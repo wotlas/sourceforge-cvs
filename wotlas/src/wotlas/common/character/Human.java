@@ -51,7 +51,11 @@ public abstract class Human implements WotCharacter {
    */
     protected byte hairColor;
 
-  /** TO ADD : other common human fields ( force, dexterity, speed, etc ... ) */
+  /** Speed [RECONSTRUCTED INFO - NOT REPLICATED]
+   */
+    protected float speed;
+
+  /** TO ADD : other common human fields ( force, dexterity, etc ... ) */
 
  /*------------------------------------------------------------------------------------*/
 
@@ -93,6 +97,22 @@ public abstract class Human implements WotCharacter {
                                             ImageLibRef.PLAYER_SMALL_IM_ACTION );
 
             return null; // null otherwise, we let sub-classes redefine the rest...
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Returns the speed of this character.
+   *
+   *  @param playerLocation player current location
+   *  @return speed in pixel/s
+   */
+     public float getSpeed( WotlasLocation playerLocation ) {
+         if ( playerLocation.isRoom() )
+              return 60.0f;  // Default human speed ( 60pixel/s = 2m/s )
+         else if ( playerLocation.isTown() )
+              return 10.0f;
+         else
+              return 5.0f;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

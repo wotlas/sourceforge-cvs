@@ -94,6 +94,15 @@ public interface WotCharacter
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** Returns the speed of this character.
+   *
+   *  @param playerLocation player current location
+   *  @return speed in pixel/s
+   */
+     public float getSpeed( WotlasLocation playerLocation );
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** To put the WotCharacter's data on the network stream. You don't need
    * to invoke this method yourself, it's done automatically.
    *

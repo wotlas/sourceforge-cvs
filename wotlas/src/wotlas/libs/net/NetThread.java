@@ -105,9 +105,7 @@ abstract class NetThread extends Thread
            }
            catch(IOException e) {
               // socket probably already closed...
-                 Debug.signal( Debug.NOTICE, this, e );
-
-              // to be sure
+              // be just to be sure...
                  try{
                       socket.close();
                  }

@@ -175,6 +175,9 @@ public class Sprite extends Drawable {
          }
 
       // 3 - Any alpha ?
+         if( dataSupplier.getAlpha()!=1.0f )
+             gc.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, dataSupplier.getAlpha() ) );
+
 
 
       // 4 - image display
@@ -190,7 +193,7 @@ public class Sprite extends Drawable {
          }
 
       // 5 - alpha cleaning
-
+         gc.setComposite( AlphaComposite.SrcOver );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

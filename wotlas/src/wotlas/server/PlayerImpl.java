@@ -445,7 +445,7 @@ public class PlayerImpl implements Player, NetConnectionListener
    /** To get lastDisconnectedTime.
     */
       public long getLastDisconnectedTime() {
-        return (long) System.currentTimeMillis()/86400000;
+        return lastDisconnectedTime;
       }
    /** To set lastDisconnectedTime.
     */
@@ -605,8 +605,8 @@ public class PlayerImpl implements Player, NetConnectionListener
                  this.personality = personality;
              }
 
-          // We forget a little about players we met
-          if (lastDisconnectedTime-System.currentTimeMillis()>3) {
+          // We forget a little about players we met if we last connected 5 days ago
+          if (lastDisconnectedTime-System.currentTimeMillis()>(5*86400000)) {
             lieManager.removeMeet(LieManager.FORGET_RECONNECT_LONG);
           } else {
             lieManager.removeMeet(LieManager.FORGET_RECONNECT);
@@ -643,6 +643,7 @@ public class PlayerImpl implements Player, NetConnectionListener
              synchronized( personalityLock ) {
                  this.personality = null;
              }
+             lastDisconnectedTime = System.currentTimeMillis();
 
              Debug.signal(Debug.NOTICE, null, "Connection closed on player: "+playerName+" at "+Tools.getLexicalTime());
 

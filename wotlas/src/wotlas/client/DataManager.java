@@ -366,7 +366,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     System.out.println("\tlocation.buildingID = " + location.getWorldMapID());
 
     // 4 - Creation of the drawable reference
-    myPlayer.init();
+    myPlayer.init(gDirector);
+    
     System.out.println("\tmyPlayer = " + myPlayer);
     System.out.println("\tmyPlayer.fullPlayerName = "  + myPlayer.getFullPlayerName());
     System.out.println("\tmyPlayer.PlayerName = "      + myPlayer.getPlayerName());
@@ -413,11 +414,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
             
       backgroundImageID = worldManager.getInteriorMap(location).getInteriorMapImage();
       System.out.println("\tbackgroundImageID = " + backgroundImageID);      
-      /*backgroundImageID = new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
-                                           ImageLibRef.UNIVERSE_SET,
-                                           ImageLibRef.TARVALON_WEST_GATE_MAP_ACTION );*/
-
-      System.out.println("\tbackgorund");
+      
       background = (Drawable) new MultiRegionImage(
                                                 myPlayer.getDrawable(),              // our reference for image loading
                                                 650,//myPlayer.DEFAULT_PERCEPTION_RADIUS,  // perception radius
@@ -462,13 +459,11 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     aStar.setMask( BinaryMask.create( bufIm ) );
     bufIm.flush(); // free image resource
 
-   
-
     // 5 - Init the GraphicsDirector
     gDirector.init( background,               // background drawable
                     myPlayer.getDrawable(),   // reference for screen movements
                     new Dimension( JClientScreen.leftWidth, JClientScreen.mapHeight )   // screen default dimension
-                   );
+                   );    
 
     // 6 - Create the panels
     JInfosPanel infosPanel = new JInfosPanel(myPlayer);
@@ -498,10 +493,19 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** Main loop to tick the graphics director every 100ms
    */
   public void run() {
+    long now;
+    int deltaT;
+        
     Object lock = new Object();
-    while( true ) {
-      tick();
-      Tools.waitTime(100);
+    while( true ) {            
+      now = System.currentTimeMillis();                            
+      tick();                  
+      deltaT = (int) (System.currentTimeMillis()-now);      
+      if (deltaT<100) {
+        Tools.waitTime(100-deltaT);
+      } else {
+        Tools.waitTime(100);
+      }      
     }
   }
 
@@ -554,6 +558,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       // Create the trajectory
       myPlayer.setTrajectory(aStar.findPath( new Point( myPlayer.getX()/TILE_SIZE, myPlayer.getY()/TILE_SIZE),
                                            new Point(newX/TILE_SIZE, newY/TILE_SIZE)));
+      /*myPlayer.initMovement(aStar.findPath( new Point( myPlayer.getX()/TILE_SIZE, myPlayer.getY()/TILE_SIZE),
+                                           new Point(newX/TILE_SIZE, newY/TILE_SIZE)));*/
       
     } else {
       System.out.println("object.getClass().getName()" + object.getClass().getName());
@@ -579,7 +585,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     System.out.println("playerImpl creation : ");
 
     newPlayer = new PlayerImpl();
-    newPlayer.init();
+    newPlayer.init(gDirector);
     newPlayer.setX(e.getX() + (int)screen.getX());
     newPlayer.setY(e.getY() + (int)screen.getY());
     gDirector.addDrawable(newPlayer.getDrawable());

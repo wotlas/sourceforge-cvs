@@ -211,6 +211,8 @@ public class ClientManager
       // ********************
 
       case 0:
+      new JHTMLWindow( screenIntro, "Wotlas News", "http://wotlas.sf.net/game/news.html", 320, 400, false );
+
       screenIntro.setTitle("Wotlas - Account selection...");
 
       // Load images of buttons

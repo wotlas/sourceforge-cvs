@@ -202,7 +202,7 @@ public class AccountManager {
            }
 
         // we remove the character from the game...
-           wManager.removePlayer( account.getPlayer() );
+           wManager.removePlayerFromUniverse( account.getPlayer() );
 
         // we delete the files
            if( !deleteAccountFiles( accountName ) ) {
@@ -233,7 +233,7 @@ public class AccountManager {
 
         // we remove the character from the game...
            account.setIsDeadAccount(true);
-           wManager.removePlayer( account.getPlayer() );
+           wManager.removePlayerFromUniverse( account.getPlayer() );
            Debug.signal( Debug.WARNING, this, "Account "+account.getAccountName()+" is dead...");
            return true;
      }

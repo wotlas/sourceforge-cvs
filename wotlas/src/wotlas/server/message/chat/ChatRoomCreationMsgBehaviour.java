@@ -27,6 +27,7 @@ import wotlas.common.message.chat.*;
 
 import wotlas.common.chat.*;
 import wotlas.common.Player;
+import wotlas.common.router.MessageRouter;
 import wotlas.common.universe.*;
 import wotlas.common.message.account.*;
 
@@ -40,16 +41,15 @@ import wotlas.utils.Debug;
  * @author Petrus
  */
 
-public class ChatRoomCreationMsgBehaviour extends ChatRoomCreationMessage implements NetMessageBehaviour
-{
+public class ChatRoomCreationMsgBehaviour extends ChatRoomCreationMessage implements NetMessageBehaviour {
 
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
    */
-  public ChatRoomCreationMsgBehaviour() {
-    super();
-  }
+    public ChatRoomCreationMsgBehaviour() {
+       super();
+    }
 
  /*------------------------------------------------------------------------------------*/
   
@@ -58,7 +58,7 @@ public class ChatRoomCreationMsgBehaviour extends ChatRoomCreationMessage implem
    * @param sessionContext an object giving specific access to other objects needed to process
    *        this message.
    */
-  public void doBehaviour( Object sessionContext ) {
+    public void doBehaviour( Object sessionContext ) {
     
     // The sessionContext is here a PlayerImpl.
        PlayerImpl player = (PlayerImpl) sessionContext;
@@ -68,35 +68,22 @@ public class ChatRoomCreationMsgBehaviour extends ChatRoomCreationMessage implem
        if( name.length() > ChatRoom.MAXIMUM_NAME_SIZE )
            name = name.substring(0,ChatRoom.MAXIMUM_NAME_SIZE-1);
 
-    // 1 - We get the list of players of the current room/town/world 
-       Hashtable players = null;
-    
-       if ( location.isWorld() ) {
-            WorldMap world = ServerDirector.getDataManager().getWorldManager().getWorldMap(location);
-            if(world!=null)
-                players = world.getPlayers();
-       } else if ( location.isTown() ) {
-            TownMap town = ServerDirector.getDataManager().getWorldManager().getTownMap(location);
-            if (town!=null)
-                players = town.getPlayers();
-       } else if ( location.isRoom() ) {
-            Room currentRoom = player.getMyRoom();    
-            if (currentRoom!=null)
-                players = currentRoom.getPlayers();
-       }
+    // 1 - We get the message router
+       MessageRouter mRouter = player.getMessageRouter();
 
-       if( players==null ) {
-           Debug.signal( Debug.ERROR, this, "Error could not get current players in "+player.getLocation() );
-           player.sendMessage( new WarningMessage("Error could not find your location! please report the bug ! - "+player.getLocation()) );
-           return;
+       if( mRouter==null ) {
+           Debug.signal( Debug.ERROR, this, "No Message Router !" );
+           player.sendMessage( new WarningMessage("Error #ChCreMsgRtr while performing creation !\nPlease report the bug !") );
+           return; // rare internal error occured !
        }
 
     // 2 - Do we have to delete the previous chatroom ?
        if( !player.getCurrentChatPrimaryKey().equals(ChatRoom.DEFAULT_CHAT) ) {
+         // The following message behaviour does this job...
             RemPlayerFromChatRoomMsgBehaviour remPlayerFromChat =
-                   new RemPlayerFromChatRoomMsgBehaviour( player.getPrimaryKey(), player.getCurrentChatPrimaryKey() );
+                   new RemPlayerFromChatRoomMsgBehaviour( player.getPrimaryKey(),
+                                                          player.getCurrentChatPrimaryKey() );
 
-         // We Send the message to ourselves & the others...
             try{
                 remPlayerFromChat.doBehaviour( player );
             }catch( Exception e ) {
@@ -112,15 +99,15 @@ public class ChatRoomCreationMsgBehaviour extends ChatRoomCreationMessage implem
        chatRoom.setCreatorPrimaryKey(creatorPrimaryKey);
        chatRoom.addPlayer(player);
 
-       synchronized( players ) {
+       synchronized( mRouter.getPlayers() ) {
            ChatList chatList = player.getChatList();
            
            if(chatList==null) {
            	chatList = (ChatList) new ChatListImpl();
            	
              // We set the chatList to all the players in the chat room...
-           	Iterator it = players.values().iterator();
-           	
+           	Iterator it = mRouter.getPlayers().values().iterator();
+           
            	while( it.hasNext() ) {
            	    PlayerImpl p = (PlayerImpl) it.next();
            	    p.setChatList( chatList );
@@ -138,19 +125,8 @@ public class ChatRoomCreationMsgBehaviour extends ChatRoomCreationMessage implem
 
     // 4 - We advertise the newly created chatroom
     // We send the information to all players of the same room or town or world
-    // ( we are one of them, that's why we don't test if p!=player )
-       ChatRoomCreatedMessage crcMsg = new ChatRoomCreatedMessage( chatRoom.getPrimaryKey(),
-                                                                   name, creatorPrimaryKey );
-
-       synchronized(players) {
-          Iterator it = players.values().iterator();
-          PlayerImpl p;
-
-          while ( it.hasNext() ) {
-              p = (PlayerImpl)it.next();
-              p.sendMessage( crcMsg );
-          }
-       }
+       mRouter.sendMessage( new ChatRoomCreatedMessage( chatRoom.getPrimaryKey(),
+                                                        name, creatorPrimaryKey ) );
   }
   
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

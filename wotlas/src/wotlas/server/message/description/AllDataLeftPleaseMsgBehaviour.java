@@ -24,17 +24,19 @@ import java.io.IOException;
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.common.message.description.*;
 import wotlas.common.Player;
+import wotlas.common.router.MessageRouter;
 import wotlas.common.universe.*;
 import wotlas.server.PlayerImpl;
 
 /**
- * Associated behaviour to the AllDataLeftPleaseMessage...
+ * Associated behaviour to the AllDataLeftPleaseMessage... We send the all the needed
+ * data to the client to complete the map's initialization.
  *
  * @author Aldiss
  */
 
-public class AllDataLeftPleaseMsgBehaviour extends AllDataLeftPleaseMessage implements NetMessageBehaviour
-{
+public class AllDataLeftPleaseMsgBehaviour extends AllDataLeftPleaseMessage implements NetMessageBehaviour {
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
@@ -55,34 +57,10 @@ public class AllDataLeftPleaseMsgBehaviour extends AllDataLeftPleaseMessage impl
         // The sessionContext is here a PlayerImpl.
            PlayerImpl player = (PlayerImpl) sessionContext;
 
-        // We send the player's fake names
-           player.sendMessage( new YourFakeNamesMessage( player.getLieManager().getFakeNames(), player.getLieManager().getCurrentFakeNameIndex() ) );
-           
-        // We send the all the data left
-
         // 1 - PLAYER DATA
-          if( player.getLocation().isRoom() ) {
-
-              Room myRoom = player.getMyRoom();
-
-           // Current Room
-              player.sendMessage( new RoomPlayerDataMessage( player.getLocation(),
-                                  player, myRoom.getPlayers() ) );
-
-           // Other rooms
-              if(myRoom.getRoomLinks()!=null)
-                for( int i=0; i<myRoom.getRoomLinks().length; i++ ) {
-                     Room otherRoom = myRoom.getRoomLinks()[i].getRoom1();
-                    
-                     if( otherRoom==myRoom )
-                         otherRoom = myRoom.getRoomLinks()[i].getRoom2();
-
-                     WotlasLocation roomLoc = new WotlasLocation( player.getLocation() );
-                     roomLoc.setRoomID( otherRoom.getRoomID() );
-                     player.sendMessage( new RoomPlayerDataMessage( roomLoc,
-                                         player, otherRoom.getPlayers() ) );
-                }
-          }
+           MessageRouter mRouter = player.getMessageRouter();
+           mRouter.addPlayer(player); // we validate the add of our player to this router
+                                      // this is the router that will send the data we need
 
        // 2 - OBJECT DATA (release 2)
 

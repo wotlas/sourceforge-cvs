@@ -28,6 +28,7 @@ import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.common.message.description.*;
 import wotlas.common.universe.*;
 import wotlas.common.chat.*;
+import wotlas.common.router.MessageRouter;
 import wotlas.common.Player;
 import wotlas.server.PlayerImpl;
 import wotlas.common.message.description.*;
@@ -38,8 +39,8 @@ import wotlas.common.message.description.*;
  * @author Aldiss
  */
 
-public class PlayerPastMsgBehaviour extends PlayerPastMessage implements NetMessageBehaviour
-{
+public class PlayerPastMsgBehaviour extends PlayerPastMessage implements NetMessageBehaviour {
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
@@ -76,47 +77,20 @@ public class PlayerPastMsgBehaviour extends PlayerPastMessage implements NetMess
                return;
            }
 
-       // we search for the player in our current room
-          Room currentRoom = player.getMyRoom();
+       // we search for the player via our MessageRouter
+          MessageRouter mRouter = player.getMessageRouter();
+          if(mRouter==null) return;
 
-          Hashtable players = currentRoom.getPlayers();
-          PlayerImpl searchedPlayer = null;
-
-          searchedPlayer = (PlayerImpl) players.get( primaryKey );
+          PlayerImpl searchedPlayer = (PlayerImpl) mRouter.getPlayer( primaryKey );
 
             if( searchedPlayer!=null ) {
-              // player found !
                  String playerPast = searchedPlayer.getPlayerPast();
                  playerPast += "\n\nEncounter info: "+searchedPlayer.getLieManager().getLastMeetPlayer(player);
                  player.sendMessage( new PlayerPastMessage( primaryKey, playerPast ) );
                  return;
             }
 
-       // We search in rooms near us
-          if( currentRoom.getRoomLinks()==null ) {
-              Debug.signal( Debug.WARNING, this, "Could not find player : "+primaryKey );
-              return; // not found...
-          }
-          
-          for( int i=0; i<currentRoom.getRoomLinks().length; i++ ) {
-               Room otherRoom = currentRoom.getRoomLinks()[i].getRoom1();
-
-               if( otherRoom==currentRoom )
-                   otherRoom = currentRoom.getRoomLinks()[i].getRoom2();
-
-               players = otherRoom.getPlayers();
-               searchedPlayer = (PlayerImpl) players.get( primaryKey );
-
-               if( searchedPlayer!=null ) {
-              	 // player found !
-                    String playerPast = searchedPlayer.getPlayerPast();
-                    playerPast += "\n\nEncounter info: "+searchedPlayer.getLieManager().getLastMeetPlayer(player);
-                    player.sendMessage( new PlayerPastMessage( primaryKey, playerPast ) );
-              	    return;
-               }
-          }
-
-       Debug.signal( Debug.WARNING, this, "Could not find player : "+primaryKey );
+          Debug.signal( Debug.WARNING, this, "Could not find player : "+primaryKey );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

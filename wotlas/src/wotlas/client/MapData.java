@@ -69,12 +69,6 @@ public interface MapData {
   public void locationUpdate(PlayerImpl myPlayer);
 
  /*------------------------------------------------------------------------------------*/
-  
-  /** To update the graphicsDirector's drawables
-   */
-  public void tick();
-  
- /*------------------------------------------------------------------------------------*/
  
 }
   

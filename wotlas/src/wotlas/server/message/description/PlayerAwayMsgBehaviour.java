@@ -27,6 +27,7 @@ import wotlas.utils.*;
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.common.message.description.*;
 import wotlas.common.universe.*;
+import wotlas.common.router.MessageRouter;
 import wotlas.common.chat.*;
 import wotlas.common.Player;
 import wotlas.server.PlayerImpl;
@@ -38,8 +39,8 @@ import wotlas.common.message.description.*;
  * @author Aldiss
  */
 
-public class PlayerAwayMsgBehaviour extends PlayerAwayMessage implements NetMessageBehaviour
-{
+public class PlayerAwayMsgBehaviour extends PlayerAwayMessage implements NetMessageBehaviour {
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
@@ -67,55 +68,28 @@ public class PlayerAwayMsgBehaviour extends PlayerAwayMessage implements NetMess
                 return;
            }
 
-
        // no, it's another player we want...
            if( !player.getLocation().isRoom() ) {
                Debug.signal( Debug.ERROR, this, "Location is not a room ! "+player.getLocation() );
                return;
            }
 
-       // we search for the player in our current room
-          Room currentRoom = player.getMyRoom();
+       // we search for the player via our MessageRouter
+          MessageRouter mRouter = player.getMessageRouter();
+          if(mRouter==null) return;
 
-          Hashtable players = currentRoom.getPlayers();
-          PlayerImpl searchedPlayer = null;
+          PlayerImpl searchedPlayer = (PlayerImpl) mRouter.getPlayer( primaryKey );
 
-          searchedPlayer = (PlayerImpl) players.get( primaryKey );
-          Calendar lastTime = Calendar.getInstance();
-          lastTime.setTime(new Date(searchedPlayer.getLastDisconnectedTime()));
-          
-          String awayMsg = "I was last connected on " +  Tools.getLexicalDate(lastTime)+ "<br>";          
-          awayMsg += searchedPlayer.getPlayerAwayMessage();         
-          
             if( searchedPlayer!=null ) {
-              // player found !
-                 player.sendMessage( new PlayerAwayMessage( primaryKey, awayMsg ) );
-                 return;
+                Calendar lastTime = Calendar.getInstance();
+                lastTime.setTime(new Date(searchedPlayer.getLastDisconnectedTime()));
+                String awayMsg = "I was last connected on " +  Tools.getLexicalDate(lastTime)+ "<br>";
+                awayMsg += searchedPlayer.getPlayerAwayMessage();
+                player.sendMessage( new PlayerAwayMessage( primaryKey, awayMsg ) );
+                return;
             }
 
-       // We search in rooms near us
-          if( currentRoom.getRoomLinks()==null ) {
-              Debug.signal( Debug.WARNING, this, "Could not find player : "+primaryKey );
-              return; // not found...
-          }
-          
-          for( int i=0; i<currentRoom.getRoomLinks().length; i++ ) {
-               Room otherRoom = currentRoom.getRoomLinks()[i].getRoom1();
-
-               if( otherRoom==currentRoom )
-                   otherRoom = currentRoom.getRoomLinks()[i].getRoom2();
-
-               players = otherRoom.getPlayers();
-               searchedPlayer = (PlayerImpl) players.get( primaryKey );
-
-               if( searchedPlayer!=null ) {
-              	 // player found !
-              	    player.sendMessage( new PlayerAwayMessage( primaryKey, awayMsg ) );
-              	    return;
-               }
-          }
-
-       Debug.signal( Debug.WARNING, this, "Could not find player : "+primaryKey );
+          Debug.signal( Debug.WARNING, this, "Could not find player : "+primaryKey );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

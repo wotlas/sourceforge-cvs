@@ -19,11 +19,11 @@
 
 package wotlas.common.universe;
 
-import wotlas.common.Player;
+import wotlas.common.*;
+import wotlas.common.router.*;
 import wotlas.utils.*;
 
 import java.awt.Rectangle;
-import java.util.Hashtable;
 
  /** A Room of an interiorMap. 
   *
@@ -31,8 +31,8 @@ import java.util.Hashtable;
   * @see wotlas.common.universe.RoomLink
   */
 
-public class Room implements WotlasMap
-{
+public class Room implements WotlasMap {
+
  /*------------------------------------------------------------------------------------*/
 
   /** ID of the Room (index in the array {@link InteriorMap#rooms InteriorMap.rooms})
@@ -73,16 +73,19 @@ public class Room implements WotlasMap
    */
     private transient InteriorMap myInteriorMap;
 
-  /** List of players in the Room
+  /** Room Location
    */
-    private transient Hashtable players;
+    private transient WotlasLocation thisLocation;
+
+  /** Our message router. Owns the list of players of this map.
+   */
+    private transient MessageRouter messageRouter;
 
  /*------------------------------------------------------------------------------------*/
   
   /** Constructor
    */
     public Room() {
-       players = new Hashtable(10);
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -162,71 +165,18 @@ public class Room implements WotlasMap
     public InteriorMap getMyInteriorMap() {
       return myInteriorMap;
     }
+
+    public MessageRouter getMessageRouter() {
+      return messageRouter;
+    }
   
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To get the list of all the players on this map.
-   * IMPORTANT: before ANY process on this list synchronize your code on the "players"
-   * object :
-   *<pre>
-   *   Hashtable players = room.getPlayers();
-   *   
-   *   synchronized( players ) {
-   *       ... some SIMPLE and SHORT processes...
-   *   }
-   *
-   * @return player hashtable, player.getPrimaryKey() is the key.
-   */
-    public Hashtable getPlayers() {
-        return players;
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Add a player to this world. The player must have been previously initialized.
-   *  We suppose that the player.getLocation() points out to this Room.
-   *
-   * @param player player to add
-   * @return false if the player already exists on this RoomMap, true otherwise
-   */
-    public boolean addPlayer( Player player ) {
-       if( players.containsKey( player.getPrimaryKey() ) ) {
-           Debug.signal( Debug.CRITICAL, this, "addPlayer failed: key "+player.getPrimaryKey()
-                         +" already in "+this );
-           return false;
-       }
-
-       players.put( player.getPrimaryKey(), player );
-       return true;
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Removes a player from this room.
-   *  We suppose that the player.getLocation() points out to this room.
-   *
-   * @param player player to remove
-   * @return false if the player doesn't exists in this Room, true otherwise
-   */
-    public boolean removePlayer( Player player ) {
-       if( !players.containsKey( player.getPrimaryKey() ) ) {
-           Debug.signal( Debug.CRITICAL, this, "removePlayer failed: key "+player.getPrimaryKey()
-                         +" not found in "+this );
-           return false;
-       }
-
-       players.remove( player.getPrimaryKey() );
-       return true;
-    }
-
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Add a new RoomLink object to the array {@link #roomLinks roomLinks}
    *
    * @return a new RoomLink object
    */
-    public RoomLink addRoomLink( ScreenRectangle r )
-    {
+    public RoomLink addRoomLink( ScreenRectangle r ) {
        RoomLink myRoomLink = new RoomLink(r);
 
        if(roomLinks == null) {
@@ -250,8 +200,7 @@ public class Room implements WotlasMap
    *
    * @param rl RoomLink object to add
    */
-    public void addRoomLink( RoomLink rl )
-    {
+    public void addRoomLink( RoomLink rl ) {
        if(roomLinks == null) {
          roomLinks = new RoomLink[1];
          roomLinks[0] = rl;
@@ -299,8 +248,7 @@ public class Room implements WotlasMap
    *
    * @return a new MapExit object
    */
-    public MapExit addMapExit(ScreenRectangle r)
-    {
+    public MapExit addMapExit(ScreenRectangle r) {
       MapExit myMapExit = new MapExit(r);
     
       if (mapExits == null) {
@@ -323,8 +271,7 @@ public class Room implements WotlasMap
    *
    * @param me MapExit object
    */
-    public void addMapExit( MapExit me )
-    {
+    public void addMapExit( MapExit me ) {
       if (mapExits == null) {
          mapExits = new MapExit[1];
          mapExits[0] = me;
@@ -342,12 +289,15 @@ public class Room implements WotlasMap
    *  @return associated Wotlas Location
    */
     public WotlasLocation getLocation() {
-       WotlasLocation thisLocation = new WotlasLocation();
-       thisLocation.setRoomID( roomID );
-       thisLocation.setInteriorMapID( myInteriorMap.getInteriorMapID() );
-       thisLocation.setBuildingID( myInteriorMap.getMyBuilding().getBuildingID() );
-       thisLocation.setTownMapID( myInteriorMap.getMyBuilding().getMyTownMap().getTownMapID() );
-       thisLocation.setWorldMapID( myInteriorMap.getMyBuilding().getMyTownMap().getMyWorldMap().getWorldMapID() );
+       if(thisLocation==null) {    
+          thisLocation = new WotlasLocation();
+          thisLocation.setRoomID( roomID );
+          thisLocation.setInteriorMapID( myInteriorMap.getInteriorMapID() );
+          thisLocation.setBuildingID( myInteriorMap.getMyBuilding().getBuildingID() );
+          thisLocation.setTownMapID( myInteriorMap.getMyBuilding().getMyTownMap().getTownMapID() );
+          thisLocation.setWorldMapID( myInteriorMap.getMyBuilding().getMyTownMap().getMyWorldMap().getWorldMapID() );
+       }
+
        return thisLocation;
     }
 
@@ -362,7 +312,7 @@ public class Room implements WotlasMap
     // 1 - inits
        this.myInteriorMap = myInteriorMap;
 
-       WotlasLocation thisLocation = getLocation();
+       thisLocation = getLocation();
 
     // 2 - We reconstruct MapExit links...       
        if( mapExits != null )
@@ -412,6 +362,20 @@ public class Room implements WotlasMap
                    break;
                }
        }
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To init this room for message routing. We create an appropriate message router
+   *  for the room via the provided factory.
+   *
+   *  Don't call this method yourself it's called from the WorldManager !
+   *
+   * @param msgRouterFactory our router factory
+   */
+    public void initMessageRouting( MessageRouterFactory msgRouterFactory, WorldManager wManager ){
+       // build/get our router
+          messageRouter = msgRouterFactory.createMsgRouterForRoom( this, wManager );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

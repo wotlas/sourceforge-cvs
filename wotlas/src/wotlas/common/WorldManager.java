@@ -22,6 +22,8 @@ package wotlas.common;
 import wotlas.common.universe.*;
 import wotlas.common.Player;
 import wotlas.common.ResourceManager;
+import wotlas.common.router.*;
+
 import wotlas.libs.persistence.*;
 import wotlas.utils.Debug;
 
@@ -41,8 +43,8 @@ import java.io.*;
   * @see wotlas.libs.persistence.PropertiesConverter
   */
  
-public class WorldManager
-{
+public class WorldManager {
+
  /*------------------------------------------------------------------------------------*/
 
   /** Game Universe Name Format
@@ -242,21 +244,19 @@ public class WorldManager
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
-  /** Add a player to this universe. This method is called for inits and should NOT
-   *  be used in any other cases. Use movePlayer instead.
-   *
+  /** Add a player to this universe.
    * @param player player to add to this world.
    */
-   public void addNewPlayer( Player player ) {
+   public void addPlayerToUniverse( Player player ) {
        editPlayer( player, true ); // no control on server location, we assume locality
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To remove a player from the universe.
+  /** Remove a player from the universe.
    * @param player the player to remove.
    */
-   public void removePlayer( Player player ) {
+   public void removePlayerFromUniverse( Player player ) {
         editPlayer( player, false );
    }
 
@@ -292,9 +292,9 @@ public class WorldManager
       // add/remove player
          if( location.isWorld() ) {
              if(addButNotRemove)
-                world.addPlayer( player );
+                world.getMessageRouter().addPlayer( player );
              else
-                world.removePlayer( player );
+                world.getMessageRouter().removePlayer( player );
          }
          else{
           // does this town exists ?
@@ -307,9 +307,9 @@ public class WorldManager
          
              if( location.isTown() ) {
                  if(addButNotRemove)
-                    town.addPlayer( player );
+                    town.getMessageRouter().addPlayer( player );
                  else
-                    town.removePlayer( player );
+                    town.getMessageRouter().removePlayer( player );
              }
              else if( location.isRoom() )
              {
@@ -339,9 +339,9 @@ public class WorldManager
 
                 // pheewww... ok, we add/remove this player...
                    if(addButNotRemove)
-                      room.addPlayer( player );
+                      room.getMessageRouter().addPlayer( player );
                    else
-                      room.removePlayer( player );                   
+                      room.getMessageRouter().removePlayer( player );                   
              }
              else
                 Debug.signal( Debug.ERROR, this, "Player "+player.toString()+" has strange location." );        
@@ -387,6 +387,30 @@ public class WorldManager
             if( worldMaps[i]!=null )
                 worldMaps[i].init();
    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To init this worldmap for message routing. We create an appropriate message router
+   *  for the world/towns/rooms via the provided factory. This method should be called once
+   *  on the WorldManager at start-up. It's your job to create the factory.
+   *
+   *  If you don't call this method you won't be able to manage message routing among
+   *  the different locations.
+   *
+   * @param msgRouterFactory our router factory for MessageRouter creation.
+   */
+    public void initMessageRouting( MessageRouterFactory msgRouterFactory ){
+     // 1 - any data ?
+        if(worldMaps==null) {
+           Debug.signal(Debug.WARNING, this, "Universe routing inits failed: No WorldMaps.");
+           return;
+        }
+
+     // 2 - we transmit the initMessageRouting() call
+        for( int i=0; i<worldMaps.length; i++ )
+             if( worldMaps[i]!=null )
+                 worldMaps[i].initMessageRouting( msgRouterFactory, this );
+    }
 
  /*------------------------------------------------------------------------------------*/
 

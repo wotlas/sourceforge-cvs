@@ -20,24 +20,23 @@
 package wotlas.common.universe;
 
 import wotlas.libs.graphics2D.ImageIdentifier;
-import wotlas.common.Player;
+import wotlas.common.*;
+import wotlas.common.router.*;
 import wotlas.utils.*;
 
-import java.util.Hashtable;
 import java.awt.Rectangle;
 
  /** A WorldMap represents the root class of a whole world of our Game Universe.
   *
   * @author Petrus, Aldiss
-  * @see wotlas.common.universe.ServerProcess
   * @see wotlas.common.universe.TownMap
   */
  
-public class WorldMap implements WotlasMap
-{
+public class WorldMap implements WotlasMap {
+
  /*------------------------------------------------------------------------------------*/
  
-  /** ID of the World (index in the array {@link ServerProcess#worldMaps ServerProcess.worldMaps})
+  /** ID of the World (index in the worldmap array in the worldmanager)
    */
     private int worldMapID;
      
@@ -67,9 +66,9 @@ public class WorldMap implements WotlasMap
    */
     private transient TownMap[] townMaps;
 
-  /** List of players in the WorldMap (not players in towns)
+  /** Our message router. Owns the list of players of this map (not in Towns).
    */
-    private transient Hashtable players;
+    private transient MessageRouter messageRouter;
 
  /*------------------------------------------------------------------------------------*/
   
@@ -77,7 +76,6 @@ public class WorldMap implements WotlasMap
    * Constructor
    */
     public WorldMap() {
-       players = new Hashtable(10);
     }
   
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -146,60 +144,8 @@ public class WorldMap implements WotlasMap
       return townMaps;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To get the list of all the players on this map.
-   * IMPORTANT: before ANY process on this list synchronize your code on the "players"
-   * object :
-   *<pre>
-   *   Hashtable players = world.getPlayers();
-   *   
-   *   synchronized( players ) {
-   *       ... some SIMPLE and SHORT processes...
-   *   }
-   *
-   * @return player hashtable, player.getPrimaryKey() is the key.
-   */
-    public Hashtable getPlayers() {
-        return players;
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Add a player to this world. The player must have been previously initialized.
-   *  We suppose that the player.getLocation() points out to this World.
-   *
-   * @param player player to add
-   * @return false if the player already exists on this WorldMap, true otherwise
-   */
-    public boolean addPlayer( Player player ) {
-       if( players.containsKey( player.getPrimaryKey() ) ) {
-           Debug.signal( Debug.CRITICAL, this, "addPlayer failed: key "+player.getPrimaryKey()
-                         +" already in "+this );
-           return false;
-       }
-
-       players.put( player.getPrimaryKey(), player );
-       return true;
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Removes a player from this world.
-   *  We suppose that the player.getLocation() points out to this World.
-   *
-   * @param player player to remove
-   * @return false if the player doesn't exists on this WorldMap, true otherwise
-   */
-    public boolean removePlayer( Player player ) {
-       if( !players.containsKey( player.getPrimaryKey() ) ) {
-           Debug.signal( Debug.CRITICAL, this, "removePlayer failed: key "+player.getPrimaryKey()
-                         +" not found in "+this );
-           return false;
-       }
-
-       players.remove( player.getPrimaryKey() );
-       return true;
+    public MessageRouter getMessageRouter() {
+      return messageRouter;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -243,8 +189,7 @@ public class WorldMap implements WotlasMap
    *
    * @return a new TownMap object
    */
-    public TownMap addNewTownMap()
-    {
+    public TownMap addNewTownMap() {
        TownMap myTownMap = new TownMap();
 
        if (townMaps == null) {
@@ -277,7 +222,7 @@ public class WorldMap implements WotlasMap
    *  of the TownMaps. You must only call this method when ALL the world data has been
    *  loaded.
    */
-    public void init(){
+    public void init() {
 
      // 1 - any data ?
         if(townMaps==null) {
@@ -293,6 +238,25 @@ public class WorldMap implements WotlasMap
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To init this worldmap for message routing. We create an appropriate message router
+   *  for the world via the provided factory.
+   *
+   *  Don't call this method yourself it's called from the WorldManager !
+   *
+   * @param msgRouterFactory our router factory
+   */
+    public void initMessageRouting( MessageRouterFactory msgRouterFactory, WorldManager wManager ){
+       // build/get our router
+          messageRouter = msgRouterFactory.createMsgRouterForWorldMap( this, wManager );
+
+       // we transmit the call to other layers
+          for( int i=0; i<townMaps.length; i++ )
+             if( townMaps[i]!=null )
+                 townMaps[i].initMessageRouting( msgRouterFactory, wManager );
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** String Info.
    */
     public String toString(){
@@ -302,29 +266,6 @@ public class WorldMap implements WotlasMap
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Tests if the given player rectangle has its x,y cordinates in a TownRectangle
-   *
-   *  Here is an example how to use this method (at each game tick) :
-   *  <pre>
-   *
-   *  WorldMap wMap = worldManager.getWorld( player.getWotlasLocation() );
-   *
-   *  TownMap tMap = wMap.isEnteringTown( myPlayer.myDestX, myPlayer.myDestY,
-   *                                      myPlayer.getCurrentRectangle() );
-   *  
-   *  if( tMap != null ) {
-   *   // intersection with a TownMap, which MapExit are we using ?
-   *      MapExit mExit = tMap.findTownMapExit( myPlayer.getCurrentRectangle() );
-   *  
-   *   // ok, we have the TownMap => we know which image to display, buildings, etc...
-   *   //     we have the MapExit => we know where to insert our player on the
-   *   //                            TownMap, it's done the following way :
-   *
-   *      myPlayer.setX( mExit.getX() + mExit.getWidth()/2 );
-   *      myPlayer.setY( mExit.getY() + mExit.getHeight()/2 );
-   *
-   *  </pre>
-   *  Yes, we set our player on the middle of the MapExit. Refer to the TownMap
-   *  findTownMapExit() javadoc for more details on this method.
    *
    * @param destX destination x position of the player movement ( endPoint of path )
    * @param destY destination y position of the player movement ( endPoint of path )

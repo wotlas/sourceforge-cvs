@@ -29,8 +29,8 @@ import wotlas.utils.Debug;
   * @author Petrus, Aldiss
   */
 
-public class InteriorMap
-{
+public class InteriorMap {
+
  /*------------------------------------------------------------------------------------*/
 
   /** ID of the InteriorMap (index in the array Building.interiorMaps)
@@ -204,8 +204,7 @@ public class InteriorMap
    *
    * @return a new Room object
    */
-    public Room addRoom()
-    {
+    public Room addRoom() {
       Room myRoom = new Room();
     
       if (rooms == null) {

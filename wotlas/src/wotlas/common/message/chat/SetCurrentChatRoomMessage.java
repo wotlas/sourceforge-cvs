@@ -64,7 +64,7 @@ public class SetCurrentChatRoomMessage extends NetMessage
   
   /** Constructor with parameters.
    */
-  public SetCurrentChatRoomMessage(String otherPlayerKey, String chatRoomPrimaryKey, Hashtable players ) {
+  public SetCurrentChatRoomMessage( String chatRoomPrimaryKey, Hashtable players ) {
     super();
     this.chatRoomPrimaryKey = chatRoomPrimaryKey;
 

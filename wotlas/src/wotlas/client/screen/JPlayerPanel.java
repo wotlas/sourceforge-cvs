@@ -53,8 +53,6 @@ public class JPlayerPanel extends JPanel implements MouseListener {
     
       playerTabbedPane = new JTabbedPane();
       add(playerTabbedPane);
-
-      init();
     }
 
  /*------------------------------------------------------------------------------------*/ 

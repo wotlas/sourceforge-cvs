@@ -27,7 +27,7 @@ import java.util.*;
 
 import wotlas.libs.net.NetMessage;
 import wotlas.common.Player;
-import wotlas.common.universe.WotlasLocation;
+import wotlas.common.universe.*;
 
 
 /** 
@@ -71,13 +71,12 @@ public class RoomPlayerDataMessage extends PlayerDataMessage
    * @param myPlayer our player.
    * @param players our players.
    */
-     public RoomPlayerDataMessage( WotlasLocation location, Player myPlayer,
-                                   Hashtable players ) {
+     public RoomPlayerDataMessage( Room room, Player myPlayer ) {
          super();
          this.myPlayer = myPlayer;
          this.otherPlayer = myPlayer;
-         this.location = location;
-         this.players = players;
+         this.location = room.getLocation();
+         this.players = room.getMessageRouter().getPlayers();
          this.publicInfoOnly = true;
      }
 

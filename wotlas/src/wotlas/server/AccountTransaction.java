@@ -126,14 +126,11 @@ public class AccountTransaction implements NetConnectionListener
           if(personality!=null) {
              Debug.signal( Debug.NOTICE, null, account.getPrimaryKey()+" account transaction succeeded." );
              account.getPlayer().init();
-              
-             ServerDirector.getDataManager().getWorldManager().addNewPlayer( account.getPlayer() );
-             Debug.signal( Debug.NOTICE, this, "Added the received client account to the game." );
+
+             Debug.signal( Debug.NOTICE, this, "Created an account for the received client..." );
 
              personality.queueMessage( new AccountTrSuccessMessage() );
              personality.closeConnection();
-
-             account.getPlayer().advertiseCreation();
           }
           else {
              Debug.signal( Debug.ERROR, this, "Could'nt finish "+account.getPrimaryKey()+" account transaction." );

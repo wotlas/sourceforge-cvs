@@ -34,15 +34,15 @@ import wotlas.server.PlayerImpl;
  * @author Petrus
  */
 
-public class CreateFakeNameMsgBehaviour extends CreateFakeNameMessage implements NetMessageBehaviour
-{
+public class CreateFakeNameMsgBehaviour extends CreateFakeNameMessage implements NetMessageBehaviour {
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
    */
-  public CreateFakeNameMsgBehaviour() {
-    super();
-  }
+    public CreateFakeNameMsgBehaviour() {
+      super();
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -51,16 +51,16 @@ public class CreateFakeNameMsgBehaviour extends CreateFakeNameMessage implements
    * @param sessionContext an object giving specific access to other objects needed to process
    *        this message.
    */
-  public void doBehaviour( Object sessionContext ) {
-    // The sessionContext is here a PlayerImpl.
-    PlayerImpl player = (PlayerImpl) sessionContext;
-    LieManager lieManager = player.getLieManager();
-    
-    short currentFakeName = lieManager.createFakeName(fakeName);    
-    if (currentFakeName > 0) {
-      player.sendMessage(new SetFakeNameMessage(currentFakeName, fakeName));
+    public void doBehaviour( Object sessionContext ) {
+      // The sessionContext is here a PlayerImpl.
+       PlayerImpl player = (PlayerImpl) sessionContext;
+       LieManager lieManager = player.getLieManager();
+
+       short currentFakeName = lieManager.createFakeName(fakeName);    
+
+       if (currentFakeName > 0)
+          player.sendMessage(new SetFakeNameMessage(currentFakeName, fakeName));
     }
-  }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

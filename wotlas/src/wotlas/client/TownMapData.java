@@ -175,7 +175,7 @@ public class TownMapData implements MapData {
                     new Dimension( JClientScreen.leftWidth, JClientScreen.mapHeight )   // screen default dimension
                    );
 
-    //   - We add buildings' images
+    // 7 - We add buildings' images
     Building buildings[] = townMap.getBuildings();
 
     if (buildings!=null) {
@@ -201,7 +201,7 @@ public class TownMapData implements MapData {
       }
     }
 
-    //   - We add MapExits' images
+    // 8 - We add MapExits' images
     if (SHOW_DEBUG) {
       MapExit[] mapExits = townMap.getMapExits();
       if (mapExits!= null) {
@@ -214,20 +214,19 @@ public class TownMapData implements MapData {
       }
     }
 
-    //   - We show some informations on the screen
+    // 9 - We show some informations on the screen
     gDirector.addDrawable(myPlayer.getGameScreenFullPlayerName());
 
     String[] strTemp2 = { townMap.getFullName() };
     MultiLineText mltLocationName = new MultiLineText(strTemp2, 10, 10, Color.black, 15.0f, "Lucida Blackletter", ImageLibRef.TEXT_PRIORITY, MultiLineText.RIGHT_ALIGNMENT);
     gDirector.addDrawable(mltLocationName);
 
-    //   - We play music
+    // 10 - We play music
     String midiFile = townMap.getMusicName();
     if (midiFile != null)
       SoundLibrary.getSoundLibrary().playMusic( midiFile );
 
-    //   - We retreive other players informations
-    if( dataManager.isAlive() )
+    // 11 - We retrieve eventual remaining data
         dataManager.sendMessage(new AllDataLeftPleaseMessage());
   }
 
@@ -275,7 +274,6 @@ public class TownMapData implements MapData {
 
       myPlayer.getMovementComposer().resetMovement();
 
-/* NETMESSAGE */
       if (isNotMovingToAnotherMap) {
         isNotMovingToAnotherMap = false;
         myPlayer.sendMessage( new CanLeaveTownMapMessage(myPlayer.getPrimaryKey(),
@@ -299,9 +297,7 @@ public class TownMapData implements MapData {
       if (SHOW_DEBUG)
         System.out.println("We are entering a building...");
 
-///////////////////////////// ALDISS : avant stopMoving()
       myPlayer.getMovementComposer().resetMovement();
-///////////////////////////// FIN ALDISS
 
       if (SHOW_DEBUG) {
         System.out.println("\t\tbuildingMap.getFullName() = " + buildingMap.getFullName());
@@ -337,12 +333,6 @@ public class TownMapData implements MapData {
       }
     }
   }
-
- /*------------------------------------------------------------------------------------*/
-
-  /** To update the graphicsDirector's drawables
-   */
-  public void tick() {}
 
  /*------------------------------------------------------------------------------------*/
 

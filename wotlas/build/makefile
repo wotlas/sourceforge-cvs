@@ -41,7 +41,8 @@ LIBS_PACKAGES2 = wotlas/libs/graphics2D \
 COMMON_PACKAGES = wotlas/common \
                   wotlas/common/universe \
                   wotlas/common/character \
-                  wotlas/common/message/account
+                  wotlas/common/message/account \
+                  wotlas/common/router
 
 COMMON_PACKAGES2 = wotlas/common/message/description \
                    wotlas/common/message/movement \
@@ -57,7 +58,8 @@ SERVER_PACKAGES = wotlas/server \
 
 SERVER_PACKAGES2 = wotlas/server/message/movement \
                    wotlas/server/message/chat \
-                   wotlas/server/chat
+                   wotlas/server/chat \
+                   wotlas/server/router
 
 CLIENT_PACKAGES = wotlas/client \
                   wotlas/client/screen \

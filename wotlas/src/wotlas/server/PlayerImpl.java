@@ -22,6 +22,7 @@ package wotlas.server;
 import wotlas.common.character.*;
 import wotlas.common.chat.*;
 import wotlas.common.movement.*;
+import wotlas.common.router.*;
 import wotlas.common.message.chat.SendTextMessage;
 import wotlas.server.message.chat.*;
 
@@ -464,6 +465,34 @@ public class PlayerImpl implements Player, NetConnectionListener {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** To get our Message router.
+    */
+      public MessageRouter getMessageRouter() {
+          if(myRoom!=null)
+             return myRoom.getMessageRouter();
+
+          if( location.isWorld() ) {
+              WorldMap world = ServerDirector.getDataManager().getWorldManager().getWorldMap(location);
+              if(world!=null)
+                 return world.getMessageRouter();
+          }
+          else if( location.isTown() ) {
+              TownMap town = ServerDirector.getDataManager().getWorldManager().getTownMap(location);
+              if(town!=null)
+                 return town.getMessageRouter();
+          }
+          else if( location.isRoom() ) {
+              Room room = ServerDirector.getDataManager().getWorldManager().getRoom(location);
+              if(room!=null)
+                 return room.getMessageRouter();
+          }
+
+         Debug.signal(Debug.ERROR, this, "MessageRouter not found ! bad location :"+location+" player: "+primaryKey);
+         return null; // not found
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
    /** To get the player away message.
     *
     *  @return player away Message
@@ -606,25 +635,25 @@ public class PlayerImpl implements Player, NetConnectionListener {
              }
 
           // We forget a little about players we met if we last connected 5 days ago
-          if (lastDisconnectedTime-System.currentTimeMillis()>(5*86400000)) {
-            lieManager.removeMeet(LieManager.FORGET_RECONNECT_LONG);
-          } else {
-            lieManager.removeMeet(LieManager.FORGET_RECONNECT);
-          }
+             if (lastDisconnectedTime-System.currentTimeMillis()>(5*86400000))
+                lieManager.removeMeet(LieManager.FORGET_RECONNECT_LONG);
+             else
+                lieManager.removeMeet(LieManager.FORGET_RECONNECT);
 
           // We signal our connection to players in the game
           // ... and players in the rooms near us
              if(location.isRoom()) {
-              // We send an update to players near us...
-                 PlayerConnectedToGameMessage pMsg = new PlayerConnectedToGameMessage(primaryKey,true);
-
                  if(myRoom==null) {
                     Debug.signal( Debug.ERROR, this, "Player "+primaryKey+" has an incoherent location state");
                     return;
                  }
 
-                 sendMessageToRoom( myRoom, pMsg, true );
-                 sendMessageToNearRooms( myRoom, pMsg, false );
+               // are we present in this room already ?
+                 if( myRoom.getMessageRouter().getPlayer(primaryKey)!=null ) {
+                   // We send an update to players near us...
+                      PlayerConnectedToGameMessage pMsg = new PlayerConnectedToGameMessage(primaryKey,true);
+                      myRoom.getMessageRouter().sendMessage( pMsg, this, MessageRouter.EXTENDED_GROUP );
+                 }
              }
 
              Debug.signal(Debug.NOTICE,null,"Connection opened for player "+playerName+" at "+Tools.getLexicalTime());
@@ -665,8 +694,8 @@ public class PlayerImpl implements Player, NetConnectionListener {
             }
 
          // 2 - Stop any current movement
-            if(location.isRoom())
-            {
+            if(location.isRoom()) {
+
               // no movement saved on rooms...
                  movementComposer.resetMovement();
 
@@ -681,8 +710,7 @@ public class PlayerImpl implements Player, NetConnectionListener {
                     return;
                  }
 
-                 sendMessageToRoom( myRoom, msg, true );
-                 sendMessageToNearRooms( myRoom, msg, false );
+                 myRoom.getMessageRouter().sendMessages( msg, this, MessageRouter.EXTENDED_GROUP );
                  return;
             }
             else if(location.isTown()) {
@@ -709,6 +737,8 @@ public class PlayerImpl implements Player, NetConnectionListener {
                 }
              }
      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
      
   /** Use this method to send a SendTextMessage to this player. You can use it directly :
    *  it does not lock, does not wait for the message to be sent before returning
@@ -719,13 +749,15 @@ public class PlayerImpl implements Player, NetConnectionListener {
    */
      public void sendChatMessage( SendTextMessage message, PlayerImpl otherPlayer) {
              synchronized( personalityLock ) {
-                if( personality!=null ) {                    
-                  if( ServerDirector.SHOW_DEBUG )
-                    System.out.println("Player "+primaryKey+" sending to:"+otherPlayer.getPrimaryKey()+" msg: "+message);
+                if( personality!=null ) {
+
+                   if( ServerDirector.SHOW_DEBUG )
+                       System.out.println("Player "+primaryKey+" sending to:"+otherPlayer.getPrimaryKey()+" msg: "+message);
+
                   personality.queueMessage( message );
-                  if ( !primaryKey.equals(otherPlayer.getPrimaryKey()) ) {
-                    lieManager.addMeet(otherPlayer, LieManager.MEET_CHATMESSAGE);
-                  }                    
+
+                  if( !primaryKey.equals(otherPlayer.getPrimaryKey()) )
+                     lieManager.addMeet(otherPlayer, LieManager.MEET_CHATMESSAGE);
                 }
              }
      }    
@@ -740,147 +772,6 @@ public class PlayerImpl implements Player, NetConnectionListener {
                     personality.closeConnection();
              }
      }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To send a message to the players that are in the specified room.
-   * @param room target room
-   * @param msg message to send
-   * @param exceptMe do we have to send the message to us ?
-   */
-    public void sendMessageToRoom( Room room, NetMessage msg, boolean exceptMe ) {
-          Hashtable players = room.getPlayers();
-
-          synchronized( players ) {
-               Iterator it = players.values().iterator();
-               
-               if( exceptMe )
-                   while( it.hasNext() ) {
-                       PlayerImpl p = (PlayerImpl)it.next();
-                       if(p!=this)
-                          p.sendMessage( msg );
-                   }
-               else
-                   while( it.hasNext() )
-                       ( (PlayerImpl)it.next() ).sendMessage( msg );
-          }
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To send some messages to the players that are in the specified room.
-   * @param room target room
-   * @param msg message to send
-   * @param exceptMe do we have to send the message to us ?
-   */
-    public void sendMessageToRoom( Room room, NetMessage msg[], boolean exceptMe ) {
-          Hashtable players = room.getPlayers();
-
-          synchronized( players ) {
-               Iterator it = players.values().iterator();
-               
-               if( exceptMe )
-                   while( it.hasNext() ) {
-                       PlayerImpl p = (PlayerImpl)it.next();
-                       if(p!=this)
-                          for( int i=0; i< msg.length; i++ )
-                               p.sendMessage( msg[i] );
-                   }
-               else
-                   while( it.hasNext() ) {
-                       PlayerImpl p = (PlayerImpl)it.next();
-                       for( int i=0; i< msg.length; i++ )
-                            p.sendMessage( msg[i] );
-                   }
-          }
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To send a message to the players that are in the rooms near the specified room.
-   * @param room reference room
-   * @param msg message to send
-   * @param exceptMe do we have to send the message to us ?
-   */
-    public void sendMessageToNearRooms( Room room, NetMessage msg[], boolean exceptMe ) {
-        if(room.getRoomLinks()!=null)
-           for( int j=0; j<room.getRoomLinks().length; j++ ) {
-                Room otherRoom = room.getRoomLinks()[j].getRoom1();
-  
-                if( otherRoom==room )
-                    otherRoom = room.getRoomLinks()[j].getRoom2();
-
-                Hashtable players = otherRoom.getPlayers();
-
-                synchronized( players ) {
-                    Iterator it = players.values().iterator();
-                 
-                    if( exceptMe )
-                       while( it.hasNext() ) {
-                           PlayerImpl p = (PlayerImpl)it.next();
-                           if(p!=this)
-                              for( int i=0; i< msg.length; i++ )
-                                   p.sendMessage( msg[i] );
-                       }
-                    else
-                       while( it.hasNext() ) {
-                           PlayerImpl p = (PlayerImpl)it.next();
-                           for( int i=0; i< msg.length; i++ )
-                                p.sendMessage( msg[i] );
-                       }
-                }
-           }
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To send a message to the players that are in the rooms near the specified room.
-   * @param room reference room
-   * @param msg message to send
-   * @param exceptMe do we have to send the message to us ?
-   */
-    public void sendMessageToNearRooms( Room room, NetMessage msg, boolean exceptMe ) {
-        if(room.getRoomLinks()!=null)
-           for( int j=0; j<room.getRoomLinks().length; j++ ) {
-                Room otherRoom = room.getRoomLinks()[j].getRoom1();
-  
-                if( otherRoom==room )
-                    otherRoom = room.getRoomLinks()[j].getRoom2();
-
-                Hashtable players = otherRoom.getPlayers();
-
-                synchronized( players ) {
-                    Iterator it = players.values().iterator();
-                 
-                    if( exceptMe )
-                       while( it.hasNext() ) {
-                           PlayerImpl p = (PlayerImpl)it.next();
-                           if(p!=this)
-                              p.sendMessage( msg );
-                       }
-                    else
-                       while( it.hasNext() )
-                           ( (PlayerImpl)it.next() ).sendMessage( msg );
-                }
-           }
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To advertise our creation in a new location of the 'Room' type.
-   */
-    public void advertiseCreation() {
-    	
-    	  if(myRoom==null) {
-    	     Debug.signal( Debug.ERROR, this, "Can't advertise player creation : myRoom=null !" );
-    	     return;
-    	  }
-    	
-          AddPlayerToRoomMessage aMsg = new AddPlayerToRoomMessage( null, this );
-
-          sendMessageToRoom( myRoom, aMsg, true );
-          sendMessageToNearRooms( myRoom, aMsg, true );
-    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

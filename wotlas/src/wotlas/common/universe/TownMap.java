@@ -20,13 +20,12 @@
 package wotlas.common.universe;
 
 import wotlas.libs.graphics2D.ImageIdentifier;
-import wotlas.common.Player;
+import wotlas.common.*;
+import wotlas.common.router.*;
 import wotlas.utils.*;
 
 import java.awt.Rectangle;
 import java.awt.Point;
-
-import java.util.Hashtable;
 
  /** A TownMap represents a town in our Game Universe.
   *
@@ -35,11 +34,11 @@ import java.util.Hashtable;
   * @see wotlas.common.universe.Building
   */
  
-public class TownMap extends ScreenRectangle implements WotlasMap
-{
+public class TownMap extends ScreenRectangle implements WotlasMap {
+
  /*------------------------------------------------------------------------------------*/
  
-  /** ID of the TownMap (index in the array {@link WorldMap#towns WorldMap.towns})
+  /** ID of the TownMap (index in the array of townmaps in the WorldMap)
    */
     private int townMapID;
      
@@ -81,16 +80,15 @@ public class TownMap extends ScreenRectangle implements WotlasMap
    */
     private transient Building[] buildings;
   
-  /** List of players in the Town
+  /** Our message router. Owns the list of players of this map (not in buildings).
    */
-    private transient Hashtable players;
+    private transient MessageRouter messageRouter;
 
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor for persistence.
    */
     public TownMap() {
-       players = new Hashtable(10);
     }
    
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -103,7 +101,6 @@ public class TownMap extends ScreenRectangle implements WotlasMap
    */
     public TownMap(int x, int y, int width, int height) {
        super(x,y,width,height);
-       players = new Hashtable(10);
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -192,6 +189,10 @@ public class TownMap extends ScreenRectangle implements WotlasMap
       return buildings;
     }
 
+    public MessageRouter getMessageRouter() {
+      return messageRouter;
+    }
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To Get a building by its ID.
@@ -215,62 +216,6 @@ public class TownMap extends ScreenRectangle implements WotlasMap
    */
     public WotlasLocation getLocation() {
        return new WotlasLocation( myWorldMap.getWorldMapID(),townMapID );
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To get the list of all the players on this map.
-   * IMPORTANT: before ANY process on this list synchronize your code on the "players"
-   * object :
-   *<pre>
-   *   Hashtable players = town.getPlayers();
-   *   
-   *   synchronized( players ) {
-   *       ... some SIMPLE and SHORT processes...
-   *   }
-   *
-   * @return player hashtable, player.getPrimaryKey() is the key.
-   */
-    public Hashtable getPlayers() {
-        return players;
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Add a player to this town. The player must have been previously initialized.
-   *  We suppose that the player.getLocation() points out to this town.
-   *
-   * @param player player to add
-   * @return false if the player already exists on this TownMap, true otherwise
-   */
-    public boolean addPlayer( Player player ) {
-       if( players.containsKey( player.getPrimaryKey() ) ) {
-           Debug.signal( Debug.CRITICAL, this, "addPlayer failed: key "+player.getPrimaryKey()
-                         +" already in "+this);
-           return false;
-       }
-
-       players.put( player.getPrimaryKey(), player );
-       return true;
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Removes a player from this town.
-   *  We suppose that the player.getLocation() points out to this town.
-   *
-   * @param player player to remove
-   * @return false if the player doesn't exists on this townMap, true otherwise
-   */
-    public boolean removePlayer( Player player ) {
-       if( !players.containsKey( player.getPrimaryKey() ) ) {
-           Debug.signal( Debug.CRITICAL, this, "removePlayer failed: key "+player.getPrimaryKey()
-                         +" not found in"+this);
-           return false;
-       }
-
-       players.remove( player.getPrimaryKey() );
-       return true;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -391,6 +336,35 @@ public class TownMap extends ScreenRectangle implements WotlasMap
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To init this townmap for message routing. We create an appropriate message router
+   *  for the town via the provided factory.
+   *
+   *  Don't call this method yourself it's called via the WorldManager !
+   *
+   * @param msgRouterFactory our router factory
+   */
+    public void initMessageRouting( MessageRouterFactory msgRouterFactory, WorldManager wManager ){
+       // build/get our router
+          messageRouter = msgRouterFactory.createMsgRouterForTownMap( this, wManager );
+
+       // we transmit the call to other layers
+          for( int i=0; i<buildings.length; i++ )
+             if( buildings[i]!=null && buildings[i].getInteriorMaps()!=null) {
+             	 InteriorMap imaps[] = buildings[i].getInteriorMaps();
+
+                 for( int j=0; j<imaps.length; j++ )
+                    if(imaps[j]!=null && imaps[j].getRooms()!=null) {
+
+                       Room rooms[] = imaps[j].getRooms();
+                       
+                       for( int k=0; k<rooms.length; k++ )
+                            rooms[k].initMessageRouting( msgRouterFactory, wManager );
+                    }
+             }
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** Returns the MapExit which is on the side given by the specified rectangle.
    *  It's an helper for you : if your player is on a WorldMap and wants to go inside
    *  a TownMap use this method to retrieve a valid MapExit and get an insertion point.
@@ -398,21 +372,13 @@ public class TownMap extends ScreenRectangle implements WotlasMap
    *  The MapExit is in fact a ScreenRectangle and the so called "insertion point"
    *  should be the center of this ScreenRectangle.
    * 
-   *  Compute it this way :
-   *  <pre>
-   *      MapExit mExit = tMap.findTownMapExit( myPlayer.getCurrentRectangle() );
-   *  
-   *      myPlayer.setX( mExit.getX() + mExit.getWidth()/2 );
-   *      myPlayer.setY( mExit.getY() + mExit.getHeight()/2 );
-   * </pre>
-   *
    * @param rCurrent rectangle containing the player's current position, width & height
    *        the rectangle position can be anything BUT it should represent in some
    *        way the direction by which the player hits this TownMap zone.
    * @return the appropriate MapExit, null if there are no MapExits.
    */
    public MapExit findTownMapExit( Rectangle fromPosition ) {
-   	
+
       if(mapExits==null) {
       	// Ok, this town has no MapExit, we suppose it's just a building
       	// Is there ONE building ?
@@ -468,29 +434,6 @@ public class TownMap extends ScreenRectangle implements WotlasMap
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Tests if the given player rectangle has its x,y cordinates in a Building.
-   *
-   *  Here is an example how to use this method (at each game tick) :
-   *  <pre>
-   *
-   *  TownMap tMap = worldManager.getTown( player.getWotlasLocation() );
-   *
-   *  Building bMap = bMap.isEnteringTown( myPlayer.myDestX, myPlayer.myDestY,
-   *                                       myPlayer.getCurrentRectangle() );
-   *
-   *  if( bMap != null ) {
-   *   // intersection with a Building, which MapExit are we using ?
-   *      MapExit mExit = bMap.findBuildingExit( myPlayer.getCurrentRectangle() );
-   *  
-   *   // ok, we have the Building => we know which image to display, buildings, etc...
-   *   //     we have the MapExit => we know where to insert our player on the
-   *   //                            InteriorMap, it's done the following way :
-   *
-   *      myPlayer.setX( mExit.getX() + mExit.getWidth()/2 );
-   *      myPlayer.setY( mExit.getY() + mExit.getHeight()/2 );
-   *
-   *  </pre>
-   *  Yes, we set our player on the middle of the MapExit. Refer to the Building
-   *  findBuildingExit() javadoc for more details on this method.
    *
    * @param destX destination x position of the player movement ( endPoint of path )
    * @param destY destination y position of the player movement ( endPoint of path )

@@ -60,7 +60,7 @@ public class WelcomeMsgBehaviour extends WelcomeMessage implements NetMessageBeh
 
         // We create a welcome message
            String message = "/cmd:<b>Welcome to Wotlas !</b><br> ";
-        
+
         // Get the list of online players
            HashMap onlinePlayers = ServerDirector.getDataManager().getAccountManager().getOnlinePlayers();
            message += "There are currently " + onlinePlayers.size() + " online players on this server...";
@@ -69,7 +69,7 @@ public class WelcomeMsgBehaviour extends WelcomeMessage implements NetMessageBeh
                                                player.getFullPlayerName(),
                                                ChatRoom.DEFAULT_CHAT,
                                                message,
-                                               ChatRoom.NORMAL_VOICE_LEVEL ));
+                                               ChatRoom.NORMAL_VOICE_LEVEL ) );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -61,9 +61,9 @@ public class DoorsStateMessage extends NetMessage
 
   /** Constructor with Player's primaryKey & location.
    */
-     public DoorsStateMessage(WotlasLocation location, Room room ) {
+     public DoorsStateMessage( Room room ) {
           this();
-          this.location = new WotlasLocation(location);
+          this.location = room.getLocation();
           
           Door doors[] = room.getDoors();
           RoomLink rl[] = room.getRoomLinks();

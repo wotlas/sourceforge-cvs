@@ -199,9 +199,6 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
     mainChat.setName("");
     JChatRoom jchatRoom = addJChatRoom(mainChat);
     currentPrimaryKey = ChatRoom.DEFAULT_CHAT;
-
-    jchatRoom.addPlayer(ClientDirector.getDataManager().getMyPlayer().getPrimaryKey(),
-                        ClientDirector.getDataManager().getMyPlayer().getFullPlayerName());
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -320,7 +317,8 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
   public JChatRoom addJChatRoom(ChatRoom chatRoom) {
     JChatRoom jchatRoom = new JChatRoom(chatRoom);
     if (DataManager.SHOW_DEBUG)
-      System.out.println("JChatRoom::addJChatRoom "+jchatRoom.getName()+" !!!!!!!!");
+      System.out.println("JChatRoom::addJChatRoom "+jchatRoom.getName()+" created !");
+
     if (DataManager.SHOW_DEBUG)
       System.out.println("\tcreatorPrimaryKey = " + chatRoom.getCreatorPrimaryKey());
     tabbedPane.addTab(chatRoom.getName(), iconUp, jchatRoom, chatRoom.getName() + " channel");

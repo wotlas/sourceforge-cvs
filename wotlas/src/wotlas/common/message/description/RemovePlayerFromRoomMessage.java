@@ -32,8 +32,8 @@ import wotlas.common.universe.*;
  * @author Aldiss
  */
 
-public class RemovePlayerFromRoomMessage extends NetMessage
-{
+public class RemovePlayerFromRoomMessage extends NetMessage {
+
  /*------------------------------------------------------------------------------------*/
 
   /** Primary Key

@@ -27,6 +27,7 @@ import wotlas.utils.*;
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.common.message.movement.*;
 import wotlas.common.universe.*;
+import wotlas.common.router.MessageRouter;
 import wotlas.common.*;
 import wotlas.server.*;
 import wotlas.common.message.description.*;
@@ -38,8 +39,8 @@ import wotlas.common.message.account.*;
  * @author Aldiss
  */
 
-public class CanLeaveWorldMapMsgBehaviour extends CanLeaveWorldMapMessage implements NetMessageBehaviour
-{
+public class CanLeaveWorldMapMsgBehaviour extends CanLeaveWorldMapMessage implements NetMessageBehaviour {
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
@@ -80,178 +81,135 @@ public class CanLeaveWorldMapMsgBehaviour extends CanLeaveWorldMapMessage implem
           WorldManager wManager = ServerDirector.getDataManager().getWorldManager();
           WorldMap currentWorld = wManager.getWorldMap( player.getLocation() );
 
-       // which of them is the right mapExit ?
           if( currentWorld==null ) {
              sendError( player, "Failed to get world !! "+player.getLocation() );
              return;
           }
 
-          if( location.isTown() && currentWorld.getTownMaps()!=null )
-              for( int i=0; i<currentWorld.getTownMaps().length; i++ )
-              {
-                TownMap townMap = currentWorld.getTownMaps()[i];
+       // I - GOING IN TOWN ?
+          if( location.isTown() && currentWorld.getTownMaps()!=null ) {
+
+               boolean found = false;
+
+            // Search of the MapExit among Towns
+               for( int i=0; i<currentWorld.getTownMaps().length; i++ ) {
+                    TownMap townMap = currentWorld.getTownMaps()[i];
               
-                if( townMap.getMapExits() == null )
-                    continue;
+                    if( townMap.getMapExits() == null )
+                        continue;
               
-                for( int j=0; j<townMap.getMapExits().length; j++ )
-                {
-                   MapExit mapExit = townMap.getMapExits()[j];
+                    for( int j=0; j<townMap.getMapExits().length; j++ ) {
+                         MapExit mapExit = townMap.getMapExits()[j];
 
-                   if( !mapExit.getMapExitLocation().equals( location ) )
-                       continue;
+                         if( mapExit.getMapExitLocation().equals( location ) ) {
+                             found=true;
+                             break;
+                         }
+                    }
 
-                // MapExit Found !!!
-                // 1 - ADD MORE PRECISE DESTINATION CHECK HERE
+                    if(found) break;
+               }
 
-                // 2 - PREPARE LOCATION CHANGE
-                   Hashtable players = currentWorld.getPlayers();
+               if(!found) {
+                  sendError( player, "Target Map not found !"+location );
+                  return;
+               }
 
-                   synchronized( players ) {
-                      players.remove( primaryKey );
-                   }
+            // We update the player's location
+               currentWorld.getMessageRouter().removePlayer(player);
 
-                // move to our new room
-                   TownMap targetTownMap = wManager.getTownMap( location );
-                   if( targetTownMap==null ) {
-                       sendError( player, "Target Town not found ! "+location );
+               player.setLocation( location );
+               player.updateSyncID();
+               player.getMovementComposer().resetMovement();
+               player.setX( x );
+               player.setY( y );
+               player.setOrientation( orientation );
+               player.getLieManager().removeMeet(LieManager.FORGET_WORLDMAP);
+               player.getLieManager().forget(LieManager.MEET_CHANGEWORLDMAP);
 
-                     // reverting to old location
-                        synchronized( players ) {
-                            players.put( primaryKey, player );
-                        }
-                       return;
-                   }
+            // We validate the update...
+               player.sendMessage( new YouCanLeaveMapMessage( primaryKey, location, x, y,
+                                                         orientation, player.getSyncID() ) );
+               return;
+          }
 
-                   players = targetTownMap.getPlayers();
 
-                // 3  - LOCATION UPDATE
-                   player.setLocation( location );
-                   player.updateSyncID();
-                   player.getMovementComposer().resetMovement();
-                   player.setX( x );
-                   player.setY( y );
-                   player.setOrientation( orientation );
-                   player.getLieManager().removeMeet(LieManager.FORGET_WORLDMAP);
-                   player.getLieManager().forget(LieManager.MEET_CHANGEWORLDMAP);
+       // II - GOING TO A ROOM ?
+          if( location.isRoom() && currentWorld.getTownMaps()!=null ) {
 
-                   synchronized( players ) {
-                      players.put( primaryKey, player );
-                   }
+            // we get our new room
+               Room targetRoom = wManager.getRoom( location );
 
-                // 4 - SEND MESSAGE TO PLAYER
-                   player.sendMessage( new YouCanLeaveMapMessage( primaryKey, location, x, y,
-                                                                  orientation, player.getSyncID() ) );
+               if( targetRoom==null ) {
+                   sendError( player, "Target Town not found ! "+location );
                    return;
-                }
-              }
-              else if( location.isRoom() && currentWorld.getTownMaps()!=null ) {
-              	   WotlasLocation targetTown = new WotlasLocation(location.getWorldMapID(),location.getTownMapID());
+               }
 
-                   for( int i=0; i<currentWorld.getTownMaps().length; i++ )
-                   {
-                      TownMap townMap = currentWorld.getTownMaps()[i];
-              
-                      if( townMap.getTownMapID()==location.getTownMapID()
-                          && townMap.getMapExits()==null ) {     
-                          MapExit mapExit = townMap.findTownMapExit(null);
+            // Building on the same server ?
+               int targetServerID = targetRoom.getMyInteriorMap().getMyBuilding().getServerID();
 
-                          if( mapExit!=null && !mapExit.getMapExitLocation().equals( location ) )
-                              continue;
+               if( targetServerID!=ServerDirector.getServerID() ) {
+                  // ok ! we must transfer this account to another server !!   
+                     GatewayServer gateway = ServerDirector.getServerManager().getGatewayServer();
 
-                       // MapExit Found !!!
-                       // 1 - ADD MORE PRECISE DESTINATION CHECK HERE
+                     WotlasLocation oldLocation = player.getLocation();
+                     int oldX = player.getX();
+                     int oldY = player.getY();
+                     float oldOrientation = player.getOrientation();
 
-                       // 2 - PREPARE LOCATION CHANGE
-                          Hashtable players = currentWorld.getPlayers();
+                  // We update the player's location
+                     player.setLocation( location );
+                     player.getMovementComposer().resetMovement();
+                     player.setX( x );
+                     player.setY( y );
+                     player.setOrientation( orientation );
+                     player.getLieManager().removeMeet(LieManager.FORGET_WORLDMAP);
+                     player.getLieManager().forget(LieManager.MEET_CHANGEWORLDMAP);
 
-                          synchronized( players ) {
-                              players.remove( primaryKey );
-                          }
+                     if( gateway.transfertAccount( primaryKey, targetServerID ) ) {
+                         Debug.signal(Debug.NOTICE, null, "Account Transaction "+primaryKey+" succeeded... sending redirection message.");
+                         player.updateSyncID();
 
+                       // We remove our player from the world
+                         currentWorld.getMessageRouter().removePlayer(player);
 
-                       // we get our new room
-                          Room targetRoom = wManager.getRoom( location );
-                          if( targetRoom==null ) {
-                             sendError( player, "Target Town not found ! "+location );
+                       // ... and send a redirection message
+                         player.sendMessage(new RedirectConnectionMessage(primaryKey,targetServerID) ); // success
+                         return;
+                     }
+                     else {
+                       // we revert to previous position
+                          Debug.signal(Debug.NOTICE, null, "Account Transaction "+primaryKey+" failed... reverting to previous state.");
+                          player.setLocation( oldLocation );
+                          player.setX( oldX );
+                          player.setY( oldY );
+                          player.setOrientation( oldOrientation );
 
-                          // reverting to old location
-                             synchronized( players ) {
-                                 players.put( primaryKey, player );
-                             }
-                             return;
-                          }
-
-                       // 3 - Building on the same server ?
-                          int targetServerID = targetRoom.getMyInteriorMap().getMyBuilding().getServerID();
-
-                          if( targetServerID!=ServerDirector.getServerID() ) {
-                             // ok ! we must transfert this account to another server !!   
-                                GatewayServer gateway = ServerDirector.getServerManager().getGatewayServer();
-
-                                WotlasLocation oldLocation = player.getLocation();
-                                int oldX = player.getX();
-                                int oldY = player.getY();
-                                float oldOrientation = player.getOrientation();
-
-                             // We update the player's location
-                                player.setLocation( location );
-                                player.getMovementComposer().resetMovement();
-                                player.setX( x );
-                                player.setY( y );
-                                player.setOrientation( orientation );
-                                player.getLieManager().removeMeet(LieManager.FORGET_WORLDMAP);
-                                player.getLieManager().forget(LieManager.MEET_CHANGEWORLDMAP);
-
-                                //player.sendMessage( new WarningMessage("Please Wait. There is admittance control to enter this town.") );
-
-                                if( gateway.transfertAccount( primaryKey, targetServerID ) ) {
-                                    Debug.signal(Debug.NOTICE, null, "Account Transaction "+primaryKey+" succeeded... sending redirection message.");
-                                    player.sendMessage(new RedirectConnectionMessage(primaryKey,targetServerID) ); // success
-                                    player.updateSyncID();
-                                    return;
-                                }
-                                else {
-                                 // we revert to previous position
-                                    Debug.signal(Debug.NOTICE, null, "Account Transaction "+primaryKey+" failed... reverting to previous state.");
-                                    player.setLocation( oldLocation );
-                                    player.setX( oldX );
-                                    player.setY( oldY );
-                                    player.setOrientation( oldOrientation );
-
-                                    synchronized( players ) {
-                                        players.put( primaryKey, player ); // we re-add our player
-                                    }                                      // to the same location
-
-                                    player.sendMessage(new RedirectErrorMessage("Movement Failed. Retry later.\nTarget server ("
-                                                       +targetServerID+") is not running.") ); // failed
-                                    return;
-                                }
-                          }
-
-                       // 4  - LOCATION UPDATE
-                          players = targetRoom.getPlayers();
-
-                          player.setLocation( location );
-                          player.updateSyncID();
-                          player.getMovementComposer().resetMovement();
-                          player.setX( x );
-                          player.setY( y );
-                          player.setOrientation( orientation );
-                          player.getLieManager().removeMeet(LieManager.FORGET_WORLDMAP);
-                          player.getLieManager().forget(LieManager.MEET_CHANGEWORLDMAP);
-
-                          synchronized( players ) {
-                             players.put( primaryKey, player );
-                          }
-
-                       // 5 - SEND MESSAGE TO PLAYER
-                          player.sendMessage( new YouCanLeaveMapMessage( primaryKey, location,
-                                                                         x, y, orientation, player.getSyncID() ) );
+                       // and send an error to the client
+                          player.sendMessage(new RedirectErrorMessage("Movement Failed. Retry later.\nTarget server ("
+                                                +targetServerID+") is not running.") ); // failed
                           return;
-                      }
-                   }
-              }
+                     }
+               }
+
+            // LOCATION UPDATE
+            // We remove our player from the world
+               currentWorld.getMessageRouter().removePlayer(player);
+
+               player.setLocation( location );
+               player.updateSyncID();
+               player.getMovementComposer().resetMovement();
+               player.setX( x );
+               player.setY( y );
+               player.setOrientation( orientation );
+               player.getLieManager().removeMeet(LieManager.FORGET_WORLDMAP);
+               player.getLieManager().forget(LieManager.MEET_CHANGEWORLDMAP);
+
+               player.sendMessage( new YouCanLeaveMapMessage( primaryKey, location,
+                                                              x, y, orientation, player.getSyncID() ) );
+               return;
+          }
+
 
        // MapExit not found...
           sendError( player, "Target Map not found !"+location );

@@ -34,15 +34,15 @@ import wotlas.server.PlayerImpl;
  * @author Petrus
  */
 
-public class ChangeFakeNameMsgBehaviour extends ChangeFakeNameMessage implements NetMessageBehaviour
-{
+public class ChangeFakeNameMsgBehaviour extends ChangeFakeNameMessage implements NetMessageBehaviour {
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
    */
-  public ChangeFakeNameMsgBehaviour() {
-    super();
-  }
+    public ChangeFakeNameMsgBehaviour() {
+       super();
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -51,13 +51,13 @@ public class ChangeFakeNameMsgBehaviour extends ChangeFakeNameMessage implements
    * @param sessionContext an object giving specific access to other objects needed to process
    *        this message.
    */
-  public void doBehaviour( Object sessionContext ) {
-    // The sessionContext is here a PlayerImpl.
-    PlayerImpl player = (PlayerImpl) sessionContext;
-    LieManager lieManager = player.getLieManager();
+    public void doBehaviour( Object sessionContext ) {
+       // The sessionContext is here a PlayerImpl.
+       PlayerImpl player = (PlayerImpl) sessionContext;
+       LieManager lieManager = player.getLieManager();
     
-    lieManager.setCurrentFakeNameIndex(index);    
-  }
+       lieManager.setCurrentFakeNameIndex(index);    
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

@@ -176,7 +176,7 @@ public class WorldMapData implements MapData {
                     new Dimension( JClientScreen.leftWidth, JClientScreen.mapHeight )   // screen default dimension
                    );
 
-    //   - We add towns' images
+    // 7 - We add towns' images
     TownMap towns[] = worldMap.getTownMaps();
 
     if (towns!=null) {
@@ -199,21 +199,21 @@ public class WorldMapData implements MapData {
       }
     }
 
-    //   - We show some informations on the screen
+    // 8 - We show some informations on the screen
     gDirector.addDrawable(myPlayer.getGameScreenFullPlayerName());
 
     String[] strTemp2 = { worldMap.getFullName() };
     MultiLineText mltLocationName = new MultiLineText(strTemp2, 10, 10, Color.black, 15.0f, "Lucida Blackletter", ImageLibRef.TEXT_PRIORITY, MultiLineText.RIGHT_ALIGNMENT);
     gDirector.addDrawable(mltLocationName);
 
-    //   - We play music
+    // 9 - We play music
     String midiFile = worldMap.getMusicName();
+
     if (midiFile != null)
       SoundLibrary.getSoundLibrary().playMusic( midiFile );
 
-    //   - We retreive other players informations
-    if( dataManager.isAlive() )
-        dataManager.sendMessage(new AllDataLeftPleaseMessage());
+    // 10 - We retrieve eventual remaining data...
+       dataManager.sendMessage(new AllDataLeftPleaseMessage());
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -273,12 +273,6 @@ public class WorldMapData implements MapData {
       }
     }
   }
-
- /*------------------------------------------------------------------------------------*/
-
-  /** To update the graphicsDirector's drawables
-   */
-  public void tick() {}
 
  /*------------------------------------------------------------------------------------*/
 

@@ -89,6 +89,10 @@ public class ServerAddressSetup extends JWizard {
     */
      private static String serverAddressFile;
 
+   /** User Password
+    */
+     private static String password="";
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
@@ -357,9 +361,10 @@ public class ServerAddressSetup extends JWizard {
                   return true;
               }
 
+       	      password = new String(t_passw.getPassword());
+
        	   // 1 - we retrieve the data and save it to disk.
        	      remoteServersProperties.setProperty( "transfer.serverHomeLogin", t_login.getText() );
-       	      remoteServersProperties.setProperty( "transfer.serverHomePassw", new String(t_passw.getPassword()) );
        	      remoteServersProperties.setProperty( "transfer.fileTransferProgram", c_prog.getSelectedItem().toString() );
        	      remoteServersProperties.setProperty( "tranfer.fileTransferOptions", c_options.getSelectedItem().toString() );
        	      remoteServersProperties.setProperty( "transfer.fileTransferWorkingDir", c_workdir.getSelectedItem().toString() );
@@ -525,7 +530,7 @@ public class ServerAddressSetup extends JWizard {
                     ind1 = cmd.indexOf("$PASSW$");
 
                     fullCmd.append( cmd.substring(0,ind1) );
-                    fullCmd.append( remoteServersProperties.getProperty("transfer.serverHomePassw","") );
+                    fullCmd.append( password );
                     fullCmd.append( cmd.substring(ind1+7,cmd.length() ) );
 
                  // Runtime... we execute the transfert command

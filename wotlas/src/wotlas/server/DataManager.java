@@ -20,6 +20,7 @@
 package wotlas.server;
 
 import wotlas.common.*;
+import wotlas.server.router.*;
 import wotlas.server.chat.ChatCommandProcessor;
 
 import java.util.Iterator;
@@ -58,6 +59,7 @@ public class DataManager {
 
        // 2 - We create a WorldManager. Worlds data is automatically loaded.
           worldManager = new WorldManager( rManager, false );
+          worldManager.initMessageRouting( new ServerMessageRouterFactory() );
 
        // 3 - We create an AccountManager. Player Accounts are not loaded yet.
           accountManager = new AccountManager( rManager );
@@ -82,7 +84,7 @@ public class DataManager {
           while( it.hasNext() ) {
           	 GameAccount account = (GameAccount) it.next();
           	 if( !account.getIsDeadAccount() )
-                     worldManager.addNewPlayer( account.getPlayer() );
+                     worldManager.addPlayerToUniverse( account.getPlayer() );
           }
 
        // 2 - We initialize the player objects that we just placed in the world.

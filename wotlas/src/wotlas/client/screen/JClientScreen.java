@@ -129,6 +129,7 @@ public class JClientScreen extends JFrame {
       rightPanel.add(Box.createRigidArea(new Dimension(0,2)));
       
       // *** Player Panel ***
+      playerPanel.init();
       playerPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
       rightPanel.add(playerPanel, BorderLayout.CENTER);
       
@@ -171,6 +172,10 @@ public class JClientScreen extends JFrame {
       // *** Map panel ***
       mapPanel.setMinimumSize(new Dimension(leftWidth, gameMinHeight));      
       chatPanel.setMinimumSize(new Dimension(leftWidth, chatMinHeight));
+
+      chatPanel.getCurrentJChatRoom().addPlayer(
+                        ClientDirector.getDataManager().getMyPlayer().getPrimaryKey(),
+                        ClientDirector.getDataManager().getMyPlayer().getFullPlayerName());
       
       JSplitPane leftPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mapPanel, chatPanel);
       leftPanel.setOneTouchExpandable(true);

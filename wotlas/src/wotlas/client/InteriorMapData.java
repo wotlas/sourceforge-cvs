@@ -158,9 +158,6 @@ public class InteriorMapData implements MapData {
     dataManager.getClientScreen().getChatPanel().changeMainJChatRoom(room.getShortName());
 
       if (SHOW_DEBUG)
-         System.out.println("dataManager.sendMessage( new EnteringRoomMessage(...) )");
-
-      if (SHOW_DEBUG)
          System.out.println("Adding a new player : " + myPlayer + "to dataManager");
 
     dataManager.addPlayer(myPlayer);
@@ -225,7 +222,7 @@ public class InteriorMapData implements MapData {
                     new Dimension( JClientScreen.leftWidth, JClientScreen.mapHeight )   // screen default dimension
                    );
 
-    //   - We show the roomLinks
+    // 7 - We show the roomLinks
     if (SHOW_DEBUG) {
       RoomLink[] roomLinks = room.getRoomLinks();
       if (roomLinks != null) {
@@ -238,7 +235,7 @@ public class InteriorMapData implements MapData {
       }
     }
 
-    //   - We show the mapExits
+    // 8 - We show the mapExits
     if (SHOW_DEBUG) {
       MapExit[] mapExits = room.getMapExits();
       if (mapExits!= null) {
@@ -251,19 +248,20 @@ public class InteriorMapData implements MapData {
       }
     }
 
-    //   - We add visual properties to the player (shadows...)
+    // 9 - We add visual properties to the player (shadows...)
     if (SHOW_DEBUG)
       System.out.println("Player init visual properties");
+
     myPlayer.initVisualProperties(gDirector);
 
-    //   - We show some informations on the screen
+    // 10 - We show some informations on the screen
     gDirector.addDrawable(myPlayer.getGameScreenFullPlayerName());
 
     String[] strTemp2 = { room.getFullName() };
     mltLocationName = new MultiLineText(strTemp2, 10, 10, Color.black, 15.0f, "Lucida Blackletter", ImageLibRef.TEXT_PRIORITY, MultiLineText.RIGHT_ALIGNMENT);
     gDirector.addDrawable(mltLocationName);
 
-    //  - We add eventual doors...
+    // 11 - We add eventual doors...
       Room rooms[] = imap.getRooms();
 
         // Init doors state
@@ -293,40 +291,18 @@ public class InteriorMapData implements MapData {
                   }
         }
 
-    // - We declare ourselves to other players...
-    if (SHOW_DEBUG)
-        System.out.println("sending EnteringRoomMessage");
-    dataManager.sendMessage( new EnteringRoomMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation(),
-                                 myPlayer.getX(), myPlayer.getY(), (float)myPlayer.getAngle() ) );
-
-    //   - We play music
+    // 12 - We play the map's music
     String midiFile = imap.getMusicName();
-    if (midiFile != null)
-      SoundLibrary.getSoundLibrary().playMusic( midiFile );
+
+    if(midiFile != null)
+       SoundLibrary.getSoundLibrary().playMusic( midiFile );
     
-    //   - We retreive other players informations
-    if( dataManager.isAlive() ) {
+    //  13 - We retrieve non-local data ( door state, players, chat info, etc... )
       if (SHOW_DEBUG)
-    	  System.out.println("DATAMANAGER ALIVE !!!");
-      if (SHOW_DEBUG)
-        System.out.println("Sending final AllDataLeftMessage");    	  
-      dataManager.sendMessage(new AllDataLeftPleaseMessage());
-    }
+        System.out.println("Sending final AllDataLeftMessage...");
+
+      dataManager.sendMessage( new AllDataLeftPleaseMessage() );
   }
-
- /*------------------------------------------------------------------------------------*/
-
-  /** canChangeMap is set to true if player can change its MapData<br>
-   * called by wotlas.client.message.YouCanLeaveMapMessage
-   */
-  /*public void canChangeMapLocation( boolean canChangeMap ) {
-    synchronized( changeMapLock ) {
-      if (SHOW_DEBUG)
-        System.out.println("NOTIFYING");
-      this.canChangeMap = canChangeMap;
-      changeMapLock.notify();
-    }
-  }*/
 
  /*------------------------------------------------------------------------------------*/
 
@@ -416,9 +392,9 @@ public class InteriorMapData implements MapData {
         myPlayer.setLocation(location);
         Room room = myPlayer.getMyRoom();
 
-/* NETMESSAGE */
         if (SHOW_DEBUG)
           System.out.println("dataManager.sendMessage( new EnteringRoomMessage(...) )");
+
         dataManager.sendMessage( new EnteringRoomMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation(),
                                                          myPlayer.getX(), myPlayer.getY(),
                                                          (float)myPlayer.getAngle() ) );
@@ -455,10 +431,6 @@ public class InteriorMapData implements MapData {
           }
         }
 
-      } else {
-        /*if (SHOW_DEBUG)
-          System.out.println("We are still in the same room" + newRoomID);
-          */
       }
     } // End of part I
 
@@ -476,7 +448,6 @@ public class InteriorMapData implements MapData {
 
         myPlayer.getMovementComposer().resetMovement();
 
-/* NETMESSAGE */
         if (isNotMovingToAnotherMap) {
           isNotMovingToAnotherMap = false;
           myPlayer.sendMessage( new CanLeaveIntMapMessage( myPlayer.getPrimaryKey(),
@@ -487,12 +458,6 @@ public class InteriorMapData implements MapData {
       }
     } // End of part II
   }
-
- /*------------------------------------------------------------------------------------*/
-
-  /** To update the graphicsDirector's drawables
-   */
-  public void tick() {}
 
  /*------------------------------------------------------------------------------------*/
 

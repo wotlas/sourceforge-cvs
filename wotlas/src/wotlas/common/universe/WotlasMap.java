@@ -20,9 +20,9 @@
 package wotlas.common.universe;
 
 import wotlas.common.Player;
-import java.util.Hashtable;
+import wotlas.common.router.MessageRouter;
 
- /** Represents a Map of the game. It can receive, own players...
+ /** Represents a Map of the game.
   *
   * @author Petrus, Aldiss
   * @see wotlas.common.universe.WorldMap
@@ -34,39 +34,9 @@ public interface WotlasMap extends LocationOwner {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Add a player to this map. The player must have been previously initialized.
-   *  We suppose that the player.getLocation() points out to this map.
-   *
-   * @param player player to add
-   * @return false if the player already exists on this Map, true otherwise
+  /** To get our message router.
    */
-    public boolean addPlayer( Player player );
-
- /*------------------------------------------------------------------------------------*/
-
-  /** Removes a player from this map.
-   *  We suppose that the player.getLocation() points out to this map.
-   *
-   * @param player player to remove
-   * @return false if the player doesn't exists on this map, true otherwise
-   */
-    public boolean removePlayer( Player player );
-
- /*------------------------------------------------------------------------------------*/
-
-  /** To get the list of all the players on this map.
-   * IMPORTANT: before ANY process on this list synchronize your code on the "players"
-   * object :
-   *<pre>
-   *   Hashtable players = map.getPlayers();
-   *   
-   *   synchronized( players ) {
-   *       ... some SIMPLE and SHORT processes...
-   *   }
-   *</pre>
-   * @return player hashtable, player.getPrimaryKey() is the key.
-   */
-    public Hashtable getPlayers();
+    public MessageRouter getMessageRouter();
 
  /*------------------------------------------------------------------------------------*/
 

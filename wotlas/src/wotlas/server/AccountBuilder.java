@@ -418,9 +418,7 @@ public class AccountBuilder implements NetConnectionListener
         if( accountManager.createAccount( account ) ) {
            // we add the player to the world...
               player.init();
-              
-              ServerDirector.getDataManager().getWorldManager().addNewPlayer( account.getPlayer() );
-              Debug.signal( Debug.NOTICE, this, "Added new client account to the game." );
+              Debug.signal( Debug.NOTICE, this, "Client account created... ("+player.getPrimaryKey()+")." );
 
            // we send a Success Message
               personality.queueMessage( new AccountCreationEndedMessage(account.getLocalClientID(),

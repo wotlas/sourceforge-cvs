@@ -431,7 +431,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
           resumeInterface();
           return;
        }
-    
+
     // 1 - Create Image Library
        String imageDBHome = ClientDirector.getResourceManager().getBase( IMAGE_LIBRARY );
        String fontsHome = ClientDirector.getResourceManager().getBase( "fonts" );
@@ -473,7 +473,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        Debug.signal(Debug.NOTICE, null, "Graphics Engine is using hardware mode : "+
                                          clientConfiguration.getUseHardwareAcceleration() );
 
-    // 4 - Retrieve player's informations
+    // 4 - Creation of the GUI components
+       clientScreen = new JClientScreen(gDirector, this );
+
+       if(SHOW_DEBUG)
+          System.out.println("JClientScreen created");
+
+    // 5 - We retrieve our player's own data
        myPlayer = null;
 
        waitForConnection(10000); // 10s max...
@@ -496,29 +502,26 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        myPlayer.tick();                // we tick the player to validate data recreation
        addPlayer(myPlayer);
 
-       WotlasLocation location = myPlayer.getLocation();  // we get the player's location
-
        if (SHOW_DEBUG)
-          System.out.println("POSITION set to x:"+myPlayer.getX()+" y:"+myPlayer.getY()+" location is "+location);
+          System.out.println("POSITION set to x:"+myPlayer.getX()+" y:"+myPlayer.getY()+" location is "+myPlayer.getLocation());
 
-    // 5 - Creation of  the GUI
-       clientScreen = new JClientScreen(gDirector, this );
-       clientScreen.init();
+
+    // 6 - Final GUI inits
        personality.setPingListener( (NetPingListener) clientScreen.getPingPanel() );
+
+       clientScreen.init();
 
        if ( (clientConfiguration.getClientWidth()>0) && (clientConfiguration.getClientHeight()>0) )
           clientScreen.setSize(clientConfiguration.getClientWidth(),clientConfiguration.getClientHeight());
 
-       if(SHOW_DEBUG)
-          System.out.println("JClientScreen created");
 
-    // 6 - Init the map display
+    // 7 - Init the map display...
        changeMapData();
 
        if(SHOW_DEBUG)
          System.out.println("Changed map data !");
 
-    // 7 - Start the tick thread.
+    // 8 - Start the tick thread.
        start();
        Debug.signal( Debug.NOTICE, null, "Started the tick thread..." );
 
@@ -527,12 +530,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        if (SHOW_DEBUG)
            System.out.println("Frame displayed on screen...");
 
-    // 8 - We can now ask for the remaining data : chat groups, players, doors...
-    // This step should have been done in the current MapData.init() but it was not
-    // the cas because our DataManager thread was not started...
-       sendMessage(new AllDataLeftPleaseMessage());
-
-    // Welcome message
+    // 9 - Welcome message
        sendMessage(new WelcomeMessage());
 
        if(SHOW_DEBUG)
@@ -546,14 +544,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     public void resumeInterface() {
        Debug.signal( Debug.NOTICE, null, "DataManager::ResumeInterface");
 
-     // wait for connection
-       waitForConnection(10000); // 10s max...
-
-    // Reset the data
-       clientScreen.getChatPanel().reset();
-       personality.setPingListener( (NetPingListener) clientScreen.getPingPanel() );
-
-    // We recreate the graphics director...
+    // 1 - We recreate the graphics director...
        WindowPolicy wPolicy = null;
     
        if( ClientDirector.getClientConfiguration().getCenterScreenPolicy() )
@@ -570,11 +561,12 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
                     ClientDirector.getClientConfiguration().getUseHardwareAcceleration() );
 
        clientScreen.getMapPanel().updateGraphicsDirector(gDirector);
-       clientScreen.show();
 
-    // Retrieve player's informations
+    // 2 - Retrieve player's informations
        myPlayer = null;
-    
+
+       waitForConnection(10000); // 10s max...
+
        try {
          synchronized(startGameLock) {
              personality.queueMessage(new MyPlayerDataPleaseMessage());
@@ -591,25 +583,24 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
        myPlayer.setIsMaster( true );   // this player is controlled by the user.
        myPlayer.tick();
-       players.clear();
        addPlayer(myPlayer);
 
-    // Retreive player's location
-       WotlasLocation location = myPlayer.getLocation();
        if(SHOW_DEBUG)
-          System.out.println("POSITION set to x:"+myPlayer.getX()+" y:"+myPlayer.getY()+" location is "+location);
+          System.out.println("POSITION set to x:"+myPlayer.getX()+" y:"+myPlayer.getY()+" location is "+myPlayer.getLocation());
 
-    // Init map display
-       changeMapData();
+    // 3 - Reset previous the data
+       clientScreen.getChatPanel().reset();
        clientScreen.getPlayerPanel().reset();
+       players.clear();
+       personality.setPingListener( (NetPingListener) clientScreen.getPingPanel() );
+
+    // 4 - Init map display, resume tick thread & show screen...
+       changeMapData();
        resumeTickThread();
 
-    // We can now ask for eventual remaining data
-    // This step should have been done in the current MapData.init() but it was not
-    // the cas because our DataManager thread was not started...
-       sendMessage(new AllDataLeftPleaseMessage());
+       clientScreen.show();
 
-    // Welcome message
+    // 5 - Welcome message
        sendMessage(new WelcomeMessage());
    }
   

@@ -19,21 +19,23 @@
 
 package wotlas.server.message.description;
 
-import java.io.IOException;
-import java.util.*;
-
-import wotlas.utils.*;
+import wotlas.server.*;
 
 import wotlas.libs.net.NetMessageBehaviour;
 
 import wotlas.common.message.description.*;
 import wotlas.common.message.movement.*;
 import wotlas.common.message.chat.*;
+import wotlas.common.router.MessageRouter;
 import wotlas.common.universe.*;
 import wotlas.common.chat.*;
 import wotlas.common.*;
 
-import wotlas.server.*;
+import wotlas.utils.*;
+
+
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Associated behaviour to the DoorStateMessage...
@@ -41,8 +43,8 @@ import wotlas.server.*;
  * @author Aldiss
  */
 
-public class DoorStateMsgBehaviour extends DoorStateMessage implements NetMessageBehaviour
-{
+public class DoorStateMsgBehaviour extends DoorStateMessage implements NetMessageBehaviour {
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
@@ -102,8 +104,8 @@ public class DoorStateMsgBehaviour extends DoorStateMessage implements NetMessag
           if( targetRoom==currentRoom )
               targetRoom = roomLink.getRoom2();
 
-          player.sendMessageToNearRooms( currentRoom, this, false );
-          player.sendMessageToNearRooms( targetRoom, this, false );
+          currentRoom.getMessageRouter().sendMessage( this, null, MessageRouter.EXC_EXTENDED_GROUP );
+          targetRoom.getMessageRouter().sendMessage( this, null, MessageRouter.EXC_EXTENDED_GROUP );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

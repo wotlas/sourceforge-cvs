@@ -68,7 +68,7 @@ public class AddPlayerToChatRoomMsgBehaviour extends AddPlayerToChatRoomMessage 
     // We seek for the player to add
        Hashtable players = dataManager.getPlayers();
        PlayerImpl sender = null;
-          
+
        if(players!=null)
           sender = (PlayerImpl) players.get( senderPrimaryKey );
 

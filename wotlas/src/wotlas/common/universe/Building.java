@@ -31,8 +31,7 @@ import java.awt.Point;
   * @see wotlas.common.universe.MapExit
   */
  
-public class Building extends ScreenRectangle
-{
+public class Building extends ScreenRectangle {
  /*------------------------------------------------------------------------------------*/
 
   /** True if we show debug informations
@@ -219,8 +218,7 @@ public class Building extends ScreenRectangle
    *
    * @return a new InteriorMap object
    */
-    public InteriorMap addNewInteriorMap()
-    {
+    public InteriorMap addNewInteriorMap() {
       InteriorMap myInteriorMap = new InteriorMap();
     
       if (interiorMaps == null) {
@@ -244,8 +242,7 @@ public class Building extends ScreenRectangle
    *
    * @param building Building object to add
    */
-    public void addInteriorMap( InteriorMap map )
-    {
+    public void addInteriorMap( InteriorMap map ) {
        if ( interiorMaps == null ) {
             interiorMaps = new InteriorMap[map.getInteriorMapID()+1];
        }
@@ -362,6 +359,8 @@ public class Building extends ScreenRectangle
    
       return buildingExits[0]; // default
    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
    
   /** Returns the buildingExit (MapExit) that is on the side given by the specified angle.
    * @param a angle which should represent the direction by which the player hits this TownMap zone.

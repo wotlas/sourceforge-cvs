@@ -33,8 +33,8 @@ import wotlas.server.LieManager;
  * @author Aldiss
  */
 
-public class MyPlayerDataPleaseMsgBehaviour extends MyPlayerDataPleaseMessage implements NetMessageBehaviour
-{
+public class MyPlayerDataPleaseMsgBehaviour extends MyPlayerDataPleaseMessage implements NetMessageBehaviour {
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
@@ -57,9 +57,12 @@ public class MyPlayerDataPleaseMsgBehaviour extends MyPlayerDataPleaseMessage im
 
         // We send the player's data
            player.sendMessage( new YourPlayerDataMessage( (Player) player ) );
-           
-        
-           
+
+        // We send the player's fake names
+           player.sendMessage( new YourFakeNamesMessage( player.getLieManager().getFakeNames(), player.getLieManager().getCurrentFakeNameIndex() ) );
+
+        // We send possessed objects... (release 2.0)
+
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

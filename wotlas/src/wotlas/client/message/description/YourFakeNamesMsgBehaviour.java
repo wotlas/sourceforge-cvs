@@ -45,6 +45,12 @@ public class YourFakeNamesMsgBehaviour extends YourFakeNamesMessage implements N
 
  /*------------------------------------------------------------------------------------*/
 
+   /** To tell if this message is to be invoked later or not.
+    */
+     private boolean invokeLater = true;
+
+ /*------------------------------------------------------------------------------------*/
+
   /** Constructor.
    */
    public YourFakeNamesMsgBehaviour() {
@@ -60,6 +66,12 @@ public class YourFakeNamesMsgBehaviour extends YourFakeNamesMessage implements N
    */
     public void doBehaviour( Object sessionContext ) {
        DataManager dataManager = (DataManager) sessionContext;
+
+       if( invokeLater ) {
+           invokeLater = false;
+           dataManager.invokeLater( this );
+           return;
+       }
     
     // Update of the panel
        LiePlugIn liePanel = (LiePlugIn) dataManager.getClientScreen().getPlayerPanel().getPlugIn("Lie");

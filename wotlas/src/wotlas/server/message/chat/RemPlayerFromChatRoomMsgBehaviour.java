@@ -27,6 +27,7 @@ import wotlas.common.message.chat.*;
 
 import wotlas.common.chat.*;
 import wotlas.common.Player;
+import wotlas.common.router.MessageRouter;
 import wotlas.common.universe.*;
 import wotlas.common.message.account.*;
 
@@ -37,27 +38,26 @@ import wotlas.utils.Debug;
 /**
  * Associated behaviour to the RemPlayerFromChatRoomMessage...
  *
- * @author Aldiss
+ * @author Petrus, Aldiss
  */
 
-public class RemPlayerFromChatRoomMsgBehaviour extends RemPlayerFromChatRoomMessage implements NetMessageBehaviour
-{
+public class RemPlayerFromChatRoomMsgBehaviour extends RemPlayerFromChatRoomMessage implements NetMessageBehaviour {
 
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
    */
-  public RemPlayerFromChatRoomMsgBehaviour() {
-    super();
-  }
+    public RemPlayerFromChatRoomMsgBehaviour() {
+       super();
+    }
 
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor with parameters : useful to directly call the behaviour.
    */
-  public RemPlayerFromChatRoomMsgBehaviour(String senderPrimaryKey, String chatRoomPrimaryKey) {
-    super(senderPrimaryKey,chatRoomPrimaryKey);
-  }
+    public RemPlayerFromChatRoomMsgBehaviour(String senderPrimaryKey, String chatRoomPrimaryKey) {
+       super(senderPrimaryKey,chatRoomPrimaryKey);
+    }
 
  /*------------------------------------------------------------------------------------*/
   
@@ -66,19 +66,19 @@ public class RemPlayerFromChatRoomMsgBehaviour extends RemPlayerFromChatRoomMess
    * @param sessionContext an object giving specific access to other objects needed to process
    *        this message.
    */
-  public void doBehaviour( Object sessionContext ) {
+    public void doBehaviour( Object sessionContext ) {
     
     // The sessionContext is here a PlayerImpl.
        PlayerImpl player = (PlayerImpl) sessionContext;
        WotlasLocation location = player.getLocation();
 
-    // 0 - security
+    // 0 - security, is it our primary key ?
        if( !player.getPrimaryKey().equals( senderPrimaryKey ) ) {
            Debug.signal( Debug.ERROR, this, "Received a RemovePlayerFromChatMsg that was for: "+chatRoomPrimaryKey+" and not for us : "+player.getPrimaryKey() );
        	   return;
        }
 
-    // 1 - Set player to defaults
+    // 1 - Set player Chat membership to defaults
        player.setCurrentChatPrimaryKey( ChatRoom.DEFAULT_CHAT );
        player.setIsChatMember(false);
 
@@ -98,62 +98,27 @@ public class RemPlayerFromChatRoomMsgBehaviour extends RemPlayerFromChatRoomMess
        }
 
        chatRoom.removePlayer( player );
-       player.sendMessage( this );
-       
+       player.sendMessage( this );    // validation sent to client
+
     // 3 - Need to suppress the ChatRoom ?
        Hashtable players = chatRoom.getPlayers();
 
        synchronized( players ) {
            if( players.size()<=0 )
-               chatList.removeChatRoom( chatRoomPrimaryKey ); // remove chat room
+               chatList.removeChatRoom( chatRoomPrimaryKey ); // ok, we remove the chat room
            else {
-             // chatRoom is not empty, we advertise our departure
-                Iterator it = players.values().iterator();
-                PlayerImpl p;
-
-                while ( it.hasNext() ) {
-                   p = (PlayerImpl)it.next();
-                   p.sendMessage( this );
-                }
-
+             // chatRoom is not empty, we just advertise our departure & quit
+                chatRoom.sendMessageToChatRoom( this );
                 return;
            }
        }
 
-    // 4 - ok, we suppressed the chatRoom, we first get the players we want to
-    //     keep in touch with the chat...
-       if ( location.isWorld() ) {
-            WorldMap world = ServerDirector.getDataManager().getWorldManager().getWorldMap(location);
-            if(world!=null)
-               players = world.getPlayers();
-       } else if ( location.isTown() ) {
-            TownMap town = ServerDirector.getDataManager().getWorldManager().getTownMap(location);
-            if (town!=null)
-                players = town.getPlayers();
-       } else if ( location.isRoom() ) {
-            Room currentRoom = player.getMyRoom();
-            if (currentRoom!=null)
-                players = currentRoom.getPlayers();
-       }
-
-       if( players==null ) {
-           Debug.signal( Debug.ERROR, this, "Error #remPlFrChMB could not get current players in "+player.getLocation() );
-           player.sendMessage( new WarningMessage("Error could not find your location! please report the bug ! - "+player.getLocation()) );
-           return;
-       }
-
-    // 2 - We send ChatRoomDeleted messages...
+    // 4 - ok, we've just suppressed our past chatRoom, we advertise the destruction...
        ChatRoomDeletedMessage delMsg = new ChatRoomDeletedMessage( chatRoomPrimaryKey );
+       MessageRouter mRouter = player.getMessageRouter();
 
-       synchronized(players) {
-          Iterator it = players.values().iterator();
-          PlayerImpl p;
-
-          while ( it.hasNext() ) {
-              p = (PlayerImpl)it.next();
-              p.sendMessage( delMsg );
-          }
-       }
+       if( mRouter!=null )
+           mRouter.sendMessage( delMsg );
   }
   
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

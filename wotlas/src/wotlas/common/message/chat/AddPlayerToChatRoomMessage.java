@@ -41,10 +41,6 @@ public class AddPlayerToChatRoomMessage extends NetMessage
   /** Id of the sender
    */
   protected String senderPrimaryKey;
-
-  /** Sender Full Player Name
-   */
-  protected String senderFullName;
  
   /** Id of the ChatRoom
    */
@@ -62,11 +58,10 @@ public class AddPlayerToChatRoomMessage extends NetMessage
 
   /** Constructor with parameters.
    */
-  public AddPlayerToChatRoomMessage(String senderPrimaryKey, String senderFullName, String chatRoomPrimaryKey ) {
+  public AddPlayerToChatRoomMessage(String senderPrimaryKey, String chatRoomPrimaryKey ) {
     super();
     this.senderPrimaryKey = senderPrimaryKey;
     this.chatRoomPrimaryKey = chatRoomPrimaryKey;
-    this.senderFullName = senderFullName;
   }
   
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -79,7 +74,6 @@ public class AddPlayerToChatRoomMessage extends NetMessage
    */
   public void encode( DataOutputStream ostream ) throws IOException {
     ostream.writeUTF( senderPrimaryKey );
-    ostream.writeUTF( senderFullName );
     ostream.writeUTF( chatRoomPrimaryKey );
   }
 
@@ -93,7 +87,6 @@ public class AddPlayerToChatRoomMessage extends NetMessage
    */
   public void decode( DataInputStream istream ) throws IOException {
     senderPrimaryKey = istream.readUTF();
-    senderFullName = istream.readUTF();
     chatRoomPrimaryKey = istream.readUTF();
   }
 

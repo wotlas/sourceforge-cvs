@@ -32,8 +32,8 @@ import wotlas.server.GameServer;
  * @author Petrus
  */
 
-public class AccountRecoverMsgBehaviour extends AccountRecoverMessage implements NetMessageBehaviour
-{
+public class AccountRecoverMsgBehaviour extends AccountRecoverMessage implements NetMessageBehaviour {
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.

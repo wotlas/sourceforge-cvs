@@ -29,6 +29,7 @@ import wotlas.common.chat.*;
 import wotlas.common.Player;
 import wotlas.common.universe.*;
 import wotlas.common.character.*;
+import wotlas.common.router.MessageRouter;
 
 import wotlas.common.message.account.*;
 
@@ -43,15 +44,15 @@ import wotlas.utils.Debug;
  * @author Petrus
  */
 
-public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageBehaviour
-{
+public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageBehaviour {
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
    */
-  public SendTextMsgBehaviour() {
-    super();
-  }
+    public SendTextMsgBehaviour() {
+       super();
+    }
 
  /*------------------------------------------------------------------------------------*/
   
@@ -60,41 +61,41 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
    * @param sessionContext an object giving specific access to other objects needed to process
    *        this message.
    */
-  public void doBehaviour( Object sessionContext ) {
-    // The sessionContext is here a PlayerImpl.
-       PlayerImpl player = (PlayerImpl) sessionContext;
+    public void doBehaviour( Object sessionContext ) {
+     // The sessionContext is here a PlayerImpl.
+        PlayerImpl player = (PlayerImpl) sessionContext;
 
-    // 0 - big messages are truncated
-       if(message.length()>ChatRoom.MAXIMUM_MESSAGE_SIZE)
-          message = message.substring( 0, ChatRoom.MAXIMUM_MESSAGE_SIZE-4)+"...";
+     // 0 - big messages are truncated
+        if(message.length()>ChatRoom.MAXIMUM_MESSAGE_SIZE)
+           message = message.substring( 0, ChatRoom.MAXIMUM_MESSAGE_SIZE-4)+"...";
 
-       Hashtable players = null;
-       WotlasLocation myLocation = player.getLocation();
+        Hashtable players = null;
+        WotlasLocation myLocation = player.getLocation();
 
-    // 0.1 - test shortcut/commands...
-       if(message.charAt(0)=='/') {
-          ChatCommandProcessor processor = ServerDirector.getDataManager().getChatCommandProcessor();
+     // 0.1 - test shortcut/commands...
+        if(message.charAt(0)=='/') {
+           ChatCommandProcessor processor = ServerDirector.getDataManager().getChatCommandProcessor();
 
-          if( processor.processCommand( message, player, this ) )
-             return; // end of message process if the command returns true
-                     // if the command returns false we continue the message process
-       }
+           if( processor.processCommand( message, player, this ) )
+               return; // end of message process if the command returns true
+                       // if the command returns false we continue the message process
+        }
 
-    // 1 - We send the message back to the user.
-       if( chatRoomPrimaryKey.equals(player.getCurrentChatPrimaryKey()) ) {
-           if(voiceSoundLevel==ChatRoom.SHOUTING_VOICE_LEVEL)
-              message = message.toUpperCase();
-           player.sendMessage(this);
-       }
-       else if(voiceSoundLevel!=ChatRoom.SHOUTING_VOICE_LEVEL) {
-       	// player is trying to speak in a ChatRoom not near to him.
-       	   message = "<i>No one can hear you !</i>";
-           player.sendMessage(this);
-           return;       	   
-       }
+     // 1 - We send the message back to the user.
+        if( chatRoomPrimaryKey.equals(player.getCurrentChatPrimaryKey()) ) {
+            if( voiceSoundLevel==ChatRoom.SHOUTING_VOICE_LEVEL )
+                message = message.toUpperCase();
+            player.sendMessage(this);
+        }
+        else if( voiceSoundLevel!=ChatRoom.SHOUTING_VOICE_LEVEL ) {
+         // player is trying to speak in a ChatRoom not near to him.
+       	    message = "<i>No one can hear you !</i>";
+            player.sendMessage(this);
+            return;       	   
+        }
 
-    // 2 - We analyze who we must receive this message... it depends on location...          
-               
+    // 2 - We analyze who we must receive this message... it depends on the location...
+
     // 2.1 - ROOM CASE
        if ( myLocation.isRoom() ) {
        	 // 2.1.1 - Get Current Room
@@ -112,7 +113,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
                      boolean isDefaultChat = chatRoomPrimaryKey.equals(ChatRoom.DEFAULT_CHAT);
                    
                      if(isDefaultChat)
-                     	players = myRoom.getPlayers();
+                     	players = myRoom.getMessageRouter().getPlayers();
                      else {
                         player.setIsChatMember(true);
 
@@ -146,9 +147,10 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
                 case ChatRoom.NORMAL_VOICE_LEVEL :
                    // is it the default chat ? or another ?
                      if(chatRoomPrimaryKey.equals(ChatRoom.DEFAULT_CHAT))
-                     	players = myRoom.getPlayers();
+                     	players = myRoom.getMessageRouter().getPlayers();
                      else {
                         player.setIsChatMember(true);
+
                         if( player.getChatList()==null ) {
                             Debug.signal( Debug.ERROR, this, "No Chat List for player: "+player.getPrimaryKey() );
                             return;
@@ -177,8 +179,8 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
                      return;
 
                 case ChatRoom.SHOUTING_VOICE_LEVEL :
-                     players = myRoom.getPlayers();
-                
+                     players = myRoom.getMessageRouter().getPlayers();
+
                      if(players==null) {
                         Debug.signal( Debug.ERROR, this, "No players found for room: "+myRoom );
                         return;
@@ -208,7 +210,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
                          if( otherRoom==myRoom )
                              otherRoom = myRoom.getRoomLinks()[j].getRoom2();
 
-                         players = otherRoom.getPlayers();
+                         players = otherRoom.getMessageRouter().getPlayers();
 
                          synchronized( players ) {
                             Iterator it = players.values().iterator();
@@ -226,50 +228,21 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
           return; // should never be reached
        }
 
-    // 2.2 - TOWN CASE
+    // 2.2 - TOWN & WORLD CASE
 
-       if ( myLocation.isTown() ) {
-       	 // 2.2.1 - Get Town
-            TownMap town = ServerDirector.getDataManager().getWorldManager().getTownMap(myLocation);
+       MessageRouter mRouter = player.getMessageRouter();
 
-            if (town==null) {
-            	Debug.signal( Debug.ERROR, this, "Town not Found : "+myLocation+" Player:"+player.getPrimaryKey());
-            	return;
-            }
-
-         // 2.2.2 - Retrieve list of players to send message to...
-         //         ( everybody on the default town chat... )
-            players = town.getPlayers();
-       }
-
-    // 2.3 - WORLD CASE
-       if ( myLocation.isWorld() ) {
-       	 // 2.3.1 - Get World
-            WorldMap world = ServerDirector.getDataManager().getWorldManager().getWorldMap(myLocation);
-
-            if (world==null) {
-            	Debug.signal( Debug.ERROR, this, "World not Found : "+myLocation+" Player:"+player.getPrimaryKey());
-            	return;
-            }
-
-         // 2.2.2 - Retrieve list of players to send message to...
-         //         ( everybody on the default world chat... )
-            players = world.getPlayers();
-       }
-
-
-    // 2.4 - We send the message for the Town & World Cases
-       if(players==null) {
-          Debug.signal( Debug.ERROR, this, "No players found for location: "+player.getLocation() );
+       if(mRouter==null) {
+          Debug.signal( Debug.ERROR, this, "No MessageRouter found for location: "+player.getLocation() );
           return;
        }
-    
-       synchronized(players) {
+
+       synchronized( mRouter.getPlayers() ) {
           Iterator it = players.values().iterator();
-          PlayerImpl p;
 
             while ( it.hasNext() ) {
-               p = (PlayerImpl)it.next();
+               PlayerImpl p = (PlayerImpl)it.next();
+
                if (p!=player)
                    p.sendChatMessage( this , player );
             }

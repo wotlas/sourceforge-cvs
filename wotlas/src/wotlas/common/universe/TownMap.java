@@ -58,6 +58,10 @@ public class TownMap extends ScreenRectangle
    */
     private ImageIdentifier townImage;
 
+  /** Point of insertion (teleportation, arrival)
+   */
+    private ScreenPoint insertionPoint;
+
   /** Music Name
    */
     private String musicName;
@@ -152,6 +156,14 @@ public class TownMap extends ScreenRectangle
 
     public MapExit[] getMapExits() {
       return mapExits;
+    }
+
+    public void setInsertionPoint(ScreenPoint myInsertionPoint) {
+      this.insertionPoint = myInsertionPoint;
+    }
+
+    public ScreenPoint getInsertionPoint() {
+      return new ScreenPoint( insertionPoint );
     }
 
     public void setMusicName(String musicName) {

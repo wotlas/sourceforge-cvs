@@ -16,14 +16,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.universe;
 
 import wotlas.utils.*;
 
  /** MapExit class
   *
-  * @author Petrus
+  * @author Petrus, Aldiss
   */
 
 public class MapExit extends ScreenRectangle
@@ -61,7 +61,7 @@ public class MapExit extends ScreenRectangle
    */
    public byte mapExitSide;
 
-  /** Eventual position on the target map (null if none)
+  /** Position on the target map.
    */
    public ScreenPoint targetPosition;
    
@@ -144,12 +144,25 @@ public class MapExit extends ScreenRectangle
 
  /*------------------------------------------------------------------------------------*/
 
+  /** To get the insertion point associated to this MapExit.
+   */
+    public ScreenPoint getInsertionPoint() {
+        ScreenPoint p = new ScreenPoint();
+        p.x = x + width/2;
+        p.y = y + height/2;
+        return p;
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
   /** To set this MapExit's location : the Map this MapExit belongs to.
    * @param mapExitLocation WotlasLocation of this MapExit.
    */
    public void setMapExitLocation(WotlasLocation mapExitLocation) {
      this.mapExitLocation = mapExitLocation;
    }
+
+ /*------------------------------------------------------------------------------------*/
 
   /** To get the WotlasLocation of this MapExit (i.e. the Map possessing this
    *  MapExit ). To get the location where this MapExit sends to use the

@@ -21,7 +21,7 @@ package wotlas.common.universe;
 
 import wotlas.libs.graphics2D.ImageIdentifier;
 import wotlas.common.Player;
-import wotlas.utils.Debug;
+import wotlas.utils.*;
 
 import java.util.Hashtable;
 import java.awt.Rectangle;
@@ -52,6 +52,10 @@ public class WorldMap
   /** Full Image (identifier) of this world
    */
     private ImageIdentifier worldImage;
+
+  /** Point of insertion (teleportation, arrival)
+   */
+    private ScreenPoint insertionPoint;
 
   /** Music Name
    */
@@ -104,6 +108,14 @@ public class WorldMap
 
     public String getShortName() {
       return shortName;
+    }
+
+    public void setInsertionPoint(ScreenPoint myInsertionPoint) {
+      this.insertionPoint = myInsertionPoint;
+    }
+
+    public ScreenPoint getInsertionPoint() {
+      return new ScreenPoint( insertionPoint );
     }
 
     public void setWorldImage(ImageIdentifier worldImage) {

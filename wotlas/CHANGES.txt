@@ -1,7 +1,8 @@
-CHANGES BETWEEN V1.2 AND V1.1.2
--------------------------------
+CHANGES BETWEEN V1.2 AND V1.1.2 (18 March 2002)
+-----------------------------------------------
 
- - added new maps : "Shayol Ghul" (2 maps), "White Tower" (4 maps), and "South Tv Ruins" is now "Braem Wood".
+ - added new maps : "Shayol Ghul" (2 maps), "White Tower" (4 maps), the Ways (1 map), "South Tv Ruins"
+   is now "Braem Wood" and "White Tower - Front" (1 map).
  - added multi-server support. A player account can now travel from one server to another.
    The game universe can now be shared between servers. Each server possesses a set of buildings.
  - added new characters to the game : Younglings, Warders, Tower Guard, Shaitan, Keeper of chronicles,
@@ -18,6 +19,7 @@ CHANGES BETWEEN V1.2 AND V1.1.2
    available commands, /info to get information on a command, /log to print something in the server log.
  - added "sound" chat commands : /fanfare to play the fanfare, /bell to ring a bell,
    /knock to knock on a door... you have to wait 10 seconds between two sounds (error msg otherwise)
+ - added different fanfare sounds for each character class (thanks to an idea of xeno yar litharr)
  - about 8 new musics for all the levels...
  - local password storage. Your passwords are now saved on disk. This option can be unset (configuration panel).
  - corrected bugs in ServerConfigList : the previous code was sometimes attempting to reach a wrong URI.
@@ -34,21 +36,25 @@ CHANGES BETWEEN V1.2 AND V1.1.2
  - Our wizard classes for wotlas setup have now been gathered into a library. The new approach uses a factory
    to build steps from a class of parameters. These parameters can be saved to a configuration file or sent
    on a stream. 8 generic steps are available.
- - added messages history to the chat. The last 16 chat messages are saved and you can navigate within the
+ - added messages history to the chat. The last 16 chat messages are saved and you can naviguate within the
    list with the up & down arrows.
  - added wotlas central web server up/down detection to the Wotlas Client start-up.
  - added support for direct building to building travel (without returning to the town map).
  - added chat command to ring a server administrator (private chat command).
  - added pause/resume feature to the tick thread (client side). It corrected bugs that could happen during
    a player re-connection or player switching.
- - added 2D graphic effect to see who is speaking.
+ - added 2D graphic effect to see who is speaking (thanks to an idea of knut hamson).
  - added FontFactory to manage the use of the Lucida Blackletter we use in the game.
  - improved replicated player movements : we don't use the movement timestamp if the delta time is less than 500ms.
  - added Lie Manager : you can now lie on your name by creating up to 5 fake names.
+ - added support of other image types to our 2D graphics engine (thanks to an idea of D. Moonfire)
+ - new format for the /who command : it now displays the players location (town or world only).
+ - the wotlas network manager code and scripts have been integrated to the wotlas code tree.
+ - corrected bug in TextDrawable due to a behaviour change of Java 1.4 for Rectangle.intersects()
 
 
-CHANGES BETWEEN V1.1.2 AND V1.1.1
----------------------------------
+CHANGES BETWEEN V1.1.2 AND V1.1.1 (20 January 2002)
+---------------------------------------------------
 
  - corrected some minor bugs found in wotlas v1.1.1 (MultiRegionImage & chat)
  - new version of the 2D Graphics engine (new ImageLibrary structure)
@@ -58,8 +64,8 @@ CHANGES BETWEEN V1.1.2 AND V1.1.1
  - when you connect, a message is displayed to tell you the number of connected players
 
 
-CHANGES BETWEEN V1.1.1 AND V1.1
--------------------------------
+CHANGES BETWEEN V1.1.1 AND V1.1 (20 December 2001)
+--------------------------------------------------
 
  - corrected the bug of the first account window which was sent to background...
  - corrected the nullPointerException in JOptionPanel...
@@ -70,8 +76,8 @@ CHANGES BETWEEN V1.1.1 AND V1.1
  - added smiley :-)
 
 
-CHANGES BETWEEN V1.1 AND V1.0
------------------------------
+CHANGES BETWEEN V1.1 AND V1.0 (28 November 2001)
+------------------------------------------------
 
  - new maps : blight refuge, tar valon gates, white tower gates, ruins
  - bugs found in v1.0 have been fixed.

@@ -213,7 +213,7 @@ public class AesSedai extends Female {
          ImageIdentifier imID = super.getImage(playerLocation);
 
          if( imID==null ) {
-              if(aesSedaiSprite!=null)
+              if(aesSedaiSprite!=null && filter!=null)
                  aesSedaiSprite.setDynamicImageFilter(filter);
 
            // We return the default Aes Sedai Sprite...

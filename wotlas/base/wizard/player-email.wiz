@@ -9,24 +9,27 @@ isPrevButtonEnabled=true
 stepClass=wotlas.libs.wizard.step.JWizardStep1TextFieldNet
 stepTitle=Account\ Contact
 
-stepPropertiesKey=5
-stepPropertiesValue=5
+stepPropertiesKey=6
+stepPropertiesValue=6
 
 stepPropertiesKey.0=init.label0
 stepPropertiesValue.0=Enter your email address :
 
-stepPropertiesKey.1=init.info0
-stepPropertiesValue.1=\nThis\ is\ optional.\ Your\ email\ address\ will\ only\ be\ used\ to\ contact\ you\ in\ case\ of\ account\ problems.\ We\ will\ make\ absolutely\ no\ use\ of\ it\ otherwise.
+stepPropertiesKey.1=init.text0
+stepPropertiesValue.1=\ 
+
+stepPropertiesKey.2=init.info0
+stepPropertiesValue.2=\nThis\ is\ optional.\ Your\ email\ address\ will\ only\ be\ used\ to\ contact\ you\ in\ case\ of\ account\ problems.\ We\ will\ make\ absolutely\ no\ use\ of\ it\ otherwise.
 
 # SERVER SIDE INCLUDES
 
 # Method to call to proceed data
-stepPropertiesKey.2=server.text0.method
-stepPropertiesValue.2=setEmail
+stepPropertiesKey.3=server.text0.method
+stepPropertiesValue.3=setEmail
 
 # Links
-stepPropertiesKey.3=server.next
-stepPropertiesValue.3=end.wiz
+stepPropertiesKey.4=server.next
+stepPropertiesValue.4=end.wiz
 
-stepPropertiesKey.4=server.previous
-stepPropertiesValue.4=player-login.wiz
+stepPropertiesKey.5=server.previous
+stepPropertiesValue.5=player-login.wiz

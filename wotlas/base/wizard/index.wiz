@@ -13,7 +13,7 @@ stepPropertiesKey=4
 stepPropertiesValue=4
 
 stepPropertiesKey.0=init.info0
-stepPropertiesValue.0=\ \ \ \ \ \ \ \ This\ wizard\ will\ help\ you\ create\ your\ wotlas\ account.\ No\ particular\ knowledge\ of\ Robert\ Jordan's\ Wheel\ Of\ Time\ books\ is\ required.\n\nClick\ on\ 'Next'\ to\ continue.\n\n\n\n\n\n\n\n\n\nYou\ are\ on\ the\ '$SERVER_NAME$'\ wotlas\ server\ .\ If\ you\ encounter\ any\ problem\ please\ contact\ $EMAIL_ADMIN$\ .
+stepPropertiesValue.0=\ \ \ \ \ \ \ \ This\ wizard\ will\ help\ you\ create\ your\ wotlas\ account.\ No\ particular\ knowledge\ of\ Robert\ Jordan's\ Wheel\ Of\ Time\ books\ is\ required.\n\n\ \ \ \ \ \ \ \ You\ are\ on\ the\ '$SERVER_NAME$'\ wotlas\ server.\ If\ you\ encounter\ any\ problem\ please\ contact\ $EMAIL_ADMIN$\ .\n\n\n\nClick\ on\ 'Next'\ to\ continue.
 
 # SERVER SIDE INCLUDES
 

@@ -15,8 +15,12 @@
         <property name="year" value="2002"/>
         
         <echo message="Building ${Name} ${version}...."/>
-        
+
+        <!-- Possible value are here 'classic' if you want to use Javac
+             or 'jikes' if you want to use jikes -->
         <property name="build.compiler" value="classic"/>
+
+
         <property name="debug" value="off"/>
         <property name="optimize" value="on"/>
         <property name="deprecation" value="on"/>
@@ -107,7 +111,6 @@
     <!-- COMPILE SERVER ONLY -->
 
     <target name="server-only" depends="prepare">
-        <echo message="Compiling Wotlas Server..."/>
         <javac srcdir="${build.src}"
             destdir="${build.dest}"
             includes="wotlas/server/**"
@@ -121,7 +124,6 @@
     <!-- COMPILE CLIENT ONLY -->
 
     <target name="client-only" depends="prepare">
-        <echo message="Compiling Wotlas Client..."/>
         <javac srcdir="${build.src}"
             destdir="${build.dest}"
             includes="wotlas/client/**"
@@ -134,7 +136,6 @@
     <!-- COMPILE COMMON PACKAGES -->
 
     <target name="common" depends="prepare">
-        <echo message="Compiling Wotlas Common..."/>
         <javac srcdir="${build.src}"
             destdir="${build.dest}"
             includes="wotlas/common/**"
@@ -147,7 +148,6 @@
     <!-- COMPILE WOTLAS LIBS -->
 
     <target name="libs" depends="prepare">
-        <echo message="Compiling Wotlas Libs..."/>
         <javac srcdir="${build.src}"
             destdir="${build.dest}"
             includes="wotlas/libs/**"
@@ -160,7 +160,6 @@
     <!-- COMPILE WOTLAS UTILS -->
 
     <target name="utils" depends="prepare">
-        <echo message="Compiling Wotlas Utils..."/>
         <javac srcdir="${build.src}"
             destdir="${build.dest}"
             includes="wotlas/utils/**"

@@ -10,9 +10,6 @@ rem EDIT FOR YOUR CONFIG :
 rem Enter your java JDK directory and remove the 'rem'
 set JAVA_HOME=c:\progra~1\javasoft\j2se1.4
 
-rem Enter the path to jikes if you want to use it instead of javac
-rem set JIKESPATH=../bin/win32/
-
 rem ------------------------------------------------------------------------------
 
 set ANT_HOME=../

@@ -29,33 +29,33 @@ import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.graphics2D.filter.*;
 
 
-/** A Wolf Brother character.
+/** An Aiel Warrior character.
  *
  * @author Aldiss
  * @see wotlas.common.character.Male
  */
 
-public class WolfBrother extends Male {
+public class AielWarrior extends Male {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Wolf Brother rank
+  /** Aiel rank
    */
-    public final static String wolfRank[][] = {
+    public final static String aielRank[][] = {
           //        Rank Name                Rank Symbol
-                {   "Wolf Friend",           "wolf-0",  },
+                {   "Aiel Warrior",          "warrior-0",  },
     };
 
-  /** Wolf Brother rank
+  /** Aiel rank
    */
-    public final static Color wolfColor[] = {
+    public final static Color aielColor[] = {
          //        Rank Color
-                   new Color(140,180,120),
+                   new Color(180,170,90),
     };
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Wolf status ( wolf friend, ... ). [PUBLIC INFO]
+  /** Aiel status ( warrior, ... ). [PUBLIC INFO]
    */
     private String characterRank;
 
@@ -63,15 +63,15 @@ public class WolfBrother extends Male {
 
   /** Current Sprite.
    */
-    transient private Sprite wolfSprite;
+    transient private Sprite aielSprite;
 
   /** Current Shadow.
    */
-    transient private ShadowSprite wolfShadowSprite;
+    transient private ShadowSprite aielShadowSprite;
 
   /** Current Aura.
    */
-    transient private AuraEffect wolfAuraEffect;
+    transient private AuraEffect aielAuraEffect;
 
   /** ColorImageFilter for InteriorMap Sprites.
    */
@@ -81,7 +81,7 @@ public class WolfBrother extends Male {
 
    /** Constructor
     */
-    public WolfBrother() {
+    public AielWarrior() {
     }
 
  /*------------------------------------------------------------------------------------*/
@@ -100,14 +100,14 @@ public class WolfBrother extends Male {
          if( ImageLibrary.getDefaultImageLibrary() == null )
              return null;
 
-         if(wolfSprite!=null)
-             return (Drawable) wolfSprite;
+         if(aielSprite!=null)
+             return (Drawable) aielSprite;
 
        // 1 - Sprite Creation + Filter
-          wolfSprite = new Sprite( (SpriteDataSupplier) player, ImageLibRef.PLAYER_PRIORITY );
-          wolfSprite.useAntialiasing(true);
+          aielSprite = new Sprite( (SpriteDataSupplier) player, ImageLibRef.PLAYER_PRIORITY );
+          aielSprite.useAntialiasing(true);
           updateColorFilter();
-         return wolfSprite;
+         return aielSprite;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -115,30 +115,10 @@ public class WolfBrother extends Male {
   /** Updates the color filter that is used for the AesSedai sprite.
    */
       private void updateColorFilter() {
-         if(wolfSprite==null)
+         if(aielSprite==null)
              return;
-
-         filter = new ColorImageFilter();
-
-      // 2 - Hair Color
-         if( hairColor.equals("brown") ) {
-                   filter.addColorChangeKey( ColorImageFilter.lightYellow, ColorImageFilter.brown );
-         }
-         else if( hairColor.equals("black") ) {
-                   filter.addColorChangeKey( ColorImageFilter.lightYellow, ColorImageFilter.darkgray );
-         }
-         else if( hairColor.equals("gray") ) {
-                   filter.addColorChangeKey( ColorImageFilter.lightYellow, ColorImageFilter.gray );
-         }
-         else if( hairColor.equals("white") ) {
-                   filter.addColorChangeKey( ColorImageFilter.lightYellow, ColorImageFilter.lightgray );
-         }
-         else {
-                   filter.addColorChangeKey( ColorImageFilter.lightYellow, ColorImageFilter.brown );
-         }
-
-       // 3 - Set Filter
-         wolfSprite.setDynamicImageFilter( filter );
+         
+         // no color filter to set...
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -153,18 +133,18 @@ public class WolfBrother extends Male {
          if( ImageLibrary.getDefaultImageLibrary() == null )
              return null;
 
-         if(wolfShadowSprite!=null)
-             return (Drawable) wolfShadowSprite;
+         if(aielShadowSprite!=null)
+             return (Drawable) aielShadowSprite;
 
       // Shadow Creation
          String path = null;
 
-         path = "players-0/shadows-3/wolf-walking-6";
+         path = "players-0/shadows-3/aiel-w-walking-7";
 
-         wolfShadowSprite = new ShadowSprite( wolfSprite.getDataSupplier(),
+         aielShadowSprite = new ShadowSprite( aielSprite.getDataSupplier(),
                                                   new ImageIdentifier( path ),
                                                   ImageLibRef.SHADOW_PRIORITY, 4, 4 );
-         return wolfShadowSprite;
+         return aielShadowSprite;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -176,22 +156,21 @@ public class WolfBrother extends Male {
          if( ImageLibrary.getDefaultImageLibrary() == null )
              return null;
 
-         if(wolfAuraEffect!=null) {
-             if(wolfAuraEffect.isLive()) {
+         if(aielAuraEffect!=null) {
+             if(aielAuraEffect.isLive()) {
                 return null; // aura still displayed on screen
              }
 
-             wolfAuraEffect.reset();
-             return (Drawable) wolfAuraEffect;
+             aielAuraEffect.reset();
+             return (Drawable) aielAuraEffect;
          }
 
       // Aura Creation
-         wolfAuraEffect = new AuraEffect( wolfSprite.getDataSupplier(), getAuraImage(),
+         aielAuraEffect = new AuraEffect( aielSprite.getDataSupplier(), getAuraImage(),
                                             ImageLibRef.AURA_PRIORITY, 5000 );
-         wolfAuraEffect.useAntialiasing(true);
-         wolfAuraEffect.setAuraMaxAlpha(0.75f);
-         wolfAuraEffect.setAmplitudeLimit( 0.3f );
-         return wolfAuraEffect;
+         aielAuraEffect.useAntialiasing(true);
+         aielAuraEffect.setAuraMaxAlpha(0.5f);
+         return aielAuraEffect;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -202,16 +181,16 @@ public class WolfBrother extends Male {
       // symbol selection
          String symbolName = null;
 
-            for( int i=0; i<wolfRank.length; i++ )
-              if( characterRank.equals(wolfRank[i][0]) ) {
-                  symbolName = wolfRank[i][1];
+            for( int i=0; i<aielRank.length; i++ )
+              if( characterRank.equals(aielRank[i][0]) ) {
+                  symbolName = aielRank[i][1];
                   break;
               }
 
-         if(symbolName==null) symbolName=wolfRank[0][1]; // default if not found
+         if(symbolName==null) symbolName=aielRank[0][1]; // default if not found
 
       // Aura Creation
-         return new ImageIdentifier( "players-0/symbols-2/wolf-symbols-3/"+symbolName+".gif" );
+         return new ImageIdentifier( "players-0/symbols-2/aiel-symbols-5/"+symbolName+".gif" );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -220,9 +199,9 @@ public class WolfBrother extends Male {
    *  @return character's color
    */
      public Color getColor(){
-         for( int i=0; i<wolfRank.length; i++ )
-              if( characterRank.equals(wolfRank[i][0]) )
-                  return wolfColor[i];
+         for( int i=0; i<aielRank.length; i++ )
+              if( characterRank.equals(aielRank[i][0]) )
+                  return aielColor[i];
 
         return Color.black;
      }
@@ -233,7 +212,7 @@ public class WolfBrother extends Male {
    * @return the name of the community.
    */
      public String getCommunityName() {
-        return "Wolf Brother";
+        return "Aiel";
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -255,8 +234,8 @@ public class WolfBrother extends Male {
      public void setCharacterRank( String rank ) {
 
          if(rank!=null)
-            for( int i=0; i<wolfRank.length; i++ )
-              if( rank.equals(wolfRank[i][0]) ) {
+            for( int i=0; i<aielRank.length; i++ )
+              if( rank.equals(aielRank[i][0]) ) {
                   characterRank = rank;
                   return; // success
               }
@@ -276,19 +255,19 @@ public class WolfBrother extends Male {
          ImageIdentifier imID = super.getImage(playerLocation);
 
          if( imID==null ) {
-              if(wolfSprite!=null && filter!=null)
-                 wolfSprite.setDynamicImageFilter(filter);
+              if(aielSprite!=null && filter!=null)
+                 aielSprite.setDynamicImageFilter(filter);
 
-           // We return the default Wolf Brother Image...
+           // We return the default Aiel Image...
               String path = null;
 
-                 path = "players-0/wolf-7/wolf-walking-0";
+                 path = "players-0/aiel-9/aiel-warrior-walking-0";
 
               return new ImageIdentifier( path );
          }
 
-         if(wolfSprite!=null)
-            wolfSprite.setDynamicImageFilter( null ); // no filter for player small image
+         if(aielSprite!=null)
+            aielSprite.setDynamicImageFilter( null ); // no filter for player small image
 
          return imID;
      }

@@ -150,10 +150,10 @@ public class JAccountCreationWizard extends wotlas.libs.wizard.JWizard
       JPanel group0 = new JPanel(new GridLayout(1,1,0,0));
       group0.setAlignmentX(LEFT_ALIGNMENT);
       group0.setBackground(Color.white);
-      ATextArea text0 = new ATextArea("       Welcome to the Account Creation Wizard."
+      ATextArea text0 = new ATextArea("         Welcome to the Account Creation Wizard."
                                      +" Please, choose the server where you want to create your new account."
-                                     +" If the list below is empty it means the central wotlas web server is not running"
-                                     +" and you'll have to restart this wizard later.\n" );
+                                     +" If the list below is empty it probably means that the wotlas web server is not running"
+                                     +" and that you'll have to restart this wizard later.\n" );
       text0.setLineWrap(true);
       text0.setWrapStyleWord(true);
       text0.setEditable(false);    

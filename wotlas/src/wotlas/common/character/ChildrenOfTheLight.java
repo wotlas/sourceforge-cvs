@@ -39,14 +39,14 @@ public class ChildrenOfTheLight extends Male {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Warder rank
+  /** White Cloak rank
    */
     public final static String childrenRank[][] = {
           //        Rank Name                Rank Symbol
                 {   "Soldier of the Light",  "soldier-0",  },
     };
 
-  /** Warder rank
+  /** White Cloak rank
    */
     public final static Color childrenColor[] = {
          //        Rank Color
@@ -282,7 +282,7 @@ public class ChildrenOfTheLight extends Male {
               if(childrenSprite!=null && filter!=null)
                  childrenSprite.setDynamicImageFilter(filter);
 
-           // We return the default Warder Image...
+           // We return the default White Cloak Image...
               String path = null;
 
                  path = "players-0/children-6/children-walking-0";

@@ -29,33 +29,40 @@ import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.graphics2D.filter.*;
 
 
-/** A Wolf Brother character.
+/** A Ashaman character.
  *
  * @author Aldiss
  * @see wotlas.common.character.Male
  */
 
-public class WolfBrother extends Male {
+public class Ashaman extends Male {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Wolf Brother rank
+  /** Ashaman rank
    */
-    public final static String wolfRank[][] = {
-          //        Rank Name                Rank Symbol
-                {   "Wolf Friend",           "wolf-0",  },
+    public final static String ashamanRank[][] = {
+          //        Rank Name              Rank Symbol
+                {   "Soldier",             "soldier-0",     },
+                {   "Dedicated",           "dedicated-1",   },
+                {   "Asha'man",            "ashaman-2",     },
+                {   "M'Hael",              "mhael-3",       },
     };
 
-  /** Wolf Brother rank
+  /** Ashaman rank
    */
-    public final static Color wolfColor[] = {
+    public final static Color ashamanColor[] = {
          //        Rank Color
-                   new Color(140,180,120),
+                   Color.white,
+                   new Color(184,184,184),
+                   new Color(100,100,100),
+                   new Color(10,10,10),
     };
+
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Wolf status ( wolf friend, ... ). [PUBLIC INFO]
+  /** Ashaman status ( soldier, ... ). [PUBLIC INFO]
    */
     private String characterRank;
 
@@ -63,15 +70,15 @@ public class WolfBrother extends Male {
 
   /** Current Sprite.
    */
-    transient private Sprite wolfSprite;
+    transient private Sprite ashamanSprite;
 
   /** Current Shadow.
    */
-    transient private ShadowSprite wolfShadowSprite;
+    transient private ShadowSprite ashamanShadowSprite;
 
   /** Current Aura.
    */
-    transient private AuraEffect wolfAuraEffect;
+    transient private AuraEffect ashamanAuraEffect;
 
   /** ColorImageFilter for InteriorMap Sprites.
    */
@@ -81,7 +88,7 @@ public class WolfBrother extends Male {
 
    /** Constructor
     */
-    public WolfBrother() {
+    public Ashaman() {
     }
 
  /*------------------------------------------------------------------------------------*/
@@ -100,14 +107,14 @@ public class WolfBrother extends Male {
          if( ImageLibrary.getDefaultImageLibrary() == null )
              return null;
 
-         if(wolfSprite!=null)
-             return (Drawable) wolfSprite;
+         if(ashamanSprite!=null)
+             return (Drawable) ashamanSprite;
 
        // 1 - Sprite Creation + Filter
-          wolfSprite = new Sprite( (SpriteDataSupplier) player, ImageLibRef.PLAYER_PRIORITY );
-          wolfSprite.useAntialiasing(true);
+          ashamanSprite = new Sprite( (SpriteDataSupplier) player, ImageLibRef.PLAYER_PRIORITY );
+          ashamanSprite.useAntialiasing(true);
           updateColorFilter();
-         return wolfSprite;
+         return ashamanSprite;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -115,7 +122,7 @@ public class WolfBrother extends Male {
   /** Updates the color filter that is used for the AesSedai sprite.
    */
       private void updateColorFilter() {
-         if(wolfSprite==null)
+         if(ashamanSprite==null)
              return;
 
          filter = new ColorImageFilter();
@@ -133,12 +140,15 @@ public class WolfBrother extends Male {
          else if( hairColor.equals("white") ) {
                    filter.addColorChangeKey( ColorImageFilter.lightYellow, ColorImageFilter.lightgray );
          }
-         else {
-                   filter.addColorChangeKey( ColorImageFilter.lightYellow, ColorImageFilter.brown );
+         else if( hairColor.equals("reddish") ) {
+                   filter.addColorChangeKey( ColorImageFilter.lightYellow, ColorImageFilter.red );
+         }
+         else if( hairColor.equals("golden") ) {
+                   filter.addColorChangeKey( ColorImageFilter.lightYellow, ColorImageFilter.yellow );
          }
 
        // 3 - Set Filter
-         wolfSprite.setDynamicImageFilter( filter );
+         ashamanSprite.setDynamicImageFilter( filter );
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -153,18 +163,18 @@ public class WolfBrother extends Male {
          if( ImageLibrary.getDefaultImageLibrary() == null )
              return null;
 
-         if(wolfShadowSprite!=null)
-             return (Drawable) wolfShadowSprite;
+         if(ashamanShadowSprite!=null)
+             return (Drawable) ashamanShadowSprite;
 
       // Shadow Creation
          String path = null;
 
-         path = "players-0/shadows-3/wolf-walking-6";
+         path = "players-0/shadows-3/guard-walking-2"; // same shadow as the tower guard
 
-         wolfShadowSprite = new ShadowSprite( wolfSprite.getDataSupplier(),
+         ashamanShadowSprite = new ShadowSprite( ashamanSprite.getDataSupplier(),
                                                   new ImageIdentifier( path ),
                                                   ImageLibRef.SHADOW_PRIORITY, 4, 4 );
-         return wolfShadowSprite;
+         return ashamanShadowSprite;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -176,22 +186,27 @@ public class WolfBrother extends Male {
          if( ImageLibrary.getDefaultImageLibrary() == null )
              return null;
 
-         if(wolfAuraEffect!=null) {
-             if(wolfAuraEffect.isLive()) {
+         if(ashamanAuraEffect!=null) {
+             if(ashamanAuraEffect.isLive()) {
                 return null; // aura still displayed on screen
              }
 
-             wolfAuraEffect.reset();
-             return (Drawable) wolfAuraEffect;
+             ashamanAuraEffect.reset();
+             return (Drawable) ashamanAuraEffect;
          }
 
       // Aura Creation
-         wolfAuraEffect = new AuraEffect( wolfSprite.getDataSupplier(), getAuraImage(),
+         ashamanAuraEffect = new AuraEffect( ashamanSprite.getDataSupplier(), getAuraImage(),
                                             ImageLibRef.AURA_PRIORITY, 5000 );
-         wolfAuraEffect.useAntialiasing(true);
-         wolfAuraEffect.setAuraMaxAlpha(0.75f);
-         wolfAuraEffect.setAmplitudeLimit( 0.3f );
-         return wolfAuraEffect;
+         ashamanAuraEffect.useAntialiasing(true);
+         ashamanAuraEffect.setAuraMaxAlpha(0.65f);
+
+         if(characterRank.equals("Asha'man"))
+            ashamanAuraEffect.setAmplitudeLimit( 1.6f );
+         else if( characterRank.equals("M'Hael") )
+            ashamanAuraEffect.setAmplitudeLimit( 1.4f );
+
+         return ashamanAuraEffect;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -202,16 +217,16 @@ public class WolfBrother extends Male {
       // symbol selection
          String symbolName = null;
 
-            for( int i=0; i<wolfRank.length; i++ )
-              if( characterRank.equals(wolfRank[i][0]) ) {
-                  symbolName = wolfRank[i][1];
+            for( int i=0; i<ashamanRank.length; i++ )
+              if( characterRank.equals(ashamanRank[i][0]) ) {
+                  symbolName = ashamanRank[i][1];
                   break;
               }
 
-         if(symbolName==null) symbolName=wolfRank[0][1]; // default if not found
+         if(symbolName==null) symbolName=ashamanRank[0][0]; // default if not found
 
       // Aura Creation
-         return new ImageIdentifier( "players-0/symbols-2/wolf-symbols-3/"+symbolName+".gif" );
+         return new ImageIdentifier( "players-0/symbols-2/ashaman-symbols-4/"+symbolName+".gif" );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -220,9 +235,9 @@ public class WolfBrother extends Male {
    *  @return character's color
    */
      public Color getColor(){
-         for( int i=0; i<wolfRank.length; i++ )
-              if( characterRank.equals(wolfRank[i][0]) )
-                  return wolfColor[i];
+         for( int i=0; i<ashamanRank.length; i++ )
+              if( characterRank.equals(ashamanRank[i][0]) )
+                  return ashamanColor[i];
 
         return Color.black;
      }
@@ -233,7 +248,7 @@ public class WolfBrother extends Male {
    * @return the name of the community.
    */
      public String getCommunityName() {
-        return "Wolf Brother";
+        return "Asha'man";
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -255,8 +270,8 @@ public class WolfBrother extends Male {
      public void setCharacterRank( String rank ) {
 
          if(rank!=null)
-            for( int i=0; i<wolfRank.length; i++ )
-              if( rank.equals(wolfRank[i][0]) ) {
+            for( int i=0; i<ashamanRank.length; i++ )
+              if( rank.equals(ashamanRank[i][0]) ) {
                   characterRank = rank;
                   return; // success
               }
@@ -276,19 +291,19 @@ public class WolfBrother extends Male {
          ImageIdentifier imID = super.getImage(playerLocation);
 
          if( imID==null ) {
-              if(wolfSprite!=null && filter!=null)
-                 wolfSprite.setDynamicImageFilter(filter);
+              if(ashamanSprite!=null && filter!=null)
+                 ashamanSprite.setDynamicImageFilter(filter);
 
-           // We return the default Wolf Brother Image...
+           // We return the default Ashaman Image...
               String path = null;
 
-                 path = "players-0/wolf-7/wolf-walking-0";
+              path = "players-0/ashaman-8/ashaman-walking-0";
 
               return new ImageIdentifier( path );
          }
 
-         if(wolfSprite!=null)
-            wolfSprite.setDynamicImageFilter( null ); // no filter for player small image
+         if(ashamanSprite!=null)
+            ashamanSprite.setDynamicImageFilter( null ); // no filter for player small image
 
          return imID;
      }

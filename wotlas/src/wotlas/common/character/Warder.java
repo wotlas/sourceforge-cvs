@@ -59,11 +59,30 @@ public class Warder extends Male {
                    new Color(140,140,160),
     };
 
+  /** Warder Cloak Color
+   */
+    public final static String warderCloakColor[] = {
+         //        Cloak Color
+                   "gray",
+                   "blue",
+                   "yellow",
+                   "red",
+                   "green",
+                   "brown",
+                   "black",
+    };
+
+
  /*------------------------------------------------------------------------------------*/
 
   /** Warder status ( youngling, guard, ... ). [PUBLIC INFO]
    */
     private String characterRank;
+
+  /** Warder cloak color ( for warders only ). [PUBLIC INFO]
+   *  possible values are listed in the static array WarderCloakColor.
+   */
+    private String cloakColor;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -125,6 +144,29 @@ public class Warder extends Male {
              return;
 
          filter = new ColorImageFilter();
+
+
+      // 1 - Cloak Color
+         if( cloakColor!=null) {
+             if( cloakColor.equals("brown") ) {
+                   filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.brown );
+             }
+             else if( cloakColor.equals("gray") ) {
+                   filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.gray );
+             }
+             else if( cloakColor.equals("green") ) {
+                   filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.green );
+             }
+             else if( cloakColor.equals("yellow") ) {
+                   filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.yellow );
+             }
+             else if( cloakColor.equals("red") ) {
+                   filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.red );
+             }
+             else if( cloakColor.equals("black") ) {
+                   filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.darkgray );
+             }
+         }
 
       // 2 - Hair Color
          if( hairColor.equals("brown") ) {
@@ -290,6 +332,37 @@ public class Warder extends Male {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To get the cloak color of the warder. If there is no cloak we return null.
+   * @return color name.
+   */
+     public String getCloakColor() {
+        return cloakColor;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To set the cloak color of the warder. If the warder is a Tower Guard or a
+   *  youngling it won't be set.
+   *
+   * @param cloakColor cloak color name
+   */
+     public void setCloakColor( String cloakColor ) {
+
+         if( characterRank==null || (!characterRank.equals(warderRank[2][0]) &&
+             !characterRank.equals(warderRank[3][0])) )
+            return;
+
+            for( int i=0; i<warderCloakColor.length; i++ )
+              if( cloakColor.equals(warderCloakColor[i]) ) {
+                  this.cloakColor = cloakColor;
+                  return; // success
+              }
+
+         // not found
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** Returns an image for this character.
    *
    *  @param playerLocation player current location
@@ -338,6 +411,11 @@ public class Warder extends Male {
      public void encode( DataOutputStream ostream, boolean publicInfoOnly ) throws IOException {
         super.encode( ostream, publicInfoOnly );
         ostream.writeUTF( characterRank );
+
+        ostream.writeBoolean(cloakColor!=null);
+
+        if(cloakColor!=null)
+           ostream.writeUTF( cloakColor );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -353,6 +431,9 @@ public class Warder extends Male {
      public void decode( DataInputStream istream, boolean publicInfoOnly ) throws IOException {
         super.decode( istream, publicInfoOnly );
         characterRank = istream.readUTF();
+
+        if(istream.readBoolean())
+           cloakColor = istream.readUTF();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

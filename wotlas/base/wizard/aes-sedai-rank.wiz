@@ -6,7 +6,7 @@ isLastStep=false
 isNextButtonEnabled=true
 isPrevButtonEnabled=true
 
-stepClass=wotlas.libs.wizard.step.JWizardStepRadio
+stepClass=wotlas.libs.wizard.step.JWizardStepRadioNet
 stepTitle=Aes\ Sedai\ Character\ Rank
 
 stepPropertiesKey=23

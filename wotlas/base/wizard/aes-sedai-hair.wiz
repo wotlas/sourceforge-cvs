@@ -6,7 +6,7 @@ isLastStep=false
 isNextButtonEnabled=true
 isPrevButtonEnabled=true
 
-stepClass=wotlas.libs.wizard.step.JWizardStepList
+stepClass=wotlas.libs.wizard.step.JWizardStepListNet
 stepTitle=Hair\ Color
 
 stepPropertiesKey=11

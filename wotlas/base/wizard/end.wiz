@@ -6,7 +6,7 @@ isLastStep=true
 isNextButtonEnabled=true
 isPrevButtonEnabled=true
 
-stepClass=wotlas.libs.wizard.step.JWizardStepInfo
+stepClass=wotlas.libs.wizard.step.JWizardStepInfoNet
 stepTitle=Account\ Creation
 
 stepPropertiesKey=2

@@ -6,7 +6,7 @@ isLastStep=false
 isNextButtonEnabled=true
 isPrevButtonEnabled=false
 
-stepClass=wotlas.libs.wizard.step.JWizardStepInfo
+stepClass=wotlas.libs.wizard.step.JWizardStepInfoNet
 stepTitle=Welcome\ !
 
 stepPropertiesKey=2

@@ -6,7 +6,7 @@ isLastStep=false
 isNextButtonEnabled=true
 isPrevButtonEnabled=false
 
-stepClass=wotlas.libs.wizard.step.JWizardStep2TextField
+stepClass=wotlas.libs.wizard.step.JWizardStep2TextFieldNet
 stepTitle=Character\ Name
 
 stepPropertiesKey=6

@@ -138,6 +138,14 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
   private Object startGameLock = new Object();
 
+  /** Tick Thread Lock.
+   */
+  private Object pauseTickThreadLock = new Object();
+
+  /** Do we have to pause the tick thread ?
+   */
+  private boolean pauseTickThread;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Our current player.
@@ -183,7 +191,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** Our MapData.
    */
   private MapData myMapData;
-
 
   /** Our client interface frame.
    */
@@ -434,7 +441,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
     Debug.signal( Debug.NOTICE, null, "DataManager not connected anymore to GameServer" );
 
-    //if (gDirector!=null) {
+    pauseTickThread();
+
      if ( (mFrame!=null) && (mFrame.isShowing()) ) {
 
         if( !ClientManager.getDefaultClientManager().getAutomaticLogin() ) {
@@ -644,9 +652,12 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     
      // Init map display
     changeMapData();
-    
+
     addPlayer(myPlayer);
     playerPanel.reset();
+
+    // Resume Tick Thread
+    resumeTickThread();
 
     // We can now ask for eventual remaining data
     // This step should have been done in the current MapData.init() but it was not
@@ -666,25 +677,35 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     String os   = System.getProperty( "os.name" );
     String arch = System.getProperty( "os.arch" );
     String vers = System.getProperty( "os.version" );
+
     Debug.signal( Debug.NOTICE, this, "OS INFO :\n\nOS NAME : <"+os+">\nOS ARCH: <"+arch+">\nOS VERSION: <"+vers+">\n" );
 
     delay = 20;
-    if ( os.equals("Windows 2000") ) {
-      delay = 30;
-    }
 
-    Object lock = new Object();
-    while( true ) {
-      now = System.currentTimeMillis();
-      tick();
+    if ( os.equals("Windows 2000") || os.equals("Windows XP") )
+      delay = 35;
 
-      deltaT = (int) (System.currentTimeMillis()-now);
-      if (deltaT<delay) {
-        Tools.waitTime(delay-deltaT);
-      } else {
-        Tools.waitTime(delay);
+    pauseTickThread = false;
+
+      while( true ) {
+          now = System.currentTimeMillis();
+
+       // Pause Thread ?
+          synchronized( pauseTickThreadLock ) {
+             if(pauseTickThread)
+                try{
+                   pauseTickThreadLock.wait();
+                }catch(Exception e){}
+          }
+
+       // Tick
+          tick();
+
+          deltaT = (int) (System.currentTimeMillis()-now);
+
+          if (deltaT<delay)
+              Tools.waitTime(delay-deltaT);
       }
-    }
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -722,6 +743,27 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
  /*------------------------------------------------------------------------------------*/
 
+  /** To pause the tick thread.
+   */
+   private void pauseTickThread() {
+          synchronized( pauseTickThreadLock ) {
+                   pauseTickThread=true;
+          }
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To resume the tick thread.
+   */
+   private void resumeTickThread() {
+          synchronized( pauseTickThreadLock ) {
+                   pauseTickThread=false;
+                   pauseTickThreadLock.notify();
+          }
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
   /** To invoke the code of the specified message just after the current tick.
    *  This method can be called multiple times and is synchronized.
    */
@@ -749,48 +791,63 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     Object object = gDirector.findOwner( e.getX(), e.getY() );
 
     if ( object instanceof PlayerImpl ) {
-      	// We display text & aura                      
-           String selectedPlayerKey = "";
+      	// We display selection and player info
+           String previouslySelectedPlayerKey = "";
+
            if (selectedPlayer!=null)
-             selectedPlayerKey = selectedPlayer.getPrimaryKey();    
+               previouslySelectedPlayerKey = selectedPlayer.getPrimaryKey();
+
+           selectedPlayer = (PlayerImpl) object; // new player selected      
+
+       // We get the InfoPanel
+          Component c_info = dataManager.getPlayerPanel().getTab("-info-");
            
-           if (circle!=null)
-             gDirector.removeDrawable(circle);
-      
-           selectedPlayer = (PlayerImpl) object;           
+          if( c_info==null || !(c_info instanceof InfoPanel) ) {
+              Debug.signal( Debug.ERROR, this, "InfoPanel not found !");
+              return;
+          }
+
+          InfoPanel infoPanel = (InfoPanel) c_info;
+
+       // We erase the previous selection circle
+          if (circle!=null) {
+              gDirector.removeDrawable(circle);
+              circle=null;
+          }
                       
-       // drawables
-           if (!selectedPlayerKey.equals(selectedPlayer.getPrimaryKey())) {                        
-             circle = new CircleDrawable( selectedPlayer.getDrawable(),
-                                        20,
-                                        selectedPlayer.getWotCharacter().getColor(),
-                                        true,
-                                        ImageLibRef.AURA_PRIORITY);
-             gDirector.addDrawable(circle);
-           }
-          
-           gDirector.addDrawable(selectedPlayer.getTextDrawable());
-           gDirector.addDrawable(selectedPlayer.getWotCharacter().getAura());
-
-       // InfoPanel
-           Component c_info = dataManager.getPlayerPanel().getTab("-info-");
-           
-           if( c_info==null || !(c_info instanceof InfoPanel) ) {
-               Debug.signal( Debug.ERROR, this, "InfoPanel not found !");
+       // Deselect ?
+          if ( previouslySelectedPlayerKey.equals(selectedPlayer.getPrimaryKey()) ) {
+               gDirector.addDrawable(selectedPlayer.getTextDrawable());
+               gDirector.addDrawable(selectedPlayer.getWotCharacter().getAura());
+               selectedPlayer=null;
+               infoPanel.reset();
                return;
-           }
+          }
 
-           InfoPanel infoPanel = (InfoPanel) c_info;
-           infoPanel.setPlayerInfo( selectedPlayer );
+       // Select
+          circle = new CircleDrawable( selectedPlayer.getDrawable(),
+                                       15,
+                                       selectedPlayer.getWotCharacter().getColor(),
+                                       true,
+                                       ImageLibRef.AURA_PRIORITY);
+          gDirector.addDrawable(circle);
+          gDirector.addDrawable(selectedPlayer.getTextDrawable());
+          gDirector.addDrawable(selectedPlayer.getWotCharacter().getAura());
+          infoPanel.setPlayerInfo( selectedPlayer );
 
        // Away Message
-           if( selectedPlayer.getPlayerAwayMessage()!=null && !selectedPlayer.isConnectedToGame() ) {
-               JChatRoom chatRoom = chatPanel.getCurrentJChatRoom();
-               chatRoom.appendText("<font color='gray'> "+selectedPlayer.getPlayerName()+" (away) says: <i> "
-                                                    +selectedPlayer.getPlayerAwayMessage()+" </i></font>");
-           }
+          String awayMessage = selectedPlayer.getPlayerAwayMessage();
 
-           return;
+          if( selectedPlayer.isConnectedToGame() )  return;
+          if( !selectedPlayer.canDisplayAwayMessage() )  return;
+
+          if( awayMessage!=null ) {
+              JChatRoom chatRoom = chatPanel.getCurrentJChatRoom();
+              chatRoom.appendText("<font color='gray'> "+selectedPlayer.getPlayerName()+" (away) says: <i> "
+                                                    +selectedPlayer.getPlayerAwayMessage()+" </i></font>");
+          }
+
+          return;
     }
     else if( object instanceof Door ) {
         // We open/close the door IF the player is near enough...

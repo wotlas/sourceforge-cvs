@@ -51,8 +51,11 @@ import java.util.Hashtable;
  * @see wotlas.common.Player
  */
 
-public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
-{
+public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
+
+  /** Period between the display of two away messages for ONE player.
+   */
+  public final static long AWAY_MSG_DISPLAY_PERIOD = 1000*40;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -87,6 +90,11 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   /** Current Chat PrimaryKey : the chat we are currently connected to.
    */
   private String currentChatPrimaryKey = ChatRoom.DEFAULT_CHAT; // everlasting chat set as default
+
+  /** Time stamp for the away message : we don't display the away messages when they
+   *  are asked during the AWAY_MSG_DISPLAY_PERIOD.
+   */
+  transient private long playerAwayMsgTimeStamp;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -153,7 +161,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   *  the game data has been loaded.
   */
   public void init() {
-    Debug.signal( Debug.NOTICE, null, "PlayerImpl::init");
+    //Debug.signal( Debug.NOTICE, null, "PlayerImpl::init");
     animation = new Animation( wotCharacter.getImage(location), ImageLibrary.getDefaultImageLibrary() );
     sprite = (Sprite) wotCharacter.getDrawable(this);              
     movementComposer.init( this );
@@ -310,13 +318,28 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     *  @return player away Message
     */
       public String getPlayerAwayMessage() {
-      	     if(isConnectedToGame && DataManager.getDefaultDataManager().getMyPlayer()!=this)
+      	     if(isConnectedToGame)
       	        return null;
       	
              if(playerAwayMessage==null)
                 sendMessage( new PlayerAwayMessage( primaryKey, "") );
-             	
+
              return playerAwayMessage;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Can we display the Away Message ? (method for the DataManager)
+    */
+      public boolean canDisplayAwayMessage() {
+             long now = System.currentTimeMillis();
+
+             if( playerAwayMsgTimeStamp+AWAY_MSG_DISPLAY_PERIOD < now ) {
+                playerAwayMsgTimeStamp = now;
+                return true;
+             }
+
+             return false;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

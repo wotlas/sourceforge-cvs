@@ -21,11 +21,11 @@ package wotlas.common.universe;
 
 import wotlas.libs.graphics2D.ImageIdentifier;
 import wotlas.common.Player;
-import wotlas.utils.Debug;
+import wotlas.utils.*;
+
+import java.awt.Rectangle;
 
 import java.util.Hashtable;
-import java.awt.Rectangle;
-import java.awt.Point;
 
  /** A TownMap represents a town in our Game Universe.
   *
@@ -34,7 +34,7 @@ import java.awt.Point;
   * @see wotlas.common.universe.Building
   */
  
-public class TownMap
+public class TownMap extends ScreenRectangle
 {
  /*------------------------------------------------------------------------------------*/
  
@@ -49,10 +49,6 @@ public class TownMap
   /** Short name of the Town
    */
     private String shortName;
-
-  /** Rectangle of the town on the WorldMap.
-   */
-    private Rectangle worldMapRectangle;
 
   /** Small Image (identifier) of this town for WorldMaps.
    */
@@ -80,14 +76,9 @@ public class TownMap
    */
     private transient Hashtable players;
 
-  /** List of buildings to enter the town
-   * first  element : BuildingID
-   */
-    private transient int[] buildingsEnter;
-
  /*------------------------------------------------------------------------------------*/
 
-  /** Constructor
+  /** Constructor for persistence.
    */
     public TownMap() {
        players = new Hashtable(10);
@@ -95,10 +86,22 @@ public class TownMap
    
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** Constructor with x,y positions & width,height dimension on WorldMap.
+   * @param x x position of this building on a WorldMap.
+   * @param y y position of this building on a WorldMap.
+   * @param width width dimension of this building on a WorldMap.
+   * @param height height dimension of this building on a WorldMap.
+   */
+    public TownMap(int x, int y, int width, int height) {
+       super(x,y,width,height);
+       players = new Hashtable(10);
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /*
    * List of setter and getter used for persistence
    */
-
     public void setTownMapID(int myTownMapID) {
       this.townMapID = myTownMapID;
     }
@@ -121,14 +124,6 @@ public class TownMap
 
     public String getShortName() {
       return shortName;
-    }
-
-    public void setWorldMapRectangle(Rectangle r) {
-      worldMapRectangle = r;
-    }
-
-    public Rectangle getWorldMapRectangle() {
-      return worldMapRectangle;
     }
 
     public void setSmallTownImage(ImageIdentifier smallTownImage) {
@@ -170,14 +165,6 @@ public class TownMap
 
     public Building[] getBuildings() {
       return buildings;
-    }
-
-    public void setBuildingsEnter(int[] myBuildingsEnter) {
-      this.buildingsEnter = myBuildingsEnter;
-    }
-
-    public int[] getBuildingsEnter() {
-      return buildingsEnter;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -302,7 +289,7 @@ public class TownMap
    *
    * @return a new MapExit object
    */
-    public MapExit addMapExit(Rectangle r)
+    public MapExit addMapExit(ScreenRectangle r)
     {
       MapExit myMapExit = new MapExit(r);
     
@@ -360,31 +347,16 @@ public class TownMap
        for( int i=0; i<buildings.length; i++ )
             if( buildings[i]!=null )
                 buildings[i].init( this );
-
-    // 3 - we reconstruct the shortcuts... (here, buildings to enter the town)
-       for( int i=0; i<buildings.length; i++ )
-            if( buildings[i]!=null && buildings[i].getHasTownExits() )
-            {
-                if ( buildingsEnter == null )
-                     buildingsEnter = new int[1];
-                else {
-                     int tmp[] = new int[buildingsEnter.length+1];
-                     System.arraycopy( buildingsEnter, 0, tmp, 0, buildingsEnter.length );
-                     buildingsEnter = tmp;
-                }
-
-                buildingsEnter[buildingsEnter.length-1] = buildings[i].getBuildingID();        
-            }
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Returns the MapExit that is on the side given by the specified point.
-   * @param a point which is out of the MapExit ScreenZone and should represent
+   * @param a point which is out of the MapExit ScreenRectangle and should represent
    *        the direction by which the player hits this TownMap zone.
    * @return the appropriate MapExit, null if there are no MapExits.
    */
-   public MapExit findTownMapExit( Point fromPosition ) {
+   public MapExit findTownMapExit( Rectangle fromPosition ) {
    	
       if(mapExits==null)
          return null;
@@ -393,16 +365,16 @@ public class TownMap
          return mapExits[0];
    
       for(int i=0; i<mapExits.length; i++ ) {
-         if( mapExits[i].getMapExitSide()==MapExit.WEST && fromPosition.x <= mapExits[i].getX() )
+         if( mapExits[i].getMapExitSide()==MapExit.WEST && fromPosition.x <= x+width/2 )
              return mapExits[i];
 
-         if( mapExits[i].getMapExitSide()==MapExit.EAST && fromPosition.x >= mapExits[i].getX()+mapExits[i].getWidth() )
+         if( mapExits[i].getMapExitSide()==MapExit.EAST && fromPosition.x >= x+width/2 )
              return mapExits[i];
 
-         if( mapExits[i].getMapExitSide()==MapExit.NORTH && fromPosition.y <= mapExits[i].getY() )
+         if( mapExits[i].getMapExitSide()==MapExit.NORTH && fromPosition.y <= y+height/2 )
              return mapExits[i];
 
-         if( mapExits[i].getMapExitSide()==MapExit.SOUTH && fromPosition.y >= mapExits[i].getY()+mapExits[i].getHeight() )
+         if( mapExits[i].getMapExitSide()==MapExit.SOUTH && fromPosition.y >= y+height/2 )
              return mapExits[i];
       }
    

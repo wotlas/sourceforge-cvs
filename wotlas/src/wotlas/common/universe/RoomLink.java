@@ -19,19 +19,19 @@
  
 package wotlas.common.universe;
 
-import java.awt.Rectangle;
+import wotlas.utils.*;
 
  /** RoomLink class
   *
   * @author Petrus, Aldiss
   * @see wotlas.common.universe.Door
   */
-  
-public class RoomLink extends ScreenZone
+
+public class RoomLink extends ScreenRectangle
 { 
  /*------------------------------------------------------------------------------------*/
   
-  /** ID of the RoomLink (index in the array {@link Room#roomLinks Room.roomLinks})
+  /** ID of the RoomLink
    */
    private int roomLinkID;
    
@@ -55,9 +55,9 @@ public class RoomLink extends ScreenZone
  
  /*------------------------------------------------------------------------------------*/
 
-  /** Constructor with Rectangle.
+  /** Constructor with ScreenRectangle.
    */
-   public RoomLink(Rectangle r) {
+   public RoomLink(ScreenRectangle r) {
        super(r);
    }
  

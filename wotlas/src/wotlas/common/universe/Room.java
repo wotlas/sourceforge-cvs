@@ -20,10 +20,8 @@
 package wotlas.common.universe;
 
 import wotlas.common.Player;
-import wotlas.utils.Debug;
+import wotlas.utils.*;
 
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.util.Hashtable;
 
  /** A Room of an interiorMap.
@@ -50,7 +48,7 @@ public class Room
 
   /** Point of insertion (teleportation, arrival)
    */
-    private Point insertionPoint;
+    private ScreenPoint insertionPoint;
 
   /** Number maximum of players
    */
@@ -91,7 +89,6 @@ public class Room
   /*
    * List of setter and getter used for persistence
    */
-
     public void setRoomID(int myRoomID) {
       this.roomID = myRoomID;
     }
@@ -120,11 +117,11 @@ public class Room
       return shortName;
     }
 
-    public void setInsertionPoint(Point myInsertionPoint) {
+    public void setInsertionPoint(ScreenPoint myInsertionPoint) {
       this.insertionPoint = myInsertionPoint;
     }
 
-    public Point getInsertionPoint() {
+    public ScreenPoint getInsertionPoint() {
       return insertionPoint;
     }
 
@@ -231,7 +228,7 @@ public class Room
    *
    * @return a new RoomLink object
    */
-    public RoomLink addRoomLink( Rectangle r )
+    public RoomLink addRoomLink( ScreenRectangle r )
     {
        RoomLink myRoomLink = new RoomLink(r);
 
@@ -275,7 +272,7 @@ public class Room
    *
    * @return a new MapExit object
    */
-    public MapExit addMapExit(Rectangle r)
+    public MapExit addMapExit(ScreenRectangle r)
     {
       MapExit myMapExit = new MapExit(r);
     

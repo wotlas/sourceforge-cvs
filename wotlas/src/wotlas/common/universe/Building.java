@@ -20,9 +20,8 @@
 package wotlas.common.universe;
 
 import wotlas.libs.graphics2D.ImageIdentifier;
+import wotlas.utils.*;
 
-import wotlas.utils.Debug;
-import java.awt.Rectangle;
 import java.awt.Point;
 
  /** A Building of a town in our World. A building always belongs to a townMap.
@@ -32,7 +31,7 @@ import java.awt.Point;
   * @see wotlas.common.universe.MapExit
   */
  
-public class Building
+public class Building extends ScreenRectangle
 {
  /*------------------------------------------------------------------------------------*/
    
@@ -60,10 +59,6 @@ public class Building
    */
     private boolean hasBuildingExits;
 
-  /** Rectangle of the building on the TownMap.
-   */
-    private Rectangle townMapRectangle;
-
   /** Small Image (identifier) of this building for TownMaps.
    */
     private ImageIdentifier smallBuildingImage;
@@ -88,9 +83,23 @@ public class Building
    
  /*------------------------------------------------------------------------------------*/
   
-  /** Constructor
+  /** Constructor for persistence.
    */
     public Building() {
+       hasBuildingExits = false; // default
+       hasTownExits = false;     // default
+    }
+    
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Constructor with x,y positions & width,height dimension on TownMaps.
+   * @param x x position of this building on a townMap.
+   * @param y y position of this building on a townMap.
+   * @param width width dimension of this building on a townMap.
+   * @param height height dimension of this building on a townMap.
+   */
+    public Building(int x, int y, int width, int height) {
+       super(x,y,width,height);
        hasBuildingExits = false; // default
        hasTownExits = false;     // default
     }
@@ -147,14 +156,6 @@ public class Building
 
     public boolean getHasBuildingExits() {
       return hasBuildingExits;
-    }
-
-    public void setTownMapRectangle(Rectangle townMapRectangle) {
-      this.townMapRectangle = townMapRectangle;
-    }
-
-    public Rectangle getTownMapRectangle() {
-      return townMapRectangle;
     }
 
     public void setSmallBuildingImage(ImageIdentifier smallBuildingImage) {
@@ -340,16 +341,16 @@ public class Building
          return buildingExits[0];
    
       for(int i=0; i<buildingExits.length; i++ ) {
-         if( buildingExits[i].getMapExitSide()==MapExit.WEST && fromPosition.x <= buildingExits[i].getX() )
+         if( buildingExits[i].getMapExitSide()==MapExit.WEST && fromPosition.x <= x )
              return buildingExits[i];
 
-         if( buildingExits[i].getMapExitSide()==MapExit.EAST && fromPosition.x >= buildingExits[i].getX()+buildingExits[i].getWidth() )
+         if( buildingExits[i].getMapExitSide()==MapExit.EAST && fromPosition.x >= x+width )
              return buildingExits[i];
 
-         if( buildingExits[i].getMapExitSide()==MapExit.NORTH && fromPosition.y <= buildingExits[i].getY() )
+         if( buildingExits[i].getMapExitSide()==MapExit.NORTH && fromPosition.y <= y )
              return buildingExits[i];
 
-         if( buildingExits[i].getMapExitSide()==MapExit.SOUTH && fromPosition.y >= buildingExits[i].getY()+buildingExits[i].getHeight() )
+         if( buildingExits[i].getMapExitSide()==MapExit.SOUTH && fromPosition.y >= y+height )
              return buildingExits[i];
       }
    

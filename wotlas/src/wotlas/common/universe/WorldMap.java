@@ -24,6 +24,7 @@ import wotlas.common.Player;
 import wotlas.utils.Debug;
 
 import java.util.Hashtable;
+import java.awt.Rectangle;
 
  /** A WorldMap represents the root class of a whole world of our Game Universe.
   *
@@ -270,4 +271,21 @@ public class WorldMap
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** Tests if the given player rectanglehas its x,y cordinates in a TownRectangle
+   */
+     public MapExit isEnteringTown( int destX, int destY, Rectangle rCurrent ) {
+        if(townMaps==null)
+           return null;
+
+        for( int i=0; i<townMaps.length; i++ ){
+             Rectangle townRect = townMaps[i].toRectangle();
+
+             if( townRect.contains( destX, destY ) && townRect.intersects( rCurrent ) )
+                 return townMaps[i].findTownMapExit( rCurrent );
+        }
+
+        return null;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

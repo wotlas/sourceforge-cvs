@@ -19,15 +19,14 @@
  
 package wotlas.common.universe;
 
-import java.awt.Point;
-import java.awt.Rectangle;
+import wotlas.utils.*;
 
  /** MapExit class
   *
   * @author Petrus
   */
 
-public class MapExit extends ScreenZone
+public class MapExit extends ScreenRectangle
 {
   /** MapExit type
    */
@@ -64,7 +63,7 @@ public class MapExit extends ScreenZone
 
   /** Eventual position on the target map (null if none)
    */
-   public Point targetPosition;
+   public ScreenPoint targetPosition;
    
   /** knowledge required to use MapExit
    * -1 if no knowledge required
@@ -79,17 +78,17 @@ public class MapExit extends ScreenZone
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Constructor with Rectangle.
+  /** Constructor with ScreenRectangle.
    */
-   public MapExit(Rectangle r) {
+   public MapExit(ScreenRectangle r) {
       super(r);
    }
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Constructor with Rectangle & type.
+  /** Constructor with ScreenRectangle & type.
    */
-   public MapExit(Rectangle r, byte type) {
+   public MapExit(ScreenRectangle r, byte type) {
       super(r);
       this.type = type;
    }
@@ -118,10 +117,10 @@ public class MapExit extends ScreenZone
   public WotlasLocation getTargetWotlasLocation() {
     return targetWotlasLocation;
   }
-  public void setTargetPosition(Point myTargetPosition) {
+  public void setTargetPosition(ScreenPoint myTargetPosition) {
     this.targetPosition = myTargetPosition;
   }
-  public Point getTargetPosition() {
+  public ScreenPoint getTargetPosition() {
     return targetPosition;
   }
   public void setMapExitSide(int mapExitSide) {

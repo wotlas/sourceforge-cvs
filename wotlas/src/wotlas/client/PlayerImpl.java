@@ -545,7 +545,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
            setAngle( getAngle() + angularDirection*deltaT*angularSpeed );           
 
         // End of turn ?
-        double deltaA = (float)( (nextAngle-getAngle())*deltaT*angularDirection);
+        double deltaA = (float)( (nextAngle-getAngle())*angularDirection);
         
            if( deltaA<=0 ) {
                 turningAlongPath = false;                

@@ -27,15 +27,14 @@ import wotlas.common.universe.*;
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
 
+import wotlas.libs.net.NetMessage;
+
 import wotlas.libs.pathfinding.*;
 
 import wotlas.utils.*;
 
 import java.awt.Point;
 import java.awt.Rectangle;
-
-///////////////////////////// ALDISS : ben j'ai fait tellement de modifs que le + simple
-///////////////////////////// est que tu essayes de reprendre ce fichier directement...
 
 /** Class of a Wotlas Player.
  *
@@ -447,5 +446,15 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Use this method to send a NetMessage to the server.
+   *
+   * @param message message to send to the player.   
+   */
+     public void sendMessage( NetMessage message ) {
+        DataManager.getDefaultDataManager().sendMessage( message );             
+     }
+
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

@@ -66,6 +66,7 @@ import java.io.IOException;
 import javax.swing.*;
 
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 
 /** A DataManager manages Game Data and client's connection.
@@ -145,7 +146,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
   /** List of players
    */
-  private HashMap players;
+  private Hashtable players;
 
   /** Circle selection
    */
@@ -306,6 +307,12 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
  
  /*------------------------------------------------------------------------------------*/ 
 
+  public NetPersonality getNetPersonality() {
+    return personality;
+  }
+  
+ /*------------------------------------------------------------------------------------*/ 
+ 
   /** This method is called when a new network connection is created
    *
    * @param personality the NetPersonality object associated to this connection.
@@ -377,8 +384,18 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     Debug.signal( Debug.NOTICE, null, "DataManager not connected anymore to GameServer" );
 
   }
-
- /*------------------------------------------------------------------------------------*/
+ 
+  /** Use this method to send a NetMessage to the server.
+   *
+   * @param message message to send to the player.   
+   */
+  public void sendMessage( NetMessage message ) {
+    synchronized( personalityLock ) {
+      if ( personality!=null ) {
+        personality.queueMessage( message );        
+      }
+    }    
+  }
 
   /** To close the network connection if any.
    */
@@ -478,12 +495,18 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     Debug.signal( Debug.NOTICE, null, "Beginning to tick Graphics Director" );
     this.start();
 
+    // 8 - Show informations on player
+    String mltString[] = {myPlayer.getFullPlayerName(), myPlayer.getPlayerName()};
+    
+    mltPlayerName = new MultiLineText(mltString, 10, 10, ImageLibRef.AURA_PRIORITY);
+    gDirector.addDrawable(mltPlayerName);
+    
     mFrame.show();
 
     // 9 - Retreive other players informations
-    players = new HashMap();
+    //players = new HashMap();
     //personality.queueMessage(new AllDataLeftPleaseMessage());
-    addPlayer(myPlayer);
+    //addPlayer(myPlayer);
 
   }
 
@@ -501,9 +524,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     String vers = System.getProperty( "os.version" );
     Debug.signal( Debug.NOTICE, this, "OS INFO :\n\nOS NAME : <"+os+">\nOS ARCH: <"+arch+">\nOS VERSION: <"+vers+">\n" );
 
-    delay = 20;
+    delay = 30;
     if ( os.equals("Windows 2000") ) {
-      delay = 25;
+      delay = 35;
     }
 
     Object lock = new Object();
@@ -630,6 +653,51 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
     addPlayer(newPlayer);
     */
+    
+    //NetMessage toto = new TotoMessage();
+
+    // We send the update to other players
+    if ( myPlayer.getLocation().isRoom() ) {
+      Room room = dataManager.getWorldManager().getRoom(myPlayer.getLocation());      
+      if ( room==null ) return;
+
+      // Current Room
+      //Hashtable players = room.getPlayers();
+      players = room.getPlayers();   
+      synchronized( players ) {
+        Iterator it = players.values().iterator();                 
+        PlayerImpl p;
+        while ( it.hasNext() ) {
+          p = (PlayerImpl)it.next();
+          System.out.println(p);
+          //p.sendMessage( toto );          
+        }        
+      }
+
+      // Other rooms
+      if (room.getRoomLinks()==null) return;              
+      
+      for ( int i=0; i<room.getRoomLinks().length; i++ ) {
+        Room otherRoom = room.getRoomLinks()[i].getRoom1();
+                   
+        if ( otherRoom==room )
+          otherRoom = room.getRoomLinks()[i].getRoom2();
+          
+        players = otherRoom.getPlayers();
+        synchronized( players ) {
+          Iterator it = players.values().iterator();
+          PlayerImpl p;
+          while ( it.hasNext() ) {
+            p = (PlayerImpl)it.next();
+            System.out.println(p);
+            //p.sendMessage( toto );
+          }
+        }       
+      }
+            
+    }   
+    
+    System.out.println("OnRightClic_end\n");
   }
 
  /*------------------------------------------------------------------------------------*/

@@ -48,6 +48,7 @@ public class ProfileConfigList
    */
   public ProfileConfigList() {
     currentProfileIndex = 0;
+    profiles = new ProfileConfig[0];
   }
 
   /*------------------------------------------------------------------------------------*/
@@ -84,7 +85,7 @@ public class ProfileConfigList
   {
     ProfileConfig myProfile = new ProfileConfig();
 
-    if (profiles == null) {
+    if (profiles == null || profiles.length==0 ) {
       profiles = new ProfileConfig[1];
       profiles[0] = myProfile;
     } else {
@@ -99,7 +100,7 @@ public class ProfileConfigList
   /** Add a new Profile to the array <b>profiles</b>
    */
   public void addProfile(ProfileConfig profile) {
-    if (profiles==null) {
+    if (profiles==null || profiles.length==0) {
       profiles = new ProfileConfig[1];
       profiles[0] = profile;
     } else {

@@ -62,6 +62,9 @@ public class ProfileConfigListTableModel extends AbstractTableModel
    */
   ProfileConfigListTableModel(ProfileConfigList profileConfigList, ServerConfigList serverConfigList) {
     this.profiles = profileConfigList.getProfiles();
+    
+    if(profiles==null) profiles = new ProfileConfig[0];
+    
     this.servers  = serverConfigList;
   }
 

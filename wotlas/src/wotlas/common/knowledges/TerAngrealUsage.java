@@ -19,44 +19,17 @@
  
 package wotlas.common.knowledges;
 
-import wotlas.common.Player;
-
 /** 
- * This is the base interface for fighting techniques (Fight-techs).
- * 
+ * This is the base interface for ter'angreal usage. (for channeling-required ter'angreals)<br> 
+ * It's an ObjectUsage and a ChannelAbility.
  * @author Elann
  */
 
-public interface FightTech
+public interface TerAngrealUsage extends ObjectUsage,ChannelAbility
 {
 
  /*------------------------------------------------------------------------------------*/
 	  	 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Get the target.<br>
-   * Used to calculate damage inflicted.
-   * @return target
-   */
-    public Player getTarget();
-	
-  /** Set the target.<br>
-   * Used to calculate damage inflicted.
-   * @param target the new target
-   */
-    public void setTarget(Player target);
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Get the damage inflicted. Must have a target. 
-   * @return damage
-   */
-    public short getDamage();
-	
-  /** Set the damage inflicted.
-   * @param damage the new damage
-   */
-    public void setDamage(short damage);
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

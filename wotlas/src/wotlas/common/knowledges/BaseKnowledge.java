@@ -19,7 +19,7 @@
  
 package wotlas.common.knowledges;
 
-//import wotlas.common.character.Levels; // THIS CLASS DOES NOT EXISTS
+//import wotlas.common.character.Level; // THIS CLASS DOES NOT EXISTS
 
 /** 
  * This is the base class for all knowledge classes.<br>

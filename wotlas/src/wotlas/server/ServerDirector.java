@@ -41,7 +41,7 @@ class ServerDirector
 
    /** Static Link to Database Config File.
     */
-    public final static String DATABASE_CONFIG = "../src/config/server-database.cfg";
+    public final static String DATABASE_CONFIG = "../src/config/server.cfg";
 
    /** Persistence period in ms.
     */
@@ -53,6 +53,10 @@ class ServerDirector
     *  accounts.
     */
       private static String databasePath;
+
+   /** Our Server ID
+    */
+      private static int serverID;
 
    /** Other eventual properties.
     */
@@ -81,6 +85,8 @@ class ServerDirector
    */
      public static void main( String argv[] )
      {
+           Debug.displayExceptionStack( false );
+
         // STEP 0 - Print some info...
            Debug.signal( Debug.NOTICE, null, "*-----------------------------------*" );
            Debug.signal( Debug.NOTICE, null, "|   Wheel Of Time - Light & Shadow  |" );
@@ -104,6 +110,21 @@ class ServerDirector
 
            Debug.signal( Debug.NOTICE, null, "DataBase Path Found : "+databasePath );
 
+           String s_serverID = properties.getProperty( "SERVER_ID" );
+
+           if( s_serverID==null ) {
+               Debug.signal( Debug.FAILURE, null, "No ServerID specified in config file !" );
+               System.exit(1);
+           }
+
+           try{
+              serverID = Integer.parseInt( s_serverID );
+           }catch( Exception e ) {
+                Debug.signal( Debug.FAILURE, null, "Bad ServerID specified in config file !" );
+                System.exit(1);
+           }
+
+           Debug.signal( Debug.NOTICE, null, "Server ID set to : "+serverID );
 
         // STEP 2 - Creation of the PersistenceManager
            persistenceManager = PersistenceManager.createPersistenceManager( databasePath );
@@ -137,6 +158,16 @@ class ServerDirector
     */
       public static String getDatabasePath() {
          return databasePath;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the server ID of this server.
+    *
+    * @return serverID
+    */
+      public static int getServerID() {
+         return serverID;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -26,10 +26,10 @@ import wotlas.utils.Debug;
   *  a GatewayServer. The parameters for these servers are gathered in config/server.cfg.
   *
   * @author Aldiss
-  * @see wotlas.common.server.GameServer
-  * @see wotlas.common.server.AccountServer
-  * @see wotlas.common.server.GatewayServer
-  * @see wotlas.common.server.Serverconfig
+  * @see wotlas.server.GameServer
+  * @see wotlas.server.AccountServer
+  * @see wotlas.server.GatewayServer
+  * @see wotlas.common.Serverconfig
   */
  
 public class ServerManager
@@ -67,7 +67,7 @@ public class ServerManager
 
        // 1 - we load the ServerConfig file...
           PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();          
-          config = pm.loadServerConfig();
+          config = pm.loadServerConfig( ServerDirector.getServerID() );
 
           if( config == null ) {
                Debug.signal( Debug.FAILURE, this, "Can't init servers without a ServerConfig !" );

@@ -1018,7 +1018,7 @@ public class WorldGenerator {
              roomLink.setRoom1ID(0);
              roomLink.setRoom2ID(1);
              roomLink.setDoor( new Door( 592, 730, halfPI, DoorDrawable.VERTICAL_BOTTOM_PIVOT,
-                               new ImageIdentifier( "objects-2/doors-0/wood-40len-8th-2/vert-bottom-pivot-1.gif" ) ) );
+                               new ImageIdentifier( "objects-2/doors-0/stone-30len-5th-3/vert-bottom-pivot-1.gif" ) ) );
 
                mapExit = rooms[0].addMapExit( new ScreenRectangle(110,770,360,30) );
                mapExit.setType( MapExit.INTERIOR_MAP_EXIT );

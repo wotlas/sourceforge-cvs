@@ -108,8 +108,10 @@ public class JOptionsPanel extends JPanel implements MouseListener, ChangeListen
     innerPanel.add(new JLabel(" "));
     innerPanel.add(b_help);
     
-    JMemory memo = new JMemory();
-    memo.init();
+    if (DataManager.SHOW_DEBUG) {
+      JMemory memo = new JMemory();
+      memo.init();
+    }
         
     add(innerPanel);
   }

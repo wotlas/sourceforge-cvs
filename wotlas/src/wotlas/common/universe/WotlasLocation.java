@@ -248,10 +248,49 @@ public class WotlasLocation
 
  /*------------------------------------------------------------------------------------*/
 
+   /** Are this location equal to our ?
+    * @param other other location
+    * @return true if they are equal...
+    */
+    public boolean equals( WotlasLocation other ) {
+        if( isRoom() ) {
+           if( worldMapID == other.getWorldMapID() &&
+               townMapID == other.getTownMapID() &&
+               buildingID == other.getBuildingID() &&
+               interiorMapID == other.getInteriorMapID() &&
+               roomID == other.getRoomID() )
+             return true;
+           return false;
+        }
+        else if( isTown() ) {
+           if( other.isTown() && 
+               worldMapID == other.getWorldMapID() &&
+               townMapID == other.getTownMapID() )
+             return true;
+           return false;
+        }
+        else if( isWorld() ) {
+           if( other.isWorld() && 
+               worldMapID == other.getWorldMapID() )
+             return true;
+        }
+
+       return false; // we should never arrive here
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
   /** String Info.
    */
     public String toString(){      
-         return " " + worldMapID + " " + townMapID + " " + buildingID + " " + interiorMapID + " " + roomID;            
+       if( isRoom() )
+         return "Room: w" + worldMapID + ", t" + townMapID + ", b" + buildingID + ", i" + interiorMapID + ", r" + roomID;            
+       else if ( isTown() )
+         return "Town: w" + worldMapID + ", t" + townMapID;            
+       else if ( isWorld() )
+         return "World: w" + worldMapID;
+       else
+         return "Bad WotlasLocation: w"+worldMapID;
     }
 
  /*------------------------------------------------------------------------------------*/

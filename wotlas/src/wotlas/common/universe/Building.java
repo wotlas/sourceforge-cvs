@@ -187,7 +187,7 @@ public class Building extends ScreenRectangle
       return interiorMaps;
     }
 
-    public MapExit[] getBuidlingExits() {
+    public MapExit[] getBuildingExits() {
       return buildingExits;
     }
 

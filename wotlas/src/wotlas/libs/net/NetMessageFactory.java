@@ -137,7 +137,7 @@ public class NetMessageFactory {
                   Class cl = Class.forName( packageName + '.'
                                             + name.substring( 0, name.lastIndexOf(".class") ) );
 
-                  if(cl.isInterface())
+                  if(cl==null || cl.isInterface())
                      continue;
 
                   Object o = cl.newInstance();

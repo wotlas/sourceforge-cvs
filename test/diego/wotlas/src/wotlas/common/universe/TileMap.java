@@ -27,6 +27,7 @@ import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.schedule.*;
 import wotlas.common.environment.*;
+import wotlas.editor.*;
 
 import java.awt.Rectangle;
 import java.awt.Point;
@@ -492,5 +493,28 @@ public class TileMap extends PreloaderEnabled implements WotlasMap,BackupReady,S
         if( loadStatus == LOAD_CLIENT_DATA)
             return;
         objectOutput.writeObject( encounterSchedules ); 
+    }
+    
+    public StoreTileMapBackground getStoreBackground(){
+        return (new StoreTileMapBackground( manager.getMapBackGroundData()
+        , manager.getMapMask()
+        , manager.getMapExits()
+        , mapSize
+        , fileName
+        , areaName
+        , fullName        
+        , shortName
+        ));
+    }
+
+    public void setStoreBackground( StoreTileMapBackground data ){
+        manager.replaceMask(data.mask);
+        manager.replaceGraphics(data.graphic);
+        manager.replaceExits(data.exits);
+        this.mapSize = data.mapSize;
+        this.fileName = data.fileName;
+        this.areaName = data.areaName;
+        this.shortName = data.shortName;
+        this.fullName = data.fullName;
     }
 }

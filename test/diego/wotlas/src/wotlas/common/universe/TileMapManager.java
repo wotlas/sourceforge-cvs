@@ -99,4 +99,9 @@ public abstract class TileMapManager implements BackupReady {
    abstract public boolean[][] getMapMask();
    
    abstract public void freeMapBackGroundData();
+
+    /*  USED by Editor */
+   abstract public void replaceGraphics(byte[][][] graphic);
+   abstract public void replaceMask(boolean[][] mask);
+   abstract public void replaceExits(MapExit[] exits);
 }

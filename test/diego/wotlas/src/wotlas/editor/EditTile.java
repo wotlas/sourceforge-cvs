@@ -29,9 +29,6 @@ import wotlas.utils.FileTools;
 import wotlas.utils.Tools;
 
 import wotlas.common.*;
-
-import wotlas.client.*;
-
 import wotlas.common.universe.*;
 
 import java.io.File;
@@ -50,13 +47,17 @@ public class EditTile {
  /*------------------------------------------------------------------------------------*/
     
     transient static public TileMap workingOnThisTileMap;
+    transient static public boolean autoImport = false;
+    transient static public boolean autoExport = false;
 
     /** Server Command Line Help
    */
     public final static String EditTile_COMMAND_LINE_HELP =
-            "Usage: EditTile -[debug|help] -[base <path>]\n\n"
+            "Usage: EditTile -[debug|help] -[base <path>] -[export|import]\n\n"
            +"Examples : \n"
-           +"  EditTile -base ../base : sets the data location.\n\n"
+           +"  EditTile -base ../base : sets the data location.\n"
+           +"  EditTile -export  : backups all graphic part of the maps to backup directory.\n"
+           +"  EditTile -import  : recreate all maptils from backup directory.\n\n"
            +"If the -base option is not set we search for configs in "
            +ResourceManager.DEFAULT_BASE_PATH
            +"\n\n";
@@ -118,13 +119,19 @@ public class EditTile {
 
                 basePath = argv[i+1];
             }
+            else if(argv[i].equals("-export")) {   // -- TO auto export all
+                autoExport = true;
+            }
+            else if(argv[i].equals("-import")) {   // -- TO auto import all
+                autoImport = true;
+            }
             else if(argv[i].equals("-help")) {   // -- TO DISPLAY THE HELP --
 
                 System.out.println(EditTile_COMMAND_LINE_HELP);
                 return;
             }
        }
-
+        
     // STEP 1 - Creation of the ResourceManager
        resourceManager = new ResourceManager();
        
@@ -184,6 +191,25 @@ public class EditTile {
 
         heavyProcessThread.start();
         logStream.setVisible( false );
+        
+        if( autoExport ){
+            new File( getResourceManager().getEditorBackupDataDir() ).mkdirs();
+            StoreTileMapBackground onlyBackground;
+            TileMap[] mapTiles;
+            mapTiles = getDataManager().getWorldManager().getWorldMapFromID(0
+            ).getTileMaps();
+            for(int i=0; i < mapTiles.length; i++){
+                onlyBackground = mapTiles[i].getStoreBackground();
+                getResourceManager().BackupObject( (Object)onlyBackground
+                , getResourceManager().getEditorBackupDataDir()+File.separator
+                +mapTiles[i].getShortName()+EditorPlugIn.GRAPHIC_DATA_EXPORTED_EXT );
+            }
+            System.exit(0);
+        }
+
+        if( autoImport ){
+            System.exit(0);
+        }
    }
 
     public static ResourceManager getResourceManager() {
@@ -200,17 +226,10 @@ public class EditTile {
             return;
         if( tileMaps[index]==null ) 
             return;
-        String universeHome = EditTile.getResourceManager().getUniverseDataDir()+WorldManager.DEFAULT_UNIVERSE+"/";
-        String worldHome =  universeHome + EditTile.getDataManager().getWorldManager().getWorldMapFromID(0).getShortName() + "/";
-/*        
-        String areaOfTile =  worldHome + tileMaps[index].getAreaName() + WorldManager.AREA_EXT + "/";
-        new File(areaOfTile).mkdir();
-        if( !EditTile.getResourceManager().BackupObject( tileMaps[index], areaOfTile
-        + tileMaps[index].getShortName() + WorldManager.TILEMAP_EXT  ) )
-            Debug.signal(Debug.ERROR,null,"Failed to save tileMap : "+areaOfTile );
-*/
+        String universeHome = EditTile.getResourceManager().getUniverseDataDir()+WorldManager.DEFAULT_UNIVERSE+File.separator;
+        String worldHome =  universeHome + EditTile.getDataManager().getWorldManager().getWorldMapFromID(0).getShortName() +File.separator;
         if( tileMaps[index].getAreaName().length() <= 0 ){
-            String tileMapHome =  worldHome + tileMaps[index].getShortName() + WorldManager.TILEMAP_DIR_EXT +"/";
+            String tileMapHome =  worldHome + tileMaps[index].getShortName() + WorldManager.TILEMAP_DIR_EXT +File.separator;
             new File(tileMapHome).mkdir();
             if( !EditTile.getResourceManager().BackupObject( tileMaps[index], tileMapHome + WorldManager.TILEMAP_FILE ) ) {
                 Debug.signal(Debug.ERROR,null,"Failed to save tileMap : "+tileMapHome );
@@ -219,7 +238,7 @@ public class EditTile {
             }
         }
         else{
-            String areaOfTile =  worldHome + tileMaps[index].getAreaName() + WorldManager.AREA_EXT + "/";
+            String areaOfTile =  worldHome + tileMaps[index].getAreaName() + WorldManager.AREA_EXT +File.separator;
             new File(areaOfTile).mkdir();
             if( !EditTile.getResourceManager().BackupObject( tileMaps[index], areaOfTile
             + tileMaps[index].getShortName() + WorldManager.TILEMAP_EXT  ) ){

@@ -1,5 +1,5 @@
 /* Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
- * Copyright (C) 2001-2002 WOTLAS Team
+ * Copyright (C) 2001-2003 WOTLAS Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -50,7 +50,12 @@ import javax.swing.tree.TreeSelectionModel;
  */
 
 public class EditorPlugIn extends JPanelPlugIn {
- /*------------------------------------------------------------------------------------*/ 
+   
+     /** extension to store files of editor
+     */
+     public static final String GRAPHIC_DATA_EXPORTED_EXT = ".background";
+
+    /*------------------------------------------------------------------------------------*/ 
     transient static private String MAP_EXIT_START_MSG = "<html><b>Write a name in Name field then <p>"
     +"click the Add button to start adding a Map Exit.....</b></html>";
  
@@ -217,6 +222,17 @@ public class EditorPlugIn extends JPanelPlugIn {
         jPanel32 = new javax.swing.JPanel();
         jList2 = new javax.swing.JList();
         ImporExportPan = new javax.swing.JPanel();
+        jPanel29 = new javax.swing.JPanel();
+        jPanel24 = new javax.swing.JPanel();
+        jLabel27 = new javax.swing.JLabel();
+        jPanel25 = new javax.swing.JPanel();
+        ExportBackground = new javax.swing.JButton();
+        ImportBackground = new javax.swing.JButton();
+        jPanel26 = new javax.swing.JPanel();
+        jLabel28 = new javax.swing.JLabel();
+        jPanel27 = new javax.swing.JPanel();
+        ExportAll = new javax.swing.JButton();
+        ImportAll = new javax.swing.JButton();
 
         jLabel14.setText("jLabel14");
 
@@ -471,17 +487,14 @@ public class EditorPlugIn extends JPanelPlugIn {
         jSplitPane1.setMaximumSize(new java.awt.Dimension(100, 300));
         jSplitPane1.setMinimumSize(new java.awt.Dimension(100, 300));
         jSplitPane1.setPreferredSize(new java.awt.Dimension(100, 300));
+        OneGroupList.setMaximumSize(new java.awt.Dimension(300, 200));
+        OneGroupList.setMinimumSize(new java.awt.Dimension(300, 200));
         OneGroupList.setPreferredSize(new java.awt.Dimension(100, 200));
         OneGroupList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane2.setViewportView(OneGroupList);
 
         jSplitPane1.setLeftComponent(jScrollPane2);
 
-        HisTileList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { null };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
         HisTileList.setLayoutOrientation(javax.swing.JList.VERTICAL_WRAP);
         HisTileList.setMaximumSize(new java.awt.Dimension(300, 200));
         HisTileList.setMinimumSize(new java.awt.Dimension(100, 200));
@@ -726,11 +739,111 @@ public class EditorPlugIn extends JPanelPlugIn {
         MainTabb.addTab("Schedule", SchedulePan);
 
         ImporExportPan.setFocusCycleRoot(true);
+        jPanel29.setBorder(new javax.swing.border.TitledBorder("Background data"));
+        jPanel24.setLayout(new java.awt.BorderLayout());
+
+        jPanel24.setBorder(new javax.swing.border.EtchedBorder());
+        jLabel27.setForeground(new java.awt.Color(255, 0, 255));
+        jLabel27.setText("<html>\n<body>\n<p>\n<p>         Export/Import ONLY data\n<p>\n<p>               of this map<p>\n<p>\n<p>\n</body>\n</html>");
+        jLabel27.setToolTipText("null");
+        jPanel24.add(jLabel27, java.awt.BorderLayout.CENTER);
+
+        ExportBackground.setText("Export");
+        ExportBackground.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ExportBackgroundActionPerformed(evt);
+            }
+        });
+
+        jPanel25.add(ExportBackground);
+
+        ImportBackground.setText("Import");
+        ImportBackground.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ImportBackgroundActionPerformed(evt);
+            }
+        });
+
+        jPanel25.add(ImportBackground);
+
+        jPanel24.add(jPanel25, java.awt.BorderLayout.SOUTH);
+
+        jPanel29.add(jPanel24);
+
+        jPanel26.setLayout(new java.awt.BorderLayout());
+
+        jPanel26.setBorder(new javax.swing.border.EtchedBorder());
+        jLabel28.setForeground(new java.awt.Color(255, 0, 0));
+        jLabel28.setText("<html>\n<body>\n<p>\n<p>         Export ALL the MAPS \n<p>\n<p>               to backup directory <p>\n<p>\n<p>\n</body>\n</html>");
+        jPanel26.add(jLabel28, java.awt.BorderLayout.CENTER);
+
+        ExportAll.setText("Export All");
+        ExportAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ExportAllActionPerformed(evt);
+            }
+        });
+
+        jPanel27.add(ExportAll);
+
+        ImportAll.setText("Import All");
+        ImportAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ImportAllActionPerformed(evt);
+            }
+        });
+
+        jPanel27.add(ImportAll);
+
+        jPanel26.add(jPanel27, java.awt.BorderLayout.SOUTH);
+
+        jPanel29.add(jPanel26);
+
+        ImporExportPan.add(jPanel29);
+
         MainTabb.addTab("Import/Export", ImporExportPan);
 
         add(MainTabb, java.awt.BorderLayout.CENTER);
 
     }//GEN-END:initComponents
+
+    private void ImportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ImportAllActionPerformed
+        // Add your handling code here:
+    }//GEN-LAST:event_ImportAllActionPerformed
+
+    private void ExportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExportAllActionPerformed
+        new File( EditTile.getResourceManager().getEditorBackupDataDir() ).mkdirs();
+        StoreTileMapBackground onlyBackground;
+        TileMap[] mapTiles;
+        mapTiles = EditTile.getDataManager().getWorldManager(
+        ).getWorldMapFromID(0).getTileMaps();
+        for(int i=0; i < mapTiles.length; i++){
+            onlyBackground = mapTiles[i].getStoreBackground();
+            EditTile.getResourceManager().BackupObject( (Object)onlyBackground
+            , EditTile.getResourceManager().getEditorBackupDataDir()+File.separator
+            +mapTiles[i].getShortName()+GRAPHIC_DATA_EXPORTED_EXT );
+        }
+    }//GEN-LAST:event_ExportAllActionPerformed
+
+    private void ImportBackgroundActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ImportBackgroundActionPerformed
+        try {
+            StoreTileMapBackground onlyBackground;
+            onlyBackground = (StoreTileMapBackground) EditTile.getResourceManager(
+            ).RestoreObject(EditTile.workingOnThisTileMap.getFileName(
+            )+GRAPHIC_DATA_EXPORTED_EXT );
+            EditTile.workingOnThisTileMap.setStoreBackground( onlyBackground );
+        } catch (Exception e){
+            JOptionPane.showMessageDialog( EditTile.getDataManager().getScreen(), "Missing import file!" 
+            ,"Warning" , JOptionPane.WARNING_MESSAGE );
+            return;
+        }            
+    }//GEN-LAST:event_ImportBackgroundActionPerformed
+
+    private void ExportBackgroundActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExportBackgroundActionPerformed
+        StoreTileMapBackground onlyBackground;
+        onlyBackground = EditTile.workingOnThisTileMap.getStoreBackground();
+        EditTile.getResourceManager().BackupObject( (Object)onlyBackground, EditTile.workingOnThisTileMap.getFileName()+GRAPHIC_DATA_EXPORTED_EXT );
+    }//GEN-LAST:event_ExportBackgroundActionPerformed
 
     private void ResumeExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ResumeExitActionPerformed
         itSelf.HelpOnMapExit.setText("<html><b>Resume load selected exit in memory to choose<p>"
@@ -964,9 +1077,11 @@ public class EditorPlugIn extends JPanelPlugIn {
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel jPanel26;
     private javax.swing.JTabbedPane jTabbedPane4;
     private javax.swing.JList DataMapSize;
     private javax.swing.JTextField StartPointText;
+    private javax.swing.JPanel jPanel27;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel HelpOnMapExit;
     private javax.swing.JLabel jLabel9;
@@ -992,11 +1107,13 @@ public class EditorPlugIn extends JPanelPlugIn {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel25;
     private javax.swing.JSplitPane jSplitPane2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JTextField DestinationText;
     private javax.swing.JLabel jLabel24;
+    private javax.swing.JPanel jPanel24;
     private javax.swing.JTextField DataShortName;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JButton SaveExit;
@@ -1005,17 +1122,20 @@ public class EditorPlugIn extends JPanelPlugIn {
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel22;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JButton ExportBackground;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JPanel jPanel18;
     private javax.swing.JPanel jPanel17;
     private javax.swing.JPanel jPanel21;
     private javax.swing.JTextField DataID;
+    private javax.swing.JLabel jLabel28;
     private javax.swing.JTextField DataAreaName;
     private javax.swing.JButton CompleteExit;
     private javax.swing.JPanel jPanel20;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JPanel jPanel15;
+    private javax.swing.JLabel jLabel27;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JPanel jPanel23;
     private javax.swing.JLabel jLabel10;
@@ -1057,7 +1177,9 @@ public class EditorPlugIn extends JPanelPlugIn {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JPanel InfoOnBrushPan;
+    private javax.swing.JButton ImportBackground;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton ImportAll;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JButton buttonNew;
@@ -1074,7 +1196,9 @@ public class EditorPlugIn extends JPanelPlugIn {
     private javax.swing.JPanel jPanel36;
     public transient javax.swing.JTabbedPane MainTabb;
     private javax.swing.JButton buttonRefresh;
+    private javax.swing.JButton ExportAll;
     private javax.swing.JButton jButton4;
+    private javax.swing.JPanel jPanel29;
     private javax.swing.JTextField DataInsertionPoint;
     private javax.swing.JCheckBox TileNotFree;
     private javax.swing.JScrollPane jScrollPane3;

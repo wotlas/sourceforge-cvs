@@ -6,6 +6,9 @@
         <attr name="class_dependency_wotlas.common.Tickable" stringvalue="EditorDataManager"/>
         <attr name="class_dependency_wotlas.libs.graphics2D.menu.Menu2DListener" stringvalue="EditorDataManager"/>
     </fileobject>
+    <fileobject name="StoreTileMapBackground.java">
+        <attr name="class_dependency_wotlas.libs.persistence.BackupReady" stringvalue="StoreTileMapBackground"/>
+    </fileobject>
     <fileobject name="JMPanel.java">
         <attr name="class_dependency_java.awt.event.MouseMotionListener" stringvalue="JMPanel"/>
         <attr name="class_dependency_javax.swing.JPanel" stringvalue="JMPanel"/>
@@ -14,12 +17,12 @@
     <fileobject name="EditMenu.java">
         <attr name="class_dependency_wotlas.libs.graphics2D.menu.Menu2DManager" stringvalue="EditMenu"/>
     </fileobject>
+    <fileobject name="JScreen.java">
+        <attr name="class_dependency_javax.swing.JFrame" stringvalue="JScreen"/>
+    </fileobject>
     <fileobject name="EditorPlugIn.java">
         <attr name="class_dependency_javax.swing.ListCellRenderer" stringvalue="EditorPlugIn.RendIcon"/>
         <attr name="class_dependency_wotlas.client.screen.JPanelPlugIn" stringvalue="EditorPlugIn"/>
         <attr name="class_dependency_javax.swing.JLabel" stringvalue="EditorPlugIn.RendIcon"/>
-    </fileobject>
-    <fileobject name="JScreen.java">
-        <attr name="class_dependency_javax.swing.JFrame" stringvalue="JScreen"/>
     </fileobject>
 </attributes>

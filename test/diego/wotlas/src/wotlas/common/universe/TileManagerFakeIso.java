@@ -26,6 +26,7 @@ import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
 import wotlas.utils.*;
 import wotlas.common.environment.*;
+import wotlas.editor.*;
 
 import java.awt.*;
 import java.util.*;
@@ -406,5 +407,18 @@ public class TileManagerFakeIso extends TileMapManager{
     
     public void freeMapBackGroundData(){
         mapBackgroundData = null;
+    }
+    
+    /*  USED by Editor */
+    public void replaceGraphics(byte[][][] graphic){
+        mapBackgroundData = graphic;
+    }
+    
+    public void replaceMask(boolean[][] mask){
+        mapBackgroundDataMask = mask;
+    }
+    
+    public void replaceExits(MapExit[] exits){
+        mapExits = exits;
     }
 }

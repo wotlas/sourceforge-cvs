@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.common;
 
 import wotlas.utils.*;
@@ -28,6 +27,7 @@ import wotlas.libs.sound.MusicResourceLocator;
 import wotlas.libs.sound.SoundResourceLocator;
 import wotlas.libs.wizard.WizardResourceLocator;
 import wotlas.libs.aswing.ASwingResourceLocator;
+import wotlas.common.environment.*;
 
 import java.io.*;
 import java.awt.Image;
@@ -153,6 +153,26 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
    /** Universe Data Directory Name
     */
      public static final String UNIVERSE_DATA_DIR = "universe";
+
+   /** directory to store data divided by environment
+    */
+     public static final String ENVIRONMENTS_DIR = "environments";
+
+   /** directory to store data of Wheel of Time environment
+    */
+     public static final String WOT_ENVIRONMENT_DIR = "wot";
+
+   /** directory to store data of Rogue like environment
+    */
+     public static final String RLIKE_ENVIRONMENT_DIR = "roguelike";
+
+   /** directory to store the definitions file of Npc 
+    */
+     public static final String NPC_DEFINITION_DIR = "npcdef";
+
+   /** directory to store the definitions file of Npc 
+    */
+     public static final String EDITOR_BACKUP_DIR = "editorbackup";
 
    /** Wizard Steps Directory Name
     */
@@ -476,6 +496,42 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /**  To get the npc definition 
+    */
+     public String getNpcDataDir() {
+     	 if( inJar )
+     	     return getResourceDir( ENVIRONMENTS_DIR
+             +"/"+EnvironmentManager.getEnvDir()
+             +"/"+NPC_DEFINITION_DIR );
+     	 return getResourceDir( ENVIRONMENTS_DIR
+         +File.separator+EnvironmentManager.getEnvDir()
+         +File.separator+NPC_DEFINITION_DIR );
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /**  To get the editorbackup definition 
+    */
+     public String getEditorBackupDataDir() {
+     	 if( inClientJar )
+     	     return WOTLAS_JAR_ROOT_RESOURCE_DIR
+             +"/"+ENVIRONMENTS_DIR
+             +"/"+EnvironmentManager.getEnvDir()
+             +"/"+this.EDITOR_BACKUP_DIR;
+         else if( inServerJar )
+     	     return wotlasJarExternalDir
+             +"/"+ENVIRONMENTS_DIR
+             +"/"+EnvironmentManager.getEnvDir()
+             +"/"+this.EDITOR_BACKUP_DIR;
+
+         return basePath
+         +File.separator+ENVIRONMENTS_DIR
+         +File.separator+EnvironmentManager.getEnvDir()
+         +File.separator+EDITOR_BACKUP_DIR;         
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
    /**  To get the Home Directory (where players are stored)
     */
      public String getExternalPlayersHomeDir() {
@@ -513,11 +569,28 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
     */
      public String getUniverseDataDir() {
      	 if( inClientJar )
+     	     return WOTLAS_JAR_ROOT_RESOURCE_DIR
+             +"/"+ ENVIRONMENTS_DIR 
+             +"/"+ EnvironmentManager.getEnvDir()
+             +"/"+UNIVERSE_DATA_DIR+"/";
+         else if( inServerJar )
+     	     return wotlasJarExternalDir
+             +"/"+ ENVIRONMENTS_DIR 
+             +"/"+EnvironmentManager.getEnvDir()
+             +"/"+UNIVERSE_DATA_DIR+"/";
+
+         return basePath
+         +File.separator+ENVIRONMENTS_DIR
+         +File.separator+EnvironmentManager.getEnvDir()
+         +File.separator+UNIVERSE_DATA_DIR+File.separator;
+/*
+         if( inClientJar )
      	     return WOTLAS_JAR_ROOT_RESOURCE_DIR+"/"+UNIVERSE_DATA_DIR+"/";
          else if( inServerJar )
      	     return wotlasJarExternalDir+"/"+UNIVERSE_DATA_DIR+"/";
 
          return basePath+File.separator+UNIVERSE_DATA_DIR+File.separator;
+ */
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

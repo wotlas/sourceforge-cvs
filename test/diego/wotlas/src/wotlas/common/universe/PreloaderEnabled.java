@@ -141,6 +141,10 @@ public abstract class PreloaderEnabled extends ScreenRectangle implements Backup
         lastUse = -1;
     }
 
+    public String getFileName(){
+        return fileName;
+    }
+    
     static public void SetClassPreloader(byte value) {
         setClassPreloader = value;
     }

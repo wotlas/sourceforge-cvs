@@ -21,6 +21,7 @@ package wotlas.common.environment;
 import wotlas.utils.Debug;
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.persistence.*;
+import wotlas.common.ResourceManager;
 
 import java.util.*;
 
@@ -37,7 +38,7 @@ public class EnvironmentManager implements SendObjectReady {
     */
     public static boolean SHOW_DEBUG = true;
 
-    static private EnvironmentManager serverEnvironment = WotEnvironment();
+    static private EnvironmentManager serverEnvironment = RLikeEnvironment();
     
     public static final byte ENVIRONMENT_WOT        = 0;
     public static final byte ENVIRONMENT_ROGUE_LIKE = 1;
@@ -254,5 +255,15 @@ public class EnvironmentManager implements SendObjectReady {
         else 
             Debug.signal( Debug.ERROR, null, "Error initializing graphics : request of non existing graphics set." );
         graphicSetsInit[choosed] = true;
+    }
+    
+    static public String getEnvDir(){
+        if( serverEnvironment.environmentType == ENVIRONMENT_WOT )
+            return ResourceManager.WOT_ENVIRONMENT_DIR;
+        
+        else if( serverEnvironment.environmentType == ENVIRONMENT_ROGUE_LIKE )
+            return ResourceManager.RLIKE_ENVIRONMENT_DIR;
+        
+        return ResourceManager.WOT_ENVIRONMENT_DIR;
     }
 }

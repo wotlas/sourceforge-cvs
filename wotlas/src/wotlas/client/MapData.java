@@ -84,14 +84,6 @@ public interface MapData
   public void tick();
 
  /*------------------------------------------------------------------------------------*/
-  
-  /** To get players around
-   *
-   * @param myPlayer the master player
-   */
-  //public Hashtable getPlayers(PlayerImpl myPlayer);
- 
- /*------------------------------------------------------------------------------------*/
  
 }
   

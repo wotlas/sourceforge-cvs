@@ -68,7 +68,10 @@ public class DataManager
               while( it.hasNext() )
                    worldManager.addNewPlayer( ( (GameAccount) it.next() ).getPlayer() );
 
-       // 4 - We initialize the player objects that we just placed in the world.
+       // 4 - We save our instance
+          dataManager = this;
+
+       // 5 - We initialize the player objects that we just placed in the world.
               it = accountManager.getIterator();
 
               while( it.hasNext() )
@@ -83,7 +86,7 @@ public class DataManager
    */
    public static DataManager createDataManager() {
      if( dataManager==null )
-            dataManager = new DataManager();
+         new DataManager();
 
      return dataManager;
    }

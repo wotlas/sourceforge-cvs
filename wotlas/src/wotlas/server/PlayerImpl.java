@@ -191,6 +191,8 @@ System.out.println("POSITION set to x:"+getX()+" y:"+getY()+" location is "+loca
     */
       public void init() {
          movementComposer.init( this );
+         setLocation( location );
+System.out.println("Player Init Done: "+location+" myRoom:"+myRoom);
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -212,7 +214,7 @@ System.out.println("POSITION set to x:"+getX()+" y:"+getY()+" location is "+loca
       public void setLocation( WotlasLocation myLocation ){
              location = myLocation;
 
-             if( location.isRoom() )
+             if( location.isRoom() && DataManager.getDefaultDataManager()!=null )
                  myRoom = DataManager.getDefaultDataManager().getWorldManager().getRoom( location );
               else
                  myRoom = null;
@@ -396,6 +398,10 @@ System.out.println("SENDING MESSAGE "+message);
 
               // We send an update to players near us...
                  MovementUpdateMessage uMsg = movementComposer.getUpdate();
+
+                 if(myRoom==null) {
+                    Debug.signal( Debug.ERROR, this, "Player "+primaryKey+" has an incoherent location state");
+                 }
 
                  Hashtable players = myRoom.getPlayers();
 

@@ -135,7 +135,7 @@ public class InteriorMapData implements MapData
       System.out.println("dataManager.sendMessage( new EnteringRoomMessage(...) )");
 
     if (SHOW_DEBUG)
-      System.out.println("Adding a new player : " + myPlayer + "to room : " + room);
+      System.out.println("Adding a new player : " + myPlayer + "to dataManager");
     dataManager.addPlayer(myPlayer);
 
     // 2 - We set player's position if his position is incorrect
@@ -230,15 +230,20 @@ public class InteriorMapData implements MapData
     }
 
     //   - We add visual properties to the player (shadows...)
+System.out.println("Player init visual properties");
     myPlayer.initVisualProperties(gDirector);
 
     //   - We play music
     String midiFile = imap.getMusicName();
     if (midiFile != null)
       SoundLibrary.getSoundLibrary().playMusic( midiFile );
+System.out.println("Sending final AllDataLeftMessage");
       
     //   - We retreive other players informations
-    dataManager.sendMessage(new AllDataLeftPleaseMessage());
+    if( dataManager.isAlive() ) {
+    	System.out.println("DATAMANAGER ALLIVE !!!");
+        dataManager.sendMessage(new AllDataLeftPleaseMessage());
+    }
   }
 
  /*------------------------------------------------------------------------------------*/

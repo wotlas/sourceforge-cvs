@@ -227,7 +227,7 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
 
          ScreenPoint pReset = null;
 
-         if( player.getLocation().isRoom() )
+         if( player.getLocation().isRoom() && player.getMyRoom()!=null )
              pReset = player.getMyRoom().getInsertionPoint();
          else
              pReset = new ScreenPoint(-1, -1);

@@ -70,7 +70,10 @@ System.out.println("ROOM PLAYER DATA MESSAGE "+location);
           if( myPlayer.getLocation().isRoom() )
           {
               Room myRoom = myPlayer.getMyRoom();       
-              if( myRoom==null ) return;
+              if( myRoom==null ) {
+System.out.println("ROOM IS NULLLLLLLLLLLLLLLLL !!!!!");
+              	return;
+              }
 
            // is this Room on the same map as ours ?
               WotlasLocation myLocation = myPlayer.getLocation();
@@ -87,12 +90,16 @@ System.out.println("ROOM PLAYER DATA MESSAGE "+location);
            // Search in Current Room
               if( myRoom.getRoomID() == location.getRoomID() ) {
                   merge( dataManager );
+System.out.println("END OF ROOM MESSAGE");
                   return;  // success
               }
 
            // Search in other rooms
-              if(myRoom.getRoomLinks()==null) return; // not found
-              
+              if(myRoom.getRoomLinks()==null) {
+System.out.println("END OF ROOM MESSAGE");
+              	  return; // not found
+              }
+
               for( int i=0; i<myRoom.getRoomLinks().length; i++ ) {
                    Room otherRoom = myRoom.getRoomLinks()[i].getRoom1();
                    
@@ -101,12 +108,17 @@ System.out.println("ROOM PLAYER DATA MESSAGE "+location);
 
                    if( otherRoom.getRoomID() == location.getRoomID() ) {
                        merge( dataManager );
+System.out.println("END OF ROOM MESSAGE");
                        return;  // success
                    }
               }
 
+System.out.println("END OF ROOM MESSAGE");
+
              return; // the room was not found near us...
           }
+
+System.out.println("END OF ROOM MESSAGE");
 
      }
 

@@ -495,24 +495,43 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     previewPanel = new JPreviewPanel();
     playerPanel = new JPlayerPanel();
     logPanel = new JLogPanel();
+System.out.println("Displaying window");
+    // 8 - Create main Frame
+    mFrame = new JClientScreen(infosPanel, mapPanel, chatPanel, previewPanel, playerPanel, logPanel);
+System.out.println("JCLient created");
+    mFrame.init();
+System.out.println("End of init");    
 
+System.out.println("Changing map data");
     // 6 - Init map display
     changeMapData();
 
-    // 8 - Create main Frame
-    mFrame = new JClientScreen(infosPanel, mapPanel, chatPanel, previewPanel, playerPanel, logPanel);
-    mFrame.init();
+/*Object obj = new Object();
+synchronized( obj ) {
+try{
+System.out.println("Waiaintg 4s");
+  obj.wait(2000);
+System.out.println("done, tick");
+}
+catch(Exception e) {e.printStackTrace();}
+}*/
 
     // 7 - Start main loop tick
     Debug.signal( Debug.NOTICE, null, "Beginning to tick Graphics Director" );
     this.start();
+System.out.println("tick thread started");
 
     mFrame.show();
+System.out.println("Frame show");
 
     // 9 - Retreive other players informations    
     //personality.queueMessage(new AllDataLeftPleaseMessage());    
-    
       addPlayer(myPlayer);
+
+    // 10 - We can now ask for eventual remaining data
+    // This step should have been done in the current MapData.init() but it was not
+    // the cas because our DataManager thread was not started...
+       sendMessage(new AllDataLeftPleaseMessage());
   }
 
  /*------------------------------------------------------------------------------------*/

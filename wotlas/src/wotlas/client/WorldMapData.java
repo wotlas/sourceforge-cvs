@@ -194,7 +194,8 @@ public class WorldMapData implements MapData
       SoundLibrary.getSoundLibrary().playMusic( midiFile );
       
     //   - We retreive other players informations
-    dataManager.sendMessage(new AllDataLeftPleaseMessage());
+    if( dataManager.isAlive() )
+        dataManager.sendMessage(new AllDataLeftPleaseMessage());
   }
 
  /*------------------------------------------------------------------------------------*/

@@ -148,20 +148,21 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
  /** When this method is called, the player can initialize its own fields safely : all
   *  the game data has been loaded.
   */
-  public void init(GraphicsDirector gDirector) {
-    // Only one character for now !
-    //wotCharacter = new AesSedai();
+  public void init() {    
     System.out.println("PlayerImpl::init");
     System.out.println("\twotCharacter = " + wotCharacter );
-
     animation = new Animation(wotCharacter.getImage());
-    sprite = (Sprite) wotCharacter.getDrawable(this);
-    //shadow = new ShadowSprite(this, new ImageIdentifier((short)0, (short) 3, (short) 0), ImageLibRef.SHADOW_PRIORITY, 3, 3);        
-    //gDirector.addDrawable(shadow);
-    gDirector.addDrawable(wotCharacter.getShadow());
+    sprite = (Sprite) wotCharacter.getDrawable(this);        
     endPosition = new Point();
     trajectory = new List();
 
+}
+
+  /** Called after graphicsDirector's init
+   * to add some visual effects to the player
+   */
+  public void initVisualProperties(GraphicsDirector gDirector) {
+    gDirector.addDrawable(wotCharacter.getShadow());
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -401,7 +402,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
       //y = position.y; 
       animation.tick();
       //shadow.tick();
-      sprite.tick();
+      sprite.tick();      
       indexTrajectory++;
     }
     /*if (indexTrajectory == trajectory.size()) {

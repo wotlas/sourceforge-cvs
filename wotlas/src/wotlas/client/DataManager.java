@@ -366,7 +366,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     System.out.println("\tlocation.buildingID = " + location.getWorldMapID());
 
     // 3 - Create the drawable reference
-    myPlayer.init(gDirector);
+    myPlayer.init();
     System.out.println("\tmyPlayer = " + myPlayer);
     System.out.println("\tmyPlayer.fullPlayerName = "  + myPlayer.getFullPlayerName());
     System.out.println("\tmyPlayer.PlayerName = "      + myPlayer.getPlayerName());
@@ -464,6 +464,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
                     new Dimension( JClientScreen.leftWidth, JClientScreen.mapHeight )   // screen default dimension
                    );
 
+    // Add visual properties to the player
+    myPlayer.initVisualProperties(gDirector);
+    
     // 6 - Create the panels
     JInfosPanel infosPanel = new JInfosPanel(myPlayer);
     JMapPanel mapPanel = new JMapPanel(gDirector, this);
@@ -495,18 +498,29 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
   public void run() {
     long now;
-    int deltaT;
-
+    int deltaT;  
+    int delay;
+ 
+    String os   = System.getProperty( "os.name" );
+    String arch = System.getProperty( "os.arch" );
+    String vers = System.getProperty( "os.version" );    
+    Debug.signal( Debug.NOTICE, this, "OS INFO :\n\nOS NAME : <"+os+">\nOS ARCH: <"+arch+">\nOS VERSION: <"+vers+">\n" );
+    
+    delay = 10;
+    if ( os.equals("Windows 2000") ) {
+      delay = 15;
+    }
+    
     Object lock = new Object();
     while( true ) {
       now = System.currentTimeMillis();
       tick();
 
       deltaT = (int) (System.currentTimeMillis()-now);
-      if (deltaT<100) {
-        Tools.waitTime(100-deltaT);
+      if (deltaT<delay) {
+        Tools.waitTime(delay-deltaT);
       } else {
-        Tools.waitTime(100);
+        Tools.waitTime(delay);
       }
     }
   }
@@ -593,7 +607,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     System.out.println("playerImpl creation : ");
 
     newPlayer = new PlayerImpl();
-    newPlayer.init(gDirector);
+    newPlayer.init();
     newPlayer.setX(e.getX() + (int)screen.getX());
     newPlayer.setY(e.getY() + (int)screen.getY());
     gDirector.addDrawable(newPlayer.getDrawable());

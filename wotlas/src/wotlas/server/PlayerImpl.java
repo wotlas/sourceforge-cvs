@@ -25,6 +25,8 @@ import wotlas.libs.net.NetConnectionListener;
 import wotlas.libs.net.NetPersonality;
 import wotlas.libs.net.NetMessage;
 
+import wotlas.common.universe.*;
+import wotlas.utils.Debug;
 
 /** Class of a Wotlas Player. It is the class that, in certain way, a client gets connected to.
  *  All the client messages have a server PlayerImpl context.
@@ -38,21 +40,27 @@ public class PlayerImpl implements Player, NetConnectionListener
 {
  /*------------------------------------------------------------------------------------*/
 
-   /** No real fields for now. This field "test" is just what's its name suggests...
+   /** Player's primary key (usually the client account name)
     */
-       String test = new String("it's working."); // TO REMOVE
+       private String primaryKey;
 
-       public String getTest(){
-          return test;
-       }
+   /** Player location
+    */
+       private WotlasLocation location;
 
-       public void setTest(String test){
-          this.test = test;
-       }
+   /** Player name
+    */
+       private String playerName;
+
+   /** Player full name
+    */
+       private String fullPlayerName;
+
+ /*------------------------------------------------------------------------------------*/
 
    /** Personality Lock
     */
-       private byte personalityLock[] = new byte[1];
+       transient private byte personalityLock[] = new byte[1];
 
  /*------------------------------------------------------------------------------------*/
 
@@ -62,11 +70,29 @@ public class PlayerImpl implements Player, NetConnectionListener
 
  /*------------------------------------------------------------------------------------*/
 
-   /** Constructor.
+   /** Constructor for persistence.
     */
       public PlayerImpl() {
-      
-          // player initial location : World
+      }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To initialize the player location to the first existent worlds found.
+    *  WARNING : the player is NOT moved in the world... that means this method
+    *  is for player creation ONLY.
+    */
+      public void setPlayerLocationToWorld() {
+          // 1 - player initial location : a World...
+             WorldManager worldManager = DataManager.getDefaultDataManager().getWorldManager();
+
+             int worldID = worldManager.getAValidWorldID();
+             
+             if( worldID<0 )
+                 Debug.signal( Debug.WARNING, this, "No world data given to initialize player." );
+
+             location = new WotlasLocation();
+             location.setWorldMapID( worldID );
+             location.setTownMapID( -1 );
       }
 
  /*------------------------------------------------------------------------------------*/
@@ -75,7 +101,87 @@ public class PlayerImpl implements Player, NetConnectionListener
     *  the game data has been loaded.
     */
       public void init() {
-         // ah, I get it , it's a joke... nothing to do here for now...
+         // nothing to do here for now...
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the player location.
+    *
+    *  @return player WotlasLocation
+    */
+      public WotlasLocation getLocation(){
+          return location;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the player location.
+    *
+    *  @param new player WotlasLocation
+    */
+      public void setLocation( WotlasLocation myLocation ){
+             location = myLocation;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the player name ( short name )
+    *
+    *  @return player name
+    */
+      public String getPlayerName() {
+         return playerName;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the player's full name.
+    *
+    *  @return player full name ( should contain the player name )
+    */
+      public String getFullPlayerName() {
+         return fullPlayerName;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the player primary Key ( account name )
+    *
+    *  @return player primary key
+    */
+      public String getPrimaryKey() {
+         return primaryKey;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the player's name ( short name )
+    *
+    *  @param player name
+    */
+      public void setPlayerName( String playerName ) {
+           this.playerName = playerName;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the player's primary key.
+    *
+    *  @param primary key
+    */
+      public void setPrimaryKey( String primaryKey ) {
+           this.primaryKey = primaryKey;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the player's full name.
+    *
+    *  @param player full name ( should contain the player name )
+    */
+      public void setFullPlayerName( String fullPlayerName ) {
+          this.fullPlayerName = fullPlayerName;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -254,6 +254,12 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     return infosPanel;
   }
 
+  /** To get JClientScreen.
+   */
+  public JClientScreen getClientScreen() {
+    return mFrame;
+  }
+
   /** To get JMapPanel.
    */
   public JMapPanel getMapPanel() {

@@ -616,6 +616,13 @@ public class ClientManager
       b_cancel.setContentAreaFilled(false);
       b_cancel.setFocusPainted(false);
 
+      b_help = new JButton(im_helpup);
+      b_help.setRolloverIcon(im_helpdo);
+      b_help.setPressedIcon(im_helpdo);
+      b_help.setBorderPainted(false);
+      b_help.setContentAreaFilled(false);
+      b_help.setFocusPainted(false);
+
       // *** Left JPanel ***
 
       imgLabel1 = new JLabel(new ImageIcon("../base/gui/complete-info.gif"));
@@ -720,7 +727,7 @@ public class ClientManager
           char charPasswd1[] = pfield1.getPassword();          
           char charPasswd2[] = pfield2.getPassword();          
           if ( (charPasswd1.length < 4) || (charPasswd2.length < 4) ) {
-            JOptionPane.showMessageDialog( screenIntro, "Password mut have at least 5 characters !", "New Password", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog( screenIntro, "Password must have at least 5 characters !", "New Password", JOptionPane.ERROR_MESSAGE);
             return;
           } else {
             //b_ok.setEnabled(false);
@@ -776,6 +783,14 @@ public class ClientManager
         }
       );
       rightPanel.add(b_cancel);
+
+      b_help.addActionListener(new ActionListener() {
+          public void actionPerformed (ActionEvent e) {
+             new JHTMLWindow( screenIntro, "Help", "../docs/help/new-account.html", 330, 450, false );
+          }
+        }
+      );
+      rightPanel.add(b_help);
 
       if (profileConfigList.size() == 0) {
         b_cancel.setEnabled(false);

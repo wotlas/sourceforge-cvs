@@ -246,14 +246,16 @@ public class MultiLineText extends Drawable {
               recalculate = false;
         } else {
            // Display background rectangle
-               gc.setColor( Color.white );
                gc.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f ) );
+               gc.setColor( Color.white );
 
                if (isLeftAligned) {
                  gc.fillRect(xs-6,ys-3,r.width,r.height);
+                 gc.setColor( Color.black );
                  gc.draw3DRect(xs-6,ys-3,r.width,r.height,false);
                } else {
                  gc.fillRect(xs-widthText-6,ys-3,r.width,r.height);
+                 gc.setColor( Color.black );
                  gc.draw3DRect(xs-widthText-6,ys-3,r.width,r.height,false);
                }
 

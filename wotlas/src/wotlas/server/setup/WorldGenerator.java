@@ -297,7 +297,7 @@ public class WorldGenerator {
 
              rooms[4].addRoomLink( rooms[3].getRoomLink(0) );
 
-               mapExit = rooms[4].addMapExit( new ScreenRectangle(1020,0,30,460) );
+               mapExit = rooms[4].addMapExit( new ScreenRectangle(1000,0,50,460) );
                mapExit.setType( MapExit.BUILDING_EXIT );
                mapExit.setMapExitSide( MapExit.NORTH );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
@@ -372,13 +372,13 @@ public class WorldGenerator {
 
              rooms[10].addRoomLink( rooms[3].getRoomLink(1) );
 
-               mapExit = rooms[10].addMapExit( new ScreenRectangle(1020,840,30,360) );
+               mapExit = rooms[10].addMapExit( new ScreenRectangle(1000,840,50,360) );
                mapExit.setType( MapExit.BUILDING_EXIT );
                mapExit.setMapExitSide( MapExit.SOUTH );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
                mapExit.setTargetPosition( new ScreenPoint(223,510) );
 
-               mapExit = rooms[10].addMapExit( new ScreenRectangle(790,1180,230,20) );
+               mapExit = rooms[10].addMapExit( new ScreenRectangle(790,1150,230,50) );
                mapExit.setType( MapExit.BUILDING_EXIT );
                mapExit.setMapExitSide( MapExit.NONE );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
@@ -498,7 +498,7 @@ public class WorldGenerator {
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
                mapExit.setTargetPosition( new ScreenPoint(60,250) );
 
-               mapExit = rooms[0].addMapExit( new ScreenRectangle(20,330,400,20) );
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(20,310,400,40) );
                mapExit.setType( MapExit.BUILDING_EXIT );
                mapExit.setMapExitSide( MapExit.SOUTH );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
@@ -510,7 +510,7 @@ public class WorldGenerator {
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
                mapExit.setTargetPosition( new ScreenPoint(65,225) );
 
-               mapExit = rooms[0].addMapExit( new ScreenRectangle(530,20,20,240) );
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(510,20,40,240) );
                mapExit.setType( MapExit.BUILDING_EXIT );
                mapExit.setMapExitSide( MapExit.EAST );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );

@@ -249,25 +249,35 @@ public class TownMapData implements MapData
       
       
 
-      if (SHOW_DEBUG) {
+      if (true) {
         System.out.println("Which MapExit are we using ?");
         System.out.println("\t\tmapExit.getType() = " + (int) mapExit.getType());
-        System.out.print("\t\tmapExit.getMapExitSide() = ");
+        System.out.print("\t\tmapExit.getMapExitSide() = ");        
         switch( mapExit.getMapExitSide() ) {
           case MapExit.NONE:
             System.out.println("NONE");
+            myPlayer.setX( mapExit.getX() + mapExit.getWidth()/2 );
+            myPlayer.setY( mapExit.getY() + mapExit.getHeight()/2 );
             break;
           case MapExit.NORTH:
             System.out.println("NORTH");
+            myPlayer.setX( mapExit.getX() + mapExit.getWidth()/2 );
+            myPlayer.setY( mapExit.getY() + mapExit.getHeight()/2 );
             break;
           case MapExit.SOUTH:
             System.out.println("SOUTH");
+            myPlayer.setX( mapExit.getX() + mapExit.getWidth()/2 );
+            myPlayer.setY( mapExit.getY() + mapExit.getHeight()/2 - 10); // top left corner coordinate
             break;
           case MapExit.EAST:
             System.out.println("EAST");
+            myPlayer.setX( mapExit.getX() + mapExit.getWidth()/2 - 10 ); // top left corner coordinate
+            myPlayer.setY( mapExit.getY() + mapExit.getHeight()/2 );
             break;
           case MapExit.WEST:
             System.out.println("WEST");
+            myPlayer.setX( mapExit.getX() + mapExit.getWidth()/2 );
+            myPlayer.setY( mapExit.getY() + mapExit.getHeight()/2 );
             break;
           }        
         System.out.println("\t\tmapExit.getTargetWotlasLocation() = " + mapExit.getTargetWotlasLocation());
@@ -277,8 +287,7 @@ public class TownMapData implements MapData
       myPlayer.setLocation(mapExit.getMapExitLocation());
       dataManager.cleanInteriorMapData();
 
-      myPlayer.setX( mapExit.getX() + mapExit.getWidth()/2 );
-      myPlayer.setY( mapExit.getY() + mapExit.getHeight()/2 );
+      
       myPlayer.setPosition( new ScreenPoint(myPlayer.getX(), myPlayer.getY()) );
 
       //initInteriorMapDisplay(myPlayer.getLocation()); // init new map

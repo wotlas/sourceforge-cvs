@@ -64,6 +64,20 @@ public class TormPersonality extends NetPersonality
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** Constructor with an already opened socket and a local ID to identify
+   *  a set of threads ( see NetServer ).
+   *
+   * @param socket an already opened socket
+   * @param context object to give to messages when they arrive.
+   * @param localID an ID that identifies a set of threads.
+   * @exception IOException if the socket wasn't already connected.
+   */
+     public TormPersonality( Socket socket, Object context, byte localID ) throws IOException {
+           super( socket, context, localID );
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** In this method we create our own NetSender and NetReceiver :
    *  a AGGREGATE_MESSAGES NetSender and asynchronous NetReceiver.
    *

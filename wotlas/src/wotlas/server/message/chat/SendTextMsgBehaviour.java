@@ -28,6 +28,7 @@ import wotlas.common.chat.*;
 
 import wotlas.common.Player;
 import wotlas.common.universe.*;
+import wotlas.common.character.*;
 
 import wotlas.common.message.account.*;
 
@@ -72,7 +73,14 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
     // 0.1 - test shortcut/commands...
        if(message.charAt(0)=='/') {
 
-          if (message.startsWith("/msg:")) {
+          if(message.equals("/blackajah") && voiceSoundLevel==ChatRoom.SHOUTING_VOICE_LEVEL) {
+
+              WotCharacter wotC = player.getWotCharacter();
+       
+              if( wotC instanceof AesSedai )
+                  ((AesSedai) wotC).toggleBlackAjah();
+          }
+          else if (message.startsWith("/msg:")) {
               message = message.substring(5);
               int index = message.indexOf(':');
 
@@ -144,6 +152,8 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
              
     // 1 - We send the message back to the user.
        if( chatRoomPrimaryKey.equals(player.getCurrentChatPrimaryKey()) ) {
+           if(voiceSoundLevel==ChatRoom.SHOUTING_VOICE_LEVEL)
+              message = message.toUpperCase();
            player.sendMessage(this);
        }
        else if(voiceSoundLevel!=ChatRoom.SHOUTING_VOICE_LEVEL) {

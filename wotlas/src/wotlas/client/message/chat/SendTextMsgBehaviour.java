@@ -24,6 +24,7 @@ import java.util.*;
 
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.common.message.chat.*;
+import wotlas.common.character.*;
 
 import wotlas.client.*;
 import wotlas.client.screen.*;
@@ -84,7 +85,23 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
           if( sender==null )
               Debug.signal( Debug.WARNING, this, "Couldnot find the sender of this message : "+senderPrimaryKey);
 
-          if (message.startsWith("/me")) {
+
+       // Is there a modifier in this message ?
+          if(message.equals("/BLACKAJAH") && voiceSoundLevel==ChatRoom.SHOUTING_VOICE_LEVEL) {
+             WotCharacter wotC = sender.getWotCharacter();
+       
+             if( wotC instanceof AesSedai ) {
+                 if( ((AesSedai) wotC).toggleBlackAjah() )
+                     dataManager.getChatPanel().getCurrentJChatRoom().appendText("<font color='black'><b>[DARK ONE]<i> NOW YOU ARE MINE "
+                         +sender.getPlayerName().toUpperCase()+" !</i></b></font>");
+                 else
+                     dataManager.getChatPanel().getCurrentJChatRoom().appendText("<font color='black'><b>[DARK ONE]<i> YOU CAN'T HIDE FROM ME. YOUR SOUL IS MINE "
+                         +sender.getPlayerName().toUpperCase()+".</i></b></font>");
+             }
+
+             return;
+          }
+          else if (message.startsWith("/me")) {
             message = "<font color='blue'><i>" + senderFullName + " " + message.substring(3) + "</i></font>";
           } else {
             // We add sender name

@@ -117,7 +117,7 @@ public class Chest extends ContainerObject implements LockableInterface
   /** Get the associated Key
    * @return key the key for this chest 
    */
-    public void getKey()
+    public Key getKey()
 	{
 	 return key;
 	}

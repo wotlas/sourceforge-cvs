@@ -26,10 +26,10 @@ import java.io.*;
 import java.util.*;
 import java.awt.font.*;
 
-/** A Drawable to display text at the top of another Drawable. To display text at an 
+/** A Drawable to display text at the top of another Drawable. To display text at an
  *  absolute position on screen use the MutiLineText drawable.
  *
- * @author MasterBob, Aldiss
+ * @author MasterBob, Aldiss, Petrus
  */
 
 public class TextDrawable extends Drawable {
@@ -61,6 +61,18 @@ public class TextDrawable extends Drawable {
     *  If -1 we have infinite life. The TextDrawable must be removed manually.
     */
      private long timeLimit;
+
+   /** True if we must calculate text width and height
+    */
+     private boolean recalculate;
+
+   /** Text width / 2
+    */
+     int demiWidthText=0;
+
+   /** Text height
+    */
+     int heightText=0;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -115,7 +127,8 @@ public class TextDrawable extends Drawable {
     short priority, int lifeTime ) {
     	super();
         this.text = text;
-	setReferenceDrawable(refDrawable);
+        recalculate = true;
+	      setReferenceDrawable(refDrawable);
         setFont(fontName);
         setSize(size);
         setColor(color);
@@ -142,6 +155,7 @@ public class TextDrawable extends Drawable {
   */
   public void setText(String text){
    this.text = text;
+   recalculate = true;
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -174,7 +188,7 @@ public class TextDrawable extends Drawable {
   public void setFont(String fontName){
    try {
       String fontPath = ImageLibrary.getDefaultImageLibrary().getDataBasePath()+File.separator+"fonts";
-   
+
       FileInputStream fis = new FileInputStream(fontPath+File.separator+fontName);
       font = Font.createFont(Font.TRUETYPE_FONT, fis);
       //System.out.println("Font=" + font);
@@ -207,16 +221,6 @@ public class TextDrawable extends Drawable {
    */
     public void paint( Graphics2D gc, Rectangle screen ) {
 
-        if(refDrawable != null)
-         {
-          Rectangle rect = refDrawable.getRectangle();
-          r.x = rect.x;
-          r.y = rect.y;
-          r.width = rect.width;
-          r.height = rect.height;
-         }
-
-
         if( !r.intersects(screen) )
             return;
 
@@ -230,16 +234,20 @@ public class TextDrawable extends Drawable {
 
         if(text!=null)
          {
-          FontRenderContext frc = gc.getFontRenderContext();
-          TextLayout t = new TextLayout(text,gc.getFont(),frc);
+          if (recalculate) {
+            FontRenderContext frc = gc.getFontRenderContext();
+            TextLayout t = new TextLayout(text,gc.getFont(),frc);
+            r.width = refDrawable.getWidth();
+            r.height = refDrawable.getHeight();
+            demiWidthText   = (int) t.getBounds().getWidth()/2;
+            heightText  = (int) t.getBounds().getHeight();
+            recalculate = false;
+          }
 
-          int widthText = (int) t.getBounds().getWidth();
-          int heightText  = (int) t.getBounds().getHeight();
-
-          gc.drawString(text, r.x-screen.x+(r.width/2)-widthText/2, r.y-screen.y);
+          gc.drawString(text, r.x-screen.x+(r.width/2)-demiWidthText, r.y-screen.y-2);
 
           gc.setColor(Color.black);
-          gc.draw3DRect(r.x-screen.x+(r.width/2)-widthText/2,r.y-screen.y-heightText,widthText,heightText,true);
+          gc.draw3DRect(r.x-screen.x+(r.width/2)-demiWidthText,r.y-screen.y-heightText,2*demiWidthText+2,heightText,true);
          }
 
         // restore
@@ -257,9 +265,15 @@ public class TextDrawable extends Drawable {
    */
      public boolean tick() {
 
-        if( timeLimit<0 )
+        if( refDrawable != null ) {
+          r.x = refDrawable.getX();
+          r.y = refDrawable.getY();
+        }
+
+        if( timeLimit<0 ) {
             return true;
-        
+        }
+
         if( timeLimit-System.currentTimeMillis() <0 )
             return false;
         return true;

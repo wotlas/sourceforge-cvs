@@ -464,6 +464,8 @@ double ot = ((NodeDouble) nodes.elementAt(cur)).f;
         
     return getPath(solution);
   }
+
+ /*------------------------------------------------------------------------------------*/
     
   /**
    * constructs the path from the start node to the node n
@@ -494,6 +496,8 @@ double ot = ((NodeDouble) nodes.elementAt(cur)).f;
       System.out.print("(" + pathPoint.x + "," + pathPoint.y + ") ");
     }
   }
+
+ /*------------------------------------------------------------------------------------*/
 
   /**
    * initializes the array "map" with a BufferedImage
@@ -582,9 +586,10 @@ double ot = ((NodeDouble) nodes.elementAt(cur)).f;
       //  eX = (int) (a.x+r*Math.cos(angle));
       //  eY = (int) (a.y-r*Math.sin(angle));
       //  System.out.print("pt=(" + eX + "," + eY + ") ");
-        if ( !map[(int) (a.x+r*Math.cos(angle))][(int) (a.y-r*Math.sin(angle))] ) {
+        //if ( !map[(int) (a.x+r*Math.cos(angle))][(int) (a.y-r*Math.sin(angle))] ) 
+          if ( !isNotBlock( (int) (a.x+r*Math.cos(angle)), (int) (a.y-r*Math.sin(angle)) ) )
           return false;
-        }
+        
       }
     //} catch (java.lang.ArrayIndexOutOfBoundsException ex) {
       //System.out.println("ArrayIndexOutOfBoundsException : eX,eY = " + eX + "," + eY + " a = " + a + " b = " + b);

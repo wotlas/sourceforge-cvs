@@ -20,7 +20,6 @@
 package wotlas.libs.graphics2D.drawable;
 
 import wotlas.libs.graphics2D.*;
-import wotlas.common.ImageLibRef;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.*;

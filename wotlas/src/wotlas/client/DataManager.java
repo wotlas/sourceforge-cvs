@@ -182,6 +182,14 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   private JPreviewPanel previewPanel;
   private JPlayerPanel playerPanel;
   private JLogPanel logPanel;
+  
+  /** player's name
+   */
+  private MultiLineText mltPlayerName;
+  
+  /** Wotlas location name
+   */
+  private MultiLineText mltLocationName;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -451,8 +459,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     chatPanel = new JChatPanel();
     previewPanel = new JPreviewPanel();
     playerPanel = new JPlayerPanel();
-    logPanel = new JLogPanel();
-
+    logPanel = new JLogPanel();    
+    
     // 6 - Init map display
     changeMapData();
 
@@ -463,6 +471,15 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     // 7 - Start main loop tick
     Debug.signal( Debug.NOTICE, null, "Beginning to tick Graphics Director" );
     this.start();
+
+    // 8 - Show informations on player
+    /*String mltString[] = new String[2];
+    mltString[0] = myPlayer.getFullPlayerName();    
+    mltString[1] = myPlayer.getPlayerName();*/
+    String mltString[] = {myPlayer.getFullPlayerName(), myPlayer.getPlayerName()};
+    
+    mltPlayerName = new MultiLineText(mltString, 10, 10, ImageLibRef.MAP_PRIORITY);
+    gDirector.addDrawable(mltPlayerName);
 
     mFrame.show();
 
@@ -615,12 +632,12 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       // Test to create multi players
       if ( object.getClass().getName().equals("wotlas.client.PlayerImpl") ) {
         myPlayer = (PlayerImpl) object;
-        if (circle!=null) {
-          gDirector.removeDrawable(circle);
-          circle = null;
-        }
-        circle = new CircleDrawable(myPlayer.getDrawable(), 20, Color.yellow, (short) ImageLibRef.AURA_PRIORITY);
-        gDirector.addDrawable(circle);
+        //if (circle!=null) {
+          //gDirector.removeDrawable(circle);
+          //circle = null;
+        //}
+        //circle = new CircleDrawable(myPlayer.getDrawable(), 20, Color.yellow, (short) ImageLibRef.AURA_PRIORITY);
+        //gDirector.addDrawable(circle);
         
         TextDrawable textDrawable = new TextDrawable( myPlayer.getFullPlayerName(), myPlayer.getDrawable(), Color.black, 12.0f, "Lblack.ttf", ImageLibRef.AURA_PRIORITY, 5000 );
         gDirector.addDrawable(textDrawable);

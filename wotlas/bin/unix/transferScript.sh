@@ -10,8 +10,8 @@ SET WEB_NAME=sourceforge.net
 SET WEB_SHELL=shell.sf.net
 SET SHELL_PATH=/home/groups/w/wo/wotlas/htdocs/game
 
-SET WEB_LOGIN=mySourceForgeLogin
-SET WEB_PASSWORD=mySourceForgePassWord
+SET WEB_LOGIN=You will be prompted for your login.
+SET WEB_PASSWORD=You will be prompted for your passsword.
 
 SET SERVER_ID=0
 SET BASE_PATH=../../base

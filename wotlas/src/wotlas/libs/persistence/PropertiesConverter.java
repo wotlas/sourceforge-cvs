@@ -39,6 +39,13 @@ public class PropertiesConverter
 {
 
    /**
+   * Warnings or not.
+   **/
+   private static boolean warning = false;
+   public static void setWarning(boolean warning) { PropertiesConverter.warning = warning; }
+   public static boolean isWarning() { return PropertiesConverter.warning; }
+
+   /**
    * Set this value to true to get DEBUG trace
    **/
    private static final boolean DEBUG = false;
@@ -73,13 +80,60 @@ public class PropertiesConverter
    public static void save(Object object, OutputStream os)
                       throws PersistenceException
    {
+      save(object, object.getClass(), os);
+   }
+
+   /**
+   * Test the saving of an object class into a "dot-properties" format file.
+   * @param clazz  the class of object to save.
+   * @param name the path of the file where to save the object.
+   * @exception PersistenceException when a problem occurs during saving.
+   */
+   public static void testSave(Class clazz, String name)
+                      throws PersistenceException
+   {
+      BufferedOutputStream os;
+
+      try {
+         os = new BufferedOutputStream(new FileOutputStream(name));
+      }
+      catch (FileNotFoundException ex) {
+         Debug.signal(Debug.ERROR, name, ex);
+         throw new PersistenceException(ex);
+      }
+      testSave(clazz, os);                    
+   }
+
+   /**
+   * Test the saving of an object class into a "dot-properties" format file.
+   * @param clazz  the class of object to save.
+   * @param os     the output stream where to save the object.
+   * @exception PersistenceException when a problem occurs during saving.
+   */
+   public static void testSave(Class clazz, OutputStream os)
+                      throws PersistenceException
+   {
+      save(null, clazz, os);
+   }
+
+   /**
+   * Save an object into a "dot-properties" format file.
+   * @param object the object to save (null for testing class).
+   * @param clazz  the class of object to save.
+   * @param os     the output stream where to save the object.
+   * @exception PersistenceException when a problem occurs during saving.
+   */
+   private static void save(Object object, Class clazz, OutputStream os)
+                       throws PersistenceException
+   {
       Properties toBeSaved; 
 
       toBeSaved = new Properties();
       // Save the content of the object
-      if (toProperties(object, toBeSaved, "") > 0) {
+      if (toProperties(object, clazz, toBeSaved, "") > 0) {
          try {
-            toBeSaved.store(os, "WotLas 1.0 Saved Object");
+            //toBeSaved.store(os, "WotLas 1.0 Saved Object");
+            sortedStore(os, "WotLas 1.0 Saved Object", toBeSaved);
          }
          catch (IOException ex) {
             Debug.signal(Debug.ERROR, os, ex);
@@ -156,27 +210,38 @@ public class PropertiesConverter
            // The field is not found in this class, try in superclass
          }
       }
+      // The XPosition bug: if a field is named xPosition, the property
+      // name is XPosition (though the setter/getter are [s/g]etXPosition()
+      // => Search not case sensitive if the field is not found
       // The field is not found in the class, return that is transient
-      Debug.signal(Debug.WARNING, clazz, "\"" + name + "\" not found as a field");
+      for (Class curClass = clazz; curClass != null; curClass = curClass.getSuperclass()) {
+         Field[] fields;
+         fields = curClass.getDeclaredFields();
+         for (int i = 0; i < fields.length; i++) {
+             if (name.equalsIgnoreCase(fields[i].getName()))
+                return Modifier.isTransient(fields[i].getModifiers());
+         }
+      }
+      if (PropertiesConverter.warning)
+         Debug.signal(Debug.WARNING, clazz, "\"" + name + "\" not found as a field");
       return true;
    }
 
    /**
    * Recursively parse the properties of an object to save.
-   * @param object     the object to save.
-   * @param properties the object properties to save.
-   * @param prefix     the prefix for saving the property.
+   * @param object      the object to save (may be null for class testing).
+   * @param objectClass the class of object to save.
+   * @param properties  the object properties to save.
+   * @param prefix      the prefix for saving the property.
    * @return the number of saved properties.
    **/
-   private static int toProperties(Object object, Properties properties, String prefix)
+   private static int toProperties(Object object, Class objectClass, Properties properties, String prefix)
    {
       PropertyDescriptor[] descriptors; // Properties of the object to save
-      int                  nbSaved; // Number of saved properties
-      Class                objectClass; // Class of object
+      int                  nbSaved;     // Number of saved properties
       
       // Get all the getters of the object.
-      descriptors = getProperties(object);
-      objectClass = object.getClass();
+      descriptors = getProperties(objectClass);
       nbSaved = 0;
       // Save the class of the object
       properties.setProperty(prefix + "class", objectClass.getName());
@@ -188,7 +253,7 @@ public class PropertiesConverter
 
          for (int i = 0; i < descriptors.length; i++) {
             if (DEBUG)
-               System.out.println("Candidate property:" + prefix + descriptors[i].getName());
+               System.out.println("Candidate property:" + prefix + descriptors[i].getName() + " in class " + objectClass.getName());
             if (((readMethod = descriptors[i].getReadMethod()) != null) &&
                 (descriptors[i].getWriteMethod() != null)) {
                // Class property or 
@@ -200,9 +265,9 @@ public class PropertiesConverter
                      System.out.println("Storable property:" + prefix + descriptors[i].getName());
                   nbSaved += saveProperty(object,
                                           properties,
-                                          prefix + descriptors[i].getName(),
-                                          readMethod,
-                                          (descriptors[i] instanceof IndexedPropertyDescriptor));
+                                          prefix,
+                                          descriptors[i],
+                                          readMethod);
                }               
                else if (DEBUG) {
                  System.out.println("Property:" + prefix + descriptors[i].getName() + " is transient");
@@ -221,23 +286,25 @@ public class PropertiesConverter
 
    /**
    * Save a single property of an object.
-   * @param object       the object to save.
+   * @param object       the object to save (may be null for class testing).
    * @param properties   the object properties to save.
-   * @param propertyName the name for saving the property.
+   * @param prefix       the prefix for saving the property.
+   * @param descriptor   the property descriptor.
    * @param readMethod   the method for getting the value.
-   * @param indexed      shows if the property is indexed or not.
    * @return the number of saved properties.
    **/
    private static int saveProperty(Object object, Properties properties,
-                                   String propertyName, Method readMethod,
-                                   boolean indexed)
+                                   String prefix, PropertyDescriptor descriptor,
+                                   Method readMethod)
    {
       Object value;                      // The value of the object property
-      int    nbSaved; // Number of saved properties
+      int    nbSaved;                    // Number of saved properties
+      String propertyName;               // Name of the property to save
 
       nbSaved = 0;
+      propertyName = prefix + descriptor.getName();
       try {      
-         if (indexed) {
+         if (descriptor instanceof IndexedPropertyDescriptor) {
             // This is an indexed property: save until array index out of bound 
             int nbCells;
 
@@ -247,12 +314,23 @@ public class PropertiesConverter
 
                arg = new Integer[0];
                for (nbCells = 0; true; nbCells++) {
-                   arg[0] = new Integer(nbCells);
-                   value = readMethod.invoke(object, arg);
+                   if (object == null) {
+                      // Test mode (using the class): consider one cell only
+                      if (nbCells == 0)
+                         value = null;
+                      else
+                         break; // Only first cell in test mode
+                   }
+                   else {
+                      // Real mode (using the object)
+                      arg[0] = new Integer(nbCells);
+                      value = readMethod.invoke(object, arg);
+                   }
                    // Save the value according to its class
                    nbSaved += saveValue(properties,
                                         propertyName + "." + nbCells,
-                                        value);
+                                        value,
+                                        descriptor.getPropertyType().getComponentType());
                }
             }
             catch (IndexOutOfBoundsException ex) {
@@ -261,16 +339,22 @@ public class PropertiesConverter
             catch (InvocationTargetException ex) {
                // We suppose that the exception warn of the end of the array,
                // but we log it anyway
-               Debug.signal(Debug.WARNING, object, ex);
+               if (PropertiesConverter.warning)
+                  Debug.signal(Debug.WARNING, object, ex);
             }
             // Save the number of values
             nbSaved += saveValue(properties,
                                  propertyName,
-                                 new Integer(nbCells));
+                                 new Integer(nbCells),
+                                 (object == null) ? Integer.TYPE : null);
          }
          else {
             // Non-indexed method: save the value according to its class
-            value = readMethod.invoke(object, null);
+            if (object == null)
+               // Test mode (using the class)
+               value = null;
+            else
+               value = readMethod.invoke(object, null);
             if ((value != null) && 
                 (value.getClass().isArray() || readMethod.getReturnType().isArray())) {
                Object[] values;
@@ -280,19 +364,22 @@ public class PropertiesConverter
                // Save the number of values
                nbSaved += saveValue(properties,
                                     propertyName,
-                                    new Integer(values.length));
+                                    new Integer(values.length),
+                                    (object == null) ? Integer.TYPE : null);
                for (int i = 0; i < values.length; i++) {
                    // Save the value according to its class
                    nbSaved += saveValue(properties,
                                         propertyName + "." + i,
-                                        values[i]);
+                                        values[i],
+                                        (object == null) ? descriptor.getPropertyType().getComponentType() : null);
                }
             }
             else {
                // Single value
                nbSaved += saveValue(properties,
                                     propertyName,
-                                    value);
+                                    value,
+                                    (object == null) ? descriptor.getPropertyType() : null);
             }
          }
       }
@@ -311,6 +398,29 @@ public class PropertiesConverter
       return nbSaved;
    }
 
+
+   /**
+   * Save a single value of an object.
+   * @param properties   the object properties to save.
+   * @param propertyName the name for saving the property.
+   * @param value        the value of the property to save.
+   * @param clazz        optional. When present, the class of value (test mode,
+   *                     value not significant).
+   * @return the number of saved properties.
+   **/
+   private static int saveValue(Properties properties,
+                                String propertyName,
+                                Object value,
+                                Class  clazz)
+   {
+      if (clazz == null)
+         // Actual mode
+         return saveActualValue(properties, propertyName, value);
+      else
+         // Test mode (class without object instance)
+         return saveTestValue(properties, propertyName, clazz);
+   }
+   
    /**
    * Save a single value of an object.
    * @param properties   the object properties to save.
@@ -318,9 +428,9 @@ public class PropertiesConverter
    * @param value        the value of the property to save.
    * @return the number of saved properties.
    **/
-   private static int saveValue(Properties properties,
-                                String propertyName,
-                                Object value)
+   private static int saveActualValue(Properties properties,
+                                      String propertyName,
+                                      Object value)
    {
       int    nbSaved; // Number of saved values
 
@@ -330,7 +440,7 @@ public class PropertiesConverter
 
          valueClass = value.getClass();
          if (DEBUG)
-            System.out.println("Candidate value:" + propertyName + "." + valueClass.toString());
+            System.out.println("Candidate value:" + propertyName + " (" + valueClass.toString() + ")");
          if ((valueClass.isPrimitive()) ||
              (value instanceof Boolean) ||
              (value instanceof Character) ||
@@ -352,8 +462,47 @@ public class PropertiesConverter
          }
          else
             // Complex object: recursively add its properties
-            nbSaved = toProperties(value, properties, propertyName + ".");
+            nbSaved = toProperties(value, value.getClass(), properties, propertyName + ".");
       }
+      return nbSaved;
+   }
+   
+   /**
+   * Save an arbitrary value of an object for testing.
+   * @param properties   the object properties to save.
+   * @param propertyName the name for saving the property.
+   * @param clazz        The class of value (test mode).
+   * @return the number of saved properties.
+   **/
+   private static int saveTestValue(Properties properties,
+                                    String propertyName,
+                                    Class  clazz)
+   {
+      int    nbSaved; // Number of saved values
+
+      nbSaved = 0;
+      String className;
+
+      className = clazz.getName();
+      if (DEBUG)
+         System.out.println("Candidate value:" + propertyName + " (" + className + ")");
+      if (clazz.isPrimitive() ||
+          (className.equals("java.lang.Boolean")) ||
+          (className.equals("java.lang.Character")) ||
+          (className.equals("java.lang.Byte")) ||
+          (className.equals("java.lang.Integer")) ||
+          (className.equals("java.lang.Short")) ||
+          (className.equals("java.lang.Long")) ||
+          (className.equals("java.lang.Float")) ||
+          (className.equals("java.lang.Double")) ||
+          (className.equals("java.lang.StringBuffer")) ||
+          (className.equals("java.lang.String"))) {
+          properties.setProperty(propertyName, "value(" + className + ")");
+          nbSaved = 1;
+      }
+      else
+          // Complex object: recursively add its properties
+          nbSaved = toProperties(null, clazz, properties, propertyName + ".");
       return nbSaved;
    }
    
@@ -390,7 +539,7 @@ public class PropertiesConverter
          Debug.signal(Debug.ERROR, objectClass, ex);
          throw new PersistenceException(ex);
       }
-      descriptors = getProperties(object);
+      descriptors = getProperties(objectClass);
       if (descriptors != null) {
          // Among the descriptors, get the one which have a read method
          // and a write method.
@@ -584,30 +733,118 @@ public class PropertiesConverter
    
    /**
    * Provide the properties of an object to save or to load.
-   * @param object the object to save or to load.
+   * @param objectClass the class of object to save or to load.
    * @return an array of properties.
    * @execption IntrospectionException when an error occurs during introspection.
    **/
-   private static PropertyDescriptor[] getProperties(Object object)
+   private static PropertyDescriptor[] getProperties(Class objectClass)
    {
-      Class objectClass; // Class of the object to save
       BeanInfo objectInfo; // Information on the object to save
 
-      objectClass = object.getClass();
       try {
          objectInfo = Introspector.getBeanInfo(objectClass);
          return objectInfo.getPropertyDescriptors();
       }
       catch (IntrospectionException ex) {
-         Debug.signal(Debug.ERROR, object, ex);
+         Debug.signal(Debug.ERROR, objectClass, ex);
       }
       return null;
    }
 
+   /*------------------------------------------------------------------------
+   *                         Sorted properties
+   ------------------------------------------------------------------------*/
+   private static void sortedStore(OutputStream out, String header, Properties properties)
+    throws IOException
+    {
+        BufferedWriter      awriter;
+        ArrayList           sortedList;
+        awriter = new BufferedWriter(new OutputStreamWriter(out, "8859_1"));
+        if (header != null)
+            writeln(awriter, "#" + header);
+        sortedList = new ArrayList(properties.size());
+        writeln(awriter, "#" + new Date().toString());
+        for (Enumeration e = properties.keys(); e.hasMoreElements();) {
+            String key = (String)e.nextElement();
+            String val = (String)properties.get(key);
+            key = saveConvert(key);
+            val = saveConvert(val);
+            sortedList.add(key + "=" + val);
+        }
+        Collections.sort(sortedList);
+        for (int i = 0; i < sortedList.size(); i++)
+            writeln(awriter, (String) sortedList.get(i));
+        awriter.flush();
+    }
+
+    private static final String specialSaveChars = "=: \t\r\n\f#!";
+    /** A table of hex digits */
+    private static final char[] hexDigit = {
+	'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'
+    };
+
+    /*
+     * Converts unicodes to encoded \\uxxxx
+     * and writes out any of the characters in specialSaveChars
+     * with a preceding slash
+     */
+    private static String saveConvert(String theString) {
+        char aChar;
+        int len = theString.length();
+        StringBuffer outBuffer = new StringBuffer(len*2);
+
+        for(int x=0; x<len; ) {
+            aChar = theString.charAt(x++);
+            switch(aChar) {
+                case '\\':outBuffer.append('\\'); outBuffer.append('\\');
+                          continue;
+                case '\t':outBuffer.append('\\'); outBuffer.append('t');
+                          continue;
+                case '\n':outBuffer.append('\\'); outBuffer.append('n');
+                          continue;
+                case '\r':outBuffer.append('\\'); outBuffer.append('r');
+                          continue;
+                case '\f':outBuffer.append('\\'); outBuffer.append('f');
+                          continue;
+                default:
+                    if ((aChar < 20) || (aChar > 127)) {
+                        outBuffer.append('\\');
+                        outBuffer.append('u');
+                        outBuffer.append(toHex((aChar >> 12) & 0xF));
+                        outBuffer.append(toHex((aChar >> 8) & 0xF));
+                        outBuffer.append(toHex((aChar >> 4) & 0xF));
+                        outBuffer.append(toHex((aChar >> 0) & 0xF));
+                    }
+                    else {
+                        if (specialSaveChars.indexOf(aChar) != -1)
+                            outBuffer.append('\\');
+                        outBuffer.append(aChar);
+                    }
+            }
+        }
+        return outBuffer.toString();
+    }
+
+    private static void writeln(BufferedWriter bw, String s) throws IOException {
+        bw.write(s);
+        bw.newLine();
+    }
+
+    /**
+     * Convert a nibble to a hex character
+     * @param	nibble	the nibble to convert.
+     */
+    private static char toHex(int nibble) {
+  	   return hexDigit[(nibble & 0xF)];
+    }
+
    /**
    * Test method.
    **/
-/*   public static void main(String[] argv) throws java.io.IOException, PersistenceException {
+   public static void main(String[] argv) throws java.io.IOException, PersistenceException, ClassNotFoundException {
+
+      testSave(Class.forName(argv[0]), "C:/temp/" + argv[0] + ".txt");
+/*   
       wotlas.common.universe.TownMap example[];
       wotlas.common.universe.WorldMap world;
 
@@ -626,6 +863,7 @@ public class PropertiesConverter
       save(world, "C:/Temp/world.txt");
       world = (wotlas.common.universe.WorldMap) load("C:/Temp/world.txt");
       save(world, "C:/Temp/world2.txt");
+*/   
    }
-  */ 
 }
+

@@ -59,7 +59,7 @@ public class MapExit extends ScreenRectangle
   /** MapExit Side
    * 0 if none (one-way MapExit)
    */
-   public int mapExitSide;
+   public byte mapExitSide;
 
   /** Eventual position on the target map (null if none)
    */
@@ -129,10 +129,10 @@ public class MapExit extends ScreenRectangle
   public ScreenPoint getTargetPosition() {
     return targetPosition;
   }
-  public void setMapExitSide(int mapExitSide) {
+  public void setMapExitSide(byte mapExitSide) {
     this.mapExitSide = mapExitSide;
   }
-  public int getMapExitSide() {
+  public byte getMapExitSide() {
     return mapExitSide;
   }
   public void setRequiredKnowledgeID(int myRequiredKnowledgeID) {

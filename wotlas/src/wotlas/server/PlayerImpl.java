@@ -316,6 +316,8 @@ System.out.println("getFullPlayerName() deprecated");
      * @return player full name
      */
        public String getFullPlayerName(PlayerImpl otherPlayer) {
+        if (otherPlayer==null)
+          return lieManager.getCurrentFakeName();
          if (otherPlayer.getPrimaryKey().equals(primaryKey)) {
            return lieManager.getCurrentFakeName();
          } else {

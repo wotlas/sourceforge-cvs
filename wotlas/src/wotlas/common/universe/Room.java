@@ -483,24 +483,24 @@ public class Room
              if( rlink.width < rlink.height ) {
                  if( rlink.getRoom1ID()==roomID ){
                    // ok, we are the west Room
-                      if( rlink.x + rlink.width < rCurrent.x )
+                      if( rlink.x + rlink.width <= rCurrent.x )
                           return rlink.getRoom2ID(); // we are in the other room
                  }
                  else {
                   // ok, we are the east Room
-                      if( rCurrent.x + rCurrent.width < rlink.x )
+                      if( rCurrent.x + rCurrent.width <= rlink.x )
                           return rlink.getRoom1ID(); // we are in the other room
                  }
              }
              else if( rlink.width > rlink.height ) {
                  if( rlink.getRoom1ID()==roomID ){
                    // ok, we are the north Room
-                      if( rlink.y + rlink.height < rCurrent.y )
+                      if( rlink.y + rlink.height <= rCurrent.y )
                           return rlink.getRoom2ID(); // we are in the other room
                  }
                  else {
                   // ok, we are the south Room
-                      if( rCurrent.y + rCurrent.height < rlink.y )
+                      if( rCurrent.y + rCurrent.height <= rlink.y )
                           return rlink.getRoom1ID(); // we are in the other room
                  }
              }

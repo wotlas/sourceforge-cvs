@@ -37,6 +37,41 @@ public class AshamanInventory extends Inventory
  /*------------------------------------------------------------------------------------*/
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+  /** Get the body armor.
+   * @return null
+   */
+    public BodyArmor getBodyArmor()
+    {
+        return null;
+    }
+
+  /** Set the body armor. Ignored.
+   * @param bodyArmor the new body armor
+   */
+    public void setBodyArmor(BodyArmor bodyArmor)
+    {
+		// no op - should warn somehow
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ 
+  /** Get the head armor.
+   * @return null
+   */
+    public HeadArmor getHeadArmor()
+    {
+        return null;
+    }
+
+  /** Set the head armor. Ignored.
+   * @param headArmor the new head armor
+   */
+    public void setHeadArmor(HeadArmor headArmor)
+    {
+		// no op - should warn somehow
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
   /** Get the bow.
    * @return null

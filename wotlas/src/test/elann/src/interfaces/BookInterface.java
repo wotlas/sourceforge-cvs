@@ -19,6 +19,8 @@
  
 package wotlas.common.objects.interfaces;
 
+import wotlas.common.objects.usefuls.Chapter;
+
 /** 
  * The book interface. Provides method to browse thru. 
  * Should provide a GUI to read/write. 
@@ -28,29 +30,53 @@ package wotlas.common.objects.interfaces;
 
 public interface BookInterface
 {
+ /** The maximum allowed size of a book.
+  */
+ 	public static final short maxNbChaptersPerBook=20;
 
  /*------------------------------------------------------------------------------------*/
-
 
   /** Open the book. First chapter active.
    */
     public void open();
 
-  /** Get the current chapter. Should be used by the GUI. --- String should be evolved ---
+  /** Get the current chapter.
    * @return active chapter
    */
-    public String getCurrentChapter();
+    public short getCurrentChapter();
 
-  /** Turn pages 'til next chapter.
+  /** Set the current chapter.
+   * @param targetChapter the new chapter.
    */
-    public void seekNextChapter();
+    public void setCurrentChapter(short targetChapter);
 
-  /** Search the book for a chapter.
-   * @param chapterName the name of the chapter searched. 
+  /** Search the book for a chapter. If the chapter is found, it becomes the current chapter.
+   * @param chapterName the name of the chapter searched.
+   * @return found index or -1
    */
-    public void searchChapter(String chapterName);
+    public short searchChapter(String chapterName);
 
+  /** Get a chapter by index.
+   * @param index the index in the book
+   */ 
+   	public Chapter getChapter(int index);
+
+  /** Get a chapter by title.
+   * @param title the title of the chapter
+   */
+    public Chapter getChapterByTitle(String title);
 	
+  /** Get the number of chapters in the book.
+   * @return nbChapters
+   */
+    public short getNbChapters();
+	
+  /** Set the number of chapters in the book.
+   * Should not be called directly.
+   * @param nbChapters the new number of chapters. 
+   */
+    public void setNbChapters(short nbChapters);
+		
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

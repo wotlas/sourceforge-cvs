@@ -25,17 +25,19 @@ import wotlas.common.objects.weapons.*;
 import wotlas.common.objects.armors.*;
 
 /** 
- * This is the class for Aes Sedai's Inventory.<br>
- * All objects are inherited. All methods are inherited excepted those not available to Aes Sedai.
+ * This is the class for Aiel Warrior's Inventory.<br>
+ * All objects are inherited. All methods are inherited excepted those not available to Aiel Warriors.
  * @author Elann
  * @see wotlas.common.objects.interfaces.InventoryInterface
  */
 
-public class AesSedaiInventory extends Inventory 
+public class AielWarriorInventory extends Inventory 
 {
 
  /*------------------------------------------------------------------------------------*/
- 
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** Get the body armor.
    * @return null
    */
@@ -70,42 +72,6 @@ public class AesSedaiInventory extends Inventory
 		// no op - should warn somehow
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Get the heavy weapon.
-   * @return null
-   */
-    public HeavyWeapon getHeavyWeapon()
-    {
-        return null;
-    }
-
-  /** Set the heavy weapon. Ignored.
-   * @param heavyWeapon the new heavy weapon
-   */
-    public void setHeavyWeapon(HeavyWeapon heavyWeapon)
-    {
-		// no op - should warn somehow
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** Get the bow.
-   * @return null
-   */
-    public Bow getBow()
-    {
-        return null;
-    }
-
-  /** Set the bow. Ignored.
-   * @param bow the new bow
-   */
-    public void setBow(Bow bow)
-    {
-		// no op - should warn somehow
-    }
-	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
  
@@ -180,8 +146,6 @@ public class AesSedaiInventory extends Inventory
     }
 	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
  
  
 }
-

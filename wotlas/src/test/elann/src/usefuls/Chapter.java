@@ -19,43 +19,69 @@
  
 package wotlas.common.objects.usefuls;
 
-import wotlas.common.objects.interfaces.BookInterface;
-import wotlas.common.objects.usefuls.Chapter;
+import wotlas.common.objects.usefuls.Paragraph;
 
 /** 
- * The class of books.
- * 
+ * The class of chapters.
+ * Used in books.
  * @author Elann
- * @see wotlas.common.objects.usefuls.Document
- * @see wotlas.common.objects.usefuls.Chapter
+ * @see wotlas.common.objects.usefuls.Book
  * @see wotlas.common.objects.interfaces.BookInterface
  */
 
-public class Book extends Document implements BookInterface
+class Chapter
 {
 
  /*------------------------------------------------------------------------------------*/
 
- /** The content of the book.
-  */
-  private Chapter[] chapters;
+  /** The maximum allowed size of a chapter.
+   */
+   public static final int maxNbParagraphsPerChapter=20;
   
- /** The current number of chapters in the book.
-  */
-  private short nbChapters;
+  /** The content of the chapter.
+   */
+   private Paragraph[] paragraphs;
+  
+  /** The current number of paragraphs in the chapter.
+   */
+   private short nbParagraphs;
+  
+  /** The title of the chapter.
+   */
+   private String chapterTitle;
+
  
  /*------------------------------------------------------------------------------------*/
 
   /** The default constructor.
    */			
-    public Book()
+    public Chapter()
 	{
-	 this.className="Book";
-	 this.objectName="default book";
-	 
-	 this.nbChapters=0;	 
+	 this.nbParagraphs=0;	 
 	}															
  
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Get a paragraph in the chapter by index.
+   * @param index the index of the paragraph
+   */	
+    public Paragraph getParagraph(int index);
+	
+  /** Get a paragraph in the chapter by title.
+   * @param title the title of the paragraph
+   */	
+    public Paragraph getParagraphByTitle(String title);
+	
+  /** Get the current number of paragraphs in the chapter.
+   * @return nbParagraphs
+   */
+	public short getNbParagraphs();
+ 
+  /** Set the current number of paragraphs in the chapter.
+   * Should not be called directly.
+   * @param nbParagraphs the new number of paragraphs
+   */
+	public void setNbParagraphs(short nbParagraphs);
  
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  

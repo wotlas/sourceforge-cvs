@@ -40,7 +40,7 @@ public abstract class MagicalObject extends UsefulObject
 	  
   /** The powers involved in the magical action. THE CLASS POWER/POWERLIST DOES NOT EXIST.
    */
-   	  private PowerList powersInvolved;
+   	  private Power [] powersInvolved;
 	  
 	  
  /*------------------------------------------------------------------------------------*/
@@ -70,7 +70,7 @@ public abstract class MagicalObject extends UsefulObject
   /** Get the powers involved in the magical effect.
    * @return powersInvolved
    */  					
-   	public PowerList getPowersInvolved()
+   	public Power /*[] makes javadoc crash - is it allowed ? */ getPowersInvolved()
 	{
 	 return this.powersInvolved;
 	}																	

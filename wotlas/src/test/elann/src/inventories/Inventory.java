@@ -48,10 +48,6 @@ public class Inventory implements InventoryInterface
   /** The head armor ie helmet, cap, ... or none
    */
    	  private HeadArmor headArmor;
-
-  /** The foot armor ie shoes, boots, ... or none ?
-   */
-   	  private FootArmor footArmor;
 	  
   /*-------------- Weapon -----------*/
 
@@ -132,24 +128,6 @@ public class Inventory implements InventoryInterface
     public void setHeadArmor(HeadArmor headArmor)
     {
         this.headArmor=headArmor;
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** Get the foot armor.
-   * @return footArmor
-   */
-    public FootArmor getFootArmor()
-    {
-        return this.footArmor;
-    }
-
-  /** Set the foot armor.
-   * @param footArmor the new foot armor
-   */
-    public void setFootArmor(FootArmor footArmor)
-    {
-        this.footArmor=footArmor;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

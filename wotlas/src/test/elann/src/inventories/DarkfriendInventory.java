@@ -17,31 +17,30 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
  
-package wotlas.common.objects.interfaces;
+package wotlas.common.objects.inventories;
 
+import wotlas.common.objects.usefuls.*;
+import wotlas.common.objects.containers.*;
+import wotlas.common.objects.weapons.*;
+import wotlas.common.objects.armors.*;
 
 /** 
- * The readable documents' class.
- * 
+ * This is the class for Darkfriend's Inventory.<br>
+ * All objects are inherited. All methods are inherited.
  * @author Elann
+ * @see wotlas.common.objects.interfaces.InventoryInterface
  */
 
-public interface ReadableInterface
+public class DarkfriendInventory extends Inventory 
 {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Ready the document.
-   * Unfold a parchment, open a book, ...  
-   */
-    public void makeReady();
-	
-  /** Get the document's text.
-   * @return current readable text
-   */
-    public String readText();
-			
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ 
 
+	
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ 
+ 
 }
-

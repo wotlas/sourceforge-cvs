@@ -19,6 +19,9 @@
  
 package wotlas.common.objects.interfaces;
 
+import wotlas.common.Knowledge;
+import wotlas.common.Material;
+
 /** 
  * The base interface for all repairable objects.
  * 
@@ -44,12 +47,12 @@ public interface RepairInterface
   /** Get the knowledge needed to repair.
    * @return knowledge needed
    */ 																		
-    public KnowledgeList getKnowledge();
+    public Knowledge /*[] make javadoc crash */ getKnowledge();
 	
   /** Get the materials needed to repair.
    * @return material list
    */
-    public MaterialList getMaterial();
+    public Material /*[] make javadoc crash */ getMaterial();
  
   /** Repair the object.
    * @param repairer the Character that repairs the object. May be the owner or not.

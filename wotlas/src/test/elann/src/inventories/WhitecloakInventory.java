@@ -25,89 +25,36 @@ import wotlas.common.objects.weapons.*;
 import wotlas.common.objects.armors.*;
 
 /** 
- * This is the class for Aes Sedai's Inventory.<br>
- * All objects are inherited. All methods are inherited excepted those not available to Aes Sedai.
+ * This is the class for Whitecloak's Inventory.<br>
+ * All objects are inherited. All methods are inherited excepted those not available to Children of the Light.
  * @author Elann
  * @see wotlas.common.objects.interfaces.InventoryInterface
  */
 
-public class AesSedaiInventory extends Inventory 
+public class WhitecloakInventory extends Inventory 
 {
 
  /*------------------------------------------------------------------------------------*/
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
-  /** Get the body armor.
+  /** Get the belt weapon.
    * @return null
    */
-    public BodyArmor getBodyArmor()
+    public LightWeapon getBeltWeapon()
     {
         return null;
     }
 
-  /** Set the body armor. Ignored.
-   * @param bodyArmor the new body armor
+  /** Set the belt weapon. Ignored.
+   * @param beltWeapon the new belt weapon
    */
-    public void setBodyArmor(BodyArmor bodyArmor)
+    public void setBeltWeapon(LightWeapon beltWeapon)
     {
 		// no op - should warn somehow
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** Get the head armor.
-   * @return null
-   */
-    public HeadArmor getHeadArmor()
-    {
-        return null;
-    }
-
-  /** Set the head armor. Ignored.
-   * @param headArmor the new head armor
-   */
-    public void setHeadArmor(HeadArmor headArmor)
-    {
-		// no op - should warn somehow
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Get the heavy weapon.
-   * @return null
-   */
-    public HeavyWeapon getHeavyWeapon()
-    {
-        return null;
-    }
-
-  /** Set the heavy weapon. Ignored.
-   * @param heavyWeapon the new heavy weapon
-   */
-    public void setHeavyWeapon(HeavyWeapon heavyWeapon)
-    {
-		// no op - should warn somehow
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** Get the bow.
-   * @return null
-   */
-    public Bow getBow()
-    {
-        return null;
-    }
-
-  /** Set the bow. Ignored.
-   * @param bow the new bow
-   */
-    public void setBow(Bow bow)
-    {
-		// no op - should warn somehow
-    }
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
  
   /** Get the weapon hidden in right sleeve.
    * @return null
@@ -180,8 +127,6 @@ public class AesSedaiInventory extends Inventory
     }
 	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
  
  
 }
-

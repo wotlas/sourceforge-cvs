@@ -25,32 +25,16 @@ import wotlas.common.objects.weapons.*;
 import wotlas.common.objects.armors.*;
 
 /** 
- * This is the class for Aes Sedai's Inventory.<br>
- * All objects are inherited. All methods are inherited excepted those not available to Aes Sedai.
+ * This is the class for Warder's Inventory.<br>
+ * All objects are inherited. All methods are inherited excepted those not available to Warders.
  * @author Elann
  * @see wotlas.common.objects.interfaces.InventoryInterface
  */
 
-public class AesSedaiInventory extends Inventory 
+public class WarderInventory extends Inventory 
 {
 
  /*------------------------------------------------------------------------------------*/
- 
-  /** Get the body armor.
-   * @return null
-   */
-    public BodyArmor getBodyArmor()
-    {
-        return null;
-    }
-
-  /** Set the body armor. Ignored.
-   * @param bodyArmor the new body armor
-   */
-    public void setBodyArmor(BodyArmor bodyArmor)
-    {
-		// no op - should warn somehow
-    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
@@ -66,24 +50,6 @@ public class AesSedaiInventory extends Inventory
    * @param headArmor the new head armor
    */
     public void setHeadArmor(HeadArmor headArmor)
-    {
-		// no op - should warn somehow
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Get the heavy weapon.
-   * @return null
-   */
-    public HeavyWeapon getHeavyWeapon()
-    {
-        return null;
-    }
-
-  /** Set the heavy weapon. Ignored.
-   * @param heavyWeapon the new heavy weapon
-   */
-    public void setHeavyWeapon(HeavyWeapon heavyWeapon)
     {
 		// no op - should warn somehow
     }
@@ -180,8 +146,6 @@ public class AesSedaiInventory extends Inventory
     }
 	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
  
  
 }
-

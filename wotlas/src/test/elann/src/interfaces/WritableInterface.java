@@ -31,24 +31,17 @@ public interface WritableInterface
 
  /*------------------------------------------------------------------------------------*/
 
-
-  /** Write to the document. String should be evolved to a class of our own.
+  /** Ready the document.
+   * Unfold for a parchment, open for a book, ...  
+   */
+    public void makeReady();
+	
+ 
+  /** Write to the document.
    * @param text the text to write
    */
-    public void write(String text);
-	
-  /* ----------- Getter/Setter ----------- */
-
-  /** Get the document's text. String should be evolved to a class of our own.
-   * @return text
-   */
-    public String getText();
-	
-   /** Set the document's text. String should be evolved to a class of our own.
-    * @param text the new text
-	*/
-	public void setText(String text);
-		
+    public void writeText(String text);
+			
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

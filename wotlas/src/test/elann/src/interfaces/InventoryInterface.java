@@ -63,18 +63,6 @@ public interface InventoryInterface
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
-  /** Get the foot armor.
-   * @return footArmor
-   */
-    public FootArmor getFootArmor();
-
-  /** Set the foot armor.
-   * @param footArmor the new foot armor
-   */
-    public void setFootArmor(FootArmor footArmor);
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
   /** Get the heavy weapon.
    * @return heavyWeapon
    */

@@ -19,6 +19,9 @@
 
 package wotlas.server;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 /** Wotlas Lie Manager.
  *
@@ -41,17 +44,17 @@ public class LieManager
   /** when we leave an InteriorMap, we forget all players
    * that we met less than MEET_CHANGEINTERIORMAP times
    */
-  public final static int MEET_CHANGEINTERIORMAP = 10;
+  public final static int MEET_CHANGEINTERIORMAP = 30;
   
   /** when we leave an TownMap, we forget all players
    * that we met less than MEET_CHANGEINTERIORMAP times
    */
-  public final static int MEET_CHANGETOWNMAP = 20;
+  public final static int MEET_CHANGETOWNMAP = 50;
   
   /** when we leave an WorldMap, we forget all players
    * that we met less than MEET_CHANGEINTERIORMAP times
    */
-  public final static int MEET_CHANGEWORLDMAP = 30;
+  public final static int MEET_CHANGEWORLDMAP = 60;
   
   /** Simple meet (weight 2)
    */
@@ -377,6 +380,79 @@ System.out.println("\tmemories=\n"+this);
       return result;
     }
   }
+ 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** This is where we put your message data on the stream. You don't need
+   * to invoke this method yourself, it's done automatically.
+   *
+   * @param ostream data stream where to put your data (see java.io.DataOutputStream)
+   * @exception IOException if the stream has been closed or is corrupted.
+   */
+    public void encode( DataOutputStream ostream ) throws IOException {     
+      int fakeNamesLength = fakeNames.length;
+      // Transfering fakeNames  
+      ostream.writeInt(fakeNamesLength);       
+      for (int i=0; i<fakeNamesLength; i++) {
+        ostream.writeUTF(fakeNames[i]);
+      }
+      
+      // Transfering currentFakeNameIndex
+      ostream.writeShort(currentFakeNameIndex);
+      
+      // Transfering memories 
+      if (memories==null) {
+        ostream.writeInt(0);
+      } else {
+        ostream.writeInt(memories.getSize());
+        LieMemory memory;
+        synchronized(memories) {
+          memories.resetIterator();
+          while (memories.hasNext()) {
+            memory = memories.next();
+            ostream.writeUTF(memory.otherPlayerKey);
+            ostream.writeShort(memory.otherPlayerFakeNameIndex);
+            ostream.writeInt(memory.meetsNumber);
+          }
+        }
+      }
+       
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** This is where we retrieve our message data from the stream. You don't need
+   * to invoke this method yourself, it's done automatically.
+   *
+   * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
+   * @param myPlayer player who owns this lieManager
+   * @exception IOException if the stream has been closed or is corrupted.
+   */
+    public void decode( DataInputStream istream , PlayerImpl myPlayer ) throws IOException {
+      //LieManager myLieManager = new LieManager();      
+      LieManager myLieManager = myPlayer.getLieManager();
+      
+      int fakeNamesLength = istream.readInt();      
+      for (int i=0; i<fakeNamesLength; i++) {
+        myLieManager.fakeNames[i] = istream.readUTF();
+      }
+      
+      currentFakeNameIndex = istream.readShort();
+      
+      int myMemoriesSize = istream.readInt();
+      
+      if (myMemoriesSize==0) {
+        ;
+      } else {
+        LieMemoryIterator myMemories = myLieManager.getMemoriesIterator();
+        myMemories.resetIterator();
+        LieMemory myMemory;
+        for (int i=0; i<myMemoriesSize; i++) {
+          myMemory = new LieMemory(istream.readUTF(), istream.readShort(), istream.readInt());
+          myMemories.add(myMemory);
+        }          
+      }       
+    }
   
  /*------------------------------------------------------------------------------------*/
   

@@ -81,7 +81,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   /** Current position in trajectory
    */
   private int indexTrajectory = 0;
-  
+
   /** End of the trajectory
    */
   private Point endPosition;
@@ -91,7 +91,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   /** Our animation.
    */
   private Animation animation;
-      
+
   /** Our sprite.
    */
   private Sprite sprite;
@@ -113,7 +113,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   /** Current position
    */
   private float positionX, positionY;
-  
+
   /** our angle (in rads)
    */
   private double angleRad;
@@ -141,15 +141,15 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
  /** When this method is called, the player can initialize its own fields safely : all
   *  the game data has been loaded.
   */
-  public void init() {    
-    System.out.println("PlayerImpl::init");    
+  public void init() {
+    Debug.signal( Debug.NOTICE, null, "PlayerImpl::init");
     animation = new Animation(wotCharacter.getImage(location));
-    sprite = (Sprite) wotCharacter.getDrawable(this);        
+    sprite = (Sprite) wotCharacter.getDrawable(this);
     endPosition = new Point();
-    trajectory = new List();    
+    trajectory = new List();
     positionX = (float)x;
     positionY = (float)y;
-    
+
   }
 
   /** Called after graphicsDirector's init
@@ -240,7 +240,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   public WotCharacter getWotCharacter() {
     return wotCharacter;
   }
-  
+
   /** To set the player's character.
    *
    *  @return WotCharacter player character
@@ -325,7 +325,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   public void setX( int x ){
     synchronized( xLock ) {
       this.x = x;
-      
+
     }
   }
 
@@ -335,10 +335,10 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   public void setY( int y ){
     synchronized( yLock ) {
       this.y = y;
-      
+
     }
   }
-  
+
   public void setAngle( double angleRad ) {
     synchronized( angleLock ) {
       this.angleRad = angleRad;
@@ -349,7 +349,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     positionX = (float) p.x;
     positionY = (float) p.y;
   }
-  
+
  /*------------------------------------------------------------------------------------*/
 
   /** To get destination of trajectory
@@ -357,13 +357,13 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   public Point getEndPosition() {
     return endPosition;
   }
-  
+
   /** To set endPosition of trajectory.
    */
   public void setEndPosition(int x, int y) {
     synchronized( endLock ) {
       this.endPosition.x = x;
-      this.endPosition.y = y;      
+      this.endPosition.y = y;
     }
   }
 
@@ -401,7 +401,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   public Rectangle getCurrentRectangle() {
     return wotCharacter.getDrawable(this).getRectangle();
   }
-  
+
  /*------------------------------------------------------------------------------------*/
 
   /** Returns true if player is moving
@@ -409,7 +409,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   public boolean isMoving() {
     return (turningAlongPath || walkingAlongPath);
   }
-  
+
   /** To stop the player's movement
    */
   public void stopMoving() {
@@ -419,43 +419,43 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     nextPoint = null;
     prevPoint = null;
   }
-  
+
   /** Tick
    */
-  public void tick() {    
-    
+  public void tick() {
+
     //if (location.isRoom()) {
       // Movement on InteriorMap (with rotations)
       if (turningAlongPath || walkingAlongPath) {
         updatePathMovement();
         x = (int) positionX;
-        y = (int) positionY; 
-        animation.tick();     
-        sprite.tick();            
-      }    
+        y = (int) positionY;
+        animation.tick();
+        sprite.tick();
+      }
       return;
     //}
-    
+
     // Movement on TownMap or WorldMap (without rotations)
-    /*if (indexTrajectory < trajectory.size()) {    
+    /*if (indexTrajectory < trajectory.size()) {
       Point newPosition = (Point) trajectory.elementAt(indexTrajectory);
       x = newPosition.x*DataManager.TILE_SIZE;
-      y = newPosition.y*DataManager.TILE_SIZE;              
-      animation.tick();     
-      sprite.tick();      
+      y = newPosition.y*DataManager.TILE_SIZE;
+      animation.tick();
+      sprite.tick();
       indexTrajectory++;
       return;
     } else { //if (indexTrajectory == trajectory.size()) {
       walkingAlongPath = false;
       indexTrajectory = 0;
       trajectory = null;
-      trajectory = new List();      
-    }*/   
-    
+      trajectory = new List();
+    }*/
+
   }
 
  /*------------------------------------------------------------------------------------*/
- 
+
 //******************************************************************
 //******* AStar with angle and velocity ****************************
 //******************************************************************
@@ -506,27 +506,27 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   public void setSpeed(int speed) {
     this.speed = speed;
   }
-  
+
   /** To get player's speed
    */
   public int getSpeed() {
     return speed;
   }
-  
+
   /** To set player's angular speed
    */
   public void setAngularSpeed(float angularSpeed) {
     this.angularSpeed = angularSpeed;
   }
-  
+
   /** To get player's angular speed
    */
   public float getAngularSpeed() {
     return angularSpeed;
   }
-  
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-     
+
   /** Update Movement along path.
    *  Method to call each tick to update the entity's position.
    *  This method does nothing if there is no current move.
@@ -535,24 +535,24 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
 
        if(!turningAlongPath && !walkingAlongPath)
           return;
-          
+
        long now = System.currentTimeMillis();
        double deltaT = ( now-lastUpdateTime )/1000.0f;
        lastUpdateTime = now;
 
       if (turningAlongPath) {
-        // Orientation update           
-           setAngle( getAngle() + angularDirection*deltaT*angularSpeed );           
+        // Orientation update
+           setAngle( getAngle() + angularDirection*deltaT*angularSpeed );
 
         // End of turn ?
         double deltaA = (float)( (nextAngle-getAngle())*angularDirection);
-        
+
            if( deltaA<=0 ) {
-                turningAlongPath = false;                
-                setAngle(angle( new Point( (int)positionX, (int)positionY), nextPoint) );                
+                turningAlongPath = false;
+                setAngle(angle( new Point( (int)positionX, (int)positionY), nextPoint) );
            }
            else if(deltaA>Math.PI/8)
-                return; // no footsteps, the angle is to great, we just turn...          
+                return; // no footsteps, the angle is to great, we just turn...
        }
         /*else {
         setAngle( angle( new Point( position.x, position.y ), nextPoint) );
@@ -567,7 +567,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
 
        if( deltaD >= 0 ) {
            pathIndex++;
-        
+
          // 2.1 - Path Over ?
             if( pathIndex >= path.size() ) {
                 positionX = (float) nextPoint.x;
@@ -580,15 +580,15 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
                 path=null;
                 nextPoint=null;
                 prevPoint=null;
-                                              
+
                 return;
             }
-         
+
          // 2.2 - Next Point + position correction
             prevPoint = new Point( (int)positionX, (int)positionY ); // = nextPoint
-            nextPoint = (Point) path.elementAt( pathIndex );            
+            nextPoint = (Point) path.elementAt( pathIndex );
             updateAngularNode();
-            
+
        }
 
     }
@@ -608,12 +608,12 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
          pathIndex = 1;
          lastUpdateTime = System.currentTimeMillis();
 
-         prevPoint =  new Point( (int)positionX, (int)positionY );         
+         prevPoint =  new Point( (int)positionX, (int)positionY );
          nextPoint = (Point) path.elementAt(pathIndex);
 
          walkingAlongPath = true;
           // We only use rotations on an InteriorMap
-         if (location.isRoom()) {           
+         if (location.isRoom()) {
            speed = 60;
          } else if (location.isTown()) {
            turningAlongPath = false;
@@ -622,7 +622,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
            turningAlongPath = false;
            speed = 5;
          }
-          
+
          updateAngularNode();
     }
 
@@ -667,8 +667,8 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     */
     private void updateAngularNode() {
         nextAngle = angle( prevPoint, nextPoint );
-        
-        angularDirection = 1;               
+
+        angularDirection = 1;
 
         while( nextAngle-getAngle() > Math.PI )
            nextAngle = (float)(nextAngle-2*Math.PI);
@@ -678,8 +678,8 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
 
         if( getAngle() > nextAngle )
             angularDirection = -1;
-            
-         // We only use rotations on an InteriorMap        
+
+         // We only use rotations on an InteriorMap
         if (location.isRoom()) {
           turningAlongPath = true;
         } else {

@@ -23,6 +23,8 @@
 
 package wotlas.client.screen;
 
+import wotlas.client.DataManager;
+
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.graphics2D.policy.*;
@@ -97,6 +99,8 @@ public class JClientScreen extends JFrame
     this.logPanel = logPanel;
     addWindowListener( new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
+        System.out.println("See you soon!");
+        DataManager.getDefaultDataManager().closeConnection();
         Debug.exit();
       }
     });
@@ -113,6 +117,7 @@ public class JClientScreen extends JFrame
     this.logPanel = logPanel;
     addWindowListener( new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
+        System.out.println("See you soon!");
         mapPanel.exit();
       }
     });

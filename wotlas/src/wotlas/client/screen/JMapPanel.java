@@ -39,10 +39,16 @@ public class JMapPanel extends JPanel implements MouseListener
 
  /*------------------------------------------------------------------------------------*/
 
+  /** True if we show debug informations
+   */
+  public static boolean SHOW_DEBUG = false;
+
+ /*------------------------------------------------------------------------------------*/
+
   /** Our Graphics Director
    */
   private GraphicsDirector gDirector;
-  
+
   /** Our DataManager
    */
   private DataManager dataManager;
@@ -53,16 +59,16 @@ public class JMapPanel extends JPanel implements MouseListener
    * @param gDirector Graphics Director
    */
   public JMapPanel(GraphicsDirector gDirector, DataManager dataManager) {
-    //super(new FlowLayout(FlowLayout.LEFT,0,0));    
+    //super(new FlowLayout(FlowLayout.LEFT,0,0));
     super(new GridLayout(1,1,0,0));
-    
+
     this.gDirector = gDirector;
     this.dataManager = dataManager;
-    
+
     add(gDirector);
-    
+
     // Listen to Mouse clics
-    addMouseListener(this);    
+    addMouseListener(this);
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -70,15 +76,18 @@ public class JMapPanel extends JPanel implements MouseListener
   /**
    * Invoked when the mouse button is clicked
    */
-  public void mouseClicked(MouseEvent e) {    
+  public void mouseClicked(MouseEvent e) {
     //if (e.getID() == java.awt.event.MouseEvent.MOUSE_CLICKED) {
-      System.out.println("[JMapPanel] : clic sur (" + e.getX() + "," + e.getY() + ")");
+      if (SHOW_DEBUG)
+        System.out.println("[JMapPanel] : clic sur (" + e.getX() + "," + e.getY() + ")");
       if (SwingUtilities.isRightMouseButton(e)) {
-        System.out.println("\tclic droit");
+        if (SHOW_DEBUG)
+          System.out.println("\tright clic");
         dataManager.onRightClicJMapPanel(e);
         dataManager.tick();
       } else {
-        System.out.println("\tclic gauche");
+        if (SHOW_DEBUG)
+          System.out.println("\tleft clic");
         dataManager.onLeftClicJMapPanel(e);
         dataManager.tick();
       }
@@ -102,11 +111,12 @@ public class JMapPanel extends JPanel implements MouseListener
   public void mouseReleased(MouseEvent e) {}
 
  /*------------------------------------------------------------------------------------*/
-  
+
   /** To close the client
    */
   public void exit() {
     gDirector.removeAllDrawables();
+    dataManager.closeConnection();
     Debug.exit();
   }
 }

@@ -35,6 +35,11 @@ import wotlas.libs.net.NetMessageBehaviour;
 
 public class WarningMsgBehaviour extends WarningMessage implements NetMessageBehaviour
 {
+ /*------------------------------------------------------------------------------------*/
+
+   /** To tell if this message is to be invoked later or not.
+    */
+     private boolean invokeLater = true;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -52,8 +57,15 @@ public class WarningMsgBehaviour extends WarningMessage implements NetMessageBeh
    *        this message.
    */
   public void doBehaviour( Object context ) {
-    DataManager dataManager = (DataManager) context;
-    dataManager.showWarningMessage(info);
+      DataManager dataManager = (DataManager) context;
+
+       if( invokeLater ) {
+           invokeLater = false;
+           dataManager.invokeLater( this );
+           return;
+       }
+
+      dataManager.showWarningMessage(info);
   }
 
  /*------------------------------------------------------------------------------------*/

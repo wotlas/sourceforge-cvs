@@ -54,7 +54,7 @@ public class JWizardStepTextArea extends JWizardStep {
    */
    private ATextArea tarea;
 
-   protected JTextArea tareaInput;
+   protected ATextArea tareaInput;
    protected ACheckBox checkBox;
 
  /*------------------------------------------------------------------------------------*/
@@ -79,7 +79,7 @@ public class JWizardStepTextArea extends JWizardStep {
       formPanel.setBackground(Color.white);
       formPanel.setBorder( BorderFactory.createEmptyBorder(10,40,10,40) );
 
-      tareaInput = new JTextArea();
+      tareaInput = new ATextArea();
       tareaInput.setBackground(Color.white);
       tareaInput.setLineWrap(true);
       tareaInput.setWrapStyleWord(true);

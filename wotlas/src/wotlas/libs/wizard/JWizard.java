@@ -25,6 +25,7 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 
+import wotlas.utils.SwingTools;
 
 /** A generic setup wizard that possesses buttons (previous/cancel/next) and displays
  *  a panel (JWizardStep) that can react when these buttons are pressed. <br>
@@ -44,6 +45,10 @@ public abstract class JWizard extends JFrame {
   /** Where the images are stored. Note the existence of an ending '/'.
    */
   public static final String GUI_IMAGES_PATH = "../base/gui/";
+
+  /** Title font to use.
+   */
+  public static final String TITLE_FONT = "../base/fonts/Lblack.ttf";
 
  /*------------------------------------------------------------------------------------*/
 
@@ -130,6 +135,7 @@ public abstract class JWizard extends JFrame {
       stepFactory = new JWizardStepFactory();
 
       setSize(width+100,height);
+      SwingTools.centerComponent(this);
       setBackground(Color.white);
       setIconImage(Toolkit.getDefaultToolkit().getImage( GUI_IMAGES_PATH+"icon.gif" ));
 
@@ -144,7 +150,8 @@ public abstract class JWizard extends JFrame {
       titlePanel.setPreferredSize( new Dimension(width-10,24) );
 
       t_title = new ALabel(title);
-      t_title.setFont(new Font("Serif",Font.PLAIN, 18) );
+      t_title.setFont( SwingTools.loadFont(TITLE_FONT).deriveFont(18f) );
+
       t_title.setAlignmentX(LEFT_ALIGNMENT);
       titlePanel.add(t_title);
       wizardPanel.add(titlePanel, BorderLayout.NORTH);
@@ -273,6 +280,11 @@ public abstract class JWizard extends JFrame {
         new ActionListener()
         {
            public void actionPerformed(ActionEvent e) {
+              int value = JOptionPane.showConfirmDialog(null, "Are you sure ?", "Cancel", JOptionPane.YES_NO_OPTION);
+
+              if( value != JOptionPane.YES_OPTION )
+                  return;
+
               onCanceled(getContext());
               setVisible(false);
               mainPanel.removeAll();
@@ -434,9 +446,16 @@ public abstract class JWizard extends JFrame {
 
  /*------------------------------------------------------------------------------------*/
 
+  /** To set if the next button is enabled.
+   */
+   public void setIsNextButtonEnabled(boolean enabled) {
+       b_next.setEnabled( enabled );
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
   /** To awake the current step.
    */
-   //protected void awakeCurrentStep() {
    public void awakeCurrentStep() {
         if(currentStep!=null)
            currentStep.awake();

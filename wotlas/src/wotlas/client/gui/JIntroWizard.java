@@ -175,34 +175,32 @@ public class JIntroWizard extends JFrame
 
     f = SwingTools.loadFont("../base/fonts/Lblack.ttf");
     
-    UIManager.put("ComboBox.font", f.deriveFont(16f));
+    UIManager.put("ComboBox.font", f.deriveFont(14f));
     UIManager.put("ComboBox.foreground", Color.black);
-        
-    UIManager.put("Label.font", f.deriveFont(18f));
+
+    UIManager.put("Label.font", f.deriveFont(14f));
     UIManager.put("Label.foreground", Color.black);
     
-    UIManager.put("PasswordField.font", f.deriveFont(16f));
+    UIManager.put("PasswordField.font", f.deriveFont(14f));
     UIManager.put("PasswordField.foreground", Color.black);
     
-    UIManager.put("RadioButton.font", f.deriveFont(16f));
+    UIManager.put("RadioButton.font", f.deriveFont(14f));
     UIManager.put("RadioButton.foreground", Color.black);
             
-    UIManager.put("Table.font", f.deriveFont(16f));
+    UIManager.put("Table.font", f.deriveFont(14f));
     UIManager.put("Table.foreground", Color.black);    
     
-    UIManager.put("TableHeader.font", f.deriveFont(18f));
+    UIManager.put("TableHeader.font", f.deriveFont(16f));
     UIManager.put("TableHeader.foreground", Color.black);
     
-    UIManager.put("TextArea.font", f.deriveFont(16f));
+    UIManager.put("TextArea.font", f.deriveFont(14f));
     UIManager.put("TextArea.foreground", Color.black);
     
-    UIManager.put("TextField.font", f.deriveFont(18f));
+    UIManager.put("TextField.font", f.deriveFont(14f));
     UIManager.put("TextField.foreground", Color.black);    
     
     UIManager.put("CheckBox.font", f.deriveFont(14f));
-    UIManager.put("CheckBox.foreground", Color.black);    
-    
-   
+    UIManager.put("CheckBox.foreground", Color.black);
   }
   
  /*--------------------------------------------------------------------------*/

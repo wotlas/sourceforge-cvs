@@ -609,6 +609,7 @@ public class ClientManager
 
       label1 = new ALabel("Welcome " + currentProfileConfig.getLogin() + ",");
       label1.setAlignmentX(Component.CENTER_ALIGNMENT);
+      label1.setFont( label1.getFont().deriveFont(18) );
       leftPanel.add(label1);
 
       leftPanel.add(Box.createRigidArea(new Dimension(0,10)));
@@ -851,6 +852,7 @@ public class ClientManager
 
       label1 = new ALabel("Welcome,");
       label1.setAlignmentX(Component.CENTER_ALIGNMENT);
+      label1.setFont( label1.getFont().deriveFont(18) );
       leftPanel.add(label1);
 
       leftPanel.add(Box.createRigidArea(new Dimension(0,10)));
@@ -966,15 +968,12 @@ public class ClientManager
     case 10:
      
       
-      screenIntro.setTitle("Wotlas - Account creation...");
+      // screenIntro.setTitle("Wotlas - Account creation...");
 
       // Loading Server Configs
-      //serverConfigList.getLatestConfigFiles(screenIntro);
+      serverConfigList.getLatestConfigFiles(screenIntro);
 
-      // Account creation
-      currentProfileConfig = new ProfileConfig();
-      DataManager.getDefaultDataManager().setCurrentProfileConfig(currentProfileConfig);
-
+      // Launching Wizard
       JAccountCreationWizard accountCreationWz = new JAccountCreationWizard();
       break;
       
@@ -1197,12 +1196,10 @@ public class ClientManager
     // **************************************
 
     case 11:
-      screenIntro.setTitle("Wotlas - Account creation...");      
-      
-      // Save accounts informations
-      profileConfigList.addProfile(currentProfileConfig);
-      PersistenceManager.getDefaultPersistenceManager().saveProfilesConfig(profileConfigList);
+      screenIntro.setTitle("Wotlas - Account creation...");
 
+      // Set the appropriate server config.
+      currentServerConfig = serverConfigList.getServerConfig(currentProfileConfig.getServerID());
 
       // Create panels
       leftPanel = new JPanel();
@@ -1233,7 +1230,8 @@ public class ClientManager
                             + "wotlas from anywhere : <b>" + currentProfileConfig.getKey()
                             + "</b><br>Click OK to enter WOTLAS....</html>");
       leftPanel.add(editorPane, BorderLayout.CENTER);
-     
+      editorPane.setEditable(false);
+
       // *** Right Panel ***/
 
       b_ok.addActionListener(new ActionListener() {
@@ -1288,4 +1286,34 @@ public class ClientManager
       screenIntro.closeScreen();
     }
   }
+
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To add a new profile to the player's profile list. This method is called by
+    *  the AccountCreationEndedMsgBehaviour when an account has been successfully created.
+    */
+    public void addNewProfile( int clientID, int serverID, String login, String password, String playerName) {
+
+      currentProfileConfig = new ProfileConfig();
+
+      // Set profile data
+      currentProfileConfig.setPlayerName(playerName);
+      currentProfileConfig.setLogin(login);
+      currentProfileConfig.setPassword(password);
+      currentProfileConfig.setLocalClientID(clientID);
+      currentProfileConfig.setOriginalServerID(serverID);
+      currentProfileConfig.setServerID(serverID);
+      
+      // Save profile informations
+      profileConfigList.addProfile(currentProfileConfig);
+      PersistenceManager.getDefaultPersistenceManager().saveProfilesConfig(profileConfigList);
+
+      // Set Data Manager ready
+      DataManager dataManager = DataManager.getDefaultDataManager();
+      dataManager.setCurrentProfileConfig(currentProfileConfig);
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
 }

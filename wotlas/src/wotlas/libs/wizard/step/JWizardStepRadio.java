@@ -89,12 +89,10 @@ public class JWizardStepRadio extends JWizardStep implements ActionListener{
       label1 = new ALabel();
       add(label1,BorderLayout.NORTH);
 
-        btGroup = new ButtonGroup();
-
       formPanel = new JPanel();
       formPanel.setAlignmentX(LEFT_ALIGNMENT);
-      formPanel.setBackground(Color.white);      
-      formPanel.setBorder(BorderFactory.createEmptyBorder(30,50,80,10));
+      formPanel.setBackground(Color.white);
+      formPanel.setBorder(BorderFactory.createEmptyBorder(20,50,40,10));
       add(formPanel, BorderLayout.CENTER);
 
       tarea = new ATextArea();
@@ -153,7 +151,9 @@ public class JWizardStepRadio extends JWizardStep implements ActionListener{
 
      // 3 - We end the GUI init
         label1.setText(s_label);
+        btGroup = new ButtonGroup();
 
+        formPanel.removeAll();
         formPanel.setLayout( new GridLayout(choices.length,1,10,10) );
 
         for( int i=0; i<choices.length; i++) {

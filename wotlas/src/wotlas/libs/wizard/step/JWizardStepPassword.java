@@ -52,7 +52,7 @@ public class JWizardStepPassword extends JWizardStep {
    */
    private ALabel label1, label2, label3;
 
-   protected JTextField tfield1;
+   protected ATextField tfield1;
    protected APasswordField tfield2, tfield3;
 
    private ATextArea tarea;
@@ -70,19 +70,19 @@ public class JWizardStepPassword extends JWizardStep {
       
       formPanel = new JPanel(new GridLayout(3,2,5,5));
       formPanel.setBackground(Color.white);
-        label1 = new ALabel("Enter Login:");
+        label1 = new ALabel("Enter a login name :");
         formPanel.add(label1);
 
-        tfield1 = new JTextField(15);
+        tfield1 = new ATextField(15);
         formPanel.add(tfield1);
 
-        label2 = new ALabel("Enter Password:");
+        label2 = new ALabel("Enter a password :");
         formPanel.add(label2);
 
         tfield2 = new APasswordField();
         formPanel.add(tfield2);
 
-        label3 = new ALabel("Re-enter Password:");
+        label3 = new ALabel("Re-enter your password :");
         formPanel.add(label3);
 
         tfield3 = new APasswordField();

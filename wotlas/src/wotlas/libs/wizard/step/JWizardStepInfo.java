@@ -57,7 +57,7 @@ public class JWizardStepInfo extends JWizardStep {
     super();
     setBackground(Color.white);
     setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-    setBorder(BorderFactory.createEmptyBorder(20,20,0,20));
+    setBorder(BorderFactory.createEmptyBorder(20,20,0,10));
 
     tarea = new ATextArea();
     tarea.setBackground(Color.white);

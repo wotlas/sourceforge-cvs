@@ -146,7 +146,7 @@ public class ServerConfigList
           if( remoteServerTable!= null )
              return remoteServerTable;
 
-          Debug.signal(Debug.NOTICE, this,"Trying to load Server Table from network...");
+          Debug.signal(Debug.NOTICE, null,"Trying to load Server Table from network...");
        // We load the file from its URL
           remoteServerTable = FileTools.getTextFileFromURL( remoteServerConfigHomeURL+"server-table.cfg" );
           

@@ -77,7 +77,7 @@ public class AccountManager
                        nbAccountsLoaded++;
                    }
 
-          Debug.signal( Debug.NOTICE, this, "AccountManager loaded "+nbAccountsLoaded+" accounts." );
+          Debug.signal( Debug.NOTICE, null, "AccountManager loaded "+nbAccountsLoaded+" accounts." );
    }
   
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

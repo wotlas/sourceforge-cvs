@@ -65,16 +65,16 @@ public class JWizardStep2TextFieldNet extends JWizardStep2TextField {
    */
    protected boolean onNext(Object context, JWizard wizard) {
     JWizardStepParameters parameters = new JWizardStepParameters();
-    parameters.setStepClass(this.getClass().getName());
+    //parameters.setStepClass(this.getClass().getName());
     
-    parameters.setProperty("data.tfield0", getText0());
-    parameters.setProperty("data.tfield1", getText1());
+    parameters.setProperty("data.text0", getText0());
+    parameters.setProperty("data.text1", getText1());
     
     NetPersonality personality = (NetPersonality) context;
     personality.queueMessage(new AccountStepMessage(parameters)); 
     await();
     
-   	return true;
+    return true;
    }
 
   /** Called when Previous button is clicked.
@@ -86,7 +86,7 @@ public class JWizardStep2TextFieldNet extends JWizardStep2TextField {
     personality.queueMessage(new PreviousStepMessage());
     await();
     
-   	return true;
+    return true;
    }
 
  /*------------------------------------------------------------------------------------*/

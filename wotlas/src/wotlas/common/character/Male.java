@@ -21,15 +21,13 @@ package wotlas.common.character;
 
 import java.io.*;
 
-/** A Female Human Wotlas Character.
+/** A Male Human Wotlas Character.
  *
  * @author Aldiss
  * @see wotlas.common.character.Human
  */
 
-public abstract class Female extends Human {
-
-// TO ADD: one power use
+public abstract class Male extends Human {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

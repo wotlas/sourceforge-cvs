@@ -104,12 +104,12 @@ public class PersistenceManager
         File worldSaveList[] = new File( universeHome ).listFiles();
 
         if( worldSaveList==null ) {
-            Debug.signal( Debug.ERROR, this, "No universe data found in: " + universeHome );
+            Debug.signal( Debug.ERROR, null, "No universe data found in: " + universeHome );
             return null;
         }
 
      // ok, here we go ! we load all the worlds we can find...
-        Debug.signal( Debug.NOTICE, this, "Loading Universe Data from :"+universeHome );
+        Debug.signal( Debug.NOTICE, null, "Loading Universe Data from :"+universeHome );
         WorldMap worlds[] = null;
 
         for( int w=0; w<worldSaveList.length; w++ )
@@ -207,7 +207,7 @@ public class PersistenceManager
      //                                       OBJECTS_PREFIX, OBJECTS_SUFFIX, true );
 
 
-      Debug.signal( Debug.NOTICE, this, "Loaded "+worldCount+" worlds, "+townCount+" towns,"
+      Debug.signal( Debug.NOTICE, null, "Persistence Manager loaded "+worldCount+" worlds, "+townCount+" towns,"
                     +buildingCount+" buildings, "+mapCount+" maps." );
 
       return worlds;

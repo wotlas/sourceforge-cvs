@@ -55,7 +55,7 @@ public class JWizardStep2TextField extends JWizardStep {
    */
    private ALabel label0, label1;
 
-   protected JTextField tfield0, tfield1;
+   protected ATextField tfield0, tfield1;
 
    private ATextArea tarea;
    private JPanel formPanel;
@@ -74,11 +74,11 @@ public class JWizardStep2TextField extends JWizardStep {
       formPanel.setBackground(Color.white);
         label0 = new ALabel();
         formPanel.add(label0);
-        tfield0 = new JTextField(15);
+        tfield0 = new ATextField(15);
         formPanel.add(tfield0);
         label1 = new ALabel();
         formPanel.add(label1);
-        tfield1 = new JTextField(15);
+        tfield1 = new ATextField(15);
         formPanel.add(tfield1);
       
       add(formPanel,BorderLayout.NORTH);

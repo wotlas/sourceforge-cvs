@@ -43,6 +43,15 @@ public class AccountCreationEndedMessage extends NetMessage
    // server ID part
       protected int serverID;
 
+   // player login
+      protected String login;
+
+   // player password
+      protected String password;
+
+   // player (full) name
+      protected String playerName;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
@@ -57,11 +66,17 @@ public class AccountCreationEndedMessage extends NetMessage
    *
    * @param clientID client local ID
    * @param serverID server ID who created the client account
+   * @param login player login
+   * @param playerName player Name
    */
-     public AccountCreationEndedMessage(int clientID, int serverID) {
+     public AccountCreationEndedMessage(int clientID, int serverID, String login, String password,
+                                        String playerName) {
          super();
          this.clientID = clientID;
          this.serverID = serverID;
+         this.login = login;
+         this.password = password;
+         this.playerName = playerName;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -75,6 +90,9 @@ public class AccountCreationEndedMessage extends NetMessage
      public void encode( DataOutputStream ostream ) throws IOException {
             ostream.writeInt(clientID);
             ostream.writeInt(serverID);
+            ostream.writeUTF(login);
+            ostream.writeUTF(password);
+            ostream.writeUTF(playerName);
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -88,6 +106,9 @@ public class AccountCreationEndedMessage extends NetMessage
      public void decode( DataInputStream istream ) throws IOException {
             clientID = istream.readInt();
             serverID = istream.readInt();
+            login = istream.readUTF();
+            password = istream.readUTF();
+            playerName = istream.readUTF();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

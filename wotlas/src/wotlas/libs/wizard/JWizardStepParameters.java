@@ -73,7 +73,7 @@ public class JWizardStepParameters {
   /** Empty Constructor. Sets default values, no step class and an empty title.
    */
    public JWizardStepParameters() {
-   	this(null," ",false,null);
+   	this("","",false,null);
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -85,7 +85,7 @@ public class JWizardStepParameters {
    * @param stepClass JWizardStep's java class.
    */
    public JWizardStepParameters(String stepClass) {
-   	this(stepClass," ",false,null);
+   	this(stepClass,"",false,null);
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

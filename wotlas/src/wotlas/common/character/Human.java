@@ -71,12 +71,12 @@ public abstract class Human implements WotCharacter {
    *  doesn't exist in our list we set it as "unknown".
    */
     public void setHairColor( String hairColor ) {
-    	
-       for( int i=0; i<hairColors.length; i++ )
-            if( hairColor.equals(hairColors[i]) ) {
-                this.hairColor = hairColor;
-                return;
-            }
+       if(hairColor!=null)
+          for( int i=0; i<hairColors.length; i++ )
+               if( hairColor.equals(hairColors[i]) ) {
+                   this.hairColor = hairColor;
+                   return;
+               }
 
        this.hairColor = "unknown";
     }

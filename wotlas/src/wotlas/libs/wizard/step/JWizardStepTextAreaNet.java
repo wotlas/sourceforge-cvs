@@ -65,20 +65,16 @@ public class JWizardStepTextAreaNet extends JWizardStepTextArea {
    */
    protected boolean onNext(Object context, JWizard wizard) {
     JWizardStepParameters parameters = new JWizardStepParameters();
-    parameters.setStepClass(this.getClass().getName());
-    
+    //parameters.setStepClass(this.getClass().getName());
+
     parameters.setProperty("data.text0", getText0());
-    if (getOption0()) {
-      parameters.setProperty("data.option0", "true");
-    } else {
-      parameters.setProperty("data.option0", "false");
-    }
+    parameters.setProperty("data.option0", ""+getOption0());
     
     NetPersonality personality = (NetPersonality) context;
     personality.queueMessage(new AccountStepMessage(parameters)); 
     await();
     
-   	return true;
+    return true;
    }
 
   /** Called when Previous button is clicked.
@@ -90,7 +86,7 @@ public class JWizardStepTextAreaNet extends JWizardStepTextArea {
     personality.queueMessage(new PreviousStepMessage());
     await();
     
-   	return true;
+    return true;
    }
 
  /*------------------------------------------------------------------------------------*/

@@ -136,6 +136,7 @@ public class JWizardStepComboBox extends JWizardStep {
 
      // 3 - We end the GUI init
         label1.setText(s_label);
+        comboBox.removeAllItems();
 
         for( int i=0; i<choices.length; i++)
              comboBox.addItem(choices[i]);

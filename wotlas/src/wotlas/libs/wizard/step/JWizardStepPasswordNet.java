@@ -62,10 +62,11 @@ public class JWizardStepPasswordNet extends JWizardStepPassword {
    *  @return return true to validate the "Next" button action, false to cancel it...
    */
    protected boolean onNext(Object context, JWizard wizard) {
-    super.onNext(context, wizard);
+    if( !super.onNext(context, wizard) )
+        return false;
     
     JWizardStepParameters parameters = new JWizardStepParameters();
-    parameters.setStepClass(this.getClass().getName());
+    //parameters.setStepClass(this.getClass().getName());
     
     parameters.setProperty("data.login", getLogin());
     parameters.setProperty("data.password", getPassword());
@@ -86,7 +87,7 @@ public class JWizardStepPasswordNet extends JWizardStepPassword {
     personality.queueMessage(new PreviousStepMessage());
     await();
     
-   	return true;
+    return true;
    }
 
  /*------------------------------------------------------------------------------------*/

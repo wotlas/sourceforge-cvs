@@ -17,14 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-// TODO :
-// - remplacer currentProfile par playerImpl
-// - changer la boucle du thread
-// - mettre un lock sur le circle
-// - modifier le point d'insertion dans InteriorMap : récupérer les coordonnées du joueur
-
-// - remettre players
-
 package wotlas.client;
 
 import wotlas.client.gui.*;

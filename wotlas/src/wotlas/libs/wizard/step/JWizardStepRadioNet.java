@@ -75,15 +75,15 @@ public class JWizardStepRadioNet extends JWizardStepRadio {
    */
    protected boolean onNext(Object context, JWizard wizard) {
     JWizardStepParameters parameters = new JWizardStepParameters();
-    parameters.setStepClass(this.getClass().getName());
+    //parameters.setStepClass(this.getClass().getName());
     
-    parameters.setProperty("data.choice", String.valueOf(getChoice()));
-    
+    parameters.setProperty("data.choice", ""+getChoice() );
+
     NetPersonality personality = (NetPersonality) context;
     personality.queueMessage(new AccountStepMessage(parameters)); 
     await();
     
-   	return true;
+    return true;
    }
 
   /** Called when Previous button is clicked.
@@ -95,7 +95,7 @@ public class JWizardStepRadioNet extends JWizardStepRadio {
     personality.queueMessage(new PreviousStepMessage());
     await();
     
-   	return true;
+    return true;
    }
 
  /*------------------------------------------------------------------------------------*/

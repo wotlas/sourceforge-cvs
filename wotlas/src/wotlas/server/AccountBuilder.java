@@ -142,7 +142,7 @@ public class AccountBuilder implements NetConnectionListener
            }
 
            String previous = currentParameters.getProperty("server.previous");
-                 
+
            if(previous==null) {
               sendStepError("Previous step not found !");
               return;
@@ -165,6 +165,8 @@ public class AccountBuilder implements NetConnectionListener
    /** To parse the result data and move to the next step.
     */
      public void setStepResultData( JWizardStepParameters resultParameters ) {
+
+       try{
 
        // A - we retrieve the data properties
           String resultPropsKey[] = resultParameters.getStepPropertiesKey();
@@ -223,7 +225,7 @@ public class AccountBuilder implements NetConnectionListener
            if(next==null && !currentParameters.getIsLastStep()) {
               // we search for default
                  next = currentParameters.getProperty("server.next");
-                 
+
                  if(next==null) {
                     sendStepError("Internal Error. This server was badly configurated.\nPlease mail this server's administrator ! (code: #nexStpNon)");
                     return;
@@ -249,6 +251,11 @@ public class AccountBuilder implements NetConnectionListener
 
            personality.queueMessage( new AccountStepMessage(
                                           currentParameters.getCopyWithNoServerProps() ) );
+        }
+        catch( Exception ex2 ) {
+           Debug.signal(Debug.ERROR,this,ex2);
+           sendStepError("Internal Error : "+ex2);
+        }
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -274,7 +281,8 @@ public class AccountBuilder implements NetConnectionListener
             return true;
         }
         catch( Exception ex ) {
-            sendStepError("Error : "+ex.getMessage());
+            Debug.signal(Debug.ERROR,this,ex);
+            sendStepError("Internal Error : ("+ex.getMessage()+") Please report the bug.");
             return false;
         }
      }
@@ -285,7 +293,7 @@ public class AccountBuilder implements NetConnectionListener
     */
      public void sendStepError( String message ) {
         personality.queueMessage( new StepErrorMessage( message ) );
-        Debug.signal( Debug.ERROR, this, "An error occured during step creation : "+message );
+        Debug.signal( Debug.ERROR, this, "An error occured during account creation : "+message );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -326,7 +334,10 @@ public class AccountBuilder implements NetConnectionListener
 
            // we send a Success Message
               personality.queueMessage( new AccountCreationEndedMessage(account.getLocalClientID(),
-                                                                        account.getOriginalServerID() ) );
+                                                                        account.getOriginalServerID(),
+                                                                        account.getLogin(),
+                                                                        account.getPassword(),
+                                                                        player.getFullPlayerName() ) );
            // And close the connection
               personality.closeConnection();
         }

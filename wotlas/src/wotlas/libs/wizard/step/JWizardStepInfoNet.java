@@ -60,13 +60,13 @@ public class JWizardStepInfoNet extends JWizardStepInfo {
    */
    protected boolean onNext(Object context, JWizard wizard) {
     JWizardStepParameters parameters = new JWizardStepParameters();
-    parameters.setStepClass(this.getClass().getName());
+    //parameters.setStepClass(this.getClass().getName());
     
     NetPersonality personality = (NetPersonality) context;
     personality.queueMessage(new AccountStepMessage(parameters)); 
     await();
     
-   	return true;
+    return true;
    }
 
   /** Called when Previous button is clicked.
@@ -78,7 +78,7 @@ public class JWizardStepInfoNet extends JWizardStepInfo {
     personality.queueMessage(new PreviousStepMessage());
     await();
     
-   	return true;
+    return true;
    }
 
  /*------------------------------------------------------------------------------------*/

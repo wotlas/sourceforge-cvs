@@ -111,7 +111,7 @@ public class JChatRoom extends JPanel
     attribut = new SimpleAttributeSet();
     StyleConstants.setFontSize(attribut,12);
     
-    strBuffer = "<font color='green'>new chat created</font><br>\n";
+    strBuffer = "<font color='green'><i>new chat created</i></font><br>\n";
     
     messagesPane.setText("<html><body>" + strBuffer + "</body></html>");
     System.out.println("init = " + messagesPane.getText());
@@ -183,7 +183,7 @@ public class JChatRoom extends JPanel
     
     Runnable runnable = new Runnable() {
       public void run() {
-        appendText("<font color='green'>" + strOldName + " left the chat...");
+        appendText("<font color='green'><i>" + strOldName + " left the chat...</i></font>");
         playersListModel.removeElement(strOldName);
       }
     };

@@ -39,7 +39,7 @@ import java.net.BindException;
  * @see wotlas.server.PersistenceManager
  */
 
-class ServerDirector implements Runnable, NetServerErrorListener
+public class ServerDirector implements Runnable, NetServerErrorListener
 {
  /*------------------------------------------------------------------------------------*/
 
@@ -55,6 +55,10 @@ class ServerDirector implements Runnable, NetServerErrorListener
    /** Persistence period in ms.
     */
     public final static long PERSISTENCE_PERIOD = 1000*3600*6; // 6h
+
+   /** Static Link to Remote Servers Config File.
+    */
+    public final static String REMOTE_SERVER_CONFIG = "../src/config/remote-servers.cfg";
 
  /*------------------------------------------------------------------------------------*/
 
@@ -86,6 +90,10 @@ class ServerDirector implements Runnable, NetServerErrorListener
    /** Our default ServerDirector.
     */
       private static ServerDirector serverDirector;
+
+   /** Remote server home URL : where the server list is stored on the internet.
+    */
+      private static String remoteServerConfigHomeURL;
 
    /** Show debug information ?
     */
@@ -172,6 +180,27 @@ class ServerDirector implements Runnable, NetServerErrorListener
            }
 
            Debug.signal( Debug.NOTICE, null, "Server ID set to : "+serverID );
+
+
+        // STEP 1.1 - We load remote props (server table base URL)
+           Properties remoteProps = FileTools.loadPropertiesFile( REMOTE_SERVER_CONFIG );
+
+           if( remoteProps==null ) {
+               Debug.signal( Debug.FAILURE, null, "No valid remote-servers.cfg file found !" );
+               Debug.exit();
+           }
+           else {
+               remoteServerConfigHomeURL = remoteProps.getProperty( "REMOTE_SERVER_CONFIG_HOME_URL","" );
+
+               if( remoteServerConfigHomeURL.length()==0 ) {
+                   Debug.signal( Debug.FAILURE, null, "No URL for remote server config home !" );
+                   Debug.exit();
+               }
+        
+               if( !remoteServerConfigHomeURL.endsWith("/") )
+                   remoteServerConfigHomeURL += "/";
+           }
+
 
         // STEP 2 - Creation of the PersistenceManager
            persistenceManager = PersistenceManager.createPersistenceManager( databasePath );
@@ -261,7 +290,7 @@ class ServerDirector implements Runnable, NetServerErrorListener
            Debug.signal( Debug.NOTICE, null, "Shuting down servers..." );
            serverManager.getGameServer().stopServer();
            serverManager.getAccountServer().stopServer();
-           /* serverManager.getGatewayServer().stopServer(); */
+           serverManager.getGatewayServer().stopServer();
 
            Tools.waitTime( 1000*10 ); // 10s
            Debug.signal( Debug.NOTICE, null, "Leaving Persistence Thread..." );
@@ -394,6 +423,17 @@ class ServerDirector implements Runnable, NetServerErrorListener
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the URL where are stored the remote server configs. This URL can also contain
+   *  a news.html file to display some news.
+   *
+   * @return remoteServerConfigHomeURL
+   */
+   public static String getRemoteServerConfigHomeURL() {
+      return remoteServerConfigHomeURL;
+   }
+
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
 

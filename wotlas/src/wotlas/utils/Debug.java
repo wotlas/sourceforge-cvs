@@ -199,6 +199,15 @@ public class Debug {
 
  /*------------------------------------------------------------------------------------*/
 
+  /** To get the PrintStream of this Debug Utility.
+   *  @return out PrintStream we use.
+   */
+     static public PrintStream getPrintStream() {
+     	 return out;
+     }
+
+ /*------------------------------------------------------------------------------------*/
+
   /** To flush the printStream.
    *  @param out PrintStream to use.
    */

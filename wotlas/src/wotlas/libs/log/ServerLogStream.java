@@ -48,7 +48,7 @@ public class ServerLogStream extends LogStream
    *
    * @param x text just printed to log.
    */
-    protected void printedText( String x ) {
+    protected void printedText( final String x ) {
     	System.err.println( x );
     }
 

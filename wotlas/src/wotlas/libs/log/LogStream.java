@@ -55,7 +55,7 @@ public abstract class LogStream extends PrintStream implements ActionListener
          super( new BufferedOutputStream( new FileOutputStream( logFileName, append ),
                                           64*1024 ) );
 
-         println("Log opened the "+Tools.getLexicalDate()+".");
+         println("Log opened the "+Tools.getLexicalDate()+" at "+Tools.getLexicalTime());
          timer = new Timer( periodBeforeSave, this );
          timer.start();
      }
@@ -79,14 +79,14 @@ public abstract class LogStream extends PrintStream implements ActionListener
    *
    * @param x text just printed to log.
    */
-    abstract protected void printedText( String x );
+    abstract protected void printedText( final String x );
 
  /*------------------------------------------------------------------------------------*/
 
   /** To close this stream.
    */
      public void close() {
-        super.println("Log cleanly closed the "+Tools.getLexicalDate()+".");
+        super.println("Log cleanly closed the "+Tools.getLexicalDate()+" at "+Tools.getLexicalTime());
         super.close();
      }
 

@@ -120,7 +120,7 @@ public class JLogStream extends LogStream
           dialog.pack();
           SwingTools.centerComponent( dialog );
           dialog.show();
-          Tools.waitTime(2000);
+          Tools.waitTime(1000); // just some time to display the logo
      }
 
  /*------------------------------------------------------------------------------------*/
@@ -130,7 +130,7 @@ public class JLogStream extends LogStream
    *
    * @param x text just printed to log.
    */
-    protected void printedText( String x ) {
+    protected void printedText( final String x ) {
         if(logArea==null || dialog==null || !logArea.isShowing() || x==null || x.length()==0 )
            return;
 
@@ -149,25 +149,31 @@ public class JLogStream extends LogStream
     // too much messages displayed ?
        numberOfMsg +=nbLines;
 
-       while( numberOfMsg > MAX_MSG ) {
-            int pos = logArea.getText().indexOf( "\n");
+      Runnable runnable = new Runnable() {
+        public void run() {
+           while( numberOfMsg > MAX_MSG ) {
+              int pos = logArea.getText().indexOf( "\n");
 
-            if(pos>=0) {
-                logArea.setText( logArea.getText().substring(pos+1,logArea.getText().length() ) );
-                numberOfMsg--;
-            }
-            else
-                break;
-       }
+              if(pos>=0) {
+                  logArea.setText( logArea.getText().substring(pos+1,logArea.getText().length() ) );
+                  numberOfMsg--;
+              }
+              else
+                  break;
+           }
 
-        if(logArea.isShowing()){
-           logArea.append( x+"\n" );
-           logArea.setPreferredSize( new Dimension( image.getWidth(dialog), numberOfMsg*15 ) );
+           if(logArea.isShowing()){
+              logArea.append( x+"\n" );
+              logArea.setPreferredSize( new Dimension( image.getWidth(dialog), numberOfMsg*15 ) );
+           }
+
+        // we want the scrollbars to move when some text is added...
+           if(logArea.isShowing())
+              logArea.setCaretPosition( logArea.getText().length() );
         }
+      };
 
-     // we want the scrollbars to move when some text is added...
-        if(logArea.isShowing())
-           logArea.setCaretPosition( logArea.getText().length() );
+      SwingUtilities.invokeLater( runnable );
     }
 
  /*------------------------------------------------------------------------------------*/

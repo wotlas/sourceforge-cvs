@@ -25,6 +25,9 @@ import javax.swing.JPanel;
  *  To create a plug-in just create a wotlas.client.screen.plugin class that
  *  extends JPanelPlugIn. That's all. The class will be loaded dynamically.
  *
+ *  Note also that the plug-in class must have an empty constructor and should
+ *  do the main inits in the init() method.
+ *
  * @author Aldiss
  */
 

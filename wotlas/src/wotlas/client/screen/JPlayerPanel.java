@@ -93,8 +93,13 @@ public class JPlayerPanel extends JPanel implements MouseListener {
                   if( o==null || !(o instanceof JPanelPlugIn) )
                       continue;
 
+                  JPanelPlugIn plugIn = (JPanelPlugIn) o;
+                  
+                  if( !plugIn.init() )
+                      continue; // init failed
+
                // Ok, we have a valid plug-in
-                  addPlugIn( (JPanelPlugIn)o, ((JPanelPlugIn)o).getPlugInIndex() );
+                  addPlugIn( plugIn, plugIn.getPlugInIndex() );
               }
               catch( Exception e ) {
                   Debug.signal( Debug.WARNING, this, e );

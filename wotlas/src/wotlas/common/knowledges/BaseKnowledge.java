@@ -43,15 +43,15 @@ public class BaseKnowledge
 	  
   /** The maximum duration of use.
    */
-      protected short maxDuration;
+      private short maxDuration;
 
   /** The required levels. THE CLASS LEVEL DOESN'T EXISTS 
    */
-      protected String[]/*Level[]*/ requiredLevels;
+      private String[]/*Level[]*/ requiredLevels;
 
   /** The pre-required knowledges to learn this one.
    */
-      protected BaseKnowledge[] preRequiredKnowledges;
+      private BaseKnowledge[] preRequiredKnowledges;
 	  
 
  /*------------------------------------------------------------------------------------*/

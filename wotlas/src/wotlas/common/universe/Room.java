@@ -21,13 +21,14 @@ package wotlas.common.universe;
 
 import wotlas.common.*;
 import wotlas.common.router.*;
+import wotlas.common.objects.inventories.RoomInventory;
 import wotlas.utils.*;
 
 import java.awt.Rectangle;
 
  /** A Room of an interiorMap. 
   *
-  * @author Petrus, Aldiss
+  * @author Petrus, Aldiss, Elann
   * @see wotlas.common.universe.RoomLink
   */
 
@@ -63,9 +64,6 @@ public class Room implements WotlasMap {
    */
     private MapExit[] mapExits;
 
-  /** List of items in the Room
-   */
-    private WotlasObject[] wotlasObjects;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -80,6 +78,11 @@ public class Room implements WotlasMap {
   /** Our message router. Owns the list of players of this map.
    */
     private transient MessageRouter messageRouter;
+
+  /** RoomInventory used to get objects here.<br>
+   * Transient because there are saved elsewhere.
+   */
+    private transient RoomInventory inventory;
 
  /*------------------------------------------------------------------------------------*/
   
@@ -149,14 +152,6 @@ public class Room implements WotlasMap {
       return mapExits;
     }
 
-    public void setWotlasObjects(WotlasObject myWotlasObject) {
-       // none for now
-    }
-
-    public WotlasObject[] getWotlasObjects() {
-      return null; // none for now
-    }
-
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Transient fields getter & setter
@@ -170,6 +165,14 @@ public class Room implements WotlasMap {
       return messageRouter;
     }
   
+    public RoomInventory getInventory() {
+      return inventory;
+    }
+
+    public void setInventory(RoomInventory inventory) {
+      this.inventory=inventory;
+    }
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Add a new RoomLink object to the array {@link #roomLinks roomLinks}

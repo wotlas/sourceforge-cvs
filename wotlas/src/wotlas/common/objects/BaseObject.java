@@ -47,45 +47,46 @@ public class BaseObject
    
   /** Object position in the world.
    */
-  	 protected WotlasLocation objectLocation; 
+  	 private WotlasLocation objectLocation; 
    
   /** Object position in the room.
    */
-   	 protected int x,y;
+   	 private int x,y;
   
   /** Object's weight - used for endurance and max load. Perhaps negative weight should mean unmovable.
    */
-     protected short objectWeight;
+     private short objectWeight;
 	  
   /** Object's size - used for max load in Containers.
    */
-     protected short objectSize;
+     private short objectSize;
 
   /** The level(s) required to use this object. - THE CLASS LEVEL DOES NOT EXIST ! 
    */
-	 protected String[] /*Level[]*/ requiredLevels;													
+	 private String[] /*Level[]*/ requiredLevels;													
 
   /** The knowledge required to use this object. - THE CLASS KNOWLEDGE DOES NOT EXIST !
    */
-   	 protected String[] /*Knowledge[]*/ requiredKnowledge;
+   	 private String[] /*Knowledge[]*/ requiredKnowledge;
 
-  /** The owner of this object. - THE CLASS PLAYER HAS TO BE ADAPTED FOR OBJECTS !
+  /** The owner of this object.
    */
-   	 protected Player owner;
+   	 private transient Player owner;
   	 
   /** The GFX of the object.
    */
-	 protected Drawable drawable;
+	 private Drawable drawable;
 	 
   /** The icon in the Inventory
    */
-	 protected ImageIdentifier inventoryPicture;
+	 private ImageIdentifier inventoryPicture;
 	 	 
  /*------------------------------------------------------------------------------------*/
 		
   /* ------- Constructor ----- */
   		
-  /** Default constructor.<br>Just sets className and objectName to default.
+  /** Default constructor.
+   * <br>Just sets className and objectName to default.
    */
    	 public BaseObject()
 	 {

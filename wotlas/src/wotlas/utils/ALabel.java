@@ -49,6 +49,15 @@ public class ALabel extends JLabel
 
  /*------------------------------------------------------------------------------------*/
 
+  /** Constructor.
+   */
+  public ALabel( Icon icon ) {
+    super( icon );
+    setOpaque(false);
+  }
+
+ /*------------------------------------------------------------------------------------*/
+
   /** Constructor with alignment.
    */
   public ALabel( String text, int horizontalAlignment ) {

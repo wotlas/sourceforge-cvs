@@ -25,6 +25,8 @@ import wotlas.common.chat.*;
 import wotlas.common.universe.*;
 import wotlas.common.*;
 
+import wotlas.common.message.description.PlayerPastMessage;
+
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
 
@@ -65,6 +67,10 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   /** Player full name
    */
   private String fullPlayerName;
+
+  /** Player character's past
+   */
+  private String playerPast;
 
   /** Wotlas Character
    */
@@ -250,6 +256,33 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   public void setWotCharacter(WotCharacter wotCharacter) {
     this.wotCharacter = wotCharacter;
   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the player character past.
+    *
+    *  @return player past
+    */
+      public String getPlayerPast() {
+      	 if( playerPast==null ) {
+      	    // we ask for the player's past
+      	     sendMessage( new PlayerPastMessage( primaryKey, "") );
+      	     playerPast="loading...";
+      	     return playerPast;
+      	 }
+      	
+         return playerPast;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the player's past.
+    *
+    *  @param playerPast past
+    */
+      public void setPlayerPast( String playerPast ) {
+           this.playerPast = playerPast;
+      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

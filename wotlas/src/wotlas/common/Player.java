@@ -140,6 +140,22 @@ public interface Player
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** To get the player character past.
+    *
+    *  @return player past
+    */
+      public String getPlayerPast();
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the player's past.
+    *
+    *  @param playerPast past
+    */
+      public void setPlayerPast( String playerPast );
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
    /** To get the player's character.
     *
     *  @return player character

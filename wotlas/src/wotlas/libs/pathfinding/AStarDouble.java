@@ -559,40 +559,54 @@ double ot = ((NodeDouble) nodes.elementAt(cur)).f;
 
   /** Returns true if we can walk directly from point A to point B.
    */
-  private boolean walkable( Point a, Point b ) {
-    float angle = 0;
-
+  private boolean walkable( Point a, Point b ) {   
+    float cosinus = 0;
+    float sinus = 0;
+    
+    if ((a.x == b.x) && (a.y == b.y)) {      
+      return true;
+    }
+    
     // 1 - compute angle between the two points...
     if (b.x == a.x) {
-      if (b.y<a.y)
-        angle = (float) Math.PI/2;
-      else if (b.y>a.y)
-        angle = (float) -Math.PI/2;
-      else angle = 0.0f;
+      if (b.y>a.y) {        
+        cosinus = 0;
+        sinus = 1;
+        }
+      else if (b.y<a.y) {        
+        cosinus = 0;
+        sinus = -1;
+        }
+      //else angle = 0.0f;
     } else {
-      angle = (float) Math.atan( (double) (a.y-b.y)/(b.x-a.x) );
-      if (b.x<a.x) {        
-        angle = (float) ( angle+Math.PI );
+      double angle = Math.atan( (double) (b.y-a.y)/(b.x-a.x) );
+      if (b.x<a.x) {
+        cosinus = (float) -Math.cos(angle);
+        sinus   = (float) -Math.sin(angle);        
+      } else {
+        cosinus = (float) Math.cos(angle);
+        sinus   = (float) Math.sin(angle);
       }
     }    
     
     // 2 - check points along the path every 0.25 pixels...
     
-    float rfin = (float) Math.sqrt( (b.y-a.y)*(b.y-a.y) + (b.x-a.x)*(b.x-a.x) );
+    float rfin = (float) Math.sqrt( (b.y-a.y)*(b.y-a.y) + (b.x-a.x)*(b.x-a.x) );    
+    
     //int eX=0;
     //int eY=0;
     //try {
       for ( float r=0.25f; r<rfin; r +=0.25f ) {
-      //  eX = (int) (a.x+r*Math.cos(angle));
-      //  eY = (int) (a.y-r*Math.sin(angle));
-      //  System.out.print("pt=(" + eX + "," + eY + ") ");
-        //if ( !map[(int) (a.x+r*Math.cos(angle))][(int) (a.y-r*Math.sin(angle))] ) 
-          if ( !isNotBlock( (int) (a.x+r*Math.cos(angle)), (int) (a.y-r*Math.sin(angle)) ) )
-          return false;
+        //eX = (int) (a.x+r*cosinus);
+        //eY = (int) (a.y+r*sinus);
+        //System.out.print("pt=(" + eX + "," + eY + ") ");      
+          if ( !isNotBlock( (int) (a.x+r*cosinus), (int) (a.y+r*sinus) ) ) {            
+            return false;
+          }
         
       }
     //} catch (java.lang.ArrayIndexOutOfBoundsException ex) {
-      //System.out.println("ArrayIndexOutOfBoundsException : eX,eY = " + eX + "," + eY + " a = " + a + " b = " + b);
+    //  System.out.println("ArrayIndexOutOfBoundsException : eX,eY = " + eX + "," + eY + " a = " + a + " b = " + b);
     //}
     
     return true; // success ! found valid path between these two points!

@@ -58,7 +58,8 @@ public class ChatRoomCreatedMsgBehaviour extends ChatRoomCreatedMessage implemen
    *        this message.
    */
   public void doBehaviour( Object context ) {
-       System.out.println("ChatRoomCreatedMsgBehaviour:"+primaryKey);
+       if (DataManager.SHOW_DEBUG)
+         System.out.println("ChatRoomCreatedMsgBehaviour:"+primaryKey);
 
     // The context is here a DataManager.
        DataManager dataManager = (DataManager) context;

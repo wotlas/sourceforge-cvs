@@ -58,7 +58,8 @@ public class ChatRoomDeletedMsgBehaviour extends ChatRoomDeletedMessage implemen
    *        this message.
    */
   public void doBehaviour( Object context ) {
-       System.out.println("ChatRoomDeletedMsgBehaviour::doBehaviour: "+chatRoomPrimaryKey);
+       if (DataManager.SHOW_DEBUG)
+         System.out.println("ChatRoomDeletedMsgBehaviour::doBehaviour: "+chatRoomPrimaryKey);
 
     // The context is here a DataManager.
        DataManager dataManager = (DataManager) context;

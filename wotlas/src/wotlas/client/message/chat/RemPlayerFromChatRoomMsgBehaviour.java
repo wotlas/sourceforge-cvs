@@ -58,7 +58,8 @@ public class RemPlayerFromChatRoomMsgBehaviour extends RemPlayerFromChatRoomMess
    *        this message.
    */
   public void doBehaviour( Object context ) {
-       System.out.println("RemPlayerFromChatRoomMsgBehaviour::doBehaviour: "+chatRoomPrimaryKey);
+       if (DataManager.SHOW_DEBUG)
+         System.out.println("RemPlayerFromChatRoomMsgBehaviour::doBehaviour: "+chatRoomPrimaryKey);
 
     // The context is here a DataManager.
        DataManager dataManager = (DataManager) context;

@@ -73,8 +73,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
               Debug.signal( Debug.WARNING, this, "Couldnot find the sender of this message : "+senderPrimaryKey);
 
        // We add sender name
-          message = "["+senderFullName+"] " + message;
-          System.out.println("newMessage = " + message);
+          message = "["+senderFullName+"] " + message;          
            
        // We display the message
           if( voiceSoundLevel!=ChatRoom.SHOUTING_VOICE_LEVEL ) {

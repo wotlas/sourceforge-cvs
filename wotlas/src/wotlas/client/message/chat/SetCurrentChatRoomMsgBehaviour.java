@@ -59,7 +59,8 @@ public class SetCurrentChatRoomMsgBehaviour extends SetCurrentChatRoomMessage im
    *        this message.
    */
   public void doBehaviour( Object context ) {
-       System.out.println("SetCurrentChatRoomMsgBehaviour::doBehaviour: "+chatRoomPrimaryKey);
+       if (DataManager.SHOW_DEBUG)
+         System.out.println("SetCurrentChatRoomMsgBehaviour::doBehaviour: "+chatRoomPrimaryKey);
 
     // The context is here a DataManager.
        DataManager dataManager = (DataManager) context;

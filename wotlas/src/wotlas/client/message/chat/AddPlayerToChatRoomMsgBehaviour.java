@@ -58,7 +58,8 @@ public class AddPlayerToChatRoomMsgBehaviour extends AddPlayerToChatRoomMessage 
    *        this message.
    */
   public void doBehaviour( Object context ) {
-       System.out.println("AddPlayerToChatRoomMsgBehaviour::doBehaviour: "+chatRoomPrimaryKey);
+       if (DataManager.SHOW_DEBUG)
+         System.out.println("AddPlayerToChatRoomMsgBehaviour::doBehaviour: "+chatRoomPrimaryKey);
 
     // The context is here a DataManager.
        DataManager dataManager = (DataManager) context;

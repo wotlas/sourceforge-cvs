@@ -153,7 +153,8 @@ public class GatewayServer extends NetServer implements ErrorCodeList
                if( client.getErrorCode()==ErrorCodeList.ERR_CONNECT_FAILED ) {
                   // we report the deadlink and try the eventualy new address
                      String newServerName = configList.reportDeadServer(remoteServerID);
-                     Debug.signal( Debug.NOTICE, null, "Server dead link. Trying "+newServerName+":"+remoteServer.getGatewayServerPort() );
+                     if(newServerName!=null)
+                        Debug.signal( Debug.NOTICE, null, "Server dead link. Trying "+newServerName+":"+remoteServer.getGatewayServerPort() );
 
                      if(server!=null) {
                           client = new NetClient();

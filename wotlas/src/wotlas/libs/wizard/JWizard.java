@@ -187,7 +187,7 @@ public abstract class JWizard extends JFrame {
       getContentPane().add( leftPanel, BorderLayout.WEST );
 
 
-      buttonsPanel = new JPanel(new GridLayout(1,4,0,5));
+      buttonsPanel = new JPanel(new GridLayout(1,4,0,10));
       buttonsPanel.setBackground(Color.white);
 
     // *** Load images of buttons
@@ -307,8 +307,8 @@ public abstract class JWizard extends JFrame {
     // *** Add buttonsPanel ***
       JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
       southPanel.setBackground(Color.white);
-      southPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,10));
       southPanel.add(buttonsPanel);
+      southPanel.setPreferredSize( new Dimension(width-10,60) );
       wizardPanel.add(southPanel, BorderLayout.SOUTH);
 
     // *** Window listener

@@ -51,6 +51,10 @@ public class ClientConfiguration
   /** true if high details.
    */
   private boolean highDetails = false;
+
+  /** Remember passwords
+   */
+  private boolean rememberPasswords = true;
   
   /** client screen width.
    */
@@ -66,7 +70,6 @@ public class ClientConfiguration
    * Data is loaded by the PersistenceManager.
    */
   public ClientConfiguration() {
-    ;
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -163,6 +166,20 @@ public class ClientConfiguration
    */
   public void setClientHeight(int height) {
     this.clientHeight = height;
+  }
+
+ /*------------------------------------------------------------------------------------*/ 
+
+  /** Getter of rememberPassword.
+   */
+  public boolean getRememberPasswords() {
+    return rememberPasswords;
+  }
+  
+  /** Setter of rememberPassword.
+   */
+  public void setRememberPasswords(boolean rememberPasswords) {
+    this.rememberPasswords = rememberPasswords;
   }
 
  /*------------------------------------------------------------------------------------*/ 

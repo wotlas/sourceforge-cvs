@@ -77,7 +77,10 @@ public class JLogStream extends LogStream
           super( logFileName, false, 180*1000 );
 
          // dialog = new JDialog( owner, false );
-            dialog = new JCroppedWindow( owner, "Wotlas Log Window" );
+            if(imageFileName.indexOf("dark")<0)
+               dialog = new JCroppedWindow( owner, "Wotlas Log Window", false );
+            else
+               dialog = new JCroppedWindow( owner, "Wotlas Log Window", true );
 
        // 1 - image panel
           image = ImageLibrary.loadImage( imageFileName );
@@ -95,10 +98,10 @@ public class JLogStream extends LogStream
           dialog.setBackground( Color.white );
 
        // 2 - log text area
-          logArea = new JTextArea("Starting Wotlas...\n");
+          logArea = new JTextArea("Starting log timer...\n");
           logArea.setFont( new Font( "Monospaced", Font.PLAIN, 10 ) );
           logArea.setForeground( new Color( 100,100,100 ) );
-          logArea.setPreferredSize( new Dimension( image.getWidth(null), 80 ) );
+          logArea.setPreferredSize( new Dimension( image.getWidth(null), 90 ) );
           logArea.setEditable(false);
 
           JScrollPane scrollPane = new JScrollPane( logArea,
@@ -164,7 +167,7 @@ public class JLogStream extends LogStream
 
            if(logArea.isShowing()){
               logArea.append( x+"\n" );
-              logArea.setPreferredSize( new Dimension( image.getWidth(dialog), numberOfMsg*15 ) );
+              logArea.setPreferredSize( new Dimension( image.getWidth(dialog), numberOfMsg*16 ) );
            }
 
         // we want the scrollbars to move when some text is added...

@@ -105,7 +105,7 @@ public abstract class JConnectionDialog extends JDialog implements Runnable
 
       // Center label
          l_info = new ALabel("Initializing Network Connection...", SwingConstants.CENTER);
-         l_info.setPreferredSize( new Dimension( 200, 100 ) );
+         l_info.setPreferredSize( new Dimension( 200, 80 ) );
          getContentPane().add( l_info, BorderLayout.CENTER );
 
       // Cancel Button

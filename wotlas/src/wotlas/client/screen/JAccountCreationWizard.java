@@ -261,8 +261,8 @@ public class JAccountCreationWizard extends wotlas.libs.wizard.JWizard
         return true;      
       } else {
         Debug.signal( Debug.NOTICE, null, "ClientManager ejected from AccountServer");
-        ClientManager clientManager = ClientManager.getDefaultClientManager();
-        clientManager.getScreenIntro().show(); // line added by Aldiss
+        //ClientManager clientManager = ClientManager.getDefaultClientManager();
+        //clientManager.getScreenIntro().show(); // line added by Aldiss
         return false;
       }
     }

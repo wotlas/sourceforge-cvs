@@ -150,12 +150,15 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   */
   public void init(GraphicsDirector gDirector) {
     // Only one character for now !
-    wotCharacter = new AesSedai();
+    //wotCharacter = new AesSedai();
+    System.out.println("PlayerImpl::init");
+    System.out.println("\twotCharacter = " + wotCharacter );
 
     animation = new Animation(wotCharacter.getImage());
     sprite = (Sprite) wotCharacter.getDrawable(this);
     //shadow = new ShadowSprite(this, new ImageIdentifier((short)0, (short) 3, (short) 0), ImageLibRef.SHADOW_PRIORITY, 3, 3);        
     //gDirector.addDrawable(shadow);
+    gDirector.addDrawable(wotCharacter.getShadow());
     endPosition = new Point();
     trajectory = new List();
 

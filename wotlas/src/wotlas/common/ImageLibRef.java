@@ -63,17 +63,17 @@ public interface ImageLibRef extends ImageLibraryReference
 
   /*** MAPS CATEGORY ***/
 
-  /** Universe Set
+  /** Buildings small images for town maps.
    */
-    public final static short UNIVERSE_SET = 0;
+    public final static short BUILDING_SMALL_SET = 0;
 
   /** Towns small images for world maps.
    */
     public final static short TOWN_SMALL_SET = 1;
 
-  /** Buildings small images for town maps.
+  /** Universe Set
    */
-    public final static short BUILDING_SMALL_SET = 2;
+    public final static short UNIVERSE_SET = 2;
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

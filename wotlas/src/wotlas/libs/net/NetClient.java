@@ -40,7 +40,7 @@ import wotlas.utils.Tools;
  * @see wotlas.libs.net.NetPersonality
  */
 
-public class NetClient
+public class NetClient implements NetErrorCodeList
 {
  /*------------------------------------------------------------------------------------*/
 
@@ -53,6 +53,11 @@ public class NetClient
    /** Latest error message generated during the NetPersonality creation.
     */
        private String errorMessage;
+
+   /** Latest error code generated during the NetPersonality creation.
+    *  see NetError interface to see system error codes.
+    */
+       private short errorCode;
 
    /** So we have to stop the connection process ( "cancel action" )
     */
@@ -119,6 +124,7 @@ public class NetClient
      {
        Socket socket;
        errorMessage = null;
+       errorCode = ERR_NONE;
        this.sessionContext = sessionContext;
 
        // to load the eventually new packages of messages...
@@ -131,6 +137,7 @@ public class NetClient
                     socket = new Socket( serverName, serverPort );
                }
                catch(UnknownHostException e){
+                    errorCode = ERR_CONNECT_FAILED;
                     errorMessage = new String("Unknown Server - "+serverName+":"+serverPort);
                     return null;
                }
@@ -169,8 +176,7 @@ public class NetClient
                }
                else {
                  // we cope with the asynchronous NetReceiver
-                    synchronized( this )
-                    {
+                    synchronized( this ) {
                        personality.start();
 
                        try{
@@ -187,14 +193,13 @@ public class NetClient
             // Success ? let's see if there is an error message
             // (see the messages in the wotlas.libs.net.message package)
                if( !validConnection() ) {
-
-                  if(getErrorMessage()!=null)
-                      Debug.signal(Debug.ERROR, this, "Server returned an Error");
-                  else {
-                      setErrorMessage( "The server is not running at the moment." );
-                      Debug.signal(Debug.ERROR, this, "Connection Timeout");
+                  if( errorCode==ERR_NONE ) {
+                      errorCode = ERR_CONNECT_FAILED;
+                      errorMessage = "Failed to reach server...";
                   }
 
+                  Debug.signal(Debug.ERROR, this, "Connection Failed... code="
+                                            +errorCode+" msg="+errorMessage );
                   clean();
                   return null;                   
                }
@@ -203,8 +208,14 @@ public class NetClient
           }
           catch(IOException e){
            // Hum ! this server doesn't want to hear from us...
-              errorMessage = "Failed to join server: "+e.getMessage();
+              if(errorCode==ERR_NONE) {
+                 errorCode = ERR_CONNECT_FAILED;
+                 errorMessage = "Failed to reach server...";
+              }
 
+              Debug.signal(Debug.ERROR, this, "Connection Failed... code="
+                                            +errorCode+" msg="+errorMessage
+                                            +" exception="+e.getMessage() );
               clean();
               return null;
  	  }
@@ -212,12 +223,22 @@ public class NetClient
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To get the latest error_message generated during the NetPersonality creation
+   /** To get the latest error message generated during the NetPersonality creation
     *
     * @return the error message.
     */
       public String getErrorMessage() {
              return errorMessage;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the latest error code generated during the NetPersonality creation
+    *
+    * @return the error code.
+    */
+      public short getErrorCode() {
+             return errorCode;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -228,6 +249,16 @@ public class NetClient
     */
       public synchronized void setErrorMessage( String errorMessage) {
              this.errorMessage = errorMessage;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set an error code for the NetPersonality creation.
+    *
+    * @param errorCode the new error code.
+    */
+      public synchronized void setErrorCode( short errorCode ) {
+             this.errorCode = errorCode;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -284,6 +315,11 @@ public class NetClient
 
               personality=null;
               sessionContext=null;
+
+              if(errorCode==ERR_NONE) {
+                 errorMessage = new String("Connect operation canceled");
+                 errorCode = ERR_CONNECT_CANCELED;
+              }
        }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

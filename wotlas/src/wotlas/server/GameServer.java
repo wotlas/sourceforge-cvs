@@ -21,6 +21,9 @@ package wotlas.server;
 
 import wotlas.libs.net.NetServer;
 import wotlas.libs.net.NetPersonality;
+
+import wotlas.common.ErrorCodeList;
+
 import wotlas.utils.Debug;
 
 import java.io.IOException;
@@ -28,10 +31,13 @@ import java.io.IOException;
 /** Wotlas Game Server. Its role is to wait client and connect them to the
  *  game. A client must have previously created a GameAccount with the AccountServer.<br>
  *
+ *  This server supposes there is a PersistenceManager & DataManager
+ *  already created.
+ *
  * @author Aldiss
  */
 
-public class GameServer extends NetServer
+public class GameServer extends NetServer implements ErrorCodeList
 {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -63,7 +69,7 @@ public class GameServer extends NetServer
        // key sanity check
           if( key.indexOf(':')<=4 || key.endsWith(":") ) {
                Debug.signal( Debug.NOTICE, this, "A client tried to connect with a bad key format.");
-               refuseClient( personality, "You are trying to connect on the wrong server !!!" );
+               refuseClient( personality, ERR_WRONG_KEY, "You are trying to connect on the wrong server !!!" );
                return;
           }
 
@@ -77,20 +83,20 @@ public class GameServer extends NetServer
 
           if( account==null ) {
                Debug.signal( Debug.NOTICE, this, "A client tried to connect on a non-existent account.");
-               refuseClient( personality, "This account does not exist on this server" );
+               refuseClient( personality, ERR_UNKNOWN_ACCOUNT, "This account does not exist on this server" );
                return;
           }
           
           if( account.getPlayer().isConnectedToGame() ) {
-               Debug.signal( Debug.ERROR, this, "A client tried to connect twice to the game server.");
-               refuseClient( personality, "This account is already connected on this server" );
+               Debug.signal( Debug.ERROR, this, accountName+" tried to connect twice to the game server.");
+               refuseClient( personality, ERR_ALREADY_CONNECTED, "Someone is already connected on this account !" );
                return;
           }
 
        // Password Crack Detection ( dictionnary attack )
           if( account.tooMuchBadPasswordEntered() ) {
-               Debug.signal( Debug.WARNING, this, "A client has entered 3 bad passwords! account locked for 30s");
-               refuseClient( personality, "Sorry, you entered 3 bad passwords ! your account is locked for 30s." );
+               Debug.signal( Debug.WARNING, this, accountName+" has entered 3 bad passwords! account locked for 30s");
+               refuseClient( personality, ERR_BAD_PASSWORD, "Sorry, you entered 3 bad passwords ! your account is locked for 30s." );
                return;
           }
 
@@ -109,11 +115,11 @@ public class GameServer extends NetServer
 
             // welcome on board...
                acceptClient( personality );
-               Debug.signal( Debug.NOTICE, this, "A new player entered the game...");
+               Debug.signal( Debug.NOTICE, null, accountName+" entered the game...");
           }
           else {
-               Debug.signal( Debug.NOTICE, this, "A client entered a bad password");
-               refuseClient( personality, "Bad password:"+key );
+               Debug.signal( Debug.NOTICE, this, accountName+" entered a bad password");
+               refuseClient( personality, ERR_BAD_PASSWORD, "Wrong password !" );
           }
     }
 

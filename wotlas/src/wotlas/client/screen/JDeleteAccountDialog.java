@@ -24,6 +24,8 @@ import wotlas.utils.Debug;
 import wotlas.utils.Tools;
 import wotlas.utils.aswing.*;
 
+import wotlas.common.ErrorCodeList;
+
 import wotlas.client.gui.JConnectionDialog;
 
 import javax.swing.*;
@@ -60,11 +62,12 @@ public class JDeleteAccountDialog extends JConnectionDialog
     * @param frame frame owner of this JDialog
     * @param server server name (DNS or IP address)
     * @param port server port
+    * @param serverID Id of the server we want to join
     * @param accountName login+'-'+key
     * @param password
     */
-   public JDeleteAccountDialog(Frame frame,String server,int port, String accountName, String password) {
-         super(frame,server,port,"deleteAccount:"+accountName+":"+password,null);
+   public JDeleteAccountDialog(Frame frame,String server,int port,int serverID,String accountName, String password) {
+         super(frame,server,port,serverID,"deleteAccount:"+accountName+":"+password,null);
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -82,7 +85,7 @@ public class JDeleteAccountDialog extends JConnectionDialog
     */
     protected void displayError( String error ) {
 
-    	if(error.equals("Account Deleted SuccessFully."))
+    	if(errorCode==ErrorCodeList.ERR_ACCOUNT_DELETED)
           hasSucceeded = true;
 
         final String ferror = new String(error);

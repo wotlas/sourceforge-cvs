@@ -25,24 +25,24 @@ import wotlas.libs.net.NetPersonality;
 
 import wotlas.common.ServerConfig;
 import wotlas.common.ServerConfigList;
+import wotlas.common.ErrorCodeList;
 
 import wotlas.utils.Debug;
 
 import java.io.IOException;
 
 
-// TO DO : password properties protection
-
-
-
-/** Wotlas Gateway Server. This isused for account travel management.
+/** Wotlas Gateway Server. This is used for account transaction management.
  *  The server awaits for account transferts and also provides a method
  *  to send an account to a remote GatewayServer.
+ *
+ *  This server supposes there is a PersistenceManager & DataManager
+ *  already created.
  *
  * @author Aldiss
  */
 
-public class GatewayServer extends NetServer
+public class GatewayServer extends NetServer implements ErrorCodeList
 {
  /*------------------------------------------------------------------------------------*/
 
@@ -93,9 +93,9 @@ public class GatewayServer extends NetServer
 
             // welcome on board...
                acceptClient( personality );
-               Debug.signal( Debug.NOTICE, this, "Gateway Server is receiving an account...");
+               Debug.signal( Debug.NOTICE, null, "Gateway Server is receiving an account...");
           }
-/*        if( key.startsWith("isThereAnAccountNamed:") )
+/*          if( key.startsWith("isThereAnAccountNamed:") )
           {
               String primaryKey = key.substring( key.indexOf(':')+1, key.length() );
               
@@ -108,11 +108,11 @@ public class GatewayServer extends NetServer
                   Debug.signal( Debug.WARNING, "The account searched ("+primaryKey+") was not found." );
                   refuseClient( personality, primaryKey+":not found");
               }
-          }
-*/        else {
+          } */
+          else {
             // NO VALID KEY
                Debug.signal( Debug.NOTICE, this, "Someone tried to connect with a bad key : "+key);
-               refuseClient( personality, "Wrong key for this server :"+key );
+               refuseClient( personality, ERR_WRONG_KEY, "Wrong key for this server :"+key );
           }
     }
 
@@ -147,8 +147,25 @@ public class GatewayServer extends NetServer
                                           transaction, null );
 
           if(personality==null) {
-             Debug.signal( Debug.ERROR, this, client.getErrorMessage() );
-             return false;
+            // We analyze the error returned
+               if( client.getErrorCode()==ErrorCodeList.ERR_CONNECT_FAILED ) {
+                  // we report the deadlink and try the eventualy new address
+                     String newServerName = configList.reportDeadServer(remoteServerID);
+
+                     if(server!=null) {
+                          client = new NetClient();
+                          personality = client.connectToServer(
+                                          newServerName,
+                                          remoteServer.getGatewayServerPort(),
+                                          "GatewayServerPlease!",
+                                          transaction, null );
+                     }
+               }
+
+               if(personality==null) {
+                  Debug.signal( Debug.ERROR, this, client.getErrorMessage() );
+                  return false;
+               }
           }
 
           personality.setConnectionListener( transaction );

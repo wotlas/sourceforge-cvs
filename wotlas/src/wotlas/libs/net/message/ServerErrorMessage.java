@@ -39,7 +39,11 @@ public class ServerErrorMessage extends NetMessage
 
   /** An error message.
    */
-      protected String error_message;
+      protected String errorMessage;
+
+  /** Error code.
+   */
+      protected short errorCode;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -53,11 +57,12 @@ public class ServerErrorMessage extends NetMessage
 
   /** Constructor with an error message.
    *
-   * @param error_message a string describing the error.
+   * @param errorMessage a string describing the error.
    */
-     public ServerErrorMessage( String error_message ) {
+     public ServerErrorMessage( short errorCode, String errorMessage ) {
          super();
-         this.error_message = error_message;
+         this.errorCode = errorCode;
+         this.errorMessage = errorMessage;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -69,7 +74,8 @@ public class ServerErrorMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void encode( DataOutputStream ostream ) throws IOException {
-         ostream.writeUTF( error_message );
+          ostream.writeShort( errorCode);
+          ostream.writeUTF( errorMessage );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -81,7 +87,8 @@ public class ServerErrorMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void decode( DataInputStream istream ) throws IOException {
-          error_message = istream.readUTF();
+          errorCode = istream.readShort();
+          errorMessage = istream.readUTF();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

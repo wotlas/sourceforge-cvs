@@ -59,6 +59,7 @@ public class JGameConnectionDialog extends JConnectionDialog
     * @param frame frame owner of this JDialog
     * @param server server name (DNS or IP address)
     * @param port server port
+    * @param serverID Id of the server we want to join
     * @param login client login
     * @param password client password
     * @param localClientID ID given by the account server when the client created his player
@@ -66,10 +67,10 @@ public class JGameConnectionDialog extends JConnectionDialog
     * @param context context to set to messages ( see NetPersonality ).
     */
 
-   public JGameConnectionDialog(Frame frame,String server,int port, String login,
+   public JGameConnectionDialog(Frame frame,String server,int port, int serverID, String login,
                                 String password, int localClientID, int originalServerID,
                                 Object context) {
-         super(frame, server, port, login+"-"+originalServerID+"-"
+         super(frame, server, port, serverID, login+"-"+originalServerID+"-"
                                     +localClientID+":"+password, context);
    }
 

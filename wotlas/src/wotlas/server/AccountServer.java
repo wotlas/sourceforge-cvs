@@ -22,6 +22,8 @@ package wotlas.server;
 import wotlas.libs.net.NetServer;
 import wotlas.libs.net.NetPersonality;
 
+import wotlas.common.ErrorCodeList;
+
 import wotlas.utils.Debug;
 import wotlas.utils.FileTools;
 
@@ -33,11 +35,14 @@ import java.util.Properties;
  *
  *  For more information on how it works see {@see AccountBuilder AccountBuilder }.
  *
+ *  This server supposes there is a PersistenceManager & DataManager
+ *  already created.
+ *
  * @author Aldiss
  * @see wotlas.server.AccountBuilder
  */
 
-public class AccountServer extends NetServer
+public class AccountServer extends NetServer implements ErrorCodeList
 {
  /*------------------------------------------------------------------------------------*/
 
@@ -49,7 +54,7 @@ public class AccountServer extends NetServer
 
   /** Client Counter
    */
-      private int clientCounter;      
+    private int clientCounter;      
 
  /*------------------------------------------------------------------------------------*/
 
@@ -127,7 +132,7 @@ public class AccountServer extends NetServer
                
                if(basepos2<0) {
                   Debug.signal( Debug.NOTICE, this, "A client tried to delete an account without giving a password.");
-                  refuseClient( personality, "Invalid request !" );
+                  refuseClient( personality, ERR_BAD_REQUEST, "Invalid request !" );
                   return;
                }
                
@@ -140,14 +145,14 @@ public class AccountServer extends NetServer
 
                if( account==null ) {
                    Debug.signal( Debug.NOTICE, this, "A client tried to delete a non-existent account.");
-                   refuseClient( personality, "This account does not exist on this server" );
+                   refuseClient( personality, ERR_UNKNOWN_ACCOUNT, "This account does not exist on this server" );
                    return;
                }
 
             // Password Crack Detection ( dictionnary attack )
                if( account.tooMuchBadPasswordEntered() ) {
-                   Debug.signal( Debug.WARNING, this, "Already entered 3 bad passwords! account locked for 30s");
-                   refuseClient( personality, "Sorry, you entered 3 bad passwords ! your account is locked for 30s." );
+                   Debug.signal( Debug.WARNING, this, accountName+" already entered 3 bad passwords! account locked for 30s");
+                   refuseClient( personality, ERR_BAD_PASSWORD, "Sorry, you entered 3 bad passwords ! your account is locked for 30s." );
                    return;
                }
 
@@ -156,24 +161,24 @@ public class AccountServer extends NetServer
                 // ok we delete the account...
                    if( manager.deleteAccount( accountName, true ) ) {
                        Debug.signal( Debug.NOTICE, this, "Account "+accountName+" deleted successfully...");
-                       refuseClient( personality, "Account Deleted SuccessFully." );
+                       refuseClient( personality, ERR_ACCOUNT_DELETED, "Account deleted successfully..." );
                        return;
                    }
 
                 // we set his message context to his player...
                    Debug.signal( Debug.NOTICE, this, "Failed to delete Account "+accountName+"...");
-                   refuseClient( personality, "Failed to delete your account. Please Report the problem." );
+                   refuseClient( personality, ERR_DELETE_FAILED, "Failed to delete your account. Please Report the problem." );
                    return;
                }
                else {
-                   Debug.signal( Debug.NOTICE, this, "A client entered a bad password to delete an account.");
-                   refuseClient( personality, "Bad password:"+key );
+                   Debug.signal( Debug.NOTICE, this, accountName+" entered a bad password to delete an account.");
+                   refuseClient( personality, ERR_BAD_PASSWORD, "Wrong password !" );
                    return;
                }
           }
           else {
                Debug.signal( Debug.NOTICE, this, "A client tried to enter the AccountServer with a wrong key :"+key);
-               refuseClient( personality, "Wrong key for this server :"+key );
+               refuseClient( personality, ERR_WRONG_KEY, "Wrong key for this server :"+key );
           }
     }
 

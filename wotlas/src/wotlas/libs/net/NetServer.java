@@ -56,7 +56,7 @@ import wotlas.libs.net.message.ServerWelcomeMsgBehaviour;
  */
 
 
-public class NetServer extends Thread
+public class NetServer extends Thread implements NetErrorCodeList
 {
  /*------------------------------------------------------------------------------------*/
 
@@ -267,8 +267,8 @@ public class NetServer extends Thread
     * @param personality a previously created personality for this connection.
     * @param errorMessage error message to send
     */
-      protected void refuseClient( NetPersonality personality, String errorMessage ) {
-              personality.queueMessage( new ServerErrorMessage( errorMessage ) );
+      protected void refuseClient( NetPersonality personality, short errorCode, String errorMessage ) {
+              personality.queueMessage( new ServerErrorMessage( errorCode, errorMessage ) );
               personality.closeConnection();
       }
 
@@ -332,13 +332,13 @@ public class NetServer extends Thread
                   // we inspect our server state... can we really accept him ?
                      if( NetThread.getOpenedSocketNumber( serverLocalID ) >= maxOpenedSockets ) {
                        // we have reached the server's connections limit
-                          refuseClient( personality, "Server has reached its maximum number of connections for the moment." );
-                          Debug.signal(Debug.NOTICE,this,"Server has reached its max number of connections");
+                          refuseClient( personality, ERR_MAX_CONN_REACHED, "Server has reached its maximum number of connections for the moment." );
+                          Debug.signal(Debug.NOTICE,this,"Err:"+ERR_MAX_CONN_REACHED+" - Server has reached its max number of connections");
                      }
                      else if(serverLock) {
                        // we don't accept new connections for the moment
-                          refuseClient( personality, "Server does not accept connections for the moment." );
-                          Debug.signal(Debug.NOTICE,this,"Server Locked - just refused incoming connection");
+                          refuseClient( personality, ERR_ACCESS_LOCKED, "Server does not accept connections for the moment." );
+                          Debug.signal(Debug.NOTICE,this,"Err:"+ERR_ACCESS_LOCKED+" - Server Locked - just refused incoming connection");
                      }
                      else {
                        // we can start this personality and inspect the client connection.

@@ -25,6 +25,11 @@ import wotlas.utils.Debug;
 import wotlas.utils.SwingTools;
 import wotlas.utils.Tools;
 
+import wotlas.common.ErrorCodeList;
+import wotlas.common.ServerConfigList;
+
+import wotlas.client.ClientManager;
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -53,6 +58,16 @@ public abstract class JConnectionDialog extends JDialog implements Runnable
     private int port;
     private Object context;
 
+  // to tell if this JConnectionDialog was canceled
+    private boolean connectCanceled;
+
+  // eventual error message & associated error code
+    protected String errorMessage;
+    protected short errorCode;
+  
+  // ID of the server we want to join
+    protected int serverID;
+
  /*------------------------------------------------------------------------------------*/
 
    /** Constructor. Displays the JDialog and immediately tries to connect to the specified
@@ -62,11 +77,12 @@ public abstract class JConnectionDialog extends JDialog implements Runnable
     * @param frame frame owner of this JDialog
     * @param server server name (DNS or IP address)
     * @param port server port
+    * @param serverID Id of the server we want to join
     * @param key server key for this connection ( see the javadoc header of this class ).
     * @param context context to set to messages ( see NetPersonality ).
     */
 
-   public JConnectionDialog(Frame frame,String server,int port,String key, Object context) {
+   public JConnectionDialog(Frame frame,String server,int port,int serverID,String key, Object context) {
          super(frame,"Network Connection",true);
 
       // some inits
@@ -75,8 +91,10 @@ public abstract class JConnectionDialog extends JDialog implements Runnable
          this.port = port;
          this.key = key;
          this.context = context;
+         this.serverID = serverID;
 
          hasSucceeded = false;
+         connectCanceled = false;
          getContentPane().setLayout( new BorderLayout() );
          getContentPane().setBackground(Color.white);
          
@@ -108,6 +126,8 @@ public abstract class JConnectionDialog extends JDialog implements Runnable
            {
               public void actionPerformed (ActionEvent e)
               {
+              	  connectCanceled=true;
+              	
                   if( client!=null )
                       client.stopConnectionProcess();
               }
@@ -127,13 +147,35 @@ public abstract class JConnectionDialog extends JDialog implements Runnable
     */
     public void run() {
 
+     // 1 - Wait the display of the window
         do{
              Tools.waitTime( 750 );
         }
         while( !isShowing() );
 
+     // 2 - We try a connection with the provided parameters...
         tryConnection();
 
+     // 3 - Connection failed ?
+        if( !connectCanceled && !hasSucceeded ) {
+            // We analyze the error returned
+               if( errorCode==ErrorCodeList.ERR_CONNECT_FAILED ) {
+                  // we report the deadlink and try the eventualy new address
+                     l_info.setText( "Connection failed. Trying to update server address..." );
+                     ServerConfigList configList = ClientManager.getDefaultClientManager().getServerConfigList();
+                     server = configList.reportDeadServer(serverID);
+
+                     if(server!=null)
+                        tryConnection(); // we retry a connection
+
+                     if(!hasSucceeded)
+                        displayError( ""+errorMessage );
+               }
+               else
+                   displayError( ""+errorMessage );
+        }
+
+     // 4 - Prepare to close the dialog the right way (we are not in the AWT thread)
         final JConnectionDialog cDialog = this;
 
         Runnable runnable = new Runnable() {
@@ -143,7 +185,7 @@ public abstract class JConnectionDialog extends JDialog implements Runnable
         };
 
         SwingUtilities.invokeLater( runnable );
-        Debug.signal( Debug.NOTICE, null, "close JConnectionDialog");
+        Debug.signal( Debug.NOTICE, null, "closing JConnectionDialog");
     }
 
  /*------------------------------------------------------------------------------------*/
@@ -177,8 +219,13 @@ public abstract class JConnectionDialog extends JDialog implements Runnable
         personality = client.connectToServer( server, port, key, context, packages );
 
         if(personality==null) {
-             if( client.getErrorMessage()!=null )
-                 displayError( client.getErrorMessage() );
+             if( client.getErrorCode()!=NetErrorCodeList.ERR_NONE ) {
+                 errorCode = client.getErrorCode();
+                 errorMessage = client.getErrorMessage();
+             }
+             else
+                 errorCode = NetErrorCodeList.ERR_CONNECT_FAILED;
+
              return;
          }
 

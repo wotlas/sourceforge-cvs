@@ -78,7 +78,7 @@ public class ServerAddressSetup extends JWizard {
 
          setLocation(200,100);
 
-       // STEP 4 - Display first step
+       // We display first step
           try{
                init( AddressWizardStep.getStaticParameters() );
           }

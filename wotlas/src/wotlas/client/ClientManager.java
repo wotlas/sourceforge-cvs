@@ -728,13 +728,13 @@ public class ClientManager
       b_cancel.setFocusPainted(false);
 
       // *** Left Panel ***/
-      label1 = new ALabel("<html>Your new account has been <br>"
+      JEditorPane editorPane = new JEditorPane("text/html","<html>Your new account has been <br>"
                             + "successfully created! <br>"
                             + "Remember your key to access <br>"
                             + "wotlas from anywhere : " + currentProfileConfig.getKey()
                             + "<br>Click OK to enter WOTLAS....</html>");
-      leftPanel.add(label1, BorderLayout.CENTER);
-
+      leftPanel.add(editorPane, BorderLayout.CENTER);
+     
       // *** Right Panel ***/
 
       b_ok.addActionListener(new ActionListener() {

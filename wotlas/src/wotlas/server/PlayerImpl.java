@@ -59,31 +59,9 @@ public class PlayerImpl implements Player, NetConnectionListener
     */
        private String fullPlayerName;
 
-   /** Player's current x position
-    */
-       private int x;
-
-   /** Player's current y position
-    */
-       private int y;
-
    /** WotCharacter Class
     */
        private WotCharacter wotCharacter;
-
- /*------------------------------------------------------------------------------------*/
-
-   /** is this player moving ? 
-    */
-       private boolean isMoving = false;
-
-   /** End Point of movement.
-    */
-       private ScreenPoint endPoint;
-
-   /** Time when we initialized this movement on the Server.
-    */
-       private long movementTimeStamp;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -95,13 +73,13 @@ public class PlayerImpl implements Player, NetConnectionListener
 
    /** Movement Composer
     */
-       transient private MovementComposer movementComposer = (MovementComposer) new PathFollower();
+       private MovementComposer movementComposer = (MovementComposer) new PathFollower();
 
    /** Our NetPersonality, useful if we want to send messages !
     */
        transient private NetPersonality personality;
 
-   /** Our current Room ( if we are a Room, null otherwise )
+   /** Our current Room ( if we are in a Room, null otherwise )
     */
        transient private Room myRoom;
 
@@ -128,7 +106,7 @@ public class PlayerImpl implements Player, NetConnectionListener
    *  @return x
    */
       public int getX() {
-      	  return x;
+      	  return (int)movementComposer.getXPosition();
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -138,7 +116,7 @@ public class PlayerImpl implements Player, NetConnectionListener
    *  @return y
    */
       public int getY() {
-      	  return y;
+      	  return (int)movementComposer.getYPosition();
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -148,7 +126,7 @@ public class PlayerImpl implements Player, NetConnectionListener
    *  @param x
    */
       public void setX( int x ) {
-      	this.x = x;
+      	  movementComposer.setXPosition( (float)x );
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -158,7 +136,7 @@ public class PlayerImpl implements Player, NetConnectionListener
    *  @return y
    */
       public void setY( int y ) {
-      	this.y = y;
+      	  movementComposer.setXPosition( (float)y );
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -178,7 +156,27 @@ public class PlayerImpl implements Player, NetConnectionListener
 
              location = new WotlasLocation();
              location.setWorldMapID( worldID );
-             location.setTownMapID( -1 );
+             location.setTownMapID( 0 );
+             location.setBuildingID( -1 );
+             location.setInteriorMapID( -1 );
+             location.setRoomID( -1 );
+
+             TownMap tMap = worldManager.getTownMap( location );
+             
+             if(tMap==null) {
+                Debug.signal( Debug.CRITICAL, this, "No towns available." );
+                return;
+             }
+
+             MapExit mExits[] = tMap.getMapExits();
+             
+             if( mExits==null || mExits[0]==null ) {
+                Debug.signal( Debug.CRITICAL, this, "No mapExits on town 0..." );
+                return;
+             }
+
+             setX( mExits[0].x+mExits[0].width/2 );
+             setY( mExits[0].y+mExits[0].height/2 );
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -311,30 +309,10 @@ public class PlayerImpl implements Player, NetConnectionListener
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   // other getters & setters for persistence
-
-      public void setIsMoving( boolean isMoving ) {
-      	this.isMoving = isMoving;
-      }
-
-      public boolean getIsMoving() {
-      	return isMoving;
-      }
-
-      public void setEndPoint( ScreenPoint endPoint ) {
-      	this.endPoint = endPoint;
-      }
-
-      public ScreenPoint getEndPoint() {
-      	return endPoint;
-      }
-
-      public void setMovementTimeStamp( long movementTimeStamp ) {
-      	this.movementTimeStamp = movementTimeStamp;
-      }
-
-      public long getMovementTimeStamp() {
-      	return movementTimeStamp;
+   /** To get the player's current Room ( if we are in a Room ).
+    */
+      public Room getMyRoom() {
+      	return myRoom;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

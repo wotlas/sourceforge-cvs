@@ -100,7 +100,7 @@ public class BrightnessFilter implements DynamicImageFilter {
         if(yb>=brightnessMask[0].length) yb=brightnessMask[0].length-1;
 
         if (brightnessMask!=null)
-            brightness = ((float) brightnessMask[xb][yb])/255;
+            brightness = ((float) brightnessMask[xb][yb])/128;
      }
      
 

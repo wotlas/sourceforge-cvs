@@ -373,8 +373,8 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   public void tick() {    
     if (indexTrajectory < trajectory.size()) {
       Point newPosition = (Point) trajectory.elementAt(indexTrajectory);
-      x = newPosition.x*10;
-      y = newPosition.y*10;
+      x = newPosition.x*DataManager.TILE_SIZE;
+      y = newPosition.y*DataManager.TILE_SIZE;
       animation.tick();
       sprite.tick();
       indexTrajectory++;

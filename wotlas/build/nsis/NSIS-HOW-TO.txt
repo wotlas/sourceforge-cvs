@@ -1,0 +1,18 @@
+ABOUT
+-----
+
+This directory provides scripts to build the wotlas release packages for Windows, using NullSoft's Free Installer NSIS.
+
+USE
+---
+
+To rebuild the wotlas-client package for Windows just :
+
+  1 - Install the latest Nsis package from http://www.nullsoft.com/free/nsis/
+
+  2 - Build the wotlas-client.jar file ( enter 'build client-jws' in wotlas/build/ )
+
+  3 - copy lib/wotlas-client.jar in this directory.
+
+  4 - right click on the wotlas-client.nsi and click on 'Compile'
+

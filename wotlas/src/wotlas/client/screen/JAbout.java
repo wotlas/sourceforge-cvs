@@ -78,7 +78,7 @@ public class JAbout extends JCroppedWindow implements ActionListener {
   	"Aldiss",
         "Blackhole",
         "Chris",
-        "Elann",
+        "Elann Veslir",
         "Fred McMaster",
   	"Hari Coplin",
         "Maneero",

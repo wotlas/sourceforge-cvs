@@ -388,7 +388,7 @@ public class ClientManager
             //profilesTable.setToolTipText(currentServerConfig.getDescription());
             currentProfileConfig = profileConfigList.getProfiles()[selectedRow];
             b_load.setEnabled(true);
-            // b_delProfile.setEnabled(true);
+            b_delProfile.setEnabled(true);
           }
         }
       });
@@ -424,6 +424,14 @@ public class ClientManager
       rightPanel.add(b_recoverProfile);
 
       b_delProfile.setEnabled(false);
+
+      b_delProfile.addActionListener(new ActionListener() {
+          public void actionPerformed (ActionEvent e) {
+            start(2);
+          }
+        }
+      );
+
       rightPanel.add(b_delProfile);
 
       rightPanel.add( new JLabel( new ImageIcon("../base/gui/separator.gif") ) );  // SEPARATOR
@@ -533,7 +541,7 @@ public class ClientManager
           char charPasswd[] = pfield1.getPassword();
           String passwd = "";
           if (charPasswd.length < 4) {
-            JOptionPane.showMessageDialog( screenIntro, "Password mut have at least 5 characters !", "New Password", JOptionPane.ERROR_MESSAGE);                          
+            JOptionPane.showMessageDialog( screenIntro, "Password must have at least 5 characters !", "New Password", JOptionPane.ERROR_MESSAGE);                          
           } else {
             for (int i=0; i<charPasswd.length; i++) {
               passwd += charPasswd[i];
@@ -560,6 +568,120 @@ public class ClientManager
       }
       );
       rightPanel.add(b_ok);
+
+      b_cancel.addActionListener(new ActionListener() {
+        public void actionPerformed (ActionEvent e) {
+            start(0);
+        }
+      }
+      );
+      rightPanel.add(b_cancel);
+
+      // *** Adding the panels ***
+
+      screenIntro.setLeftPanel(leftPanel);
+      screenIntro.setRightPanel(rightPanel);
+      screenIntro.showScreen();
+      break;
+
+    // ********************************
+    // ***   To Delete An Account   ***
+    // ********************************
+
+    case 2:
+      screenIntro.setTitle("Wotlas - Delete Account...");
+
+      // Create panels
+      leftPanel = new JPanel();
+      leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+      rightPanel = new JPanel();
+
+      // Create buttons
+      b_delProfile = new JButton(im_delup);
+      b_delProfile.setRolloverIcon(im_deldo);
+      b_delProfile.setPressedIcon(im_deldo);
+      b_delProfile.setDisabledIcon(im_delun);
+      b_delProfile.setBorderPainted(false);
+      b_delProfile.setContentAreaFilled(false);
+      b_delProfile.setFocusPainted(false);
+
+      b_cancel = new JButton(im_cancelup);
+      b_cancel.setRolloverIcon(im_canceldo);
+      b_cancel.setPressedIcon(im_canceldo);
+      b_cancel.setDisabledIcon(im_cancelun);
+      b_cancel.setBorderPainted(false);
+      b_cancel.setContentAreaFilled(false);
+      b_cancel.setFocusPainted(false);
+
+      // *** Left JPanel ***
+
+      label1 = new ALabel("Delete " + currentProfileConfig.getPlayerName() + " ?");
+      label1.setAlignmentX(Component.CENTER_ALIGNMENT);
+      leftPanel.add(label1);
+
+      leftPanel.add(Box.createRigidArea(new Dimension(0,10)));
+
+      JPanel mainPanel_02 = new JPanel();
+        mainPanel_02.setBackground(Color.white);
+        JPanel formPanel_02_left = new JPanel(new GridLayout(2,1,5,5));
+          formPanel_02_left.setBackground(Color.white);
+          formPanel_02_left.add(new JLabel(new ImageIcon("../base/gui/enter-password.gif")));
+          formPanel_02_left.add(new JLabel(new ImageIcon("../base/gui/your-key.gif")));
+        mainPanel_02.add(formPanel_02_left);
+        JPanel formPanel_02_right = new JPanel(new GridLayout(2,1,5,10));
+          formPanel_02_right.setBackground(Color.white);
+          pfield1 = new APasswordField(10);
+          pfield1.setFont(f.deriveFont(18f));
+          
+          pfield1.addKeyListener(new KeyAdapter() {
+            public void keyReleased(KeyEvent e) {
+            if ( e.getKeyCode()==KeyEvent.VK_ENTER )
+              b_delProfile.doClick();
+            }
+          });
+          
+          formPanel_02_right.add(pfield1);
+          formPanel_02_right.add(new ALabel(currentProfileConfig.getKey()));
+        mainPanel_02.add(formPanel_02_right);
+      leftPanel.add(mainPanel_02);
+
+      // *** Right Panel ***
+
+      b_delProfile.addActionListener(new ActionListener() {
+        public void actionPerformed (ActionEvent e) {
+          char charPasswd[] = pfield1.getPassword();
+          String passwd = "";
+          if (charPasswd.length < 4) {
+            JOptionPane.showMessageDialog( screenIntro, "Password must have at least 5 characters !", "New Password", JOptionPane.ERROR_MESSAGE);
+          } else {
+            for (int i=0; i<charPasswd.length; i++) {
+              passwd += charPasswd[i];
+            }
+
+            currentServerConfig = serverConfigList.getServerConfig(currentProfileConfig.getServerID());
+
+            JDeleteAccountDialog jdconnect = new JDeleteAccountDialog( screenIntro,
+                    currentServerConfig.getServerName(), currentServerConfig.getAccountServerPort(),
+                    currentProfileConfig.getLogin()+"-"+
+                    currentProfileConfig.getOriginalServerID()+"-"+
+                    currentProfileConfig.getLocalClientID(), passwd );
+
+            if ( jdconnect.hasSucceeded() ) {
+                 Debug.signal( Debug.NOTICE, this, "Account deleted.");
+
+              // Save accounts informations
+                 if( !profileConfigList.removeProfile(currentProfileConfig) )
+                    Debug.signal( Debug.ERROR, this, "Failed to delete player profile !" );
+                 else
+                    PersistenceManager.getDefaultPersistenceManager().saveProfilesConfig(profileConfigList);
+            }
+
+            start(0); // return to main screen
+          }
+        }
+      }
+      );
+      rightPanel.add(b_delProfile);
 
       b_cancel.addActionListener(new ActionListener() {
         public void actionPerformed (ActionEvent e) {

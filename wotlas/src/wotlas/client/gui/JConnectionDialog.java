@@ -44,11 +44,11 @@ public abstract class JConnectionDialog extends JDialog implements Runnable
     private ALabel l_info;    // information label
     private JButton b_cancel; // cancel button
 
-    private boolean hasSucceeded; // has connection succeeded ?
+    protected boolean hasSucceeded; // has connection succeeded ?
     private NetPersonality personality;
     private NetClient client;
 
-    private Frame frame;
+    protected Frame frame;
     private String server, key;
     private int port;
     private Object context;
@@ -91,9 +91,9 @@ public abstract class JConnectionDialog extends JDialog implements Runnable
          getContentPane().add( l_info, BorderLayout.CENTER );
 
       // Cancel Button
-         ImageIcon im_cancelup = new ImageIcon("..\\base\\gui\\cancel-up.gif");
-         ImageIcon im_canceldo = new ImageIcon("..\\base\\gui\\cancel-do.gif");
-         ImageIcon im_cancelun = new ImageIcon("..\\base\\gui\\cancel-un.gif");
+         ImageIcon im_cancelup = new ImageIcon("../base/gui/cancel-up.gif");
+         ImageIcon im_canceldo = new ImageIcon("../base/gui/cancel-do.gif");
+         ImageIcon im_cancelun = new ImageIcon("../base/gui/cancel-un.gif");
          b_cancel = new JButton(im_cancelup);
          b_cancel.setRolloverIcon(im_canceldo);
          b_cancel.setPressedIcon(im_canceldo);
@@ -142,7 +142,7 @@ public abstract class JConnectionDialog extends JDialog implements Runnable
 
    /** To display en error message in a pop-up.
     */
-    private void displayError( String error ) {
+    protected void displayError( String error ) {
           JOptionPane.showMessageDialog( frame, error, "Error", JOptionPane.ERROR_MESSAGE);
     }
 

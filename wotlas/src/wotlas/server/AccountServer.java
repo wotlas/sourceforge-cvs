@@ -120,6 +120,57 @@ public class AccountServer extends NetServer
                acceptClient( personality );
                Debug.signal( Debug.NOTICE, this, "A new client is building a GameAccount...");
           }
+          else if(key.startsWith("deleteAccount:") && !key.endsWith(":") ){
+            // we retrieve the account name & password
+               int basepos = key.indexOf(':');
+               int basepos2 = key.indexOf(':',basepos+1);
+               
+               if(basepos2<0) {
+                  Debug.signal( Debug.NOTICE, this, "A client tried to delete an account without giving a password.");
+                  refuseClient( personality, "Invalid request !" );
+                  return;
+               }
+               
+               String accountName = key.substring( basepos+1, basepos2 );
+               String password = key.substring( basepos2+1, key.length() );
+
+            // We try to erase the account
+               AccountManager manager = DataManager.getDefaultDataManager().getAccountManager();
+               GameAccount account = manager.getAccount( accountName );
+
+               if( account==null ) {
+                   Debug.signal( Debug.NOTICE, this, "A client tried to delete a non-existent account.");
+                   refuseClient( personality, "This account does not exist on this server" );
+                   return;
+               }
+
+            // Password Crack Detection ( dictionnary attack )
+               if( account.tooMuchBadPasswordEntered() ) {
+                   Debug.signal( Debug.WARNING, this, "Already entered 3 bad passwords! account locked for 30s");
+                   refuseClient( personality, "Sorry, you entered 3 bad passwords ! your account is locked for 30s." );
+                   return;
+               }
+
+            // The account exists... but do we have the right password ?
+               if( account.isRightPassword( password ) ) {
+                // ok we delete the account...
+                   if( manager.deleteAccount( accountName ) ) {
+                       Debug.signal( Debug.NOTICE, this, "Account "+accountName+" deleted successfully...");
+                       refuseClient( personality, "Account Deleted SuccessFully." );
+                       return;
+                   }
+
+                // we set his message context to his player...
+                   Debug.signal( Debug.NOTICE, this, "Failed to delete Account "+accountName+"...");
+                   refuseClient( personality, "Failed to delete your account. Please Report the problem." );
+                   return;
+               }
+               else {
+                   Debug.signal( Debug.NOTICE, this, "A client entered a bad password to delete an account.");
+                   refuseClient( personality, "Bad password:"+key );
+                   return;
+               }
+          }
           else {
                Debug.signal( Debug.NOTICE, this, "A client tried to enter the AccountServer with a wrong key :"+key);
                refuseClient( personality, "Wrong key for this server :"+key );

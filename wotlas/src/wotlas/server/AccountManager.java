@@ -165,14 +165,34 @@ class AccountManager
    * @return true if the account was deleted.
    */
      public synchronized boolean deleteAccount( String accountName ) {
-        // we delete the account
            PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
+           WorldManager wManager = DataManager.getDefaultDataManager().getWorldManager();
 
-           if( !pm.deleteAccount( accountName ) )
+        // We get the account
+           GameAccount account = (GameAccount) accounts.get( accountName );
+           
+           if( account==null ) {
+               Debug.signal( Debug.ERROR, this, "Account "+accountName+" not found" );
                return false;
+           }
 
         // we remove the account hashmap entry
            accounts.remove( accountName );
+
+           if( account.getPlayer().isConnectedToGame() ) {
+               account.getPlayer().closeConnection();
+               Debug.signal( Debug.WARNING, this, "Client connection was closed during the delete request.");
+           }
+
+        // we remove the character from the game...
+           wManager.removePlayer( account.getPlayer() );
+
+        // we delete the files
+           if( !pm.deleteAccount( accountName ) ) {
+               Debug.signal( Debug.ERROR, this, "Failed to delete Account files: "+accountName );
+               return true; // account erased but some files remain !
+           }           
+
            return true;
      }
 

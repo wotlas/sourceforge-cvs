@@ -120,6 +120,45 @@ public class ProfileConfigList
     return 0;
   }
 
+  /** Remove a profile of the array profiles
+   *
+   * @param profileConfig to remove
+   * @return true if removed
+   */
+   public boolean removeProfile(ProfileConfig pf) {
+      if(profiles==null)
+         return false;
+      
+      int index=-1;
+      
+      for( int i=0; i<profiles.length; i++ )
+         if(profiles[i]==pf) {
+            index=i;
+            break;
+         }
+
+      if(index==-1)
+        return false; // not found
+
+      if(profiles.length==1) {
+      	profiles=null; // no profile remaining...
+      	return true;
+      }
+
+      ProfileConfig[] myProfiles = new ProfileConfig[profiles.length-1];
+      int j=0;
+
+      for( int i=0; i<profiles.length; i++ )
+      	if(i!=index) {
+           myProfiles[j] = profiles[i];
+           j++;
+        }
+
+      profiles = myProfiles; // swap
+      return true;
+   }
+
+
  /*------------------------------------------------------------------------------------*/
 
   /** To get the number of accounts

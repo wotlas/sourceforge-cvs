@@ -141,4 +141,13 @@ public class WorldManager extends wotlas.common.WorldManager
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+ /** To remove a player from the universe.
+  * @param player the player to remove.
+  */
+    public void removePlayer( Player player ) {
+         editPlayer( player, false );
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }

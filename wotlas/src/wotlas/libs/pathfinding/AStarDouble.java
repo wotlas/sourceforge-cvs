@@ -85,6 +85,10 @@ public class AStarDouble
   /** size of the sprite (in CELL units)
    */
   private int SPRITE_SIZE = 4;
+  
+  /** True if we show debug informations
+   */
+  public static boolean SHOW_DEBUG = false;
    
  /*------------------------------------------------------------------------------------*/
   
@@ -435,12 +439,14 @@ double ot = ((NodeDouble) nodes.elementAt(cur)).f;
     //pointGoal = pGoal;
     
     //if ( (!isNotBlock(pointStart.x, pointStart.y)) || (!isNotBlock(pointGoal.x, pointGoal.y)) ) {
+    if (SHOW_DEBUG)
       System.out.print(pointGoal);
     if ( (!isValidGoal(pointGoal)) ) {
       System.err.println("error : invalid point");
       return null;
     }
-    System.out.println(" -> " + pointGoal);
+    if (SHOW_DEBUG)
+      System.out.println(" -> " + pointGoal);
     
     //System.out.println("Creation of first node");
     firstNode.point = pointStart;

@@ -80,6 +80,7 @@ public class GraphicsDirector extends JPanel {
       super(true);
       drawables = new DrawableIterator();
       setWindowPolicy( windowPolicy );
+      setBackground( Color.white );
       display = false;
     }
 
@@ -133,6 +134,7 @@ public class GraphicsDirector extends JPanel {
    * @param gc graphics object.
    */
     public void paint(Graphics gc) {
+        super.paint(gc);
 
         if(!display) {
            gc.setColor( Color.white );

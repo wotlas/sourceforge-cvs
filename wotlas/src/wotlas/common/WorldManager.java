@@ -90,6 +90,11 @@ public class WorldManager {
     public WorldManager( ResourceManager rManager, boolean loadDefault ) {
          this.rManager = rManager;
          loadUniverse(loadDefault);
+
+         if(worldMaps==null) {
+            Debug.signal( Debug.FAILURE, this, "No universe data available !" );
+            Debug.exit();
+         }
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

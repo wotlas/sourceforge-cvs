@@ -77,6 +77,12 @@ public class ServerConfigList
      */
        private long lastServerTableUpdateTime;
 
+    /** A local ID of a server config we don't want to update. On the server side it's
+     *  the server's ID. On the client side it should remain equal to -1 : all configs
+     *  are updated.
+     */
+       private int localServerID;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor with persistence manager.
@@ -87,11 +93,21 @@ public class ServerConfigList
          this.pm = pm;
          serversRemoteHomeUnreachable = false;
          lastServerTableUpdateTime=0; // none
+         localServerID=-1; // no config to spare from updates...
 
       // attempt to load the configs from persistenceManager...
          configs = pm.loadServerConfigs();
          if(configs==null)
             Debug.signal( Debug.WARNING, null, "No Server Configs loaded !" );
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To set the local server ID that is used on this machine and should never be used.
+   * @param serverID serverID of the config to never update
+   */
+   public void setLocalServerID( int localServerID ) {
+         this.localServerID = localServerID;
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -171,6 +187,9 @@ public class ServerConfigList
 
     	if(getRemoteServerTable()==null)
     	   return;
+    	
+    	if(localServerID==config.getServerID())
+    	   return;  // this config musn't be updated
     	
     	int ind = remoteServerTable.indexOf( "Server-"+config.getServerID()+"-Version" );
     	

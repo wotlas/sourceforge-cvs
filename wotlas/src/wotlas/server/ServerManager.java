@@ -76,6 +76,7 @@ public class ServerManager
 
           configs = new ServerConfigList( pm );
           configs.setRemoteServerConfigHomeURL( ServerDirector.getRemoteServerConfigHomeURL() );
+          configs.setLocalServerID( ServerDirector.getServerID() );
 
           configs.getLatestConfigFiles(null);  // we retrieve all the server files
 

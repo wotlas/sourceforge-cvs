@@ -220,4 +220,27 @@ public class WorldManager
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To initialize this whole universe ( it rebuilds shortcuts ). This method calls
+   *  recursively the init() method of the WorldMaps, TownMaps, buildings, interiorMaps
+   *  and rooms.
+   *
+   *  IMPORTANT: You must ONLY call this method ONE time when ALL the world data has been
+   *  loaded by the persistence manger...
+   */
+   protected void init() {
+
+    // 1 - any data ?
+       if(worldMaps==null) {
+          Debug.signal(Debug.WARNING, this, "Universe inits failed: No WorldMaps.");
+          return;
+       }
+
+    // 2 - we transmit the init() call
+       for( int i=0; i<worldMaps.length; i++ )
+            if( worldMaps[i]!=null )
+                worldMaps[i].init();
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
 }

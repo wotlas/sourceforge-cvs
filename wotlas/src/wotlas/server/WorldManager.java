@@ -56,7 +56,7 @@ public class WorldManager extends wotlas.common.WorldManager
           }
 
        // We rebuild shortcuts
-
+          init();
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

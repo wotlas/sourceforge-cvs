@@ -138,6 +138,10 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
   private boolean pauseTickThread;
 
+  /** Are we changing the MapData ?
+   */
+  private boolean updatingMapData = false;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Our current player.
@@ -782,6 +786,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     if (SHOW_DEBUG)
       System.out.println("DataManager::onLeftClicJMapPanel");
 
+    if(updatingMapData) return; // updating Map Location
+
     Rectangle screen = gDirector.getScreenRectangle();
     Object object = gDirector.findOwner( e.getX(), e.getY() );
 
@@ -809,7 +815,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
               gDirector.removeDrawable(circle);
               circle=null;
           }
-                      
+
        // Deselect ?
           if ( previouslySelectedPlayerKey.equals(selectedPlayer.getPrimaryKey()) ) {
                gDirector.addDrawable(selectedPlayer.getTextDrawable());
@@ -890,6 +896,15 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
  /*------------------------------------------------------------------------------------*/
 
+ /** To add a wave arc effect on the player.
+  */
+   public void addWaveDrawable( PlayerImpl player ) {
+      if(gDirector!=null)
+         gDirector.addDrawable(player.getWaveArcDrawable());
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
   /** To add a new player to the screen<br>
    * (called by client.message.description.PlayerDataMsgBehaviour)
    *
@@ -922,17 +937,26 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** To change type of MapData
    */
   public void changeMapData() {
-    if ( myPlayer.getLocation().isRoom() ) {
-      myMapData = new InteriorMapData();      
+    updatingMapData=true;
+
+    try{
+      if ( myPlayer.getLocation().isRoom() ) {
+         myMapData = new InteriorMapData();      
+      }
+      else if ( myPlayer.getLocation().isTown() ) {
+         myMapData = new TownMapData();
+      }
+      else if ( myPlayer.getLocation().isWorld() ) {
+         myMapData = new WorldMapData();
+      }
+      myMapData.showDebug(SHOW_DEBUG);
+      myMapData.initDisplay(myPlayer, this);
     }
-    else if ( myPlayer.getLocation().isTown() ) {
-      myMapData = new TownMapData();
+    catch(Exception e ) {
+      Debug.signal(Debug.ERROR, this, e);
     }
-    else if ( myPlayer.getLocation().isWorld() ) {
-      myMapData = new WorldMapData();
-    }
-    myMapData.showDebug(SHOW_DEBUG);
-    myMapData.initDisplay(myPlayer, this);
+
+    updatingMapData=false;
   }
 
  /*------------------------------------------------------------------------------------*/

@@ -115,7 +115,11 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
   /** Our textDrawable
    */
   private TextDrawable textDrawable;
-  
+
+  /** Our wave arc drawable to show our player talking.
+   */
+  private WaveArcDrawable waveDrawable;
+
  /** Our current Room ( if we are in a Room, null otherwise )
   */
   private Room myRoom;
@@ -620,6 +624,28 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
                                         13.0f, "Lblack.ttf", ImageLibRef.TEXT_PRIORITY, 5000 );
        }                                        
        return textDrawable;
+   }
+ 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get a wave drawable on this player.
+   */
+   public Drawable getWaveArcDrawable() {
+       if( waveDrawable!=null ) {
+           if( waveDrawable.isLive() ) {
+               waveDrawable.reset();
+               return null;
+           }
+
+           waveDrawable.reset();
+           return waveDrawable;
+       }
+
+       if(sprite==null) return null;
+
+       waveDrawable = new WaveArcDrawable( sprite, 40, Color.white,
+                                           ImageLibRef.WAVE_PRIORITY, 1.0f, (byte)3 );
+       return waveDrawable;
    }
  
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

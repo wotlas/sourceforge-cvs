@@ -332,7 +332,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   public void showInterface() {
     System.out.println("DataManager::ShowInterface");
 
-    // 0 - Image Library Creation
+    // 0 - Create Image Library
     String imageDBHome = databasePath + File.separator + IMAGE_LIBRARY;
     try {
       imageLib = ImageLibrary.createImageLibrary(imageDBHome);
@@ -341,12 +341,12 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       Debug.exit();
     }
 
-    // Create Graphics Director
+    // 1 - Create Graphics Director
     gDirector = new GraphicsDirector( new LimitWindowPolicy() );
     ImageIdentifier backgroundImageID = null;  // background image ( town, interiorMap, etc ... )
     Drawable background = null;
 
-    // 1 - Retreive player's informations
+    // 2 - Retreive player's informations
     myPlayer = new PlayerImpl();
     try {
       synchronized(startGameLock) {
@@ -360,28 +360,27 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
     // Retreive player's location
     WotlasLocation location = myPlayer.getLocation();
-    System.out.println("\tmyPlayer.location = " + location);
+    System.out.println("\tmyPlayer.location = "   + location);
     System.out.println("\tlocation.worldMapID = " + location.getWorldMapID());
-    System.out.println("\tlocation.townMapID = " + location.getTownMapID());
+    System.out.println("\tlocation.townMapID = "  + location.getTownMapID());
     System.out.println("\tlocation.buildingID = " + location.getWorldMapID());
 
-    // 4 - Creation of the drawable reference
+    // 3 - Create the drawable reference
     myPlayer.init(gDirector);
-    
     System.out.println("\tmyPlayer = " + myPlayer);
     System.out.println("\tmyPlayer.fullPlayerName = "  + myPlayer.getFullPlayerName());
     System.out.println("\tmyPlayer.PlayerName = "      + myPlayer.getPlayerName());
     System.out.println("\tmyPlayer.WotCharacter = "    + myPlayer.getWotCharacter());
     System.out.println("\tmyPlayer.ImageIdentifier = " + myPlayer.getImageIdentifier());
     System.out.println("\tmyPlayer.Drawable = "        + myPlayer.getDrawable());
-    
+
   //*** World
     //if (location.isWorld()) {
     if (false) {
-      System.out.println("\tWorld");      
+      System.out.println("\tWorld");
       backgroundImageID = worldManager.getWorldMap(location).getWorldImage();
       System.out.println("\tImageIdentifier = " + backgroundImageID);
-      
+
       background = (Drawable) new MotionlessSprite(
                                             0,                        // ground x=0
                                             0,                        // ground y=0
@@ -389,9 +388,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
                                             ImageLibRef.MAP_PRIORITY, // priority
                                             false                     // no animation
                                         );
-                                        
+
       myPlayer.setX(152*TILE_SIZE);
-      myPlayer.setY(16*TILE_SIZE);                                        
+      myPlayer.setY(16*TILE_SIZE);
     }
 
   //*** Town
@@ -411,10 +410,10 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
       InteriorMap imap = worldManager.getInteriorMap(location);
       System.out.println("\troom.fullName = " + worldManager.getInteriorMap(location).getFullName());
-            
+
       backgroundImageID = worldManager.getInteriorMap(location).getInteriorMapImage();
-      System.out.println("\tbackgroundImageID = " + backgroundImageID);      
-      
+      System.out.println("\tbackgroundImageID = " + backgroundImageID);
+
       background = (Drawable) new MultiRegionImage(
                                                 myPlayer.getDrawable(),              // our reference for image loading
                                                 650,//myPlayer.DEFAULT_PERCEPTION_RADIUS,  // perception radius
@@ -424,13 +423,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
                                                 imap.getImageHeight(),               // image's total height
                                                 imap.getInteriorMapImage()           // base image identifier
                                             );
-                                            
+
       myPlayer.setX(90*TILE_SIZE);
-      myPlayer.setY(150*TILE_SIZE);                                            
+      myPlayer.setY(150*TILE_SIZE);
 
     }
 
-    // 2 - given the backgroundImageID we get the mask...
+    // 4 - given the backgroundImageID we get the mask...
     ImageIdentifier mapMaskID = null;
     try {
       mapMaskID = ImageLibrary.getImageIdentifier( backgroundImageID, imageDBHome, "mask" );
@@ -443,7 +442,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       Debug.exit();
     }
 
-    // 3 - We load the mask image and create the Astar algo.
+    // 5 - We load the mask image and create the Astar algo.
     BufferedImage bufIm = null;
     try {
       bufIm = ImageLibrary.loadBufferedImage(new ImageIdentifier( mapMaskID ), imageDBHome, BufferedImage.TYPE_INT_ARGB );
@@ -459,11 +458,11 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     aStar.setMask( BinaryMask.create( bufIm ) );
     bufIm.flush(); // free image resource
 
-    // 5 - Init the GraphicsDirector
+    // 6 - Init the GraphicsDirector
     gDirector.init( background,               // background drawable
                     myPlayer.getDrawable(),   // reference for screen movements
                     new Dimension( JClientScreen.leftWidth, JClientScreen.mapHeight )   // screen default dimension
-                   );    
+                   );
 
     // 6 - Create the panels
     JInfosPanel infosPanel = new JInfosPanel(myPlayer);
@@ -479,12 +478,14 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     mFrame.show();
 
     // Start main loop tick
-    Debug.signal( Debug.NOTICE, null, "Beginning to tick Graphics Director" );    
+    Debug.signal( Debug.NOTICE, null, "Beginning to tick Graphics Director" );
     this.start();
 
     // Retreive other players informations
     players = new HashMap();
     personality.queueMessage(new AllDataLeftPleaseMessage());
+
+    addPlayer(myPlayer);
 
   }
 
@@ -495,17 +496,18 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   public void run() {
     long now;
     int deltaT;
-        
+
     Object lock = new Object();
-    while( true ) {            
-      now = System.currentTimeMillis();                            
-      tick();                  
-      deltaT = (int) (System.currentTimeMillis()-now);      
+    while( true ) {
+      now = System.currentTimeMillis();
+      tick();
+
+      deltaT = (int) (System.currentTimeMillis()-now);
       if (deltaT<100) {
         Tools.waitTime(100-deltaT);
       } else {
         Tools.waitTime(100);
-      }      
+      }
     }
   }
 
@@ -514,7 +516,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** Tick
    */
   public void tick() {
-    myPlayer.tick();
+    //myPlayer.tick();
     if (circle != null) {
       if (circleLife < CIRCLE_LIFETIME) {
         circleLife++;
@@ -525,10 +527,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         circleLife = 0;
       }
     }
-    /*Iterator it = players.values().iterator();
+    Iterator it = players.values().iterator();
+    System.out.println("tick players");
     while( it.hasNext() ) {
+      System.out.println("tick");
       ( (PlayerImpl) it.next() ).tick();
-    }*/
+    }
+    System.out.println("end tick");
     gDirector.tick();
   }
 
@@ -546,9 +551,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
   public void onLeftClicJMapPanel(MouseEvent e) {
     System.out.println("DataManager::onLeftClicJMapPanel");
-    
+
     Rectangle screen = gDirector.getScreenRectangle();
-    
+
     Object object = gDirector.findOwner( e.getX(), e.getY());
 
     if (object == null) {
@@ -560,17 +565,20 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
                                            new Point(newX/TILE_SIZE, newY/TILE_SIZE)));
       /*myPlayer.initMovement(aStar.findPath( new Point( myPlayer.getX()/TILE_SIZE, myPlayer.getY()/TILE_SIZE),
                                            new Point(newX/TILE_SIZE, newY/TILE_SIZE)));*/
-      
+
     } else {
-      System.out.println("object.getClass().getName()" + object.getClass().getName());
-      if (circle!=null) {
-        gDirector.removeDrawable(circle);
-        circle = null;
+      System.out.println("object.getClass().getName() = " + object.getClass().getName());
+
+      // Test to create multi players
+      if ( object.getClass().getName().equals("wotlas.client.PlayerImpl") ) {
+        myPlayer = (PlayerImpl) object;
+        if (circle!=null) {
+          gDirector.removeDrawable(circle);
+          circle = null;
+        }
+        circle = new CircleDrawable(myPlayer.getDrawable(), 20, Color.yellow, (short) ImageLibRef.AURA_PRIORITY);
+        gDirector.addDrawable(circle);
       }
-      circle = new CircleDrawable(myPlayer.getDrawable(), 20, Color.yellow, (short) 10);
-      gDirector.addDrawable(circle);
-      
-      //PlayerImpl player = (PlayerImpl) object;
     }
   }
 

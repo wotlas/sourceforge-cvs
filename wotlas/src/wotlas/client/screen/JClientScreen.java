@@ -67,7 +67,8 @@ public class JClientScreen extends JFrame
 
   private final static int thumbHeight = 100;
 
-  private final static int playerHeight = 300;
+  //private final static int playerHeight = 300;
+  private final static int playerHeight = mainHeight-thumbHeight;      
 
   private final static int chatMinHeight = 150;
 
@@ -140,7 +141,7 @@ public class JClientScreen extends JFrame
 
       JPanel rightPanel = new JPanel();
       rightPanel.setPreferredSize(new Dimension(mainWidth-leftWidth, mainHeight-northHeight));
-      rightPanel.setBackground(Color.blue);
+      rightPanel.setBackground(Color.black);
 
       // *** Preview Panel ***
 
@@ -154,8 +155,8 @@ public class JClientScreen extends JFrame
 
       // *** Log Panel ***
 
-      logPanel.setPreferredSize(new Dimension(mainWidth-leftWidth, mainHeight-thumbHeight-playerHeight));
-      rightPanel.add(logPanel);
+      logPanel.setPreferredSize(new Dimension(mainWidth-leftWidth, mainHeight-thumbHeight-playerHeight));      
+      //rightPanel.add(logPanel);
 
     getContentPane().add(rightPanel, BorderLayout.EAST);
 

@@ -231,7 +231,7 @@ public class Building
        if(interiorMaps==null) {
           Debug.signal(Debug.NOTICE, this, "Building w:"+fromWorldMapID
                                             +" t:"+fromTownMapID+" b:"+buildingID
-                                            +" is on another server" );
+                                            +" has no interior maps" );
           return;
        }
 

@@ -199,15 +199,36 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
      public void sendError( PlayerImpl player, String message ) {
          Debug.signal( Debug.ERROR, this, message );
 
+      // We search for a valid insertion point
          ScreenPoint pReset = null;
 
          if( player.getLocation().isRoom() )
              pReset = player.getMyRoom().getInsertionPoint();
-         else
-             pReset = new ScreenPoint(-1, -1);
+         else {
+           // We get the world manager
+             WorldManager wManager = DataManager.getDefaultDataManager().getWorldManager();
 
+             if( player.getLocation().isTown() ) {
+                 TownMap myTown = wManager.getTownMap( location );
+                 if(myTown!=null) 
+                    pReset = myTown.getInsertionPoint();
+             }
+             else if( player.getLocation().isWorld() ) {
+                 WorldMap myWorld = wManager.getWorldMap( location );
+                 if(myWorld!=null) 
+                    pReset = myWorld.getInsertionPoint();
+             }
+         }
+
+      // Have we found a valid insertion point ?
+         if(pReset==null) {
+            Debug.signal(Debug.CRITICAL,this,"NO VALID LOCATION FOR PLAYER: "+player.getLocation());
+            pReset = new ScreenPoint(0, 0);
+         }
+
+      // We send the message...
          player.sendMessage( new ResetPositionMessage( primaryKey, player.getLocation(),
-                                                       pReset.x, pReset.y ));
+                                                       pReset.x, pReset.y ) );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

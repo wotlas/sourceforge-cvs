@@ -79,7 +79,7 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
        // 2 - We send the update to other players
        // ... in the current Room & other rooms near me
           if( !player.getLocation().isRoom() )
-              return; // nothing to do for world & towns...
+              return; // nothing to do for worlds & towns...
 
           Room room = player.getMyRoom();
 

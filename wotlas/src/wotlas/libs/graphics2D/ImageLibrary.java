@@ -301,8 +301,13 @@ public class ImageLibrary {
          if( !list[i].isDirectory() )
              continue;
 
-         if( getIDFromName( list[i].getName() ) == idToFind )
-             return list[i].getName();
+         try{
+             if( getIDFromName( list[i].getName() ) == idToFind )
+                 return list[i].getName();
+         }
+         catch( IOException ioe ) {
+             Debug.signal( Debug.ERROR, null, ""+ioe);
+         }
       }
 
       return null; // not found

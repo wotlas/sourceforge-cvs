@@ -68,6 +68,12 @@ public class PlayerImpl implements Player, NetConnectionListener
 
  /*------------------------------------------------------------------------------------*/
 
+   /** Player ChatRooms
+    */
+       transient private Hashtable chatRooms;
+       
+ /*------------------------------------------------------------------------------------*/
+
    /** Personality Lock
     */
        transient private byte personalityLock[] = new byte[1];

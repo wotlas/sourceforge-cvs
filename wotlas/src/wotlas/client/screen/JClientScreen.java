@@ -69,7 +69,7 @@ public class JClientScreen extends JFrame
   private final static int thumbHeight = 100;
 
   //private final static int playerHeight = 300;
-  private final static int playerHeight = mainHeight-thumbHeight;      
+  private final static int playerHeight = mainHeight-thumbHeight;
 
   private final static int chatMinHeight = 150;
 
@@ -105,6 +105,7 @@ public class JClientScreen extends JFrame
         //System.out.println("See you soon!");
         //DataManager.getDefaultDataManager().closeConnection();
         //Debug.exit();
+        DataManager.getDefaultDataManager().closeConnection();
         ClientManager.getDefaultClientManager().start(0);
       }
     });
@@ -124,6 +125,7 @@ public class JClientScreen extends JFrame
         //System.out.println("See you soon!");
         //DataManager.getDefaultDataManager().exit();
         hide();
+        DataManager.getDefaultDataManager().closeConnection();
         ClientManager.getDefaultClientManager().start(0);
       }
     });

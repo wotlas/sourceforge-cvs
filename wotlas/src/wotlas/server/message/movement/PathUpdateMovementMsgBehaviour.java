@@ -167,8 +167,8 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
                                   && !player.getCurrentChatPrimaryKey().equals( ChatRoom.DEFAULT_CHAT ) ) {
                                  // we change the current chat of THE OTHER player
 
-                                 // ATTENTION PLEASE !! FROM THIS LINE THE CURRENT PLAYER
-                                 // ( player ) IS NOW THE SELECTED PLAYER HERE ( p )
+                                 // ATTENTION PLEASE !! FROM THIS LINE (if reached) THE CURRENT
+                                 // PLAYER ( player ) IS NOW THE SELECTED PLAYER HERE ( p )
 
                                    chatRoom = chatList.getChatRoom( player.getCurrentChatPrimaryKey() );
                                    player = p; // <- change
@@ -194,6 +194,12 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
                 player.sendMessage( new SetCurrentChatRoomMessage( chatRoom.getPrimaryKey(), chatRoom.getPlayers() ) );
 
              // We advertise our presence
+
+  /*** Well, if we don't want to : a player could be a plain member of a chat only
+       when he speaks the first time
+
+       just put in comment lines the code below :
+   ***/
                 players = chatRoom.getPlayers();
                 AddPlayerToChatRoomMessage aMsg = new AddPlayerToChatRoomMessage( primaryKey, player.getFullPlayerName(), chatRoom.getPrimaryKey() );
              

@@ -234,7 +234,9 @@ public class WorldMapData implements MapData
           || (myPlayer.getLocation().getTownMapID()>-1) ) {
       Debug.signal( Debug.NOTICE, null, "LOCATION HAS CHANGED in WorldMapData");
 
-      dataManager.getPlayers().clear();
+      if(dataManager.getPlayers()!=null)
+         dataManager.getPlayers().clear();
+
       dataManager.cleanInteriorMapData(); // suppress drawables, shadows, data
       dataManager.getChatPanel().reset();
       

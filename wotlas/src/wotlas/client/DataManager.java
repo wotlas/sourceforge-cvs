@@ -643,15 +643,8 @@ System.out.println("Frame show");
 
         // player near enough the door ?
            if( door.isPlayerNear( myPlayer.getCurrentRectangle() ) ) {
-               if( door.isOpened() ) {
-                   SoundLibrary.getSoundLibrary().playSound("door-close.wav");
-                   door.close();
-               }
-               else {
-                   SoundLibrary.getSoundLibrary().playSound("door-open.wav");
-                   door.open();
-               }
-               
+               WotlasLocation location = new WotlasLocation(myPlayer.getLocation());
+               sendMessage( new DoorStateMessage(location, door.getMyRoomLinkID(), !door.isOpened()) );
                return;
            }
            else

@@ -250,8 +250,10 @@ public class InteriorMapData implements MapData
              Door doors[] = rooms[r].getDoors();
            
              for( int d=0; d<doors.length; d++ )
-                  if( !doors[d].isDisplayed() )
+                  if( !doors[d].isDisplayed() ) {
                       gDirector.addDrawable( doors[d].getDoorDrawable() );
+                      doors[d].setIsDisplayed(true);
+                  }
         }
     
     //   - We play music

@@ -16,12 +16,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.client.gui;
+
+import wotlas.utils.SwingTools;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+
+import java.io.*;
 
 /** A wizard to enter wotlas world
  *
@@ -30,150 +34,154 @@ import java.awt.event.*;
 
 public class JIntroWizard extends JFrame
 {
-  private JBackground bgPanel;
-  
+
+ /*------------------------------------------------------------------------------------*/  
+
   private JPanel leftPanel;
-  
   private JPanel rightPanel;
-  
-  private int leftWidth = 280;
-  
+
+  private int width = 500;
   private int rightWidth = 120;
-  
-  private int height = 300;    
-  
+  private int leftWidth = 0;
+  private int height = 300;
+  private Dimension rightDimension = new Dimension(rightWidth, height);
+
  /*------------------------------------------------------------------------------------*/
-  
-  /** Constructor
+
+  /** Constructor.
    */
   public JIntroWizard() {
-    super("Wotlas client"); 
-    setDefaultCloseOperation(EXIT_ON_CLOSE);    
-    
-    ImageIcon bgImg = new ImageIcon("..\\src\\test\\petrus\\bg-400x300.jpg");
-    bgPanel = new JBackground(bgImg);
-    
-    //bgPanel = new JBackground();
-    getContentPane().add(bgPanel, BorderLayout.NORTH);
-    
-    setSize(leftWidth+rightWidth, height);
-    setResizable(false);
-  }  
-  
+    super("Wotlas client");
+    setDefaultCloseOperation(EXIT_ON_CLOSE);
+    setBackground(Color.white);
+    setSize(width, height);
+    SwingTools.centerComponent(this);
+  }
+
  /*------------------------------------------------------------------------------------*/
-  
+
   /** Set the left JPanel of the interface
    *
    * @param leftPanel left panel to be added
-   */  
+   */
   public void setLeftPanel(JPanel leftPanel) {
     removeLeftPanel();
-    leftPanel.setPreferredSize( new Dimension(leftWidth-10, height) );
     this.leftPanel = leftPanel;
-    this.leftPanel.setOpaque(false);    
-    bgPanel.add(this.leftPanel, BorderLayout.CENTER);
+    this.leftPanel.setBackground(Color.white);
+    getContentPane().add(this.leftPanel, BorderLayout.CENTER);
   }
-  
+
   /** Set the right JPanel of the interface
    *
    * @param rightPanel right panel to be added
    */
   public void setRightPanel(JPanel rightPanel) {
-    removeRightPanel();   
-    rightPanel.setPreferredSize( new Dimension(rightWidth-10, height) );
+    removeRightPanel();
+    rightPanel.setPreferredSize(rightDimension);
     this.rightPanel = rightPanel;
-    this.rightPanel.setOpaque(false);    
-    bgPanel.add(this.rightPanel, BorderLayout.EAST);
+    this.rightPanel.setBackground(Color.white);
+    getContentPane().add(this.rightPanel, BorderLayout.EAST);
   }
-  
+
   /** Remove the left panel
    */
   public void removeLeftPanel() {
     if (this.leftPanel != null) {
-      
-      bgPanel.remove(this.leftPanel);
+      getContentPane().remove(leftPanel);
       leftPanel = null;
     }
   }
-  
+
   /** Remove the right panel
    */
   public void removeRightPanel() {
     if (this.rightPanel != null) {
-      bgPanel.remove(this.rightPanel);
+      getContentPane().remove(rightPanel);
       rightPanel = null;
     }
-  }  
-  
+  }
+
  /*------------------------------------------------------------------------------------*/
-  
+
   /** To get left panel width
    */
   public int getLeftWidth() {
     return leftWidth;
   }
-  
+
   /** To set left panel width
    */
   public void setLeftWidth(int width) {
     leftWidth = width;
   }
-  
+
   /** To get right panel width
    */
   public int getRightWidth() {
     return rightWidth;
   }
-  
+
   /** To set right panel width
    */
   public void setRightWidth(int width) {
     rightWidth = width;
-  }  
-  
+  }
+
  /*------------------------------------------------------------------------------------*/
-  
+
   /** Show the interface
    */
-  public void showScreen() {    
-    pack();
-    setSize(leftWidth+rightWidth, height);
-    leftPanel.repaint();
-    rightPanel.repaint();
-    leftPanel.validate();
-    rightPanel.validate();
+  public void showScreen() {  
     show();
   }
-  
-  /** Close the interface
+
+ /*--------------------------------------------------------------------------*/
+
+  /** Close the interface and remove the panels
    */
-  public void closeScreen() {    
+  public void closeScreen() {
     if (leftPanel != null) {
-      bgPanel.remove(leftPanel);
+      getContentPane().remove(leftPanel);
     }
     if (rightPanel != null) {
-      bgPanel.remove(rightPanel);
+      getContentPane().remove(rightPanel);
     }
-    remove(bgPanel);
-    bgPanel = null;
     dispose();
   }
-  
-  /** Set the different colors
+
+ /*--------------------------------------------------------------------------*/
+
+  /** Set the colors and fonts
    */
   static public void setGUI() {
-    // Set the differents fonts
-    Font f = new Font("Monospaced", Font.PLAIN, 10);
+    Font f;
+    
+    f = new Font("Monospaced", Font.PLAIN, 10);
     UIManager.put("Button.font", f);
+
+    f = SwingTools.loadFont("../base/fonts/Lblack.ttf");
     
-    f = new Font("Dialog", Font.BOLD, 15);
-    UIManager.put("Label.font", f);
-    UIManager.put("Label.foreground", Color.white);
+    UIManager.put("Label.font", f.deriveFont(18f));
+    UIManager.put("Label.foreground", Color.black);
+            
+    UIManager.put("TextField.font", f.deriveFont(18f));
+    UIManager.put("TextField.foreground", Color.black);
+    
+    UIManager.put("TextArea.font", f.deriveFont(16f));
+    UIManager.put("TextArea.foreground", Color.black);
+    
+    
+    UIManager.put("TableHeader.font", f.deriveFont(20f));
+    UIManager.put("TableHeader.foreground", Color.black);
+    
+    UIManager.put("Table.font", f.deriveFont(18f));
+    UIManager.put("Table.foreground", Color.black);    
   }
- /*--------------------------------------------------------------------------*/ 
   
-}  
-    
-    
-    
+ /*--------------------------------------------------------------------------*/
+
+}
+
+
+
     

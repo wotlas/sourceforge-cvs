@@ -60,6 +60,13 @@ public class GameServer extends NetServer
     */
     public void accessControl( NetPersonality personality, String key )
     {
+       // key sanity check
+          if( key.indexOf(':')<=4 || key.endsWith(":") ) {
+               Debug.signal( Debug.NOTICE, this, "A client tried to connect with a bad key format.");
+               refuseClient( personality, "You are trying to connect on the wrong server !!!" );
+               return;
+          }
+
        // we retrieve the key data "accountName:password"
           String accountName = key.substring( 0, key.indexOf(':') );
           String password = key.substring( key.indexOf(':')+1, key.length() );
@@ -71,12 +78,14 @@ public class GameServer extends NetServer
           if( account==null ) {
                Debug.signal( Debug.NOTICE, this, "A client tried to connect on a non-existent account.");
                refuseClient( personality, "This account doesnot exist on this server" );
+               return;
           }
 
-       // Password Crack Detection ( dictionnay attack )
+       // Password Crack Detection ( dictionnary attack )
           if( account.tooMuchBadPasswordEntered() ) {
-               Debug.signal( Debug.WARNING, this, "A client has entered 3 bad passwords.! account locked for 30s");
+               Debug.signal( Debug.WARNING, this, "A client has entered 3 bad passwords! account locked for 30s");
                refuseClient( personality, "Sorry, you entered 3 bad passwords ! your account is locked for 30s." );
+               return;
           }
 
        // The account exists... but do we have the right password ?

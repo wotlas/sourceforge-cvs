@@ -25,6 +25,7 @@ import java.util.*;
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.common.message.chat.*;
 
+import wotlas.common.chat.ChatRoom;
 import wotlas.common.Player;
 import wotlas.common.universe.*;
 
@@ -60,11 +61,19 @@ public class ChatRoomCreationMsgBehaviour extends ChatRoomCreationMessage implem
     PlayerImpl player = (PlayerImpl) context;
 
     System.out.println("public ChatRoomCreationMsgBehaviour()");
-    String primaryKey = name+creatorPrimaryKey;
-    System.out.println("primaryKey = " + primaryKey);
-    System.out.println("name = " + name);
-    System.out.println("creatorPrimaryKey = " + creatorPrimaryKey);
-    ChatRoomCreatedMessage crcMsg = new ChatRoomCreatedMessage(primaryKey, name, creatorPrimaryKey);
+    ChatRoom chatRoom = new ChatRoom();
+    chatRoom.setPrimaryKey(player.getNewChatRoomID());
+    chatRoom.setName(name);
+    chatRoom.setCreatorPrimaryKey(creatorPrimaryKey);
+    chatRoom.addPlayer(player.getPrimaryKey());
+    
+    System.out.println( "primaryKey = " + chatRoom.getPrimaryKey() );
+    System.out.println( "name = " + chatRoom.getName() );
+    System.out.println( "creatorPrimaryKey = " + chatRoom.getCreatorPrimaryKey() );
+    ChatRoomCreatedMessage crcMsg = new ChatRoomCreatedMessage( chatRoom.getPrimaryKey(),
+                                                                name,
+                                                                creatorPrimaryKey
+                                                              );
     player.sendMessage(crcMsg);
     
     // We send the information to all players of the same room or town or world

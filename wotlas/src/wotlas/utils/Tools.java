@@ -20,6 +20,8 @@
 package wotlas.utils;
 
 import java.util.Calendar;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /** Various useful tools...
  *
@@ -202,6 +204,32 @@ public class Tools
 
 	  return sb.toString();
   }
+
+ /*------------------------------------------------------------------------------------*/ 
+
+  /** To get all the available IP address on this machine.
+   *  @return null if none
+   */
+  public static String[] getAllInetAddresses() {
+        try{
+           InetAddress list[] = InetAddress.getAllByName(InetAddress.getLocalHost().getHostAddress()); // search for localhost
+
+           if(list==null) return null;
+
+           String strList[] = new String[list.length];
+           
+           for(int i=0; i<list.length; i++)
+               strList[i] = list[i].toString();
+
+           return strList;
+        }
+        catch(UnknownHostException e) {
+           e.printStackTrace();
+           return null;
+        }
+  }
+
+ /*------------------------------------------------------------------------------------*/ 
 
 }
 

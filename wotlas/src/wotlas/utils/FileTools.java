@@ -199,7 +199,7 @@ public class FileTools
          text = null;
       }
    
-      return text;	
+      return text;
    }
 
 
@@ -227,6 +227,47 @@ public class FileTools
        }
 
     }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To update a property file without modifying its format. We don't save the file
+   *  disk.
+   *
+   *  @param propertyName the property name to search and replace
+   *  @param newValue the new value for the property
+   *  @param oldConfig previous config file
+   *  @return new config file.
+   */
+    public static String updateProperty( String propertyName, String newValue, String oldConfig ) {
+
+         // search for property
+            StringBuffer newConfig = new StringBuffer("");
+
+            int pos = oldConfig.lastIndexOf( propertyName );
+
+            if(pos<0)
+               return null; // not found
+
+            pos = oldConfig.indexOf( "=", pos );
+
+            if(pos<0)
+               return null; // bad format
+
+         // replace old value
+            newConfig.append( oldConfig.substring(0,pos+1) );
+            newConfig.append( newValue );
+                          
+            pos = oldConfig.indexOf( "\n", pos );
+                          
+            if(pos>0 && pos<oldConfig.length())
+                newConfig.append( oldConfig.substring( pos, oldConfig.length() ) );
+            else 
+                newConfig.append( "\n" );
+
+            return newConfig.toString();
+
+    }
+
  /*------------------------------------------------------------------------------------*/
 
 }

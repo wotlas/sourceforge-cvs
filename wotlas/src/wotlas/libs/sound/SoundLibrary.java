@@ -164,7 +164,52 @@ public class SoundLibrary implements MetaEventListener, ControllerEventListener 
       if (noSoundDevice) return;
 
       try {
-         sequencer = MidiSystem.getSequencer();
+	 MidiDevice device = null;
+	 MidiDevice.Info[] midiInfos = MidiSystem.getMidiDeviceInfo();
+	 for (int i=0; i<midiInfos.length; i++) {
+	   System.out.println("midiInfos["+i+"] = " + midiInfos[i]);	              
+	   try {
+	     device = MidiSystem.getMidiDevice(midiInfos[i]);	     
+	     
+	     
+	     if (device instanceof Sequencer) {
+	       System.out.println("\t is sequencer");
+	       sequencer = (Sequencer) device;
+	       sequencer.open();
+	       sequencer.addMetaEventListener(this);
+               int[] controllers = {7};
+               sequencer.addControllerEventListener(this, controllers);
+	     } else {
+	       System.out.println("\t is not a sequencer");
+	     }
+	     
+	     if (device instanceof Synthesizer) {
+	       System.out.print("\t is synthesizer, ");
+	       synthesizer = (Synthesizer) device;
+	       System.out.print(synthesizer.getMaxPolyphony() + " polyphonies, ");
+	       channels = synthesizer.getChannels();
+	       System.out.print(channels.length + " channels\n");
+	       } else {
+		 System.out.println("\t is not a synthesizer");
+	       }
+	     
+	     
+	     
+	     
+	   } catch (MidiUnavailableException e) {
+	     //
+	   }
+	   //	   
+	 }
+
+	 if (device == null) {
+	   Debug.signal( Debug.WARNING, null, "no valid MIDI sequencers");
+           noSoundDevice = true;
+           return;
+	 }
+
+	 
+         /*sequencer = MidiSystem.getSequencer();
 
          if(sequencer == null) {
             Debug.signal( Debug.WARNING, null, "no valid MIDI sequencers");
@@ -176,11 +221,12 @@ public class SoundLibrary implements MetaEventListener, ControllerEventListener 
               channels = synthesizer.getChannels();
            }
 
+	   System.out.println("\nCurrent sequencer = " + sequencer);
            sequencer.open();
            sequencer.addMetaEventListener(this);
            int[] controllers = {7};
            sequencer.addControllerEventListener(this, controllers);
-         }
+         }*/
       }
       catch (Exception ex) {
         // Failed to init Sequencer

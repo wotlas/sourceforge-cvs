@@ -55,7 +55,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
 
   /** Period between the display of two away messages for ONE player.
    */
-  public final static long AWAY_MSG_DISPLAY_PERIOD = 1000*40;
+  public final static long AWAY_MSG_DISPLAY_PERIOD = 1000*20;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -119,6 +119,10 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
   /** Our wave arc drawable to show our player talking.
    */
   private WaveArcDrawable waveDrawable;
+
+  /** To get the player name to display on the left of the screen
+   */
+  private MultiLineText gameScreenFullPlayerName;
 
  /** Our current Room ( if we are in a Room, null otherwise )
   */
@@ -255,6 +259,14 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
    */
   public void setFullPlayerName(String fullPlayerName) {
     this.fullPlayerName = fullPlayerName;
+
+       if( textDrawable!=null )
+           textDrawable.setText(fullPlayerName);
+
+       if( gameScreenFullPlayerName!=null ) {
+           String[] strTemp = { fullPlayerName };
+           gameScreenFullPlayerName.setText(strTemp);
+       }
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -655,7 +667,20 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
                                            ImageLibRef.WAVE_PRIORITY, 1.0f, (byte)3 );
        return waveDrawable;
    }
- 
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the player name to display on the left of the screen
+   */
+     public MultiLineText getGameScreenFullPlayerName() {
+          if(gameScreenFullPlayerName==null) {
+             String[] strTemp = { fullPlayerName };
+             gameScreenFullPlayerName = new MultiLineText(strTemp, 10, 10, Color.black, 15.0f, "Lucida Blackletter", ImageLibRef.TEXT_PRIORITY, MultiLineText.LEFT_ALIGNMENT);
+          }
+
+          return gameScreenFullPlayerName;
+     }
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To get the primary key of the chat the player is now using.

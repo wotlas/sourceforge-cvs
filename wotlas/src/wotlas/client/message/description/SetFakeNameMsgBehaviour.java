@@ -71,7 +71,6 @@ public class SetFakeNameMsgBehaviour extends SetFakeNameMessage implements NetMe
 
     LiePanel liePanel = (LiePanel) c_lie;
     liePanel.setFakeName(index, fakeName);
-    
   }
 
  /*------------------------------------------------------------------------------------*/

@@ -196,9 +196,7 @@ public class WorldMapData implements MapData
     }
 
     //   - We show some informations on the screen
-    String[] strTemp = { myPlayer.getFullPlayerName() };
-    MultiLineText mltPlayerName = new MultiLineText(strTemp, 10, 10, Color.black, 15.0f, "Lucida Blackletter", ImageLibRef.TEXT_PRIORITY, MultiLineText.LEFT_ALIGNMENT);
-    gDirector.addDrawable(mltPlayerName);
+    gDirector.addDrawable(myPlayer.getGameScreenFullPlayerName());
 
     String[] strTemp2 = { worldMap.getFullName() };
     MultiLineText mltLocationName = new MultiLineText(strTemp2, 10, 10, Color.black, 15.0f, "Lucida Blackletter", ImageLibRef.TEXT_PRIORITY, MultiLineText.RIGHT_ALIGNMENT);

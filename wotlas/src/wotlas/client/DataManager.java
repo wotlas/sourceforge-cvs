@@ -859,7 +859,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
           if( awayMessage!=null ) {
               JChatRoom chatRoom = chatPanel.getCurrentJChatRoom();
-              chatRoom.appendText("<font color='gray'> "+selectedPlayer.getPlayerName()+" (away) says: <i> "
+              chatRoom.appendText("<font color='gray'> "+selectedPlayer.getFullPlayerName()+" (away) says: <i> "
                                                     +selectedPlayer.getPlayerAwayMessage()+" </i></font>");
           }
 

@@ -136,10 +136,6 @@ public class LiePanel extends JPanel
     whitePanel.setBackground( Color.white );
     
     add(whitePanel, BorderLayout.SOUTH);
-       
-
-
-
   }
 
   /** To set a fake name.
@@ -181,7 +177,10 @@ public class LiePanel extends JPanel
     public void actionPerformed(ActionEvent e) {
       int currentFakeName = Integer.parseInt(e.getActionCommand());
       PlayerImpl player = DataManager.getDefaultDataManager().getMyPlayer(); 
-      player.sendMessage(new ChangeFakeNameMessage((short) currentFakeName));        
+      player.sendMessage(new ChangeFakeNameMessage((short) currentFakeName));
+      player.setFullPlayerName(b_fakeNames[currentFakeName].getText());
+      DataManager.getDefaultDataManager().getChatPanel().getCurrentJChatRoom().updatePlayer(
+            player.getPrimaryKey(), b_fakeNames[currentFakeName].getText());
     }
   }
 }

@@ -152,7 +152,7 @@ public class JChatRoom extends JPanel implements MouseListener
         public void run() {
           if (!strNewName.equals(DataManager.getDefaultDataManager().getMyPlayer().getFullPlayerName()))
             appendText("<font color='green'>" + strNewName + " entered the chat...</font>");
-          playersListModel.addElement(strNewName);       
+          playersListModel.addElement(strNewName);
           revalidate();
           repaint();
         }
@@ -186,6 +186,30 @@ public class JChatRoom extends JPanel implements MouseListener
         if (!strOldName.equals(DataManager.getDefaultDataManager().getMyPlayer().getFullPlayerName()))
           appendText("<font color='green'><i>" + strOldName + " left the chat...</i></font>");
         playersListModel.removeElement(strOldName);
+        revalidate();
+        repaint();
+      }
+    };
+    SwingUtilities.invokeLater( runnable );
+
+  }
+
+  /** To update a player' full name from the JList.
+   */
+  synchronized public void updatePlayer(String primaryKey, String newName) {
+    if( !players.containsKey( primaryKey ) )
+        return; // not in this chat
+    if (DataManager.SHOW_DEBUG)
+      System.out.println("UPDATING PLAYER "+primaryKey);
+
+    final String strOldName = (String) players.get(primaryKey);
+    final String strNewName = newName;
+    players.put(primaryKey, newName);
+
+    Runnable runnable = new Runnable() {
+      public void run() {
+        playersListModel.removeElement(strOldName);
+        playersListModel.addElement(strNewName);
         revalidate();
         repaint();
       }
@@ -274,16 +298,17 @@ public class JChatRoom extends JPanel implements MouseListener
          String s = value.toString();
          setText(s);
          
-   	   if (isSelected) {
+         if (isSelected) {
              setBackground(list.getSelectionBackground());
-	       setForeground(list.getSelectionForeground());
-	   }
+	     setForeground(list.getSelectionForeground());
+	 }
          else {
 	       setBackground(list.getBackground());
 	       setForeground(list.getForeground());
-	   }
-	   setEnabled(list.isEnabled());
-	   setFont(list.getFont());
+         }
+
+         setEnabled(list.isEnabled());
+         setFont(list.getFont());
          return this;
      }
  }

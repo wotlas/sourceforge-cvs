@@ -35,7 +35,7 @@ public class FindChatCommand implements ChatCommand
 
    /** Returns the first part of the chat command. For example if your chat command
     *  has the following format '/msg:playerId:message' the prefix is '/msg' ( note
-    *  that there is ':' at the end).
+    *  that there is no ':' at the end).
     *  Other example : if your command is '/who' the prefix is '/who'. 
     *
     * @return the chat command prefix that will help identify the command.

@@ -18,10 +18,13 @@
  */
  
 package wotlas.common.universe;
+
+import wotlas.libs.graphics2D.*;
+import wotlas.libs.graphics2D.drawable.*;
  
- /** Door class
+ /** A Door on an InteriorMap... Doors are possessed by RoomLinks.
   *
-  * @author Petrus
+  * @author Petrus, Aldiss
   * @see wotlas.common.universe.RoomLink
   */
 
@@ -33,11 +36,41 @@ public class Door
     */
      private boolean hasLock;
 
+   /** X position of the door ( top-left corner )
+    */
+     private int x;
+
+   /** Y position of the door ( top-left corner )
+    */
+     private int y;
+
+   /** Door Type ( indicating which pivot point to use )
+    */
+     private byte doorType;
+
+   /** Initial door angle ( in radians ). If the door is horizontal on screen
+    *  this initial angle will be 0. If the door is vertical on screen the door angle
+    *  will be PI/2.
+    */
+     private float initialDoorAngle;
+
+   /** Points out which Door image to use.
+    */
+     private ImageIdentifier doorImage;
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** Door drawable to use...
+    */
+   // transient private DoorDrawable doorDrawable;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor
    */
-   public Door() {}
+   public Door() {
+         hasLock = false;
+   }
 
  /*------------------------------------------------------------------------------------*/  
 
@@ -51,9 +84,86 @@ public class Door
     	this.hasLock = hasLock;
     }
 
- /*------------------------------------------------------------------------------------*/  
+     public int getX(){
+     	return x;
+     }
+
+     public void setX( int x ) {
+     	this.x = x;
+     }
+
+     public int getY(){
+     	return y;
+     }
+
+     public void setY( int y ) {
+     	this.y = y;
+     }
+
+     public byte getDoorType(){
+     	return doorType;
+     }
+
+     public void setDoorType( byte doorType ) {
+     	this.doorType = doorType;
+     }
+
+     public float getInitialDoorAngle() {
+     	return initialDoorAngle;
+     }
+
+     public void setInitialDoorAngle( float initialDoorAngle ) {
+     	this.initialDoorAngle = initialDoorAngle;
+     }
+
+     public ImageIdentifier getDoorImage() {
+     	return doorImage;
+     }
+
+     public void setDoorImage( ImageIdentifier doorImage ){
+     	this.doorImage = doorImage;
+     }
 
  /*------------------------------------------------------------------------------------*/  
+
+   /** To get the Door Drawable to add to the GraphicsDirector.
+    * @return DoorDrawable corresponding to this room.
+    */
+     public Drawable getDoorDrawable() {
+      	 if( ImageLibrary.getDefaultImageLibrary() == null )
+      	     return null;
+
+       //  if(doorDrawable!=null)
+       //     return (Drawable) doorDrawable;
+
+       // Door Drawable creation
+       // doorDrawable = new DoorDrawable( x, y, doorType, initialDoorAngle,
+       //                                  doorImage, ImageLibRef.DOOR_PRIORITY );
+       // doorDrawable.useAntialiasing(true);
+          return null; // tmp
+     }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To open the door...
+    */
+     public void openDoor() {
+        // if( getDoorDrawable()!=null )
+     	//     doorDrawable.openDoor();
+     }
+
+ /*------------------------------------------------------------------------------------*/  
+
+   /** To test if the door is opened...
+    */
+     public boolean isDoorOpened() {
+     	// if( getDoorDrawable()!=null )
+     	//     return doorDrawable.isDoorOpened();
+        // else
+               return true;
+     }
+
+ /*------------------------------------------------------------------------------------*/
 }
 
         

@@ -67,6 +67,7 @@ public class ChatCommandProcessor
            addChatCommand( new MsgChatCommand() );
            addChatCommand( new FindChatCommand() );
            addChatCommand( new ServerChatCommand() );
+           addChatCommand( new LieChatCommand() );
            addChatCommand( new LogChatCommand() );
            addChatCommand( new InfoChatCommand() );
            addChatCommand( new HelpChatCommand() );

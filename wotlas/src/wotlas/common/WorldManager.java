@@ -40,18 +40,34 @@ import wotlas.utils.Debug;
 public class WorldManager
 {
  /*------------------------------------------------------------------------------------*/
+
+  /** Root Instance
+   */
+   private static WorldManager wManager;
+
+ /*------------------------------------------------------------------------------------*/
  
   /** array of WorldMap
    */
    protected WorldMap[] worldMaps;
 
  /*------------------------------------------------------------------------------------*/
+
+  /** To get the root instance of the WorldManager.
+   * @param root WorldManager
+   */
+   public static WorldManager getRootInstance() {
+   	return wManager;
+   }
   
+ /*------------------------------------------------------------------------------------*/
+
   /** Constructor. Attemps to load the local universe data. Any error at this
    * step will stop the program.
    */
 
    public WorldManager() {
+   	wManager = this;
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

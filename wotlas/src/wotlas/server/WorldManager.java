@@ -18,8 +18,10 @@
  */
  
 package wotlas.server;
-<PERSISTENCE CORRECT>
-<WORLD SHORTCUTS TO DO>
+
+import wotlas.common.universe.*;
+
+import wotlas.utils.Debug;
 
  /** A WorldManager provides all the methods needed to handle & manage the game world
   *  from its root.<p><br>
@@ -51,7 +53,7 @@ public class WorldManager
 
        // we use the PersistenceManager to load the worlds.
           if( !loadLocalUniverse() ) {
-              Debug.signal( Debug.FAILURE, null, "Could not load Data ! Exiting..." );
+              Debug.signal( Debug.FAILURE, null, "Could not load data correctly ! Exiting..." );
               System.exit(1);
           }
 
@@ -61,7 +63,7 @@ public class WorldManager
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Get World by ID.
+  /** To Get a World by its ID.
    *
    * @param id worldMapID
    * @return corresponding worldMap, null if ID does not exist.
@@ -85,16 +87,10 @@ public class WorldManager
    public boolean loadLocalUniverse() {
 
        // Call to the PersistenceManager to load the worlds from the dataBase.
-          try{
-              PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
+/**           PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
               worldMaps = pm.loadLocalUniverse();
-          }
-          catch( PersistenceException pe ) {
-              Debug.signal( Debug.FAILURE, this, pe );
-              return false;
-          }
-
-      return true;
+**/
+      return true; // fake, for now...
    }
   
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -106,16 +102,10 @@ public class WorldManager
 
    public boolean saveLocalUniverse() {
        // Call to the PersistenceManager to save the worlds to the dataBase.
-          try{
-              PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
+/**              PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
               pm.saveLocalUniverse( worldMaps );
-          }
-          catch( PersistenceException pe ) {
-              Debug.signal( Debug.FAILURE, this, pe );
-              return false;
-          }
-
-      return true;
+**/
+      return false;
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -147,7 +137,7 @@ public class WorldManager
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
-  /** Add a player to this universe. This method is called at system init and should not
+  /** Add a player to this universe. This method is called at system init and should NOT
    *  be used in any other cases. Use movePlayer instead.
    *
    * @param player player to add to this world.
@@ -159,14 +149,14 @@ public class WorldManager
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
   /** Add a player to this universe. The player must have been previously initialized.
-   *  IMPORTANT: if the location point out a room we assume that the room is LOCAL, i.e.
+   *  IMPORTANT: if the location points out a room we assume that the room is LOCAL, i.e.
    *             local to this server.
    *
    * @param player player to add
    */
    private void addPlayer( PlayerImpl player )
    {
-      // Get Location & location type
+/**      // Get Location & location type
          WotlasLocation location = player.getLocation();
       
       // add player
@@ -190,6 +180,7 @@ public class WorldManager
          }
 
       Debug.signal( Debug.ERROR, this, "Player "+player.toString()+" has bad location." );
+*/
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

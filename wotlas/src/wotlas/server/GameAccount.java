@@ -18,7 +18,7 @@
  */
 
 package wotlas.server;
-<COMPLETE>
+
 
 /** A game account represents information about a player account.
  *  It is used for access control when connecting to a GameServer, and for
@@ -104,7 +104,7 @@ class GameAccount
    * @param originalServerID the original server ID of this client account.
    * @param localClientID the client ID given by its first server.
    */
-     public GameAccount( Socket login, String password, int originalServerID, int localClientID ) {
+     public GameAccount( String login, String password, int originalServerID, int localClientID ) {
          this.login = login;
          this.password = password;
          this.originalServerID = originalServerID;
@@ -209,7 +209,7 @@ class GameAccount
    * @return client's local ID
    */
      public int getLocalClientID() {
-         return password;
+         return localClientID;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

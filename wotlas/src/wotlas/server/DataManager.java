@@ -18,7 +18,8 @@
  */
 
 package wotlas.server;
-<COMPLETE>
+
+import java.util.Iterator;
 
 
 /** A DataManager manages Game Data. It possesses a WorldManager & AccountManager.
@@ -52,7 +53,7 @@ class DataManager
    private DataManager() {
 
        // 0 - We load all the WotlasObjects, Knowledges, etc...
-
+              /** Not for wotlas release 1 **/
 
        // 1 - We create an AccountManager. Player Accounts are automatically loaded.
               accountManager = new AccountManager();
@@ -61,11 +62,11 @@ class DataManager
               worldManager = new WorldManager();
        
        // 3 - We initialize the WorldManager with the Players ( Players are
-       //     located on Maps ).
+       //     located on Maps, it's our game organization... ).
               Iterator it = accountManager.getIterator();
 
               while( it.hasNext() )
-                   worldManager.addPlayer( ( (GameAccount) it.next() ).getPlayer() );
+                   worldManager.addNewPlayer( ( (GameAccount) it.next() ).getPlayer() );
 
        // 4 - We initialize the player objects that we just placed in the world.
               it = accountManager.getIterator();

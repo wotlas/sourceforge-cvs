@@ -18,14 +18,12 @@
  */
 
 package wotlas.server;
-<COMPLETE>
-<GAME CODE UPDATE POSSIBILITY>
 
 import wotlas.libs.net.NetServer;
 import wotlas.libs.net.NetPersonality;
-
 import wotlas.utils.Debug;
 
+import java.io.IOException;
 
 /** Wotlas Game Server. Its role is to wait client and connect them to the
  *  game. A client must have previously created a GameAccount with the AccountServer.<br>
@@ -43,9 +41,11 @@ public class GameServer extends NetServer
    *  @param host the host interface to bind to. Example: wotlas.tower.org
    *  @param server_port port on which the server listens to clients.
    *  @param msg_packages a list of packages where we can find NetMsgBehaviour Classes.
+   *  @param nbMaxSockets maximum number of sockets that can be opened on this server
    */
-    public GameServer( String host, int port, String packages[] ) {
+    public GameServer( String host, int port, String packages[], int nbMaxSockets ) {
        super( host, port, packages );
+       setMaximumOpenedSockets( nbMaxSockets );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -60,55 +60,43 @@ public class GameServer extends NetServer
     */
     public void accessControl( NetPersonality personality, String key )
     {
-      try{
-         // we retrieve the key data "accountName:password"
-            String accountName = key.substring( 0, key.indexOf(':') );
-            String password = key.substring( key.indexOf(':')+1, key.length );
+       // we retrieve the key data "accountName:password"
+          String accountName = key.substring( 0, key.indexOf(':') );
+          String password = key.substring( key.indexOf(':')+1, key.length() );
 
-         // does this client exists ?
-            AccountManager manager = DataManager.getDefaultDataManager().getAccountManager();
-            GameAccount account = manager.getAccount( accountName );
+       // does this client exists ?
+          AccountManager manager = DataManager.getDefaultDataManager().getAccountManager();
+          GameAccount account = manager.getAccount( accountName );
 
-            if( account==null ) {
-                 Debug.signal( Debug.NOTICE, this, "A client tried to connect on a non-existent account.");
-                 refuseClient( personality, "This account doesnot exist on this server" );
-            }
+          if( account==null ) {
+               Debug.signal( Debug.NOTICE, this, "A client tried to connect on a non-existent account.");
+               refuseClient( personality, "This account doesnot exist on this server" );
+          }
 
-         // Password Crack Detection ( dictionnay attack )
-            if( account.tooMuchBadPasswordEntered() ) {
-                 Debug.signal( Debug.WARNING, this, "A client has entered 3 bad passwords.! account locked for 30s");
-                 refuseClient( personality, "Sorry, you entered 3 bad passwords ! your account is locked for 30s." );
-            }
+       // Password Crack Detection ( dictionnay attack )
+          if( account.tooMuchBadPasswordEntered() ) {
+               Debug.signal( Debug.WARNING, this, "A client has entered 3 bad passwords.! account locked for 30s");
+               refuseClient( personality, "Sorry, you entered 3 bad passwords ! your account is locked for 30s." );
+          }
 
-         // The account exists... but do we have the right password ?
-            if( account.isRightPassword( password ) )
-            {
-              // ok, client accepted...
-                 account.setLastConnectionTimeNow();
+       // The account exists... but do we have the right password ?
+          if( account.isRightPassword( password ) )
+          {
+            // ok, client accepted...
+               account.setLastConnectionTimeNow();
 
-              // we set his message context to his player...
-                 personality.setContext( account.getPlayer() );
-                 personality.setConnectionListener( account.getPlayer() );
+            // we set his message context to his player...
+               personality.setContext( account.getPlayer() );
+               personality.setConnectionListener( account.getPlayer() );
 
-              // welcome on board...
-                 acceptClient( personality );
-                 Debug.signal( Debug.NOTICE, this, "A new player entered the game...");
-            }
-            else {
-                 Debug.signal( Debug.NOTICE, this, "A client entered a bad password");
-                 refuseClient( personality, "mauvais mot de passe :"+key );
-            }
-      }
-      catch(IOException e) {
-             Debug.signal( Debug.WARNING, this, e );
-
-          // just to be absolutely sure the connection is closed...
-             try{
-                 refuseClient( personality, "Access Control Failed." );
-             }
-             catch( IOException e )
-             { /* expected */ }
-      }
+            // welcome on board...
+               acceptClient( personality );
+               Debug.signal( Debug.NOTICE, this, "A new player entered the game...");
+          }
+          else {
+               Debug.signal( Debug.NOTICE, this, "A client entered a bad password");
+               refuseClient( personality, "mauvais mot de passe :"+key );
+          }
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

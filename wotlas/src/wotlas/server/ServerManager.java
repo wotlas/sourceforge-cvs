@@ -18,10 +18,9 @@
  */
  
 package wotlas.server;
-<COMPLETE>
-<PACKAGE NAMES (FOR SERVERS) TO COMPLETE>
-<PERSISTENCE CORRECT>
 
+
+import wotlas.utils.Debug;
 
  /** A Server Manager manages three servers : A GameServer, a AccountServer and
   *  a GatewayServer. The parameters for these servers are gathered in config/server.cfg.
@@ -53,11 +52,11 @@ public class ServerManager
 
    /** Our AccountServer
     */
-      private AccountServer accountServer;
+//      private AccountServer accountServer;
 
    /** Our GatewayServer
     */
-      private GatewayServer gatewayServer;
+//      private GatewayServer gatewayServer;
 
  /*------------------------------------------------------------------------------------*/
   
@@ -67,27 +66,24 @@ public class ServerManager
    private ServerManager() {
 
        // 1 - we load the ServerConfig file...
-          config = new ServerConfig();
+          PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();          
+          config = pm.loadServerConfig();
 
-          PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
-          
-           try{
-              pm.loadServerConfig();
-           }
-           catch( PersistenceException pe ) {
-               Debug.signal( Debug.FAILURE, this, pe );
-               return false;
+          if( config == null ) {
+               Debug.signal( Debug.FAILURE, this, "Can't init servers without a ServerConfig !" );
+               System.exit(1);
            }
 
        // 2 - We create the AccountServer
+/** Not for now
+ **
           String account_packages[] = { "wotlas.server.message.account" };
 
           accountServer = new AccountServer( config.getServerName(),
                                              config.getAccountServerPort(),
-                                             account_packages );
-
-          accountServer.setMaximumOpenedSockets( config.getMaxNumberOfAccountConnections() );
-
+                                             account_packages,
+                                             config.getMaxNumberOfAccountConnections() );
+ **/
        // 3 - We create the GameServer
           String game_packages[] = { "wotlas.server.message.description",
                                      "wotlas.server.message.movement",
@@ -95,23 +91,36 @@ public class ServerManager
 
           gameServer = new GameServer( config.getServerName(),
                                        config.getGameServerPort(),
-                                       game_packages );
-
-          gameServer.setMaximumOpenedSockets( config.getMaxNumberOfGameConnections() );
+                                       game_packages,
+                                       config.getMaxNumberOfGameConnections() );
 
        // 4 - We create the GatewayServer
+
+ /** Not for now
+  **
           String gateway_packages[] = { "wotlas.server.message.gateway" };
 
           gatewayServer = new GatewayServer( config.getServerName(),
                                              config.getGatewayServerPort(),
-                                             gateway_packages );
+                                             gateway_packages,
+                                             config.getMaxNumberOfGatewayConnections() );
 
-          gatewayServer.setMaximumOpenedSockets( config.getMaxNumberOfGatewayConnections() );
-
+  **/
        // Everything is ready on the network side...
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Starts the 3 servers.
+   */
+   public void start() {
+       gameServer.start();
+//       accountServer.start();
+//       gatewayServer.start();
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   
   /** Creates a server manager. Attemps to load the config/server.cfg file... and then
    * constructs the different servers ( but doesnot start them ).
@@ -151,20 +160,20 @@ public class ServerManager
    *
    * @return the account server.
    */
-   public AccountServer getAccountServer() {
+/*   public AccountServer getAccountServer() {
          return acountServer;
    }
-
+*/
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To get the GatewayServer.
    *
    * @return the gateway server.
    */
-   public GatewayServer getGatewayServer() {
+/*   public GatewayServer getGatewayServer() {
          return gatewayServer;
    }
-
+*/
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

@@ -20,15 +20,30 @@
 package wotlas.server;
 
 import wotlas.libs.persistence.*;
+import wotlas.utils.Debug;
+import wotlas.utils.FileTools;
+import wotlas.utils.Tools;
 
- /** Persistence Manager for Wotlas Servers.
+import java.io.File;
+
+ /** Persistence Manager for Wotlas Servers. The persistence manager is the central
+  * class where are saved/loaded data for the game. Mainly, it deals with Game Accounts
+  * and World data ( wotlas.common.universe ).
   *
   * @author Aldiss
   * @see wotlas.libs.persistence.PropertiesConverter
   */
  
-public class PersistenceManager
+class PersistenceManager
 {
+ /*------------------------------------------------------------------------------------*/
+
+   public final static String CLIENT_PROFILE = "profile.cfg";
+   public final static String ACCOUNTS_HOME = "home";
+   public final static String PLAYER_PREFIX = "player-save-";
+   public final static String PLAYER_SUFFIX = ".cfg";
+   public final static String SERVERCONFIG = "../src/config/server.cfg";
+
  /*------------------------------------------------------------------------------------*/
 
    /** Maximum number of save in a client account. If this number is reached we delete
@@ -65,7 +80,7 @@ public class PersistenceManager
    */
    public static PersistenceManager createPersistenceManager( String databasePath ) {
          if( persistenceManager == null )
-             persistenceManager = new PersistenceManager( String databasePath );
+             persistenceManager = new PersistenceManager( databasePath );
          
          return persistenceManager;
    }
@@ -82,13 +97,13 @@ public class PersistenceManager
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To load the client Accounts
+  /** To load all the client Accounts.
    *
-   * @return client accounts...
+   * @return all the client accounts found in the databasePath+"/"+ACCOUNTS_HOME
    */
    public GameAccount[] loadAccounts() 
    {
-      String accountHome =  databasePath+File.separator+"home";
+      String accountHome =  databasePath+File.separator+ACCOUNTS_HOME;
       File accountList[] = new File( accountHome ).listFiles();
 
      // no accounts ?
@@ -108,14 +123,14 @@ public class PersistenceManager
            try
            {
              // we load the client's profile
-                accounts[i] = PropertiesConverter.load( accountHome + File.separator
+                accounts[i] = (GameAccount) PropertiesConverter.load( accountHome + File.separator
                                               + accountList[i].getName() + File.separator
-                                              + "profile.cfg" );
+                                              + CLIENT_PROFILE );
 
              // we now search for the latest saved player file.
                 String latest = FileTools.findSave( accountHome + File.separator
                                                           + accountList[i].getName(),
-                                                          "player-save", ".cfg", true );
+                                                          PLAYER_PREFIX, PLAYER_SUFFIX, true );
 
               // have we found the latest saved file ?
                  if( latest==null ) {
@@ -127,7 +142,7 @@ public class PersistenceManager
                      continue;
                  }
 
-                 PlayerImpl player = PropertiesConverter.load( accountHome + File.separator
+                 PlayerImpl player = (PlayerImpl) PropertiesConverter.load( accountHome + File.separator
                                               + accountList[i].getName() + File.separator
                                               + latest );
 
@@ -153,27 +168,27 @@ public class PersistenceManager
    */
    public boolean saveAccount( GameAccount account ) 
    {
-      String accountHome =  databasePath+File.separator+"home";
+      String accountHome =  databasePath+File.separator+ACCOUNTS_HOME;
 
       try{
             PropertiesConverter.save( account.getPlayer(),
                                     accountHome + File.separator
                                     + account.getAccountName() + File.separator
-                                    + "player-save-"+Tools.getLexicalDate()+".cfg" );
+                                    + PLAYER_PREFIX+Tools.getLexicalDate()+PLAYER_SUFFIX );
 
          // ok, the save went ok... do we have to erase the oldest file ?
             File accountFiles[] = new File( accountHome + File.separator
                                             + account.getAccountName() ).listFiles();
 
-            if( accountFiles > MAX_NUMBER_OF_SAVE+1 )
+            if( accountFiles.length > MAX_NUMBER_OF_SAVE+1 )
             {
                // ok, let's delete the oldest save	
                   String oldest = FileTools.findSave( accountHome + File.separator
                                                       + account.getAccountName(),
-                                                      "player-save", ".cfg", false );
+                                                      PLAYER_PREFIX, PLAYER_SUFFIX, false );
 
               // have we found the latest saved file ?
-                 if( oldest!=null ) {
+                 if( oldest!=null && !oldest.equals(PLAYER_PREFIX+Tools.getLexicalDate()+PLAYER_SUFFIX) ) {
 
                     String oldestpath = accountHome + File.separator + account.getAccountName()
                                         + File.separator + oldest;
@@ -205,7 +220,7 @@ public class PersistenceManager
    */
    public boolean createAccount( GameAccount account ) 
    {
-      String accountHome =  databasePath+File.separator+"home";
+      String accountHome =  databasePath+File.separator+ACCOUNTS_HOME;
       File accountDir = new File( accountHome+File.separator+account.getAccountName() );
 
       if( !accountDir.mkdir() ) {
@@ -219,7 +234,7 @@ public class PersistenceManager
           PropertiesConverter.save( account,
                                     accountHome + File.separator
                                     + account.getAccountName() + File.separator
-                                    + "profile.cfg" );
+                                    + CLIENT_PROFILE );
       }
       catch( PersistenceException pe ) {
           Debug.signal( Debug.ERROR, this, "Failed to save account: "
@@ -230,7 +245,7 @@ public class PersistenceManager
 
     // we save the player data in something like "player-save-2001-09-23.cfg"
        if( !saveAccount( account ) ) {
-           if( !deleteAccount( account ) )          
+           if( !deleteAccount( account.getAccountName() ) )          
               Debug.signal( Debug.WARNING, this, "Failed to delete bad account" );
 
            return false;
@@ -243,13 +258,13 @@ public class PersistenceManager
 
   /** To delete a client Account.
    *
-   * @param account client account
+   * @param accountName account name, use GameAccount.getAccountName().
    * @return true if the account has been deleted succesfully.
    */
-   public boolean deleteAccount( GameAccount account ) 
+   public boolean deleteAccount( String accountName ) 
    {
-      String accountHome =  databasePath+File.separator+"home";
-      File accountDir = new File( accountHome+File.separator+account.getAccountName() );
+      String accountHome =  databasePath+File.separator+ACCOUNTS_HOME;
+      File accountDir = new File( accountHome+File.separator+accountName );
 
       // account doesnot exists
          if( !accountDir.exists() )
@@ -266,6 +281,44 @@ public class PersistenceManager
       return accountDir.delete();
    }
 
+ /*------------------------------------------------------------------------------------*/
+
+  /** Loads the server config located in config/server.cfg
+   *
+   * @return server config
+   */
+
+   public ServerConfig loadServerConfig()
+   {
+      try{
+          return (ServerConfig) PropertiesConverter.load( SERVERCONFIG );
+      }
+      catch( PersistenceException pe ) {
+          Debug.signal( Debug.ERROR, this, "Failed to load server config: "+pe.getMessage() );
+          return null;
+      }
+   }
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Saves the server config to config/server.cfg
+   *
+   *  @param serverConfig server config
+   *  @return true in case of success, false if an error occured.
+   */
+
+   public boolean saveServerConfig( ServerConfig serverConfig )
+   {
+      try{
+          PropertiesConverter.save( serverConfig, SERVERCONFIG );
+          return true;
+      }
+      catch( PersistenceException pe ) {
+          Debug.signal( Debug.ERROR, this, "Failed to save server config: "+pe.getMessage() );
+          return false;
+      }
+   }
+
+ /*------------------------------------------------------------------------------------*/
 
 }

@@ -18,7 +18,7 @@
  */
 
 package wotlas.server;
-<COMPLETE>
+
 
 /** A ServerConfig contains all the basic information of a server : name, ports, etc...
  *<p>

@@ -18,13 +18,17 @@
  */
 
 package wotlas.server;
-<PERSISTENCE CORRECT>
-<LOTS OF METHODS TO ADD: REMOVEACCOUNT, CREATEACCOUNT, >
-<DOC REVIEW>
+
+import wotlas.utils.Debug;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
-/** 
+
+/** The AccountManager posseses all the client's game accounts. Note that all the
+ *  methods of the AccountManager are not synchronized... so use the AccountManager with
+ *  care ! It should only be used as server start-up or for daily persistence save in
+ *  maintenance mode.
  *
  * @author Aldiss
  * @see wotlas.server.GameServer
@@ -40,37 +44,26 @@ class AccountManager
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Constructor. Attemps to load the client accounts. Any error at this step
-   *  will stop the program.
+  /** Constructor. Attemps to load the client accounts.
    */
    public AccountManager() {
 
-       // we use the PersistenceManager to load the worlds.
-          if( !loadAccounts() ) {
-              Debug.signal( Debug.NOTICE, null, "Exiting..." );
-              System.exit(1);
-          }
-
+          loadAccounts();
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To load the client Accounts
-   *
-   * @return true in case of success, false otherwise.
+  /** To load the client Accounts.
    */
-
-   public boolean loadAccounts()
+   public void loadAccounts()
    {
+       int nbAccounts=0,nbAccountsLoaded=0;
+
        // Call to the PersistenceManager to load the accounts from the dataBase.
           PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
           GameAccount account_list[] = pm.loadAccounts();
 
-           int nbAccounts;
-
-            if( account_list==null )
-                  nbAccounts = 0;
-             else
+            if( account_list!=null )
                   nbAccounts = account_list.length;
 
             // HashMap init. ( initial size is 1.5*Nb Accounts +10 )
@@ -79,31 +72,26 @@ class AccountManager
 
             // we fill the hash-map...
                for( int i=0; i<nbAccounts; i++ )
-                   if( account_list[i]!=null )
+                   if( account_list[i]!=null ) {
                        accounts.put( account_list[i].getAccountName(), account_list[i] );
+                       nbAccountsLoaded++;
+                   }
 
-        return true;
+          Debug.signal( Debug.NOTICE, this, "AccountManager loaded "+nbAccountsLoaded+" accouts." );
    }
   
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To save to disk a modified account.
+  /** To save to disk a modified account. The account MUST ALREADY EXIST.
    *
    * @return true in case of success, false otherwise.
    */
 
    public boolean saveAccount( GameAccount account ) {
        // Call to the PersistenceManager to save a new account in the dataBase.
-          try{
-              PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
-              pm.saveAccount( account );
-          }
-          catch( PersistenceException pe ) {
-              Debug.signal( Debug.FAILURE, this, pe );
-              return false;
-          }
+          PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
 
-      return true;
+          return pm.saveAccount( account );
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -118,16 +106,23 @@ class AccountManager
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To create a new acount.
+  /** To create a new acount. The account must have been fully initialized ( don't forget
+   *  the setPlayer() ! even if it's a transient field we use it to save Player data in
+   *  a separate file ).
    *
-   * @param account a game account (client part)
-   * @param player player data (player part)
+   * @param account a game account
+   * @return true means success, false usually means that the account name already exists.
    */
-     public synchronized boolean createAccount( GameAccount account, PlayerImpl player ) {
+     public synchronized boolean createAccount( GameAccount account ) {
         // we create the persistence entry
-        
-        // we insert the account in our table
+           PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
 
+           if( !pm.createAccount( account ) )
+               return false;
+
+        // we insert the account in our table
+           accounts.put( account.getAccountName(), account );
+           return true;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -149,7 +144,7 @@ class AccountManager
    * @return the wanted account, or null if the account doesnot exist...
    */
      public synchronized GameAccount getAccount( String accountName ) {
-         return accounts.get( accountName );
+         return (GameAccount) accounts.get( accountName );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -161,9 +156,14 @@ class AccountManager
    */
      public synchronized boolean deleteAccount( String accountName ) {
         // we delete the account
+           PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
 
-        // we remove the file entry
+           if( !pm.deleteAccount( accountName ) )
+               return false;
 
+        // we remove the account hashmap entry
+           accounts.remove( accountName );
+           return true;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -18,20 +18,29 @@
  */
 
 package wotlas.server;
-<COMPLETE>
-<REPLACE FILETOOLS CALL WITH A PROPERTIES FILE>
 
+import wotlas.utils.Debug;
 import wotlas.utils.FileTools;
 
+import java.util.Properties;
+
+
 /** The MAIN server class. It starts the PersistenceManager, the ServerManager
- *  and the DataManager. So got it ? yeah, it's the boss...
+ *  and the DataManager. So got it ? yeah, it's the boss on the server side...
  *
  * @author Aldiss
  * @see wotlas.server.GameServer
+ * @see wotlas.server.PersistenceManager
  */
 
 class ServerDirector
 {
+ /*------------------------------------------------------------------------------------*/
+
+   /** Static Link Database Config File.
+    */
+    public final static String DATABASE_CONFIG = "../src/config/server-database.cfg";
+
  /*------------------------------------------------------------------------------------*/
 
    /** Complete Path to the database where are stored the universe and the client
@@ -67,41 +76,39 @@ class ServerDirector
      public static void main( String argv[] )
      {
         // STEP 1 - We load the database path. Where is the data ?
-           databasePath = FileTools.readConfigFile( "config/database.cfg", "DATABASE_PATH" );
+           properties = FileTools.loadPropertiesFile( DATABASE_CONFIG );
 
-             if( databasePath==null ) {
-                Debug.signal( Debug.FAILURE, null, "No Database Path available !" );
+             if( properties==null ) {
+                Debug.signal( Debug.FAILURE, null, "No valid server-database.cfg file found !" );
                 System.exit(1);
              }
 
-           Debug.signal( Debug.NOTICE, null, "DataBase Path Found..." );
+           databasePath = properties.getProperty( "DATABASE_PATH" );
+
+             if( databasePath==null ) {
+                Debug.signal( Debug.FAILURE, null, "No Database Path specified in config file !" );
+                System.exit(1);
+             }
+
+           Debug.signal( Debug.NOTICE, null, "DataBase Path Found : "+databasePath );
 
 
         // STEP 2 - Creation of the PersistenceManager
-           persistenceManager = createPersistenceManager( databasePath );
-
-             if( persistenceManager==null ) {
-                Debug.signal( Debug.FAILURE, null, "Failed to create PersistenceManager !" );
-                System.exit(1);
-             }
-
+           persistenceManager = PersistenceManager.createPersistenceManager( databasePath );
            Debug.signal( Debug.NOTICE, null, "Persistence Manager Created..." );
 
 
         // STEP 3 - We ask the ServerManager to get ready
-           serverManager = new ServerManager();
-
-           Debug.signal( Debug.NOTICE, null, "Servers Created..." );
+           serverManager = ServerManager.createServerManager();
+           Debug.signal( Debug.NOTICE, null, "Servers Created (but not started)..." );
 
 
         // STEP 4 - We ask the DataManager to load the worlds & client accounts
-           dataManager = new DataManager();
-
+           dataManager = DataManager.createDataManager();
            Debug.signal( Debug.NOTICE, null, "World Data Loaded..." );
         
         // STEP 5 - Start of the GameServer, AccountServer & GatewayServer !
            serverManager.start();
-
            Debug.signal( Debug.NOTICE, null, "WOTLAS Servers started with success..." );
 
         // Everything is ok !

@@ -39,10 +39,6 @@ public class PathFollower implements MovementComposer {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** AStar algorithm for pathfinding.
-   */
-    //transient private static AStarDouble aStar;
-
   /** size of a mask's cell (in pixels)
    */
     transient private static int tileSize = -1;
@@ -128,7 +124,7 @@ public class PathFollower implements MovementComposer {
     * @param maskTileSize mask tile size (in pixels).
     * @param playerSize represents the average player size ( in maskTileSize unit )
     */
-     public void setMovementMask( boolean mask[][], int maskTileSize, int playerSize ) {     	 
+     public void setMovementMask( boolean mask[][], int maskTileSize, int playerSize ) {
          AStarDouble.setMask( mask );
          tileSize = maskTileSize;
          AStarDouble.setSpriteSize( playerSize );

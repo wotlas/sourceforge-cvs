@@ -291,8 +291,11 @@ public class JWizardStepParameters {
       }
       
       ostream.writeBoolean(isPrevButtonEnabled);
+      System.out.println(isPrevButtonEnabled);
       ostream.writeBoolean(isNextButtonEnabled);
+      System.out.println(isNextButtonEnabled);
       ostream.writeBoolean(isLastStep);
+      
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -325,7 +328,9 @@ public class JWizardStepParameters {
       }
       
       isPrevButtonEnabled = istream.readBoolean();
+      System.out.println(isPrevButtonEnabled);
       isNextButtonEnabled = istream.readBoolean();
+      System.out.println(isNextButtonEnabled);
       isLastStep = istream.readBoolean();
    }
 
@@ -399,8 +404,8 @@ public class JWizardStepParameters {
         noInitParam.stepTitle = "";
         noInitParam.isDynamic = isDynamic;
         noInitParam.isPrevButtonEnabled = isPrevButtonEnabled;
-        noInitParam.isNextButtonEnabled = isPrevButtonEnabled;
-        noInitParam.isLastStep = isPrevButtonEnabled;
+        noInitParam.isNextButtonEnabled = isNextButtonEnabled;
+        noInitParam.isLastStep = isLastStep;
 
       // 2 - Property copy
         if(stepPropertiesKey!=null)
@@ -424,8 +429,8 @@ public class JWizardStepParameters {
         noServerParam.stepTitle = stepTitle;
         noServerParam.isDynamic = isDynamic;
         noServerParam.isPrevButtonEnabled = isPrevButtonEnabled;
-        noServerParam.isNextButtonEnabled = isPrevButtonEnabled;
-        noServerParam.isLastStep = isPrevButtonEnabled;
+        noServerParam.isNextButtonEnabled = isNextButtonEnabled;
+        noServerParam.isLastStep = isLastStep;
 
       // 2 - Property copy
         if(stepPropertiesKey!=null)

@@ -130,11 +130,12 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
             if (message.length()==0) {
               // no parameter : player is no longer away
               sender.getPlayerState().value = PlayerState.CONNECTED;
+              message = "<font color='green'><i>" + senderFullName + " is back</i></font>";
             } else {
               // player is away
               sender.getPlayerState().value = PlayerState.AWAY;
               sender.setPlayerAwayMessage(message);
-              message = "<font color='blue'><i>" + senderFullName + " is away (" + message + " )</i></font>";
+              message = "<font color='green'><i>" + senderFullName + " is away (" + message + " )</i></font>";
               
             }
             dataManager.getClientScreen().getChatPanel().updateAllChatRooms((Player) sender);

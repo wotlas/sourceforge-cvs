@@ -18,7 +18,7 @@
 
         <!-- Possible value are here 'classic' if you want to use Javac
              or 'jikes' if you want to use jikes -->
-        <property name="build.compiler" value="jikes"/>
+        <property name="build.compiler" value="classic"/>
 
         <property name="debug" value="on"/>
         <property name="optimize" value="on"/>
@@ -63,7 +63,7 @@
         <echo message="   server --> compiles the server side only (server,common,libs)"/>
         <echo message="   server-only --> compiles the server packages only"/>
         <echo message=""/>
-        <echo message="   client --> compiles the client side only and creates a JAR."/>
+        <echo message="   client --> compiles the client side"/>
         <echo message="   client-only --> compiles the client packages only"/>
         <echo message=""/>
         <echo message="   libs --> compiles the wotlas libs only"/>
@@ -71,6 +71,7 @@
         <echo message="   utils --> compiles the wotlas utils only"/>
         <echo message=""/>
         <echo message="   alice  --> compiles the alice part of wotlas (you'll need alicebot)"/>
+        <echo message="   client-jws --> compiles the whole client and builds a JAR for Java Web Start"/>
         <echo message=""/>
         <echo message="   javadoc  --> generates the API documentation in the docs/api directory"/>
         <echo message="   clean    --> cleans up the directory"/>

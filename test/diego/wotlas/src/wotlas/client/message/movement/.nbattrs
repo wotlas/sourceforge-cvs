@@ -5,6 +5,11 @@
         <attr name="class_dependency_wotlas.common.message.movement.PathUpdateMovementMessage" stringvalue="PathUpdateMovementMsgBehaviour"/>
         <attr name="class_dependency_wotlas.libs.net.NetMessageBehaviour" stringvalue="PathUpdateMovementMsgBehaviour"/>
     </fileobject>
+    <fileobject name="ScreenObjectPathUpdateMovementMsgBehaviour.java">
+        <attr name="class_dependency_wotlas.common.message.movement.PathUpdateMovementMessage" stringvalue="PathUpdateMovementMsgBehaviour"/>
+        <attr name="class_dependency_wotlas.common.message.movement.ScreenObjectPathUpdateMovementMessage" stringvalue="ScreenObjectPathUpdateMovementMsgBehaviour"/>
+        <attr name="class_dependency_wotlas.libs.net.NetMessageBehaviour" stringvalue="PathUpdateMovementMsgBehaviour"/>
+    </fileobject>
     <fileobject name="YouCanLeaveMapMsgBehaviour.java">
         <attr name="class_dependency_wotlas.libs.net.NetMessageBehaviour" stringvalue="YouCanLeaveMapMsgBehaviour"/>
         <attr name="class_dependency_wotlas.common.message.movement.YouCanLeaveMapMessage" stringvalue="YouCanLeaveMapMsgBehaviour"/>

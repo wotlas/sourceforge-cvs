@@ -18,29 +18,32 @@
  */
 
 package wotlas.common.movement;
-
 import wotlas.libs.pathfinding.*;
-
 import wotlas.common.*;
 import wotlas.common.message.movement.*;
 import wotlas.common.universe.*;
 import wotlas.utils.*;
 import wotlas.libs.persistence.*;
 import wotlas.common.screenobject.*;
+import wotlas.common.router.*;
 
 import java.awt.Point;
 
 /** 
- * A path follower... well yes, this class is a path adept :) It follows a given path
- * at a certain speed taking into account angle variations...
+ * First of all : look at pathFollower.
+ * Second and last : this manage on TILEMAPS the movement of anything else then
+ *                   the master player AND on the server OF EVERYTHING else then
+ *                   the players
  *
  * IMPORTANT : this implementation is NOT synchronized... please avoid the situation
  *             when one thread is invoking the tick() method and the other a setXXX()...
  *
  * @author Petrus, Aldiss, Diego
+ * @see wotlas.common.movement.MovementComposer
+ * @see wotlas.common.movement.PathFollower
  */
 
-public class PathFollower implements MovementComposer,BackupReady {
+public class ScreenObjectPathFollower implements MovementComposer,BackupReady {
 
     /** id used in Serialized interface.
      */
@@ -146,7 +149,7 @@ public class PathFollower implements MovementComposer,BackupReady {
 
   /** Asociated Player.
    */
-    transient private Player player;
+    transient private ScreenObject screenObject;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -155,10 +158,10 @@ public class PathFollower implements MovementComposer,BackupReady {
     * @param maskTileSize mask tile size (in pixels).
     * @param playerSize represents the average player size ( in maskTileSize unit )
     */
-     public void setMovementMask( boolean mask[][], int maskTileSize, int playerSize ) {
+     public void setMovementMask( boolean mask[][], int maskTileSize, int spriteSize ) {
          AStarDouble.setMask( mask );
          AStarDouble.setTileSize( maskTileSize );
-         AStarDouble.setSpriteSize( playerSize );
+         AStarDouble.setSpriteSize( spriteSize );
      }
 
  /*------------------------------------------------------------------------------------*/
@@ -198,7 +201,7 @@ public class PathFollower implements MovementComposer,BackupReady {
 
   /** Empty Constructor.
    */
-    public PathFollower() {
+    public ScreenObjectPathFollower() {
         walkingAlongPath = false;
         turningAlongPath = false;
         realisticRotations = false;
@@ -213,7 +216,7 @@ public class PathFollower implements MovementComposer,BackupReady {
    *  @param yPosition y position in pixels.
    *  @param orientationAngle orientation angle in radians.
    */
-    public PathFollower( float xPosition, float yPosition, double orientationAngle ) {
+    public ScreenObjectPathFollower( float xPosition, float yPosition, double orientationAngle ) {
         this();
         this.xPosition = xPosition;
         this.yPosition = yPosition;
@@ -226,11 +229,11 @@ public class PathFollower implements MovementComposer,BackupReady {
     * @param player associated player.
     */
     public void init(Player player) {
-        this.player = player;
+        Debug.signal( Debug.ERROR, null, "This should never be called : init with player on ScreenObjectPathFollower!" );
     }
 
     public void init(ScreenObject screenObject) {
-        Debug.signal( Debug.ERROR, null, "This should never be called : init with ScreenObject on PathFollower!" );
+        this.screenObject = screenObject;
     }
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -278,43 +281,43 @@ public class PathFollower implements MovementComposer,BackupReady {
       this.orientationAngle = orientationAngle;
     }
 
-  /** To set player's speed
+  /** To set screenObject's speed
    */
     public void setSpeed(float speed) {
       this.speed = speed;
     }
 
-  /** To get player's speed
+  /** To get screenObject's speed
    */
     public float getSpeed() {
       return speed;
     }
 
-  /** To set player's angular speed
+  /** To set screenObject's angular speed
    */
     public void setAngularSpeed(float angularSpeed) {
       this.angularSpeed = angularSpeed;
     }
 
-  /** To get player's angular speed
+  /** To get screenObject's angular speed
    */
     public float getAngularSpeed() {
       return angularSpeed;
     }
 
-  /** To set if the player is walking along the path
+  /** To set if the screenObject is walking along the path
    */
     public void setWalkingAlongPath(boolean walkingAlongPath) {
       this.walkingAlongPath = walkingAlongPath;
     }
 
-  /** is the player moving ( same as isMoving(), this method is for persistence only )
+  /** is the screenObject moving ( same as isMoving(), this method is for persistence only )
    */
     public boolean getWalkingAlongPath() {
       return walkingAlongPath;
     }
 
-  /** To set the player end position ( for persistence only )
+  /** To set the screenObject end position ( for persistence only )
    */
     public void setEndPoint(ScreenPoint endPoint) {
       this.endPoint= endPoint;
@@ -384,13 +387,17 @@ public class PathFollower implements MovementComposer,BackupReady {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To stop our movement along the path.
-   */
+    /** To stop our movement along the path.
+    */
     public void stopMovement() {
-      resetMovement();
-      
-      if(player.isMaster())
-         player.sendMessage( new PathUpdateMovementMessage( this, player.getPrimaryKey(), player.getSyncID() ) );
+        resetMovement();
+
+        if( screenObject.isTheServerSide() )
+            if( screenObject instanceof NpcOnTheScreen )
+//         player.sendMessage( new PathUpdateMovementMessage( this, player.getPrimaryKey(), player.getSyncID() ) );
+                ((NpcOnTheScreen)screenObject).getRouter().sendMessage( 
+                new ScreenObjectPathUpdateMovementMessage( this, screenObject.getPrimaryKey()
+                , screenObject.getSyncID()),null, MessageRouter.EXTENDED_GROUP );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -427,9 +434,9 @@ public class PathFollower implements MovementComposer,BackupReady {
    */
      public MovementUpdateMessage getUpdate() {
          if(AStarDouble.isInitialized())
-            return (MovementUpdateMessage) new PathUpdateMovementMessage( this, null, player.getSyncID() );
+            return (MovementUpdateMessage) new ScreenObjectPathUpdateMovementMessage( this, null, screenObject.getSyncID() );
          else
-            return (MovementUpdateMessage) new PathUpdateMovementMessage( this, player.getPrimaryKey(), player.getSyncID() );
+            return (MovementUpdateMessage) new ScreenObjectPathUpdateMovementMessage( this, screenObject.getPrimaryKey(), screenObject.getSyncID() );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -505,7 +512,7 @@ public class PathFollower implements MovementComposer,BackupReady {
 
                     if( msg.isMoving ) {
                         if( distance( msg.srcPoint, getPosition() )>MAX_DISTANCE_DELAY ||
-                            findPath( getPosition(), msg.dstPoint, player.getLocation().isRoom() )==null )
+                            findPath( getPosition(), msg.dstPoint, screenObject.getLocation().isTileMap() )==null )
                             takeUpdate = true;
                         else
                             recreateTrajectory( msg.dstPoint, 0 );
@@ -570,13 +577,13 @@ public class PathFollower implements MovementComposer,BackupReady {
          realisticRotations = false; // default
          speed = 1.0f;             // default : very slow speed
 
-         if( player==null || player.getLocation()==null )
+         if( screenObject==null || screenObject.getLocation()==null )
              return;
 
-         if ( player.getLocation().isRoom() )
+         if ( screenObject.getLocation().isRoom() )
               realisticRotations = true;
 
-         speed = player.getBasicChar().getSpeed( player.getLocation() );
+         speed = screenObject.getSpeed( screenObject.getLocation() );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -682,21 +689,25 @@ public class PathFollower implements MovementComposer,BackupReady {
     /** To set a player's movement : movement from current position to the given point.
     */
     public void moveTo( Point endPosition, WorldManager wManager ) {
+        // why all rem? 'cause mob can get to a new map : we will reinit data when getting
+        // out of tilemap if will enable this.
+/*
         // Test if xPosition,yPosition is a valid point
         Point startPt = new Point( (int)xPosition, (int)yPosition );
         if ( !AStarDouble.isValidStart(startPt) ) {
             Debug.signal(Debug.WARNING,this,"PathFollower : invalid start point");
             // We reset the position
-            WotlasLocation location = player.getLocation();
+            WotlasLocation location = screenObject.getLocation();
             // We search for a valid insertion point
             ScreenPoint pReset = null;
-            if ( location.isRoom() )
-                pReset = player.getMyRoom().getInsertionPoint();
-            else {
+            if ( location.isRoom() ){
+                pReset = screenObject.getMyRoom().getInsertionPoint();
+            else
+            {
                 if ( location.isTown() ) {
                     TownMap myTown = wManager.getTownMap( location );
                     if (myTown!=null) 
-                      pReset = myTown.getInsertionPoint();
+                        pReset = myTown.getInsertionPoint();
                 }
                 else if ( location.isWorld() ) {
                     WorldMap myWorld = wManager.getWorldMap( location );
@@ -704,69 +715,76 @@ public class PathFollower implements MovementComposer,BackupReady {
                         pReset = myWorld.getInsertionPoint();
                 }
             }
-
             if (pReset==null) {
                 pReset = new ScreenPoint(0, 0);
                 Debug.signal(Debug.CRITICAL,this,"Could not find a valid start point !");
             } else
                 Debug.signal(Debug.NOTICE,this,"Found a new valid start point...");
-                player.setX(pReset.x);
-                player.setY(pReset.y);
-                startPt.x = pReset.x;
-                startPt.y = pReset.y;              
-            }
-            path = findPath( startPt, new Point( endPosition.x, endPosition.y ),player.getLocation().isRoom() );
-            if( path==null ) {
-            	if( walkingAlongPath )
-                    stopMovement(); // a message is sent : we were moving...
-                else
-                    resetMovement(); // no message sent : we were already still...
-                return; // no movement
-            }
-            updateMovementAspect();
-            initMovement( path );
-            if(player.isMaster())
-               player.sendMessage( new PathUpdateMovementMessage( this, player.getPrimaryKey(), player.getSyncID() ) );
-     }
+            screenObject.setX(pReset.x);
+            screenObject.setY(pReset.y);
+            startPt.x = pReset.x;
+            startPt.y = pReset.y;              
+        }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        // path = findPath( startPt, new Point( endPosition.x, endPosition.y ),player.getLocation().isRoom() );
+        path = findPath( startPt, new Point( endPosition.x, endPosition.y ), screenObject.getLocation().isTileMap() );
 
-  /** To rotate the player on itself.
-   *  @param finalOrientation final orientation to reach
-   */
-     public void rotateTo( double finalOrientation ) {
-
-         orientationAngle = finalOrientation;
-
-         if( player.isMaster() )
-            player.sendMessage( new PathUpdateMovementMessage( this, player.getPrimaryKey(), player.getSyncID() ) );
-     }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To recreate a trajectory from a dest. point & a DeltaTime.
-   */
-     public void recreateTrajectory( Point pDst, int movementDeltaTime ) {
-            path = findPath( new Point( (int)xPosition, (int)yPosition ),
-                             new Point( pDst.x, pDst.y ), player.getLocation().isRoom() );
-
-            if( path==null ) {
-                Debug.signal( Debug.ERROR, this, "Failed to re-create path !" );
-                
-                if(player.isMaster())
-                   stopMovement();
-                else
-                   resetMovement();
-                return;
-            }
-
-            updateMovementAspect();
-            
-            if(movementDeltaTime>500)
-               initMovement( path, movementDeltaTime );
+        if( path==null ) {
+            if( walkingAlongPath )
+                stopMovement(); // a message is sent : we were moving...
             else
-               initMovement( path );
-     }
+                resetMovement(); // no message sent : we were already still...
+            return; // no movement
+        }
+
+        updateMovementAspect();
+        initMovement( path );
+
+        if( screenObject.isTheServerSide() )
+            if( screenObject instanceof NpcOnTheScreen)
+                ((NpcOnTheScreen)screenObject).getRouter().sendMessage( 
+                new ScreenObjectPathUpdateMovementMessage( this, screenObject.getPrimaryKey()
+                , screenObject.getSyncID()),null, MessageRouter.EXTENDED_GROUP );
+ */
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** To rotate the player on itself.
+    *  @param finalOrientation final orientation to reach
+    */
+    public void rotateTo( double finalOrientation ) {
+
+        orientationAngle = finalOrientation;
+
+        if( screenObject.isTheServerSide() )
+            if( screenObject instanceof NpcOnTheScreen)
+                ((NpcOnTheScreen)screenObject).getRouter().sendMessage( 
+                new ScreenObjectPathUpdateMovementMessage( this, screenObject.getPrimaryKey()
+                , screenObject.getSyncID()),null, MessageRouter.EXTENDED_GROUP );
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** To recreate a trajectory from a dest. point & a DeltaTime.
+    */
+    public void recreateTrajectory( Point pDst, int movementDeltaTime ) {
+        path = findPath( new Point( (int)xPosition, (int)yPosition ),
+                        new Point( pDst.x, pDst.y ), screenObject.getLocation().isTileMap() );
+        if( path==null ) {
+            Debug.signal( Debug.ERROR, this, "Failed to re-create path !" );
+            if( screenObject.isTheServerSide() )
+                stopMovement();
+            else
+                resetMovement();
+            return;
+        }
+        updateMovementAspect();
+        if(movementDeltaTime>500)
+            initMovement( path, movementDeltaTime );
+        else
+            initMovement( path );
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -870,7 +888,7 @@ public class PathFollower implements MovementComposer,BackupReady {
         xPosition = (float)a1.x;
         yPosition = (float)a1.y;
 
-        if(player.isMaster())
+        if( screenObject.isTheServerSide() )
            stopMovement();     
         else
            resetMovement();

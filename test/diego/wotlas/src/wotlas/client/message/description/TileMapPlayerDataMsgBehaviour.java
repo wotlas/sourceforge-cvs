@@ -114,7 +114,7 @@ public class TileMapPlayerDataMsgBehaviour extends TileMapPlayerDataMessage impl
                     continue;
                 
                 dest.put( item.getPrimaryKey(), item );
-                dataManager.getGraphicsDirector().addDrawable(item.getDrawable());
+                item.init( dataManager.getGraphicsDirector() );
             }
     	}
     }

@@ -21,14 +21,16 @@ package wotlas.common.movement;
 
 import wotlas.common.message.movement.*;
 import wotlas.common.*;
+import wotlas.common.screenobject.*;
 
 import java.awt.Point;
 
 
-/** An interface representing a generic player movement.
+/** An interface representing a generic player/ScreenObject (to manage npc) movement.
  *
- * @author Aldiss
+ * @author Aldiss, Diego
  * @see wotlas.common.Player
+ * @see wotlas.common.ScreenObject
  */
 
 public interface MovementComposer extends Tickable {
@@ -44,10 +46,15 @@ public interface MovementComposer extends Tickable {
 
  /*------------------------------------------------------------------------------------*/
 
-   /** To init this MovementComposer.
-    * @param player associated player.
-    */
+    /** To init this MovementComposer.
+     * @param player associated player.
+     */
      public void init( Player player );
+
+     /** To init this MovementComposer.
+     * @param screenObject associated ScreenObject.
+     */
+     public void init( ScreenObject screenObject );
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

@@ -26,6 +26,8 @@ import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.graphics2D.filter.*;
 import wotlas.common.environment.*;
+import wotlas.common.movement.ScreenObjectPathFollower;
+import wotlas.common.movement.MovementComposer;
 
 import java.awt.Rectangle;
 
@@ -36,6 +38,7 @@ import java.awt.Rectangle;
 public class PlayerOnTheScreen extends ScreenObject {
 
     transient private Player player;
+    transient private ScreenObjectPathFollower movementComposer;
     
     public PlayerOnTheScreen(Player player) {
         this.player = player;
@@ -43,6 +46,7 @@ public class PlayerOnTheScreen extends ScreenObject {
         this.y = player.getY();
         this.loc = player.getLocation();
         this.primaryKey = player.getPrimaryKey();
+        this.speed = player.getBasicChar().getSpeed( player.getLocation() );
     }
     
     /** To get a Drawable for this character. This should not be used on the
@@ -61,7 +65,7 @@ public class PlayerOnTheScreen extends ScreenObject {
         int imageNr = 0;
         switch( EnvironmentManager.whtGraphicSetIs() ){
             case EnvironmentManager.GRAPHICS_SET_ROGUE:
-                imageNr = 2;
+                imageNr = 7;
                 break;
             default:
                 imageNr = EnvironmentManager.getDefaultNpcImageNr();
@@ -101,4 +105,41 @@ public class PlayerOnTheScreen extends ScreenObject {
     public CharData getCharData() {
         return player.getBasicChar();
     }
+
+    public void init(GraphicsDirector gDirector) {
+        gDirector.addDrawable( getDrawable() );
+        movementComposer = new ScreenObjectPathFollower();
+        movementComposer.init( this );
+    }
+    
+  /* - - - - - - - - - - - SYNC ID MANIPULATION - - - - - - - - - - - - - - - - - - - -*/
+
+    /** To get the synchronization ID. This ID is used to synchronize this player on the
+    *  client & server side. The ID is incremented only when the player changes its map.
+    *  Movement messages that have a bad syncID are discarded.
+    * @return sync ID
+    */
+    public byte getSyncID(){
+      	synchronized( syncID ) {
+            return syncID[0];
+        }
+    }
+
+    /** To set the synchronization ID. See the getter for an explanation on this ID.
+    *  @param syncID new syncID
+    */
+    public void setSyncID(byte syncID){
+        synchronized( this.syncID ) {
+            this.syncID[0] = syncID;
+        }
+    }
+    
+    public float getSpeed(WotlasLocation loc) {
+        return speed;
+    }
+    
+    public MovementComposer getMovementComposer() {
+        return movementComposer;
+    }
+    
 }

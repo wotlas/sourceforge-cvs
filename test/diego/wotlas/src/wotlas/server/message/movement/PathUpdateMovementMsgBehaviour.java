@@ -82,12 +82,15 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
 
        // 2 - We send the update to other players
        // ... in the current room/tilemap & other rooms near me
-          if( !player.getLocation().isRoom()
-          && !player.getLocation().isTileMap())
+          MessageRouter mRouter = player.getMessageRouter();
+          if( player.getLocation().isRoom())
+              mRouter.sendMessage( this, player, MessageRouter.EXTENDED_GROUP );
+          else if (player.getLocation().isTileMap())
+              mRouter.sendMessage( new ScreenObjectPathUpdateMovementMessage(this)
+              , player, MessageRouter.EXTENDED_GROUP );
+          else
               return; // nothing to do for worlds & towns...
 
-          MessageRouter mRouter = player.getMessageRouter();
-          mRouter.sendMessage( this, player, MessageRouter.EXTENDED_GROUP );
           PlayerImpl nearPlayer = null;
 
        // 3 - Chat selection/quit

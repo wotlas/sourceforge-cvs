@@ -803,16 +803,16 @@ public class PlayerImpl implements Player, SpriteDataSupplier,FakeSpriteDataSupp
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To get the synchronization ID. This ID is used to synchronize this player on the
+    /** To get the synchronization ID. This ID is used to synchronize this player on the
     *  client & server side. The ID is incremented only when the player changes its map.
     *  Movement messages that have a bad syncID are discarded.
     * @return sync ID
     */
-      public byte getSyncID(){
-      	synchronized( syncID ) {
-          return syncID[0];
+    public byte getSyncID(){
+        synchronized( syncID ) {
+            return syncID[0];
         }
-      }
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

@@ -89,6 +89,7 @@ public class AddScreenObjectToTileMapMsgBehaviour extends AddScreenObjectToTileM
                         // la riga sopra, qui serve solo a fare questo :
                         //  movementComposer.init( this );
                         // va' sistemato.....
+                        
                         ;
                     }
                     else if( !(item instanceof ItemOnTheScreen) ) {
@@ -98,7 +99,8 @@ public class AddScreenObjectToTileMapMsgBehaviour extends AddScreenObjectToTileM
                     // ((PlayerImpl)player).initVisualProperties(dataManager.getGraphicsDirector());
                     // la riga sopra falsequesto sotto:
                     // gDirector.addDrawable(wotCharacter.getDrawable(this));
-                    dataManager.getGraphicsDirector().addDrawable(item.getDrawable());
+                    item.init( dataManager.getGraphicsDirector() );
+                    // dataManager.getGraphicsDirector().addDrawable(item.getDrawable());
                	}
            }
 

@@ -129,11 +129,11 @@ public class PlayerImpl implements Player, NetConnectionListener,BackupReady {
     */
        transient protected TileMap myTileMap;
 
-   /** SyncID for client & server. See the getter of this field for explanation.
+    /** SyncID for client & server. See the getter of this field for explanation.
     * This field is an array and not a byte because we want to be able to
     * synchronize the code that uses it.
     */
-       transient protected byte syncID[] = new byte[1];
+    transient protected byte syncID[] = new byte[1];
 
  /*------------------------------------------------------------------------------------*/
 

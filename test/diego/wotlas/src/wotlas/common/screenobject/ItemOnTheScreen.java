@@ -27,6 +27,7 @@ import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.graphics2D.filter.*;
 import wotlas.common.environment.*;
 import wotlas.server.ServerDirector;
+import wotlas.common.movement.MovementComposer;
 
 import java.awt.Rectangle;
 
@@ -94,4 +95,75 @@ public class ItemOnTheScreen extends ScreenObject {
     public CharData getCharData() {
         return null;
     }
+    
+    public void init(GraphicsDirector gDirector) {
+        gDirector.addDrawable( getDrawable() );
+    }
+
+    /* - - - - - - - - - - - SYNC ID MANIPULATION - - - - - - - - - - - - - - - - - - - -*/
+
+    /** To get the synchronization ID. This ID is used to synchronize this player on the
+    *  client & server side. The ID is incremented only when the player changes its map.
+    *  Movement messages that have a bad syncID are discarded.
+    * @return sync ID
+    */
+    public byte getSyncID(){
+      	synchronized( syncID ) {
+            return syncID[0];
+        }
+    }
+
+    /** To update the synchronization ID. See the getter for an explanation on this ID.
+    *  The new updated syncID is (syncID+1)%100.
+    */
+    public void updateSyncID(){
+      	synchronized( syncID ) {
+            syncID[0] = (byte) ( (syncID[0]+1)%100 );
+        }
+    }
+
+    /** To set the synchronization ID. See the getter for an explanation on this ID.
+    *  @param syncID new syncID
+    */
+    public void setSyncID(byte syncID){
+        synchronized( this.syncID ) {
+            this.syncID[0] = syncID;
+        }
+    }
+    
+    public int ExternalizeGetVersion(){
+        return 1;
+    }
+
+    public void writeObject(java.io.ObjectOutputStream objectOutput)
+    throws java.io.IOException {
+        objectOutput.writeInt( ExternalizeGetVersion() );
+        objectOutput.writeInt( x );
+        objectOutput.writeInt( y );
+        objectOutput.writeObject( primaryKey );
+        objectOutput.writeObject( loc );
+    }
+
+    public void readObject(java.io.ObjectInputStream objectInput)
+    throws java.io.IOException, java.lang.ClassNotFoundException {
+        int IdTmp = objectInput.readInt();
+        if( IdTmp == ExternalizeGetVersion() ){
+            x = objectInput.readInt();
+            y = objectInput.readInt();
+            primaryKey = ( String ) objectInput.readObject();
+            loc = ( WotlasLocation ) objectInput.readObject();
+        } else {
+            // to do.... when new version
+        }
+        isServerSide = false;
+    }
+    
+    public float getSpeed(WotlasLocation loc) {
+        return 0;
+    }    
+    
+    public MovementComposer getMovementComposer() {
+        return null;
+    }
+    
 }

@@ -17,6 +17,7 @@ public class Summon extends Spell {
     public void CastToMap(WotlasLocation loc, int x, int y) {
         TileMap map = ServerDirector.getDataManager().getWorldManager().getTileMap(loc);
         // System.out.println("summon :"+npcKey);
-        map.getMessageRouter().addScreenObject( new NpcOnTheScreen(x,y,name) );
+        map.getMessageRouter().addScreenObject( new NpcOnTheScreen(x,y,name
+        ,map.getMessageRouter()) );
     }
 }

@@ -123,4 +123,3 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

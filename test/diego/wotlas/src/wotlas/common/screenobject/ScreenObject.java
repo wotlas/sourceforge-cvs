@@ -27,6 +27,7 @@ import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.graphics2D.filter.*;
 import wotlas.common.environment.*;
+import wotlas.common.movement.MovementComposer;
 
 import java.awt.Rectangle;
 
@@ -43,10 +44,18 @@ import java.awt.Rectangle;
 public abstract class ScreenObject implements FakeSpriteDataSupplier, SendObjectReady{
     
     transient protected FakeSprite memImage;
+    transient protected boolean isServerSide = true;
     protected int x,y;
     protected WotlasLocation loc;
     protected String primaryKey;
     protected String name;
+    protected float speed;
+
+    /** SyncID for client & server. See the getter of this field for explanation.
+    * This field is an array and not a byte because we want to be able to
+    * synchronize the code that uses it.
+    */
+    transient protected byte syncID[] = new byte[1];
 
  /*---------------all the abstract functions to implement------------------------------*/
 
@@ -68,6 +77,28 @@ public abstract class ScreenObject implements FakeSpriteDataSupplier, SendObject
     */
 //    abstract public Rectangle getCurrentRectangle();
      
+    
+    abstract public void init(GraphicsDirector gDirector);
+    
+
+ /* - - - - - - - - - - - SYNC ID MANIPULATION - - - - - - - - - - - - - - - - - - - -*/
+
+    /** To get the synchronization ID. This ID is used to synchronize this player on the
+    *  client & server side. The ID is incremented only when the player changes its map.
+    *  Movement messages that have a bad syncID are discarded.
+    * @return sync ID
+    */
+    abstract public byte getSyncID();
+
+    /** To set the synchronization ID. See the getter for an explanation on this ID.
+    *  @param syncID new syncID
+    */
+    abstract public void setSyncID(byte syncID);
+    
+    abstract public float getSpeed(WotlasLocation loc);
+    
+    abstract public MovementComposer getMovementComposer();
+    
  /*---------------------All the common functions---------------------------------------*/
 
     public WotlasLocation getLocation() {
@@ -112,6 +143,10 @@ public abstract class ScreenObject implements FakeSpriteDataSupplier, SendObject
         gDirector.removeDrawable( getDrawable() );
     }
     
+    public boolean isTheServerSide() {
+        return isServerSide;
+    }
+    
     /* - - - - - - - - - - - - - - Send object by the net- - - - - - - - - - - - - - - - -*/
     
     /** id version of data, used in serialized persistance.
@@ -127,6 +162,7 @@ public abstract class ScreenObject implements FakeSpriteDataSupplier, SendObject
         objectOutput.writeInt( y );
         objectOutput.writeObject( primaryKey );
         objectOutput.writeObject( loc );
+        objectOutput.writeFloat( speed );
     }
 
     public void readObject(java.io.ObjectInputStream objectInput)
@@ -137,8 +173,10 @@ public abstract class ScreenObject implements FakeSpriteDataSupplier, SendObject
             y = objectInput.readInt();
             primaryKey = ( String ) objectInput.readObject();
             loc = ( WotlasLocation ) objectInput.readObject();
+            speed = objectInput.readFloat();
         } else {
             // to do.... when new version
         }
+        isServerSide = false;
     }
 }

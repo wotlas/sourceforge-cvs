@@ -76,14 +76,6 @@ public class ServerEnvironmentMsgBehaviour extends ServerEnvironmentMessage impl
     *        this message.
     */
     public void doBehaviour( Object sessionContext ) {
-/*
-        // The sessionContext is here a DataManager.
-        DataManager dataManager = (DataManager) sessionContext;
-        PlayerImpl myPlayer = dataManager.getMyPlayer();
-        
-
-  */
-        //Debug.signal( Debug.NOTICE, this, "nServer sended the environment!" );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -100,7 +100,6 @@ public class JMemory extends JPanel implements Runnable {
   /** Ping.
    */
   private void ping() {
-    System.out.println("ping");
     
     float freeMemory = (float) r.freeMemory();
     float totalMemory = (float) r.totalMemory();
@@ -120,15 +119,15 @@ public class JMemory extends JPanel implements Runnable {
     public void init() {
        final JMemory monitor = new JMemory();
        
-       JFrame f = new JFrame("Java2D Demo - JMonitor");
+       JFrame f = new JFrame("Memory monitor");
        
-        /*WindowListener l = new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {System.exit(0);}
+        WindowListener l = new WindowAdapter() {
+            public void windowClosing(WindowEvent e) { monitor.stop(); }
             public void windowDeiconified(WindowEvent e) { monitor.start(); }
             public void windowIconified(WindowEvent e) { monitor.stop(); }
         };
         f.addWindowListener(l);
-        */
+        
         
         f.getContentPane().add("Center", monitor);
         f.pack();

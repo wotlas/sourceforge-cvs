@@ -140,6 +140,61 @@ public class CanLeaveWorldMapMsgBehaviour extends CanLeaveWorldMapMessage implem
                    return;
                 }
               }
+              else if( location.isRoom() && currentWorld.getTownMaps()!=null ) {
+              	   WotlasLocation targetTown = new WotlasLocation(location.getWorldMapID(),location.getTownMapID());
+
+                   for( int i=0; i<currentWorld.getTownMaps().length; i++ )
+                   {
+                      TownMap townMap = currentWorld.getTownMaps()[i];
+              
+                      if( townMap.getTownMapID()==location.getTownMapID()
+                          && townMap.getMapExits()==null ) {                   
+                          MapExit mapExit = townMap.findTownMapExit(null);
+
+                          if( mapExit==null || !mapExit.getMapExitLocation().equals( location ) )
+                              continue;
+
+                       // MapExit Found !!!
+                       // 1 - ADD MORE PRECISE DESTINATION CHECK HERE
+
+                       // 2 - PREPARE LOCATION CHANGE
+                          Hashtable players = currentWorld.getPlayers();
+
+                          synchronized( players ) {
+                              players.remove( primaryKey );
+                          }
+
+                       // move to our new room
+                          Room targetRoom = wManager.getRoom( location );
+                          if( targetRoom==null ) {
+                             sendError( player, "Target Town not found ! "+location );
+
+                          // reverting to old location
+                             synchronized( players ) {
+                                 players.put( primaryKey, player );
+                             }
+                             return;
+                          }
+
+                          players = targetRoom.getPlayers();
+
+                       // 3  - LOCATION UPDATE
+                          player.setLocation( location );
+                          player.updateSyncID();
+                          player.getMovementComposer().resetMovement();
+                          player.setX( x );
+                          player.setY( y );
+
+                          synchronized( players ) {
+                             players.put( primaryKey, player );
+                          }
+
+                       // 4 - SEND MESSAGE TO PLAYER
+                          player.sendMessage( new YouCanLeaveMapMessage( primaryKey, location, x, y, player.getSyncID() ) );
+                          return;
+                      }
+                   }
+              }
 
        // MapExit not found...
           sendError( player, "Target Map not found !"+location );

@@ -148,8 +148,22 @@ public class MapExit extends ScreenRectangle
    */
     public ScreenPoint getInsertionPoint() {
         ScreenPoint p = new ScreenPoint();
-        p.x = x + width/2;
-        p.y = y + height/2;
+
+        switch( mapExitSide ) {
+          case MapExit.SOUTH:
+            p.x = x + width/2;
+            p.y = y - 20;
+            break;
+          case MapExit.EAST:
+            p.x = x - 20;
+            p.y = y + height/2;
+            break;
+          default:
+            p.x = x + width/2;
+            p.y = y + height/2;            
+            break;
+        }
+
         return p;
     }
 

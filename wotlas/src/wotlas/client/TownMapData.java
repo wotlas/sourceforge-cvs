@@ -313,83 +313,29 @@ public class TownMapData implements MapData
       }
 
       mapExit = buildingMap.findTownMapExit( myPlayer.getAngle() );
-
-      int newX=-1, newY=-1;
       
-      if (true) {
         if (SHOW_DEBUG) {
           System.out.println("Which MapExit are we using ?");
           System.out.println("\t\tmapExit.getType() = " + (int) mapExit.getType());
           System.out.print("\t\tmapExit.getMapExitSide() = ");
         }
         
-        switch( mapExit.getMapExitSide() ) {
-          case MapExit.NONE:
-            //System.out.println("NONE");
-            /*myPlayer.setX( mapExit.getX() + mapExit.getWidth()/2 );
-            myPlayer.setY( mapExit.getY() + mapExit.getHeight()/2 );
-            */
-            newX = mapExit.getX() + mapExit.getWidth()/2;
-            newY = mapExit.getY() + mapExit.getHeight()/2;            
-            break;
-          case MapExit.NORTH:
-            //System.out.println("NORTH");
-            /*myPlayer.setX( mapExit.getX() + mapExit.getWidth()/2 );
-            myPlayer.setY( mapExit.getY() + mapExit.getHeight()/2 );
-            */
-            newX = mapExit.getX() + mapExit.getWidth()/2;
-            newY = mapExit.getY() + mapExit.getHeight()/2;
-            break;
-          case MapExit.SOUTH:
-            //System.out.println("SOUTH");
-            /*myPlayer.setX( mapExit.getX() + mapExit.getWidth()/2 );
-            myPlayer.setY( mapExit.getY() + mapExit.getHeight()/2 - 10); // top left corner coordinate
-            */
-            newX = mapExit.getX() + mapExit.getWidth()/2;
-            newY = mapExit.getY() + mapExit.getHeight()/2 - 10; // top left corner coordinate            
-            break;
-          case MapExit.EAST:
-            //System.out.println("EAST");
-            /*myPlayer.setX( mapExit.getX() + mapExit.getWidth()/2 - 10 ); // top left corner coordinate
-            myPlayer.setY( mapExit.getY() + mapExit.getHeight()/2 );
-            */
-            newX = mapExit.getX() + mapExit.getWidth()/2 - 10; // top left corner coordinate
-            newY = mapExit.getY() + mapExit.getHeight()/2;            
-            break;
-          case MapExit.WEST:
-            //System.out.println("WEST");
-            /*myPlayer.setX( mapExit.getX() + mapExit.getWidth()/2 );
-            myPlayer.setY( mapExit.getY() + mapExit.getHeight()/2 );
-            */
-            newX = mapExit.getX() + mapExit.getWidth()/2;
-            newY = mapExit.getY() + mapExit.getHeight()/2;            
-            break;
-          }
         if (SHOW_DEBUG) {
           System.out.println("\t\tmapExit.getTargetWotlasLocation() = " + mapExit.getTargetWotlasLocation());
           System.out.println("\t\tmapExit.getMapExitLocation() = " + mapExit.getMapExitLocation());
         }
-      }     
 
-/* NETMESSAGE */      
       if (isNotMovingToAnotherMap) {
         isNotMovingToAnotherMap = false;
-        myPlayer.sendMessage( new CanLeaveTownMapMessage(myPlayer.getPrimaryKey(),
-                              mapExit.getMapExitLocation(), newX, newY) );
+
+      // New Position
+         ScreenPoint newPos = mapExit.getInsertionPoint();
+         
+         myPlayer.sendMessage( new CanLeaveTownMapMessage(myPlayer.getPrimaryKey(),
+                               mapExit.getMapExitLocation(), newPos.x, newPos.y) );
       }
     }
   }
-
- /*------------------------------------------------------------------------------------*/
-
-  /** To get players around
-   *
-   * @param myPlayer the master player
-   */
-//  public Hashtable getPlayers(PlayerImpl myPlayer) {
-//    TownMap townMap = dataManager.getWorldManager().getTownMap( myPlayer.getLocation() );
-//    return townMap.getPlayers();
-//  }
 
  /*------------------------------------------------------------------------------------*/
 

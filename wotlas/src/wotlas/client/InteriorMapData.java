@@ -86,10 +86,6 @@ public class InteriorMapData implements MapData
    */
   private InteriorMap imap;
 
-  /** Can we automatically open the next door ?
-   */
-  private boolean automaticDoorOpen = false;
-
   /** true if we must reset the room
    */
   private boolean resetRoom = false;
@@ -114,14 +110,6 @@ public class InteriorMapData implements MapData
   public void setIsNotMovingToAnotherMap(boolean value) {
     isNotMovingToAnotherMap = value;
   }
-
- /*------------------------------------------------------------------------------------*/
-
-  /** To automatically open the next door...
-   */
-    public void setAutomaticDoorOpen() {
-       automaticDoorOpen = true;
-    }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -381,30 +369,15 @@ public class InteriorMapData implements MapData
                                         myPlayer.getEndPosition() ) ) {
         myPlayer.stopMovement();
       }
-/* DOESN'T WORK... the player stops before intersecting the roomlink and the code
-   below is never reached... to fix in release 2...
-
-           if(automaticDoorOpen) {
-              WotlasLocation location = new WotlasLocation(myPlayer.getLocation());
-              dataManager.sendMessage(
-                  new DoorStateMessage(location, rl.getRoomLinkID(), !rl.getDoor().isOpened()) );
-              automaticDoorOpen=false;
-           }
-*/
     }
 
     // Moving to another Room ?
     if ( rl!=null && !couldBeMovingToAnotherRoom ) {
       // Player is intersecting a RoomLink
-      /*if (SHOW_DEBUG)
-        System.out.println("Intersecting a RoomLink");*/
-      latestRoomLink = rl;
-      couldBeMovingToAnotherRoom = true;
+         latestRoomLink = rl;
+         couldBeMovingToAnotherRoom = true;
     } else if ( rl==null && couldBeMovingToAnotherRoom ) {
       // ok, no intersection now, are we in an another room ?
-      /*if (SHOW_DEBUG)
-        System.out.println("ok, no intersection now, are we in an another room ?");
-        */
       couldBeMovingToAnotherRoom = false;
 
       int newRoomID;
@@ -435,21 +408,16 @@ public class InteriorMapData implements MapData
         dataManager.getChatPanel().reset();
         dataManager.getChatPanel().changeMainJChatRoom(room.getShortName());
 
-        //if (SHOW_DEBUG)
-          //System.out.println("Adding a new player : " + myPlayer + "to room : " + room);
-//        room.addPlayer( myPlayer );
-
         String[] strTemp = { room.getFullName() };
         mltLocationName.setText(strTemp);
+
         if (SHOW_DEBUG)
           System.out.print("Move to another room : " + newRoomID + " -> " + room.getFullName());
 
         if (SHOW_DEBUG) {
           RoomLink[] roomLinks = room.getRoomLinks();
           if (roomLinks != null) {
-            //System.out.println("\tDrawing RoomLink");
             for (int i=0; i<roomLinks.length; i++) {
-              //System.out.println("\t\troomLinks["+i+"] = " + roomLinks[i]);
               dataManager.drawScreenRectangle(roomLinks[i].toRectangle(), Color.green);
             }
             roomLinks = null;
@@ -459,9 +427,7 @@ public class InteriorMapData implements MapData
         if (SHOW_DEBUG) {
           MapExit[] mapExits = room.getMapExits();
           if (mapExits!= null) {
-            //System.out.println("\tDrawing MapExit");
             for (int i=0; i<mapExits.length; i++) {
-              //System.out.println("\t\tmapExits["+i+"] = " + mapExits[i]);
               dataManager.drawScreenRectangle(mapExits[i].toRectangle(), Color.yellow);
             }
             mapExits = null;
@@ -499,20 +465,6 @@ public class InteriorMapData implements MapData
       }
     } // End of part II
   }
-
- /*------------------------------------------------------------------------------------*/
-
-  /** To get players around
-   *
-   * @param myPlayer the master player
-   */
-//  public Hashtable getPlayers(PlayerImpl myPlayer) {
-//    Room myRoom = myPlayer.getMyRoom();
-//    if (myRoom != null)
-//      return myRoom.getPlayers();
-//    else
-//      return null;
-//  }
 
  /*------------------------------------------------------------------------------------*/
 

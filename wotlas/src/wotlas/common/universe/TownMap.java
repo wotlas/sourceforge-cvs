@@ -24,6 +24,7 @@ import wotlas.common.Player;
 import wotlas.utils.*;
 
 import java.awt.Rectangle;
+import java.awt.Point;
 
 import java.util.Hashtable;
 
@@ -412,8 +413,16 @@ public class TownMap extends ScreenRectangle
    */
    public MapExit findTownMapExit( Rectangle fromPosition ) {
    	
-      if(mapExits==null)
-         return null;
+      if(mapExits==null) {
+      	// Ok, this town has no MapExit, we suppose it's just a building
+      	// Is there ONE building ?
+      	   if(buildings!=null && buildings.length==1 && buildings[0]!=null) {
+      	      Debug.signal( Debug.NOTICE, null, "Entering Single Building Map..." );
+      	      return buildings[0].getBuildingExits()[0];
+      	   }
+
+           return null;
+      }
 
       if(mapExits.length==1)
          return mapExits[0];

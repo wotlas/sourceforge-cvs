@@ -261,27 +261,18 @@ public class WorldMapData implements MapData
 
       MapExit mapExit = townMap.findTownMapExit( myPlayer.getCurrentRectangle() );
 
-/* NETMESSAGE */
       if (isNotMovingToAnotherMap) {
         isNotMovingToAnotherMap = false;
-        myPlayer.sendMessage( new CanLeaveWorldMapMessage(myPlayer.getPrimaryKey(),
+
+      // New Position
+         ScreenPoint newPos = mapExit.getInsertionPoint();
+
+         myPlayer.sendMessage( new CanLeaveWorldMapMessage(myPlayer.getPrimaryKey(),
                                   mapExit.getMapExitLocation(),
-                                  mapExit.getX() + mapExit.getWidth()/2,
-                                  mapExit.getY() + mapExit.getHeight()/2 ) );
-      }                                  
+                                  newPos.x, newPos.y ) );
+      }
     }
   }
-
- /*------------------------------------------------------------------------------------*/
-
-  /** To get players around
-   *
-   * @param myPlayer the master player
-   */
-//  public Hashtable getPlayers(PlayerImpl myPlayer) {
-//    WorldMap worldMap = dataManager.getWorldManager().getWorldMap( myPlayer.getLocation() );
-//    return worldMap.getPlayers();
-//  }
 
  /*------------------------------------------------------------------------------------*/
 

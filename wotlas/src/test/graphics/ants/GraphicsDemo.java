@@ -39,7 +39,7 @@ public class GraphicsDemo extends JFrame implements AWTEventListener {
          
        // 1 - Image Library Creation
           try{
-             imageLib = ImageLibrary.createImageLibrary("../src/test/graphics/ants/graphics");
+             imageLib = ImageLibrary.createImageLibrary("../test/graphics/ants/graphics");
           }catch( java.io.IOException ioe ) {
               ioe.printStackTrace();
               System.exit(1);
@@ -134,16 +134,16 @@ public class GraphicsDemo extends JFrame implements AWTEventListener {
        switch( key.getKeyCode() ) {
             case KeyEvent.VK_UP:
                      angle = myAnt.getAngle();
-                     x = (int)( myAnt.getX() + 1.5*Math.cos( angle ) );
-                     y = (int)( myAnt.getY() + 1.5*Math.sin( angle ) );
+                     x = (int)( myAnt.getX() + 2*Math.cos( angle ) );
+                     y = (int)( myAnt.getY() + 2*Math.sin( angle ) );
                      myAnt.setX( x );
                      myAnt.setY( y );
                      break;
 
             case KeyEvent.VK_DOWN:
                      angle = myAnt.getAngle();
-                     x = (int)( myAnt.getX() + 2*Math.cos( angle ) );
-                     y = (int)( myAnt.getY() + 2*Math.sin( angle ) );
+                     x = (int)( myAnt.getX() - 1.5*Math.cos( angle ) );
+                     y = (int)( myAnt.getY() - 1.5*Math.sin( angle ) );
                      myAnt.setX( x );
                      myAnt.setY( y );
                      break;

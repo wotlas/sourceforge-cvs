@@ -147,7 +147,6 @@ public class JChatRoom extends JPanel
 
       // ok, we add this one...
          playersListModel.addElement(players[i].getFullPlayerName());
-         repaint();
          this.players.put( players[i].getPrimaryKey(), players[i] );
     }
   }
@@ -159,13 +158,17 @@ public class JChatRoom extends JPanel
         return; // already in this chat
     //playersListModel.addElement(player.getFullPlayerName());
     strNewName = player.getFullPlayerName();
+    final PlayerImpl player2add = player;
+    
     Runnable runnable = new Runnable() {
       public void run() {
         playersListModel.addElement(strNewName);
+        players.put( player2add.getPrimaryKey(), player2add );    
+
       }
     };
     SwingUtilities.invokeLater( runnable );
-    this.players.put( player.getPrimaryKey(), player );    
+    
   }
   
   /** To remove a player from the JList.

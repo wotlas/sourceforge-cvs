@@ -446,7 +446,8 @@ public class Room implements WotlasMap
            return null;
 
         for( int i=0; i<mapExits.length; i++ )
-             if( mapExits[i].toRectangle().contains(destX,destY)
+             if( ( mapExits[i].toRectangle().contains(destX,destY)
+                 || mapExits[i].toRectangle().contains(destX+rCurrent.width,destY+rCurrent.height) )
                  && mapExits[i].toRectangle().intersects( rCurrent ) )
                  return mapExits[i]; // mapExits reached
 

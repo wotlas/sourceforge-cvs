@@ -83,6 +83,10 @@ public class InteriorMapData implements MapData
    */
   private MultiLineText mltLocationName;
 
+  /** Associated InteriorMap of this InteriorMapData.
+   */
+  private InteriorMap imap;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Set to true to show debug information
@@ -118,7 +122,7 @@ public class InteriorMapData implements MapData
 
     // 1 - We load the InteriorMap
     WotlasLocation location = myPlayer.getLocation();
-    InteriorMap imap = dataManager.getWorldManager().getInteriorMap(location);
+    imap = dataManager.getWorldManager().getInteriorMap(location);
     if (SHOW_DEBUG) {
       System.out.println("InteriorMap");
       System.out.println("\tfullName = "  + imap.getFullName());
@@ -239,6 +243,7 @@ public class InteriorMapData implements MapData
 System.out.println("Player init visual properties");
     myPlayer.initVisualProperties(gDirector);
 
+
     //   - We show some informations on the screen
     String[] strTemp = { myPlayer.getFullPlayerName(), myPlayer.getPlayerName() };
     MultiLineText mltPlayerName = new MultiLineText(strTemp, 10, 10, Color.black, 15.0f, "Lblack.ttf", ImageLibRef.TEXT_PRIORITY, MultiLineText.LEFT_ALIGNMENT);
@@ -247,6 +252,17 @@ System.out.println("Player init visual properties");
     String[] strTemp2 = { room.getFullName(), room.getShortName() };
     mltLocationName = new MultiLineText(strTemp2, gDirector.getWidth()-10, 10, Color.black, 15.0f, "Lblack.ttf", ImageLibRef.TEXT_PRIORITY, MultiLineText.RIGHT_ALIGNMENT);
     gDirector.addDrawable(mltLocationName);
+
+    //  - We add eventual doors...
+      Room rooms[] = imap.getRooms();
+
+        for( int r=0; r<rooms.length; r++ ) {
+             Door doors[] = rooms[r].getDoors();
+           
+             for( int d=0; d<doors.length; d++ )
+                  if( !doors[d].isDisplayed() )
+                      gDirector.addDrawable( doors[d].getDoorDrawable() );
+        }
     
     //   - We play music
     String midiFile = imap.getMusicName();
@@ -296,7 +312,8 @@ System.out.println("NOTIFYING");
 
       // is there a Door ?
       if ( rl.getDoor()!=null ) {
-           rl.openDoor( myPlayer.getCurrentRectangle() );
+           if( !rl.getDoor().isOpened() )
+               myPlayer.stopMovement();
       }
     } else if ( rl==null && couldBeMovingToAnotherRoom ) {
       // ok, no intersection now, are we in an another room ?
@@ -405,6 +422,17 @@ System.out.println("NOTIFYING");
           dataManager.cleanInteriorMapData(); // suppress drawables, shadows, data
           dataManager.getChatPanel().reset();
 
+          //  - We clean eventual doors data...
+          Room rooms[] = imap.getRooms();
+
+          for( int r=0; r<rooms.length; r++ ) {
+               Door doors[] = rooms[r].getDoors();
+          
+               for( int d=0; d<doors.length; d++ )
+                    doors[d].clean();
+          }
+
+          // update
           ScreenPoint targetPoint = mapExit.getTargetPosition();
           myPlayer.setX(targetPoint.x);
           myPlayer.setY(targetPoint.y);

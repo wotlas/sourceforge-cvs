@@ -589,16 +589,6 @@ System.out.println("Frame show");
       }
     }
 
-    if (circle != null) {
-      if (circleLife < CIRCLE_LIFETIME) {
-        circleLife++;
-      } else {
-        gDirector.removeDrawable(circle);
-        circle = null;
-        circleLife = 0;
-      }
-    }
-
     gDirector.tick();
 
   }
@@ -625,28 +615,36 @@ System.out.println("Frame show");
     Object object = gDirector.findOwner( e.getX(), e.getY());
 
     if (object == null) {
-      int newX = e.getX() + (int)screen.getX();
-      int newY = e.getY() + (int)screen.getY();
-      myPlayer.moveTo( new Point(newX,newY) );
-    } else {
-      if (SHOW_DEBUG)
-        System.out.println("object.getClass().getName() = " + object.getClass().getName());
-
-      if ( object.getClass().getName().equals("wotlas.client.PlayerImpl") ) {
-        PlayerImpl selectedPlayer = (PlayerImpl) object;
-        //if (circle!=null) {
-          //gDirector.removeDrawable(circle);
-          //circle = null;
-        //}
-        //circle = new CircleDrawable(myPlayer.getDrawable(), 20, Color.yellow, (short) ImageLibRef.AURA_PRIORITY);
-        //gDirector.addDrawable(circle);
-          gDirector.addDrawable(selectedPlayer.getTextDrawable());
-
-        // Aura
-          gDirector.addDrawable( selectedPlayer.getWotCharacter().getAura() );
-      }
+       int newX = e.getX() + (int)screen.getX();
+       int newY = e.getY() + (int)screen.getY();
+       myPlayer.moveTo( new Point(newX,newY) );
     }
+    else if ( object instanceof PlayerImpl ) {
+      	// We display text & aura
+           PlayerImpl selectedPlayer = (PlayerImpl) object;
+           gDirector.addDrawable(selectedPlayer.getTextDrawable());
+           gDirector.addDrawable( selectedPlayer.getWotCharacter().getAura() );
+    }
+    else if( object instanceof Door ) {
+        // We open/close the door IF the player is near enough...
+           Door door = (Door) object;
+System.out.println("DOOOORRR CLICKED");
+        // player near enough the door ?
+           if( !door.isPlayerNear( myPlayer.getCurrentRectangle() ) )
+               return;
+
+           if( door.isOpened() ) {
+ System.out.println("door close");
+               door.close();
+           }
+           else {
+System.out.println("DOOOORRR open");
+               door.open();
+           }
+    }
+
 System.out.println("END JCLICK");
+
   }
 
  /*------------------------------------------------------------------------------------*/

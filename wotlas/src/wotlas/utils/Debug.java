@@ -103,8 +103,11 @@ public class Debug
 	          debug_msg += "UNKNOWN"; break;
            }
 
-          debug_msg += " - " + src_obj.getClass().getName() +"\n   "+info;
-          
+          if(src_obj!=null)
+             debug_msg += " - " + src_obj.getClass().getName() +"\n   "+info;
+          else 
+             debug_msg += " - " +info;
+                
           out.println( debug_msg );
        }
 

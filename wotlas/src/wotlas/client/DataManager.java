@@ -423,10 +423,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** To set the ID of currentProfileConfig<br>
    * called by wotlas.client.message.account.AccountCreatedMsgBehaviour
    */
-  public void setCurrentProfileConfigID(int clientID, int serverID, String clientName) {
+  public void setCurrentProfileConfigID(int clientID, int serverID) {
     currentProfileConfig.setLocalClientID(clientID);
     currentProfileConfig.setOriginalServerID(serverID);
-    currentProfileConfig.setPlayerName(clientName);
     closeConnection();
     ClientManager.getDefaultClientManager().start(11);
   }
@@ -641,15 +640,10 @@ System.out.println("Frame show");
         //}
         //circle = new CircleDrawable(myPlayer.getDrawable(), 20, Color.yellow, (short) ImageLibRef.AURA_PRIORITY);
         //gDirector.addDrawable(circle);
-
-           TextDrawable textDrawable = new TextDrawable( selectedPlayer.getFullPlayerName(),
-                                                         selectedPlayer.getDrawable(), Color.black,
-                                                         13.0f, "Lblack.ttf",
-                                                         ImageLibRef.TEXT_PRIORITY, 5000 );
-           gDirector.addDrawable(textDrawable);
+          gDirector.addDrawable(selectedPlayer.getTextDrawable());
 
         // Aura
-           gDirector.addDrawable( selectedPlayer.getWotCharacter().getAura() );
+          gDirector.addDrawable( selectedPlayer.getWotCharacter().getAura() );
       }
     }
 System.out.println("END JCLICK");

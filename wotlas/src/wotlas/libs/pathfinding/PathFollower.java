@@ -41,7 +41,7 @@ public class PathFollower implements MovementComposer {
 
   /** AStar algorithm for pathfinding.
    */
-    transient private static AStarDouble aStar;
+    //transient private static AStarDouble aStar;
 
   /** size of a mask's cell (in pixels)
    */
@@ -128,13 +128,10 @@ public class PathFollower implements MovementComposer {
     * @param maskTileSize mask tile size (in pixels).
     * @param playerSize represents the average player size ( in maskTileSize unit )
     */
-     public void setMovementMask( boolean mask[][], int maskTileSize, int playerSize ) {
-     	 if(aStar==null)
-     	    aStar = new AStarDouble();
-
-         aStar.setMask( mask );
+     public void setMovementMask( boolean mask[][], int maskTileSize, int playerSize ) {     	 
+         AStarDouble.setMask( mask );
          tileSize = maskTileSize;
-         aStar.setSpriteSize( playerSize );
+         AStarDouble.setSpriteSize( playerSize );
      }
 
  /*------------------------------------------------------------------------------------*/
@@ -145,9 +142,9 @@ public class PathFollower implements MovementComposer {
     * @return path
     */
      public static List findPath(  Point a, Point b ) {
-           List path = aStar.findPath( new Point( a.x/tileSize, a.y/tileSize ),
+           List path = AStarDouble.findPath( new Point( a.x/tileSize, a.y/tileSize ),
                                        new Point( b.x/tileSize, b.y/tileSize ) );
-           path = aStar.smoothPath(path);
+           path = AStarDouble.smoothPath(path);
                      
            if( path==null || path.size()<2 )
                return null; // no movement
@@ -400,8 +397,8 @@ public class PathFollower implements MovementComposer {
 
            if( walkingAlongPath ) {
                Point pDst = new Point( msg.dstPoint.x, msg.dstPoint.y );
-               
-               if( aStar!=null ) {
+                              
+               if (AStarDouble.isInitialized()) {
                	  // Astar initialized, re-creating path
                	     path = findPath( new Point( (int)xPosition, (int)yPosition ),
                	                      new Point( pDst.x, pDst.y ) );

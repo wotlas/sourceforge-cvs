@@ -20,6 +20,7 @@
 package wotlas.client.screen;
 
 import wotlas.client.ClientDirector;
+import wotlas.client.PlayerImpl;
 import wotlas.utils.Debug;
 import wotlas.utils.Tools;
 
@@ -67,7 +68,9 @@ public class JPlayerPanel extends JPanel implements MouseListener {
           Class classes[] = null;
         
           try{
-              classes = Tools.getImplementorsOf("wotlas.client.screen.JPanelPlugIn", null );
+              //classes = Tools.getImplementorsOf("wotlas.client.screen.JPanelPlugIn", null );
+              String packages[] = {this.getClass().getPackage().getName()+".plugin"};
+              classes = Tools.getImplementorsOf("wotlas.client.screen.JPanelPlugIn", packages);
           }
           catch( ClassNotFoundException e ) {
               Debug.signal(Debug.CRITICAL, this, e );
@@ -105,7 +108,8 @@ public class JPlayerPanel extends JPanel implements MouseListener {
               }
           }
 
-        Debug.signal(Debug.NOTICE,null,"Loaded "+playerTabbedPane.getTabCount()+" plug-ins...");
+        Debug.signal(Debug.NOTICE,null,"Loaded "+playerTabbedPane.getTabCount()+" plug-ins...");                                
+        
     }
 
  /*------------------------------------------------------------------------------------*/ 
@@ -114,7 +118,7 @@ public class JPlayerPanel extends JPanel implements MouseListener {
    *  @param plugIn plug-in to add
    *  @param index index in the list, -1 means at the end.
    */
-    protected void addPlugIn( JPanelPlugIn plugIn, int index ) {
+    public void addPlugIn( JPanelPlugIn plugIn, int index ) {
          if(index<0 || index>playerTabbedPane.getTabCount()-1)
             playerTabbedPane.addTab( plugIn.getPlugInName(),
                                   ClientDirector.getResourceManager().getImageIcon("pin.gif"),

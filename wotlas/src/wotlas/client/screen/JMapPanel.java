@@ -110,11 +110,4 @@ public class JMapPanel extends JPanel implements MouseListener
 
  /*------------------------------------------------------------------------------------*/
 
-  /** To close the client
-   */
-  public void exit() {
-    gDirector.removeAllDrawables();
-    dataManager.closeConnection();
-    Debug.exit();
-  }
 }

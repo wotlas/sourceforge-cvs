@@ -155,6 +155,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     sprite = (Sprite) wotCharacter.getDrawable(this);        
     endPosition = new Point();
     trajectory = new List();
+    position = new Point();
 
 }
 
@@ -393,58 +394,33 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   /** Tick
    */
   public void tick() {    
-    if (indexTrajectory < trajectory.size()) {
-      Point newPosition = (Point) trajectory.elementAt(indexTrajectory);
-      x = newPosition.x*DataManager.TILE_SIZE;
-      y = newPosition.y*DataManager.TILE_SIZE;           
-      //updatePathMovement();
-      //x = position.x;
-      //y = position.y; 
-      animation.tick();
-      //shadow.tick();
+    //if (indexTrajectory < trajectory.size()) {
+    if (turningAlongPath || walkingAlongPath) {
+      //Point newPosition = (Point) trajectory.elementAt(indexTrajectory);
+      //x = newPosition.x*DataManager.TILE_SIZE;
+      //y = newPosition.y*DataManager.TILE_SIZE;           
+      updatePathMovement();
+      x = position.x*DataManager.TILE_SIZE;
+      y = position.y*DataManager.TILE_SIZE; 
+      animation.tick();     
       sprite.tick();      
-      indexTrajectory++;
-    }
-    /*if (indexTrajectory == trajectory.size()) {
-      reverse = true;
-      indexTrajectory--;
-    }
-    if (indexTrajectory == -1) {
-      reverse = false;
-      indexTrajectory++;
-    }
-    if ((reverse == false) && (indexTrajectory < trajectory.size())) {
-      Point newPosition = (Point) trajectory.elementAt(indexTrajectory);
-      x = newPosition.x*10;
-      y = newPosition.y*10;
-      animation.tick();
-      sprite.tick();
-      indexTrajectory++;
-    }
-    if ((reverse == true) && (indexTrajectory > -1)) {
-      Point newPosition = (Point) trajectory.elementAt(indexTrajectory);
-      x = newPosition.x*10;
-      y = newPosition.y*10;
-      animation.tick();
-      sprite.tick();
-      indexTrajectory--;
-    }*/            
+      //indexTrajectory++;
+    }       
   }
 
  /*------------------------------------------------------------------------------------*/
  
- 
- //**********************************************************************************************
-//******* Trajectoires AStar avec angle et gestion de la vitesse... ****************************
-//**********************************************************************************************
+//******************************************************************
+//******* AStar with angle and velocity ****************************
+//******************************************************************
 
   /** Player speed : 40 pixel/s
    */
-    private int speed = 40;
+  private int speed = 40;
 
   /** Player default angular speed : 3 rad/s
    */
-    public float angularSpeed = 3;
+  public float angularSpeed = 3;
 
   //---------------------------------------------------------------------------//
 
@@ -509,7 +485,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
 
     // 1 - Position Update
        position.x += (float)( speed*deltaT*Math.cos( getAngle() ) );
-       position.y += (float)( speed*deltaT*Math.sin( getAngle() ) );
+       position.y -= (float)( speed*deltaT*Math.sin( getAngle() ) );
 
     // 2 - Have we reached the next Path Point ?
        float deltaD = distance( new Point( (int)position.x, (int)position.y ), prevPoint ) - distance( nextPoint, prevPoint );
@@ -538,32 +514,39 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
             updateAngularNode();
 
             position.x = (int)( prevPoint.x + deltaD*Math.cos( getAngle() ) );
-            position.y = (int)( prevPoint.y + deltaD*Math.sin( getAngle() ) );
+            position.y = (int)( prevPoint.y - deltaD*Math.sin( getAngle() ) );
        }
 
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Initialize a path movement.
-    * @param path a valid returned by the Astar algorithm
-    */
-    public void initMovement( List path ) {
-         if( path==null || path.size()<2 ) {// invalid path
-             System.out.println( "Invalid Path !!!! "+path);
-             return;
-         }
-
-         this.path = path;
-         pathIndex = 1;
-         lastUpdateTime = System.currentTimeMillis();
-
-         prevPoint =  new Point( (int)position.x, (int)position.y );
-         nextPoint = (Point) path.elementAt(1);
-
-         walkingAlongPath =true;
-         updateAngularNode();
+  /** Initialize a path movement.
+   * @param path a valid returned by the Astar algorithm
+   */
+  public void initMovement( List path ) {
+    if ( path==null || path.size()<2 ) {// invalid path
+      System.out.println( "Invalid Path !!!! "+path);
+      return;
     }
+
+    this.path = path;
+    pathIndex = 1;
+    lastUpdateTime = System.currentTimeMillis();
+
+    //prevPoint =  new Point( (int)position.x, (int)position.y );
+    
+    prevPoint = (Point) path.elementAt(0);
+    position.x = prevPoint.x;
+    position.y = prevPoint.y;    
+    nextPoint = (Point) path.elementAt(1);
+    nextAngle = 0;
+    
+    
+
+    walkingAlongPath =true;
+    updateAngularNode();
+  }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -576,48 +559,46 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Returns the angle between the given line and the horizontal.
-    *
-    * @param first point of the line
-    * @param second point of the line
-    * @return angle in radian in the [-pi,pi] range
-    */
-    private float angle( Point a, Point b ) {
-         if(b.x==a.x) {
-            if(b.y>a.y) return (float) Math.PI/2;
-            else if (b.y<a.y) return (float) -Math.PI/2;
-
-            return 0.0f;
-         }
-
-         float angle = (float) Math.atan( (double)(b.y-a.y)/(b.x-a.x) );
-
-         if(b.x<a.x) {
-            if(angle>=0) return (float)( angle-Math.PI );
-            if(angle<0)  return (float) ( angle+Math.PI );
-         }
-
-         return angle;
+  /** Returns the angle between the given line and the horizontal.
+   *
+   * @param first point of the line
+   * @param second point of the line
+   * @return angle in radian in the [-pi,pi] range
+   */
+  private float angle( Point a, Point b ) {
+    if (b.x == a.x) {
+      if (b.y<a.y)
+        return (float) Math.PI/2;
+      else if (b.y>a.y)
+        return (float) -Math.PI/2;
+      return 0.0f;
     }
+
+    float angle = (float) Math.atan( (double)(a.y-b.y)/(b.x-a.x) );
+    if (b.x<a.x) {
+      return (float) ( angle+Math.PI );
+    }
+
+    return angle;
+  }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To update the angular movement at a Path node.
-    */
-    private void updateAngularNode() {
-        nextAngle = angle( prevPoint, nextPoint );
-        angularDirection = 1;
-        turningAlongPath = true;
+  /** To update the angular movement at a Path node.
+   */
+  private void updateAngularNode() {
+    nextAngle = angle( prevPoint, nextPoint );
+    angularDirection = 1;
+    turningAlongPath = true;
 
-        while( nextAngle-getAngle() > Math.PI )
-           nextAngle = (float)(nextAngle-2*Math.PI);
+    while( nextAngle-getAngle() > Math.PI )
+      nextAngle = (float)(nextAngle-2*Math.PI);
 
-        while( nextAngle-getAngle() < -Math.PI )
-           nextAngle = (float)(nextAngle+2*Math.PI);
+    while( nextAngle-getAngle() < -Math.PI )
+      nextAngle = (float)(nextAngle+2*Math.PI);
 
-
-        if( getAngle() > nextAngle )
-            angularDirection = -1;
+    if( getAngle() > nextAngle )
+      angularDirection = -1;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

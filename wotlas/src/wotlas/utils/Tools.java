@@ -109,7 +109,7 @@ public class Tools
     *  @param className a string representing the class name of the filter
     *  @return an instance of the object, null if we cannot get an instance.
     */
-      private static Object getInstance( String className ) {
+      public static Object getInstance( String className ) {
           try{
                Class myClass = Class.forName(className);
                return myClass.newInstance();

@@ -19,11 +19,15 @@
 
 package wotlas.client;
 
-import wotlas.libs.persistence.*;
+import wotlas.common.*;
+import wotlas.common.universe.*;
 
+import wotlas.libs.persistence.*;
 import wotlas.utils.Debug;
 import wotlas.utils.FileTools;
 import wotlas.utils.Tools;
+
+import java.io.File;
 
  /** Persistence Manager for Wotlas Clients. The persistence manager is the central
   * class where are saved/loaded data for the game. Mainly, it deals with client's profiles
@@ -33,7 +37,7 @@ import wotlas.utils.Tools;
   * @see wotlas.libs.persistence.PropertiesConverter
   */
   
-public class PersistenceManager
+public class PersistenceManager extends wotlas.common.PersistenceManager
 {
  /*------------------------------------------------------------------------------------*/
 
@@ -44,11 +48,7 @@ public class PersistenceManager
 
   /** Our Default PersistenceManager.
    */
-  private static PersistenceManager persistenceManager;
-
-  /** Path to the local server database.
-   */
-  private String databasePath;
+  private static wotlas.client.PersistenceManager persistenceManager;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -57,7 +57,7 @@ public class PersistenceManager
    * @param databasePath path to the local server database
    */  
   private PersistenceManager(String databasePath) {
-    this.databasePath = databasePath;
+    super(databasePath);
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -69,7 +69,7 @@ public class PersistenceManager
    */
   public static PersistenceManager createPersistenceManager( String databasePath ) {
     if (persistenceManager == null)
-      persistenceManager = new PersistenceManager(databasePath);
+      persistenceManager = new wotlas.client.PersistenceManager(databasePath);
     return persistenceManager;
    }
 
@@ -79,20 +79,20 @@ public class PersistenceManager
    *
    * @return the default persistence manager.
    */
-  public static PersistenceManager getDefaultPersistenceManager() {
+  public static wotlas.client.PersistenceManager getDefaultPersistenceManager() {
     return persistenceManager;
   }
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Loads the client's profiles config located in config/client-profiles.cfg
+  /** Loads all the client's profile config files located in CLIENT_PROFILES
    *
-   * @return the client's profiles config found in CLIENT_PROFILES
+   * @return client's ProfileConfigList
    */
-  public ProfilesConfig loadProfilesConfig()
+  public ProfileConfigList loadProfileConfigs()
   {
     try {
-      return (ProfilesConfig) PropertiesConverter.load(CLIENT_PROFILES);
+      return (ProfileConfigList) PropertiesConverter.load(CLIENT_PROFILES);
     } catch (PersistenceException pe) {
       Debug.signal( Debug.ERROR, this, "Failed to load client's profiles config: " + pe.getMessage() );
       return null;
@@ -106,13 +106,13 @@ public class PersistenceManager
    * @param profilesConfig client's profiles config
    * @return true in case of success, false if an error occured.
    */
-  public boolean saveProfilesConfig(ProfilesConfig profilesConfig)
+  public boolean saveProfilesConfig(ProfileConfigList profileConfigList)
   {
     try {
-      PropertiesConverter.save(profilesConfig, CLIENT_PROFILES);
+      PropertiesConverter.save(profileConfigList, CLIENT_PROFILES);
       return true;
     } catch (PersistenceException pe) {
-      Debug.signal( Debug.ERROR, this, "Failed to save client's profiles config:" + pe.getMessage() );
+      Debug.signal( Debug.ERROR, this, "Failed to save client's profiles config: " + pe.getMessage() );
       return false;
     }
   }
@@ -123,11 +123,11 @@ public class PersistenceManager
    *
    * @return all the client's profiles found in CLIENT_PROFILES
    */
-  public Profile[] loadProfiles()
+  public ProfileConfig[] loadProfiles()
   {
     try {
-      ProfilesConfig profilesConfig = (ProfilesConfig) PropertiesConverter.load(CLIENT_PROFILES);
-      return profilesConfig.getProfiles();
+      ProfileConfigList profileConfigList = (ProfileConfigList) PropertiesConverter.load(CLIENT_PROFILES);
+      return profileConfigList.getProfiles();
     } catch (PersistenceException pe) {
       Debug.signal( Debug.ERROR, this, "Failed to load client's profiles: " + pe.getMessage() );
       return null;

@@ -19,37 +19,37 @@
 
 package wotlas.client;
 
-import wotlas.common.ServerConfigList;
-import wotlas.common.ServerConfig;
-import wotlas.common.ServerConfigListTableModel;
-
 import wotlas.client.gui.*;
 import wotlas.client.screen.*;
 
-import wotlas.utils.Tools;
-import wotlas.utils.Debug;
-
-import wotlas.utils.ALabel;
-import wotlas.utils.ATextField;
-import wotlas.utils.ATableCellRenderer;
+import wotlas.common.message.account.*;
+import wotlas.common.ServerConfig;
+import wotlas.common.ServerConfigList;
+import wotlas.common.ServerConfigListTableModel;
 
 import wotlas.libs.net.*;
 import wotlas.libs.net.personality.*;
-import wotlas.common.message.account.*;
+
+import wotlas.utils.ALabel;
+import wotlas.utils.ATableCellRenderer;
+import wotlas.utils.ATextField;
+import wotlas.utils.Debug;
+import wotlas.utils.SwingTools;
+import wotlas.utils.Tools;
 
 import java.awt.*;
 import java.awt.event.*;
 
-import javax.swing.*;
 import javax.swing.event.*;
-
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.JScrollPane;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.JOptionPane;
+
+import javax.swing.*;
 
 public class ClientManager
 {
@@ -84,27 +84,35 @@ public class ClientManager
    */
   private int indexScreen;
 
-  ImageIcon im_okup, im_okdo, im_okun;
-  ImageIcon im_cancelup, im_canceldo;
-  ImageIcon im_newup, im_newdo;
-  ImageIcon im_loadup, im_loaddo, im_loadun;
-  ImageIcon im_delup, im_deldo, im_delun;
+  /** Path to the local server database.
+   */   
+  private String databasePath;
+  
+  /** pictures of buttons
+   */
+  private ImageIcon im_okup, im_okdo, im_okun;
+  private ImageIcon im_cancelup, im_canceldo, im_cancelun;
+  private ImageIcon im_newup, im_newdo;
+  private ImageIcon im_loadup, im_loaddo, im_loadun;
+  private ImageIcon im_delup, im_deldo, im_delun;
 
-  Font f;
+  /** Default font
+   */
+  private Font f;
 
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. Attemps to load the config/client-profiles.cfg file...
    */
-  private ClientManager() {
-
+  private ClientManager(String databasePath) {
+    this.databasePath = databasePath;
+    
     PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
 
     // 1 - We load the ProfileConfigList
     profileConfigList = pm.loadProfileConfigs();
     if (profileConfigList == null) {
-      Debug.signal( Debug.FAILURE, this, "Can't init client's profile without a ProfileConfigList file !" );
-      //System.exit(1);
+      Debug.signal( Debug.NOTICE, this, "no client's profile found : creating a new one..." );      
     } else {
       Debug.signal( Debug.NOTICE, null, "Client Configs loaded with success !" );
     }
@@ -113,18 +121,16 @@ public class ClientManager
     serverConfigList = new ServerConfigList(pm);
     if (serverConfigList == null) {
       Debug.signal( Debug.FAILURE, this, "No Server Configs loaded !" );
-      System.exit(1);
+      Debug.exit();
     } else {
       Debug.signal( Debug.NOTICE, null, "Server Configs loaded with success !" );
     }
 
     // 3 - We create the wizard to connect Wotlas
-    screenIntro = new JIntroWizard();
-    // set the different colors of fonts and buttons
-    screenIntro.setGUI();
-
-    // 4 - We load some fonts for GUI
-    f = wotlas.utils.SwingTools.loadFont("../base/fonts/Lblack.ttf");
+    screenIntro = new JIntroWizard();    
+    screenIntro.setGUI();    
+    f = SwingTools.loadFont("../base/fonts/Lblack.ttf");        
+    
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -133,9 +139,9 @@ public class ClientManager
    *
    * @return the created (or previously created) client manager.
    */
-  public static ClientManager createClientManager() {
+  public static ClientManager createClientManager(String databasePath) {
     if (clientManager == null)
-      clientManager = new ClientManager();
+      clientManager = new ClientManager(databasePath);
     return clientManager;
    }
 
@@ -188,8 +194,6 @@ public class ClientManager
     final JButton b_cancel;
     final JButton b_delProfile;
 
-
-
     indexScreen = state;
 
     switch(state)
@@ -205,6 +209,7 @@ public class ClientManager
       // Load images of buttons
       im_cancelup = new ImageIcon("..\\base\\gui\\cancel-up.gif");
       im_canceldo = new ImageIcon("..\\base\\gui\\cancel-do.gif");
+      im_cancelun = new ImageIcon("..\\base\\gui\\cancel-un.gif");
       im_delup    = new ImageIcon("..\\base\\gui\\delete-up.gif");
       im_deldo    = new ImageIcon("..\\base\\gui\\delete-do.gif");
       im_delun    = new ImageIcon("..\\base\\gui\\delete-un.gif");
@@ -242,7 +247,7 @@ public class ClientManager
       b_cancel = new JButton(im_cancelup);
       b_cancel.setRolloverIcon(im_canceldo);
       b_cancel.setPressedIcon(im_canceldo);
-      b_cancel.setDisabledIcon(im_canceldo);
+      b_cancel.setDisabledIcon(im_cancelun);
       b_cancel.setBorderPainted(false);
       b_cancel.setContentAreaFilled(false);
       b_cancel.setFocusPainted(false);
@@ -273,7 +278,7 @@ public class ClientManager
 
       // *** Left JPanel ***
 
-      imgLabel1 = new JLabel(new ImageIcon("..\\base\\gui\\welcome.gif"));
+      imgLabel1 = new JLabel(new ImageIcon("..\\base\\gui\\welcome-title.jpg"));
       imgLabel1.setAlignmentX(Component.CENTER_ALIGNMENT);
       leftPanel.add(imgLabel1);
 
@@ -379,7 +384,7 @@ public class ClientManager
       b_cancel = new JButton(im_cancelup);
       b_cancel.setRolloverIcon(im_canceldo);
       b_cancel.setPressedIcon(im_canceldo);
-      b_cancel.setDisabledIcon(im_canceldo);
+      b_cancel.setDisabledIcon(im_cancelun);
       b_cancel.setBorderPainted(false);
       b_cancel.setContentAreaFilled(false);
       b_cancel.setFocusPainted(false);
@@ -485,7 +490,7 @@ public class ClientManager
       b_cancel = new JButton(im_cancelup);
       b_cancel.setRolloverIcon(im_canceldo);
       b_cancel.setPressedIcon(im_canceldo);
-      b_cancel.setDisabledIcon(im_canceldo);
+      b_cancel.setDisabledIcon(im_cancelun);
       b_cancel.setBorderPainted(false);
       b_cancel.setContentAreaFilled(false);
       b_cancel.setFocusPainted(false);
@@ -648,7 +653,7 @@ public class ClientManager
       b_cancel = new JButton(im_cancelup);
       b_cancel.setRolloverIcon(im_canceldo);
       b_cancel.setPressedIcon(im_canceldo);
-      b_cancel.setDisabledIcon(im_canceldo);
+      b_cancel.setDisabledIcon(im_cancelun);
       b_cancel.setBorderPainted(false);
       b_cancel.setContentAreaFilled(false);
       b_cancel.setFocusPainted(false);
@@ -702,19 +707,10 @@ public class ClientManager
     // ********************
 
     case 100:
+
       screenIntro.dispose();
-
-      JInfosPanel infosPanel = new JInfosPanel();
-      JMapPanel mapPanel = new JMapPanel();
-      JChatPanel chatPanel = new JChatPanel();
-      JPreviewPanel previewPanel = new JPreviewPanel();
-      JPlayerPanel playerPanel = new JPlayerPanel();
-      JLogPanel logPanel = new JLogPanel();
-
-      JClientScreen mFrame = new JClientScreen(infosPanel, mapPanel, chatPanel, previewPanel, playerPanel, logPanel);
-      mFrame.init();
-      mFrame.show();
-
+      DataManager dataManager = DataManager.getDefaultDataManager();
+      dataManager.showInterface();
       break;
 
     default:

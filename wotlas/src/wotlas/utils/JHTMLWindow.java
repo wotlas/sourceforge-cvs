@@ -36,13 +36,28 @@ import java.io.*;
   * @author Aldiss
   */
 
-public class JHTMLWindow extends JDialog
+public class JHTMLWindow extends JDialog implements ActionListener
 {
+ /*------------------------------------------------------------------------------------*/
+
+  /** Max Repaints (in the JDK1.3 images are badly displayed, we need to call repaint
+   *  a few times ).
+   */
+    public static int MAX_REPAINTS = 20;
+
  /*------------------------------------------------------------------------------------*/
 
   /** JEditorPane to display the HTML text.
    */
     private JEditorPane html;
+
+  /** Timer to repaint the JEditorPaint a few times...
+   */
+    private Timer timer;
+
+  /** number of repaints...
+   */
+    private int nbRepaints = 0;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -66,7 +81,8 @@ public class JHTMLWindow extends JDialog
     * @param header text to display before the html document
     * @param title JDialog title
     * @param fileName HTML filename. If the file begins with "http:" we assume it's an URL
-    *        otherwise we consider its a local file.
+    *        otherwise we consider its a local file. If the file begins with "text:" we assume
+    *        the fileName contains the text to display qo we just display the "fileName" string.
     * @param width initial window width
     * @param height initial window height
     * @param center tells if the JDialog must be centered on screen
@@ -89,6 +105,8 @@ public class JHTMLWindow extends JDialog
                  htmlText = "<b>ERROR</b><br>Failed to open URL: <i>"+fileName+"</i><p>An exception occured: <i>"+e.getMessage()+"</i>";
               }
         }
+        else if( fileName.startsWith( "text:" ) )
+              htmlText = fileName.substring(5,fileName.length());
         else
               htmlText = FileTools.loadTextFromFile( fileName );
 
@@ -138,6 +156,7 @@ public class JHTMLWindow extends JDialog
 
          html.setEditable(false);
          html.setBorder(new EmptyBorder(0, 0, 0, 0) );               
+         html.setPreferredSize(new Dimension(width-30,height));
 
          JScrollPane scroller = new JScrollPane(html);
          scroller.setVerticalScrollBarPolicy( JScrollPane.VERTICAL_SCROLLBAR_ALWAYS );
@@ -153,10 +172,23 @@ public class JHTMLWindow extends JDialog
             setLocation( 100, 100 );
 
          show();
+
+         timer = new Timer(400,this);
+         timer.start();
     }
 
  /*------------------------------------------------------------------------------------*/
 
+   /** To set the html text of the JEDitorPane
+    */
+     public void setText( String htmlText ) {
+     	html.setText( htmlText );
+     }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To add a listener to get HyperLinks...
+    */
      public HyperlinkListener createHyperLinkListener()
      { 
         return new HyperlinkListener()
@@ -173,7 +205,8 @@ public class JHTMLWindow extends JDialog
                               else
                               { 
                                   try { 
-                                          html.setPage(e.getURL()); 
+                                          html.setPage(e.getURL());
+                                          timer.start();
                                   } catch (IOException ioe) { 
                                           html.setText( "<b>ERROR</b><br>Failed to open URL: <i>"
                                                        +e.getURL()+"</i><p>An exception occured: <i>"
@@ -184,6 +217,21 @@ public class JHTMLWindow extends JDialog
                         } 
                     }; 
      } 
+
+ /*------------------------------------------------------------------------------------*/
+
+  public void actionPerformed( ActionEvent e) {
+    if(e.getSource()!=timer)
+       return;
+
+     nbRepaints++;
+     html.repaint();
+
+     if( nbRepaints >= MAX_REPAINTS ) {
+     	 timer.stop();
+     	 nbRepaints=0;
+     }
+  }
 
  /*------------------------------------------------------------------------------------*/
 

@@ -25,7 +25,7 @@ import wotlas.utils.*;
 import wotlas.utils.aswing.*;
 
 import wotlas.common.*;
-import wotlas.common.message.description.PlayerAwayMessage;
+import wotlas.common.message.description.SetFakeNameMessage;
 import wotlas.client.*;
 
 /** JPanel where you can lie on your name.
@@ -47,14 +47,24 @@ public class LiePanel extends JPanel
    */
   public LiePanel() {
     super();
-    this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
+    this.setLayout(new BorderLayout());
 
+    ATextArea ta_infos = new ATextArea("You can lie on your name: you can create and use up to 5 fake names... but be careful, once you have created a fake name, you cannot change it");
+    ta_infos.setLineWrap(true);
+    ta_infos.setWrapStyleWord(true);
+    ta_infos.setEditable(false);
+    ta_infos.setAlignmentX(0.5f);
+    ta_infos.setOpaque(false);
+    add(ta_infos, BorderLayout.NORTH);
     
-    String[][] data = {{"one"}, {"two"}, {"three"}, {"four"}, {"five yes"}};
+    JPanel centerPanel = new JPanel( new BorderLayout() );
+    
+    final String[][] data = {{"one"}, {"two"}, {"three"}, {"four"}, {"five yes"}};
     String[] columnNames = {"names"};
     fakeNamesList = new JTable(data, columnNames);
-    add(fakeNamesList);
-        
+    centerPanel.add(fakeNamesList);
+    add(centerPanel, BorderLayout.CENTER);
+    
     ImageIcon im_saveup  = new ImageIcon("../base/gui/save-up.gif");
     ImageIcon im_savedo  = new ImageIcon("../base/gui/save-do.gif");
     saveNameButton = new AButton(im_saveup);
@@ -64,20 +74,23 @@ public class LiePanel extends JPanel
     saveNameButton.setContentAreaFilled(false);
     saveNameButton.setFocusPainted(false);
     saveNameButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+    
+      saveNameButton.addActionListener(new ActionListener() {
+        public void actionPerformed (ActionEvent e) {                    	
+          PlayerImpl player = DataManager.getDefaultDataManager().getMyPlayer();
+          
+          int index = 0;
+          System.out.println("fakeName 0,0 = " + (String) fakeNamesList.getValueAt(0,0));
+          player.sendMessage( new SetFakeNameMessage(index, (String) fakeNamesList.getValueAt(index,0) ) );
+        }
+      });
 
     JPanel whitePanel = new JPanel();
     whitePanel.setBackground( Color.white );
     whitePanel.add(saveNameButton);
-    add(whitePanel);
+    add(whitePanel, BorderLayout.SOUTH);
        
-    ATextArea ta_infos = new ATextArea("You can lie on your name: you can create and use up to 5 fake names... but be careful, once you have created a fake name, you cannot change it");
-    ta_infos.setLineWrap(true);
-    ta_infos.setWrapStyleWord(true);
-    ta_infos.setEditable(false);
-    ta_infos.setAlignmentX(0.5f);
-    ta_infos.setRows(6);
-    ta_infos.setOpaque(false);
-    add(ta_infos);
+
 
 
   }

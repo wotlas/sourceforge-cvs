@@ -376,8 +376,6 @@ System.out.println( "CLOSE isMoving:"+movementComposer.isMoving()+", ref:"+this)
 System.out.println("SENDING MESSAGE "+message);
                     personality.queueMessage( message );
                 }
-                else
-                    System.out.println("NULL personality...");
              }
      }
 
@@ -433,6 +431,10 @@ System.out.println("SENDING MESSAGE "+message);
                             }
                          }
                     }
+             }
+             else if(location.isTown()) {
+              // no movement saved on towns...
+                 movementComposer.resetMovement();
              }
      }
 

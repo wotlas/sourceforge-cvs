@@ -43,6 +43,10 @@ public class ServerConfig
 {
  /*------------------------------------------------------------------------------------*/
 
+   /** Server Symbolic Name.
+    */
+      private String serverSymbolicName;
+
    /** Server Name, normally the host name. Example: "tatoo.wotlas.org"
     */
       private String serverName;
@@ -87,12 +91,17 @@ public class ServerConfig
     */
       private String adminEmail;
 
+   /** ServerConfig Version.
+    */
+      private String configVersion;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Empty Constructor for persistence.
    *  Data is loaded by the PersistenceManager.
    */
      public ServerConfig() {
+        serverSymbolicName = new String("My Wotlas Server");
         serverName = new String("localhost");
         serverID = 0;
         accountServerPort = 25500;
@@ -101,8 +110,8 @@ public class ServerConfig
         maxNumberOfGameConnections = 110;
         maxNumberOfAccountConnections = 20;
         maxNumberOfGatewayConnections = 20;
-        description = new String("Enter a server description");
-        location = new String("nope");
+        description = new String("Enter a description for your server");
+        location = new String("France ? USA ? England ?");
         adminEmail = new String("myAdress@foobar.net");
      }
 
@@ -124,6 +133,26 @@ public class ServerConfig
     */
       public void setServerName( String serverName ) {
           this.serverName = serverName;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the Server Symbolic Name. Example: "My Wotlas Server"
+    *
+    * @return server symbolic name
+    */
+      public String getServerSymbolicName() {
+          return serverSymbolicName;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the Server Symbolic Name. Example: "My Wotlas Server"
+    *
+    * @param serverSymbolicName server symbolic name
+    */
+      public void setServerSymbolicName( String serverSymbolicName ) {
+          this.serverSymbolicName = serverSymbolicName;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -330,13 +359,46 @@ public class ServerConfig
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To get the data to export to the wotlas server registry ( light-and-shadow.org )
+   /** To get the version of this server config
+    *
+    * @return configVersion
+    */
+      public String getConfigVersion() {
+         return configVersion;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the version of this server config.
+    */
+      public void setConfigVersion() {
+         if( serverName.length()>3 )
+             configVersion = "WOT-"+serverName.substring(0,3).toUpperCase()+"-"+System.currentTimeMillis();
+         else
+             configVersion = "WOT-"+serverName.substring(0,serverName.length()).toUpperCase()+"-"+System.currentTimeMillis();
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+
+   /** To set the version of this SErverConfig.
+    *
+    * @param configVersion version.
+    */
+      public void setConfigVersion( String configVersion ) {
+         this.configVersion = configVersion;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get this ServerConfig as a String.
     *
     * @return a string containing all the information to export.
     */
       public String toString() {
           return "Wotlas Server Declaration\n"
-                 +"Ref:\n   #WOT"+System.currentTimeMillis()+"\n"
+                 +"Ref:\n "+configVersion+"\n"
+                 +"\nServer Symbolic Name:\n   "+serverSymbolicName
                  +"\nServer Name:\n   "+serverName
                  +"\nServer ID:\n   "+serverID+"\n"
                  +"\nAccount Port:\n   "+accountServerPort
@@ -348,5 +410,21 @@ public class ServerConfig
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get this ServerConfig as a HTML String.
+    *
+    * @return a string containing all the information to export.
+    */
+      public String toHTML() {
+          return "<h1>Wotlas Server<h1><br>"
+                 +"<b>Server Symbolic Name :</b> "+serverSymbolicName+"<br>"
+                 +"<b>Server ID:</b> "+serverID+"<br>"
+                 +"<b>Location:</b> "+location+"<br>"
+                 +"<b>Admin e-mail:</b> <i>"+adminEmail+"</i><br>"
+                 +"<b>Description:</b> "+description+"<br><p>";
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }
 

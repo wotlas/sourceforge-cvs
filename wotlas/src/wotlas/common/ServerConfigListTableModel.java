@@ -89,7 +89,7 @@ public class ServerConfigListTableModel extends AbstractTableModel
   public Object getValueAt(int row, int col) {
     switch(col) {
       case 0:
-        return servers.ServerConfigAt(row).getServerName();
+        return servers.ServerConfigAt(row).getServerSymbolicName();
         
       case 1:        
         return servers.ServerConfigAt(row).getDescription();        

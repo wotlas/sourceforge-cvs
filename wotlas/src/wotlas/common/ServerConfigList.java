@@ -19,7 +19,7 @@
 
 package wotlas.common;
 
-import wotlas.utils.Debug;
+import wotlas.utils.*;
 
 
  /** Server Config List. Loaded using the provided persistence manager.
@@ -36,6 +36,14 @@ public class ServerConfigList
      */
        private ServerConfig configs[];
 
+    /** Remote server home URL : where the server list is stored on the internet.
+     */
+       private String remoteServerConfigHomeURL;
+
+    /** Remote Server Table giving the list of available remote servers.
+     */
+       private String remoteServerTable;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor with persistence manager.
@@ -46,12 +54,40 @@ public class ServerConfigList
 
       // attempt to load the configs from persistenceManager...
          configs = pm.loadServerConfigs();
-
          if(configs==null)
             Debug.signal( Debug.WARNING, null, "No Server Configs loaded !" ); 
    }
 
  /*------------------------------------------------------------------------------------*/
+
+  /** To get the URL where are stored the remote server configs. This URL can also contain
+   *  a news.html file to display some news.
+   *
+   * @param remoteServerConfigHomeURL urlname to use to find the servers home.
+   */
+   public void setRemoteServerConfigHomeURL( String remoteServerConfigHomeURL ) {
+      this.remoteServerConfigHomeURL = remoteServerConfigHomeURL;
+   }
+
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the remote server table.
+    * @return the previously loaded server table, the just-loaded server table or null
+    *         if we cannot reach our central site.
+    */
+    public String getRemoteServerTable() {
+          if(remoteServerConfigHomeURL==null)
+             return null;
+
+          if( remoteServerTable!= null )
+             return remoteServerTable;
+
+       // We load the file from its URL
+          remoteServerTable = FileTools.getTextFileFromURL( remoteServerConfigHomeURL+"server-table.cfg" );
+          return remoteServerTable;
+    }
+
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To get a ServerConfig file from its associated serverID.
     *
@@ -75,26 +111,26 @@ public class ServerConfigList
          return null;
      }
 
- /*------------------------------------------------------------------------------------*/
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
   /** To get the number of servers.
    */  
-  public int size() {
+   public int size() {
     if (configs==null)
       return 0;
     return configs.length;
-  }
+   }
   
- /*------------------------------------------------------------------------------------*/
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
   
   /** To get a ServerConfig file from its index in array <b>configs</b>
    *
    * @param index server index.
    */
-  public ServerConfig ServerConfigAt(int index) {
-    return configs[index];
-  }
+   public ServerConfig ServerConfigAt(int index) {
+      return configs[index];
+   }
 
- /*------------------------------------------------------------------------------------*/
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

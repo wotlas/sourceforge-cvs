@@ -46,11 +46,15 @@ import wotlas.libs.net.NetConnectionListener;
 import wotlas.libs.net.NetMessage;
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.libs.net.NetPersonality;
+import wotlas.libs.net.NetPingListener;
 import wotlas.libs.net.utils.NetQueue;
+
+import wotlas.libs.persistence.*;
 
 import wotlas.libs.sound.SoundLibrary;
 
 import wotlas.utils.Debug;
+import wotlas.utils.FileTools;
 import wotlas.utils.List;
 import wotlas.utils.ScreenPoint;
 import wotlas.utils.ScreenRectangle;
@@ -67,6 +71,7 @@ import javax.swing.*;
 
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Properties;
 
 /** A DataManager manages Game Data and client's connection.
  * It possesses a WorldManager
@@ -185,6 +190,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   private JOptionsPanel optionsPanel;
   private JPlayerPanel playerPanel;
   private JLogPanel logPanel;
+  private GraphicPingPanel pingPanel;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -459,7 +465,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     Debug.signal( Debug.NOTICE, null, "DataManager::ShowInterface");
 
     if (imageLib !=null) {
-      // All data have alreay been initialized
+      // All data have already been initialized
       // => there was a disconnexion and player has resumed the game
       resumeInterface();
       return;
@@ -474,8 +480,18 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       Debug.exit();
     }
 
+    // 0 - Load Client Configuration
+        
+    
     // 0 - Create Sound Library
     SoundLibrary.createSoundLibrary(databasePath);
+
+    try {
+      PropertiesConverter.save(SoundLibrary.getSoundLibrary(), "../src/config/soundmusic.cfg");
+    } catch (PersistenceException pe) {
+      Debug.signal( Debug.ERROR, this, "Failed to save sound & music configuration : " + pe.getMessage() );
+
+    }
 
     // 1 - Create Graphics Director
     gDirector = new GraphicsDirector( new LimitWindowPolicy() );
@@ -502,7 +518,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
     players = new Hashtable();
     
-
     // 5 - Create the panels
     infosPanel = new JInfosPanel(myPlayer);
     mapPanel = new JMapPanel(gDirector, this);
@@ -510,22 +525,22 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     optionsPanel = new JOptionsPanel();
     playerPanel = new JPlayerPanel();
     logPanel = new JLogPanel();    
+    pingPanel = new GraphicPingPanel();
+    personality.setPingListener( (NetPingListener) pingPanel );
 
     if (SHOW_DEBUG)
         System.out.println("Displaying window");
 
     // 6 - Create main Frame
-    mFrame = new JClientScreen(infosPanel, mapPanel, chatPanel, optionsPanel, playerPanel, logPanel);
+    mFrame = new JClientScreen(infosPanel, mapPanel, chatPanel, optionsPanel, playerPanel, logPanel, pingPanel);
 
     if (SHOW_DEBUG)
-       System.out.println("JCLient created");
-
+       System.out.println("JClient created");
     mFrame.init();
 
     // 7 - Init map display
     if (SHOW_DEBUG)
        System.out.println("Changing map data");
-
     changeMapData();
 
 
@@ -533,22 +548,17 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     Debug.signal( Debug.NOTICE, null, "Beginning to tick Graphics Director" );
     this.start();
 
-    if (SHOW_DEBUG)    
-        System.out.println("tick thread started");
-
-    mFrame.show();
-
     if (SHOW_DEBUG)
         System.out.println("Frame show");
-
-    // 9 - Retrieve other players informations    
-    //personality.queueMessage(new AllDataLeftPleaseMessage());    
-      addPlayer(myPlayer);
+    mFrame.show();
+    
+    // 9 - Retrieve other players informations        
+    addPlayer(myPlayer);
 
     // 10 - We can now ask for eventual remaining data
     // This step should have been done in the current MapData.init() but it was not
     // the cas because our DataManager thread was not started...
-       sendMessage(new AllDataLeftPleaseMessage());
+    sendMessage(new AllDataLeftPleaseMessage());
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -557,6 +567,10 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
   public void resumeInterface() {
     Debug.signal( Debug.NOTICE, null, "DataManager::ResumeInterface");
+
+    // Reset the data
+    chatPanel.reset();
+    personality.setPingListener( (NetPingListener) pingPanel );
     
     mFrame.show();
 
@@ -642,7 +656,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
               ( (PlayerImpl) it.next() ).tick();
        }
 
-
+        if (circle!=null)
+          circle.tick();
+          
     // III - Graphics Director update & redraw
        gDirector.tick();
 
@@ -686,8 +702,18 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     if ( object instanceof PlayerImpl ) {
       	// We display text & aura
            PlayerImpl selectedPlayer = (PlayerImpl) object;
+           if (circle!=null)
+             gDirector.removeDrawable(circle);
+            
+           circle = new CircleDrawable( selectedPlayer.getDrawable(),
+                                        20,
+                                        Color.yellow,
+                                        true,
+                                        ImageLibRef.AURA_PRIORITY);
+           gDirector.addDrawable(circle);
+           
            gDirector.addDrawable(selectedPlayer.getTextDrawable());
-           gDirector.addDrawable( selectedPlayer.getWotCharacter().getAura() );
+           gDirector.addDrawable(selectedPlayer.getWotCharacter().getAura());
 
            Component c_info = dataManager.getPlayerPanel().getTab("-info-");
            
@@ -735,7 +761,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
     
     if (SHOW_DEBUG)
-      System.out.println("END JCLICK");
+      System.out.println("END of DataManager::onLeftClicJMapPanel");
   }
 
  /*------------------------------------------------------------------------------------*/

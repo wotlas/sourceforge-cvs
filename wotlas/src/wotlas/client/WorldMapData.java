@@ -228,15 +228,16 @@ public class WorldMapData implements MapData
    */
   public void locationUpdate(PlayerImpl myPlayer) {
 
+    if(dataManager==null)
+       return;
+
     // Has the currentLocation changed ?
 
     if ( (currentWorldMapID != myPlayer.getLocation().getWorldMapID())
           || (myPlayer.getLocation().getTownMapID()>-1) ) {
       Debug.signal( Debug.NOTICE, null, "LOCATION HAS CHANGED in WorldMapData");
 
-      if(dataManager.getPlayers()!=null)
-         dataManager.getPlayers().clear();
-
+      dataManager.getPlayers().clear();
       dataManager.cleanInteriorMapData(); // suppress drawables, shadows, data
       dataManager.getChatPanel().reset();
       

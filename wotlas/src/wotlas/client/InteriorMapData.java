@@ -320,6 +320,9 @@ public class InteriorMapData implements MapData
    */
   public void locationUpdate(PlayerImpl myPlayer) {
 
+    if(dataManager==null)
+       return;
+
     // Has the currentLocation changed ?
 
     if ( currentInteriorMapID != myPlayer.getLocation().getInteriorMapID() ) {
@@ -328,8 +331,7 @@ public class InteriorMapData implements MapData
         
       Debug.signal( Debug.NOTICE, null, "LOCATION HAS CHANGED in InteriorMapData");
 
-      if(dataManager.getPlayers()!=null)
-         dataManager.getPlayers().clear();
+      dataManager.getPlayers().clear();
       dataManager.cleanInteriorMapData(); // suppress drawables, shadows, data
       dataManager.getChatPanel().reset();
 

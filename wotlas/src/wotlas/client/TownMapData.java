@@ -241,6 +241,9 @@ public class TownMapData implements MapData
    */
   public void locationUpdate(PlayerImpl myPlayer) {
 
+    if(dataManager==null)
+       return;
+
     // Has the currentLocation changed ?
 
     if ( (currentTownMapID != myPlayer.getLocation().getTownMapID())
@@ -250,9 +253,7 @@ public class TownMapData implements MapData
         
       Debug.signal( Debug.NOTICE, null, "LOCATION HAS CHANGED in TownMapData");
 
-      if(dataManager.getPlayers()!=null)
-         dataManager.getPlayers().clear();
-
+      dataManager.getPlayers().clear();
       dataManager.cleanInteriorMapData();
       dataManager.getChatPanel().reset();
       

@@ -32,7 +32,7 @@ import java.awt.geom.*;
  *  the imageIdentifier changes on each tick. You can use an Animation object to manage
  *  the animation.
  *
- * @author MasterBob, Aldiss
+ * @author MasterBob, Aldiss, Petrus
  * @see wotlas.libs.graphics2D.drawable.SpriteDataSupplier
  */
 
@@ -165,6 +165,24 @@ public class Sprite extends Drawable implements DrawableOwner {
         myImageFilters[imageFilters.length] = imageFilter;
         imageFilters = myImageFilters;    		
     }
+    
+    /** To remove a previously set dynamic image filter
+     *
+     * @param filterClass class name of filter to remove
+     */
+    public void unsetDynamicImageFilter(String filterClass) {        
+        int i=0;        
+        DynamicImageFilter imageFilter = imageFilters[0];
+        while ( !filterClass.equals(imageFilter.getClass().getName()) && i<imageFilters.length) {            
+            i++;
+            imageFilter = imageFilters[i];
+        }        
+        if (i<imageFilters.length) {
+            DynamicImageFilter[] myImageFilters = new DynamicImageFilter[imageFilters.length-1];
+            System.arraycopy(imageFilters, 0, myImageFilters, 0, i);
+            System.arraycopy(imageFilters, i+1, myImageFilters, i, imageFilters.length-1-i);
+        }
+    }                
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

@@ -54,15 +54,20 @@ public class AesSedai extends Female {
    */
     private byte aesSedaiStatus;
 
+
+  /** Current Sprite.
+   */
+    private Sprite aesSedaiSprite;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Getters & Setters for persistence
    */
-    private byte getAesSedaiStatus() {
+    public byte getAesSedaiStatus() {
        return aesSedaiStatus; 
     }
 
-    private void setAesSedaiStatus( byte aesSedaiStatus ) {
+    public void setAesSedaiStatus( byte aesSedaiStatus ) {
        this.aesSedaiStatus = aesSedaiStatus;
     }
 
@@ -78,7 +83,10 @@ public class AesSedai extends Female {
       public Drawable getDrawable( Player player ) {
       	 if( ImageLibrary.getDefaultImageLibrary() == null )
       	     return null;
-      	 
+
+         if(aesSedaiSprite!=null)
+             return (Drawable) aesSedaiSprite; 
+
          return new Sprite( (SpriteDataSupplier) player, ImageLibRef.PLAYER_PRIORITY );
       }
 
@@ -97,6 +105,18 @@ public class AesSedai extends Female {
                                      ImageLibRef.AES_BLUE_GOLDH_WALKING_ACTION
                                    );
      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Tests if the given int is a valid aesSedaiStatus.
+    *  @param aesSedaiStatus
+    *  @return true if the aesSedaiStatus is valid, false otherwise.
+    */
+    public static boolean isValidAesSedaiStatus( byte aesSedaiStatus ) {
+    	if( aesSedaiStatus>=0 && aesSedaiStatus<=9 )
+    	    return true;
+    	return false;
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

@@ -43,7 +43,7 @@ public abstract class Human implements WotCharacter {
 
   /** Hair color
    */
-    private byte hairColor;
+    protected byte hairColor;
 
   /** TO ADD : other common human fields ( force, dexterity, speed, etc ... ) */
 
@@ -51,12 +51,24 @@ public abstract class Human implements WotCharacter {
 
   /** Getters & Setters for persistence
    */
-    private byte getHairColor() {
+    public byte getHairColor() {
        return hairColor; 
     }
 
-    private void setHairColor( byte hairColor ) {
+    public void setHairColor( byte hairColor ) {
        this.hairColor = hairColor;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Tests if the given ID is a valid hair color
+    *  @param hairColor hairColor
+    *  @return true if the hairColor is valid, false otherwise.
+    */
+    public static boolean isValidHairColor( byte hairColor ) {
+    	if( hairColor>=0 && hairColor<=5 )
+    	    return true;
+    	return false;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

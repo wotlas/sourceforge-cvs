@@ -72,6 +72,16 @@ public class WorldManager
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** Constructor from a pre-loaded list of World Maps.
+   *  @param worldMaps list of worlds...
+   */
+   public WorldManager( WorldMap worldMaps[] ) {
+   	wManager = this;
+   	this.worldMaps = worldMaps;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** To Get a World by its ID.
    *
    * @param id worldMapID
@@ -89,6 +99,15 @@ public class WorldManager
    	}
    	
         return worldMaps[id];
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To Get a World list (some entries might be null).
+   *  @return worldMaps possessed by this WorldManager.
+   */
+   public WorldMap[] getWorldMaps() {
+        return worldMaps;
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

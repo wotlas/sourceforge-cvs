@@ -31,6 +31,7 @@ import wotlas.libs.net.*;
 import wotlas.libs.net.personality.*;
 
 import wotlas.utils.ALabel;
+import wotlas.utils.APasswordField;
 import wotlas.utils.ATableCellRenderer;
 import wotlas.utils.ATextField;
 import wotlas.utils.Debug;
@@ -186,10 +187,10 @@ public class ClientManager
     JLabel imgLabel1;
     JLabel imgLabel2;
 
-    final JTextField tfield1;
+    final ATextField tfield1;
     final ATextField atf_login;
-    final JPasswordField pfield1;
-    final JPasswordField pfield2;
+    final APasswordField pfield1;
+    final APasswordField pfield2;
 
     final JButton b_ok;
     final JButton b_cancel;
@@ -424,7 +425,7 @@ public class ClientManager
         mainPanel_01.add(formPanel_01_left);
         JPanel formPanel_01_right = new JPanel(new GridLayout(2,1,5,10));
           formPanel_01_right.setBackground(Color.white);
-          pfield1 = new JPasswordField(10);
+          pfield1 = new APasswordField(10);
           pfield1.setFont(f.deriveFont(18f));
           formPanel_01_right.add(pfield1);
           formPanel_01_right.add(new ALabel(currentProfileConfig.getKey()));
@@ -437,8 +438,8 @@ public class ClientManager
         public void actionPerformed (ActionEvent e) {
           char charPasswd[] = pfield1.getPassword();
           String passwd = "";
-          if (charPasswd.length < 6) {
-            JOptionPane.showMessageDialog( screenIntro, "Password mut have at least 5 characters !", "New Password", JOptionPane.ERROR_MESSAGE);
+          if (charPasswd.length < 4) {
+            JOptionPane.showMessageDialog( screenIntro, "Password mut have at least 5 characters !", "New Password", JOptionPane.ERROR_MESSAGE);                          
           } else {
             for (int i=0; i<charPasswd.length; i++) {
               passwd += charPasswd[i];
@@ -532,13 +533,13 @@ public class ClientManager
           atf_login.setSelectedTextColor(Color.white);
           formPanel_10.add(atf_login);
           formPanel_10.add(new JLabel(new ImageIcon("..\\base\\gui\\password.gif")));
-          pfield1 = new JPasswordField(10);
+          pfield1 = new APasswordField(10);
           pfield1.setFont(f.deriveFont(18f));
           pfield1.setSelectionColor(Color.lightGray);
           pfield1.setSelectedTextColor(Color.white);
           formPanel_10.add(pfield1);
           formPanel_10.add(new JLabel(new ImageIcon("..\\base\\gui\\password.gif")));
-          pfield2 = new JPasswordField(10);
+          pfield2 = new APasswordField(10);
           pfield2.setFont(f.deriveFont(18f));
           pfield2.setSelectionColor(Color.lightGray);
           pfield2.setSelectedTextColor(Color.white);
@@ -706,11 +707,11 @@ public class ClientManager
       b_cancel.setFocusPainted(false);
 
       // *** Left Panel ***/
-      label1 = new ALabel("<html>Your new account has been"
-                            + "<br>successfully created!<br>"
-                            + "Remember your key to access<br>"
+      label1 = new ALabel("<html>Your new account has been <br>"
+                            + "successfully created! <br>"
+                            + "Remember your key to access <br>"
                             + "wotlas from anywhere : " + currentProfileConfig.getKey()
-                            + "</center><br>Click OK to enter WOTLAS....</html>");
+                            + "<br>Click OK to enter WOTLAS....</html>");
       leftPanel.add(label1, BorderLayout.CENTER);
 
       // *** Right Panel ***/

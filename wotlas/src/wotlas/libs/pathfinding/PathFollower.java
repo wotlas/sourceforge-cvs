@@ -506,19 +506,15 @@ public class PathFollower implements MovementComposer {
    */
       private void updateMovementAspect() {
          realisticRotations = false; // default
-         speed = 60.0f;             // default
+         speed = 1.0f;             // default : very slow speed
 
          if( player==null || player.getLocation()==null )
              return;
 
-         if ( player.getLocation().isRoom() ) {
+         if ( player.getLocation().isRoom() )
               realisticRotations = true;
-              speed = 60.0f;
-         }
-         else if ( player.getLocation().isTown() )
-              speed = 10.0f;
-         else if ( player.getLocation().isWorld() )
-              speed = 5.0f;
+
+         speed = player.getWotCharacter().getSpeed( player.getLocation() );
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

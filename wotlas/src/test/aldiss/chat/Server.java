@@ -19,7 +19,6 @@ public class Server extends NetServer
 
   public void accessControl( NetPersonality personality, String key )
   {
-      try{
          // does the client have the right password ?
             if( key.compareTo("sesame") == 0 )
             {
@@ -27,17 +26,13 @@ public class Server extends NetServer
                  personality.setConnectionListener(chat);
                  acceptClient( personality );
 
-                 System.out.println("Client accepté :" +count+" key:"+key);
+                 System.out.println("Client accepted :" +count+" key:"+key);
                  count++;
             }
             else {
-                 System.out.println("Client refusé :" +count+" key:"+key);
-                 refuseClient( personality, "mauvais mot de passe :"+key );
+                 System.out.println("Client refused :" +count+" key:"+key);
+                 refuseClient( personality, "bad password :"+key );
             }
-      }
-      catch(IOException e) {
-             Debug.signal( Debug.WARNING, this, e );
-      }
   }
 
 
@@ -50,7 +45,7 @@ public class Server extends NetServer
          chat = new Chat();
          server.start();
 
-         System.out.println("serveur ok.");
+         System.out.println("server ok.");
   }
 
 }

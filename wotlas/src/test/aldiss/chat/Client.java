@@ -45,7 +45,7 @@ public class Client extends NetClient
 
   // Succès de la connexion ?
      if(personality!=null)
-         System.out.println("connexion serveur ok.");
+         System.out.println("server connection ok.");
      else {
          System.out.println("Error: "+client.getErrorMessage() );
          return;

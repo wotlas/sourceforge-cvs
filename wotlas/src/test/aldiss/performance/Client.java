@@ -40,7 +40,7 @@ public class Client
 
      PerfThread perf[] = new PerfThread[nb_client];
 
-     System.out.println("Création de "+nb_client+" connexions..." );
+     System.out.println("Creation of "+nb_client+" connection..." );
 
 
   // création du PerfThread
@@ -57,7 +57,7 @@ public class Client
 
       // Succès de la connexion ?
          if(personality!=null)
-               System.out.println("connexion serveur "+i+"ok.");
+               System.out.println("server connection -"+i+"- ok.");
          else {
                System.out.println("Error: "+client.getErrorMessage() );
                return;
@@ -69,7 +69,7 @@ public class Client
 
 
      // on démarre tous les threads
-        System.out.println("Lancement des tests de performance...");
+        System.out.println("Starting performance tests (140msg per connection)...");
 
         boolean fini = false;
      
@@ -87,19 +87,19 @@ public class Client
         }
 
      // Analyse des résultats...
-        System.out.println("Analyse des résultats...\n");
+        System.out.println("Results (Per Message Sent, Processed, Returned)...\n");
 
-        System.out.println("> Les Temps Minimum"); 
+        System.out.println("> Min Times"); 
         System.out.println("   - min: "+PerfThread.getMin(tmin) );
         System.out.println("   - avg: "+PerfThread.getAvg(tmin) );
         System.out.println("   - max: "+PerfThread.getMax(tmin) );
 
-        System.out.println("\n> Les Temps Moyens"); 
+        System.out.println("\n> Average Times"); 
         System.out.println("   - min: "+PerfThread.getMin(tavg) );
         System.out.println("   - avg: "+PerfThread.getAvg(tavg) );
         System.out.println("   - max: "+PerfThread.getMax(tavg) );
 
-        System.out.println("\n> Les Temps Maximum"); 
+        System.out.println("\n> Max Times"); 
         System.out.println("   - min: "+PerfThread.getMin(tmax) );
         System.out.println("   - avg: "+PerfThread.getAvg(tmax) );
         System.out.println("   - max: "+PerfThread.getMax(tmax) );

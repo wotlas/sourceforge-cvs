@@ -25,12 +25,12 @@ public class Chat implements NetConnectionListener
   }
   
   public void connectionCreated( NetPersonality personality ) {
-     System.out.println("Chat : Connexion ouverte");
+     System.out.println("Chat : Connection opened");
      members.add( (Object) personality );
   }
   
   public void connectionClosed( NetPersonality personality ) {
-     System.out.println("Chat : Connexion fermée");
+     System.out.println("Chat : Connection closed");
      members.remove( (Object) personality );
   }
 

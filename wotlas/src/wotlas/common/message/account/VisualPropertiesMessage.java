@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 
 
 /** 
@@ -45,8 +44,7 @@ public class VisualPropertiesMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
      public VisualPropertiesMessage() {
-          super( MessageRegistry.ACCOUNT_CATEGORY,
-                 AccountMessageCategory.ACCOUNT_VISUAL_PROPS_MSG );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -56,7 +54,7 @@ public class VisualPropertiesMessage extends NetMessage
    * @param hairColor hairColor ID as given in wotlas.common.character.Human.
    */
      public VisualPropertiesMessage( byte hairColor ) {
-         this();
+         super();
          this.hairColor = hairColor;
      }
 

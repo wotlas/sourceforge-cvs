@@ -55,15 +55,15 @@ public class SetCurrentChatRoomMsgBehaviour extends SetCurrentChatRoomMessage im
   
   /** Associated code to this Message...
    *
-   * @param context an object giving specific access to other objects needed to process
+   * @param sessionContext an object giving specific access to other objects needed to process
    *        this message.
    */
-  public void doBehaviour( Object context ) {
+  public void doBehaviour( Object sessionContext ) {
        if (DataManager.SHOW_DEBUG)
          System.out.println("SetCurrentChatRoomMsgBehaviour::doBehaviour: "+chatRoomPrimaryKey);
 
-    // The context is here a DataManager.
-       DataManager dataManager = (DataManager) context;
+    // The sessionContext is here a DataManager.
+       DataManager dataManager = (DataManager) sessionContext;
        PlayerImpl player = dataManager.getMyPlayer();
 
     // We set the current chat for our player

@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.util.*;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 
 /** 
  * To set the current ChatRoom of the player. (Message sent by Server)
@@ -58,8 +57,7 @@ public class SetCurrentChatRoomMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
   public SetCurrentChatRoomMessage() {
-    super( MessageRegistry.CHAT_CATEGORY,
-           ChatMessageCategory.SET_CURRENT_CHATROOM_MSG );
+       super();
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -67,7 +65,7 @@ public class SetCurrentChatRoomMessage extends NetMessage
   /** Constructor with parameters.
    */
   public SetCurrentChatRoomMessage(String chatRoomPrimaryKey, Hashtable players ) {
-    this();
+    super();
     this.chatRoomPrimaryKey = chatRoomPrimaryKey;
 
      if(players==null){
@@ -101,17 +99,17 @@ public class SetCurrentChatRoomMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
   public void encode( DataOutputStream ostream ) throws IOException {
-    writeString( chatRoomPrimaryKey, ostream );
+    ostream.writeUTF( chatRoomPrimaryKey );
 
     ostream.writeInt( playersPrimaryKey.length );    
 
     for( int i=0; i<playersPrimaryKey.length; i++ )
-         writeString( playersPrimaryKey[i], ostream);
+         ostream.writeUTF( playersPrimaryKey[i] );
 
-    ostream.writeInt( fullPlayerNames.length );    
+    ostream.writeInt( fullPlayerNames.length );
 
     for( int i=0; i<fullPlayerNames.length; i++ )
-         writeString( fullPlayerNames[i], ostream);
+         ostream.writeUTF( fullPlayerNames[i] );
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -124,17 +122,17 @@ public class SetCurrentChatRoomMessage extends NetMessage
    */
   public void decode( DataInputStream istream ) throws IOException {
 
-    chatRoomPrimaryKey = readString( istream );
+    chatRoomPrimaryKey = istream.readUTF();
 
     playersPrimaryKey = new String[ istream.readInt() ];
 
     for( int i=0; i<playersPrimaryKey.length; i++ )
-       playersPrimaryKey[i] = readString( istream );
+       playersPrimaryKey[i] = istream.readUTF();
 
     fullPlayerNames = new String[ istream.readInt() ];
 
     for( int i=0; i<fullPlayerNames.length; i++ )
-       fullPlayerNames[i] = readString( istream );
+       fullPlayerNames[i] = istream.readUTF();
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

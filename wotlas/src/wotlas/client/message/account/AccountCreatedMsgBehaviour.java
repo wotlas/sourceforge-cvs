@@ -47,13 +47,13 @@ public class AccountCreatedMsgBehaviour extends AccountCreatedMessage implements
 
   /** Associated code to this Message...
    *
-   * @param context an object giving specific access to other objects needed to process
+   * @param sessionContext an object giving specific access to other objects needed to process
    *        this message.
    */
-  public void doBehaviour( Object context ) {
+  public void doBehaviour( Object sessionContext ) {
     if (DataManager.SHOW_DEBUG)
       System.out.println("Account Created - clientID:"+clientID+" serverID:"+serverID);
-    DataManager dataManager = (DataManager) context;
+    DataManager dataManager = (DataManager) sessionContext;
     dataManager.setCurrentProfileConfigID(clientID, serverID);
   }
 

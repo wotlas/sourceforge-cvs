@@ -53,13 +53,13 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
 
   /** Associated code to this Message...
    *
-   * @param context an object giving specific access to other objects needed to process
+   * @param sessionContext an object giving specific access to other objects needed to process
    *        this message.
    */
-     public void doBehaviour( Object context ) {
+     public void doBehaviour( Object sessionContext ) {
 
-        // 0 - The context is here a PlayerImpl.
-           PlayerImpl player = (PlayerImpl) context;
+        // 0 - The sessionContext is here a PlayerImpl.
+           PlayerImpl player = (PlayerImpl) sessionContext;
 
            if(primaryKey==null) {
               Debug.signal( Debug.ERROR, this, "No primary key for movement !" );

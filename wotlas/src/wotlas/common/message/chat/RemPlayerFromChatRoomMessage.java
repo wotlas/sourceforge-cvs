@@ -26,7 +26,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 
 /** 
  * To remove a player from a chat room (Message sent by Client or Server)
@@ -52,16 +51,15 @@ public class RemPlayerFromChatRoomMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
   public RemPlayerFromChatRoomMessage() {
-    super( MessageRegistry.CHAT_CATEGORY,
-           ChatMessageCategory.REM_PLAYER_FROM_CHATROOM_MSG );        
+    super();        
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Constructor with parameters.
    */
-  public RemPlayerFromChatRoomMessage(String senderPrimaryKey, String chatRoomPrimaryKey ) {
-    this();
+  public RemPlayerFromChatRoomMessage( String senderPrimaryKey, String chatRoomPrimaryKey ) {
+    super();
     this.senderPrimaryKey = senderPrimaryKey;
     this.chatRoomPrimaryKey = chatRoomPrimaryKey;
   }
@@ -75,8 +73,8 @@ public class RemPlayerFromChatRoomMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
   public void encode( DataOutputStream ostream ) throws IOException {
-    writeString( senderPrimaryKey, ostream );
-    writeString( chatRoomPrimaryKey, ostream );
+    ostream.writeUTF( senderPrimaryKey );
+    ostream.writeUTF( chatRoomPrimaryKey );
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -88,8 +86,8 @@ public class RemPlayerFromChatRoomMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
   public void decode( DataInputStream istream ) throws IOException {
-    senderPrimaryKey = readString( istream );
-    chatRoomPrimaryKey = readString( istream );
+    senderPrimaryKey = istream.readUTF();
+    chatRoomPrimaryKey = istream.readUTF();
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

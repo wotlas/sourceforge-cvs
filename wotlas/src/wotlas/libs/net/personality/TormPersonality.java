@@ -55,11 +55,11 @@ public class TormPersonality extends NetPersonality
   /** Constructor with an already opened socket.
    *
    * @param socket an already opened socket
-   * @param context an object to give to messages as they arrive.
+   * @param sessionContext an object to give to messages as they arrive.
    * @exception IOException if the socket wasn't already connected.
    */
-     public TormPersonality( Socket socket, Object context ) throws IOException {
-           super( socket, context );
+     public TormPersonality( Socket socket, Object sessionContext ) throws IOException {
+           super( socket, sessionContext );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -68,12 +68,12 @@ public class TormPersonality extends NetPersonality
    *  a set of threads ( see NetServer ).
    *
    * @param socket an already opened socket
-   * @param context object to give to messages when they arrive.
+   * @param sessionContext object to give to messages when they arrive.
    * @param localID an ID that identifies a set of threads.
    * @exception IOException if the socket wasn't already connected.
    */
-     public TormPersonality( Socket socket, Object context, byte localID ) throws IOException {
-           super( socket, context, localID );
+     public TormPersonality( Socket socket, Object sessionContext, byte localID ) throws IOException {
+           super( socket, sessionContext, localID );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -82,10 +82,10 @@ public class TormPersonality extends NetPersonality
    *  a AGGREGATE_MESSAGES NetSender and asynchronous NetReceiver.
    *
    * @param socket an already opened socket
-   * @param context an object to give to messages as they arrive.
+   * @param sessionContext an object to give to messages as they arrive.
    * @exception IOException if the socket wasn't already connected.
    */
-     protected void generatePersonality( Socket socket, Object context )
+     protected void generatePersonality( Socket socket, Object sessionContext )
      throws IOException
      {
        // We change both buffer size to 64k for this socket (default is normally 64k)
@@ -98,10 +98,10 @@ public class TormPersonality extends NetPersonality
           }
 
        // NetSender with default aggregation limit & timeout.
-          my_netsender = new NetSender( socket, this, NetSender.AGGREGATE_MESSAGES, 128*1024 );
+          myNetsender = new NetSender( socket, this, NetSender.AGGREGATE_MESSAGES, 128*1024 );
 
        // NetReceiver, asynchronous. It processes messages as they arrive.
-          my_netreceiver = new NetReceiver( socket, this, false, context, 128*1024 );
+          myNetreceiver = new NetReceiver( socket, this, false, sessionContext, 128*1024 );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 
 
 /** 
@@ -50,8 +49,7 @@ public class WotCharacterClassMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
      public WotCharacterClassMessage() {
-          super( MessageRegistry.ACCOUNT_CATEGORY,
-                 AccountMessageCategory.ACCOUNT_WOTCHAR_CLASS_MSG );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -63,7 +61,7 @@ public class WotCharacterClassMessage extends NetMessage
    * @param wotCharacterStatus wotCharacterStatus
    */
      public WotCharacterClassMessage( String className, byte wotCharacterStatus ) {
-         this();
+         super();
          this.className = className;
          this.wotCharacterStatus = wotCharacterStatus;
      }
@@ -77,7 +75,7 @@ public class WotCharacterClassMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void encode( DataOutputStream ostream ) throws IOException {
-         writeString( className, ostream );
+         ostream.writeUTF( className );
          ostream.writeByte( wotCharacterStatus );
      }
 
@@ -90,7 +88,7 @@ public class WotCharacterClassMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void decode( DataInputStream istream ) throws IOException {
-          className = readString( istream );
+          className = istream.readUTF();
           wotCharacterStatus = istream.readByte();
      }
 

@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 import wotlas.common.universe.*;
 
 /** 
@@ -50,8 +49,7 @@ public class RemovePlayerFromRoomMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
      public RemovePlayerFromRoomMessage() {
-          super( MessageRegistry.DESCRIPTION_CATEGORY,
-                 DescriptionMessageCategory.REMOVE_PLAYER_FROM_ROOM_MSG );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -59,7 +57,7 @@ public class RemovePlayerFromRoomMessage extends NetMessage
   /** Constructor with Player's primaryKey.
    */
      public RemovePlayerFromRoomMessage(String primaryKey, WotlasLocation location) {
-          this();
+          super();
           this.primaryKey = primaryKey;
           this.location = new WotlasLocation(location);
      }
@@ -74,7 +72,7 @@ public class RemovePlayerFromRoomMessage extends NetMessage
    */
      public void encode( DataOutputStream ostream ) throws IOException {
 
-         writeString( primaryKey, ostream );
+         ostream.writeUTF( primaryKey );
 
          ostream.writeInt( location.getWorldMapID() );
          ostream.writeInt( location.getTownMapID() );
@@ -93,7 +91,7 @@ public class RemovePlayerFromRoomMessage extends NetMessage
    */
      public void decode( DataInputStream istream ) throws IOException {
 
-         primaryKey = readString( istream );
+         primaryKey = istream.readUTF();
 
          location = new WotlasLocation();
 

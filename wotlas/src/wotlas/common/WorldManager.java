@@ -342,4 +342,52 @@ public class WorldManager
 
  /*------------------------------------------------------------------------------------*/
 
+   // TODO
+   
+   public WotlasLocation getWotlasLocation(String locationName) {
+   	return null;
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  // TODO
+  
+   public String[] getWorldList() {
+   	return null;
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  // TODO
+  
+   public String[] getTownList(WotlasLocation world) {
+   	return null;
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  // TODO
+  
+   public String[] getBuildingList(WotlasLocation town) {
+   	return null;
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  // TODO
+  
+   public String[] getInteriorMapList(WotlasLocation building) {
+   	return null;
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  // TODO
+  
+   public String[] getRoomList(WotlasLocation interiorMap) {
+   	return null;
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
 }

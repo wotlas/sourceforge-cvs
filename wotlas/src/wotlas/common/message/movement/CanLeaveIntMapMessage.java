@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 import wotlas.common.universe.*;
 
 /** 
@@ -40,8 +39,7 @@ public class CanLeaveIntMapMessage extends LocationChangeMessage
   /** Constructor. Just initializes the message category and type.
    */
      public CanLeaveIntMapMessage() {
-          super( MessageRegistry.MOVEMENT_CATEGORY,
-                 MovementMessageCategory.CAN_LEAVE_INTMAP_MSG );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -49,7 +47,7 @@ public class CanLeaveIntMapMessage extends LocationChangeMessage
   /** Constructor with Player's primaryKey & location.
    */
      public CanLeaveIntMapMessage(String primaryKey, WotlasLocation location, int x, int y, float orientation) {
-          this();
+          super();
           this.primaryKey = primaryKey;
           this.location = location;
           this.x = x;

@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 import wotlas.common.universe.*;
 
 /** 
@@ -55,8 +54,7 @@ public class DoorStateMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
      public DoorStateMessage() {
-          super( MessageRegistry.DESCRIPTION_CATEGORY,
-                 DescriptionMessageCategory.DOOR_STATE_MSG );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -64,7 +62,7 @@ public class DoorStateMessage extends NetMessage
   /** Constructor with Player's primaryKey & location.
    */
      public DoorStateMessage(WotlasLocation location, int roomLinkID, boolean isOpened) {
-          this();
+          super();
           this.location = new WotlasLocation(location);
           this.roomLinkID = roomLinkID;
           this.isOpened = isOpened;

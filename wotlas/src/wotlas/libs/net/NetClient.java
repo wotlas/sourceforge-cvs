@@ -52,7 +52,7 @@ public class NetClient
 
    /** Latest error message generated during the NetPersonality creation.
     */
-       private String error_message;
+       private String errorMessage;
 
    /** So we have to stop the connection process ( "cancel action" )
     */
@@ -62,9 +62,9 @@ public class NetClient
     */
        private boolean validConnection;
 
-   /** Context to set (temp attribute)
+   /** SessionContext to set.
     */
-       private Object context;
+       private Object sessionContext;
 
    /** NetPersonality created for this client
     */
@@ -106,32 +106,32 @@ public class NetClient
    *  given context object implements the NetConnectionListener, we sets it as the
    *  default NetPersonality connection observer ( personality.setConnectionListener() )...
    *
-   * @param server_name complete server name
-   * @param server_port port to reach
+   * @param serverName complete server name
+   * @param serverPort port to reach
    * @param key key identifying this client on the server side.
-   * @param context an optional context object (see NetReceiver for more details).
-   * @param msg_packages a list of packages where we can find NetMsgBehaviour Classes.
+   * @param sessionContext an optional session context object (see NetPersonality for more details).
+   * @param msgPackages a list of packages where we can find NetMsgBehaviour Classes.
    * @return a NetPersonality on success, null on failure.
    */
-     public NetPersonality connectToServer( String server_name, int server_port,
-                                            String key, Object context,
-                                            String msg_packages[] )
+     public NetPersonality connectToServer( String serverName, int serverPort,
+                                            String key, Object sessionContext,
+                                            String msgPackages[] )
      {
        Socket socket;
-       error_message = null;
-       this.context = context;
+       errorMessage = null;
+       this.sessionContext = sessionContext;
 
        // to make sure there is one...
-          NetMessageFactory.createMessageFactory( msg_packages );
+          NetMessageFactory.getMessageFactory().addMessagePackages( msgPackages );
 
           try
           {
             // We try a connection with specified server.
                try{
-                    socket = new Socket( server_name, server_port );
+                    socket = new Socket( serverName, serverPort );
                }
                catch(UnknownHostException e){
-                    error_message = new String("Unknown Server - "+server_name+":"+server_port);
+                    errorMessage = new String("Unknown Server - "+serverName+":"+serverPort);
                     return null;
                }
 
@@ -175,9 +175,7 @@ public class NetClient
 
                        try{
                           wait( CONNECTION_TIMEOUT );
-                       }
-                       catch(InterruptedException ie){
-                       }
+                       } catch(InterruptedException ie){}
                     }
                }
 
@@ -193,7 +191,7 @@ public class NetClient
                   if(getErrorMessage()!=null)
                       Debug.signal(Debug.ERROR, this, "Server returned an Error");
                   else {
-                      setErrorMessage( "Server reached, but connection timeout" );        
+                      setErrorMessage( "The server is not running at the moment." );
                       Debug.signal(Debug.ERROR, this, "Connection Timeout");
                   }
 
@@ -205,7 +203,7 @@ public class NetClient
           }
           catch(IOException e){
            // Hum ! this server doesn't want to hear from us...
-              error_message = "Error during connection: "+e.getMessage();
+              errorMessage = "Failed to join server: "+e.getMessage();
 
               clean();
               return null;
@@ -219,17 +217,17 @@ public class NetClient
     * @return the error message.
     */
       public String getErrorMessage() {
-             return error_message;
+             return errorMessage;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To set an error_message for the NetPersonality creation.
+   /** To set an error message for the NetPersonality creation.
     *
-    * @param error_message the new error message.
+    * @param errorMessage the new error message.
     */
-      public synchronized void setErrorMessage( String error_message) {
-             this.error_message = error_message;
+      public synchronized void setErrorMessage( String errorMessage) {
+             this.errorMessage = errorMessage;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -258,11 +256,11 @@ public class NetClient
      */
        public synchronized void validateConnection() {
              validConnection=true;
-             personality.setContext( context );
+             personality.setContext( sessionContext );
 
           // NetConnectionListener
-             if(context instanceof NetConnectionListener)
-                personality.setConnectionListener( (NetConnectionListener) context );
+             if(sessionContext instanceof NetConnectionListener)
+                personality.setConnectionListener( (NetConnectionListener) sessionContext );
        }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -285,7 +283,7 @@ public class NetClient
                  personality.closeConnection();
 
               personality=null;
-              context=null;
+              sessionContext=null;
        }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

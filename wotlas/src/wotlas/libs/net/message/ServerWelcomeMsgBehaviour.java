@@ -44,12 +44,12 @@ public class ServerWelcomeMsgBehaviour extends ServerWelcomeMessage implements N
   /** Associated code to the ServerWelcomeMessage... well, we do nothing special...
    *  the messages IDs were the only data...
    *
-   * @param context an object giving specific access to other objects needed to process
+   * @param sessionContext an object giving specific access to other objects needed to process
    *        this message.
    */
-     public void doBehaviour( Object context ) {
+     public void doBehaviour( Object sessionContext ) {
 
-         NetClient client = (NetClient) context;
+         NetClient client = (NetClient) sessionContext;
 
        // we awake our client with no error message
           synchronized( client ){

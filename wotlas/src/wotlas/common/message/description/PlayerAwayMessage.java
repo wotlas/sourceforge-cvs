@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 
 
 /** 
@@ -50,8 +49,7 @@ public class PlayerAwayMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
      public PlayerAwayMessage() {
-          super( MessageRegistry.DESCRIPTION_CATEGORY,
-                 DescriptionMessageCategory.PLAYER_AWAY_MSG );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -62,7 +60,7 @@ public class PlayerAwayMessage extends NetMessage
    * @param playerAwayMessage playerAwayMessage
    */
      public PlayerAwayMessage( String primaryKey, String playerAwayMessage ) {
-         this();
+         super();
          this.primaryKey = primaryKey;
          this.playerAwayMessage = playerAwayMessage;
      }
@@ -76,8 +74,8 @@ public class PlayerAwayMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void encode( DataOutputStream ostream ) throws IOException {
-         writeString( primaryKey, ostream );
-         writeString( playerAwayMessage, ostream );
+         ostream.writeUTF( primaryKey );
+         ostream.writeUTF( playerAwayMessage );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -89,8 +87,8 @@ public class PlayerAwayMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void decode( DataInputStream istream ) throws IOException {
-          primaryKey = readString( istream );
-          playerAwayMessage = readString( istream );
+          primaryKey = istream.readUTF();
+          playerAwayMessage = istream.readUTF();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 import wotlas.common.universe.*;
 
 /** 
@@ -47,8 +46,7 @@ public class ResetPositionMessage extends LocationChangeMessage
   /** Constructor. Just initializes the message category and type.
    */
      public ResetPositionMessage() {
-          super( MessageRegistry.MOVEMENT_CATEGORY,
-                 MovementMessageCategory.RESET_POSITION_MSG );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -26,7 +26,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 
 /** 
  * To write a message in a ChatRoom. (Message sent by Client or Server)
@@ -64,8 +63,7 @@ public class SendTextMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
   public SendTextMessage() {
-    super( MessageRegistry.CHAT_CATEGORY,
-           ChatMessageCategory.SEND_TEXT_MSG );        
+    super();        
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -73,7 +71,7 @@ public class SendTextMessage extends NetMessage
   /** Constructor with parameters.
    */
   public SendTextMessage(String senderPrimaryKey, String senderFullName, String chatRoomPrimaryKey, String message, byte voiceSoundLevel ) {
-    this();
+    super();
     this.senderPrimaryKey = senderPrimaryKey;
     this.senderFullName = senderFullName;
     this.chatRoomPrimaryKey = chatRoomPrimaryKey;
@@ -90,10 +88,10 @@ public class SendTextMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
   public void encode( DataOutputStream ostream ) throws IOException {
-    writeString( senderPrimaryKey, ostream );
-    writeString( senderFullName, ostream );
-    writeString( chatRoomPrimaryKey, ostream );
-    writeString( message, ostream);
+    ostream.writeUTF( senderPrimaryKey );
+    ostream.writeUTF( senderFullName );
+    ostream.writeUTF( chatRoomPrimaryKey );
+    ostream.writeUTF( message );
     ostream.writeByte( voiceSoundLevel );
   }
 
@@ -106,10 +104,10 @@ public class SendTextMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
   public void decode( DataInputStream istream ) throws IOException {
-    senderPrimaryKey = readString( istream );
-    senderFullName = readString( istream );
-    chatRoomPrimaryKey = readString( istream );
-    message = readString( istream );
+    senderPrimaryKey = istream.readUTF();
+    senderFullName = istream.readUTF();
+    chatRoomPrimaryKey = istream.readUTF();
+    message = istream.readUTF();
     voiceSoundLevel = istream.readByte();
   }
 

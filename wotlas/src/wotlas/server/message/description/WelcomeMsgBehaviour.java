@@ -51,13 +51,13 @@ public class WelcomeMsgBehaviour extends WelcomeMessage implements NetMessageBeh
 
   /** Associated code to this Message...
    *
-   * @param context an object giving specific access to other objects needed to process
+   * @param sessionContext an object giving specific access to other objects needed to process
    *        this message.
    */
-     public void doBehaviour( Object context ) {
+     public void doBehaviour( Object sessionContext ) {
 
-        // The context is here a PlayerImpl.
-           PlayerImpl player = (PlayerImpl) context;
+        // The sessionContext is here a PlayerImpl.
+           PlayerImpl player = (PlayerImpl) sessionContext;
 
         // We create a welcome message
            String message = "/whoWelcome to Wotlas<br>";

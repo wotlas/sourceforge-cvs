@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 import wotlas.common.Player;
 
 
@@ -41,8 +40,7 @@ public class AddPlayerToRoomMessage extends PlayerDataMessage
   /** Constructor. Just initializes the message category and type.
    */
      public AddPlayerToRoomMessage() {
-          super( MessageRegistry.DESCRIPTION_CATEGORY,
-                 DescriptionMessageCategory.ADD_PLAYER_TO_ROOM_MSG );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

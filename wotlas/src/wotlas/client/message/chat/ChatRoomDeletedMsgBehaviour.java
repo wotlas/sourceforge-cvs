@@ -54,15 +54,15 @@ public class ChatRoomDeletedMsgBehaviour extends ChatRoomDeletedMessage implemen
 
   /** Associated code to this Message...
    *
-   * @param context an object giving specific access to other objects needed to process
+   * @param sessionContext an object giving specific access to other objects needed to process
    *        this message.
    */
-  public void doBehaviour( Object context ) {
+  public void doBehaviour( Object sessionContext ) {
        if (DataManager.SHOW_DEBUG)
          System.out.println("ChatRoomDeletedMsgBehaviour::doBehaviour: "+chatRoomPrimaryKey);
 
-    // The context is here a DataManager.
-       DataManager dataManager = (DataManager) context;
+    // The sessionContext is here a DataManager.
+       DataManager dataManager = (DataManager) sessionContext;
        PlayerImpl player = dataManager.getMyPlayer();
 
     // Do we have to reset our current chat selection ?

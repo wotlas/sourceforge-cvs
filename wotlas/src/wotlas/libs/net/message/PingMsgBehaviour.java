@@ -43,10 +43,10 @@ public class PingMsgBehaviour extends PingMessage implements NetMessageBehaviour
 
   /** Associated code to the ServerErrorMessage... 
    *
-   * @param context an object giving specific access to other objects needed to process
+   * @param sessionContext an object giving specific access to other objects needed to process
    *        this message.
    */
-     public void doBehaviour( Object context ) {
+     public void doBehaviour( Object sessionContext ) {
         // none
      }
 

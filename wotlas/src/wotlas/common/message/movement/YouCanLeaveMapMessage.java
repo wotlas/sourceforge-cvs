@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 import wotlas.common.universe.*;
 
 /** 
@@ -46,8 +45,7 @@ public class YouCanLeaveMapMessage extends LocationChangeMessage
   /** Constructor. Just initializes the message category and type.
    */
      public YouCanLeaveMapMessage() {
-          super( MessageRegistry.MOVEMENT_CATEGORY,
-                 MovementMessageCategory.YOU_CAN_LEAVE_MAP_MSG );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -56,7 +54,7 @@ public class YouCanLeaveMapMessage extends LocationChangeMessage
    *  ID that needs to be set for the player.
    */
      public YouCanLeaveMapMessage(String primaryKey, WotlasLocation location, int x, int y, float orientation, byte syncID) {
-          this();
+          super();
           this.primaryKey = primaryKey;
           this.location = location;
           this.x = x;

@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 import wotlas.common.Player;
 import wotlas.common.character.WotCharacter;
 import wotlas.common.universe.WotlasLocation;
@@ -44,19 +43,7 @@ abstract public class MovementUpdateMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
      public MovementUpdateMessage() {
-          super( MessageRegistry.MOVEMENT_CATEGORY,
-                 MovementMessageCategory.MOVEMENT_UPDATE_MSG );
-     }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Constructor for eventual subclasses. Just initializes the message category and type.
-   *
-   * @param msg_category message's category in your NetRegistry.
-   * @param msg_type message's type in the associated NetCategory.
-   */
-     public MovementUpdateMessage( byte msg_category, byte msg_type) {
-          super( msg_category, msg_type );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

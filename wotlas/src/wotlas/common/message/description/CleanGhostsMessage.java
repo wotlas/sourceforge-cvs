@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 import wotlas.common.universe.*;
 
 /** 
@@ -51,8 +50,7 @@ public class CleanGhostsMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
      public CleanGhostsMessage() {
-          super( MessageRegistry.DESCRIPTION_CATEGORY,
-                 DescriptionMessageCategory.CLEAN_GHOST_PLAYERS_MSG );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -60,7 +58,7 @@ public class CleanGhostsMessage extends NetMessage
   /** Constructor with Player's primaryKey & location.
    */
      public CleanGhostsMessage(String primaryKey, WotlasLocation location) {
-          this();
+          super();
           this.primaryKey = primaryKey;
           this.location = new WotlasLocation(location);
      }
@@ -75,7 +73,7 @@ public class CleanGhostsMessage extends NetMessage
    */
      public void encode( DataOutputStream ostream ) throws IOException {
 
-         writeString( primaryKey, ostream );
+         ostream.writeUTF( primaryKey );
 
          ostream.writeInt( location.getWorldMapID() );
          ostream.writeInt( location.getTownMapID() );
@@ -94,7 +92,7 @@ public class CleanGhostsMessage extends NetMessage
    */
      public void decode( DataInputStream istream ) throws IOException {
 
-         primaryKey = readString( istream );
+         primaryKey = istream.readUTF();
 
          location = new WotlasLocation();
 

@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 
 
 /** 
@@ -50,8 +49,7 @@ public class PlayerPastMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
      public PlayerPastMessage() {
-          super( MessageRegistry.DESCRIPTION_CATEGORY,
-                 DescriptionMessageCategory.PLAYER_PAST_MSG );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -62,7 +60,7 @@ public class PlayerPastMessage extends NetMessage
    * @param playerPast playerPast
    */
      public PlayerPastMessage( String primaryKey, String playerPast ) {
-         this();
+         super();
          this.primaryKey = primaryKey;
          this.playerPast = playerPast;
      }
@@ -76,8 +74,8 @@ public class PlayerPastMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void encode( DataOutputStream ostream ) throws IOException {
-         writeString( primaryKey, ostream );
-         writeString( playerPast, ostream );
+         ostream.writeUTF( primaryKey );
+         ostream.writeUTF( playerPast );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -89,8 +87,8 @@ public class PlayerPastMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void decode( DataInputStream istream ) throws IOException {
-          primaryKey = readString( istream );
-          playerPast = readString( istream );
+          primaryKey = istream.readUTF();
+          playerPast = istream.readUTF();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

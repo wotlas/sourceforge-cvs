@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 
 
 /** 
@@ -40,8 +39,7 @@ public class AllDataLeftPleaseMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
      public AllDataLeftPleaseMessage() {
-          super( MessageRegistry.DESCRIPTION_CATEGORY,
-                 DescriptionMessageCategory.ALL_DATA_LEFT_MSG );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

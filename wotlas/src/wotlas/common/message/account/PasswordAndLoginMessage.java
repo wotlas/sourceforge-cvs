@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 
 
 /** 
@@ -50,7 +49,7 @@ public class PasswordAndLoginMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
      public PasswordAndLoginMessage() {
-          super( MessageRegistry.ACCOUNT_CATEGORY, AccountMessageCategory.PASSWORD_AND_LOGIN_MSG );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -75,8 +74,8 @@ public class PasswordAndLoginMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void encode( DataOutputStream ostream ) throws IOException {
-         writeString( login, ostream );
-         writeString( password, ostream );
+         ostream.writeUTF( login );
+         ostream.writeUTF( password );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -88,8 +87,8 @@ public class PasswordAndLoginMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void decode( DataInputStream istream ) throws IOException {
-          login = readString( istream );
-          password = readString( istream );
+          login = istream.readUTF();
+          password = istream.readUTF();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

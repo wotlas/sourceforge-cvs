@@ -52,13 +52,13 @@ public class PlayerAwayMsgBehaviour extends PlayerAwayMessage implements NetMess
 
   /** Associated code to this Message...
    *
-   * @param context an object giving specific access to other objects needed to process
+   * @param sessionContext an object giving specific access to other objects needed to process
    *        this message.
    */
-     public void doBehaviour( Object context ) {
+     public void doBehaviour( Object sessionContext ) {
 
-        // The context is here a PlayerImpl.
-           PlayerImpl player = (PlayerImpl) context;
+        // The sessionContext is here a PlayerImpl.
+           PlayerImpl player = (PlayerImpl) sessionContext;
 
         // is our player the dest of this message
            if( primaryKey.equals(player.getPrimaryKey()) ) {

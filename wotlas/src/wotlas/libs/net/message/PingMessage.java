@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.libs.net.NetMessageRegistry;
 import wotlas.libs.net.NetEngineVersion;
 
 
@@ -48,7 +47,7 @@ public class PingMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
      public PingMessage() {
-          super( NetMessageRegistry.SYSTEM_CATEGORY, SystemMessageCategory.PING_MSG );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -56,7 +55,7 @@ public class PingMessage extends NetMessage
   /** Constructor with sequence ID.
    */
      public PingMessage( byte sequenceID ) {
-          this();
+          super();
           this.sequenceID = sequenceID;
      }
 

@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 
 
 /** 
@@ -46,8 +45,7 @@ public class PlayerPastMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
      public PlayerPastMessage() {
-          super( MessageRegistry.ACCOUNT_CATEGORY,
-                 AccountMessageCategory.ACCOUNT_PLAYER_PAST_MSG );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -57,7 +55,7 @@ public class PlayerPastMessage extends NetMessage
    * @param playerPast playerPast
    */
      public PlayerPastMessage( String playerPast ) {
-         this();
+         super();
          this.playerPast = playerPast;
      }
 
@@ -70,7 +68,7 @@ public class PlayerPastMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void encode( DataOutputStream ostream ) throws IOException {
-         writeString( playerPast, ostream );
+         ostream.writeUTF( playerPast );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -82,7 +80,7 @@ public class PlayerPastMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void decode( DataInputStream istream ) throws IOException {
-          playerPast = readString( istream );
+          playerPast = istream.readUTF();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

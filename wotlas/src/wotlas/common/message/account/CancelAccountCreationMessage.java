@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 
 
 /** 
@@ -40,8 +39,7 @@ public class CancelAccountCreationMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
      public CancelAccountCreationMessage() {
-          super( MessageRegistry.ACCOUNT_CATEGORY,
-                 AccountMessageCategory.CANCEL_ACCOUNT_CREATION_MSG );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

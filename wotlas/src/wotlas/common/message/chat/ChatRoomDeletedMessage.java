@@ -26,7 +26,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 
 /** 
  * To tell that a chatroom has been deleted (Message sent by Server)
@@ -48,8 +47,7 @@ public class ChatRoomDeletedMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
   public ChatRoomDeletedMessage() {
-    super( MessageRegistry.CHAT_CATEGORY,
-           ChatMessageCategory.CHATROOM_DELETED_MSG );        
+    super();
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -57,7 +55,7 @@ public class ChatRoomDeletedMessage extends NetMessage
   /** Constructor with parameters.
    */
   public ChatRoomDeletedMessage(String chatRoomPrimaryKey) {
-    this();
+    super();
     this.chatRoomPrimaryKey = chatRoomPrimaryKey;
   }
   
@@ -70,7 +68,7 @@ public class ChatRoomDeletedMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
   public void encode( DataOutputStream ostream ) throws IOException {
-    writeString( chatRoomPrimaryKey, ostream );
+    ostream.writeUTF( chatRoomPrimaryKey );
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -82,7 +80,7 @@ public class ChatRoomDeletedMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
   public void decode( DataInputStream istream ) throws IOException {
-    chatRoomPrimaryKey = readString( istream );
+    chatRoomPrimaryKey = istream.readUTF();
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

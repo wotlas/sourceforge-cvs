@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.libs.net.NetMessageRegistry;
 import wotlas.libs.net.NetEngineVersion;
 
 
@@ -53,7 +52,7 @@ public class ClientRegisterMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
      public ClientRegisterMessage() {
-          super( NetMessageRegistry.SYSTEM_CATEGORY, SystemMessageCategory.CLIENT_REGISTER_MSG );
+         super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -63,9 +62,9 @@ public class ClientRegisterMessage extends NetMessage
    * @param key client key for access control.
    */
      public ClientRegisterMessage( String key ) {
-         this();
-         this.key = key;
-         netEngineVersion = NetEngineVersion.VERSION;
+        super();
+        this.key = key;
+        netEngineVersion = NetEngineVersion.VERSION;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -77,7 +76,7 @@ public class ClientRegisterMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void encode( DataOutputStream ostream ) throws IOException {
-         writeString( key, ostream );
+         ostream.writeUTF( key );
          ostream.writeFloat( netEngineVersion );
      }
 
@@ -90,7 +89,7 @@ public class ClientRegisterMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void decode( DataInputStream istream ) throws IOException {
-          key = readString( istream );
+          key = istream.readUTF();
           netEngineVersion = istream.readFloat();
      }
 

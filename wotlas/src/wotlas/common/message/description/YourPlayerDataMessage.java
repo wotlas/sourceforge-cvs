@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 import wotlas.common.Player;
 
 
@@ -41,8 +40,7 @@ public class YourPlayerDataMessage extends PlayerDataMessage
   /** Constructor. Just initializes the message category and type.
    */
      public YourPlayerDataMessage() {
-          super( MessageRegistry.DESCRIPTION_CATEGORY,
-                 DescriptionMessageCategory.YOUR_PLAYER_DATA_MSG );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -52,7 +50,7 @@ public class YourPlayerDataMessage extends PlayerDataMessage
    * @param player Player object to send.
    */
      public YourPlayerDataMessage( Player player ) {
-         this();
+         super();
          this.player = player;
          this.publicInfoOnly = false;
      }

@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 import wotlas.common.message.movement.*;
 import wotlas.common.*;
 import wotlas.common.character.WotCharacter;
@@ -56,19 +55,7 @@ public class PlayerDataMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
      public PlayerDataMessage() {
-          super( MessageRegistry.DESCRIPTION_CATEGORY,
-                 DescriptionMessageCategory.PLAYER_DATA_MSG );
-     }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Constructor for eventual subclasses. Just initializes the message category and type.
-   *
-   * @param msg_category message's category in your NetRegistry.
-   * @param msg_type message's type in the associated NetCategory.
-   */
-     public PlayerDataMessage( byte msg_category, byte msg_type) {
-          super( msg_category, msg_type );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -79,7 +66,7 @@ public class PlayerDataMessage extends NetMessage
    * @param publicInfoOnly tells if we have to write/read public info or all the player's data
    */
      public PlayerDataMessage( Player player, boolean publicInfoOnly ) {
-         this();
+         super();
          this.player = player;
          this.publicInfoOnly = publicInfoOnly;
      }
@@ -104,13 +91,13 @@ public class PlayerDataMessage extends NetMessage
          ostream.writeInt( player.getLocation().getRoomID() );
 
       // Player Data
-         writeString( player.getPlayerName(), ostream );
-         writeString( player.getFullPlayerName(), ostream );
-         writeString( player.getPrimaryKey(), ostream );
+         ostream.writeUTF( player.getPlayerName() );
+         ostream.writeUTF( player.getFullPlayerName() );
+         ostream.writeUTF( player.getPrimaryKey() );
 
          if(!publicInfoOnly) {
-            writeString( player.getPlayerPast(), ostream );
-            writeString( player.getPlayerAwayMessage(), ostream );
+            ostream.writeUTF( player.getPlayerPast() );
+            ostream.writeUTF( player.getPlayerAwayMessage() );
          }
 
          ostream.writeBoolean( player.isConnectedToGame() );
@@ -120,15 +107,15 @@ public class PlayerDataMessage extends NetMessage
             ostream.writeByte( player.getSyncID() );
 
       // Movement Composer
-         writeString( player.getMovementComposer().getClass().getName(), ostream );
+         ostream.writeUTF( player.getMovementComposer().getClass().getName() );
 
          MovementUpdateMessage updateMsg = player.getMovementComposer().getUpdate();
 
-         writeString( updateMsg.getClass().getName(), ostream );
+         ostream.writeUTF( updateMsg.getClass().getName() );
          updateMsg.encode( ostream );
 
       // Wotlas Character Data
-         writeString( player.getWotCharacter().getClass().getName(), ostream );
+         ostream.writeUTF( player.getWotCharacter().getClass().getName() );
          player.getWotCharacter().encode( ostream, publicInfoOnly ); // call to encode character's data
      }
 
@@ -160,13 +147,13 @@ public class PlayerDataMessage extends NetMessage
          player.setLocation( wotLoc );
 
       // Player Data
-         player.setPlayerName( readString( istream ) );
-         player.setFullPlayerName( readString( istream ) );
-         player.setPrimaryKey( readString( istream ) );
+         player.setPlayerName( istream.readUTF() );
+         player.setFullPlayerName( istream.readUTF() );
+         player.setPrimaryKey( istream.readUTF() );
 
          if(!publicInfoOnly){
-             player.setPlayerPast(  readString( istream ) );
-             player.setPlayerAwayMessage(  readString( istream ) );
+             player.setPlayerPast( istream.readUTF() );
+             player.setPlayerAwayMessage( istream.readUTF() );
          }
 
          player.setIsConnectedToGame( istream.readBoolean() );
@@ -176,12 +163,12 @@ public class PlayerDataMessage extends NetMessage
             player.setSyncID( istream.readByte() );
 
       // Movement Composer
-         MovementComposer mvComposer = (MovementComposer) Tools.getInstance( readString( istream ) );
-         MovementUpdateMessage uMsg = (MovementUpdateMessage) Tools.getInstance( readString( istream ) );
+         MovementComposer mvComposer = (MovementComposer) Tools.getInstance( istream.readUTF() );
+         MovementUpdateMessage uMsg = (MovementUpdateMessage) Tools.getInstance( istream.readUTF() );
          uMsg.decode( istream );
 
       // Wotlas Character
-         WotCharacter wotChar = (WotCharacter) Tools.getInstance( readString( istream ) );
+         WotCharacter wotChar = (WotCharacter) Tools.getInstance( istream.readUTF() );
          
          wotChar.decode( istream, publicInfoOnly );
          player.setWotCharacter( wotChar );

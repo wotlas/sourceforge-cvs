@@ -24,72 +24,72 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 /** 
- * A NetMessage is a simple message that you give to your NetSender so
- * it transmits it to a foreign NetReceiver.
+ * A NetMessage is a simple message that you give to your NetPersonality ( which handles it
+ * to the NetSender) so it transmits it to a foreign ( i.e. NetReceiver ).
  *
  * To create a new message simply extends the NetMessage class : <pre>
  *
  *    class PasswordMsg extends NetMessage {
- *         protected int pswd; // my message data
+ *         protected int mySecretID;
  *
- *         HelloMsg() {
- *              super( MyNetCategory.AUTHENTICATION_MESSAGE, MyNetAuth.PASSWORD_MESSAGE );
+ *         public PasswordMsg() {
+ *              super(); // mandatory call to NetMessage constructor
  *         }
  *
- *         HelloMsg( int password ) {
- *              this();
- *              pswd = password;
+ *         public PasswordMsg( int mySecretID ) {
+ *              super();
+ *              this.mySecretID = mySecretID;
  *         }
  *
  *         void encode( DataOutputStream ostream ) throws IOException {
- *              ostream.writeInt();
+ *              ostream.writeInt( mySecretID );
  *         }
  *
  *         void decode( DataInputStream istream ) throws IOException {
- *              pswd = istream.readInt();
+ *              mySecretID = istream.readInt();
  *         }
  *    }
- * </pre>
- * The empty constructor is mandatory and must initialize the message's
- * category and type.
+ * </pre><br>
  *
- * Note that a NetMessage comes along with a NetMessageBehaviour
- * which contains the associated code to execute on the remote side.
+ * The empty constructor is mandatory. The 'mySecretID' fiels is protected
+ * for an easy access from the child classes.
  *
- * The Message's Category must be declared in your NetMessageRegistry interface
- * and it's type in one of your associated NetMessageCategory interface.
- * 
+ * <p>Note that a NetMessage comes along with a NetMessageBehaviour
+ * which contains the associated code to execute on the remote side.</p>
+ *
  * @author Aldiss
- * @see wotlas.libs.net.NetSender
+ * @see wotlas.libs.net.NetPersonality
  * @see wotlas.libs.net.NetMessageBehaviour
- * @see wotlas.libs.net.NetMessageRegistry
- * @see wotlas.libs.net.NetMessageCategory
  * @see java.io.DataOutputStream
  */
 
-public abstract class NetMessage
-{
+public abstract class NetMessage {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Message category.
+  /** Message ClassName (fully qualified class name).
    */
-      private byte msg_category;
-
-  /** Message type.
-   */
-      private byte msg_type;
+     private String messageClassName;
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Constructor. Just initializes the message category and type.
-   *
-   * @param msg_category message's category in your NetRegistry.
-   * @param msg_type message's type in the associated NetCategory.
+  /** Constructor. Just initializes the message's class name field.
    */
-     public NetMessage( byte msg_category, byte msg_type ) {
-         this.msg_category = msg_category;
-         this.msg_type = msg_type;
+     public NetMessage() {     	
+       // we search for the first non-NetMessageBehaviour
+     	if( NetMessageBehaviour.class.isAssignableFrom( getClass() ) )
+            messageClassName = getClass().getSuperclass().getName();
+        else
+            messageClassName = getClass().getName(); // ok, we can get this class name
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the message's class name.
+   * @return the message's class name.
+   */
+     public String getMessageClassName() {
+         return messageClassName;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -114,60 +114,5 @@ public abstract class NetMessage
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the message's category.
-   * 
-   * @return the message's category.
-   */
-     public byte getMessageCategory() {
-           return msg_category;
-     }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To get the message's type.
-   * 
-   * @return the message's type.
-   */
-     public byte getMessageType() {
-           return msg_type;
-     }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To read a string written to this stream by a call to the writeString() below.
-   *
-   * @param istream the stream from which we take the data.
-   * @return the read String
-   * @exception IOException in case of IO error
-   */
-     static protected String readString( DataInputStream istream ) throws IOException
-     {
-       int nb = istream.readInt();
-       char s[] = new char[nb];
-
-           for(int i=0; i<nb; i++)
-              s[i] = istream.readChar();
-
-       return new String(s,0,nb);
-     }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To write a string o a stream. Use the readString() method to read it on the other
-   *  side of the stream.
-   *
-   * @param s the string to write.
-   * @param ostream the stream where we put the data.
-   * @exception IOException in case of IO error
-   */
-     static protected void writeString( String s, DataOutputStream ostream ) throws IOException
-     {
-       ostream.writeInt( s.length() );
-
-           for(int i=0; i<s.length(); i++)
-              ostream.writeChar(s.charAt(i));
-     }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
 

@@ -27,7 +27,6 @@ import java.util.*;
 
 import wotlas.libs.net.NetMessage;
 import wotlas.common.Player;
-import wotlas.common.message.MessageRegistry;
 import wotlas.common.universe.WotlasLocation;
 
 
@@ -59,8 +58,7 @@ public class RoomPlayerDataMessage extends PlayerDataMessage
   /** Constructor. Just initializes the message category and type.
    */
      public RoomPlayerDataMessage() {
-          super( MessageRegistry.DESCRIPTION_CATEGORY,
-                 DescriptionMessageCategory.ROOM_PLAYER_DATA_MSG );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -75,7 +73,7 @@ public class RoomPlayerDataMessage extends PlayerDataMessage
    */
      public RoomPlayerDataMessage( WotlasLocation location, Player myPlayer,
                                    Hashtable players ) {
-         this();
+         super();
          this.myPlayer = myPlayer;
          this.location = location;
          this.players = players;

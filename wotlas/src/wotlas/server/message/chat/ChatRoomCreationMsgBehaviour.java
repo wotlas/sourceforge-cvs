@@ -55,13 +55,13 @@ public class ChatRoomCreationMsgBehaviour extends ChatRoomCreationMessage implem
   
   /** Associated code to this Message...
    *
-   * @param context an object giving specific access to other objects needed to process
+   * @param sessionContext an object giving specific access to other objects needed to process
    *        this message.
    */
-  public void doBehaviour( Object context ) {
+  public void doBehaviour( Object sessionContext ) {
     
-    // The context is here a PlayerImpl.
-       PlayerImpl player = (PlayerImpl) context;
+    // The sessionContext is here a PlayerImpl.
+       PlayerImpl player = (PlayerImpl) sessionContext;
        WotlasLocation location = player.getLocation();
 
     // 0 - We check the length of the chat room name

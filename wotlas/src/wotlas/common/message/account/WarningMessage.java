@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 
 
 /** 
@@ -46,7 +45,7 @@ public class WarningMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
      public WarningMessage() {
-          super( MessageRegistry.ACCOUNT_CATEGORY, AccountMessageCategory.ACCOUNT_WARNING_MSG );
+         super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -57,7 +56,7 @@ public class WarningMessage extends NetMessage
    * @param serverID server ID who created the client account
    */
      public WarningMessage(String info) {
-         this();
+         super();
          this.info = info;
      }
 
@@ -70,7 +69,7 @@ public class WarningMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void encode( DataOutputStream ostream ) throws IOException {
-         writeString( info, ostream );
+         ostream.writeUTF( info );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -82,7 +81,7 @@ public class WarningMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void decode( DataInputStream istream ) throws IOException {
-          info = readString( istream );
+          info = istream.readUTF();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -51,7 +51,7 @@ public class NetReceiver extends NetThread
 
     /** Communication stream to receive data
      */
-        private DataInputStream in_stream;
+        private DataInputStream inStream;
 
     /** Do we have to wait for a user signal to execute messages ?
      *  Determine if we work synchronously or asynchronously.
@@ -66,14 +66,14 @@ public class NetReceiver extends NetThread
      */
         private NetPersonality personality;
 
-    /** Object to give to messages when they arrive.
+    /** Session Object to give to messages when they arrive.
      */
-        private Object context;
+        private Object sessionContext;
 
     /** For the synchronous NetReceiver : 
      *  maximum number of messages to process per user call ( pleaseReceiveAllMessagesNow() ).
      */
-        private int max_msg;
+        private int maxMsg;
 
     /** Do we have to send back ping messages ?
      */
@@ -90,25 +90,24 @@ public class NetReceiver extends NetThread
      * @param socket a previously created & connected socket.
      * @param personality a NetPersonality linked to the specified socket.
      * @param sync do we have to work synchronously or asynchronously.
-     * @param context object to give to messages when they arrive.
-     * @param buffer_size buffer size (in bytes) for the buffered input stream.
+     * @param sessionContext session object to give to messages when they arrive.
+     * @param bufferSize buffer size (in bytes) for the buffered input stream.
      * @exception IOException if the socket wasn't already connected.
      */
       public NetReceiver( Socket socket, NetPersonality personality, boolean sync,
-                          Object context, int buffer_size ) throws IOException
+                          Object sessionContext, int bufferSize ) throws IOException
       {
           super( socket );
           this.sync = sync;
-          this.context = context;
+          this.sessionContext = sessionContext;
           this.personality = personality;
           sendBackPingMessages = false;
 
-          if(sync)
-             max_msg = 15; // default value
+          if(sync)  maxMsg = 15; // default value
 
        // we retrieve & construct some useful handles
-          in_stream = new DataInputStream( getBufferedInputStream( buffer_size ) );
-          factory = NetMessageFactory.getDefaultMessageFactory();
+          inStream = new DataInputStream( getBufferedInputStream( bufferSize ) );
+          factory = NetMessageFactory.getMessageFactory();
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -134,14 +133,13 @@ public class NetReceiver extends NetThread
         {
            do
            {
-             // we wait for message category & type.
-                byte msg_cat = in_stream.readByte();
-                byte msg_typ = in_stream.readByte();
+             // we wait for message super class name.
+                String msgSuperClassName = inStream.readUTF();
 
              // we reconstruct the message and execute its associated code.
                 try{
-                     NetMessageBehaviour msg = factory.getNewMessageInstance( msg_cat, msg_typ );
-                     ((NetMessage) msg ).decode( in_stream );
+                     NetMessageBehaviour msg = factory.getNewMessageInstance( msgSuperClassName );
+                     ( (NetMessage)msg ).decode( inStream );
 
                      if(msg instanceof PingMessage) {
                      	if(sendBackPingMessages)
@@ -150,11 +148,11 @@ public class NetReceiver extends NetThread
                            personality.receivedPingMessage( ((PingMessage) msg).getSeqID() );
                      }
                      else
-                        msg.doBehaviour( context );
+                        msg.doBehaviour( sessionContext );
                 }
                 catch(ClassNotFoundException e) {
                       Debug.signal( Debug.WARNING, this, e );
-                      in_stream.skipBytes( in_stream.available() );  // cleanse the source ;)
+                      inStream.skipBytes( inStream.available() );  // cleanse the source ;)
                 }
            }
            while( !shouldStopThread() );
@@ -172,34 +170,33 @@ public class NetReceiver extends NetThread
      // we ask the NetPersonality to perform some cleanup
      // and signal that the connection was closed ( connectionListener )
         personality.closeConnection();
-        in_stream=null;
+        inStream=null;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Method to call in a case of a sync NetReceiver. We stop to process messages in 
    *  either cases : (1) there is no more messages,
-   *                 (2) the max_msg limit has been reached.
+   *                 (2) the maxMsg limit has been reached.
    */
      public void pleaseReceiveAllMessagesNow()
      {
         if(!sync)
            return;   // we have nothing to do here
 
-        int msg_counter=0;
+        int msgCounter=0;
 
         try
         {
-           while( in_stream.available()!=0 && msg_counter<max_msg )
+           while( inStream.available()!=0 && msgCounter<maxMsg )
            {
-             // we read the message category & type.
-                byte msg_cat = in_stream.readByte();
-                byte msg_typ = in_stream.readByte();
+             // we wait for message super class name.
+                String msgSuperClassName = inStream.readUTF();
 
              // we reconstruct the message and execute its associated code.
                 try{
-                     NetMessageBehaviour msg = factory.getNewMessageInstance( msg_cat, msg_typ );
-                     ((NetMessage) msg ).decode( in_stream );
+                     NetMessageBehaviour msg = factory.getNewMessageInstance( msgSuperClassName );
+                     ( (NetMessage)msg ).decode( inStream );
 
                      if(msg instanceof PingMessage) {
                      	if(sendBackPingMessages)
@@ -208,15 +205,15 @@ public class NetReceiver extends NetThread
                            personality.receivedPingMessage( ((PingMessage) msg).getSeqID() );
                      }
                      else
-                        msg.doBehaviour( context );
+                        msg.doBehaviour( sessionContext );
                 }
                 catch(ClassNotFoundException e) {                     
                       Debug.signal( Debug.WARNING, this, e );
-                      in_stream.skipBytes( in_stream.available() );  // cleanse the source ;)
+                      inStream.skipBytes( inStream.available() );  // cleanse the source ;)
                       return;
                 }
 
-              msg_counter++;
+              msgCounter++;
            }
 
         }
@@ -238,10 +235,10 @@ public class NetReceiver extends NetThread
 
   /** To set the maximum number of messages to process per user call.
    *
-   * @param max_msg maximum number of messages
+   * @param maxMsg maximum number of messages
    */
-     public void setMaxMessageLimitPerUserCall( int max_msg ) {
-         this.max_msg = max_msg;
+     public void setMaxMessageLimitPerUserCall( int maxMsg ) {
+         this.maxMsg = maxMsg;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -251,17 +248,17 @@ public class NetReceiver extends NetThread
    * @return the maximum number of messages
    */
      public int getMaxMessageLimitPerUserCall() {
-         return max_msg;
+         return maxMsg;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To set the current context.
+  /** To set the current sessionContext.
    *
-   * @param context the new context.
+   * @param sessionContext the new sessionContext.
    */
-     public void setContext( Object context ) {
-         this.context = context;
+     public void setContext( Object sessionContext ) {
+         this.sessionContext = sessionContext;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -279,13 +276,13 @@ public class NetReceiver extends NetThread
            return;
 
       // We mark the stream
-         in_stream.mark( 1000 );
- 
+         inStream.mark( 1000 );
+
       // Wait for data...
-         in_stream.readByte();
+         inStream.readByte();
 
       // Reset Stream state
-         in_stream.reset();
+         inStream.reset();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -27,8 +27,8 @@ package wotlas.libs.net;
  * @see wotlas.libs.net.NetPersonality
  */
 
-public interface NetConnectionListener
-{
+public interface NetConnectionListener {
+
  /*------------------------------------------------------------------------------------*/
 
   /** This method is called when a new network connection is created for you.

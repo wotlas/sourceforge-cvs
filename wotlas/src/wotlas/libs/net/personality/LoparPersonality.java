@@ -56,11 +56,11 @@ public class LoparPersonality extends NetPersonality
   /** Constructor with an already opened socket.
    *
    * @param socket an already opened socket
-   * @param context object to give to messages when they arrive.
+   * @param sessionContext object to give to messages when they arrive.
    * @exception IOException if the socket wasn't already connected.
    */
-     public LoparPersonality( Socket socket, Object context ) throws IOException {
-           super( socket, context );
+     public LoparPersonality( Socket socket, Object sessionContext ) throws IOException {
+           super( socket, sessionContext );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -69,12 +69,12 @@ public class LoparPersonality extends NetPersonality
    *  a set of threads ( see NetServer ).
    *
    * @param socket an already opened socket
-   * @param context object to give to messages when they arrive.
+   * @param sessionContext object to give to messages when they arrive.
    * @param localID an ID that identifies a set of threads.
    * @exception IOException if the socket wasn't already connected.
    */
-     public LoparPersonality( Socket socket, Object context, byte localID ) throws IOException {
-           super( socket, context, localID );
+     public LoparPersonality( Socket socket, Object sessionContext, byte localID ) throws IOException {
+           super( socket, sessionContext, localID );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -83,10 +83,10 @@ public class LoparPersonality extends NetPersonality
    *  a USER_AGGREGATION NetSender and synchronous NetReceiver.
    *
    * @param socket an already opened socket
-   * @param context an object to give to messages as they arrive.
+   * @param sessionContext an object to give to messages as they arrive.
    * @exception IOException if the socket wasn't already connected.
    */
-     protected void generatePersonality( Socket socket, Object context )
+     protected void generatePersonality( Socket socket, Object sessionContext )
      throws IOException
      {
        // We change both buffer size to 128k for this socket (default size was 64k)
@@ -99,11 +99,11 @@ public class LoparPersonality extends NetPersonality
           }
 
        // NetSender.
-          my_netsender = new NetSender( socket, this, NetSender.USER_AGGREGATION, 128*1024 );
+          myNetsender = new NetSender( socket, this, NetSender.USER_AGGREGATION, 128*1024 );
 
        // NetReceiver
-          my_netreceiver = new NetReceiver( socket, this, true, context, 128*1024 );
-          my_netreceiver.setMaxMessageLimitPerUserCall( 20 );
+          myNetreceiver = new NetReceiver( socket, this, true, sessionContext, 128*1024 );
+          myNetreceiver.setMaxMessageLimitPerUserCall( 20 );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

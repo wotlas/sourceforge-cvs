@@ -66,11 +66,11 @@ public abstract class NetPersonality
 
    /** Our NetSender
     */
-      protected NetSender my_netsender;
+      protected NetSender myNetsender;
 
    /** Our NetReceiver
     */
-      protected NetReceiver my_netreceiver;
+      protected NetReceiver myNetreceiver;
 
    /** An eventual connection listener
     */
@@ -89,11 +89,11 @@ public abstract class NetPersonality
   /** Constructor with an already opened socket.
    *
    * @param socket an already opened socket
-   * @param context object to give to messages when they arrive.
+   * @param sessionContext object to give to messages when they arrive.
    * @exception IOException if the socket wasn't already connected.
    */
-     public NetPersonality( Socket socket, Object context ) throws IOException {
-           generatePersonality( socket, context );
+     public NetPersonality( Socket socket, Object sessionContext ) throws IOException {
+           generatePersonality( socket, sessionContext );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -102,30 +102,30 @@ public abstract class NetPersonality
    *  a set of threads ( see NetServer ).
    *
    * @param socket an already opened socket
-   * @param context object to give to messages when they arrive.
+   * @param sessionContext object to give to messages when they arrive.
    * @param localID an ID that identifies a set of threads.
    * @exception IOException if the socket wasn't already connected.
    */
-     public NetPersonality( Socket socket, Object context, byte localID ) throws IOException {
-           generatePersonality( socket, context );
+     public NetPersonality( Socket socket, Object sessionContext, byte localID ) throws IOException {
+           generatePersonality( socket, sessionContext );
         
         // we attach the socket of the NetThread to 
-           my_netreceiver.attachTo( localID );
-           my_netsender.attachTo( localID );
+           myNetreceiver.attachTo( localID );
+           myNetsender.attachTo( localID );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** In this method you have to create your own NetSender and NetReceiver and
-   *  save them in the "my_netsender" and "my_net_receiver" class attributes.
+   *  save them in the "myNetsender" and "my_net_receiver" class attributes.
    *  If you want to create a new Personality model you can take the classes
    *  in wotlas.libs.net.personality as examples.
    *
    * @param socket an already opened socket
-   * @param context an object to give to messages as they arrive.
+   * @param sessionContext an object to give to messages as they arrive.
    * @exception IOException if the socket wasn't already connected.
    */
-     protected abstract void generatePersonality( Socket socket, Object context )
+     protected abstract void generatePersonality( Socket socket, Object sessionContext )
      throws IOException;
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -135,17 +135,17 @@ public abstract class NetPersonality
    * launch your NetReceiver and thus can process incoming messages.
    */
      public void start() {
-          my_netreceiver.start();
+          myNetreceiver.start();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To set the current context.
+  /** To set the current sessionContext.
    *
-   * @param context the new context.
+   * @param sessionContext the new sessionContext.
    */
-     public void setContext( Object context ) {
-         my_netreceiver.setContext( context );
+     public void setContext( Object sessionContext ) {
+         myNetreceiver.setContext( sessionContext );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -155,7 +155,7 @@ public abstract class NetPersonality
    * @return the personality's NetSender
    */
      public NetSender getNetSender() {
-         return my_netsender;
+         return myNetsender;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -165,7 +165,7 @@ public abstract class NetPersonality
    * @return the personality's NetReceiver
    */
      public NetReceiver getNetReceiver() {
-         return my_netreceiver;
+         return myNetreceiver;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -185,7 +185,7 @@ public abstract class NetPersonality
 
          this.listener = listener;
 
-         if( my_netsender!=null && my_netreceiver!=null )
+         if( myNetsender!=null && myNetreceiver!=null )
              listener.connectionCreated( this );
      }
 
@@ -195,7 +195,7 @@ public abstract class NetPersonality
    *  you use in case of a USER_AGGREGATION NetSender.
    */
      public void pleaseSendAllMessagesNow() {
-           my_netsender.pleaseSendAllMessagesNow();
+           myNetsender.pleaseSendAllMessagesNow();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -204,7 +204,7 @@ public abstract class NetPersonality
    *  does nothing if the NetReceiver is in the asynchronous mode.
    */
      public void pleaseReceiveAllMessagesNow() {
-           my_netreceiver.pleaseReceiveAllMessagesNow();
+           myNetreceiver.pleaseReceiveAllMessagesNow();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -215,8 +215,8 @@ public abstract class NetPersonality
    * @param message message you want to send.
    */
      public void queueMessage( NetMessage message ) {
-            if( my_netsender!=null )
-                my_netsender.queueMessage( message );
+            if( myNetsender!=null )
+                myNetsender.queueMessage( message );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -227,7 +227,7 @@ public abstract class NetPersonality
    * @exception IOException if an IO error occur.
    */
      public void waitForAMessageToArrive() throws IOException{
-     	my_netreceiver.waitForAMessageToArrive();
+     	myNetreceiver.waitForAMessageToArrive();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -238,22 +238,22 @@ public abstract class NetPersonality
    */
      synchronized public void closeConnection()
      {
-     	  if( my_netsender==null ||  my_netreceiver==null )
+     	  if( myNetsender==null ||  myNetreceiver==null )
      	      return;
      	  
        // no more message handling
-          my_netreceiver.stopThread();
+          myNetreceiver.stopThread();
 
        // we wait for the remaining messages to be sent
-          my_netsender.pleaseSendAllMessagesNow();
+          myNetsender.pleaseSendAllMessagesNow();
             
        // massive destruction
-          my_netsender.stopThread();
-          my_netsender.closeSocket();  // only lets the NetReceiver finish its work
+          myNetsender.stopThread();
+          myNetsender.closeSocket();  // only lets the NetReceiver finish its work
                                        // before closing
           
-          synchronized( my_netsender ) {
-                my_netsender.notify();    // we don't forget to wake up the thread !
+          synchronized( myNetsender ) {
+                myNetsender.notify();    // we don't forget to wake up the thread !
           }                               // (the NetSender is locked when there are no msgs )
 
           if( pingLock!=null )
@@ -264,9 +264,9 @@ public abstract class NetPersonality
           if( listener!=null )
               listener.connectionClosed( this );
 
-          my_netsender = null;
-          my_netreceiver = null;
-          listener=null;
+          myNetsender = null;
+          myNetreceiver = null;
+          listener = null;
      }
 
  /*------------------------------------------------------------------------------------*/
@@ -342,8 +342,8 @@ public abstract class NetPersonality
             Debug.signal( Debug.ERROR, this, "Conflict detected: ping thread exists ! Can't send back ping messages");
         }
 
-        if( my_netreceiver!=null )
-            my_netreceiver.sendBackPingMessages( sendBack );
+        if( myNetreceiver!=null )
+            myNetreceiver.sendBackPingMessages( sendBack );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

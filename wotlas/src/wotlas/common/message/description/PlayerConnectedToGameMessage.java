@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 import wotlas.common.universe.*;
 
 /** 
@@ -50,8 +49,7 @@ public class PlayerConnectedToGameMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
      public PlayerConnectedToGameMessage() {
-          super( MessageRegistry.DESCRIPTION_CATEGORY,
-                 DescriptionMessageCategory.PLAYER_CONNECTED_GAME_MSG );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -59,7 +57,7 @@ public class PlayerConnectedToGameMessage extends NetMessage
   /** Constructor with Player's primaryKey.
    */
      public PlayerConnectedToGameMessage( String primaryKey, boolean isConnectedToGame ) {
-          this();
+          super();
           this.primaryKey = primaryKey;
           this.isConnectedToGame = isConnectedToGame;
      }
@@ -74,7 +72,7 @@ public class PlayerConnectedToGameMessage extends NetMessage
    */
      public void encode( DataOutputStream ostream ) throws IOException {
 
-         writeString( primaryKey, ostream );
+         ostream.writeUTF( primaryKey );
          ostream.writeBoolean( isConnectedToGame );
      }
 
@@ -88,7 +86,7 @@ public class PlayerConnectedToGameMessage extends NetMessage
    */
      public void decode( DataInputStream istream ) throws IOException {
 
-         primaryKey = readString( istream );
+         primaryKey = istream.readUTF();
          isConnectedToGame = istream.readBoolean();
      }
 

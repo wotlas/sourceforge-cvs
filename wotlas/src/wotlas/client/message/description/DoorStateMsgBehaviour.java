@@ -52,13 +52,13 @@ public class DoorStateMsgBehaviour extends DoorStateMessage implements NetMessag
 
   /** Associated code to this Message...
    *
-   * @param context an object giving specific access to other objects needed to process
+   * @param sessionContext an object giving specific access to other objects needed to process
    *        this message.
    */
-     public void doBehaviour( Object context ) {
+     public void doBehaviour( Object sessionContext ) {
 
-        // The context is here a DataManager
-           DataManager dataManager = (DataManager) context;
+        // The sessionContext is here a DataManager
+           DataManager dataManager = (DataManager) sessionContext;
            PlayerImpl myPlayer = dataManager.getMyPlayer();
 
         // 1 - Control

@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 
 
 /** 
@@ -54,8 +53,7 @@ public class PlayerNamesMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
      public PlayerNamesMessage() {
-          super( MessageRegistry.ACCOUNT_CATEGORY,
-                 AccountMessageCategory.ACCOUNT_PLAYER_NAMES_MSG );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -66,7 +64,7 @@ public class PlayerNamesMessage extends NetMessage
    * @param fullPlayerName fullPlayerName
    */
      public PlayerNamesMessage( String playerName, String fullPlayerName, String playerEmail ) {
-         this();
+         super();
          this.playerName = playerName;
          this.fullPlayerName = fullPlayerName;
          this.playerEmail = playerEmail;
@@ -81,9 +79,9 @@ public class PlayerNamesMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void encode( DataOutputStream ostream ) throws IOException {
-         writeString( playerName, ostream );
-         writeString( fullPlayerName, ostream );
-         writeString( playerEmail, ostream );
+         ostream.writeUTF( playerName );
+         ostream.writeUTF( fullPlayerName );
+         ostream.writeUTF( playerEmail );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -95,11 +93,10 @@ public class PlayerNamesMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void decode( DataInputStream istream ) throws IOException {
-          playerName = readString( istream );
-          fullPlayerName = readString( istream );
-          playerEmail = readString( istream );
+          playerName = istream.readUTF();
+          fullPlayerName = istream.readUTF();
+          playerEmail = istream.readUTF();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

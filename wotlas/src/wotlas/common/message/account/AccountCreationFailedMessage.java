@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 
 
 /** 
@@ -46,7 +45,7 @@ public class AccountCreationFailedMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
      public AccountCreationFailedMessage() {
-          super( MessageRegistry.ACCOUNT_CATEGORY, AccountMessageCategory.ACCOUNT_CREATION_FAILED_MSG );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -56,7 +55,7 @@ public class AccountCreationFailedMessage extends NetMessage
    * @param info why the creation failed.
    */
      public AccountCreationFailedMessage( String info ) {
-         this();
+         super();
          this.info = info;
      }
 
@@ -69,7 +68,7 @@ public class AccountCreationFailedMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void encode( DataOutputStream ostream ) throws IOException {
-         writeString( info, ostream );
+         ostream.writeUTF( info );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -81,7 +80,7 @@ public class AccountCreationFailedMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void decode( DataInputStream istream ) throws IOException {
-          info = readString( istream );
+          info = istream.readUTF();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -47,7 +47,7 @@ import wotlas.libs.net.message.ServerWelcomeMsgBehaviour;
  *<br><p>
  *
  * This server uses a TormPersonality as default. If you want to use another
- * one override the getNewDefaultPersonality() method. Note also that when we create
+ * one override the getNewPersonality() method. Note also that when we create
  * our new personality we don't assign any "context" object. To assign one do it in
  * the initializeConnection() method with the "personality.setContext()" call.
  *
@@ -61,9 +61,9 @@ public class NetServer extends Thread
  /*------------------------------------------------------------------------------------*/
 
   /** Server counter. We count how many servers we have on this JVM.
-   *  It helps set the server_local_ID.
+   *  It helps set the serverLocalID.
    */
-     private static byte server_counter;
+     private static byte serverCounter;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -73,19 +73,19 @@ public class NetServer extends Thread
 
   /** Stop server ?
    */
-     private boolean stop_server;
+     private boolean stopServer;
 
   /** User lock to temporarily forbid new connections
    */
-     private boolean server_lock;
+     private boolean serverLock;
 
   /** Maximum number of opened sockets for this server.
    */
-     private int max_opened_sockets;
+     private int maxOpenedSockets;
 
   /** Server Local ID. Identifies this server on this JVM.
    */
-     private byte server_local_ID;
+     private byte serverLocalID;
 
   /** Server Port
    */
@@ -115,18 +115,18 @@ public class NetServer extends Thread
         {
               super("Server");
               this.serverPort = serverPort;
-              stop_server = false;
-              server_lock = false;
+              stopServer = false;
+              serverLock = false;
 
            // server local ID
-              server_local_ID = server_counter;
-              server_counter++;
+              serverLocalID = serverCounter;
+              serverCounter++;
 
            // default maximum number of opened sockets
-              max_opened_sockets = 200;
+              maxOpenedSockets = 200;
 
-           // we create a message factory
-              NetMessageFactory.createMessageFactory( msgPackages );
+           // we add the new message packages to the message factory
+              NetMessageFactory.getMessageFactory().addMessagePackages( msgPackages );
 
            // ServerSocket inits
               server = getServerSocket();
@@ -150,18 +150,18 @@ public class NetServer extends Thread
               super("Server");
               this.host = host;
               this.serverPort = serverPort;
-              stop_server = false;
-              server_lock = false;
+              stopServer = false;
+              serverLock = false;
 
            // server local ID
-              server_local_ID = server_counter;
-              server_counter++;
+              serverLocalID = serverCounter;
+              serverCounter++;
 
            // default maximum number of opened sockets
-              max_opened_sockets = 200;
+              maxOpenedSockets = 200;
 
-           // we create a message factory & server
-              NetMessageFactory.createMessageFactory( msgPackages );
+           // we add the new message packages to the message factory
+              NetMessageFactory.getMessageFactory().addMessagePackages( msgPackages );
 
               server = getServerSocket(); 
         }
@@ -216,7 +216,7 @@ public class NetServer extends Thread
     *     the case of a repository server, a key would be a client login. You can then create
     *     your own set of messages to ask for a password.
     *
-    *  2) initialize the client context ( personality.setContext() ). The context can be
+    *  2) initialize the client session context ( personality.setContext() ). The context can be
     *     any type of object and should be client dependent. It will be given to the messages
     *     coming from the client. For example, in a ChatServer the context could be the Chat
     *     chanel object the client wants to register to. Messages would have then a direct
@@ -243,8 +243,8 @@ public class NetServer extends Thread
     *
     * @return a new TormPersonality associated to this socket.
     */
-      protected NetPersonality getNewDefaultPersonality( Socket socket ) throws IOException{
-              return new TormPersonality( socket, null, server_local_ID );
+      protected NetPersonality getNewPersonality( Socket socket ) throws IOException{
+              return new TormPersonality( socket, null, serverLocalID );
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -265,9 +265,10 @@ public class NetServer extends Thread
     *  Should be called by initializeConnection() if you decide to refuse the client.
     *
     * @param personality a previously created personality for this connection.
+    * @param errorMessage error message to send
     */
-      protected void refuseClient( NetPersonality personality, String error_message ) {
-              personality.queueMessage( new ServerErrorMessage( error_message ) );
+      protected void refuseClient( NetPersonality personality, String errorMessage ) {
+              personality.queueMessage( new ServerErrorMessage( errorMessage ) );
               personality.closeConnection();
       }
 
@@ -282,7 +283,7 @@ public class NetServer extends Thread
         NetPersonality personality;
 
         // We print some info about this server.
-           Debug.signal( Debug.NOTICE, null, "Starting Server #local-"+server_local_ID
+           Debug.signal( Debug.NOTICE, null, "Starting Server #local-"+serverLocalID
                          +" on IP:"+server.getInetAddress()+" Port:"+server.getLocalPort() );
 
         // We wait for clients.
@@ -307,13 +308,13 @@ public class NetServer extends Thread
                          Debug.signal( Debug.CRITICAL, this, e );
 
                       // We'll retry our connection in 3 minutes
-                         Debug.signal(Debug.WARNING, null,"Server #"+server_local_ID+" will be restarted in 3m.");
+                         Debug.signal(Debug.WARNING, null,"Server #"+serverLocalID+" will be restarted in 3m.");
 
                          if(errorListener!=null)
                             errorListener.errorOccured(e);
 
                          Tools.waitTime(1000*60*3); // we wait 3 minutes
-                         Debug.signal(Debug.WARNING, null,"Attempt to restart server #"+server_local_ID+"...");
+                         Debug.signal(Debug.WARNING, null,"Attempt to restart server #"+serverLocalID+"...");
                          server = getServerSocket();
                          continue;
                      }
@@ -326,15 +327,15 @@ public class NetServer extends Thread
             // Ok, a client has arrived.
                try{                           
                   // We creates a personality object to take care of him...
-                     personality = getNewDefaultPersonality( client_socket );
+                     personality = getNewPersonality( client_socket );
 
                   // we inspect our server state... can we really accept him ?
-                     if( NetThread.getOpenedSocketNumber( server_local_ID ) >= max_opened_sockets ) {
+                     if( NetThread.getOpenedSocketNumber( serverLocalID ) >= maxOpenedSockets ) {
                        // we have reached the server's connections limit
                           refuseClient( personality, "Server has reached its maximum number of connections for the moment." );
                           Debug.signal(Debug.NOTICE,this,"Server has reached its max number of connections");
                      }
-                     else if(server_lock) {
+                     else if(serverLock) {
                        // we don't accept new connections for the moment
                           refuseClient( personality, "Server does not accept connections for the moment." );
                           Debug.signal(Debug.NOTICE,this,"Server Locked - just refused incoming connection");
@@ -357,7 +358,7 @@ public class NetServer extends Thread
        // We close the server connection
           try{
                 server.close();
-                Debug.signal( Debug.NOTICE, this, "Server Stopped ("+server_local_ID+")." );
+                Debug.signal( Debug.NOTICE, this, "Server Stopped ("+serverLocalID+")." );
           }
           catch(IOException e) {
                 Debug.signal( Debug.WARNING, this, e );
@@ -371,7 +372,7 @@ public class NetServer extends Thread
     *  @param lock server lock new value
     */
       public void setServerLock( boolean lock ) {
-          server_lock = lock;
+          serverLock = lock;
       }
   
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -379,7 +380,7 @@ public class NetServer extends Thread
    /** To stop this server
     */
       synchronized public void stopServer(){
-           stop_server = true;
+           stopServer = true;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -390,17 +391,17 @@ public class NetServer extends Thread
     */
 
       synchronized private boolean shouldStopServer(){
-           return stop_server;
+           return stopServer;
       }  
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To change the maximum number of opened sockets.
     *
-    *  @param max_opened_sockets maximum number of opened sockets
+    *  @param maxOpenedSockets maximum number of opened sockets
     */
-      protected void setMaximumOpenedSockets( int max_opened_sockets ) {
-          this.max_opened_sockets = max_opened_sockets;
+      protected void setMaximumOpenedSockets( int maxOpenedSockets ) {
+          this.maxOpenedSockets = maxOpenedSockets;
       }
   
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.libs.net.NetMessageRegistry;
 
 
 /** 
@@ -47,7 +46,7 @@ public class ServerErrorMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
      public ServerErrorMessage() {
-          super( NetMessageRegistry.SYSTEM_CATEGORY, SystemMessageCategory.SERVER_ERROR_MSG );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -57,7 +56,7 @@ public class ServerErrorMessage extends NetMessage
    * @param error_message a string describing the error.
    */
      public ServerErrorMessage( String error_message ) {
-         this();
+         super();
          this.error_message = error_message;
      }
 
@@ -70,7 +69,7 @@ public class ServerErrorMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void encode( DataOutputStream ostream ) throws IOException {
-         writeString( error_message, ostream );
+         ostream.writeUTF( error_message );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -82,7 +81,7 @@ public class ServerErrorMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void decode( DataInputStream istream ) throws IOException {
-          error_message = readString( istream );
+          error_message = istream.readUTF();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

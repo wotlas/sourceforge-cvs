@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 import wotlas.common.universe.*;
 
 /** 
@@ -40,8 +39,7 @@ public class EnteringRoomMessage extends LocationChangeMessage
   /** Constructor. Just initializes the message category and type.
    */
      public EnteringRoomMessage() {
-          super( MessageRegistry.MOVEMENT_CATEGORY,
-                 MovementMessageCategory.ENTERING_ROOM_MSG );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -49,7 +47,7 @@ public class EnteringRoomMessage extends LocationChangeMessage
   /** Constructor with Player's primaryKey & location.
    */
      public EnteringRoomMessage(String primaryKey, WotlasLocation location, int x, int y, float orientation) {
-          this();
+          super();
           this.primaryKey = primaryKey;
           this.location = location;
           this.x = x;

@@ -49,13 +49,13 @@ public class ClientRegisterMsgBehaviour extends ClientRegisterMessage implements
 
   /** Associated code to the ClientRegisterMessage...
    *
-   * @param context an object giving specific access to other objects needed to process
+   * @param sessionContext an object giving specific access to other objects needed to process
    *        this message.
    */
-     public void doBehaviour( Object context ) {
+     public void doBehaviour( Object sessionContext ) {
 
-        // the context is here an entry on this server ( server + personality )
-           NetServerEntry entry = (NetServerEntry) context;
+        // the sessionContext is here an entry on this server ( server + personality )
+           NetServerEntry entry = (NetServerEntry) sessionContext;
 
      	// this message is the first one sent by a client 
      	// when he establishes a new connection. Arrived on the server

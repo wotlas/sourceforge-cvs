@@ -49,11 +49,11 @@ public class YourPlayerDataMsgBehaviour extends YourPlayerDataMessage implements
 
   /** Associated code to this Message...
    *
-   * @param context an object giving specific access to other objects needed to process
+   * @param sessionContext an object giving specific access to other objects needed to process
    *        this message.
    */
-  public void doBehaviour( Object context ) {
-    DataManager dataManager = (DataManager) context;
+  public void doBehaviour( Object sessionContext ) {
+    DataManager dataManager = (DataManager) sessionContext;
     dataManager.setCurrentPlayer( player );
 
     synchronized(dataManager.getStartGameLock()) {

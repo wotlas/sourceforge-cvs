@@ -26,7 +26,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 
 /** 
  * To add a player to a chat room (Message sent by Client or Server)
@@ -56,8 +55,7 @@ public class AddPlayerToChatRoomMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
   public AddPlayerToChatRoomMessage() {
-    super( MessageRegistry.CHAT_CATEGORY,
-           ChatMessageCategory.ADD_PLAYER_TO_CHATROOM_MSG );        
+    super();        
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -65,7 +63,7 @@ public class AddPlayerToChatRoomMessage extends NetMessage
   /** Constructor with parameters.
    */
   public AddPlayerToChatRoomMessage(String senderPrimaryKey, String senderFullName, String chatRoomPrimaryKey ) {
-    this();
+    super();
     this.senderPrimaryKey = senderPrimaryKey;
     this.chatRoomPrimaryKey = chatRoomPrimaryKey;
     this.senderFullName = senderFullName;
@@ -80,9 +78,9 @@ public class AddPlayerToChatRoomMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
   public void encode( DataOutputStream ostream ) throws IOException {
-    writeString( senderPrimaryKey, ostream );
-    writeString( senderFullName, ostream );
-    writeString( chatRoomPrimaryKey, ostream );
+    ostream.writeUTF( senderPrimaryKey );
+    ostream.writeUTF( senderFullName );
+    ostream.writeUTF( chatRoomPrimaryKey );
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -94,9 +92,9 @@ public class AddPlayerToChatRoomMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
   public void decode( DataInputStream istream ) throws IOException {
-    senderPrimaryKey = readString( istream );
-    senderFullName = readString( istream );
-    chatRoomPrimaryKey = readString( istream );
+    senderPrimaryKey = istream.readUTF();
+    senderFullName = istream.readUTF();
+    chatRoomPrimaryKey = istream.readUTF();
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.libs.net.NetMessageRegistry;
 
 
 /** 
@@ -42,7 +41,7 @@ public class ServerWelcomeMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
      public ServerWelcomeMessage() {
-          super( NetMessageRegistry.SYSTEM_CATEGORY, SystemMessageCategory.SERVER_WELCOME_MSG );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

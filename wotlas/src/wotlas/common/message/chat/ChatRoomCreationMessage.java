@@ -26,7 +26,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 
 /** 
  * To notice the server that a ChatRoom should be created now. (Message Sent by Client)
@@ -56,14 +55,13 @@ public class ChatRoomCreationMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
   public ChatRoomCreationMessage() {
-    super( MessageRegistry.CHAT_CATEGORY,
-           ChatMessageCategory.CHATROOM_CREATION_MSG );        
+    super();
   }
   
   /** Constructor with parameters.
    */
   public ChatRoomCreationMessage(String name, String creatorPrimaryKey, WotlasLocation location) {
-    this();
+    super();
     this.name = name;
     this.creatorPrimaryKey = creatorPrimaryKey;
     this.location = location;
@@ -78,9 +76,9 @@ public class ChatRoomCreationMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
   public void encode( DataOutputStream ostream ) throws IOException {
-    writeString( name, ostream );
+    ostream.writeUTF( name );
     
-    writeString( creatorPrimaryKey, ostream);
+    ostream.writeUTF( creatorPrimaryKey );
     
     ostream.writeInt( location.getWorldMapID() );
     ostream.writeInt( location.getTownMapID() );
@@ -99,9 +97,9 @@ public class ChatRoomCreationMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
   public void decode( DataInputStream istream ) throws IOException {
-    name = readString( istream );
+    name = istream.readUTF();
     
-    creatorPrimaryKey = readString( istream );
+    creatorPrimaryKey = istream.readUTF();
     
     WotlasLocation wotLoc = new WotlasLocation();
     wotLoc.setWorldMapID( istream.readInt() );

@@ -28,8 +28,8 @@ package wotlas.libs.net;
  * @see wotlas.libs.net.NetPersonality
  */
 
-public interface NetPingListener
-{
+public interface NetPingListener {
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To tell that the network connection is no longer available

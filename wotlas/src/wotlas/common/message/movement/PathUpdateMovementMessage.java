@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.awt.Point;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 import wotlas.common.Player;
 import wotlas.common.character.WotCharacter;
 import wotlas.common.universe.WotlasLocation;
@@ -78,8 +77,7 @@ public class PathUpdateMovementMessage extends MovementUpdateMessage
   /** Constructor. Just initializes the message category and type.
    */
      public PathUpdateMovementMessage() {
-          super( MessageRegistry.MOVEMENT_CATEGORY,
-                 MovementMessageCategory.PATH_MOVEMENT_UPDATE_MSG );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -93,7 +91,7 @@ public class PathUpdateMovementMessage extends MovementUpdateMessage
    *        for more details.
    */
      public PathUpdateMovementMessage( PathFollower pFollower, String primaryKey, byte syncID ) {
-         this();
+         super();
          this.primaryKey = primaryKey;
          this.syncID = syncID;
 
@@ -139,7 +137,7 @@ public class PathUpdateMovementMessage extends MovementUpdateMessage
 
          if(primaryKey!=null) {
             ostream.writeBoolean( true );
-            writeString( primaryKey, ostream );
+            ostream.writeUTF( primaryKey );
          }
          else
             ostream.writeBoolean( false );
@@ -173,7 +171,7 @@ public class PathUpdateMovementMessage extends MovementUpdateMessage
          }
 
          if( istream.readBoolean() )
-             primaryKey = readString( istream ); 
+             primaryKey = istream.readUTF(); 
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

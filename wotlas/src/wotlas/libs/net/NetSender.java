@@ -36,7 +36,6 @@ import wotlas.utils.Debug;
  *   (3) wait for a user signal to send the message aggregation <p>
  *
  * @author Aldiss
- * @see wotlas.libs.net.NetMessageFactory
  * @see wotlas.libs.net.NetThread
  */
 
@@ -64,24 +63,24 @@ public class NetSender extends NetThread
 
     /** Communication stream to send data
      */
-        private DataOutputStream out_stream;
+        private DataOutputStream outStream;
 
     /** NetSender type ( SEND_IMMEDIATELY, AGGREGATE_MESSAGES or USER_AGGREGATION )
      */
-        private byte sender_type;
+        private byte senderType;
 
     /** Aggregation timeout (ms)
      */
-        private short aggregation_timeout;
+        private short aggregationTimeout;
 
     /** Aggregation maximum message limit
      */
-        private short aggregation_msg_limit;
+        private short aggregationMsgLimit;
 
     /** Stop aggregation for this time. (useful only for the AGGREGATE_MESSAGES
      *  type and the pleaseSendAllMessagesNow() call )
      */
-        private boolean stop_aggregation;
+        private boolean stopAggregation;
 
     /** To signal that we a thread is locked on pleaseSendAllMessagesNow()
      */
@@ -91,11 +90,11 @@ public class NetSender extends NetThread
 
     /** NetMessages to send.
      */
-        private NetMessage message_list[];
+        private NetMessage messageList[];
 
     /** Current number of messages to send.
      */
-        private int nb_messages;
+        private int nbMessages;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -107,29 +106,29 @@ public class NetSender extends NetThread
      *<p>
      * @param socket a previously created & connected socket.
      * @param personality a NetPersonality linked to the specified socket.
-     * @param sender_type NetSender type ( SEND_IMMEDIATELY, AGGREGATE_MESSAGES or USER_AGGREGATION )
-     * @param buffer_size buffer size (in bytes) for the buffered output stream.
+     * @param senderType NetSender type ( SEND_IMMEDIATELY, AGGREGATE_MESSAGES or USER_AGGREGATION )
+     * @param bufferSize buffer size (in bytes) for the buffered output stream.
      * @exception IOException if the socket wasn't already connected.
      */
       public NetSender( Socket socket, NetPersonality personality,
-                        byte sender_type, int buffer_size ) throws IOException
+                        byte senderType, int bufferSize ) throws IOException
       {
           super(socket);
           this.personality = personality;
 
-          if(sender_type<1 || 3<sender_type)
-              this.sender_type = SEND_IMMEDIATELY;
+          if( senderType<1 || 3<senderType )
+              this.senderType = SEND_IMMEDIATELY;
            else
-              this.sender_type = sender_type;
+              this.senderType = senderType;
 
        // default values
-          aggregation_timeout   = 20;  // 20 ms
-          aggregation_msg_limit = 10;  // 10 messages max per aggregation
-          stop_aggregation = false;
+          aggregationTimeout   = 20;     // 20 ms
+          aggregationMsgLimit  = 10;     // 10 messages max per aggregation
+          stopAggregation      = false; 
 
        // other inits
-          message_list = new NetMessage[aggregation_msg_limit];
-          out_stream = new DataOutputStream( getBufferedOutputStream( buffer_size ) );
+          messageList = new NetMessage[aggregationMsgLimit];
+          outStream = new DataOutputStream( getBufferedOutputStream( bufferSize ) );
 
           start();
       }
@@ -141,7 +140,7 @@ public class NetSender extends NetThread
    */
     public void run()
     {
-     	if( sender_type == USER_AGGREGATION )  // we have nothing to do here
+     	if( senderType==USER_AGGREGATION )  // we have nothing to do here
      	  return;
 
         try
@@ -151,37 +150,33 @@ public class NetSender extends NetThread
                synchronized( this )
                {
                   // we wait for some action...
-                     while( nb_messages==0 && !shouldStopThread() )
+                     while( nbMessages==0 && !shouldStopThread() )
                          try{
-                               wait();
-                         }
-                         catch( InterruptedException e )
-                         {}
+                           wait();
+                         } catch( InterruptedException e ) {}
 
                   // ok, we have at least one message... what do we do ?
-                     if( sender_type==AGGREGATE_MESSAGES )
+                     if( senderType==AGGREGATE_MESSAGES )
                      {
-                       if( !stop_aggregation )
+                       if( !stopAggregation )
                        {
                         // aggregation start
                            long t0 = System.currentTimeMillis();
-                           long tr = aggregation_timeout;
+                           long tr = aggregationTimeout;
 
-                            while( nb_messages<aggregation_msg_limit && !shouldStopThread())
+                            while( nbMessages<aggregationMsgLimit && !shouldStopThread())
                             {
                                try{
                                         wait( tr );
-                               }
-                               catch( InterruptedException e )
-                               {}
+                               } catch( InterruptedException e ) {}
 
-                               tr = aggregation_timeout-System.currentTimeMillis()-t0;
+                               tr = aggregationTimeout-System.currentTimeMillis()-t0;
 
                                if(tr<3) break; // aggregation end
                             }
                        }
                        else
-                           stop_aggregation = false;
+                           stopAggregation = false;
                     }
 
                  // we send all the messages
@@ -203,7 +198,7 @@ public class NetSender extends NetThread
      // we ask the NetPersonality to perform some cleanup
      // and signal that the connection was closed ( connectionListener )
         personality.closeConnection();
-        out_stream=null;
+        outStream=null;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -214,17 +209,16 @@ public class NetSender extends NetThread
    *
    * @param message message to queue.
    */
-     synchronized public void queueMessage( NetMessage message )
-     {
-          if( nb_messages==aggregation_msg_limit ) {
+     synchronized public void queueMessage( NetMessage message ) {
+          if( nbMessages==aggregationMsgLimit ) {
                 // the user has not tunned his aggregation limit very well...
-                setAggregationMessageLimit( (short) (aggregation_msg_limit+5) );
+                setAggregationMessageLimit( (short) (aggregationMsgLimit+5) );
           }
 
-          message_list[nb_messages] = message;
-          nb_messages++;
+          messageList[nbMessages] = message;
+          nbMessages++;
 
-          if( sender_type!=USER_AGGREGATION )
+          if( senderType!=USER_AGGREGATION )
                notify();
      }
 
@@ -237,7 +231,7 @@ public class NetSender extends NetThread
    */
      synchronized public void pleaseSendAllMessagesNow()
      {
-            if( sender_type == USER_AGGREGATION )
+            if( senderType==USER_AGGREGATION )
             {
                 try{
                     sendQueuedMessages();
@@ -255,21 +249,21 @@ public class NetSender extends NetThread
                 // we ask the NetPersonality to perform some cleanup
                 // and signal that the connection was closed ( connectionListener )
                    personality.closeConnection();
-                   out_stream=null;
+                   outStream=null;
                 }
             }
-            else if( sender_type == AGGREGATE_MESSAGES ) {
-                stop_aggregation = true;
+            else if( senderType==AGGREGATE_MESSAGES ) {
+                stopAggregation = true;
                 notify();
             }
 
         // we wait until the last message is sent. The sendQueuedMessages() will notify us.
-        // (max 10s to avoid a deadlock if an Exception has been thrown in sendQueuedMessages)
-           if(nb_messages!=0) {
+        // (max 15s to avoid a deadlock if an Exception has been thrown in sendQueuedMessages)
+           if(nbMessages!=0) {
               locked = true;
  
               try{
-                   wait( 10000 );
+                   wait( 15000 );
               }
               catch( InterruptedException e )
               {}
@@ -282,22 +276,20 @@ public class NetSender extends NetThread
    * 
    * @exception IOException if something goes wrong while sending this message
    */
-     synchronized private void sendQueuedMessages() throws IOException
-     {
+     synchronized private void sendQueuedMessages() throws IOException {
         if(shouldStopThread())
             return;
 
-        for( short i=0; i<nb_messages; i++) {
-     	    if(message_list[i]==null) continue;
+        for( short i=0; i<nbMessages; i++) {
+     	    if(messageList[i]==null) continue;
 
-            out_stream.writeByte( message_list[i].getMessageCategory() );
-            out_stream.writeByte( message_list[i].getMessageType() );
-     	    message_list[i].encode( out_stream );
-     	    message_list[i] = null;
+            outStream.writeUTF( messageList[i].getMessageClassName() );
+     	    messageList[i].encode( outStream );
+     	    messageList[i] = null;
      	}
 
-        out_stream.flush();
-     	nb_messages = 0;
+        outStream.flush();
+     	nbMessages = 0;
 
       // A notifyAll if there are threads locked on pleaseSendAllMessagesNow()
          if(locked) {
@@ -317,31 +309,30 @@ public class NetSender extends NetThread
    *  Note also that this method is synchronised and takes a little time...
    *  Use it only to initialize this NetSender.
    *
-   * @param new_msg_limit the new value for the aggregation_msg_limit
+   * @param newMsgLimit the new value for the aggregationMsgLimit
    */
-     synchronized public void setAggregationMessageLimit( short new_msg_limit ) {
-        if( new_msg_limit<nb_messages ) {
-            Debug.signal( Debug.NOTICE, this, "setAggregationMessageLimit refused: "+nb_messages );
+     synchronized public void setAggregationMessageLimit( short newMsgLimit ) {
+        if( newMsgLimit<nbMessages ) {
+            Debug.signal( Debug.NOTICE, this, "setAggregationMessageLimit refused: "+nbMessages );
             return;
         }
 
-        NetMessage list_tmp[] = new NetMessage[new_msg_limit];
-        System.arraycopy( message_list, 0, list_tmp, 0, nb_messages );
+        NetMessage listTmp[] = new NetMessage[newMsgLimit];
+        System.arraycopy( messageList, 0, listTmp, 0, nbMessages );
 
-        message_list = list_tmp;
-        aggregation_msg_limit=new_msg_limit;
+        messageList = listTmp;
+        aggregationMsgLimit=newMsgLimit;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To change the aggregation timeout.
-   *
    *  IMPORTANT: this change takes its effects only after the current aggregation.
    *
    * @param timeout new aggregation timeout
    */
      synchronized public void setAggregationTimeout( short timeout ) {
-         aggregation_timeout = timeout;
+         aggregationTimeout = timeout;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -351,7 +342,7 @@ public class NetSender extends NetThread
    * @return aggregation timeout
    */
      public short getAggregationTimeout() {
-         return aggregation_timeout;
+         return aggregationTimeout;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -361,7 +352,7 @@ public class NetSender extends NetThread
    * @return aggregation message limit
    */
      public short getAggregationMessageLimit() {
-         return aggregation_msg_limit;
+         return aggregationMsgLimit;
      }
 
  /*------------------------------------------------------------------------------------*/

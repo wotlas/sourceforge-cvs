@@ -47,13 +47,13 @@ public class WotCharacterClassMsgBehaviour extends WotCharacterClassMessage impl
 
   /** Associated code to this Message...
    *
-   * @param context an object giving specific access to other objects needed to process
+   * @param sessionContext an object giving specific access to other objects needed to process
    *        this message.
    */
-     public void doBehaviour( Object context ) {
+     public void doBehaviour( Object sessionContext ) {
 
-        // the context is here an AccountBuilder
-           AccountBuilder builder = (AccountBuilder) context;
+        // the sessionContext is here an AccountBuilder
+           AccountBuilder builder = (AccountBuilder) sessionContext;
            builder.setWotCharacterClass( className, wotCharacterStatus );
      }
 

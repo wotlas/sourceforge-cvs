@@ -22,6 +22,7 @@ package wotlas.libs.net;
 
 /** 
  * A NetMessageBehaviour contains the code associated to a NetMessage.
+ *
  * A MessageBehaviour must extend the class of its associated NetMessage
  * and implement the NetMessageBehaviour interface.
  *<br>
@@ -33,32 +34,33 @@ package wotlas.libs.net;
  *        super();
  *      }
  *
- *      public void doBehaviour( Object context ) {
- *           System.out.println("My password:"+ pswd );	
+ *      public void doBehaviour( Object sessionContext ) {
+ *           System.out.println("My secret ID: "+ mySecretID );
  *	}
  *    }
- *</pre>
+ *</pre><br>
  *
  * The empty constructor is mandatory and must call the empty superclass constructor.
+ *
+ * IMPORTANT: any runtime exception occuring in a NetMessageBehaviour is caught by the
+ * NetReceiver and closes immediately the network connection.
  * 
  * @author Aldiss
- * @see wotlas.libs.net.NetReceiver
  * @see wotlas.libs.net.NetMessage
  */
 
-public interface NetMessageBehaviour
-{
+public interface NetMessageBehaviour {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Where you put the code associated to your NetMessage.
-   *  The context object passed as an argument by the NetReceiver depends on
-   *  your redefinition of NetServer or NetClient (method handleNewConnection).
+   *  The sessionContext object given as an argument is the sessionObject you give to the
+   *  NetServer or NetClient when you start it (see their constructor).
    *
-   * @param context an object giving specific access to other objects needed to process
-   *        this message.
+   * @param sessionContext an object giving specific access to other objects needed
+   *        to process this message.
    */
-     public void doBehaviour( Object context );
+     public void doBehaviour( Object sessionContext );
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

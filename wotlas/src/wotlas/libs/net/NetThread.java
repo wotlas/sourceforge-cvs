@@ -69,7 +69,7 @@ abstract public class NetThread extends Thread
 
          this.socket = socket;
          stopThread = false;
-         localID = -1;       // no owner
+         localID = -1;       // no owner for now, see attachTo() method
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

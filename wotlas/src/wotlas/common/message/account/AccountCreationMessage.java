@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 
 
 /** 
@@ -40,7 +39,7 @@ public class AccountCreationMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
      public AccountCreationMessage() {
-          super( MessageRegistry.ACCOUNT_CATEGORY, AccountMessageCategory.ACCOUNT_CREATION_MSG );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -24,7 +24,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 
 
 /** 
@@ -40,8 +39,7 @@ public class RevertToPreviousStateMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
      public RevertToPreviousStateMessage() {
-          super( MessageRegistry.ACCOUNT_CATEGORY,
-                 AccountMessageCategory.REVERT_TO_PREVIOUS_STATE_MSG );
+          super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

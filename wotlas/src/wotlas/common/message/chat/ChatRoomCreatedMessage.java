@@ -26,7 +26,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.message.MessageRegistry;
 
 /** 
  * To notice the client that a ChatRoom has be created now. (Message Sent by Server)
@@ -56,14 +55,13 @@ public class ChatRoomCreatedMessage extends NetMessage
   /** Constructor. Just initializes the message category and type.
    */
   public ChatRoomCreatedMessage() {
-    super( MessageRegistry.CHAT_CATEGORY,
-           ChatMessageCategory.CHATROOM_CREATED_MSG );        
+    super();        
   }
   
   /** Constructor with parameters.
    */
   public ChatRoomCreatedMessage(String primaryKey, String name, String creatorPrimaryKey) {
-    this();
+    super();
     this.primaryKey = primaryKey;
     this.name = name;
     this.creatorPrimaryKey = creatorPrimaryKey;
@@ -78,9 +76,9 @@ public class ChatRoomCreatedMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
   public void encode( DataOutputStream ostream ) throws IOException {
-    writeString( primaryKey, ostream );
-    writeString( name, ostream );
-    writeString( creatorPrimaryKey, ostream);
+    ostream.writeUTF( primaryKey );
+    ostream.writeUTF( name );
+    ostream.writeUTF( creatorPrimaryKey );
     
   }  
     
@@ -93,9 +91,9 @@ public class ChatRoomCreatedMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
   public void decode( DataInputStream istream ) throws IOException {
-    primaryKey = readString( istream );
-    name = readString( istream );
-    creatorPrimaryKey = readString( istream );
+    primaryKey = istream.readUTF();
+    name = istream.readUTF();
+    creatorPrimaryKey = istream.readUTF();
     
   }
 

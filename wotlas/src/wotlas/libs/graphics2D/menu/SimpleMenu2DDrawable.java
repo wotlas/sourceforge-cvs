@@ -145,6 +145,10 @@ public class SimpleMenu2DDrawable extends Drawable {
     */
      private long timeStamp;
 
+   /** Next left-upper Point of the menu location
+    */
+     private Point pNext;
+
  /*------------------------------------------------------------------------------------*/
 
    /** To get the default font name.
@@ -177,6 +181,7 @@ public class SimpleMenu2DDrawable extends Drawable {
         r.y = 0;
         recompute = true;
         size = 10;
+        pNext = new Point(-1,-1);
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -435,6 +440,15 @@ public class SimpleMenu2DDrawable extends Drawable {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** To set the next position of the menu (upper-left cordinates).
+    */
+     public synchronized void setNextPosition( int x, int y ) {
+          pNext.x = x;
+          pNext.y = y;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** Tick method called by the GraphicsDirector. This tick method has a returned value
    *  that indicates if the drawable is still living or must be deleted. Some Drawables
    *  always return "still living", it is then the task of the program that uses
@@ -442,13 +456,19 @@ public class SimpleMenu2DDrawable extends Drawable {
    *
    *  @return true if the drawable is "live", false if it must be deleted.
    */
-     public boolean tick() {
+     public synchronized boolean tick() {
         long now = System.currentTimeMillis();
 
         if( now-timeStamp>DISPLAY_TIMEOUT && ( 
             menu2D.getSelectedItemIndex()==-1 || menu2D.getSelectedItemIndex()>=menu2D.getItems().length ) )
             menu2D.hide();
 
+        if(pNext.x!=-1 && pNext.y!=-1) {
+           r.x = pNext.x;
+           r.y = pNext.y;
+           pNext.x=-1;
+           pNext.y=-1;
+        }
         return true;
      }
 

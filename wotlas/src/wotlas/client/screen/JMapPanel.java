@@ -156,7 +156,7 @@ public class JMapPanel extends JPanel implements MouseListener, MouseMotionListe
           if (DataManager.SHOW_DEBUG)
              System.out.println("\tright clic");
 
-          if(!mouseDragged)
+          if( Math.abs(e.getX()-x)<5 && Math.abs(e.getY()-y)<5 )
              dataManager.onRightClicJMapPanel(e);
        }
        else {

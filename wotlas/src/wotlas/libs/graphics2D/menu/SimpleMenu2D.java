@@ -266,11 +266,11 @@ public class SimpleMenu2D implements Menu2D {
    * @param p screen point
    */
      public void show( Point p ) {
-         menuDrawable.getRectangle().x = p.x;
-         menuDrawable.getRectangle().y = p.y;
+         menuDrawable.setNextPosition( p.x, p.y );
 
          if(!isVisible && menuManager!=null) {
             menuDrawable.animateMenu();
+            menuDrawable.tick();
             menuManager.getGraphicsDirector().addDrawable( menuDrawable );
             isVisible=true;
          }
@@ -552,8 +552,7 @@ public class SimpleMenu2D implements Menu2D {
             return true;
          }
 
-         menuDrawable.getRectangle().x = dragFromX + dx ;
-         menuDrawable.getRectangle().y = dragFromY + dy ;
+         menuDrawable.setNextPosition( dragFromX + dx, dragFromY + dy );
          return true;
     }
 

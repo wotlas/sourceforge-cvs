@@ -20,6 +20,7 @@
 package wotlas.libs.log;
 
 import wotlas.utils.SwingTools;
+import wotlas.client.gui.JCroppedWindow;
 import wotlas.libs.graphics2D.ImageLibrary;
 
 import java.awt.*;
@@ -44,10 +45,11 @@ public class JLogStream extends LogStream
 
  /*------------------------------------------------------------------------------------*/
 
-   /** Our JDialog
+   /** Our CroppedWindow
     */
-     private JDialog dialog;
-
+     // private JDialog dialog;
+     private JCroppedWindow dialog;
+     
    /** Our JTextArea
     */
      private JTextArea logArea;
@@ -73,7 +75,8 @@ public class JLogStream extends LogStream
      throws FileNotFoundException {
           super( logFileName, false, 180*1000 );
 
-          dialog = new JDialog( owner, false );
+         // dialog = new JDialog( owner, false );
+            dialog = new JCroppedWindow( owner, "Wotlas Log Window" );
 
        // 1 - image panel
           image = ImageLibrary.loadImage( imageFileName );

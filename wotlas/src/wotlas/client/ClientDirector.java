@@ -80,7 +80,7 @@ class ClientDirector
     System.out.println("Log started");
     // STEP 0 - Start a JLogStream to display our Debug messages
     try {
-      Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(), CLIENT_LOG, "title.jpg" ) );
+      Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(), CLIENT_LOG, "../base/gui/log-title.jpg" ) );
     } catch( java.io.FileNotFoundException e ) {
       e.printStackTrace();
       return;

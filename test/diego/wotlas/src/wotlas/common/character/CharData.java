@@ -66,6 +66,7 @@ public abstract class CharData implements BackupReady {
     /* index for array of data [x][2] */
     final static public int IDX_MAX     = 0;
     final static public int IDX_ACTUAL  = 1;
+    final static public int IDX_SIZE    = 2;
 
     /* list of all the classes */
     final static public short CLASSES_WOT_AES_SEDAI   = 1;
@@ -77,10 +78,14 @@ public abstract class CharData implements BackupReady {
     final static public short CLASSES_WOT_AIEL_WARRIOR= 7;
     final static public short CLASSES_RL_WARRIOR      = 8;
     final static public short CLASSES_RL_WIZARD       = 9;
+    final static public short CLASSES_RL_HUMAN        = 10;
+    final static public short CLASSES_RL_DWARF        = 11;
+    final static public short CLASSES_LAST_CLASS      = 12;
     
     final static public String[] CLASSES_NAMES = {
         "NULL","Wot:Aes Sedai","Wot:Warder","Wot:Children of the Light","Wot:Ashaman"
-        ,"Wot:Dark One","Wot:Wolf Brother","Wot:Aiel Warrior","Rl:Warrior","Rl:Wizard" };
+        ,"Wot:Dark One","Wot:Wolf Brother","Wot:Aiel Warrior"
+        ,"Rl:Warrior","Rl:Wizard","Rl:Human","Rl:Dwarf"};
     
     /* spells and items, will point to this constant to maniupulate data flags*/
     final static public int FLAG_INVISIBLE = 0;
@@ -136,62 +141,86 @@ public abstract class CharData implements BackupReady {
     ,"Age","Weight","Height","Ac","Thac0","Hit","Dam","Sav. Mind","Sav. Reflex"
     ,"Sav. Const","Hunger","Thirsty"};
     
-    public int[] maskCharAttributes;
+    // public int[] maskCharAttributes;
     /**
     *   list of attribues of a playe/mob with [2] data
     *   [0]=max [1]=actual
     */
-    public short[][] charAttributes;
+    private short[][] charAttributes;
 
-    public byte[][] levels;
-    public short[] classes;
-    public long[] gold;
-    public long[] exp;
+    /** this hold the levels reached by a character :
+     * levels[firstindex][secondindex] 
+     * firstindex : 2 value, IDX_ACTUAL, ID_MAX  they arent the same if someone drains level from you
+     * secondindex : 1 value for all the wot character, 'cause they have only a class
+     *             up to 3 value for all the rougelike characters, that can have up to 3 classes
+     */
+    private byte[][] levels;
+    
+    /** hold the gold of a player
+     *
+     */
+    private long gold;
+    
+    /**
+     * hold the exp of a player : IDX_MAX,IDX_ACTUAL points to actual exp or maximum exp
+     * the actual != max if someone drains exp from you
+     */
+    private long[] exp;
 
-    public int[] maskCharClasses;
-    public int[] maskCharRaces;
+    /** this mask is done to hold information about classes and races
+     * this player is.
+     * any bit set, means the players is of that class/race
+     *
+     */
+    private int[] maskCharClasses;
 
-    public int[] maskCharSkills;
+    /** this mask hold information about what skill a player CAN have
+     * this means the system should check this mask BEFORE add a skill
+     * it should be used by a TRAIN function before add the skill
+     *
+     */
+    private int[] maskCharSkills;
     /**
     *   list of skills/knowledge with an int value:
     *   u have it with value of x>0 or u have not it, and it's 0.
     */
-    public byte[] charSkills;
+    private byte[] charSkills;
 
-    public int[] maskCharKnownledge;
+    /** this mask hold information about what KNOWLEDGE a player CAN have
+     * this means the system should check this mask BEFORE add a KNOWLEDGE
+     * it should be used by a TRAIN function before add the KNOWLEDGE
+     *
+     */
+    private int[] maskCharKnownledge;
     /**
     *   list of skills/knowledge with a boolean value:
     *   u have it or u have not it.
     */
-    public boolean[] charKnownledge;
+    private boolean[] charKnownledge;
 
-    public int[] maskCharFlags;
     /**
     *    it's a list of status flags, like <invisible?>:
     *    if the bit is ste, the char is invisible
     *    managed like a maskXXXX
     */
-    public int[] charFlags;
-    //public boolean[] charFlags;
+    private int[] maskCharFlags;
 
-    protected void InitCharData(){
-        maskCharAttributes = new int[2];
-        charAttributes = new short[ATTR_LAST_ATTR][2];
-        levels = new byte[1][2];
-        classes = new short[1];
-        gold = new long[2];
-        exp = new long[2];
-        maskCharSkills = new int[2];
-        charSkills = new byte[SKILL_LAST_SKILL];
-        maskCharKnownledge = new int[2];
-        charKnownledge = new boolean[KNOW_LAST_KNOWN];
-        maskCharFlags = new int[2];
-        charFlags = new int[2];
-//        charFlags = new boolean[FLAG_LAST_FLAG];
-//        for(int i=0; i<charFlags.length; i++)
-//            charFlags[i] = false;
-    }
+    /* ------------------ VARIABLE FINISHED ---------------------------- */
     
+    protected void InitCharData(){
+        maskCharClasses = new int[1];
+        // maskCharAttributes = new int[2];
+        charAttributes = new short[IDX_SIZE][ATTR_LAST_ATTR];
+        levels = new byte[IDX_SIZE][1];
+        gold = 0;
+        exp = new long[IDX_SIZE];
+        maskCharSkills = new int[IDX_SIZE];
+        charSkills = new byte[SKILL_LAST_SKILL];
+        maskCharKnownledge = new int[IDX_SIZE];
+        charKnownledge = new boolean[KNOW_LAST_KNOWN];
+        maskCharFlags = new int[IDX_SIZE];
+    }
+
     /**
     *   hold object in the backpack every mob/char have
     */
@@ -219,19 +248,16 @@ public abstract class CharData implements BackupReady {
     throws java.io.IOException {
         objectOutput.writeInt( ExternalizeGetVersion() );
         objectOutput.writeObject( maskCharClasses );
-        objectOutput.writeObject( maskCharRaces );
-        objectOutput.writeObject( maskCharAttributes );
+        // objectOutput.writeObject( maskCharAttributes );
         objectOutput.writeObject( charAttributes );
         objectOutput.writeObject( levels );
-        objectOutput.writeObject( classes );
-        objectOutput.writeObject( gold );
+        objectOutput.writeLong( gold );
         objectOutput.writeObject( exp );
         objectOutput.writeObject( maskCharSkills );
         objectOutput.writeObject( charSkills );
         objectOutput.writeObject( maskCharKnownledge );
         objectOutput.writeObject( charKnownledge );
         objectOutput.writeObject( maskCharFlags );
-        objectOutput.writeObject( charFlags );
     }
     
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -243,20 +269,16 @@ public abstract class CharData implements BackupReady {
         int IdTmp = objectInput.readInt();
         if( IdTmp == ExternalizeGetVersion() ){
             maskCharClasses = ( int[] ) objectInput.readObject();
-            maskCharRaces = ( int[] ) objectInput.readObject();
-            maskCharAttributes = ( int[] ) objectInput.readObject();
+            // maskCharAttributes = ( int[] ) objectInput.readObject();
             charAttributes = ( short[][] ) objectInput.readObject();
             levels = ( byte[][] ) objectInput.readObject();
-            classes = ( short[] ) objectInput.readObject();
-            gold = ( long[] ) objectInput.readObject();
+            gold = objectInput.readLong();
             exp = ( long[] ) objectInput.readObject();
             maskCharSkills = (  int[]) objectInput.readObject();
             charSkills = ( byte[] ) objectInput.readObject();
             maskCharKnownledge = ( int[] ) objectInput.readObject();
             charKnownledge = ( boolean[] ) objectInput.readObject();
             maskCharFlags = ( int[] ) objectInput.readObject();
-            // charFlags = ( boolean[] ) objectInput.readObject();
-            charFlags = ( int[] ) objectInput.readObject();
         } else {
             // to do.... when new version
         }
@@ -275,48 +297,212 @@ public abstract class CharData implements BackupReady {
     public void writeObject(java.io.ObjectOutputStream objectOutput)
     throws java.io.IOException {
         objectOutput.writeInt( ExternalizeGetVersion() );
-        objectOutput.writeObject( maskCharAttributes );
+        objectOutput.writeObject( maskCharClasses );
+        // objectOutput.writeObject( maskCharAttributes );
         objectOutput.writeObject( charAttributes );
         objectOutput.writeObject( levels );
-        objectOutput.writeObject( classes );
-        objectOutput.writeObject( gold );
+        objectOutput.writeLong( gold );
         objectOutput.writeObject( exp );
         objectOutput.writeObject( maskCharSkills );
         objectOutput.writeObject( charSkills );
         objectOutput.writeObject( maskCharKnownledge );
         objectOutput.writeObject( charKnownledge );
         objectOutput.writeObject( maskCharFlags );
-        objectOutput.writeObject( charFlags );
     }
     
     public void readObject(java.io.ObjectInputStream objectInput)
     throws java.io.IOException, java.lang.ClassNotFoundException {
         int IdTmp = objectInput.readInt();
         if( IdTmp == ExternalizeGetVersion() ){
-            maskCharAttributes = ( int[] ) objectInput.readObject();
+            maskCharClasses = ( int[] ) objectInput.readObject();
+            // maskCharAttributes = ( int[] ) objectInput.readObject();
             charAttributes = ( short[][] ) objectInput.readObject();
             levels = ( byte[][] ) objectInput.readObject();
-            classes = ( short[] ) objectInput.readObject();
-            gold = ( long[] ) objectInput.readObject();
+            gold = objectInput.readLong();
             exp = ( long[] ) objectInput.readObject();
             maskCharSkills = (  int[]) objectInput.readObject();
             charSkills = ( byte[] ) objectInput.readObject();
             maskCharKnownledge = ( int[] ) objectInput.readObject();
             charKnownledge = ( boolean[] ) objectInput.readObject();
             maskCharFlags = ( int[] ) objectInput.readObject();
-            // charFlags = ( boolean[] ) objectInput.readObject();
-            charFlags = ( int[] ) objectInput.readObject();
         } else {
             // to do.... when new version
         }
     }
-    
+
+    /*  -------------- SHOW DATA (ATTRIBUTES) SECTION ------------------------------- */
+
     public String getCharAttrWihDescr(int index ) {
-        return ATTR_NAMES[index]+" "+charAttributes[index][IDX_ACTUAL];
+        return ATTR_NAMES[index]+" "+charAttributes[IDX_ACTUAL][index];
+    }
+
+    /*  -------------- ATTRIBUTES SECTION ------------------------------- */
+
+    public void setCharAttr(int index, int value ) {
+        if( ATTR_LAST_ATTR >= index )
+            System.out.println("Impossible to set this ATTR: it doez not exist!");
+        charAttributes[IDX_ACTUAL][index] = (short)value;
+        charAttributes[IDX_MAX][index]    = (short)value;
+    }
+
+    public void addCharAttr(int index, int value ) {
+        if( ATTR_LAST_ATTR >= index )
+            System.out.println("Impossible to set this ATTR: it doez not exist!");
+        charAttributes[IDX_ACTUAL][index] += (short)value;
+        charAttributes[IDX_MAX][index]    += (short)value;
+    }
+
+    public short getCharAttrActual(int index) {
+        if( ATTR_LAST_ATTR >= index )
+            System.out.println("Impossible to set this ATTR: it doez not exist!");
+        return charAttributes[IDX_ACTUAL][index];
+    }
+
+    public short getCharAttrMax(int index) {
+        if( ATTR_LAST_ATTR >= index )
+            System.out.println("Impossible to set this ATTR: it doez not exist!");
+        return charAttributes[IDX_MAX][index];
+    }
+ 
+    public void setCharAttrActualAdd(int index, int value) {
+        if( ATTR_LAST_ATTR >= index )
+            System.out.println("Impossible to set this ATTR: it doez not exist!");
+        charAttributes[IDX_ACTUAL][index] += (short)value;
+    }
+
+    public void setCharAttrMaxAdd(int index, int value) {
+        if( ATTR_LAST_ATTR >= index )
+            System.out.println("Impossible to set this ATTR: it doez not exist!");
+        charAttributes[IDX_MAX][index] += (short)value;
+    }
+
+    /*  -------------- CLASS SECTION ------------------------------- */
+
+    public void setCharClass(int index) {
+        if( index >= CLASSES_LAST_CLASS )
+            System.out.println("Impossible to set this class : it doez not exist!");
+        maskCharClasses = MaskTools.set(maskCharClasses,index);
     }
     
-    public void setCharAttr(int index, short value ) {
-        charAttributes[index][CharData.IDX_ACTUAL] = value;
-        charAttributes[index][CharData.IDX_MAX]    = value;
+    /*  -------------- EXP SECTION ------------------------------- */
+
+    public long getExpActual() {
+        return exp[IDX_ACTUAL];
+    }
+    
+    public void addExpActual(int value) {
+        exp[IDX_ACTUAL] += value;
+    }
+    
+    public void setExpActual(int value) {
+        exp[IDX_ACTUAL] = value;
+    }
+
+    public long getExpMax() {
+        return exp[IDX_MAX];
+    }
+    
+    public void addExpMax(int value) {
+        exp[IDX_MAX] += value;
+    }
+    
+    public void setExpMax(int value) {
+        exp[IDX_MAX] = value;
+    }
+
+    public long getExp() {
+        return exp[IDX_ACTUAL];
+    }
+    
+    public void addExp(int value) {
+        exp[IDX_ACTUAL] += value;
+        exp[IDX_MAX] += value;
+    }
+    
+    public void setExp(int value) {
+        exp[IDX_ACTUAL] = value;
+        exp[IDX_MAX] = value;
+    }
+
+    /*  -------------- GOLD SECTION ------------------------------- */
+    
+    public long getGold() {
+        return gold;
+    }
+    
+    public void addGold(int value) {
+        gold += value;
+    }
+    
+    public void setGold(int value) {
+        gold = value;
+    }
+
+    /*  -------------- LEVEL SECTION ------------------------------- */
+    
+    public void setLevel(int value) {
+        levels[IDX_MAX][0] = (byte)value;
+        levels[IDX_ACTUAL][0] = (byte)value;
+    }
+
+    public byte getLevel() {
+        return levels[IDX_ACTUAL][0];
+    }
+    
+    public void setLevel(int value, int index) {
+        levels[IDX_MAX][index] = (byte)value;
+        levels[IDX_ACTUAL][index] = (byte)value;
+    }
+
+    public byte getLevel(int index) {
+        return levels[IDX_ACTUAL][index];
+    }
+
+    /** probably used only with RLIKE classes, it's used
+     *  when a player is a human with dualclass warrior/wizard for example
+     *  or it's a elf multiclass warrior/wizard/cleric for example
+     *
+     *  however there should be a limit : u cant have a player with 7 classes.
+     *  The actual limit is 3 classes per character.
+     *  So if adding the program see there is 3 classes it returns and index
+     *  set to -1 to let you know there area already 3 classes.
+     *
+     * it return the index of the level of the added class
+     */
+    public byte addNewClassLevel(int startingLevel) {
+        byte newIndex = (byte)levels[IDX_ACTUAL].length;
+        if(newIndex >= 3) {
+            System.out.println("Can't add more then 3 classes");
+            return -1;
+        }
+        byte[][] newLevels = new byte[IDX_MAX][newIndex+1];
+        for(int i=0; i<newIndex; i++) {
+            newLevels[IDX_ACTUAL][i] = levels[IDX_ACTUAL][i];
+            newLevels[IDX_MAX][i] = levels[IDX_MAX][i];
+        }
+        newLevels[IDX_ACTUAL][newIndex] = (byte)startingLevel;
+        newLevels[IDX_MAX][newIndex] = (byte)startingLevel;
+        levels = newLevels;
+        return newIndex;
+    }
+    
+    /*  -------------- CHAR FLAGS SECTION ------------------------------- */
+    
+    /** check if a flag is set : for example invisible or something like this.
+     *
+     */
+    public boolean isFlagSet(int index) {
+        if( FLAG_LAST_FLAG >= index )
+            System.out.println("Impossible to set this FLAG: it doez not exist!");
+        return MaskTools.isSet(maskCharFlags,index);
+    }
+    
+    /** used to set a flag: flag cant be set if it's not enable.
+     * let's make an example a devil can't be blessed.
+     */
+    public void setFlag(int index) {
+        if( FLAG_LAST_FLAG >= index )
+            System.out.println("Impossible to set this FLAG: it doez not exist!");
+        MaskTools.set(maskCharFlags,index);
     }
 }

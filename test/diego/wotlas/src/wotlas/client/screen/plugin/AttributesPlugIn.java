@@ -56,7 +56,7 @@ public class AttributesPlugIn extends JPanelPlugIn  {
             if( !MaskTools.isSet(data,index) )
                 continue;
             // no means to show a stat with 0 : cause a division by zero.
-            if( player.getBasicChar().charAttributes[index][CharData.IDX_MAX] == 0 )
+            if( player.getBasicChar().getCharAttrMax(index) == 0 )
                 continue;
             tmp = new JPanel();
             // tmp.setLayout( null );
@@ -70,15 +70,15 @@ public class AttributesPlugIn extends JPanelPlugIn  {
             box.setSize( new Dimension(BARSIZE,10) );
             boxFill.setForeground( Color.red );
             boxFill.setBackground( Color.red );
-            boxFill.setSize( new Dimension( -1 + new Integer( player.getBasicChar().charAttributes[index][CharData.IDX_ACTUAL]*BARSIZE
-            / player.getBasicChar().charAttributes[index][CharData.IDX_MAX] ).intValue(),9) );
+            boxFill.setSize( new Dimension( -1 + new Integer( player.getBasicChar().getCharAttrActual(index)*BARSIZE
+            / player.getBasicChar().getCharAttrMax(index) ).intValue(),9) );
 //            boxFill.setSize( new Dimension( 80, 9 ) );
             text = new JLabel(CharData.ATTR_NAMES[index]);
             text.setFont(new java.awt.Font("Dialog", 1, 12));
             tmp.add( text );
             tmp.add( box );
             box.add( boxFill );
-            text = new JLabel(""+player.getBasicChar().charAttributes[index][CharData.IDX_ACTUAL]);
+            text = new JLabel(""+player.getBasicChar().getCharAttrActual(index));
             text.setFont(new java.awt.Font("Dialog", 1, 12));
             tmp.add( text );
             tmp.setLocation( 3, 5+(spaceCounter*18) );
@@ -90,8 +90,7 @@ public class AttributesPlugIn extends JPanelPlugIn  {
         /*  show flags (if any) */
         String textToShow = new String("");
         for(int index = 0; index < CharData.FLAG_LAST_FLAG; index++){
-//            if( player.getBasicChar().charFlags[index] )
-            if( !MaskTools.isSet(player.getBasicChar().charFlags,index) )
+            if( !player.getBasicChar().isFlagSet(index) )
                 continue;
             textToShow += CharData.FLAG_NAMES[index]+"\n";
         }

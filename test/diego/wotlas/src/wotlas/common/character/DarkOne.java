@@ -59,20 +59,15 @@ public class DarkOne extends WotCharacter {
         InitCharData();
         InitWotData();
 
-        classes[0] = CLASSES_WOT_DARK_ONE;
+        setCharClass( CLASSES_WOT_DARK_ONE );
         
-        this.charAttributes[this.ATTR_STR][this.IDX_ACTUAL] = 10;
-        this.charAttributes[this.ATTR_STR][this.IDX_MAX]    = 10;
-        this.charAttributes[this.ATTR_INT][this.IDX_ACTUAL] = 10;
-        this.charAttributes[this.ATTR_INT][this.IDX_MAX]    = 10;
-        this.charAttributes[this.ATTR_WIS][this.IDX_ACTUAL] = 10;
-        this.charAttributes[this.ATTR_WIS][this.IDX_MAX]    = 10;
-        this.charAttributes[this.ATTR_CON][this.IDX_ACTUAL] = 10;
-        this.charAttributes[this.ATTR_CON][this.IDX_MAX]    = 10;
-        this.charAttributes[this.ATTR_DEX][this.IDX_ACTUAL] = 10;
-        this.charAttributes[this.ATTR_DEX][this.IDX_MAX]    = 10;
-        this.charAttributes[this.ATTR_CHA][this.IDX_ACTUAL] = 10;
-        this.charAttributes[this.ATTR_CHA][this.IDX_MAX]    = 10;
+        this.setCharAttr(CharData.ATTR_STR,10);
+        this.setCharAttr(CharData.ATTR_INT,10);
+        this.setCharAttr(CharData.ATTR_WIS,10);
+        this.setCharAttr(CharData.ATTR_CON,10);
+        this.setCharAttr(CharData.ATTR_DEX,10);
+        this.setCharAttr(CharData.ATTR_CHA,10);
+
      }    
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

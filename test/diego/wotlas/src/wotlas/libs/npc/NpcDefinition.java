@@ -88,7 +88,7 @@ public class NpcDefinition implements Cloneable {
         return true;
     }
 */
-    public NpcDefinition Clone(){
+    public Object Clone(){
         NpcDefinition clone = new NpcDefinition();
         clone.name = new String(name);
         if( triggers != null ){

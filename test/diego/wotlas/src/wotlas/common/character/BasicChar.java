@@ -138,4 +138,9 @@ public abstract class BasicChar extends CharData {
       */
     abstract public byte getEnvironment();
 
+    /*
+    abstract void public gainLevel();
+
+    abstract void public setLevel(int level);
+    */
 }

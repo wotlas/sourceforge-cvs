@@ -43,11 +43,8 @@ public class Wizard extends RLikeClass {
     
     public void init(RLikeCharacter myChar){
         super.init(myChar);
-        // myChar.classes = new short[1];
-        // myChar.classes[CharData.IDX_MAX] = 1;
-        // myChar.classes[CharData.IDX_ACTUAL] = 1;
-        myChar.charAttributes[CharData.ATTR_HP][CharData.IDX_MAX] += 10;
-        myChar.charAttributes[CharData.ATTR_HP][CharData.IDX_ACTUAL] += 10;        
+        myChar.setCharClass( CharData.CLASSES_RL_WIZARD );
+        myChar.setCharAttr(CharData.ATTR_MANA, myChar.getCharAttrActual(CharData.ATTR_MANA)+10 );
 
         short[] stats;
         stats = rollStat();
@@ -59,6 +56,5 @@ public class Wizard extends RLikeClass {
         myChar.setCharAttr(CharData.ATTR_DEX,stats[1]);
         myChar.setCharAttr(CharData.ATTR_CHA,stats[5]);
 
-        //        classes[0] = CLASSES_RLIKE_WIZARD;
     }
 }

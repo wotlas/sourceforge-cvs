@@ -49,7 +49,7 @@ public class Dwarf extends RLikeCharacter {
     public Dwarf() {
         InitCharData();
         InitRLikeData();
-//        classes[0] = CLASSES_RLIKE_DWARF;
+        setCharClass( CLASSES_RL_DWARF );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

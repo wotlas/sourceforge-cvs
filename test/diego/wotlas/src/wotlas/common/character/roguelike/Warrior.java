@@ -43,22 +43,19 @@ public class Warrior extends RLikeClass {
     
     public void init(RLikeCharacter myChar){
         super.init(myChar);
-        myChar.classes = new short[1];
-        // myChar.classes[CharData.IDX_MAX] = 1;
-        // myChar.classes[CharData.IDX_ACTUAL] = 1;
-        myChar.charAttributes[CharData.ATTR_HP][CharData.IDX_MAX] += 10;
-        myChar.charAttributes[CharData.ATTR_HP][CharData.IDX_ACTUAL] += 10;        
-        
+        myChar.setCharClass( CharData.CLASSES_RL_WARRIOR );
+        myChar.setCharAttr(CharData.ATTR_HP, myChar.getCharAttrActual(CharData.ATTR_HP)+10 );
+
         short[] stats;
         stats = rollStat();
         
         try {
-        myChar.setCharAttr(CharData.ATTR_STR,stats[0]);
-        myChar.setCharAttr(CharData.ATTR_INT,stats[4]);
-        myChar.setCharAttr(CharData.ATTR_WIS,stats[5]);
-        myChar.setCharAttr(CharData.ATTR_CON,stats[1]);
-        myChar.setCharAttr(CharData.ATTR_DEX,stats[2]);
-        myChar.setCharAttr(CharData.ATTR_CHA,stats[3]);
+        myChar.setCharAttr( CharData.ATTR_STR, stats[0] );
+        myChar.setCharAttr( CharData.ATTR_INT, stats[4] );
+        myChar.setCharAttr( CharData.ATTR_WIS, stats[5] );
+        myChar.setCharAttr( CharData.ATTR_CON, stats[1] );
+        myChar.setCharAttr( CharData.ATTR_DEX, stats[2] );
+        myChar.setCharAttr( CharData.ATTR_CHA, stats[3] );
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -41,16 +41,6 @@ import java.awt.Color;
 
 public abstract class WotCharacter extends BasicChar {
 
-/*
-    public String getAttributesText() {
-        return " Str : "+this.charAttributes[this.ATTR_STR][this.IDX_ACTUAL]+"\n"
-        +" Int : "+this.charAttributes[this.ATTR_INT][this.IDX_ACTUAL]+"\n"
-        +" Wis : "+this.charAttributes[this.ATTR_WIS][this.IDX_ACTUAL]+"\n"
-        +" Con : "+this.charAttributes[this.ATTR_CON][this.IDX_ACTUAL]+"\n"
-        +" Dex : "+this.charAttributes[this.ATTR_DEX][this.IDX_ACTUAL]+"\n"
-        +" Cha : "+this.charAttributes[this.ATTR_CHA][this.IDX_ACTUAL]+"\n" ;
-    }
-*
     /** return enviroment type : Actually are RogueLike or Wheel of Time
      *
      */
@@ -59,18 +49,13 @@ public abstract class WotCharacter extends BasicChar {
     }
 
     public void InitWotData(){
-        levels[0][IDX_MAX] = 1;
-        levels[0][IDX_ACTUAL] = 1;
-        gold[IDX_MAX] = 100;
-        gold[IDX_ACTUAL] = 100;
-        exp[IDX_MAX] = 1;
-        exp[IDX_ACTUAL] = 1;
-        this.charAttributes[ATTR_HUNGER][CharData.IDX_MAX] = 100;
-        this.charAttributes[ATTR_HUNGER][CharData.IDX_ACTUAL] = 100;
-        this.charAttributes[ATTR_THIRSTY][CharData.IDX_MAX] = 100;
-        this.charAttributes[ATTR_THIRSTY][CharData.IDX_ACTUAL] = 100;
-        this.charAttributes[ATTR_HP][CharData.IDX_MAX] = 10;
-        this.charAttributes[ATTR_HP][CharData.IDX_ACTUAL] = 10;
+        this.setLevel(1);
+        this.setGold(100);
+        this.setExp(1);
+        this.setCharAttr(CharData.ATTR_HUNGER,100);
+        this.setCharAttr(CharData.ATTR_THIRSTY,100);
+        this.setCharAttr(CharData.ATTR_HP,10);
+        this.setCharAttr(CharData.ATTR_MOVEMENT,100);
     }
 
     /**

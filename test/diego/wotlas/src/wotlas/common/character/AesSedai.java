@@ -121,23 +121,16 @@ public class AesSedai extends Female {
         InitCharData();
         InitWotData();
 
-        classes[0] = CLASSES_WOT_AES_SEDAI;
+        setCharClass( CLASSES_WOT_AES_SEDAI );
         
-        this.charAttributes[this.ATTR_STR][this.IDX_ACTUAL] = 10;
-        this.charAttributes[this.ATTR_STR][this.IDX_MAX]    = 10;
-        this.charAttributes[this.ATTR_INT][this.IDX_ACTUAL] = 10;
-        this.charAttributes[this.ATTR_INT][this.IDX_MAX]    = 10;
-        this.charAttributes[this.ATTR_WIS][this.IDX_ACTUAL] = 10;
-        this.charAttributes[this.ATTR_WIS][this.IDX_MAX]    = 10;
-        this.charAttributes[this.ATTR_CON][this.IDX_ACTUAL] = 10;
-        this.charAttributes[this.ATTR_CON][this.IDX_MAX]    = 10;
-        this.charAttributes[this.ATTR_DEX][this.IDX_ACTUAL] = 10;
-        this.charAttributes[this.ATTR_DEX][this.IDX_MAX]    = 10;
-        this.charAttributes[this.ATTR_CHA][this.IDX_ACTUAL] = 10;
-        this.charAttributes[this.ATTR_CHA][this.IDX_MAX]    = 10;
+        this.setCharAttr(CharData.ATTR_STR,10);
+        this.setCharAttr(CharData.ATTR_INT,10);
+        this.setCharAttr(CharData.ATTR_WIS,10);
+        this.setCharAttr(CharData.ATTR_CON,10);
+        this.setCharAttr(CharData.ATTR_DEX,10);
+        this.setCharAttr(CharData.ATTR_CHA,10);
         
-        this.charAttributes[ATTR_MANA][IDX_MAX] = 100;
-        this.charAttributes[ATTR_MANA][IDX_ACTUAL] = 100;
+        this.addCharAttr(CharData.ATTR_MANA, 10 );
     }
 
  /*------------------------------------------------------------------------------------*/

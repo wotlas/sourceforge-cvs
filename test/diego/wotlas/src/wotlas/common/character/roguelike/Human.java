@@ -48,7 +48,7 @@ public class Human extends RLikeCharacter {
     public Human() {
         InitCharData();
         InitRLikeData();
-//        classes[0] = CLASSES_RLIKE_HUMAN;
+        setCharClass( CLASSES_RL_HUMAN );
     }
         
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

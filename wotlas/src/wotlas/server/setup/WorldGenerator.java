@@ -550,6 +550,7 @@ public class WorldGenerator {
 
            maps[0].setMusicName("tar-valon-01.mid");
 
+           maps[1] = new InteriorMap();
            maps[1].setInteriorMapID(1);
            maps[1].setFullName("Tar Valon - North West Gate - Terrace");
            maps[1].setShortName("nw-gate-lv1");

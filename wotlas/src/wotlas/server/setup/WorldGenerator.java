@@ -753,7 +753,7 @@ public class WorldGenerator {
            rooms[0].setShortName("refuge-ouside");
            rooms[0].setInsertionPoint( new ScreenPoint(610,200) );
 
-             roomLink = rooms[0].addRoomLink( new ScreenRectangle(400,30,5,15) );
+             roomLink = rooms[0].addRoomLink( new ScreenRectangle(400,350,5,10) );
              roomLink.setRoom1ID(1);
              roomLink.setRoom2ID(0);
 
@@ -876,7 +876,7 @@ public class WorldGenerator {
                mapExit = rooms[2].addMapExit( new ScreenRectangle(355,355,25,55) );
                mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
                mapExit.setMapExitSide( MapExit.NONE );
-               mapExit.setTargetWotlasLocation( new WotlasLocation(0,1,0,0,0) );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,1,0,0,1) );
                mapExit.setTargetPosition( new ScreenPoint(170,150) );
 
            rooms[3] = new Room();

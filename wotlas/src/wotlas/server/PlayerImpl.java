@@ -110,6 +110,26 @@ public class PlayerImpl implements Player, NetConnectionListener
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To set the player's X position.
+   *
+   *  @param x
+   */
+      public void setX( int x ) {
+      	this.x = x;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To set the player's Y position.
+   *
+   *  @return y
+   */
+      public void setY( int y ) {
+      	this.y = y;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
    /** To initialize the player location to the first existent worlds found.
     *  WARNING : the player is NOT moved in the world... that means this method
     *  is for player creation ONLY.

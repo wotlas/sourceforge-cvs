@@ -607,7 +607,7 @@ public class PropertiesConverter
    /**
    * Test method.
    **/
-   public static void main(String[] argv) throws java.io.IOException, PersistenceException {
+/*   public static void main(String[] argv) throws java.io.IOException, PersistenceException {
       wotlas.common.universe.TownMap example[];
       wotlas.common.universe.WorldMap world;
 
@@ -627,5 +627,5 @@ public class PropertiesConverter
       world = (wotlas.common.universe.WorldMap) load("C:/Temp/world.txt");
       save(world, "C:/Temp/world2.txt");
    }
-   
+  */ 
 }

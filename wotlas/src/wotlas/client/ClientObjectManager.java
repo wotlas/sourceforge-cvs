@@ -26,6 +26,7 @@ import wotlas.common.objects.inventories.Inventory;
 /** 
  * The ClientObjectManager.<br>
  * Used to handle Objects and Inventory client side.
+ * @see wotlas.common.objects.ObjectManager
  * @see wotlas.server.ServerObjectManager
  * @author Elann
  */
@@ -35,7 +36,7 @@ public class ClientObjectManager implements ObjectManager
 
  /*------------------------------------------------------------------------------------*/
  
- /** An Inventory object.
+ /** The owned Inventory object.
   */
   protected Inventory inventory;
  

@@ -23,6 +23,7 @@ import wotlas.common.character.*;
 import wotlas.common.chat.*;
 import wotlas.common.universe.*;
 import wotlas.common.movement.*;
+import wotlas.common.objects.*;
 import wotlas.common.*;
 
 import wotlas.common.message.description.PlayerPastMessage;
@@ -47,7 +48,7 @@ import java.util.Hashtable;
 
 /** Class of a Wotlas Player.
  *
- * @author Petrus, Aldiss
+ * @author Petrus, Aldiss, Elann
  * @see wotlas.common.Player
  */
 
@@ -86,6 +87,10 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
   /** Wotlas Character
    */
   private WotCharacter wotCharacter;
+  
+  /** Object manager
+   */
+  private ClientObjectManager objectManager;
   
   /** Player state
    */
@@ -316,6 +321,27 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
     this.wotCharacter = wotCharacter;
   }
 
+  
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the player's object manager
+    *
+    *  @return player object manager
+    */
+      public ObjectManager getObjectManager()
+	  {
+	   return objectManager;
+	  }
+
+   /** To set the player's object manager.
+    *
+    *  @param objectManager player object manager
+    */
+      public void setObjectManager( ObjectManager objectManager )
+	  {
+	   this.objectManager=(ClientObjectManager)objectManager;
+	  }  
+  
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To get the player character past.

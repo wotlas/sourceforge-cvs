@@ -22,8 +22,8 @@ package wotlas.common.objects.inventories;
 import wotlas.common.objects.containers.Ground;
 
 /** 
- * This is the base class for all RoomInventories.
- *
+ * This is the base class for all RoomInventories.<br>
+ * It can also be considered as a standard Room with only the Ground for Container.
  * @author Elann
  */
 
@@ -38,11 +38,17 @@ public class RoomInventory
 
  /*------------------------------------------------------------------------------------*/
 
+  /** Default constructor
+   */
+    public RoomInventory()
+    {
+    }
+ 
  
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
-  /** Get the book.
-   * @return book
+  /** Get the ground.
+   * @return ground
    */
     public Ground getGround()
     {

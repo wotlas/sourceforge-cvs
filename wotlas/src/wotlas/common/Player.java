@@ -22,6 +22,7 @@ package wotlas.common;
 import wotlas.common.character.*;
 import wotlas.common.universe.*;
 import wotlas.common.movement.*;
+import wotlas.common.objects.*;
 
 import wotlas.libs.net.NetMessage;
 
@@ -29,7 +30,7 @@ import java.io.*;
 
 /** Interface of a Wotlas Player.
  *
- * @author Aldiss
+ * @author Aldiss, Elann
  * @see wotlas.server.PlayerImpl
  * @see wotlas.client.PlayerImpl
  */
@@ -163,6 +164,22 @@ public interface Player extends PreciseLocationOwner
     *  @param wotCharacter player character
     */
       public void setWotCharacter( WotCharacter wotCharacter );
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the player's object manager
+    *
+    *  @return player object manager
+    */
+      public ObjectManager getObjectManager();
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the player's object manager.
+    *
+    *  @param objectManager player object manager
+    */
+      public void setObjectManager( ObjectManager objectManager );
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

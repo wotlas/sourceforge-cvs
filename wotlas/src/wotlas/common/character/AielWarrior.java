@@ -24,6 +24,7 @@ import java.awt.Color;
 
 import wotlas.common.*;
 import wotlas.common.universe.*;
+import wotlas.common.objects.inventories.*;
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.graphics2D.filter.*;
@@ -31,7 +32,7 @@ import wotlas.libs.graphics2D.filter.*;
 
 /** An Aiel Warrior character.
  *
- * @author Aldiss
+ * @author Aldiss, Elann
  * @see wotlas.common.character.Male
  */
 
@@ -275,6 +276,17 @@ public class AielWarrior extends Male {
         return "fanfare-aiel.wav";
      }
 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get a new Inventory for this WotCharacter.<br>
+   * In this case, it is an AielWarriorInventory.
+   * @return a new inventory for this char
+   */
+     public Inventory createInventory()
+	 {
+	  return new AielWarriorInventory();
+	 }	 
+	 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
  /** To put the WotCharacter's data on the network stream. You don't need

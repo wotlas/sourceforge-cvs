@@ -39,6 +39,7 @@ import wotlas.common.chat.*;
 import wotlas.common.message.movement.*;
 import wotlas.common.message.description.*;
 import wotlas.common.universe.*;
+import wotlas.common.objects.*;
 import wotlas.utils.*;
 
 import java.util.*;
@@ -46,7 +47,7 @@ import java.util.*;
 /** Class of a Wotlas Player. It is the class that, in certain way, a client gets connected to.
  *  All the client messages have a server PlayerImpl context.
  *
- * @author Aldiss
+ * @author Aldiss, Elann
  * @see wotlas.common.Player
  * @see wotlas.common.NetConnectionListener
  */
@@ -83,6 +84,10 @@ public class PlayerImpl implements Player, NetConnectionListener {
    /** WotCharacter Class
     */
        protected WotCharacter wotCharacter;
+   
+   /** Object manager
+    */
+  	   transient private ServerObjectManager objectManager;   
    
    /** Player state
     */
@@ -436,6 +441,26 @@ public class PlayerImpl implements Player, NetConnectionListener {
          this.wotCharacter = wotCharacter;
       }
 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the player's object manager
+    *
+    *  @return player object manager
+    */
+      public ObjectManager getObjectManager()
+	  {
+	   return objectManager;
+	  }
+
+   /** To set the player's object manager.
+    *
+    *  @param objectManager player object manager
+    */
+      public void setObjectManager( ObjectManager objectManager )
+	  {
+	   this.objectManager=(ServerObjectManager)objectManager;
+	  }  
+	  
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To get the player's movement Composer.

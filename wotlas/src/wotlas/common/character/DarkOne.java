@@ -21,6 +21,7 @@ package wotlas.common.character;
 
 import wotlas.common.*;
 import wotlas.common.universe.*;
+import wotlas.common.objects.inventories.*;
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
 
@@ -29,7 +30,7 @@ import java.awt.Color;
 
 /** The Dark One.
  *
- * @author Aldiss
+ * @author Aldiss, Elann
  * @see wotlas.common.Player
  * @see wotlas.libs.graphics2D.Drawable
  */
@@ -166,6 +167,18 @@ public class DarkOne implements WotCharacter {
         return "fanfare-dark.wav";
      }
 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get a new Inventory for this WotCharacter.<br>
+   * In this case, it is null. The Dark One has no Inventory. 
+   * @return null
+   */
+     public Inventory createInventory()
+	 {
+	  return null;
+	 }
+	 
+	 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To put the WotCharacter's data on the network stream. You don't need

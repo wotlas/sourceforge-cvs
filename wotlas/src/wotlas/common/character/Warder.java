@@ -24,6 +24,7 @@ import java.awt.Color;
 
 import wotlas.common.*;
 import wotlas.common.universe.*;
+import wotlas.common.objects.inventories.*;
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.graphics2D.filter.*;
@@ -31,7 +32,7 @@ import wotlas.libs.graphics2D.filter.*;
 
 /** A Warder character.
  *
- * @author Aldiss
+ * @author Aldiss, Elann
  * @see wotlas.common.character.Male
  */
 
@@ -404,6 +405,17 @@ public class Warder extends Male {
         return "fanfare.wav";
      }
 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get a new Inventory for this WotCharacter.<br>
+   * In this case, it is a WarderInventory.
+   * @return a new inventory for this char
+   */
+     public Inventory createInventory()
+	 {
+	  return new WarderInventory();
+	 }	 
+	 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
  /** To put the WotCharacter's data on the network stream. You don't need

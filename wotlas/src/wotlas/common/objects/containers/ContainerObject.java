@@ -155,4 +155,21 @@ public class ContainerObject extends BaseObject implements ContainerInterface
 	 return content[i];
 	}
  
+
+  /** Get the raw content.
+   * @return content 
+   */
+	public BaseObject[] getContent()
+	{
+	 return content;
+	}
+
+  /** Set the content.
+   * @param content the content array 
+   */
+	public void getContent(BaseObject[] content)
+	{
+	 this.content=content;
+	}
+
 }

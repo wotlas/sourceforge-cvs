@@ -58,6 +58,17 @@ public interface ContainerInterface
    */
 	public BaseObject getObjectByName(String name); // dnk if useful - C later
 	
+	
+  /** Get the raw content.
+   * @return content 
+   */
+	public BaseObject[] getContent();
+	
+  /** Set the content.
+   * @param content the content array 
+   */
+	public void getContent(BaseObject[] content);
+		
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

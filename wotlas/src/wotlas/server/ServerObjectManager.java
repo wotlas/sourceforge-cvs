@@ -38,17 +38,28 @@ public class ServerObjectManager implements ObjectManager
 
  /*------------------------------------------------------------------------------------*/
   
+ /** The owned Inventory object.
+  */
+  protected Inventory inventory;
+
  
  /*------------------------------------------------------------------------------------*/
 		
   /* ------- Constructor ----- */
   
   /** Default constructor.
-   *
    */
    	public ServerObjectManager()
 	{
+	 inventory=null;
+	}		
 	
+  /** Parametric constructor.
+   * @param inventory the inventory of my player
+   */
+   	public ServerObjectManager(Inventory inventory)
+	{
+	 this.inventory=inventory;
 	}		
 		
   /* ------- Methods --------- */
@@ -58,12 +69,7 @@ public class ServerObjectManager implements ObjectManager
    */
     public Inventory getInventory() 
 	{ 
-	 Inventory ret=new Inventory();
-
-	 /* no op */
-	 /* should read on disk the stored inventory to rebuild one */
-	 
-	 return ret; 	
+	 return inventory;
 	}
 
   /** Set the Inventory of the Manager.
@@ -71,7 +77,7 @@ public class ServerObjectManager implements ObjectManager
    */
     public void setInventory(Inventory inventory)
 	{
-	 /* no op */ 
+	 this.inventory=inventory; 
 	}
 
 	

@@ -24,6 +24,7 @@ import java.awt.Color;
 
 import wotlas.common.*;
 import wotlas.common.universe.*;
+import wotlas.common.objects.inventories.*;
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.graphics2D.filter.*;
@@ -393,6 +394,18 @@ public class AesSedai extends Female {
 
         return "fanfare-aes.wav";
      }
+
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get a new Inventory for this WotCharacter.<br>
+   * In this case, it is an AesSedaiInventory.
+   * @return a new inventory for this char
+   */
+     public Inventory createInventory()
+	 {
+	  return new AesSedaiInventory();
+	 }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

@@ -21,6 +21,7 @@ package wotlas.common.character;
 
 import wotlas.common.*;
 import wotlas.common.universe.*;
+import wotlas.common.objects.inventories.Inventory;
 import wotlas.libs.graphics2D.*;
 
 import java.io.*;
@@ -28,7 +29,7 @@ import java.awt.Color;
 
 /** Interface of a Wotlas Character. Each Player object possess one Character object.
  *
- * @author Aldiss
+ * @author Aldiss, Elann
  * @see wotlas.common.Player
  * @see wotlas.libs.graphics2D.Drawable
  */
@@ -116,6 +117,14 @@ public interface WotCharacter
    *  @return fanfare sound file name
    */
      public String getFanfareSound();
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get a new Inventory for this WotCharacter.<br>
+   * NB : there is at least one Inventory class for each WotCharacter implementor.
+   * @return a new inventory for this char
+   */
+     public Inventory createInventory();
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

@@ -25,13 +25,13 @@ import wotlas.common.objects.weapons.*;
 import wotlas.common.objects.armors.*;
 
 /** 
- * This is the class for Whitecloak's Inventory.<br>
+ * This is the class for Children of the Light's Inventory.<br>
  * All objects are inherited. All methods are inherited excepted those not available to Children of the Light.
  * @author Elann
  * @see wotlas.common.objects.interfaces.InventoryInterface
  */
 
-public class WhitecloakInventory extends Inventory 
+public class ChildrenOfTheLightInventory extends Inventory 
 {
 
  /*------------------------------------------------------------------------------------*/

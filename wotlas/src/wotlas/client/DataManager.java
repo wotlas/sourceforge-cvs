@@ -606,7 +606,6 @@ System.out.println("Frame show");
   /** Called when user left-clic on JMapPanel
    */
   public void onLeftClicJMapPanel(MouseEvent e) {
-
     if (SHOW_DEBUG)
       System.out.println("DataManager::onLeftClicJMapPanel");
 
@@ -614,12 +613,7 @@ System.out.println("Frame show");
 
     Object object = gDirector.findOwner( e.getX(), e.getY());
 
-    if (object == null) {
-       int newX = e.getX() + (int)screen.getX();
-       int newY = e.getY() + (int)screen.getY();
-       myPlayer.moveTo( new Point(newX,newY) );
-    }
-    else if ( object instanceof PlayerImpl ) {
+    if ( object instanceof PlayerImpl ) {
       	// We display text & aura
            PlayerImpl selectedPlayer = (PlayerImpl) object;
            gDirector.addDrawable(selectedPlayer.getTextDrawable());
@@ -628,23 +622,35 @@ System.out.println("Frame show");
     else if( object instanceof Door ) {
         // We open/close the door IF the player is near enough...
            Door door = (Door) object;
-System.out.println("DOOOORRR CLICKED");
-        // player near enough the door ?
-           if( !door.isPlayerNear( myPlayer.getCurrentRectangle() ) )
-               return;
 
-           if( door.isOpened() ) {
- System.out.println("door close");
-               door.close();
+System.out.println("DOOOORRR CLICKED");
+
+        // player near enough the door ?
+           if( door.isPlayerNear( myPlayer.getCurrentRectangle() ) ) {
+               if( door.isOpened() ) {
+                   SoundLibrary.getSoundLibrary().playSound("door-close.wav");
+                   door.close();
+               }
+               else {
+                   SoundLibrary.getSoundLibrary().playSound("door-open.wav");
+                   door.open();
+               }
+               
+               return;
            }
-           else {
-System.out.println("DOOOORRR open");
-               door.open();
-           }
+           else
+              object=null;
     }
 
-System.out.println("END JCLICK");
+    synchronized( players ) {
+       if (object == null) {
+          int newX = e.getX() + (int)screen.getX();
+          int newY = e.getY() + (int)screen.getY();
+          myPlayer.moveTo( new Point(newX,newY) );
+       }
+    }
 
+    System.out.println("END JCLICK");
   }
 
  /*------------------------------------------------------------------------------------*/

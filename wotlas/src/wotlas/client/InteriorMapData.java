@@ -303,18 +303,21 @@ System.out.println("NOTIFYING");
     // I - ROOMLINK INTERSECTION UPDATE ( is the player moving to another room ? )
     RoomLink rl = myRoom.isIntersectingRoomLink( myPlayer.getCurrentRectangle() );
 
+    // is there a Door ?
+      if ( rl!=null && rl.getDoor()!=null ) {
+           if( !rl.getDoor().isOpened()
+               && !rl.getDoor().canMove(myPlayer.getCurrentRectangle(),
+                                        myPlayer.getEndPosition() ) )
+               myPlayer.stopMovement();
+      }
+
+    // Moving to another Room ?
     if ( rl!=null && !couldBeMovingToAnotherRoom ) {
       // Player is intersecting a RoomLink
       if (SHOW_DEBUG)
         System.out.println("Insersecting a RoomLink");
       latestRoomLink = rl;
       couldBeMovingToAnotherRoom = true;
-
-      // is there a Door ?
-      if ( rl.getDoor()!=null ) {
-           if( !rl.getDoor().isOpened() )
-               myPlayer.stopMovement();
-      }
     } else if ( rl==null && couldBeMovingToAnotherRoom ) {
       // ok, no intersection now, are we in an another room ?
       if (SHOW_DEBUG)

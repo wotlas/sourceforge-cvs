@@ -389,13 +389,13 @@ public class DoorDrawable extends Drawable implements DrawableOwner {
      public boolean tick() {
 
        if(isOpening) {
-          currentAngle += variationAngle/20;
+          currentAngle += variationAngle/10;
           if( Math.abs(currentAngle) >= Math.abs(variationAngle))
               setOpened();
        }
 
        if(isClosing) {
-          currentAngle -= variationAngle/20;
+          currentAngle -= variationAngle/10;
           if( Math.abs(currentAngle-variationAngle) >= Math.abs(variationAngle) )
               setClosed();
        }

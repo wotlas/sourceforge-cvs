@@ -180,7 +180,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
        b_createChatRoom.setEnabled(true);
 
 System.out.println("TAB number:"+tabbedPane.getTabCount());
-       for (int i=tabbedPane.getTabCount()-1; i>0;i--) {
+       for (int i=tabbedPane.getTabCount()-1; i>=0;i--) {
 
               System.out.println(""+tabbedPane.getComponentAt(i).getName());
 

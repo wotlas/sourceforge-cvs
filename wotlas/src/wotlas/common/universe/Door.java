@@ -19,7 +19,7 @@
  
 package wotlas.common.universe;
 
-import java.awt.Rectangle;
+import java.awt.*;
 
 import wotlas.common.*;
 import wotlas.libs.graphics2D.*;
@@ -232,6 +232,33 @@ public class Door
 
        if( (xdc-xpc)*(xdc-xpc)+(ydc-ypc)*(ydc-ypc) <= MAX_ACTION_DIST )
            return true;
+
+       return false;
+     }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To check if the player can go to the specified direction...
+    * @param true if the player can move...
+    */
+     public boolean canMove( Rectangle playerRectangle, Point destPoint ) {
+       if( doorDrawable==null || destPoint.x<0 || destPoint.y<0 )
+           return true;
+
+       int xpc = playerRectangle.x + playerRectangle.width/2;
+       int ypc = playerRectangle.y + playerRectangle.height/2;
+
+       int xdc = doorDrawable.getX() + doorDrawable.getWidth()/2;
+       int ydc = doorDrawable.getY() + doorDrawable.getHeight()/2;
+
+       if( doorType == DoorDrawable.VERTICAL_TOP_PIVOT ||
+           doorType == DoorDrawable.VERTICAL_TOP_PIVOT ) {
+           if( (xdc<xpc && xdc<destPoint.x) ||  (xdc>xpc && xdc>destPoint.x) )
+               return true;
+           return false;
+       }
+       else if( (ydc<ypc && ydc<destPoint.y) || (ydc>ypc && ydc>destPoint.y) )
+               return true;
 
        return false;
      }

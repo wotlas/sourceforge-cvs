@@ -43,6 +43,10 @@ public interface ImageLibRef extends ImageLibraryReference
    */
     public final static short MAPS_CATEGORY = 1;
 
+  /** Image category for objects.
+   */
+    public final static short OBJECTS_CATEGORY = 2;
+
  /*------------------------------------------------------------------------------------*/
  /*------------------------------------------------------------------------------------*/
 
@@ -172,6 +176,51 @@ public interface ImageLibRef extends ImageLibraryReference
    /** Tar valon - NW Clearing Small image.
     */
      public final static short TARVALON_NWCLNG_SMALL_IM_ACTION = 2;
+
+ /*------------------------------------------------------------------------------------*/
+ /*------------------------------------------------------------------------------------*/
+
+  /*** OBJECTS CATEGORY ***/
+
+  /** Doors Set
+   */
+     public final static short DOORS_SET = 0;
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /*** Doors set ***/
+
+   /** Wooden door - 30pix length - 5pix thick
+    */
+     public final static short WOOD_DOOR_30L_5T_ACTION = 0;
+
+   /** Wooden door - 30pix length - 8pix thick
+    */
+     public final static short WOOD_DOOR_30L_8T_ACTION = 1;
+
+   /** Wooden door - 40pix length - 8pix thick
+    */
+     public final static short WOOD_DOOR_40L_8T_ACTION = 2;
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Doors index */
+
+   /** VERTICAL DOOR WITH PIVOT ON TOP.
+    */
+     public final static short VERTICAL_TOP_PIVOT = 0;
+
+   /** VERTICAL DOOR WITH PIVOT ON BOTTOM.
+    */
+     public final static short VERTICAL_BOTTOM_PIVOT = 1;
+
+   /** HORIZONTAL DOOR WITH PIVOT ON LEFT.
+    */
+     public final static short HORIZONTAL_LEFT_PIVOT = 2;
+
+   /** HORIZONTAL DOOR WITH PIVOT ON RIGHT.
+    */
+     public final static short HORIZONTAL_RIGHT_PIVOT = 3;
 
  /*------------------------------------------------------------------------------------*/
  /*------------------------------------------------------------------------------------*/

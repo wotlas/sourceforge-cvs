@@ -72,7 +72,8 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   
   /** Player's chatRooms
    */
-  private Hashtable chatRooms;
+  //private Hashtable chatRooms;
+  private ChatListImpl chatList;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -133,7 +134,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     animation = new Animation(wotCharacter.getImage(location));
     sprite = (Sprite) wotCharacter.getDrawable(this);    
     movementComposer.init( this );
-    chatRooms = new Hashtable(2);
+    chatList = new ChatListImpl();
   }
 
   /** Called after graphicsDirector's init to add some visual effects to the master player
@@ -218,16 +219,10 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
 
  /*------------------------------------------------------------------------------------*/
  
-  /** To get the player's chatRooms.
+  /** To get ChatList
    */
-  public Hashtable getChatRooms() {
-    return chatRooms;
-  }
-  
-  /** To set the player's chatRooms.
-   */
-  public void setChatRooms(Hashtable chatRooms) {
-    this.chatRooms = chatRooms;
+  public ChatListImpl getChatList() {
+    return chatList;
   }
   
  /*------------------------------------------------------------------------------------*/
@@ -511,49 +506,5 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To add a chatRoom.
-   *
-   * @param chatRoom ChatRoom to add
-   * @return false if the chatRoom already exists, true otherwise
-   */
-  public boolean addChatRoom(ChatRoom chatRoom) {
-    if ( chatRooms.containsKey(chatRoom.getPrimaryKey()) ) {
-      Debug.signal( Debug.CRITICAL, this, "addChatRoom failed: key " + chatRoom.getPrimaryKey()
-                      + " already in " + this );
-      return false;
-    }
-    chatRooms.put(chatRoom.getPrimaryKey(), chatRoom);
-    return true;    
-  }
-
-  /** To remove a chatRoom.   
-   *
-   * @param chatRoom ChatRoom to remove
-   * @return false if the chatRoom doesn't exists, true otherwise
-   */
-  public boolean removeChatRoom(ChatRoom chatRoom) {
-    if ( !chatRooms.containsKey(chatRoom.getPrimaryKey()) ) {
-      Debug.signal( Debug.CRITICAL, this, "removeChatRoom failed: key " + chatRoom.getPrimaryKey()
-                      + " not found in " + this );
-      return false;
-    }
-    chatRooms.remove(chatRoom.getPrimaryKey() );
-    return true;
-  }
-  
-  /** To get currentChatRoom
-   */
-  public ChatRoom getMyChatRoom() {
-    String chatRoomID = DataManager.getDefaultDataManager().getChatPanel().getMyChatRoomID();
-    if ( !chatRooms.containsKey(chatRoomID) ) {
-      Debug.signal( Debug.CRITICAL, this, "ChatRoom key " + chatRoomID
-                      + " not found in " + this );
-      return null;
-    }
-    return (ChatRoom) chatRooms.get(chatRoomID);
-  }
-
- /*------------------------------------------------------------------------------------*/  
  
 }

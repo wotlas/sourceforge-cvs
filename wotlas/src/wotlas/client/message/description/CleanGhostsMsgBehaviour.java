@@ -126,6 +126,9 @@ public class CleanGhostsMsgBehaviour extends CleanGhostsMessage implements NetMe
                          if (DataManager.SHOW_DEBUG)                         
                              System.out.println("REMOVING GHOSTS !!!!"+playerImpl.getPrimaryKey()+" rID"+playerImpl.getLocation().getRoomID());
                          playerImpl.cleanVisualProperties(dataManager.getGraphicsDirector());
+
+                         if( dataManager.getSelectedPlayerKey()!=null && playerImpl.getPrimaryKey().equals(dataManager.getSelectedPlayerKey()) )
+                             dataManager.removeCircle();
                      }
               }
            }

@@ -61,7 +61,6 @@ public class RemovePlayerFromRoomMsgBehaviour extends RemovePlayerFromRoomMessag
            DataManager dataManager = (DataManager) context;
            PlayerImpl myPlayer = dataManager.getMyPlayer();
 
-
         // 1 - Control
            if( !myPlayer.getLocation().isRoom() ) {
                Debug.signal( Debug.ERROR, this, "Master player is not on an InteriorMap" );
@@ -88,8 +87,9 @@ public class RemovePlayerFromRoomMsgBehaviour extends RemovePlayerFromRoomMessag
            }
                       
            playerImpl.cleanVisualProperties(dataManager.getGraphicsDirector());
-           if (primaryKey.equals(dataManager.getSelectedPlayerKey()))
-            dataManager.removeCircle();
+
+           if (dataManager.getSelectedPlayerKey()!=null && primaryKey.equals(dataManager.getSelectedPlayerKey()) )
+               dataManager.removeCircle();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -54,7 +54,11 @@ public class ClientManager
 {
 
  /*------------------------------------------------------------------------------------*/
-
+  
+  /** Indexs of wizard step
+   */
+  static private int RECOVER_ACCOUNT = 3;
+  
   /** Our Default ClientManager.
    */
   private static ClientManager clientManager;
@@ -66,7 +70,7 @@ public class ClientManager
   /** Current profileConfig
    */
   private ProfileConfig currentProfileConfig;
-
+  
   /** Our ServerConfigList file.
    */
   private ServerConfigList serverConfigList;
@@ -199,6 +203,7 @@ public class ClientManager
 
     final ATextField tfield1;
     final ATextField atf_login;
+    final ATextField atf_key;
     final APasswordField pfield1;
     final APasswordField pfield2;
 
@@ -440,7 +445,13 @@ public class ClientManager
 
       rightPanel.add( new JLabel( new ImageIcon("../base/gui/separator.gif") ) );  // SEPARATOR
 
-      b_recoverProfile.setEnabled(false);
+      b_recoverProfile.setEnabled(true);
+      b_recoverProfile.addActionListener(new ActionListener() {
+          public void actionPerformed (ActionEvent e) {
+            start(RECOVER_ACCOUNT);
+          }
+        }
+      );
       rightPanel.add(b_recoverProfile);
 
       b_delProfile.setEnabled(false);
@@ -725,6 +736,149 @@ public class ClientManager
       screenIntro.showScreen();
       break;
 
+    // *********************************
+    // *** Load an existing account ****
+    // *********************************
+    
+    case 3:
+    
+    screenIntro.setTitle("Wotlas - Login...");
+
+      // Create panels
+      leftPanel = new JPanel();
+      leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+      rightPanel = new JPanel();
+
+      // Create buttons
+      b_ok = new JButton(im_okup);
+      b_ok.setRolloverIcon(im_okdo);
+      b_ok.setPressedIcon(im_okdo);
+      b_ok.setDisabledIcon(im_okun);
+      b_ok.setBorderPainted(false);
+      b_ok.setContentAreaFilled(false);
+      b_ok.setFocusPainted(false);
+
+      b_cancel = new JButton(im_cancelup);
+      b_cancel.setRolloverIcon(im_canceldo);
+      b_cancel.setPressedIcon(im_canceldo);
+      b_cancel.setDisabledIcon(im_cancelun);
+      b_cancel.setBorderPainted(false);
+      b_cancel.setContentAreaFilled(false);
+      b_cancel.setFocusPainted(false);
+      
+      
+      // *** Left JPanel ***
+
+      label1 = new ALabel("Welcome,");
+      label1.setAlignmentX(Component.CENTER_ALIGNMENT);
+      leftPanel.add(label1);
+
+      leftPanel.add(Box.createRigidArea(new Dimension(0,10)));
+
+      JPanel mainPanel_03 = new JPanel();
+        mainPanel_03.setBackground(Color.white);
+        JPanel formPanel_03_left = new JPanel(new GridLayout(2,1,5,5));
+          formPanel_03_left.setBackground(Color.white);
+          formPanel_03_left.add(new JLabel(new ImageIcon("../base/gui/your-key.gif")));
+          formPanel_03_left.add(new JLabel(new ImageIcon("../base/gui/enter-password.gif")));
+        mainPanel_03.add(formPanel_03_left);
+        JPanel formPanel_03_right = new JPanel(new GridLayout(2,1,5,10));
+          formPanel_03_right.setBackground(Color.white);
+          atf_key = new ATextField(10);
+          formPanel_03_right.add(atf_key);
+          
+          pfield1 = new APasswordField(10);
+          pfield1.setFont(f.deriveFont(18f));
+          pfield1.addKeyListener(new KeyAdapter() {
+            public void keyReleased(KeyEvent e) {
+            if ( e.getKeyCode()==KeyEvent.VK_ENTER )
+              b_ok.doClick();
+            }
+          });
+          formPanel_03_right.add(pfield1);
+          
+        mainPanel_03.add(formPanel_03_right);
+      leftPanel.add(mainPanel_03);
+
+      // *** Right Panel ***
+
+      b_ok.addActionListener(new ActionListener() {
+        public void actionPerformed (ActionEvent e) {
+          char charPasswd[] = pfield1.getPassword();
+          if (charPasswd.length < 4) {
+            JOptionPane.showMessageDialog( screenIntro, "Password must have at least 5 characters !", "New Password", JOptionPane.ERROR_MESSAGE);
+          } else {
+                    
+            if (currentProfileConfig==null) {
+              currentProfileConfig = new ProfileConfig();
+            }
+            
+            String tempKey = atf_key.getText();
+            int index = tempKey.indexOf('-');
+            if (index<0) {
+              start(0);
+              return;
+            }
+            currentProfileConfig.setLogin(tempKey.substring(0,index));
+            tempKey = tempKey.substring(index+1);
+            index = tempKey.indexOf('-');
+            if (index<0) {
+              start(0);   
+              return;
+            }         
+            try {
+              currentProfileConfig.setServerID(Integer.parseInt(tempKey.substring(0,index)));
+              currentProfileConfig.setOriginalServerID(Integer.parseInt(tempKey.substring(0,index)));
+              currentProfileConfig.setLocalClientID(Integer.parseInt(tempKey.substring(index+1)));
+            } catch (NumberFormatException nfes) {
+              start(0);
+              return;
+            }       
+            
+            DataManager.getDefaultDataManager().setCurrentProfileConfig(currentProfileConfig);
+
+            currentServerConfig = serverConfigList.getServerConfig(currentProfileConfig.getServerID());
+
+            JGameConnectionDialog jgconnect = new JGameConnectionDialog( screenIntro,
+                    currentServerConfig.getServerName(), currentServerConfig.getGameServerPort(),
+                    currentProfileConfig.getLogin(), new String(charPasswd), currentProfileConfig.getLocalClientID(),
+                    currentProfileConfig.getOriginalServerID(), DataManager.getDefaultDataManager());
+
+            if ( jgconnect.hasSucceeded() ) {
+              Debug.signal( Debug.NOTICE, null, "ClientManager connected to GameServer");
+              // Save accounts informations
+              //profileConfigList.addProfile(currentProfileConfig);
+              //PersistenceManager.getDefaultPersistenceManager().saveProfilesConfig(profileConfigList);
+              
+              
+              //jgconnect.getPersonality().queueMessage(new AccountRecoverMessage( atf_key.getText()) );
+              
+              start(100);
+            } else {
+              Debug.signal( Debug.ERROR, this, "ClientManager ejected from GameServer");
+              start(0);
+            }
+          }
+        }
+      }
+      );
+      rightPanel.add(b_ok);
+
+      b_cancel.addActionListener(new ActionListener() {
+        public void actionPerformed (ActionEvent e) {
+            start(0);
+        }
+      }
+      );
+      rightPanel.add(b_cancel);
+
+      // *** Adding the panels ***
+
+      screenIntro.setLeftPanel(leftPanel);
+      screenIntro.setRightPanel(rightPanel);
+      screenIntro.showScreen();
+      break;
+    
     // ***********************************
     // *** Connection to AccountServer ***
     // ***********************************

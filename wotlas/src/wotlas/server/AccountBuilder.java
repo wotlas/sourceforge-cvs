@@ -364,5 +364,14 @@ public class AccountBuilder implements NetConnectionListener
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** Method called by NetMessages to recover an account
+    */
+     public void recoverAccount(String key, String playerName) {
+        System.out.println(key);
+        System.out.println(playerName);
+     }
+    
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }
 

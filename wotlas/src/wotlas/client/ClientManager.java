@@ -511,6 +511,9 @@ public class ClientManager
     case 10:
       screenIntro.setTitle("Wotlas - Account creation...");
 
+      // Loading Server Configs
+      serverConfigList.getLatestConfigFiles(screenIntro);
+
       // Account creation
       currentProfileConfig = new ProfileConfig();
 

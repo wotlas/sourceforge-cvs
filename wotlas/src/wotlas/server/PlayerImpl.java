@@ -65,6 +65,10 @@ public class PlayerImpl implements Player, NetConnectionListener
     */
        private String fullPlayerName;
 
+   /** Player character's past
+    */
+       private String playerPast;
+
    /** WotCharacter Class
     */
        private WotCharacter wotCharacter;
@@ -280,6 +284,16 @@ System.out.println("POSITION set to x:"+getX()+" y:"+getY()+" location is "+loca
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** To get the player character past.
+    *
+    *  @return player past
+    */
+      public String getPlayerPast() {
+         return playerPast;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
    /** To set the player's name ( short name )
     *
     *  @param player name
@@ -296,6 +310,16 @@ System.out.println("POSITION set to x:"+getX()+" y:"+getY()+" location is "+loca
     */
       public void setPrimaryKey( String primaryKey ) {
            this.primaryKey = primaryKey;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the player's past.
+    *
+    *  @param playerPast past
+    */
+      public void setPlayerPast( String playerPast ) {
+           this.playerPast = playerPast;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -40,5 +40,6 @@ public interface DescriptionMessageCategory extends NetMessageCategory {
        public final static byte CLEAN_GHOST_PLAYERS_MSG     = 7;
        public final static byte DOOR_STATE_MSG              = 8;
        public final static byte DOORS_STATE_MSG             = 9;
+       public final static byte PLAYER_PAST_MSG             = 10;
 }
 

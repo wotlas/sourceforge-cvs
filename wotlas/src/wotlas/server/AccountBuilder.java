@@ -87,13 +87,17 @@ public class AccountBuilder implements NetConnectionListener
      */
        static final public byte ACCOUNT_PLAYER_NAMES_STATE = 4;
 
+    /** Account awaiting player past.
+     */
+       static final public byte ACCOUNT_PLAYER_PAST_STATE = 5;
+
     /** Account Ready State (account ready to be created)
      */
-       static final public byte ACCOUNT_READY_STATE = 5;
+       static final public byte ACCOUNT_READY_STATE = 6;
 
     /** Account Created State (account has been created)
      */
-       static final public byte ACCOUNT_CREATED_STATE = 6;
+       static final public byte ACCOUNT_CREATED_STATE = 7;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -267,6 +271,21 @@ public class AccountBuilder implements NetConnectionListener
      	player.setPlayerName(playerName);
      	player.setFullPlayerName(fullPlayerName);                
      	account.setEmail(playerEmail);
+     	canGoToPreviousState = true;
+        state = ACCOUNT_PLAYER_PAST_STATE;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Method called by NetMessages to set player names.
+    */
+     public void setPlayerPast( String playerPast ) {
+     	if(state!=ACCOUNT_PLAYER_PAST_STATE) {
+           stateError();
+           return;
+        }
+
+     	player.setPlayerPast(playerPast);
      	canGoToPreviousState = true;
         state = ACCOUNT_READY_STATE;
      }

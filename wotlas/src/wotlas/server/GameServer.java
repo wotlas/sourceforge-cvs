@@ -119,4 +119,11 @@ public class GameServer extends NetServer
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+    /** To get the server ID
+     */
+    static public int getServerID() {
+      return ServerDirector.getServerID();
+    }
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }

@@ -87,6 +87,24 @@ public abstract class NetPersonality
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** Constructor with an already opened socket and a local ID to identify
+   *  a set of threads ( see NetServer ).
+   *
+   * @param socket an already opened socket
+   * @param context object to give to messages when they arrive.
+   * @param localID an ID that identifies a set of threads.
+   * @exception IOException if the socket wasn't already connected.
+   */
+     public NetPersonality( Socket socket, Object context, byte localID ) throws IOException {
+           generatePersonality( socket, context );
+        
+        // we attach the socket of the NetThread to 
+           my_netreceiver.attachTo( localID );
+           my_netsender.attachTo( localID );
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** In this method you have to create your own NetSender and NetReceiver and
    *  save them in the "my_netsender" and "my_net_receiver" class attributes.
    *  If you want to create a new Personality model you can take the classes

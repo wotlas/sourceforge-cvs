@@ -58,6 +58,10 @@ public class NetSender extends NetThread
 
  /*------------------------------------------------------------------------------------*/
 
+    /** A link to our NetPersonality
+     */
+        private NetPersonality personality;
+
     /** Communication stream to send data
      */
         private DataOutputStream out_stream;
@@ -110,7 +114,8 @@ public class NetSender extends NetThread
       public NetSender( Socket socket, NetPersonality personality,
                         byte sender_type, int buffer_size ) throws IOException
       {
-          super(socket, personality );
+          super(socket);
+          this.personality = personality;
 
           if(sender_type<1 || 3<sender_type)
               this.sender_type = SEND_IMMEDIATELY;
@@ -134,8 +139,8 @@ public class NetSender extends NetThread
   /** NetSender Thread action.
    *  Never call this method it's done automatically.
    */
-     public void run()
-     {
+    public void run()
+    {
      	if( sender_type == USER_AGGREGATION )  // we have nothing to do here
      	  return;
 
@@ -195,9 +200,11 @@ public class NetSender extends NetThread
                Debug.signal( Debug.ERROR, this, e ); // serious error while sending message
         }
 
-       closeConnection();
-       out_stream=null;
-     }
+     // we ask the NetPersonality to perform some cleanup
+     // and signal that the connection was closed ( connectionListener )
+        personality.closeConnection();
+        out_stream=null;
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -245,7 +252,9 @@ public class NetSender extends NetThread
                     else
                           Debug.signal( Debug.ERROR, this, e ); // serious error
 
-                   closeConnection();
+                // we ask the NetPersonality to perform some cleanup
+                // and signal that the connection was closed ( connectionListener )
+                   personality.closeConnection();
                    out_stream=null;
                 }
             }

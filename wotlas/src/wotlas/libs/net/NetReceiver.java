@@ -61,7 +61,11 @@ public class NetReceiver extends NetThread
     /** Our message factory
      */
         private NetMessageFactory factory;
-    
+
+    /** A link to our NetPersonality
+     */
+        private NetPersonality personality;
+
     /** Object to give to messages when they arrive.
      */
         private Object context;
@@ -86,9 +90,10 @@ public class NetReceiver extends NetThread
       public NetReceiver( Socket socket, NetPersonality personality, boolean sync,
                           Object context, int buffer_size ) throws IOException
       {
-          super( socket, personality );
+          super( socket );
           this.sync = sync;
           this.context = context;
+          this.personality = personality;
 
           if(sync)
              max_msg = 15; // default value
@@ -103,8 +108,8 @@ public class NetReceiver extends NetThread
   /** Method for the async NetReceiver.
    *  Never call this method it's done automatically.
    */
-     public void run()
-     {
+    public void run()
+    {
         if(sync)
            return;   // we have nothing to do here
 
@@ -139,9 +144,11 @@ public class NetReceiver extends NetThread
                Debug.signal( Debug.ERROR, this, e ); // serious error while processing message
         }
 
-       closeConnection();
-       in_stream=null;
-     }
+     // we ask the NetPersonality to perform some cleanup
+     // and signal that the connection was closed ( connectionListener )
+        personality.closeConnection();
+        in_stream=null;
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -189,7 +196,9 @@ public class NetReceiver extends NetThread
            else
                Debug.signal( Debug.ERROR, this, e ); // serious error while processing message
 
-           closeConnection();
+         // we ask the NetPersonality to perform some cleanup
+         // and signal that the connection was closed ( connectionListener )
+            personality.closeConnection();
         }
      }
 

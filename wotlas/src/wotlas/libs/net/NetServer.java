@@ -54,8 +54,15 @@ import wotlas.libs.net.message.ServerWelcomeMsgBehaviour;
  */
 
 
-abstract public class NetServer extends Thread
+public class NetServer extends Thread
 {
+ /*------------------------------------------------------------------------------------*/
+
+  /** Server counter. We count how many servers we have on this JVM.
+   *  It helps set the server_local_ID.
+   */
+     private static byte server_counter;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Server Socket
@@ -70,17 +77,22 @@ abstract public class NetServer extends Thread
    */
      private boolean server_lock;
 
-  /** Maximum number of opened sockets
+  /** Maximum number of opened sockets for this server.
    */
-     private short max_opened_sockets;
+     private int max_opened_sockets;
+
+  /** Server Local ID. Identifies this server on this JVM.
+   */
+     private byte server_local_ID;
 
  /*------------------------------------------------------------------------------------*/
 
      /**  Constructs a NetServer but does not starts it. Call the start()
       *   method to start the server. You have to give the name of the packages
-      *   where we'll be able to find the NetMessageBehaviour classes.
+      *   where we'll be able to find the NetMessageBehaviour classes.<p>
       *
-      *   By default we accept a maximum of 200 opened socket connections (by JVM).
+      *   By default we accept a maximum of 200 opened socket connections for
+      *   this server.
       *
       *  @param server_port port on which the server listens to clients.
       *  @param msg_packages a list of packages where we can find NetMsgBehaviour Classes.
@@ -90,6 +102,10 @@ abstract public class NetServer extends Thread
               super("Server");
               stop_server = false;
               server_lock = false;
+
+           // server local ID
+              server_local_ID = server_counter;
+              server_counter++;
 
            // default maximum number of opened sockets
               max_opened_sockets = 200;
@@ -112,9 +128,10 @@ abstract public class NetServer extends Thread
 
      /**  Constructs a NetServer on the specified host, but does not starts it.
       *   Call the start() method to start the server. You have to give the name of
-      *   the packages where we'll be able to find the NetMessageBehaviour classes.
+      *   the packages where we'll be able to find the NetMessageBehaviour classes.<p>
       *
-      *   By default we accept a maximum of 200 opened socket connections (by JVM).
+      *   By default we accept a maximum of 200 opened socket connections for
+      *   this server.
       *
       *  @param host the host interface to bind to. Example: wotlas.tower.org
       *  @param server_port port on which the server listens to clients.
@@ -125,6 +142,10 @@ abstract public class NetServer extends Thread
               super("Server");
               stop_server = false;
               server_lock = false;
+
+           // server local ID
+              server_local_ID = server_counter;
+              server_counter++;
 
            // default maximum number of opened sockets
               max_opened_sockets = 200;
@@ -202,7 +223,7 @@ abstract public class NetServer extends Thread
     * @return a new TormPersonality associated to this socket.
     */
       protected NetPersonality getNewDefaultPersonality( Socket socket ) throws IOException{
-              return new TormPersonality( socket, null );
+              return new TormPersonality( socket, null, server_local_ID );
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -267,8 +288,8 @@ abstract public class NetServer extends Thread
                   // We creates a personality object to take care of him...
                      personality = getNewDefaultPersonality( client_socket );
 
-                  // we inspect our server state... do we really accept him ?
-                     if( NetThread.getOpenedSocketNumber() >= max_opened_sockets ) {
+                  // we inspect our server state... can we really accept him ?
+                     if( NetThread.getOpenedSocketNumber( server_local_ID ) >= max_opened_sockets ) {
                        // we have reached the server's connections limit
                           refuseClient( personality, "Server has reached its maximum number of connections for the moment." );
                           Debug.signal(Debug.NOTICE,this,"Server has reached its max number of connections");
@@ -339,7 +360,7 @@ abstract public class NetServer extends Thread
     *
     *  @param max_opened_sockets maximum number of opened sockets
     */
-      protected void setMaximumOpenedSockets( short max_opened_sockets ) {
+      protected void setMaximumOpenedSockets( int max_opened_sockets ) {
           this.max_opened_sockets = max_opened_sockets;
       }
   

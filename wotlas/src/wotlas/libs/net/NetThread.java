@@ -28,21 +28,21 @@ import wotlas.utils.Debug;
 
 
 /** A NetThread is an abstract class representing a thread that manages
- *  a socket connection and is a part of a Network Personality ( NetPersonality ).
+ *  a socket connection.
  * 
  * @author Aldiss
  * @see wotlas.libs.net.NetReceiver
  * @see wotlas.libs.net.NetSender
- * @see wotlas.libs.net.NetPersonality
  */
 
 abstract public class NetThread extends Thread
 {
  /*------------------------------------------------------------------------------------*/
 
-   /** NetThread counter.
+   /** Thread Counters. ( This JVM may have different servers for example, each of them
+    *  owning a set of threads ).
     */
-       private static int count = 0;
+       private static int threadCounter[] = new int[1];
 
  /*------------------------------------------------------------------------------------*/
 
@@ -50,28 +50,26 @@ abstract public class NetThread extends Thread
     */
        private Socket socket;
 
-   /** A link to our NetPersonality
-    */
-       private NetPersonality personality;
-
    /** tells the thread if it must stop.
     */ 
-       private boolean stop_thread;
+       private boolean stopThread;
+
+   /** An ID representing our owner. This is also our index in the threadCounter array.
+    */
+       private byte localID;
 
  /*------------------------------------------------------------------------------------*/
 
    /** NetThread constructor.
     *
     * @param socket an already opened socket. 
-    * @param personality a NetPersonality linked to this socket.
     */
-      protected NetThread( Socket socket, NetPersonality personality ){
-         super("NetThread"+count);
-         count++;
+      protected NetThread( Socket socket ){
+         super("NetThread");
 
          this.socket = socket;
-         this.personality = personality;
-         stop_thread = false;
+         stopThread = false;
+         localID = -1;       // no owner
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -80,7 +78,7 @@ abstract public class NetThread extends Thread
     *   This method does nothing if the thread has already been stopped.
     */
       synchronized public void stopThread(){
-           stop_thread = true;
+           stopThread = true;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -90,7 +88,7 @@ abstract public class NetThread extends Thread
     * @return true if the thread should stop.
     */
       synchronized protected boolean shouldStopThread(){
-           return stop_thread;
+           return stopThread;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -111,19 +109,13 @@ abstract public class NetThread extends Thread
                  }
                  catch(IOException ioe ) {}
            }
-      }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /**  Asks the NetPersonality to close the socket connection.
-    */
-      protected void closeConnection() {
-        // we ask the NetPersonality to perform some cleanup
-        // and signal that the connection was closed ( connectionListener )
-           personality.closeConnection();
-
-        // we decrease the number of thread
-           count--;
+        // we decrease the number of threads for our set...
+           if( localID!=-1 )
+               synchronized( threadCounter ) {
+                   threadCounter[localID] -= 2; // this method is called once
+               }                                // and there are 2 threads.
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -154,14 +146,63 @@ abstract public class NetThread extends Thread
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /**  To get the number of opened socket. This method should only be used
-    *   for resource management (NetServer). Note that this method is not
-    *   synchronized.
+   /**  To get the number of opened socket for the given owner ID.
+    *   This method should only be used for resource management (NetServer).
     *
-    * @return the current number of opened sockets on this JVM...
+    * @param localID the ID of the sockets owner
+    * @return the current number of opened sockets for this owner.
     */
-      public static int getOpenedSocketNumber() {
-           return count/2; // there are two NetThread per socket connection
+      public static int getOpenedSocketNumber( byte localID ) { 
+             return getThreadsNumber(localID)/2;  // two threads per socket
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /**  To get the number of threads for the given owner ID.
+    *   This method should only be used for resource management (NetServer).
+    *
+    * @param localID the ID of the sockets owner (ID>0).
+    * @return the current number of working threads for this owner.
+    */
+      public static int getThreadsNumber( byte localID ) { 
+           synchronized (threadCounter) {
+            // if no socket were opened it is possible that the
+            // array length was not increased yet.
+               if( localID>=threadCounter.length )
+                   return 0;
+           
+               return threadCounter[localID];
+           }
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Attach this thread to the given owner ID.<p>
+    *
+    *  The purpose of this method is mainly to keep trace of the number
+    *  of opened sockets. It's optional and currently only used by the
+    *  NetServer class.
+    * 
+    *  @param localID an ID identifying an entity that owns this thread.
+    */
+      public void attachTo( byte localID ) {
+          this.localID = localID;
+
+          synchronized(threadCounter)
+          {
+            // new localID ? array not big enough ?
+              if( localID>=threadCounter.length ) {
+                 int tmp[] = new int[threadCounter.length+1];
+                
+                 for( byte i=0; i<threadCounter.length; i++ )
+                      tmp[i] = threadCounter[i];
+                
+                 threadCounter = tmp;
+              }
+          
+            // counter incr
+               threadCounter[localID]++;
+          }
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

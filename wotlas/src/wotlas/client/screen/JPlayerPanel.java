@@ -30,6 +30,7 @@ import java.awt.event.*;
 
 public class JPlayerPanel extends JPanel implements MouseListener
 {
+  JTabbedPane playerTabbedPane;
   
  /*------------------------------------------------------------------------------------*/ 
   
@@ -37,9 +38,29 @@ public class JPlayerPanel extends JPanel implements MouseListener
    */
   public JPlayerPanel() {
     super();
-    JLabel label1 = new JLabel("Player panel...");
-    add(label1);
+    this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
+    
+    playerTabbedPane = new JTabbedPane();
+    //playerTabbedPane.setAlignmentX(0.5f);
+    
+    playerTabbedPane.addTab("Info", null, new InfoPanel() );
+    playerTabbedPane.getComponentAt(0).setName("Info");
+        
+    add(playerTabbedPane);
   }
+  
+  
+  
+ public Component getTab(String nom)
+  {
+   for (int i=0; i<playerTabbedPane.getTabCount();i++) {
+    if ( playerTabbedPane.getComponentAt(i).getName().equals(nom) ) {
+      return playerTabbedPane.getComponentAt(i);
+    }
+   } 
+   return null;
+  }	 
+  
   
  /*------------------------------------------------------------------------------------*/
  

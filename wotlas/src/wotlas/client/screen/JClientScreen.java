@@ -57,7 +57,8 @@ public class JClientScreen extends JFrame
   public final static int mainWidth = 800;
   public final static int mainHeight = 600;
 
-  private final static int northHeight = 50;
+  //private final static int northHeight = 50;
+  private final static int northHeight = 0;
   public final static int leftWidth = 600;
 
   private final static int gameHeight = 400;
@@ -131,9 +132,9 @@ public class JClientScreen extends JFrame
   {
     // *** North panel ***
 
-    infosPanel.setPreferredSize(new Dimension(mainWidth, northHeight));
-    infosPanel.setBackground(Color.red);
-    getContentPane().add(infosPanel, BorderLayout.NORTH);
+      infosPanel.setPreferredSize(new Dimension(mainWidth, northHeight));
+      infosPanel.setBackground(Color.red);
+      getContentPane().add(infosPanel, BorderLayout.NORTH);
 
     // *** Right Panel ***
 

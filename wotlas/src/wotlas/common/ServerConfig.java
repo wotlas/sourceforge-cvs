@@ -95,6 +95,14 @@ public class ServerConfig
     */
       private String configVersion;
 
+   /** The first x position in the world.
+    */
+      private int worldFirstXPosition;
+
+   /** The first y position in the world.
+    */
+      private int worldFirstYPosition;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Empty Constructor for persistence.
@@ -113,6 +121,9 @@ public class ServerConfig
         description = new String("Enter a description for your server");
         location = new String("France ? USA ? England ?");
         adminEmail = new String("myAdress@foobar.net");
+        
+        worldFirstXPosition = 743;
+        worldFirstYPosition = 277;  // default is Tar Valon
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -134,6 +145,8 @@ public class ServerConfig
         location = other.getLocation();
         adminEmail = other.getAdminEmail();
         configVersion = other.getConfigVersion();
+        worldFirstXPosition = other.getWorldFirstXPosition();
+        worldFirstYPosition = other.getWorldFirstYPosition();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -393,7 +406,7 @@ public class ServerConfig
    /** To set the version of this server config.
     */
       public void setConfigVersion() {
-         if( serverName.length()>3 )
+         if( serverSymbolicName.length()>3 )
              configVersion = "WOT-"+serverName.substring(0,3).toUpperCase()+"-"+System.currentTimeMillis();
          else
              configVersion = "WOT-"+serverName.substring(0,serverName.length()).toUpperCase()+"-"+System.currentTimeMillis();
@@ -408,6 +421,42 @@ public class ServerConfig
     */
       public void setConfigVersion( String configVersion ) {
          this.configVersion = configVersion;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the player's first x position in the world.
+    * @return worldFirstXPosition
+    */
+      public int getWorldFirstXPosition() {
+         return worldFirstXPosition;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the player's first x position in the world.
+    * @param worldFirstXPosition
+    */
+      public void setWorldFirstXPosition( int worldFirstXPosition ) {
+         this.worldFirstXPosition = worldFirstXPosition;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the player's first y position in the world.
+    * @return worldFirstYPosition
+    */
+      public int getWorldFirstYPosition() {
+         return worldFirstYPosition;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the player's first y position in the world.
+    * @param worldFirstYPosition
+    */
+      public void setWorldFirstYPosition( int worldFirstYPosition ) {
+         this.worldFirstYPosition = worldFirstYPosition;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -439,6 +488,7 @@ public class ServerConfig
       public String toHTML() {
           return "<h2>Wotlas Server</h2><br>"
                  +"<b>Server Symbolic Name :</b> "+serverSymbolicName+"<br>"
+                 +"<b>Server address:</b> "+serverName+"<br>"
                  +"<b>Server ID:</b> "+serverID+"<br>"
                  +"<b>Location:</b> "+location+"<br>"
                  +"<b>Admin e-mail:</b> <i>"+adminEmail+"</i><br>"

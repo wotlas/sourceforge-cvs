@@ -34,6 +34,12 @@ public class ServerConfigList
 {
  /*------------------------------------------------------------------------------------*/
 
+   /** Update Period for the Remote Server Table... (in ms)
+    */
+       public final long UPDATE_PERIOD = 1000*3600;  // every hour
+
+ /*------------------------------------------------------------------------------------*/
+
     /** ServerConfig List ( sorted by getServerID() )
      */
        private ServerConfig configs[];
@@ -54,6 +60,10 @@ public class ServerConfigList
      */
        private boolean serversRemoteHomeUnreachable;
 
+    /** Last time we updated our remoteServerTable.
+     */
+       private long lastUpdateTime;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor with persistence manager.
@@ -63,11 +73,12 @@ public class ServerConfigList
    public ServerConfigList( PersistenceManager pm ) {
          this.pm = pm;
          serversRemoteHomeUnreachable = false;
+         lastUpdateTime=0; // none
 
       // attempt to load the configs from persistenceManager...
          configs = pm.loadServerConfigs();
          if(configs==null)
-            Debug.signal( Debug.WARNING, null, "No Server Configs loaded !" ); 
+            Debug.signal( Debug.WARNING, null, "No Server Configs loaded !" );
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -91,18 +102,28 @@ public class ServerConfigList
           if(remoteServerConfigHomeURL==null)
              return null;
 
+          if( serversRemoteHomeUnreachable ) return null;
+
+       // Update Period Reached ?
+          long now = System.currentTimeMillis();
+
+          if( remoteServerTable== null || (lastUpdateTime+UPDATE_PERIOD)<=now ) {
+             // yes ! we erase the old server table.
+                Debug.signal( Debug.NOTICE, null, "Loading server table..." );
+                remoteServerTable = null;
+                lastUpdateTime=now;
+          }
+
           if( remoteServerTable!= null )
              return remoteServerTable;
-
-          if( serversRemoteHomeUnreachable ) return null;
 
           Debug.signal(Debug.NOTICE, this,"Trying to load Server Table from network...");
        // We load the file from its URL
           remoteServerTable = FileTools.getTextFileFromURL( remoteServerConfigHomeURL+"server-table.cfg" );
           
           if(remoteServerTable==null || remoteServerTable.length()==0 ) {
-            Debug.signal(Debug.ERROR, this,"Try to load Server Table from network failed...");
-            serversRemoteHomeUnreachable = true;
+              Debug.signal(Debug.CRITICAL, this,"Try to load Server Table from network failed...");
+              serversRemoteHomeUnreachable = true;
           }
 
           return remoteServerTable;
@@ -192,29 +213,36 @@ public class ServerConfigList
    /** To retrieve the latest server config files.
     * @param parent parent component for the javax.swing.ProgressMonitor...
     */
-    public void getLatestConfigFiles( Component parent) {
+    public void getLatestConfigFiles( Component parent ) {
          if(getRemoteServerTable()==null)
     	    return;
 
          int value=0;
 
        // Progress Monitor
-          ProgressMonitor pMonitor = new ProgressMonitor( parent, "Loading Server List", "", 0, getMaxValue() );
-          pMonitor.setMillisToPopup(500);
-          pMonitor.setMillisToDecideToPopup(100);
+          ProgressMonitor pMonitor = null;
+
+          if(parent!=null) {
+             pMonitor = new ProgressMonitor( parent, "Loading Server List", "", 0, getMaxValue() );
+             pMonitor.setMillisToPopup(500);
+             pMonitor.setMillisToDecideToPopup(100);
+          }
+
           int ind=0;
 
          while( ( ind = remoteServerTable.indexOf( "Server-", ind ) ) >0 ) {
              ind += 7; // to skip the "Server-";
              value++;
-             pMonitor.setProgress(value);
 
-             if(pMonitor.isCanceled()) {
+             if(parent!=null)
+                pMonitor.setProgress(value);
+
+             if( parent!=null && pMonitor.isCanceled()) {
                 pMonitor.close();
                 return;
              }
 
-             int end = remoteServerTable.indexOf( "-", ind );             
+             int end = remoteServerTable.indexOf( "-", ind );
              if(end<0) return; // premature end of table
 
           // We retrieve the serverID
@@ -226,44 +254,55 @@ public class ServerConfigList
 
              ind ++; // to skip the last '-' char
 
-          // Update or Creation ?
-             if( serverID>0 ) {  // negative or null IDs are skipped
-             	 ServerConfig config = getServerConfig( serverID );
-             	 
-             	 if( config!=null ) {
-             	     updateServerConfig( config ); // update
-             	 }
-             	 else {
-             	   // creation
-                      if(pMonitor.isCanceled() || remoteServerTable.indexOf("WOT",ind)<0 ) {
-                      	 pMonitor.close();
-                      	 return;
-                      }
+             if(serverID<=0) continue; // negative or null IDs are skipped
 
-                      Debug.signal( Debug.WARNING, this, "A new server ("+serverID+") is available. Trying to load its config.");
+             int versionBeg = remoteServerTable.indexOf( "=", ind );
+             int versionEnd = remoteServerTable.indexOf( "\n",ind );
+
+             if( versionBeg<0 || versionEnd<0 ) {
+                 break; // end of file
+             }
+
+             if( remoteServerTable.substring(versionBeg+1,versionEnd).trim().length()==0 )
+                 continue; // we skip the empty server entry...
+
+          // Update or Creation ?
+             ServerConfig config = findServerConfig( serverID );
+             	 
+             if( config!=null ) {
+                 updateServerConfig( config ); // update
+             }
+             else {
+               // creation
+                 if( parent!=null && (pMonitor.isCanceled() || remoteServerTable.indexOf("WOT",ind)<0) ) {
+                     pMonitor.close();
+                     return;
+                 }
+
+                 Debug.signal( Debug.WARNING, this, "A new server ("+serverID+") is available. Trying to load its config.");
                       
-                      String newConfig = FileTools.getTextFileFromURL( remoteServerConfigHomeURL
+                 String newConfig = FileTools.getTextFileFromURL( remoteServerConfigHomeURL
                                          +PersistenceManager.SERVERS_PREFIX+serverID+PersistenceManager.SERVERS_SUFFIX );
                         
-                      if( newConfig ==null ) {
-                          Debug.signal( Debug.CRITICAL, this, "Failed to get new Server "+serverID+" config. Reverting to previous one.");
-                          continue;
-                      }
+                 if( newConfig ==null ) {
+                     Debug.signal( Debug.CRITICAL, this, "Failed to get new Server "+serverID+" config. Reverting to previous one.");
+                     continue;
+                 }
 
-                      config = pm.createServerConfig( newConfig, serverID );
+                 config = pm.createServerConfig( newConfig, serverID );
 
-                      if( config!=null ){
-                      	// We save it in our table
-                           Debug.signal( Debug.NOTICE, this, "Retrieved successfully new server ("+config.getServerID()+") config.");
-                           addConfig( config );
-                      }
-             	 }
+                 if( config!=null ){
+                    // We save it in our table
+                       Debug.signal( Debug.NOTICE, this, "Retrieved successfully new server ("+config.getServerID()+") config.");
+                       addConfig( config );
+                 }
              }
 
             // going to next line...
          }
 
-         pMonitor.close();
+         if(parent!=null)
+            pMonitor.close();
     }
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -305,6 +344,22 @@ public class ServerConfigList
                  updateServerConfig( configs[i] ); // trying to update
                  return configs[i];
              }
+         return null;
+     }
+
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** We search for the wanted server config without performing any updates.
+    */
+     private ServerConfig findServerConfig( int serverID ) {
+     
+         if(configs==null)
+            return null;
+     
+         for( int i=0; i<configs.length; i++ )
+             if( configs[i].getServerID()==serverID )
+                 return configs[i];
+
          return null;
      }
 

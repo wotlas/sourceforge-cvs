@@ -49,6 +49,11 @@ import java.util.*;
 
 public class PlayerImpl implements Player, NetConnectionListener
 {
+   /** Period between two focus sounds. Focus sounds can be send by players two draw
+    *  attention.
+    */
+      private static final int FOCUS_SOUND_PERIOD = 1000*10; // 10s between two sounds
+
  /*------------------------------------------------------------------------------------*/
 
    /** Player's primary key (usually the client account name)
@@ -113,6 +118,12 @@ public class PlayerImpl implements Player, NetConnectionListener
     */
        transient private boolean isChatMember = true; //always member on default chat.
 
+   /** Last time this player was grant the possibility to send a focus sound to players.
+    *
+    *  The period between two focus sound is set by the static FOCUS_SOUND_PERIOD.
+    */
+       transient private long focusSoundTimeStamp;
+
  /*------------------------------------------------------------------------------------*/
 
    /** Personality Lock
@@ -143,8 +154,8 @@ public class PlayerImpl implements Player, NetConnectionListener
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To initialize the player location to the first existent town found.
-    *  WARNING : the player is NOT moved in the town... that means this method
+   /** To initialize the player location to the first existent world found.
+    *  WARNING : the player is NOT moved to the world... thus this method
     *  is for player creation ONLY.
     */
       public void setDefaultPlayerLocation() {
@@ -155,20 +166,15 @@ public class PlayerImpl implements Player, NetConnectionListener
              
              if( worldID<0 )
                  Debug.signal( Debug.CRITICAL, this, "No world data given to initialize player." );
+             else if(worldID!=0)
+                 Debug.signal( Debug.WARNING, this, "The default world isn't the first in the list... hope you are aware of that..." );
 
-             location = new WotlasLocation(worldID,0);
-             location.setWorldMapID( worldID );
+             location = new WotlasLocation(worldID);
 
-             TownMap tMap = worldManager.getTownMap( location );
-             
-             if(tMap==null) {
-                Debug.signal( Debug.CRITICAL, this, "No towns available." );
-                return;
-             }
-
-             ScreenPoint insPoint = tMap.getInsertionPoint();
-             setX( insPoint.x );
-             setY( insPoint.y );
+          // we retrieve the default position.
+             ServerConfig cfg = ServerManager.getDefaultServerManager().getServerConfig();
+             setX( cfg.getWorldFirstXPosition() );
+             setY( cfg.getWorldFirstYPosition() );
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -771,6 +777,41 @@ public class PlayerImpl implements Player, NetConnectionListener
                            ( (PlayerImpl)it.next() ).sendMessage( msg );
                 }
            }
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To advertise our creation in a new location of the 'Room' type.
+   */
+    public void advertiseCreation() {
+    	
+    	  if(myRoom==null) {
+    	     Debug.signal( Debug.ERROR, this, "Can't advertise player creation : myRoom=null !" );
+    	     return;
+    	  }
+    	
+          AddPlayerToRoomMessage aMsg = new AddPlayerToRoomMessage( this );
+
+          sendMessageToRoom( myRoom, aMsg, true );
+          sendMessageToNearRooms( myRoom, aMsg, true );
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To ask the grant to send a focus sound... see FOCUS_SOUND_PERIOD definition for
+    *  more information.
+    *
+    *  @return true if you can send the sound, false otherwise.
+    */
+    public boolean askGrantAccessToSendFocusSound() {
+    	long now = System.currentTimeMillis();
+
+        if( focusSoundTimeStamp+FOCUS_SOUND_PERIOD < now ) {
+            focusSoundTimeStamp=now;
+            return true; // grant accepted
+        }
+
+       return false; // grant rejected
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -452,22 +452,6 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
       chatVoiceLevel.setValue(ChatRoom.SHOUTING_VOICE_LEVEL);
       message = message.substring(7);
     }
-    else if(message.equals("/help"))  {
-      message = "<font color='purple'><b>Commands:</b><br>"+
-                "<b>&nbsp;&nbsp; /who</b> prints connected players name & key.<br>"+
-                "<b>&nbsp;&nbsp; /find:[playerKey]</b> prints a player's location.<br>"+
-                "<b>&nbsp;&nbsp; /msg:[playerKey]:[text]</b> to send a private message to a player.<br>"+
-                "<b>&nbsp;&nbsp; /to:[playerName]:[text]</b> to send a public message to a player.<br>"+
-                "<b>&nbsp;&nbsp; /print:[text]</b> to send a message to the server administrator.<br>"+
-                "<b>&nbsp;&nbsp; /me:[text]</b> to start the current message with 'YourName says...'.<br>"+
-                "<b>&nbsp;&nbsp; /whisper:[text]</b> to whisper the current message.<br>"+
-                "<b>&nbsp;&nbsp; /shout:[text]</b> to shout the current message.<br>"+
-                "<b>&nbsp;&nbsp; /help</b> help command.<br></font>";
-
-       getCurrentJChatRoom().appendText( message );
-       inputBox.setText("");
-       return;
-    }
 
     dManager.sendMessage( new SendTextMessage( dManager.getMyPlayer().getPrimaryKey(),
                                                dManager.getMyPlayer().getFullPlayerName(),

@@ -69,11 +69,11 @@ public class ChatRoom
 
    /** Chat message maximum size ( in number of chars )
     */
-    final public static int MAXIMUM_MESSAGE_SIZE = 100;
+    final public static int MAXIMUM_MESSAGE_SIZE = 250;
 
    /** Chat Room name maximum size ( in number of chars )
     */
-    final public static int MAXIMUM_NAME_SIZE = 15;
+    final public static int MAXIMUM_NAME_SIZE = 20;
 
    /** Maximum number of ChatRooms per Room.
     */

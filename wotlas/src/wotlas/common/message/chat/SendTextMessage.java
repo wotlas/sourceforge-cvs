@@ -112,5 +112,30 @@ public class SendTextMessage extends NetMessage
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To set the message for this chat message...
+   */
+   public void setMessage( String message ) {
+      this.message = message;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
+  /** To get the voice sound level of this message.
+   */
+   public byte getVoiceSoundLevel() {
+     return voiceSoundLevel;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ 
+  /** To set the voice sound level of this message.
+   *  @param voiceSoundLevel as defined in ChatRoom.
+   */
+   public void setVoiceSoundLevel( byte voiceSoundLevel ) {
+        this.voiceSoundLevel=voiceSoundLevel;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }

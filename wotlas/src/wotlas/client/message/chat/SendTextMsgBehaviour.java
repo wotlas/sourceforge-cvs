@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.*;
 
 import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.libs.sound.*;
 import wotlas.common.message.chat.*;
 import wotlas.common.character.*;
 
@@ -48,7 +49,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
   /** Constructor.
    */
     public SendTextMsgBehaviour() {
-      super();
+        super();
     }
 
  /*------------------------------------------------------------------------------------*/
@@ -63,30 +64,30 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
           DataManager dataManager = (DataManager) sessionContext;
           PlayerImpl player = dataManager.getMyPlayer();          
           
-       // Send a private message
-          if (message.startsWith("/msg:")) {
+       // Return of a command ?
+          if (message.startsWith("/cmd:")) {
             JChatRoom chatRoom = dataManager.getChatPanel().getJChatRoom(chatRoomPrimaryKey);
-            chatRoom.appendText("<i> ** [" + senderFullName + "] " + message.substring(5) + " ** </i>");
+            chatRoom.appendText("<font color='purple'>"+message.substring(5)+"</font>");
             return;
           }
-       // Find a player
-          else if(message.startsWith("/find:")) {
-            JChatRoom chatRoom = dataManager.getChatPanel().getJChatRoom(chatRoomPrimaryKey);
-            chatRoom.appendText("<font color='purple'><i> "+message.substring(6)+".</i></font>");
-            return;
+          else if( message.equals("/BELL") ) {
+             message = "/me rings a bell...";
+             SoundLibrary.getSoundLibrary().playSound("bell.wav");
           }
-       // Get a list of online players
-          else if(message.startsWith("/who")) {
-            JChatRoom chatRoom = dataManager.getChatPanel().getJChatRoom(chatRoomPrimaryKey);
-            chatRoom.appendText("<font color='purple'> "+message.substring(4)+" </font>");
-            return;
+          else if( message.equals("/FANFARE") ) {
+             message = "/me sounds the fanfare !";
+             SoundLibrary.getSoundLibrary().playSound("fanfare.wav");
           }
-           
-            
+          else if( message.equals("/KNOCK") ) {
+             message = "/me knocks at the door...";
+             SoundLibrary.getSoundLibrary().playSound("knock.wav");
+          }
+
+
        // We get the sender of this message
           Hashtable players = dataManager.getPlayers();
           PlayerImpl sender = null;
-          
+
           if(players!=null)
              sender = (PlayerImpl) players.get( senderPrimaryKey );
 

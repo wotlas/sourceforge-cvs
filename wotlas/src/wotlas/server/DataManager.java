@@ -19,6 +19,8 @@
 
 package wotlas.server;
 
+import wotlas.server.chat.ChatCommandProcessor;
+
 import java.util.Iterator;
 
 
@@ -45,6 +47,10 @@ public class DataManager
    /** Our Account Manager
     */
       private AccountManager accountManager;
+
+   /** Our chat command processor
+    */
+      private ChatCommandProcessor chatCommandProcessor;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -76,6 +82,10 @@ public class DataManager
 
           while( it.hasNext() )
                  ( (GameAccount) it.next() ).getPlayer().init();
+
+       // 7 - Creation of the Chat Command Processor.
+          chatCommandProcessor = new ChatCommandProcessor();
+          chatCommandProcessor.init();
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -113,7 +123,7 @@ public class DataManager
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get account manager.
+  /** To get the account manager.
    *
    * @return the account manager.
    */
@@ -123,5 +133,14 @@ public class DataManager
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To get the chat command processor.
+   *
+   * @return the chat command processor.
+   */
+   public ChatCommandProcessor getChatCommandProcessor(){
+         return chatCommandProcessor;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
 

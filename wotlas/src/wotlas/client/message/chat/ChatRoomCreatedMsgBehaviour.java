@@ -44,6 +44,12 @@ public class ChatRoomCreatedMsgBehaviour extends ChatRoomCreatedMessage implemen
 
  /*------------------------------------------------------------------------------------*/
 
+   /** To tell if this message is to be invoked later or not.
+    */
+     private boolean invokeLater = true;
+
+ /*------------------------------------------------------------------------------------*/
+
   /** Constructor.
    */
   public ChatRoomCreatedMsgBehaviour() {
@@ -58,12 +64,21 @@ public class ChatRoomCreatedMsgBehaviour extends ChatRoomCreatedMessage implemen
    *        this message.
    */
   public void doBehaviour( Object sessionContext ) {
+
        if (DataManager.SHOW_DEBUG)
          System.out.println("ChatRoomCreatedMsgBehaviour:"+primaryKey);
 
     // The sessionContext is here a DataManager.
        DataManager dataManager = (DataManager) sessionContext;
        PlayerImpl player = dataManager.getMyPlayer();
+
+
+       if( invokeLater ) {
+           invokeLater = false;
+           dataManager.invokeLater( this );
+           return;
+       }
+
 
     // We seek for the creator of this chat...
        Hashtable players = dataManager.getPlayers();
@@ -76,6 +91,9 @@ public class ChatRoomCreatedMsgBehaviour extends ChatRoomCreatedMessage implemen
            Debug.signal( Debug.WARNING, this, "Could not find the sender of this message : "+creatorPrimaryKey);
 
      // We create the new chat
+       if(primaryKey==null || name==null || creatorPrimaryKey==null )
+           Debug.signal( Debug.ERROR, this, "Created new chat with bad parameters !");
+
        ChatRoom chatRoom = new ChatRoom();
        chatRoom.setPrimaryKey(primaryKey);
        chatRoom.setName(name);

@@ -60,11 +60,11 @@ public class WelcomeMsgBehaviour extends WelcomeMessage implements NetMessageBeh
            PlayerImpl player = (PlayerImpl) sessionContext;
 
         // We create a welcome message
-           String message = "/whoWelcome to Wotlas<br>";
+           String message = "/cmd:<b>Welcome to Wotlas !</b><br> ";
         
         // Get the list of online players
-           HashMap onlinePlayers = DataManager.getDefaultDataManager().getAccountManager().getOnlinePlayers();        
-           message += "There are currently " + onlinePlayers.size() + " online players...</font>";
+           HashMap onlinePlayers = DataManager.getDefaultDataManager().getAccountManager().getOnlinePlayers();
+           message += "There are currently " + onlinePlayers.size() + " online players...";
         
            player.sendMessage( new SendTextMessage( player.getPrimaryKey(),
                                                player.getFullPlayerName(),

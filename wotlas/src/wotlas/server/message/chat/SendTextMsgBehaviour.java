@@ -33,6 +33,7 @@ import wotlas.common.character.*;
 import wotlas.common.message.account.*;
 
 import wotlas.server.*;
+import wotlas.server.chat.ChatCommandProcessor;
 
 import wotlas.utils.Debug;
 
@@ -72,104 +73,13 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
 
     // 0.1 - test shortcut/commands...
        if(message.charAt(0)=='/') {
-          if( message.equals("/who") ) {
-              HashMap onlinePlayers = DataManager.getDefaultDataManager().getAccountManager().getOnlinePlayers();
-              Iterator it = onlinePlayers.values().iterator();
-              PlayerImpl onlinePlayer;
-              message += "There are " + onlinePlayers.size() + " online players:";
-              while ( it.hasNext() ) {
-                onlinePlayer = (PlayerImpl) it.next();
-                message += "<br> &nbsp;&nbsp;&nbsp; " + onlinePlayer.getPlayerName() + " &nbsp; <i> ( " + onlinePlayer.getPrimaryKey() + " )</i>";
-              }     
-              player.sendMessage(this);
-              return;                   
-          } else if (message.equals("/blackajah") && voiceSoundLevel==ChatRoom.SHOUTING_VOICE_LEVEL) {
+          ChatCommandProcessor processor = DataManager.getDefaultDataManager().getChatCommandProcessor();
 
-              WotCharacter wotC = player.getWotCharacter();
-       
-              if( wotC instanceof AesSedai )
-                  ((AesSedai) wotC).toggleBlackAjah();
-          }
-          else if (message.startsWith("/msg:")) {
-              message = message.substring(5);
-              int index = message.indexOf(':');
-
-              if(index<0 || message.endsWith(":")) {
-                 message = "/msg:" +message+" <font color='red'>ERROR: bad format</font>";
-                 player.sendMessage(this);
-                 return;
-              }
-
-              String key = message.substring(0,index);
-              message = "/msg:" + message.substring(index);
-
-              GameAccount account = DataManager.getDefaultDataManager().getAccountManager().getAccount(key);
-         
-              if(account==null) {
-                 message = "/msg:"+message+" <font color='red'>ERROR: unknown player</font>";
-                 player.sendMessage(this);
-                 return;
-              }
-
-              account.getPlayer().sendMessage(this);
-              player.sendMessage(this);
-              return;
-          }
-          else if(message.startsWith("/find:")) {
-
-              message = message.substring(6);
-
-              if(message.length()==0) {
-                 message = "/find: <font color='red'>ERROR: no key entered</font>";
-                 player.sendMessage(this);
-                 return;
-              }
-
-              GameAccount account = DataManager.getDefaultDataManager().getAccountManager().getAccount(message);
-         
-              if(account==null) {
-                 message = "/find: <font color='red'>ERROR: unknown player</font>";
-                 player.sendMessage(this);
-                 return;
-              }
-
-              message = "/find:"+account.getPlayer().getFullPlayerName()+" found in ";
-              WotlasLocation flocation = account.getPlayer().getLocation();
-
-              if( flocation.isRoom() ) {
-                  Room r = DataManager.getDefaultDataManager().getWorldManager().getRoom(flocation);
-                  if(r!=null)
-                     message += r.getFullName();
-              }
-              else if( flocation.isTown() ) {
-                  TownMap t = DataManager.getDefaultDataManager().getWorldManager().getTownMap(flocation);
-                  if(t!=null)
-                     message += t.getFullName();
-              }
-              else if( flocation.isWorld() ) {
-                  WorldMap w = DataManager.getDefaultDataManager().getWorldManager().getWorldMap(flocation);
-                  if(w!=null)
-                     message += w.getFullName();
-              }
-              else {
-              	  message += "#error: bad location! "+flocation;
-              }
-
-              player.sendMessage(this);
-              return;
-          }
-          else if(message.startsWith("/print:")) {
-
-              message = message.substring(7);
-              message = ""+player.getFullPlayerName()+" says: "+message;
-              Debug.signal(Debug.NOTICE,null,message);
-
-              message = "<font color='red'>"+message+"</font>";
-              player.sendMessage(this);
-              return;
-          }
+          if( processor.processCommand( message, player, this ) )
+             return; // end of message process if the command returns true
+                     // if the command returns false we continue the message process
        }
-             
+
     // 1 - We send the message back to the user.
        if( chatRoomPrimaryKey.equals(player.getCurrentChatPrimaryKey()) ) {
            if(voiceSoundLevel==ChatRoom.SHOUTING_VOICE_LEVEL)

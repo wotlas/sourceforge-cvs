@@ -25,6 +25,7 @@ import java.lang.*;
 import java.io.*;
 import java.util.*;
 import java.awt.font.*;
+import java.awt.geom.*;
 
 /** A Drawable to display text at the top of another Drawable. To display text at an
  *  absolute position on screen use the MutiLineText drawable.
@@ -33,6 +34,12 @@ import java.awt.font.*;
  */
 
 public class TextDrawable extends Drawable {
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To set High Quality / Medium Quality text display
+    */
+     private static boolean highQualityTextDisplay = false;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -78,6 +85,26 @@ public class TextDrawable extends Drawable {
     */
      private int lifeTime;
 
+   /** TextLayout to use to draw the text shape...
+    */
+     private TextLayout t;
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To get if this TextDrawable must be high/medium quality
+    */
+     public static boolean getHighQualityTextDisplay() {
+          return highQualityTextDisplay;
+     }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To set if this TextDrawable must be high/medium quality
+    */
+     public static void setHighQualityTextDisplay(boolean highQualityTextDisplay) {
+          TextDrawable.highQualityTextDisplay = highQualityTextDisplay;
+     }
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor with drawable to use as reference. The font use we use as default
@@ -91,7 +118,7 @@ public class TextDrawable extends Drawable {
    * @param priority textDrawble's priority
    */
     public TextDrawable( String text, Drawable refDrawable, short priority) {
-    	this( text, refDrawable, Color.black, 12.0f,"Lblack.ttf", priority, -1 );
+    	this( text, refDrawable, Color.black, 13.0f,"Lblack.ttf", priority, -1 );
     }
 
 
@@ -229,33 +256,40 @@ public class TextDrawable extends Drawable {
         if( !r.intersects(screen) )
             return;
 
-        gc.setColor(color);
-
         if (font != null) {
           gc.setFont(font);
         }
 
-        if(text!=null)
-         {
-          if (recalculate) {
-            FontRenderContext frc = gc.getFontRenderContext();
-            TextLayout t = new TextLayout(text,gc.getFont(),frc);
-            r.width = refDrawable.getWidth();
-            r.height = refDrawable.getHeight();
-            demiWidthText   = (int) t.getBounds().getWidth()/2;
-            heightText  = (int) t.getBounds().getHeight();
-            recalculate = false;
-          }
+         if(text!=null) {
+           if (recalculate) {
+             FontRenderContext frc = gc.getFontRenderContext();
+             t = new TextLayout(text,gc.getFont(),frc);
+             r.width = refDrawable.getWidth();
+             r.height = refDrawable.getHeight();
+             demiWidthText   = (int) t.getBounds().getWidth()/2;
+             heightText  = (int) t.getBounds().getHeight();
+             recalculate = false;
+           }
 
-         // transparent rectangle
-            gc.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.35f ) );
-            gc.setColor(Color.white);
-            gc.fillRect(r.x-screen.x+(r.width/2)-demiWidthText,r.y-screen.y-heightText,2*demiWidthText+2,heightText);
-            gc.setComposite( AlphaComposite.SrcOver ); // suppressing alpha
+           if( !highQualityTextDisplay ) {
+            // transparent rectangle
+               gc.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.35f ) );
+               gc.setColor(color);
+               gc.fillRect(r.x-screen.x+(r.width/2)-demiWidthText,r.y-screen.y-heightText,2*demiWidthText+2,heightText);
+               gc.setComposite( AlphaComposite.SrcOver ); // suppressing alpha
 
-         // drawing text...
-            gc.setColor(color);
-            gc.drawString(text, r.x-screen.x+(r.width/2)-demiWidthText, r.y-screen.y-2);
+            // drawing text...
+               gc.setColor(Color.black);
+               gc.drawString(text, r.x-screen.x+(r.width/2)-demiWidthText, r.y-screen.y-2);
+           }
+           else{
+               Shape sha = t.getOutline(AffineTransform.getTranslateInstance(r.x-screen.x+(r.width/2)-demiWidthText, r.y-screen.y-2));
+               gc.setColor(new Color(30,30,30));
+               gc.setStroke(new BasicStroke(1.8f));
+               gc.draw(sha);
+               gc.setColor(color);
+               gc.fill(sha);
+           }
          }
      }
 
@@ -289,7 +323,7 @@ public class TextDrawable extends Drawable {
    /** Returns true if the text is still displayed on screen
     */
    public boolean isLive() {
-        if( timeLimit-System.currentTimeMillis() >0 )
+        if( timeLimit-System.currentTimeMillis() <0 )
             return false;
         return true;   	
    }

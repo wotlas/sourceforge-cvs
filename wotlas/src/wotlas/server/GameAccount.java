@@ -60,6 +60,10 @@ public class GameAccount
     */
       private String password;
 
+   /** Client Email
+    */
+      private String email;
+
    /** Client Original Server ID ( where this game account was first created )
     */
       private int originalServerID;
@@ -205,6 +209,26 @@ public class GameAccount
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To get the client email.
+   *
+   * @return client's email
+   */
+     public String getEmail() {
+         return email;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To set the client email ( for persistence only ).
+   *
+   * @param email client's email
+   */
+     public void setEmail( String email ) {
+         this.email = email;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** To get the client local ID.
    *
    * @return client's local ID
@@ -302,9 +326,9 @@ public class GameAccount
      public String toString(){
          return "Account Info:"
            +"\nlogin: "+login
-           +"\nPassword: "+password
            +"\naccountName: "+getAccountName()
-           +"\nlastConnection: "+getLastConnectionTime()+"\n";
+           +"\nlastConnection: "+getLastConnectionTime()
+           +"\nemail:"+getEmail()+"\n";
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

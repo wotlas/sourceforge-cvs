@@ -321,8 +321,8 @@ System.out.println("NOTIFYING");
 
         if (SHOW_DEBUG)
           System.out.println("Changing main ChatRoom");
-        dataManager.getChatPanel().changeMainJChatRoom(room.getShortName());
-        dataManager.getChatPanel().addPlayer("chat-0", myPlayer.getPrimaryKey());
+
+        dataManager.getChatPanel().reset();
 
         if (SHOW_DEBUG)
           System.out.println("Adding a new player : " + myPlayer + "to room : " + room);
@@ -403,6 +403,7 @@ System.out.println("NOTIFYING");
           myPlayer.setLocation( mapExit.getTargetWotlasLocation() );
           
           dataManager.cleanInteriorMapData(); // suppress drawables, shadows, data
+          dataManager.getChatPanel().reset();
 
           ScreenPoint targetPoint = mapExit.getTargetPosition();
           myPlayer.setX(targetPoint.x);

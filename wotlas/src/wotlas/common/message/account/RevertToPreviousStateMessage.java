@@ -28,48 +28,20 @@ import wotlas.common.message.MessageRegistry;
 
 
 /** 
- * To set the account's playerName & fullPlayerName. (Message Sent by Client)
+ * To revert to the previous state of the account's creation (Message Sent by Client)
  *
  * @author Aldiss
  */
 
-public class PlayerNamesMessage extends NetMessage
+public class RevertToPreviousStateMessage extends NetMessage
 {
- /*------------------------------------------------------------------------------------*/
-
-  /** playerName
-   */
-      protected String playerName;
-
-  /** fullPlayerName
-   */
-      protected String fullPlayerName;
-
-  /** playerEmail
-   */
-      protected String playerEmail;
-
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. Just initializes the message category and type.
    */
-     public PlayerNamesMessage() {
+     public RevertToPreviousStateMessage() {
           super( MessageRegistry.ACCOUNT_CATEGORY,
-                 AccountMessageCategory.ACCOUNT_PLAYER_NAMES_MSG );
-     }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Constructor with the client's playerName & fullPlayerName.
-   *
-   * @param playerName playerName
-   * @param fullPlayerName fullPlayerName
-   */
-     public PlayerNamesMessage( String playerName, String fullPlayerName, String playerEmail ) {
-         this();
-         this.playerName = playerName;
-         this.fullPlayerName = fullPlayerName;
-         this.playerEmail = playerEmail;
+                 AccountMessageCategory.REVERT_TO_PREVIOUS_STATE_MSG );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -81,8 +53,6 @@ public class PlayerNamesMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void encode( DataOutputStream ostream ) throws IOException {
-         writeString( playerName, ostream );
-         writeString( fullPlayerName, ostream );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -94,8 +64,6 @@ public class PlayerNamesMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void decode( DataInputStream istream ) throws IOException {
-          playerName = readString( istream );
-          fullPlayerName = readString( istream );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -20,6 +20,7 @@
 package wotlas.common.character;
 
 import java.io.*;
+import java.awt.Color;
 
 import wotlas.common.*;
 import wotlas.common.universe.*;
@@ -261,6 +262,34 @@ public class AesSedai extends Female {
                                               ImageLibRef.AURA_PRIORITY, false, 5000 );
          aesSedaiAuraEffect.useAntialiasing(true);
          return aesSedaiAuraEffect;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Return the character's color.
+   *  @return character's color
+   */
+     public Color getColor(){
+          switch( aesSedaiStatus ) {
+              case AES_BROWN_AJAH :
+                   return new Color(180,158,80);
+              case AES_BLUE_AJAH :
+                   return new Color(119,152,213);
+              case AES_GREEN_AJAH :
+                   return new Color(128,206,113);
+              case AES_RED_AJAH :
+                   return new Color(223,83,65);
+              case AES_GRAY_AJAH :
+                   return new Color(184,184,184);
+              case AES_YELLOW_AJAH :
+                   return new Color(209,203,99);
+              case AES_NOVICE :
+              case AES_ACCEPTED :
+              case AES_WHITE_AJAH:
+              case AES_AMYRLIN :
+          }
+
+        return Color.white;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

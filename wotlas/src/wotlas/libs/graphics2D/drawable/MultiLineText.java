@@ -26,11 +26,7 @@ import java.io.*;
 import java.util.*;
 import java.awt.font.*;
 
-/** A MotiolessSprite is a sprite that has no DataSupplier. It is used to just display
- *  an image on the GraphicsDirector. The image can change ( hasAnimation=true in constructor)
- *  but you can not change its (x,y) cordinates once set in the constructor.
- *
- *  A MotionlessSprite is especially useful for background images.
+/** A MultiLineText is used to display motionless text ons screen.
  *
  * @author MasterBob, Aldiss, Petrus
  */
@@ -203,16 +199,13 @@ public class MultiLineText extends Drawable {
    */
     public void paint( Graphics2D gc, Rectangle screen ) {
 
-        gc.setColor(color);
-
         if (font != null)
           gc.setFont(font);
 
-        //gc.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f ) );
-
-        if(text != null)
-         {
-           if (recalculate) {
+        if(text == null)
+           return;
+        
+        if (recalculate) {
               heightsText = null;
               heightsText = new int[text.length];
 
@@ -221,6 +214,7 @@ public class MultiLineText extends Drawable {
               TextLayout t = new TextLayout(text[0],gc.getFont(),frc);
               heightsText[0] = (int) t.getBounds().getHeight();
               widthText      = (int) t.getBounds().getWidth();
+              gc.setColor(color);
               gc.drawString(this.text[0], xs, ys+heightsText[0]);
 
               gap = (int) heightsText[0]/2; //spaces between lines (half height of the text)
@@ -246,25 +240,29 @@ public class MultiLineText extends Drawable {
               r.y = ys;
 
               recalculate = false;
-            } else {
-              if (isLeftAligned)
-                for(int i=0; i<text.length; i++)
-                  gc.drawString(this.text[i], xs, ys+heightsText[i]);              
-                
-              else
-                for(int i=0; i<text.length; i++)
-                  gc.drawString(this.text[i], xs-widthText, ys+heightsText[i]);
-            }      
-         }
+        } else {
+           // Display background rectangle
+               gc.setColor( Color.white );
+               gc.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f ) );
 
-        if (isLeftAligned)
-          gc.draw3DRect(xs,ys,r.width,r.height,true);
-        else
-          gc.draw3DRect(xs-widthText,ys,r.width,r.height,true);
+               if (isLeftAligned)
+                   gc.fillRect(xs,ys,r.width,r.height);
+               else
+                   gc.fillRect(xs-widthText,ys,r.width,r.height);
 
-        //gc.setComposite( AlphaComposite.SrcOver ); // restore
+               gc.setComposite( AlphaComposite.SrcOver ); // restore
+
+            // display text
+               gc.setColor(color);
+
+               if(isLeftAligned)
+                   for(int i=0; i<text.length; i++)
+                       gc.drawString(this.text[i], xs, ys+heightsText[i]);
+               else
+                   for(int i=0; i<text.length; i++)
+                       gc.drawString(this.text[i], xs-widthText, ys+heightsText[i]);
+        }
     }
-
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Tick method called by the GraphicsDirector. This tick method has a returned value

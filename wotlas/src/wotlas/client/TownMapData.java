@@ -282,6 +282,7 @@ public class TownMapData implements MapData
         myPlayer.setLocation( mapExit.getTargetWotlasLocation() );
         
         dataManager.cleanInteriorMapData(); // suppress drawables, shadows, data
+        dataManager.getChatPanel().reset();
 
         ScreenPoint targetPoint = mapExit.getTargetPosition();
         myPlayer.setX(targetPoint.x);
@@ -395,6 +396,7 @@ public class TownMapData implements MapData
         // Player can change its MapData
         dataManager.getPlayers().clear();
         dataManager.cleanInteriorMapData();
+        dataManager.getChatPanel().reset();
       
         myPlayer.setPosition( new ScreenPoint(myPlayer.getX(), myPlayer.getY()) );
 

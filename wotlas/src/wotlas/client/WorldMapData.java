@@ -276,6 +276,7 @@ public class WorldMapData implements MapData
         myPlayer.setLocation( mapExit.getMapExitLocation() );
         
         dataManager.cleanInteriorMapData(); // suppress drawables, shadows, data
+        dataManager.getChatPanel().reset();
         
         // We set our player on the middle of the MapExit
         myPlayer.setX( mapExit.getX() + mapExit.getWidth()/2 );

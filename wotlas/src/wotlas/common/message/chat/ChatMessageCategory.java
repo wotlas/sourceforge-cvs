@@ -31,14 +31,10 @@ public interface ChatMessageCategory extends NetMessageCategory {
 
        public final static byte CHATROOM_CREATION_MSG       = 0;
        public final static byte CHATROOM_CREATED_MSG        = 1;
-       public final static byte DELETE_CHATROOM_MSG         = 2;
-       public final static byte CHATROOM_DELETED_MSG        = 3;
-       public final static byte LEAVE_CHATROOM_MSG          = 4;
-       public final static byte CHATROOM_LEFT_MSG           = 5;
-       public final static byte SEND_PUBLIC_TXT_MSG         = 6;
-       public final static byte RECEIVE_PUBLIC_TXT_MSG      = 7;
-       public final static byte SEND_PRIVATE_TXT_MSG        = 8;
-       public final static byte RECEIVE_PRIVATE_TXT_MSG     = 9;
-       
+       public final static byte CHATROOM_DELETED_MSG        = 2;
+       public final static byte REM_PLAYER_FROM_CHATROOM_MSG= 3;
+       public final static byte ADD_PLAYER_TO_CHATROOM_MSG  = 4;
+       public final static byte SET_CURRENT_CHATROOM_MSG    = 5;
+       public final static byte SEND_TEXT_MSG               = 6;
 }
 

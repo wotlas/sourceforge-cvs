@@ -89,8 +89,11 @@ public class ClientManager
   private ImageIcon im_cancelup, im_canceldo, im_cancelun;
   private ImageIcon im_newup, im_newdo;
   private ImageIcon im_loadup, im_loaddo, im_loadun;
+  private ImageIcon im_recoverup, im_recoverdo, im_recoverun;
   private ImageIcon im_delup, im_deldo, im_delun;
   private ImageIcon im_exitup, im_exitdo;
+  private ImageIcon im_aboutup, im_aboutdo;
+  private ImageIcon im_helpup, im_helpdo;
 
   /** Default font
    */
@@ -193,9 +196,14 @@ public class ClientManager
     final APasswordField pfield2;
 
     final JButton b_ok;
+    final JButton b_load;
+    final JButton b_help;
+    final JButton b_about;
     final JButton b_cancel;
+    final JButton b_newProfile;
     final JButton b_delProfile;
     final JButton b_exitProfile;
+    final JButton b_recoverProfile;
 
     final JTable profilesTable;
     final JTable serversTable ;
@@ -218,9 +226,15 @@ public class ClientManager
       screenIntro.setTitle("Wotlas - Account selection...");
 
       // Load images of buttons
-      im_cancelup = new ImageIcon("..\\base\\gui\\cancel-up.gif");
-      im_canceldo = new ImageIcon("..\\base\\gui\\cancel-do.gif");
-      im_cancelun = new ImageIcon("..\\base\\gui\\cancel-un.gif");
+      im_cancelup    = new ImageIcon("..\\base\\gui\\cancel-up.gif");
+      im_canceldo    = new ImageIcon("..\\base\\gui\\cancel-do.gif");
+      im_cancelun    = new ImageIcon("..\\base\\gui\\cancel-un.gif");
+      im_okup    = new ImageIcon("..\\base\\gui\\ok-up.gif");
+      im_okdo    = new ImageIcon("..\\base\\gui\\ok-do.gif");
+      im_okun    = new ImageIcon("..\\base\\gui\\ok-un.gif");
+      im_recoverup = new ImageIcon("..\\base\\gui\\recover-up.gif");
+      im_recoverdo = new ImageIcon("..\\base\\gui\\recover-do.gif");
+      im_recoverun = new ImageIcon("..\\base\\gui\\recover-un.gif");
       im_delup    = new ImageIcon("..\\base\\gui\\delete-up.gif");
       im_deldo    = new ImageIcon("..\\base\\gui\\delete-do.gif");
       im_delun    = new ImageIcon("..\\base\\gui\\delete-un.gif");
@@ -231,9 +245,10 @@ public class ClientManager
       im_loadun   = new ImageIcon("..\\base\\gui\\load-un.gif");
       im_newup    = new ImageIcon("..\\base\\gui\\new-up.gif");
       im_newdo    = new ImageIcon("..\\base\\gui\\new-do.gif");
-      im_okup     = new ImageIcon("..\\base\\gui\\ok-up.gif");
-      im_okdo     = new ImageIcon("..\\base\\gui\\ok-do.gif");
-      im_okun     = new ImageIcon("..\\base\\gui\\ok-un.gif");      
+      im_aboutup  = new ImageIcon("..\\base\\gui\\about-up.gif");
+      im_aboutdo  = new ImageIcon("..\\base\\gui\\about-do.gif");
+      im_helpup  = new ImageIcon("..\\base\\gui\\help-up.gif");
+      im_helpdo  = new ImageIcon("..\\base\\gui\\help-do.gif");
 
       // Test if an account exists
       if (profileConfigList==null) {
@@ -249,6 +264,13 @@ public class ClientManager
       rightPanel.setLayout(new FlowLayout(FlowLayout.CENTER, screenIntro.getRightWidth(), 10));
 
       // Create buttons
+      b_about = new JButton(im_aboutup);
+      b_about.setRolloverIcon(im_aboutdo);
+      b_about.setPressedIcon(im_aboutdo);
+      b_about.setBorderPainted(false);
+      b_about.setContentAreaFilled(false);
+      b_about.setFocusPainted(false);
+
       b_ok = new JButton(im_okup);
       b_ok.setRolloverIcon(im_okdo);
       b_ok.setPressedIcon(im_okdo);
@@ -265,7 +287,22 @@ public class ClientManager
       b_cancel.setContentAreaFilled(false);
       b_cancel.setFocusPainted(false);
 
-      JButton b_newProfile = new JButton(im_newup);
+      b_load = new JButton(im_loadup);
+      b_load.setRolloverIcon(im_loaddo);
+      b_load.setPressedIcon(im_loaddo);
+      b_load.setDisabledIcon(im_loadun);
+      b_load.setBorderPainted(false);
+      b_load.setContentAreaFilled(false);
+      b_load.setFocusPainted(false);
+
+      b_help = new JButton(im_helpup);
+      b_help.setRolloverIcon(im_helpdo);
+      b_help.setPressedIcon(im_helpdo);
+      b_help.setBorderPainted(false);
+      b_help.setContentAreaFilled(false);
+      b_help.setFocusPainted(false);
+
+      b_newProfile = new JButton(im_newup);
       b_newProfile.setRolloverIcon(im_newdo);
       b_newProfile.setPressedIcon(im_newdo);
       b_newProfile.setDisabledIcon(im_newdo);
@@ -273,13 +310,13 @@ public class ClientManager
       b_newProfile.setContentAreaFilled(false);
       b_newProfile.setFocusPainted(false);
 
-      JButton b_loadProfile = new JButton(im_loadup);
-      b_loadProfile.setRolloverIcon(im_loaddo);
-      b_loadProfile.setPressedIcon(im_loaddo);
-      b_loadProfile.setDisabledIcon(im_loadun);
-      b_loadProfile.setBorderPainted(false);
-      b_loadProfile.setContentAreaFilled(false);
-      b_loadProfile.setFocusPainted(false);
+      b_recoverProfile = new JButton(im_recoverup);
+      b_recoverProfile.setRolloverIcon(im_recoverdo);
+      b_recoverProfile.setPressedIcon(im_recoverdo);
+      b_recoverProfile.setDisabledIcon(im_recoverun);
+      b_recoverProfile.setBorderPainted(false);
+      b_recoverProfile.setContentAreaFilled(false);
+      b_recoverProfile.setFocusPainted(false);
 
       b_delProfile = new JButton(im_delup);
       b_delProfile.setRolloverIcon(im_deldo);
@@ -347,8 +384,8 @@ public class ClientManager
             //currentServerConfig = serverConfigList.ServerConfigAt(selectedRow);
             //profilesTable.setToolTipText(currentServerConfig.getDescription());
             currentProfileConfig = profileConfigList.getProfiles()[selectedRow];
-            b_ok.setEnabled(true);
-            b_delProfile.setEnabled(true);
+            b_load.setEnabled(true);
+            // b_delProfile.setEnabled(true);
           }
         }
       });
@@ -361,17 +398,14 @@ public class ClientManager
 
       // *** Right Panel ***
 
-      b_ok.setEnabled(false);
-      b_ok.addActionListener(new ActionListener() {
+      b_load.setEnabled(false);
+      b_load.addActionListener(new ActionListener() {
           public void actionPerformed (ActionEvent e) {
             start(indexScreen+1);
           }
         }
       );
-      rightPanel.add(b_ok);
-
-      b_cancel.setEnabled(false);
-      rightPanel.add(b_cancel);
+      rightPanel.add(b_load);
 
       b_newProfile.addActionListener(new ActionListener() {
           public void actionPerformed (ActionEvent e) {
@@ -381,10 +415,35 @@ public class ClientManager
       );
       rightPanel.add(b_newProfile);
 
-      rightPanel.add(b_loadProfile);
+      rightPanel.add( new JLabel( new ImageIcon("../base/gui/separator.gif") ) );  // SEPARATOR
+
+      b_recoverProfile.setEnabled(false);
+      rightPanel.add(b_recoverProfile);
 
       b_delProfile.setEnabled(false);
       rightPanel.add(b_delProfile);
+
+      rightPanel.add( new JLabel( new ImageIcon("../base/gui/separator.gif") ) );  // SEPARATOR
+
+      b_help.addActionListener(new ActionListener() {
+          public void actionPerformed (ActionEvent e) {
+          }
+        }
+      );
+      rightPanel.add(b_help);
+
+      b_about.addActionListener(new ActionListener() {
+          public void actionPerformed (ActionEvent e) {
+            try{
+              new JAbout( screenIntro );
+            }catch(Exception ei ) {
+              Debug.signal( Debug.ERROR, this, ei );
+            }
+          }
+        }
+      );
+      rightPanel.add(b_about);
+
 
       b_exitProfile.addActionListener(new ActionListener() {
           public void actionPerformed (ActionEvent e) {

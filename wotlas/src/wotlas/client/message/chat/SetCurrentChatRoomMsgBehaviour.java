@@ -25,80 +25,80 @@ import java.util.*;
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.common.message.chat.*;
 
-import wotlas.client.DataManager;
-import wotlas.client.PlayerImpl;
-
 import wotlas.common.chat.*;
 import wotlas.common.Player;
+import wotlas.common.universe.*;
 
-import wotlas.utils.*;
+import wotlas.client.*;
+import wotlas.client.screen.*;
+
+import wotlas.utils.Debug;
 
 /**
- * Associated behaviour to the ChatRoomCreatedMessage...
+ * Associated behaviour to the SetCurrentChatRoomMessage...
  *
- * @author Petrus
+ * @author Aldiss
  */
 
-public class ChatRoomCreatedMsgBehaviour extends ChatRoomCreatedMessage implements NetMessageBehaviour
+public class SetCurrentChatRoomMsgBehaviour extends SetCurrentChatRoomMessage implements NetMessageBehaviour
 {
 
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
    */
-  public ChatRoomCreatedMsgBehaviour() {
+  public SetCurrentChatRoomMsgBehaviour() {
     super();
   }
 
  /*------------------------------------------------------------------------------------*/
-
+  
   /** Associated code to this Message...
    *
    * @param context an object giving specific access to other objects needed to process
    *        this message.
    */
   public void doBehaviour( Object context ) {
-       System.out.println("ChatRoomCreatedMsgBehaviour:"+primaryKey);
+       System.out.println("SetCurrentChatRoomMsgBehaviour::doBehaviour: "+chatRoomPrimaryKey);
 
     // The context is here a DataManager.
        DataManager dataManager = (DataManager) context;
        PlayerImpl player = dataManager.getMyPlayer();
 
-    // We seek for the creator of this chat...
+    // We set the current chat for our player
+       if( dataManager.getChatPanel().setCurrentJChatRoom( chatRoomPrimaryKey ) )
+            dataManager.getChatPanel().addPlayer(chatRoomPrimaryKey, player );
+       else {
+            Debug.signal( Debug.ERROR, this, "Failed to set current chat for player... "+chatRoomPrimaryKey);
+            return;
+       }
+
+    // We seek the players to add
+       JChatRoom chatRoom = dataManager.getChatPanel().getJChatRoom( chatRoomPrimaryKey );
+
+       if(chatRoom==null) {
+          Debug.signal( Debug.ERROR, this, "Failed to find chat : "+chatRoomPrimaryKey);
+          return;
+       }
+
        Hashtable players = dataManager.getPlayers();
        PlayerImpl sender = null;
 
-       if(players!=null)
-          sender = (PlayerImpl) players.get( creatorPrimaryKey );
+       for( int i=0; i<playersPrimaryKey.length; i++ ) {          
+          if(players!=null)
+             sender = (PlayerImpl) players.get( playersPrimaryKey[i] );
 
-       if( sender==null )
-           Debug.signal( Debug.WARNING, this, "Could not find the sender of this message : "+creatorPrimaryKey);
+          if( sender==null ) {
+              Debug.signal( Debug.ERROR, this, "Could not find the player for chat... "+playersPrimaryKey[i]);
+              continue;
+          }
 
-     // We create the new chat
-       ChatRoom chatRoom = new ChatRoom();
-       chatRoom.setPrimaryKey(primaryKey);
-       chatRoom.setName(name);
-       chatRoom.setCreatorPrimaryKey(creatorPrimaryKey);
-
-       dataManager.getChatPanel().addJChatRoom(chatRoom);
-       
-       if( player.getPrimaryKey().equals( creatorPrimaryKey ) ) {
-       	 // We created this chat !
-            boolean success = dataManager.getChatPanel().setCurrentJChatRoom( primaryKey );
-
-            if( success )
-                dataManager.getChatPanel().addPlayer(primaryKey, player);
-            else
-                Debug.signal( Debug.ERROR, this, "Failed to create owner's new ChatRoom");
+       // We add the player
+          chatRoom.addPlayer(sender);
        }
-       else {
-       	 // someone else created the chatroom
-            dataManager.getChatPanel().setEnabledAt(primaryKey,false);
-       }
-       
-    }
-
+  }
+  
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
+ 
 }
-
+  

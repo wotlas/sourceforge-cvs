@@ -20,6 +20,8 @@
 package wotlas.server;
 
 import wotlas.common.character.*;
+import wotlas.common.chat.*;
+import wotlas.server.message.chat.*;
 
 import wotlas.libs.net.NetConnectionListener;
 import wotlas.libs.net.NetPersonality;
@@ -28,6 +30,7 @@ import wotlas.libs.net.NetMessage;
 import wotlas.libs.pathfinding.*;
 
 import wotlas.common.*;
+import wotlas.common.chat.*;
 import wotlas.common.message.movement.MovementUpdateMessage;
 import wotlas.common.universe.*;
 import wotlas.utils.*;
@@ -66,28 +69,11 @@ public class PlayerImpl implements Player, NetConnectionListener
     */
        private WotCharacter wotCharacter;
 
- /*------------------------------------------------------------------------------------*/
-
-   /** Player ChatRooms
-    */
-       //transient private Hashtable chatRooms;
-       transient private ChatListImpl chatList;
-       
-   /** Number of ChatRooms
-    */
-       private static int chatCounter = 0;
-       
- /*------------------------------------------------------------------------------------*/
-
-   /** Personality Lock
-    */
-       transient private byte personalityLock[] = new byte[1];
-
- /*------------------------------------------------------------------------------------*/
-
    /** Movement Composer
     */
        private MovementComposer movementComposer = (MovementComposer) new PathFollower();
+
+ /*------------------------------------------------------------------------------------*/
 
    /** Our NetPersonality, useful if we want to send messages !
     */
@@ -99,9 +85,85 @@ public class PlayerImpl implements Player, NetConnectionListener
 
  /*------------------------------------------------------------------------------------*/
 
+   /** Player ChatRooms : is the list of the current room.
+    */
+       transient private ChatList chatList;
+
+   /** Current Chat PrimaryKey : the chat we are currently looking.
+    */
+       transient private String currentChatPrimaryKey = ChatRoom.DEFAULT_CHAT; // everlasting chat set as default
+
+   /** are we a member of this chat ? or just eavesdropping ?
+    */
+       transient private boolean isChatMember = true; //always member on default chat.
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** Personality Lock
+    */
+       transient private byte personalityLock[] = new byte[0];
+
+   /** ChatList Lock
+    */
+       transient private byte chatListLock[] = new byte[0];
+
+ /*------------------------------------------------------------------------------------*/
+
    /** Constructor for persistence.
     */
       public PlayerImpl() {
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** When this method is called, the player can intialize its own fields safely : all
+    *  the game data has been loaded.
+    */
+      public void init() {
+         movementComposer.init( this );
+         setLocation( location );
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To initialize the player location to the first existent town found.
+    *  WARNING : the player is NOT moved in the town... that means this method
+    *  is for player creation ONLY.
+    */
+      public void setDefaultPlayerLocation() {
+          // 1 - player initial location : a World...
+             WorldManager worldManager = DataManager.getDefaultDataManager().getWorldManager();
+
+             int worldID = worldManager.getAValidWorldID();
+             
+             if( worldID<0 )
+                 Debug.signal( Debug.WARNING, this, "No world data given to initialize player." );
+
+             location = new WotlasLocation();
+             location.setWorldMapID( worldID );
+             location.setTownMapID( 0 );
+             location.setBuildingID( -1 );
+             location.setInteriorMapID( -1 );
+             location.setRoomID( -1 );
+
+             TownMap tMap = worldManager.getTownMap( location );
+             
+             if(tMap==null) {
+                Debug.signal( Debug.CRITICAL, this, "No towns available." );
+                return;
+             }
+
+             MapExit mExits[] = tMap.getMapExits();
+             
+             if( mExits==null || mExits[0]==null ) {
+                Debug.signal( Debug.CRITICAL, this, "No mapExits on town 0..." );
+                return;
+             }
+
+             setX( mExits[0].x+mExits[0].width/2 );
+             setY( mExits[0].y+mExits[0].height/2 );
+
+System.out.println("POSITION set to x:"+getX()+" y:"+getY()+" location is "+location);
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -155,59 +217,6 @@ public class PlayerImpl implements Player, NetConnectionListener
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To initialize the player location to the first existent worlds found.
-    *  WARNING : the player is NOT moved in the world... that means this method
-    *  is for player creation ONLY.
-    */
-      public void setPlayerLocationToWorld() {
-          // 1 - player initial location : a World...
-             WorldManager worldManager = DataManager.getDefaultDataManager().getWorldManager();
-
-             int worldID = worldManager.getAValidWorldID();
-             
-             if( worldID<0 )
-                 Debug.signal( Debug.WARNING, this, "No world data given to initialize player." );
-
-             location = new WotlasLocation();
-             location.setWorldMapID( worldID );
-             location.setTownMapID( 0 );
-             location.setBuildingID( -1 );
-             location.setInteriorMapID( -1 );
-             location.setRoomID( -1 );
-
-             TownMap tMap = worldManager.getTownMap( location );
-             
-             if(tMap==null) {
-                Debug.signal( Debug.CRITICAL, this, "No towns available." );
-                return;
-             }
-
-             MapExit mExits[] = tMap.getMapExits();
-             
-             if( mExits==null || mExits[0]==null ) {
-                Debug.signal( Debug.CRITICAL, this, "No mapExits on town 0..." );
-                return;
-             }
-
-             setX( mExits[0].x+mExits[0].width/2 );
-             setY( mExits[0].y+mExits[0].height/2 );
-
-System.out.println("POSITION set to x:"+getX()+" y:"+getY()+" location is "+location);
-      }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-   /** When this method is called, the player can intialize its own fields safely : all
-    *  the game data has been loaded.
-    */
-      public void init() {
-         movementComposer.init( this );
-         setLocation( location );
-System.out.println("Player Init Done: "+location+" myRoom:"+myRoom);
-      }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
    /** To get the player location.
     *
     *  @return player WotlasLocation
@@ -229,6 +238,14 @@ System.out.println("Player Init Done: "+location+" myRoom:"+myRoom);
                  myRoom = DataManager.getDefaultDataManager().getWorldManager().getRoom( location );
               else
                  myRoom = null;
+
+          // Current Chat set to default
+             currentChatPrimaryKey = ChatRoom.DEFAULT_CHAT;
+             isChatMember = false;
+             
+             synchronized( chatListLock ) {
+             	chatList = null;
+             }
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -340,6 +357,73 @@ System.out.println("Player Init Done: "+location+" myRoom:"+myRoom);
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** To set the player's chatList.
+    */
+      public void setChatList( ChatList chatList ) {
+      	 synchronized( chatListLock ) {
+            this.chatList = chatList;
+         }
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the player's chatList.
+    */
+      public ChatList getChatList() {
+      	 synchronized( chatListLock ) {
+            return chatList;
+         }
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the primary key of the chat the player is now using.
+    * @return currentChatPrimaryKey
+    */
+      public String getCurrentChatPrimaryKey() {
+          return currentChatPrimaryKey;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the current chat used
+    * @param currentChatPrimaryKey
+    */
+      public void setCurrentChatPrimaryKey( String currentChatPrimaryKey ) {
+      	this.currentChatPrimaryKey = currentChatPrimaryKey;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+      
+   /** are we a member of this chat ? or just eavesdropping ?
+    * @return true if we are a real member of the current chat
+    */
+      public boolean isChatMember() {
+      	   return isChatMember;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** are we a member of this chat ? or just eavesdropping ?
+    * @param isChatMember if we are a real member of the current chat set it to true.
+    */
+      public void setIsChatMember( boolean isChatMember ) {
+      	   this.isChatMember = isChatMember;
+      }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** Is this player connected to the game ? ( not synchronized )
+    * @return true if the player is in the game, false if the client is not connected.
+    */
+      public boolean isConnectedToGame() {
+            if(personality==null)
+               return false;
+            return true;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** This method is called when a new network connection is created on this player.
    *
    * @param personality the NetPersonality object associated to this connection.
@@ -364,13 +448,81 @@ System.out.println("Player Init Done: "+location+" myRoom:"+myRoom);
    */
      public void connectionClosed( NetPersonality personality ) {
 
+         // 0 - no more messages will be sent...
              synchronized( personalityLock ) {
                  this.personality = null;
              }
 
-          // great we do nothing
              Debug.signal(Debug.NOTICE, this, "Connection closed on player: "+playerName);
-System.out.println( "CLOSE isMoving:"+movementComposer.isMoving()+", ref:"+this);
+
+         // 1 - Leave any current chat...
+            if( !currentChatPrimaryKey.equals( ChatRoom.DEFAULT_CHAT ) ) {
+                RemPlayerFromChatRoomMsgBehaviour remPlayerfromChat
+                     = new RemPlayerFromChatRoomMsgBehaviour( primaryKey, currentChatPrimaryKey );
+
+                try{
+                   remPlayerfromChat.doBehaviour( this );
+                }catch( Exception e ) {
+                   Debug.signal( Debug.ERROR, this, e );
+                   currentChatPrimaryKey = ChatRoom.DEFAULT_CHAT;
+                }
+            }
+
+            synchronized( chatListLock ) {
+                chatList = null;
+            }
+
+         // 2 - Stop any current movement
+             if(location.isRoom())
+             {
+              // no movement saved on rooms...
+                 movementComposer.resetMovement();
+
+              // We send an update to players near us...
+                 MovementUpdateMessage uMsg = movementComposer.getUpdate();
+
+                 if(myRoom==null) {
+                    Debug.signal( Debug.ERROR, this, "Player "+primaryKey+" has an incoherent location state");
+                    return;
+                 }
+
+                 Hashtable players = myRoom.getPlayers();
+
+              // to players of the current room
+                 synchronized( players ) {
+                    Iterator it = players.values().iterator();
+                 
+                    while( it.hasNext() ) {
+                        PlayerImpl p = (PlayerImpl)it.next();
+                        if(p!=this)
+                           p.sendMessage( uMsg );
+                    }
+                 }
+
+              // ... and players in other rooms
+                 if(myRoom.getRoomLinks()!=null)
+                    for( int j=0; j<myRoom.getRoomLinks().length; j++ ) {
+                         Room otherRoom = myRoom.getRoomLinks()[j].getRoom1();
+  
+                         if( otherRoom==myRoom )
+                             otherRoom = myRoom.getRoomLinks()[j].getRoom2();
+
+                         players = otherRoom.getPlayers();
+
+                         synchronized( players ) {
+                            Iterator it = players.values().iterator();
+                 
+                            while( it.hasNext() ) {
+                               PlayerImpl p = (PlayerImpl)it.next();
+                               p.sendMessage( uMsg );
+                            }
+                         }
+                    }
+             }
+             else if(location.isTown()) {
+              // no movement saved on towns...
+                 movementComposer.resetMovement();
+             }          
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -399,64 +551,7 @@ System.out.println("SENDING MESSAGE "+message);
                 if( personality!=null )
                     personality.closeConnection();
              }
-
-             if(location.isRoom())
-             {
-              // no movement saved on rooms...
-                 movementComposer.resetMovement();
-
-              // We send an update to players near us...
-                 MovementUpdateMessage uMsg = movementComposer.getUpdate();
-
-                 if(myRoom==null) {
-                    Debug.signal( Debug.ERROR, this, "Player "+primaryKey+" has an incoherent location state");
-                 }
-
-                 Hashtable players = myRoom.getPlayers();
-
-                 synchronized( players ) {
-                    Iterator it = players.values().iterator();
-                 
-                    while( it.hasNext() ) {
-                        PlayerImpl p = (PlayerImpl)it.next();
-                        if(p!=this)
-                           p.sendMessage( uMsg );
-                    }
-                 }
-
-                 if(myRoom.getRoomLinks()!=null)
-                    for( int j=0; j<myRoom.getRoomLinks().length; j++ ) {
-                         Room otherRoom = myRoom.getRoomLinks()[j].getRoom1();
-  
-                         if( otherRoom==myRoom )
-                             otherRoom = myRoom.getRoomLinks()[j].getRoom2();
-
-                         players = otherRoom.getPlayers();
-
-                         synchronized( players ) {
-                            Iterator it = players.values().iterator();
-                 
-                            while( it.hasNext() ) {
-                               PlayerImpl p = (PlayerImpl)it.next();
-                               p.sendMessage( uMsg );
-                            }
-                         }
-                    }
-             }
-             else if(location.isTown()) {
-              // no movement saved on towns...
-                 movementComposer.resetMovement();
-             }
      }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To get a valid ChatRoom primaryKey
-   */
-  synchronized static public String getNewChatRoomID() {
-    chatCounter++;
-    return "chat-"+chatCounter;
-  }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

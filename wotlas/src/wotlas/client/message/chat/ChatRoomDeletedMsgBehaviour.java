@@ -34,19 +34,19 @@ import wotlas.common.Player;
 import wotlas.utils.*;
 
 /**
- * Associated behaviour to the ChatRoomCreatedMessage...
+ * Associated behaviour to the ChatRoomDeletedMessage...
  *
  * @author Petrus
  */
 
-public class ChatRoomCreatedMsgBehaviour extends ChatRoomCreatedMessage implements NetMessageBehaviour
+public class ChatRoomDeletedMsgBehaviour extends ChatRoomDeletedMessage implements NetMessageBehaviour
 {
 
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
    */
-  public ChatRoomCreatedMsgBehaviour() {
+  public ChatRoomDeletedMsgBehaviour() {
     super();
   }
 
@@ -58,44 +58,21 @@ public class ChatRoomCreatedMsgBehaviour extends ChatRoomCreatedMessage implemen
    *        this message.
    */
   public void doBehaviour( Object context ) {
-       System.out.println("ChatRoomCreatedMsgBehaviour:"+primaryKey);
+       System.out.println("ChatRoomDeletedMsgBehaviour::doBehaviour: "+chatRoomPrimaryKey);
 
     // The context is here a DataManager.
        DataManager dataManager = (DataManager) context;
        PlayerImpl player = dataManager.getMyPlayer();
 
-    // We seek for the creator of this chat...
-       Hashtable players = dataManager.getPlayers();
-       PlayerImpl sender = null;
+    // Do we have to reset our current chat selection ?
+       if( dataManager.getChatPanel().getMyCurrentChatPrimaryKey().equals(chatRoomPrimaryKey) )
+           dataManager.getChatPanel().setCurrentJChatRoom( ChatRoom.DEFAULT_CHAT );
 
-       if(players!=null)
-          sender = (PlayerImpl) players.get( creatorPrimaryKey );
-
-       if( sender==null )
-           Debug.signal( Debug.WARNING, this, "Could not find the sender of this message : "+creatorPrimaryKey);
-
-     // We create the new chat
-       ChatRoom chatRoom = new ChatRoom();
-       chatRoom.setPrimaryKey(primaryKey);
-       chatRoom.setName(name);
-       chatRoom.setCreatorPrimaryKey(creatorPrimaryKey);
-
-       dataManager.getChatPanel().addJChatRoom(chatRoom);
-       
-       if( player.getPrimaryKey().equals( creatorPrimaryKey ) ) {
-       	 // We created this chat !
-            boolean success = dataManager.getChatPanel().setCurrentJChatRoom( primaryKey );
-
-            if( success )
-                dataManager.getChatPanel().addPlayer(primaryKey, player);
-            else
-                Debug.signal( Debug.ERROR, this, "Failed to create owner's new ChatRoom");
-       }
-       else {
-       	 // someone else created the chatroom
-            dataManager.getChatPanel().setEnabledAt(primaryKey,false);
-       }
-       
+    // We seek for the chat to suppress
+       if( !dataManager.getChatPanel().removeJChatRoom(chatRoomPrimaryKey) ) {
+            Debug.signal( Debug.ERROR, this, "failed to delete JChatRoom" );
+            return;
+       }       
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

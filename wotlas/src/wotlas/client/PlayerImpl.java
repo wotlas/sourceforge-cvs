@@ -70,10 +70,9 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
    */
   private WotCharacter wotCharacter;
   
-  /** Player's chatRooms
+  /** Current Chat PrimaryKey : the chat we are currently connected to.
    */
-  //private Hashtable chatRooms;
-  private ChatListImpl chatList;
+  private String currentChatPrimaryKey = ChatRoom.DEFAULT_CHAT; // everlasting chat set as default
 
  /*------------------------------------------------------------------------------------*/
 
@@ -134,7 +133,6 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     animation = new Animation(wotCharacter.getImage(location));
     sprite = (Sprite) wotCharacter.getDrawable(this);    
     movementComposer.init( this );
-    chatList = new ChatListImpl();
   }
 
   /** Called after graphicsDirector's init to add some visual effects to the master player
@@ -219,15 +217,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
 
  /*------------------------------------------------------------------------------------*/
  
-  /** To get ChatList
-   */
-  public ChatListImpl getChatList() {
-    return chatList;
-  }
-  
- /*------------------------------------------------------------------------------------*/
-
-/*** Player implementation ***/
+  /*** Player implementation ***/
 
   /** To get the player primary Key ( account name )
    *
@@ -506,5 +496,41 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get a text drawable representing the name of this player.
+   */
+   public Drawable getTextDrawable() {
+       if( textDrawable!=null ) {
+           if( textDrawable.isLive() )
+               return null;
+           
+           textDrawable.resetTimeLimit();
+           return textDrawable;
+       }
+
+       textDrawable = new TextDrawable( fullPlayerName, getDrawable(), wotCharacter.getColor(),
+                                        13.0f, "Lblack.ttf", ImageLibRef.TEXT_PRIORITY, 5000 );
+       return textDrawable;
+   }
  
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the primary key of the chat the player is now using.
+    * @return currentChatPrimaryKey
+    */
+      public String getCurrentChatPrimaryKey() {
+          return currentChatPrimaryKey;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the current chat used
+    * @param currentChatPrimaryKey
+    */
+      public void setCurrentChatPrimaryKey( String currentChatPrimaryKey ) {
+      	this.currentChatPrimaryKey = currentChatPrimaryKey;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }

@@ -28,18 +28,18 @@ import wotlas.server.AccountBuilder;
 
 
 /**
- * Associated behaviour to the PlayerNamesMessage...
+ * Associated behaviour to the CancelAccountCreationMessage...
  *
  * @author Aldiss
  */
 
-public class PlayerNamesMsgBehaviour extends PlayerNamesMessage implements NetMessageBehaviour
+public class CancelAccountCreationMsgBehaviour extends CancelAccountCreationMessage implements NetMessageBehaviour
 {
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
    */
-     public PlayerNamesMsgBehaviour() {
+     public CancelAccountCreationMsgBehaviour() {
           super();
      }
 
@@ -54,7 +54,7 @@ public class PlayerNamesMsgBehaviour extends PlayerNamesMessage implements NetMe
 
         // the context is here an AccountBuilder
            AccountBuilder builder = (AccountBuilder) context;
-           builder.setPlayerNames( playerName, fullPlayerName, playerEmail );
+           builder.cancelCreation();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

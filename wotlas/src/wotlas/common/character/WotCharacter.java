@@ -24,6 +24,7 @@ import wotlas.common.universe.*;
 import wotlas.libs.graphics2D.*;
 
 import java.io.*;
+import java.awt.Color;
 
 /** Interface of a Wotlas Character. Each Player object possess one Character object.
  *
@@ -69,6 +70,13 @@ public interface WotCharacter
    *  @return character's Aura Drawable.
    */     
      public Drawable getAura();
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Return the character's representative color.
+   *  @return character's color.
+   */     
+     public Color getColor();
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

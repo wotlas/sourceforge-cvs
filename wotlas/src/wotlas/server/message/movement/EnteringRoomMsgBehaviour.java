@@ -26,7 +26,9 @@ import wotlas.utils.*;
 
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.common.message.movement.*;
+import wotlas.common.message.chat.*;
 import wotlas.common.universe.*;
+import wotlas.common.chat.*;
 import wotlas.common.Player;
 import wotlas.server.PlayerImpl;
 import wotlas.common.message.description.*;
@@ -58,7 +60,7 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
 
         // The context is here a PlayerImpl.
            PlayerImpl player = (PlayerImpl) context;
-           boolean mapEnter = false;
+           boolean mapEnter = false; // to tell if it's an entry on the map, or just an move on the map
 
         // 1 - CONTROL
            if(primaryKey==null) {
@@ -94,7 +96,7 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
           }
 
           if( currentRoom.getRoomID()==location.getRoomID() )
-              mapEnter=true;
+              mapEnter=true; // we have just entered the map
 
           if( !mapEnter && currentRoom.getRoomLinks()==null ) {
               sendError( player, "No update possible ! "+location );
@@ -143,7 +145,6 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
               	 
                         while( it.hasNext() ) {
                             PlayerImpl p = (PlayerImpl)it.next();
-                       	System.out.println("To player "+p+":");
                             p.sendMessage( rMsg );
               	        }
                   }
@@ -159,7 +160,7 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
               player.sendMessage( new CleanGhostsMessage( primaryKey, location ) );
           }
 
-       // We change our location & send ADD messages
+       // 3 - We change our location & send ADD messages
           Hashtable players = targetRoom.getPlayers();
           player.setLocation( location );
 
@@ -181,7 +182,7 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
               }
           }
 
-       // We send ADD player messages to neighbour rooms & RoomPlayerDataMessages
+       // 4 - We send ADD player messages to neighbour rooms & RoomPlayerDataMessages
        // to ourseleves
           if(targetRoom.getRoomLinks()==null) return;
 
@@ -207,7 +208,7 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
               	     }
                }
 
-            // RoomPlayerDataMessages
+            // RoomPlayerDataMessages ( already received if mapEnter state... ( via AllDataLeftMsg))
                if( !mapEnter ) {
                   WotlasLocation roomLoc = new WotlasLocation( player.getLocation() );
                   roomLoc.setRoomID( otherRoom.getRoomID() );
@@ -215,6 +216,68 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
                   player.sendMessage( new RoomPlayerDataMessage( roomLoc,
                                        player, otherRoom.getPlayers() ) );
                }
+          }
+
+
+       // 5 - We send a RemovePlayerFromChatMsg if not in the mapEnter state
+          if( !mapEnter ) {
+              players = currentRoom.getPlayers();
+
+              RemPlayerFromChatRoomMessage rpMsg =
+                 new RemPlayerFromChatRoomMessage( player.getPrimaryKey(), ChatRoom.DEFAULT_CHAT );
+
+              synchronized( players ) {
+                  Iterator it = players.values().iterator();
+              	 
+                  while( it.hasNext() ) {
+                       PlayerImpl p = (PlayerImpl)it.next();
+                       p.sendMessage( rpMsg );
+                  }
+              }
+          }
+
+       // 5(bis) - Send the player of the default chat room to our player
+          player.sendMessage( new SetCurrentChatRoomMessage( ChatRoom.DEFAULT_CHAT, targetRoom.getPlayers() ) );
+
+
+       // 6 - We seek for a valid chatList if any...
+          players = player.getMyRoom().getPlayers();
+
+          synchronized( players ) {
+             Iterator it = players.values().iterator();
+              	 
+             while( it.hasNext() ) {
+             	 PlayerImpl p = (PlayerImpl)it.next();
+
+                 if(p!=player && p.isConnectedToGame() ) {
+                    ChatList chatList = p.getChatList();
+                    if( chatList!=null )
+                    	player.setChatList( chatList );
+                 }
+             }
+          }
+
+          ChatList myChatList = player.getChatList();
+          
+          if( myChatList == null ) {
+System.out.println("NO CHAT LIST AVAILABLE !!!");
+              return; // no chats in the room
+          }
+
+       // 7 - We send the chats available to our client...
+          Hashtable chatRooms = myChatList.getChatRooms();
+
+          synchronized( chatRooms ) {
+             Iterator it = chatRooms.values().iterator();
+              	 
+             while( it.hasNext() ) {
+             	 ChatRoom cRoom = (ChatRoom)it.next();
+                 ChatRoomCreatedMessage crcMsg =
+                         new ChatRoomCreatedMessage( cRoom.getPrimaryKey(),
+                                                     cRoom.getName(), cRoom.getCreatorPrimaryKey() );
+
+                 player.sendMessage( crcMsg );
+             }
           }
      }
 

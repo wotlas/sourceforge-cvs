@@ -25,80 +25,67 @@ import java.util.*;
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.common.message.chat.*;
 
-import wotlas.client.DataManager;
-import wotlas.client.PlayerImpl;
-
 import wotlas.common.chat.*;
 import wotlas.common.Player;
+import wotlas.common.universe.*;
 
-import wotlas.utils.*;
+import wotlas.client.*;
+
+import wotlas.utils.Debug;
 
 /**
- * Associated behaviour to the ChatRoomCreatedMessage...
+ * Associated behaviour to the RemPlayerFromChatRoomMessage...
  *
- * @author Petrus
+ * @author Aldiss
  */
 
-public class ChatRoomCreatedMsgBehaviour extends ChatRoomCreatedMessage implements NetMessageBehaviour
+public class RemPlayerFromChatRoomMsgBehaviour extends RemPlayerFromChatRoomMessage implements NetMessageBehaviour
 {
 
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
    */
-  public ChatRoomCreatedMsgBehaviour() {
+  public RemPlayerFromChatRoomMsgBehaviour() {
     super();
   }
 
  /*------------------------------------------------------------------------------------*/
-
+  
   /** Associated code to this Message...
    *
    * @param context an object giving specific access to other objects needed to process
    *        this message.
    */
   public void doBehaviour( Object context ) {
-       System.out.println("ChatRoomCreatedMsgBehaviour:"+primaryKey);
+       System.out.println("RemPlayerFromChatRoomMsgBehaviour::doBehaviour: "+chatRoomPrimaryKey);
 
     // The context is here a DataManager.
        DataManager dataManager = (DataManager) context;
        PlayerImpl player = dataManager.getMyPlayer();
 
-    // We seek for the creator of this chat...
+    // We seek for the player to remove
        Hashtable players = dataManager.getPlayers();
        PlayerImpl sender = null;
-
+          
        if(players!=null)
-          sender = (PlayerImpl) players.get( creatorPrimaryKey );
+          sender = (PlayerImpl) players.get( senderPrimaryKey );
 
-       if( sender==null )
-           Debug.signal( Debug.WARNING, this, "Could not find the sender of this message : "+creatorPrimaryKey);
-
-     // We create the new chat
-       ChatRoom chatRoom = new ChatRoom();
-       chatRoom.setPrimaryKey(primaryKey);
-       chatRoom.setName(name);
-       chatRoom.setCreatorPrimaryKey(creatorPrimaryKey);
-
-       dataManager.getChatPanel().addJChatRoom(chatRoom);
-       
-       if( player.getPrimaryKey().equals( creatorPrimaryKey ) ) {
-       	 // We created this chat !
-            boolean success = dataManager.getChatPanel().setCurrentJChatRoom( primaryKey );
-
-            if( success )
-                dataManager.getChatPanel().addPlayer(primaryKey, player);
-            else
-                Debug.signal( Debug.ERROR, this, "Failed to create owner's new ChatRoom");
+       if( sender==null ) {
+           Debug.signal( Debug.ERROR, this, "Could not find the subject player of this message : "+senderPrimaryKey);
+           return;
        }
-       else {
-       	 // someone else created the chatroom
-            dataManager.getChatPanel().setEnabledAt(primaryKey,false);
-       }
-       
-    }
 
+    // We remove the player
+       dataManager.getChatPanel().removePlayer(chatRoomPrimaryKey,sender);
+
+       if( player.getPrimaryKey().equals( senderPrimaryKey ) ) {
+       	 // It's our player we remove from this chat !
+            dataManager.getChatPanel().setCurrentJChatRoom( ChatRoom.DEFAULT_CHAT );
+       }
+  }
+  
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
+ 
 }
-
+  

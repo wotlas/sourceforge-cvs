@@ -28,7 +28,6 @@ import wotlas.utils.Debug;
 
 import java.io.*;
 import java.util.Hashtable;
-import java.util.Set;
 
 /** Implementation of a Chat by the server
  *
@@ -39,15 +38,27 @@ import java.util.Set;
 
 public class ChatListImpl implements ChatList
 {
+ /*------------------------------------------------------------------------------------*/
   
   /** List of player's ChatRooms
    */
-  Hashtable chatRooms = new Hashtable(2);
+   protected Hashtable chatRooms = new Hashtable(2);
   
-  /** Primary key of current ChatRoom
+ /*------------------------------------------------------------------------------------*/
+
+  /** Constructor
    */
-  String currentPrimaryKey;
-  
+   public ChatListImpl() {
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To get the number of existing ChatRooms.
+   */
+   public int getNumberOfChatRooms() {
+       return chatRooms.size();
+   }
+
  /*------------------------------------------------------------------------------------*/
 
   /** To add a chatRoom.
@@ -102,26 +113,12 @@ public class ChatListImpl implements ChatList
 
  /*------------------------------------------------------------------------------------*/
 
-  /** To get current ChatRoom.
-   */
-  public ChatRoom getCurrentChatRoom() {
-    return getChatRoom(currentPrimaryKey);
-  }
-  
- /*------------------------------------------------------------------------------------*/
-  
-  /** To set the current active ChatRoom.
+  /** To get all the ChatRooms. Use with : synchronized( ... ) {} please !
    *
-   * @param primaryKey primary key of current ChatRoom
+   * @param primaryKey primary key of ChatRoom we want to get
    */
-  public boolean setCurrentChatRoom(String primaryKey) {
-    if (!chatRooms.containsKey(primaryKey) ) {
-      Debug.signal( Debug.CRITICAL, this, "removeChatRoom failed: key " + primaryKey
-                      + " not found in " + this );
-      return false;
-    }
-    this.currentPrimaryKey = primaryKey;
-    return true;
+  public Hashtable getChatRooms() {
+      return chatRooms;
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -129,11 +126,17 @@ public class ChatListImpl implements ChatList
   /** To add a player to a ChatRoom.
    *
    * @param primaryKey primary key of ChatRoom to modify
-   * @param playerPrimaryKey primary key of Player to add
+   * @param player Player to add
    */
-  public boolean addPlayer(String primaryKey, String playerPrimaryKey) {
+  public boolean addPlayer(String primaryKey, Player player) {
     ChatRoom chatRoom = (ChatRoom) chatRooms.get(primaryKey);
-    return chatRoom.addPlayer(playerPrimaryKey);
+    
+    if(chatRoom==null) {
+       Debug.signal( Debug.ERROR, this, "No chatRoom "+primaryKey+" found. Can't add player.");
+       return false;
+    }
+
+    return chatRoom.addPlayer(player);
   }
 
  /*------------------------------------------------------------------------------------*/  
@@ -141,11 +144,17 @@ public class ChatListImpl implements ChatList
   /** To remove a player from a ChatRoom.
    *
    * @param primaryKey primary key of ChatRoom to modify
-   * @param playerPrimaryKey primary key of Player to remove
+   * @param player Player to remove
    */
-  public boolean removePlayer(String primaryKey, String playerPrimaryKey) {
+  public boolean removePlayer(String primaryKey, Player player) {
     ChatRoom chatRoom = (ChatRoom) chatRooms.get(primaryKey);
-    return chatRoom.removePlayer(playerPrimaryKey);
+
+    if(chatRoom==null) {
+       Debug.signal( Debug.ERROR, this, "No chatRoom "+primaryKey+" found. Can't remove player.");
+       return false;
+    }
+
+    return chatRoom.removePlayer(player);
   }
 
  /*------------------------------------------------------------------------------------*/  
@@ -154,10 +163,16 @@ public class ChatListImpl implements ChatList
    *
    * @param primaryKey primary key of the ChatRoom
    */
-  public Set getPlayers(String primaryKey) {
+  public Hashtable getPlayers(String primaryKey) {
     ChatRoom chatRoom = (ChatRoom) chatRooms.get(primaryKey);
+
+    if(chatRoom==null) {
+       Debug.signal( Debug.ERROR, this, "No chatRoom "+primaryKey+" found. Can't get player list.");
+       return null;
+    }
+
     return chatRoom.getPlayers();
-  }  
+  }
 
  /*------------------------------------------------------------------------------------*/  
  

@@ -25,12 +25,12 @@ import java.util.*;
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.common.message.chat.*;
 
-import wotlas.common.chat.ChatRoom;
+import wotlas.common.chat.*;
 import wotlas.common.Player;
 import wotlas.common.universe.*;
+import wotlas.common.message.account.*;
 
-import wotlas.server.DataManager;
-import wotlas.server.PlayerImpl;
+import wotlas.server.*;
 
 import wotlas.utils.Debug;
 
@@ -50,6 +50,8 @@ public class ChatRoomCreationMsgBehaviour extends ChatRoomCreationMessage implem
   public ChatRoomCreationMsgBehaviour() {
     super();
   }
+
+ /*------------------------------------------------------------------------------------*/
   
   /** Associated code to this Message...
    *
@@ -57,69 +59,98 @@ public class ChatRoomCreationMsgBehaviour extends ChatRoomCreationMessage implem
    *        this message.
    */
   public void doBehaviour( Object context ) {
-    System.out.println("ChatRoomCreationMsgBehaviour::doBehaviour");
     
     // The context is here a PlayerImpl.
-    PlayerImpl player = (PlayerImpl) context;
+       PlayerImpl player = (PlayerImpl) context;
+       WotlasLocation location = player.getLocation();
 
-    ChatRoom chatRoom = new ChatRoom();
-    chatRoom.setPrimaryKey(player.getNewChatRoomID());
-    chatRoom.setName(name);
-    chatRoom.setCreatorPrimaryKey(creatorPrimaryKey);
-    chatRoom.addPlayer(player.getPrimaryKey());
+    // 0 - We check the length of the chat room name
+       if( name.length() > ChatRoom.MAXIMUM_NAME_SIZE )
+           name = name.substring(0,ChatRoom.MAXIMUM_NAME_SIZE-1);
+
+    // 1 - We get the list of players of the current room/town/world 
+       Hashtable players = null;
     
-    System.out.println( "\tprimaryKey = " + chatRoom.getPrimaryKey() );
-    System.out.println( "\tname = " + chatRoom.getName() );
-    System.out.println( "\tcreatorPrimaryKey = " + chatRoom.getCreatorPrimaryKey() );
-    
-    ChatRoomCreatedMessage crcMsg = new ChatRoomCreatedMessage( chatRoom.getPrimaryKey(),
-                                                                name,
-                                                                creatorPrimaryKey
-                                                              );
-    player.sendMessage(crcMsg);
-    
+       if ( location.isWorld() ) {
+            WorldMap world = DataManager.getDefaultDataManager().getWorldManager().getWorldMap(location);
+            if(world!=null)
+                players = world.getPlayers();
+       } else if ( location.isTown() ) {
+            TownMap town = DataManager.getDefaultDataManager().getWorldManager().getTownMap(location);
+            if (town!=null)
+                players = town.getPlayers();
+       } else if ( location.isRoom() ) {
+            Room currentRoom = player.getMyRoom();    
+            if (currentRoom!=null)
+                players = currentRoom.getPlayers();
+       }
+
+       if( players==null ) {
+           Debug.signal( Debug.ERROR, this, "Error could not get current players in "+player.getLocation() );
+           player.sendMessage( new WarningMessage("Error could not find your location! please report the bug ! - "+player.getLocation()) );
+           return;
+       }
+
+    // 2 - Do we have to delete the previous chatroom ?
+       if( !player.getCurrentChatPrimaryKey().equals(ChatRoom.DEFAULT_CHAT) ) {
+            RemPlayerFromChatRoomMsgBehaviour remPlayerFromChat =
+                   new RemPlayerFromChatRoomMsgBehaviour( player.getPrimaryKey(), player.getCurrentChatPrimaryKey() );
+
+         // We Send the message to ourselves & the others...
+            try{
+                remPlayerFromChat.doBehaviour( player );
+            }catch( Exception e ) {
+                Debug.signal( Debug.ERROR, this, e );
+                player.setCurrentChatPrimaryKey(ChatRoom.DEFAULT_CHAT);
+            }
+       }
+
+    // 3 - We try to create the new chatroom
+       ChatRoom chatRoom = new ChatRoom();
+       chatRoom.setPrimaryKey( ChatRoom.getNewChatPrimaryKey() );
+       chatRoom.setName(name);
+       chatRoom.setCreatorPrimaryKey(creatorPrimaryKey);
+       chatRoom.addPlayer(player);
+
+       synchronized( players ) {
+           ChatList chatList = player.getChatList();
+           
+           if(chatList==null) {
+           	chatList = (ChatList) new ChatListImpl();
+           	
+             // We set the chatList to all the players in the chat room...
+           	Iterator it = players.values().iterator();
+           	
+           	while( it.hasNext() ) {
+           	    PlayerImpl p = (PlayerImpl) it.next();
+           	    p.setChatList( chatList );
+           	}
+           }
+
+           if(chatList.getNumberOfChatRooms() > ChatRoom.MAXIMUM_CHATROOMS_PER_ROOM )
+              return; // can't add ChatRoom : too many already !
+
+           chatList.addChatRoom( chatRoom );
+       }
+
+       player.setCurrentChatPrimaryKey( chatRoom.getPrimaryKey() );
+       player.setIsChatMember(true);
+
+    // 4 - We advertise the newly created chatroom
     // We send the information to all players of the same room or town or world
-    WotlasLocation location = player.getLocation();
-    
-    Hashtable players;
-    
-    if ( location.isWorld() ) {
-      WorldMap world = DataManager.getDefaultDataManager().getWorldManager().getWorldMap(location);
-      if (world!=null)
-        players = world.getPlayers();
-      else
-        return;
-    } else if ( location.isTown() ) {
-      TownMap town = DataManager.getDefaultDataManager().getWorldManager().getTownMap(location);
-      if (town!=null)
-        players = town.getPlayers();
-      else
-        return;
-    } else if ( location.isRoom() ) {
-      Room currentRoom = player.getMyRoom();    
-      if (currentRoom==null) {
-        Debug.signal( Debug.ERROR, this, "Error could not get current room ! "+player.getLocation() );
-        player.sendMessage( new wotlas.common.message.account.WarningMessage("Error could not get current room ! "+player.getLocation()) );
-        return;
-      }
-      players = currentRoom.getPlayers();
-    } else {
-      return;
-    }
-    
-    synchronized(players) {
-      Iterator it = players.values().iterator();
-      PlayerImpl p;
-              	 
-      while ( it.hasNext() ) {
-        p = (PlayerImpl)it.next();
-        if (p!=player) {
-          System.out.println("To player "+p+":");
-          p.sendMessage( crcMsg );
-        }
-      }
-    }
-    
+    // ( we are one of them, that's why we don't test if p!=player )
+       ChatRoomCreatedMessage crcMsg = new ChatRoomCreatedMessage( chatRoom.getPrimaryKey(),
+                                                                   name, creatorPrimaryKey );
+
+       synchronized(players) {
+          Iterator it = players.values().iterator();
+          PlayerImpl p;
+
+          while ( it.hasNext() ) {
+              p = (PlayerImpl)it.next();
+              p.sendMessage( crcMsg );
+          }
+       }
   }
   
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

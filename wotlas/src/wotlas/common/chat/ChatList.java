@@ -23,7 +23,7 @@ import wotlas.common.Player;
 import wotlas.common.universe.*;
 
 import java.io.*;
-import java.util.Set;
+import java.util.*;
 
 /** Interface of a Chat.
  *
@@ -34,6 +34,10 @@ import java.util.Set;
 
 public interface ChatList
 {
+  /** To get the number of existing ChatRooms.
+   */
+  public int getNumberOfChatRooms();
+
   /** To add a ChatRoom.
    */
   public boolean addChatRoom(ChatRoom chatRoom);
@@ -50,34 +54,30 @@ public interface ChatList
    */
   public ChatRoom getChatRoom(String primaryKey);
   
-  /** To get current ChatRoom.
-   */
-  public ChatRoom getCurrentChatRoom();
-  
-  /** To set the current active window.
-   *
-   * @param primaryKey primary key of current ChatRoom
-   */
-  public boolean setCurrentChatRoom(String primaryKey);
-  
   /** To add a player to a ChatRoom.
    *
    * @param primaryKey primary key of ChatRoom to modify
-   * @param playerPrimaryKey primary key of Player to add
+   * @param player Player to add
    */
-  public boolean addPlayer(String primaryKey, String playerPrimaryKey);
+  public boolean addPlayer(String primaryKey, Player player);
   
   /** To remove a player from a ChatRoom.
    *
    * @param primaryKey primary key of ChatRoom to modify
-   * @param playerPrimaryKey primary key of Player to remove
+   * @param player Player to remove
    */
-  public boolean removePlayer(String primaryKey, String playerPrimaryKey);
+  public boolean removePlayer(String primaryKey, Player player);
   
   /** To get the list of players of a ChatRoom
    *
    * @param primaryKey primary key of the ChatRoom
    */
-  public Set getPlayers(String primaryKey);
+  public Hashtable getPlayers(String primaryKey);
+
+  /** To get all the ChatRooms. Use with : synchronized( ... ) {} please !
+   *
+   * @param primaryKey primary key of ChatRoom we want to get
+   */
+  public Hashtable getChatRooms();
   
 }

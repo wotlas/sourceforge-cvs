@@ -26,9 +26,12 @@ import wotlas.utils.Debug;
 
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.common.message.movement.*;
+import wotlas.common.message.chat.*;
 import wotlas.common.universe.*;
 import wotlas.common.Player;
-import wotlas.server.PlayerImpl;
+import wotlas.common.chat.*;
+import wotlas.server.*;
+import wotlas.server.message.chat.*;
 
 /**
  * Associated behaviour to the PathUpdateMovementMessage...
@@ -56,7 +59,7 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
      public void doBehaviour( Object context ) {
 System.out.println("RECEVIED BEHAVIOUR for "+primaryKey);
 
-        // The context is here a PlayerImpl.
+        // 0 - The context is here a PlayerImpl.
            PlayerImpl player = (PlayerImpl) context;
 
            if(primaryKey==null) {
@@ -69,53 +72,130 @@ System.out.println("RECEVIED BEHAVIOUR for "+primaryKey);
               return;
            }
 
-       // We update our player
+       // 1 - We update our player
           player.getMovementComposer().setUpdate( (MovementUpdateMessage)this );
-System.out.println("propagation des updates....");
        
-       // We send the update to other players
-          if( player.getLocation().isRoom() ) {
+       // 2 - We send the update to other players
+          if( !player.getLocation().isRoom() )
+              return; // nothing to do for world & towns...
 
-              Room room = player.getMyRoom();
-              if( room==null ) return;
+          Room room = player.getMyRoom();
 
-           // Current Room
-              Hashtable players = room.getPlayers();
-
-              synchronized( players ) {
-              	 Iterator it = players.values().iterator();
-              	 
-              	 while( it.hasNext() ) {
-              	    PlayerImpl p = (PlayerImpl)it.next();
-              	    if(p!=player) {
-System.out.println("envoi du mouvement à "+p.getPrimaryKey());
-                       p.sendMessage( this );
-                    }
-              	 }
-              }
-
-           // Other rooms
-              if(room.getRoomLinks()==null) return;
-              
-              for( int i=0; i<room.getRoomLinks().length; i++ ) {
-                   Room otherRoom = room.getRoomLinks()[i].getRoom1();
-                   
-                   if( otherRoom==room )
-                       otherRoom = room.getRoomLinks()[i].getRoom2();
-
-                   players = otherRoom.getPlayers();
-
-                   synchronized( players ) {
-              	      Iterator it = players.values().iterator();
-              	 
-              	      while( it.hasNext() ) {
-              	          PlayerImpl p = (PlayerImpl)it.next();
-System.out.println("envoi du mouvement à la pièce d'à côté à "+p.getPrimaryKey());
-                          p.sendMessage( this );
-              	      }
-                   }
-              }
+          if( room==null ) {
+              Debug.signal( Debug.CRITICAL, this, "No current Room for player"+primaryKey+"! "+player.getLocation() );
+              return;
           }
+
+       // 2.1 - ... in the current Room
+          Hashtable players = room.getPlayers();
+
+          synchronized( players ) {
+               Iterator it = players.values().iterator();
+                 
+                while( it.hasNext() ) {
+                    PlayerImpl p = (PlayerImpl)it.next();
+                    if(p!=player)
+                       p.sendMessage( this );
+                }
+          }
+
+       // 2.2 - ... and other rooms
+          if(room.getRoomLinks()!=null)              
+             for( int i=0; i<room.getRoomLinks().length; i++ ) {
+                  Room otherRoom = room.getRoomLinks()[i].getRoom1();
+                   
+                  if( otherRoom==room )
+                      otherRoom = room.getRoomLinks()[i].getRoom2();
+
+                  players = otherRoom.getPlayers();
+
+                  synchronized( players ) {
+                      Iterator it = players.values().iterator();
+                 
+                      while( it.hasNext() ) {
+                          PlayerImpl p = (PlayerImpl)it.next();
+                          p.sendMessage( this );
+                      }
+                  }
+             }
+
+       // 3 - Chat selection/quit
+          ChatList chatList = player.getChatList();
+                
+          if( chatList==null )
+              return; // nothing to do
+
+          if( isMoving ) {
+             // chat reset
+                if( player.getCurrentChatPrimaryKey().equals( ChatRoom.DEFAULT_CHAT ) )
+                    return; // nothing to do
+
+             // we leave the current chatroom IF there are still chatters in it
+             // and if we are not its creator...
+                ChatRoom chatRoom = chatList.getChatRoom( player.getCurrentChatPrimaryKey() );
+             
+                if( chatRoom!=null && ( chatRoom.getPlayers().size()>1
+                    || !chatRoom.getCreatorPrimaryKey().equals(primaryKey) ) ) {
+                    RemPlayerFromChatRoomMsgBehaviour remPlayerFromChat =
+                        new RemPlayerFromChatRoomMsgBehaviour( primaryKey, player.getCurrentChatPrimaryKey() );
+
+                 // We Send the message to ourselves & the others...
+                    try{
+                      remPlayerFromChat.doBehaviour( player );
+                    }catch( Exception e ) {
+                       Debug.signal( Debug.ERROR, this, e );
+                       player.setCurrentChatPrimaryKey(ChatRoom.DEFAULT_CHAT);
+                    }
+                }
+          }
+          else {
+             // chat selection, we search for the closest player
+                players = room.getPlayers();
+                ChatRoom chatRoom = null;
+
+                synchronized( players ) {
+                    Iterator it = players.values().iterator();
+                 
+                    while( it.hasNext() ) {
+                       PlayerImpl p = (PlayerImpl)it.next();
+                       if( p!=player && p.isConnectedToGame() ) {
+                         int dx = p.getX()-player.getX();
+                         int dy = p.getY()-player.getY();
+                         
+                          if( dx*dx+dy*dy < ChatRoom.MIN_CHAT_DISTANCE ) {
+                              chatRoom = chatList.getChatRoom( p.getCurrentChatPrimaryKey() );                              
+                              if( chatRoom==null ) continue;
+                              
+                              chatRoom.addPlayer( player );
+                              player.setCurrentChatPrimaryKey( chatRoom.getPrimaryKey() );
+                              player.setIsChatMember( false );
+                              break;
+                          }
+                       }
+                    }
+                }
+
+                if( chatRoom==null )
+                    return; // no player near us, or no chat...
+
+             // New chat selected !
+                player.sendMessage( new SetCurrentChatRoomMessage( chatRoom.getPrimaryKey(), chatRoom.getPlayers() ) );
+
+             // We advertise our presence
+                players = chatRoom.getPlayers();
+                AddPlayerToChatRoomMessage aMsg = new AddPlayerToChatRoomMessage( primaryKey, chatRoom.getPrimaryKey() );
+             
+                synchronized( players ) {
+                    Iterator it = players.values().iterator();
+                    
+                    while( it.hasNext() ) {
+                    	PlayerImpl p = (PlayerImpl) it.next();
+                    	p.sendMessage( aMsg );
+                    }
+                }
+          }
+
+       // end !
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

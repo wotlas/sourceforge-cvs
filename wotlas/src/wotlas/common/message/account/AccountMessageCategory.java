@@ -40,5 +40,9 @@ public interface AccountMessageCategory extends NetMessageCategory {
        public final static byte ACCOUNT_PLAYER_NAMES_MSG    = 7;
        public final static byte DELETE_MY_ACCOUNT_MSG       = 8;
        public final static byte DELETE_YOUR_ACCOUNT_MSG     = 9;
+       public final static byte REVERT_TO_PREVIOUS_STATE_MSG= 10;
+       public final static byte CANCEL_ACCOUNT_CREATION_MSG = 11;
+       public final static byte RECOVER_ACCOUNT_MSG         = 12;
+       public final static byte DELETE_ACCOUNT_MSG          = 13;
 }
 

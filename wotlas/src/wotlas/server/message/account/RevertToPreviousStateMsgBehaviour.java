@@ -28,18 +28,18 @@ import wotlas.server.AccountBuilder;
 
 
 /**
- * Associated behaviour to the PlayerNamesMessage...
+ * Associated behaviour to the RevertToPreviousStateMessage...
  *
  * @author Aldiss
  */
 
-public class PlayerNamesMsgBehaviour extends PlayerNamesMessage implements NetMessageBehaviour
+public class RevertToPreviousStateMsgBehaviour extends RevertToPreviousStateMessage implements NetMessageBehaviour
 {
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
    */
-     public PlayerNamesMsgBehaviour() {
+     public RevertToPreviousStateMsgBehaviour() {
           super();
      }
 
@@ -54,7 +54,7 @@ public class PlayerNamesMsgBehaviour extends PlayerNamesMessage implements NetMe
 
         // the context is here an AccountBuilder
            AccountBuilder builder = (AccountBuilder) context;
-           builder.setPlayerNames( playerName, fullPlayerName, playerEmail );
+           builder.revertToPreviousState();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

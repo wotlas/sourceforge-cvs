@@ -42,9 +42,9 @@ public class ScreenIntro extends JFrame
 
   private int rightWidth = 110;
 
-  private int height = 300;
+  private int height = 340;
 
-  final private ImageIcon backgroundImg = new ImageIcon("D:\\projects\\wotlas\\wotlas\\src\\wotlas\\client\\screen\\bg-400x300.jpg");
+  private ImageIcon backgroundImg = null;
 
  /*------------------------------------------------------------------------------------*/
 

@@ -20,6 +20,8 @@
 package wotlas.client.screen;
 
 import wotlas.common.chat.ChatRoom;
+import wotlas.client.*;
+
 
 import javax.swing.*;
 import javax.swing.text.*;
@@ -28,6 +30,13 @@ import java.awt.*;
 import java.awt.event.*;
 
 import java.io.*;
+import java.util.*;
+
+
+/** Swing Chat Room where messages are displayed...
+ *
+ * @author Petrus, Aldiss
+ */
 
 public class JChatRoom extends JPanel
 {
@@ -37,6 +46,8 @@ public class JChatRoom extends JPanel
   /** max number of messages to display on screen at the same time
    */
   static final private int MAX_DISPLAYED_MESSAGES = 25;
+
+ /*------------------------------------------------------------------------------------*/  
 
   /** messages number.
    */
@@ -49,7 +60,7 @@ public class JChatRoom extends JPanel
   /** Where messages appear.
    */
   private JTextPane messagesPane;
-  
+
   /** Chat document.
    */
   private DefaultStyledDocument doc_chat;
@@ -60,6 +71,10 @@ public class JChatRoom extends JPanel
    */
   private JList playersJList;
   private DefaultListModel playersListModel;
+
+  /** Player list
+   */
+  private Hashtable players;
 
  /*------------------------------------------------------------------------------------*/  
  
@@ -72,6 +87,7 @@ public class JChatRoom extends JPanel
     super(false);
     setName(chatRoom.getPrimaryKey());
     setLayout(new BorderLayout());
+    players = new Hashtable(2);
     
     msg_number = 0;
     
@@ -79,9 +95,10 @@ public class JChatRoom extends JPanel
     /*HTMLEditorKit kit = new HTMLEditorKit();
    	HTMLDocument doc_chat = (HTMLDocument) kit.createDefaultDocument();
     */
-    doc_chat = new DefaultStyledDocument();
+//    doc_chat = new DefaultStyledDocument();
     
-    messagesPane = new JTextPane(doc_chat);
+//    messagesPane = new JTextPane(doc_chat); ALDISS
+    messagesPane = new JTextPane();
     messagesPane.setContentType("text/html");
     messagesPane.setEditable(false);
     
@@ -117,25 +134,46 @@ public class JChatRoom extends JPanel
   
   /** To add some players to the JList.
    */
-  synchronized public void addPlayers(Object[] players) {
-    for (int i=0; i<players.length; i++)
-      playersListModel.addElement(players[i]);
+  synchronized public void addPlayers(PlayerImpl players[]) {
+    for (int i=0; i<players.length; i++) {
+      // we detect non valid entries
+     	 if(players[i]==null ||  this.players.containsKey( players[i].getPrimaryKey() ))
+    	    continue;
+
+      // ok, we add this one...
+         playersListModel.addElement(players[i].getFullPlayerName());
+         this.players.put( players[i].getPrimaryKey(), players[i] );
+    }
   }
   
   /** To add a player to the JList.
    */
-  synchronized public void addPlayer(Object player) {
-    playersListModel.addElement(player);
+  synchronized public void addPlayer(PlayerImpl player) {
+
+    if( players.containsKey( player.getPrimaryKey() ) )
+        return; // already in this chat
+
+    playersListModel.addElement(player.getFullPlayerName());
+    this.players.put( player.getPrimaryKey(), player );    
   }
   
   /** To remove a player from the JList.
    */
-  synchronized public void removePlayer(Object player) {
-    playersListModel.removeElement(player);
+  synchronized public void removePlayer(PlayerImpl player) {
+    if( !players.containsKey( player.getPrimaryKey() ) )
+        return; // not in this chat
+System.out.println("REMOVING PLAYER "+player.getPrimaryKey());
+    playersListModel.removeElement(player.getFullPlayerName());
+    this.players.remove( player.getPrimaryKey());    
   }
   
   synchronized public void removeAllPlayers() {
     playersListModel.removeAllElements();
+    players.clear();
+  }
+
+  public Hashtable getPlayers() {
+    return players;
   }
   
  /*------------------------------------------------------------------------------------*/  
@@ -177,24 +215,31 @@ public class JChatRoom extends JPanel
 
     //try {
       System.out.println("insertString");
-      System.out.println("doc_chat.getLength() = " + doc_chat.getLength());
       //doc_chat.insertString (doc_chat.getLength(), text+"<br>\n", attribut );
       strBuffer += text + "<br>\n";
-      messagesPane.setText(strBuffer);
+
+      Runnable runnable = new Runnable() {
+          public void run() {
+               messagesPane.setText(strBuffer);
+          }
+      };
+
+      SwingUtilities.invokeLater( runnable );
+
     /*} catch(BadLocationException e) {
       e.printStackTrace();
       return;
     }*/
 
     // TRICK TRICK TRICK TRICK TRICK
-
+    //System.out.println( "LENGTH str:"+strBuffer.length()+" mTxt:"+messagesPane.getText().length());
     // we want the scrollbars to move when some text is added...
-    if (isShowing())
-      messagesPane.setCaretPosition( strBuffer.length() );
-
-     // TRICK TRICK TRICK TRICK TRICK
+    //if (isShowing())
+    //  messagesPane.setCaretPosition( strBuffer.length() );
+    // TRICK TRICK TRICK TRICK TRICK
   }
   
+ /*------------------------------------------------------------------------------------*/  
   
 }
   

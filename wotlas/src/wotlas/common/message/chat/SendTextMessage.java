@@ -16,8 +16,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
-package wotlas.common.message.account;
+
+package wotlas.common.message.chat;
+
+import wotlas.common.universe.WotlasLocation;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -26,52 +28,54 @@ import java.io.IOException;
 import wotlas.libs.net.NetMessage;
 import wotlas.common.message.MessageRegistry;
 
-
 /** 
- * To set the account's playerName & fullPlayerName. (Message Sent by Client)
+ * To write a message in a ChatRoom. (Message sent by Client or Server)
  *
- * @author Aldiss
+ * @author Petrus, Aldiss
  */
 
-public class PlayerNamesMessage extends NetMessage
+public class SendTextMessage extends NetMessage
 {
+ 
  /*------------------------------------------------------------------------------------*/
 
-  /** playerName
+  /** Id of the sender
    */
-      protected String playerName;
-
-  /** fullPlayerName
+  protected String senderPrimaryKey;
+ 
+  /** Id of the ChatRoom
    */
-      protected String fullPlayerName;
-
-  /** playerEmail
+  protected String chatRoomPrimaryKey;
+  
+  /** The message to send
    */
-      protected String playerEmail;
+  protected String message;
 
+  /** Voice Sound Level, see wotlas.common.chat.ChatRoom
+   */
+  protected byte voiceSoundLevel;
+  
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. Just initializes the message category and type.
    */
-     public PlayerNamesMessage() {
-          super( MessageRegistry.ACCOUNT_CATEGORY,
-                 AccountMessageCategory.ACCOUNT_PLAYER_NAMES_MSG );
-     }
+  public SendTextMessage() {
+    super( MessageRegistry.CHAT_CATEGORY,
+           ChatMessageCategory.SEND_TEXT_MSG );        
+  }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor with the client's playerName & fullPlayerName.
-   *
-   * @param playerName playerName
-   * @param fullPlayerName fullPlayerName
+  /** Constructor with parameters.
    */
-     public PlayerNamesMessage( String playerName, String fullPlayerName, String playerEmail ) {
-         this();
-         this.playerName = playerName;
-         this.fullPlayerName = fullPlayerName;
-         this.playerEmail = playerEmail;
-     }
-
+  public SendTextMessage(String senderPrimaryKey, String chatRoomPrimaryKey, String message, byte voiceSoundLevel ) {
+    this();
+    this.senderPrimaryKey = senderPrimaryKey;
+    this.chatRoomPrimaryKey = chatRoomPrimaryKey;
+    this.message = message;
+    this.voiceSoundLevel = voiceSoundLevel;
+  }
+  
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** This is where we put your message data on the stream. You don't need
@@ -80,10 +84,12 @@ public class PlayerNamesMessage extends NetMessage
    * @param ostream data stream where to put your data (see java.io.DataOutputStream)
    * @exception IOException if the stream has been closed or is corrupted.
    */
-     public void encode( DataOutputStream ostream ) throws IOException {
-         writeString( playerName, ostream );
-         writeString( fullPlayerName, ostream );
-     }
+  public void encode( DataOutputStream ostream ) throws IOException {
+    writeString( senderPrimaryKey, ostream );
+    writeString( chatRoomPrimaryKey, ostream );
+    writeString( message, ostream);
+    ostream.writeByte( voiceSoundLevel );
+  }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -93,11 +99,13 @@ public class PlayerNamesMessage extends NetMessage
    * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
    * @exception IOException if the stream has been closed or is corrupted.
    */
-     public void decode( DataInputStream istream ) throws IOException {
-          playerName = readString( istream );
-          fullPlayerName = readString( istream );
-     }
+  public void decode( DataInputStream istream ) throws IOException {
+    senderPrimaryKey = readString( istream );
+    chatRoomPrimaryKey = readString( istream );
+    message = readString( istream );
+    voiceSoundLevel = istream.readByte();
+  }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ 
 }
-

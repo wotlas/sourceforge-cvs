@@ -123,7 +123,8 @@ class MyPrivateClass {
         // 4 - nettoyage éventuel
                msg_hello = null;
 
+6 - Pour chacun de vos packages vous devrez aussi créer un fichier package.html qui contiendra un petit descriptif de votre package. Jettez un coup d'oeil à /CVSROOT/wotlas/wotlassrc/wotlas/libs/net/package.html pour un exemple.
 
 
-6 - Bon codage !
+7 - Bon codage !
 

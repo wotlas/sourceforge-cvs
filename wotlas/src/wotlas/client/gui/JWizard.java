@@ -19,6 +19,7 @@
 
 package wotlas.client.gui;
 
+import wotlas.client.DataManager;
 import wotlas.utils.ALabel;
 
 import java.awt.*;

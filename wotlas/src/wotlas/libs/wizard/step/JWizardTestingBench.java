@@ -94,8 +94,8 @@ public class JWizardTestingBench extends JWizard {
 
            case 1 :  /* STEP 1 TEXT FIELD */
 
-           parameters.setStepClass("wotlas.libs.wizard.step.JWizardStep1TextField");
-           parameters.setStepTitle("Information Input Step (JWizardStep1TextField)");
+           parameters.setStepClass("wotlas.libs.wizard.step.JWizardStep1TextFieldNet");
+           parameters.setStepTitle("Information Input Step (JWizardStep1TextFieldNet)");
 
            parameters.setProperty("init.label0", "Kyzophrenic Proton :");
            parameters.setProperty("init.text0", "krypton A");

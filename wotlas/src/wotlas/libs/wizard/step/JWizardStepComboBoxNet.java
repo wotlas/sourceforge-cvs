@@ -20,6 +20,7 @@
 package wotlas.libs.wizard.step;
 
 import wotlas.common.message.account.*;
+import wotlas.libs.net.NetPersonality;
 import wotlas.libs.wizard.*;
 import wotlas.utils.aswing.*;
 
@@ -71,10 +72,11 @@ public class JWizardStepComboBoxNet extends JWizardStepComboBox {
     JWizardStepParameters parameters = new JWizardStepParameters();
     parameters.setStepClass(this.getClass().getName());
     
-    parameters.setProperty("data.choice0", String.valueOf(getChoice()));
+    parameters.setProperty("data.choice", String.valueOf(getChoice()));
     
-    //sendMessage(new AccountStepMessage(parameters)); 
-    //await();
+    NetPersonality personality = (NetPersonality) context;
+    personality.queueMessage(new AccountStepMessage(parameters)); 
+    await();
     
    	return true;
    }
@@ -84,8 +86,9 @@ public class JWizardStepComboBoxNet extends JWizardStepComboBox {
    *  @return return true to validate the "Previous" button action, false to cancel it...
    */
    protected boolean onPrevious(Object context, JWizard wizard) {
-    //sendMessage(new PreviousStepMessage());
-    //await();
+    NetPersonality personality = (NetPersonality) context;
+    personality.queueMessage(new PreviousStepMessage());
+    await();
     
    	return true;
    }

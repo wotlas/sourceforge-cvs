@@ -20,6 +20,7 @@
 package wotlas.libs.wizard.step;
 
 import wotlas.common.message.account.*;
+import wotlas.libs.net.NetPersonality;
 import wotlas.libs.wizard.*;
 import wotlas.utils.aswing.*;
 
@@ -69,8 +70,9 @@ public class JWizardStep2TextFieldNet extends JWizardStep2TextField {
     parameters.setProperty("data.tfield0", getText0());
     parameters.setProperty("data.tfield1", getText1());
     
-    //sendMessage(new AccountStepMessage(parameters)); 
-    //await();
+    NetPersonality personality = (NetPersonality) context;
+    personality.queueMessage(new AccountStepMessage(parameters)); 
+    await();
     
    	return true;
    }
@@ -80,8 +82,9 @@ public class JWizardStep2TextFieldNet extends JWizardStep2TextField {
    *  @return return true to validate the "Previous" button action, false to cancel it...
    */
    protected boolean onPrevious(Object context, JWizard wizard) {
-    //sendMessage(new PreviousStepMessage());
-    //await();
+    NetPersonality personality = (NetPersonality) context;
+    personality.queueMessage(new PreviousStepMessage());
+    await();
     
    	return true;
    }

@@ -68,7 +68,7 @@ public abstract class Human implements WotCharacter {
     *  @return true if the hairColor is valid, false otherwise.
     */
     public static boolean isValidHairColor( byte hairColor ) {
-    	if( hairColor>=0 && hairColor<=5 )
+    	if( hairColor>=0 && hairColor<=6 )
     	    return true;
     	return false;
     }

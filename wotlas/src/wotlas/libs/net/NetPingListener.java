@@ -21,11 +21,11 @@ package wotlas.libs.net;
 
 
 /** 
- * A NetPingListener listens to network ping information. Use the NetPersonality methods
+ * A NetPingListener listens to network ping information. Use the NetConnection methods
  * to register to this listener.
  * 
  * @author Aldiss
- * @see wotlas.libs.net.NetPersonality
+ * @see wotlas.libs.net.NetConnection
  */
 
 public interface NetPingListener {

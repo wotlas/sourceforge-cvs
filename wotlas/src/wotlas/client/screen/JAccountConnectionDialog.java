@@ -34,12 +34,12 @@ import java.awt.event.*;
  * <pre>
  *  Example :
  *
- *   NetPersonality myNetPersonality;
+ *   NetConnection myNetConnection;
  *
  *   JAccountConnectionDialog jconnect = new JAccountConnectionDialog( frame, "myServer", 
  *                                                                     25000, myDataManager );
  *   if( jconnect.hasSucceeded() ) 
- *       myNetPersonality = jconnect.getPersonality();
+ *       myNetConnection = jconnect.getConnection();
  *
  * </pre>
  *
@@ -59,7 +59,7 @@ public class JAccountConnectionDialog extends JConnectionDialog
     * @param server server name (DNS or IP address)
     * @param port server port
     * @param serverID Id of the server we want to join
-    * @param context context to set to messages ( see NetPersonality ).
+    * @param context context to set to messages ( see NetConnection ).
     */
 
    public JAccountConnectionDialog(Frame frame,String server,int port, int serverID, Object context) {

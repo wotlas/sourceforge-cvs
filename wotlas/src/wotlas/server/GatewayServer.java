@@ -21,7 +21,7 @@ package wotlas.server;
 
 import wotlas.libs.net.NetServer;
 import wotlas.libs.net.NetClient;
-import wotlas.libs.net.NetPersonality;
+import wotlas.libs.net.NetConnection;
 
 import wotlas.common.ServerConfig;
 import wotlas.common.ServerConfigManager;
@@ -73,11 +73,11 @@ public class GatewayServer extends NetServer implements ErrorCodeList {
    /** This method is called automatically when a new client establishes a connection
     *  with this server ( the client sends a ClientRegisterMessage ).
     *
-    * @param personality a previously created personality for this connection.
+    * @param connection a previously created connection for this connection.
     * @param key a string given by the client to identify itself. The key should be
     *        equal to "AccountServerPlease!".
     */
-    public void accessControl( NetPersonality personality, String key )
+    public void accessControl( NetConnection connection, String key )
     {
        // The key is there to prevent wrong connections
 
@@ -88,11 +88,11 @@ public class GatewayServer extends NetServer implements ErrorCodeList {
                                                 AccountTransaction.TRANSACTION_ACCOUNT_RECEIVER );
 
             // we set his message context to his player...
-               personality.setContext( transaction );
-               personality.setConnectionListener( transaction );
+               connection.setContext( transaction );
+               connection.setConnectionListener( transaction );
 
             // welcome on board...
-               acceptClient( personality );
+               acceptClient( connection );
                Debug.signal( Debug.NOTICE, null, "Gateway Server is receiving an account...");
           }
 /*          if( key.startsWith("isThereAnAccountNamed:") )
@@ -103,16 +103,16 @@ public class GatewayServer extends NetServer implements ErrorCodeList {
               AccountManager manager = DataManager.getDefaultDataManager().getAccountManager();
 
               if( manager.checkAccountName( primaryKey ) )
-                  refuseClient( personality, primaryKey+":found" ); // yes the client exists
+                  refuseClient( connection, primaryKey+":found" ); // yes the client exists
               else {
                   Debug.signal( Debug.WARNING, "The account searched ("+primaryKey+") was not found." );
-                  refuseClient( personality, primaryKey+":not found");
+                  refuseClient( connection, primaryKey+":not found");
               }
           } */
           else {
             // NO VALID KEY
                Debug.signal( Debug.NOTICE, this, "Someone tried to connect with a bad key : "+key);
-               refuseClient( personality, ERR_WRONG_KEY, "Wrong key for this server :"+key );
+               refuseClient( connection, ERR_WRONG_KEY, "Wrong key for this server :"+key );
           }
     }
 
@@ -142,13 +142,13 @@ public class GatewayServer extends NetServer implements ErrorCodeList {
 
        // STEP 3 - Open a connection with the remote server
           NetClient client = new NetClient();
-          NetPersonality personality = client.connectToServer(
+          NetConnection connection = client.connectToServer(
                                           remoteServer.getServerName(),
                                           remoteServer.getGatewayServerPort(),
                                           "GatewayServerPlease!",
                                           transaction, null );
 
-          if(personality==null) {
+          if(connection==null) {
             // We analyze the error returned
                if( client.getErrorCode()==ErrorCodeList.ERR_CONNECT_FAILED ) {
                   // we report the deadlink and try the eventualy new address
@@ -158,7 +158,7 @@ public class GatewayServer extends NetServer implements ErrorCodeList {
 
                      if(server!=null) {
                           client = new NetClient();
-                          personality = client.connectToServer(
+                          connection = client.connectToServer(
                                           newServerName,
                                           remoteServer.getGatewayServerPort(),
                                           "GatewayServerPlease!",
@@ -166,14 +166,14 @@ public class GatewayServer extends NetServer implements ErrorCodeList {
                      }
                }
 
-               if(personality==null) {
+               if(connection==null) {
                   Debug.signal( Debug.ERROR, this, client.getErrorMessage() );
                   return false;
                }
           }
 
           Debug.signal( Debug.NOTICE, null, "Gateway server reached. Starting transaction for "+accountPrimaryKey+".");
-          personality.setConnectionListener( transaction );
+          connection.setConnectionListener( transaction );
 
        // STEP 4 - Wait for the result (10s max)
           return transaction.transfertAccount( accountPrimaryKey, 10000, ServerDirector.getServerID() );

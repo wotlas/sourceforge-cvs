@@ -57,9 +57,9 @@ public class NetSender extends NetThread
 
  /*------------------------------------------------------------------------------------*/
 
-    /** A link to our NetPersonality
+    /** A link to our NetConnection
      */
-        private NetPersonality personality;
+        private NetConnection connection;
 
     /** Communication stream to send data
      */
@@ -105,16 +105,16 @@ public class NetSender extends NetThread
      *      - aggregation_msg_limit = 10 messages
      *<p>
      * @param socket a previously created & connected socket.
-     * @param personality a NetPersonality linked to the specified socket.
+     * @param connection a NetConnection linked to the specified socket.
      * @param senderType NetSender type ( SEND_IMMEDIATELY, AGGREGATE_MESSAGES or USER_AGGREGATION )
      * @param bufferSize buffer size (in bytes) for the buffered output stream.
      * @exception IOException if the socket wasn't already connected.
      */
-      public NetSender( Socket socket, NetPersonality personality,
+      public NetSender( Socket socket, NetConnection connection,
                         byte senderType, int bufferSize ) throws IOException
       {
           super(socket);
-          this.personality = personality;
+          this.connection = connection;
 
           if( senderType<1 || 3<senderType )
               this.senderType = SEND_IMMEDIATELY;
@@ -195,9 +195,9 @@ public class NetSender extends NetThread
                Debug.signal( Debug.ERROR, this, e ); // serious error while sending message
         }
 
-     // we ask the NetPersonality to perform some cleanup
+     // we ask the NetConnection to perform some cleanup
      // and signal that the connection was closed ( connectionListener )
-        personality.closeConnection();
+        connection.closeConnection();
         outStream=null;
     }
 
@@ -246,9 +246,9 @@ public class NetSender extends NetThread
                     else
                           Debug.signal( Debug.ERROR, this, e ); // serious error
 
-                // we ask the NetPersonality to perform some cleanup
+                // we ask the NetConnection to perform some cleanup
                 // and signal that the connection was closed ( connectionListener )
-                   personality.closeConnection();
+                   connection.closeConnection();
                    outStream=null;
                 }
             }

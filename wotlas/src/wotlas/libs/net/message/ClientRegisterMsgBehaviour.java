@@ -55,7 +55,7 @@ public class ClientRegisterMsgBehaviour extends ClientRegisterMessage implements
    */
      public void doBehaviour( Object sessionContext ) {
 
-        // the sessionContext is here an entry on this server ( server + personality )
+        // the sessionContext is here an entry on this server ( server + connection )
            NetServerEntry entry = (NetServerEntry) sessionContext;
 
      	// this message is the first one sent by a client 
@@ -65,14 +65,14 @@ public class ClientRegisterMsgBehaviour extends ClientRegisterMessage implements
            {
                 if( netEngineVersion > NetEngineVersion.VERSION )
                 {
-                     entry.getPersonality().queueMessage(
+                     entry.getConnection().queueMessage(
                            new ServerErrorMessage( NetErrorCodeList.ERR_BAD_LIB_VERSION,
                                                    "The Server Network Engine Version is old : "
                                                    + NetEngineVersion.VERSION
                                                    + ". Please Signal it ! You have version "
                                                    + netEngineVersion ) );
 
-                     entry.getPersonality().closeConnection();
+                     entry.getConnection().closeConnection();
 
                      Debug.signal( Debug.WARNING, this,
                                      "Client tried to connect with a more recent network engine version :"
@@ -81,13 +81,13 @@ public class ClientRegisterMsgBehaviour extends ClientRegisterMessage implements
                 }
                 else
                 {
-                       entry.getPersonality().queueMessage(
+                       entry.getConnection().queueMessage(
                            new ServerErrorMessage( NetErrorCodeList.ERR_BAD_LIB_VERSION,
                                                    "You have an old version of the Wotlas Network Engine (v"
                                                         + netEngineVersion + "). Please update to v"
                                                         + NetEngineVersion.VERSION ) );
 
-                       entry.getPersonality().closeConnection();
+                       entry.getConnection().closeConnection();
 
                        Debug.signal( Debug.WARNING, this,
                                      "Client tried to connect with an old version of the network engine (v"
@@ -98,7 +98,7 @@ public class ClientRegisterMsgBehaviour extends ClientRegisterMessage implements
            }
 
      	// if the version are the same, we call the server's accessControl method.
-           entry.getServer().accessControl( entry.getPersonality(), key );
+           entry.getServer().accessControl( entry.getConnection(), key );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

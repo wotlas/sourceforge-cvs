@@ -22,7 +22,7 @@ package wotlas.server;
 import wotlas.server.bots.BotPlayer;
 
 import wotlas.libs.net.NetServer;
-import wotlas.libs.net.NetPersonality;
+import wotlas.libs.net.NetConnection;
 
 import wotlas.common.ErrorCodeList;
 
@@ -60,17 +60,17 @@ public class GameServer extends NetServer implements ErrorCodeList {
    /** This method is called automatically when a new client establishes a connection
     *  with this server ( the client sends a ClientRegisterMessage ).
     *
-    * @param personality a previously created personality for this connection.
+    * @param connection a previously created connection for this connection.
     * @param key a string given by the client to identify itself. The key structure
     *        is the following "accountName:password". See wotlas.server.GameAccount
     *        for the accountName structure.
     */
-    public void accessControl( NetPersonality personality, String key )
+    public void accessControl( NetConnection connection, String key )
     {
        // key sanity check
           if( key.indexOf(':')<=4 || key.endsWith(":") ) {
                Debug.signal( Debug.NOTICE, this, "A client tried to connect with a bad key format.");
-               refuseClient( personality, ERR_WRONG_KEY, "You are trying to connect on the wrong server !!!" );
+               refuseClient( connection, ERR_WRONG_KEY, "You are trying to connect on the wrong server !!!" );
                return;
           }
 
@@ -84,26 +84,26 @@ public class GameServer extends NetServer implements ErrorCodeList {
 
           if( account==null ) {
                Debug.signal( Debug.NOTICE, this, "A client tried to connect on a non-existent account.");
-               refuseClient( personality, ERR_UNKNOWN_ACCOUNT, "This account does not exist on this server" );
+               refuseClient( connection, ERR_UNKNOWN_ACCOUNT, "This account does not exist on this server" );
                return;
           }
 /*
           if( account.getPlayer() instanceof BotPlayer ) {
                Debug.signal( Debug.ERROR, this, accountName+" tried to connect on a bot's account.");
-               refuseClient( personality, ERR_BOT_ACCOUNT, "This account is owned by a bot.\nYou can't connect to it !" );
+               refuseClient( connection, ERR_BOT_ACCOUNT, "This account is owned by a bot.\nYou can't connect to it !" );
                return;
           }
 */
           if( account.getPlayer().isConnectedToGame() && !(account.getPlayer() instanceof BotPlayer) ) {
                Debug.signal( Debug.ERROR, this, accountName+" tried to connect twice to the game server.");
-               refuseClient( personality, ERR_ALREADY_CONNECTED, "Someone is already connected on this account !" );
+               refuseClient( connection, ERR_ALREADY_CONNECTED, "Someone is already connected on this account !" );
                return;
           }
 
        // Password Crack Detection ( dictionnary attack )
           if( account.tooMuchBadPasswordEntered() ) {
                Debug.signal( Debug.WARNING, this, accountName+" has entered 3 bad passwords! account locked for 30s");
-               refuseClient( personality, ERR_BAD_PASSWORD, "Sorry, you entered 3 bad passwords ! your account is locked for 30s." );
+               refuseClient( connection, ERR_BAD_PASSWORD, "Sorry, you entered 3 bad passwords ! your account is locked for 30s." );
                return;
           }
 
@@ -112,7 +112,7 @@ public class GameServer extends NetServer implements ErrorCodeList {
           {
             // account alive ?
                if( account.getIsDeadAccount() ) {
-                   refuseClient( personality, ERR_DEAD_ACCOUNT, "Sorry, your character has been killed !" );
+                   refuseClient( connection, ERR_DEAD_ACCOUNT, "Sorry, your character has been killed !" );
                    return;
                }
 
@@ -120,19 +120,19 @@ public class GameServer extends NetServer implements ErrorCodeList {
                account.setLastConnectionTimeNow();
 
             // we set his message context to his player...
-               personality.setContext( account.getPlayer() );
-               personality.setConnectionListener( account.getPlayer() );
+               connection.setContext( account.getPlayer() );
+               connection.setConnectionListener( account.getPlayer() );
                
             // We will send back ping messages if we receive them
-               personality.sendBackPingMessages( true );
+               connection.sendBackPingMessages( true );
 
             // welcome on board...
-               acceptClient( personality );
+               acceptClient( connection );
                Debug.signal( Debug.NOTICE, null, accountName+" entered the game...");
           }
           else {
                Debug.signal( Debug.NOTICE, this, accountName+" entered a bad password");
-               refuseClient( personality, ERR_BAD_PASSWORD, "Wrong password !" );
+               refuseClient( connection, ERR_BAD_PASSWORD, "Wrong password !" );
           }
     }
 

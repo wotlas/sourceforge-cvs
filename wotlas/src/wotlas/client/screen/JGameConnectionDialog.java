@@ -35,12 +35,12 @@ import java.awt.event.*;
  *  Example : here is the case of a player of login "masterBob" whose secret password is "hulo"
  *            and player IDs are : 1 (server part) and 22 (client part)
  *
- *   NetPersonality myNetPersonality;
+ *   NetConnection myNetConnection;
  *
  *   JGameConnectionDialog jconnect = new JGameConnectionDialog( frame, "myServer", 26000
  *                                                  "masterBob", "hulo", 1, 22, myDataManager );
  *   if( jconnect.hasSucceeded() ) 
- *       myNetPersonality = jconnect.getPersonality();
+ *       myNetConnection = jconnect.getConnection();
  *
  * </pre>
  *
@@ -64,7 +64,7 @@ public class JGameConnectionDialog extends JConnectionDialog
     * @param password client password
     * @param localClientID ID given by the account server when the client created his player
     * @param originalServerID ID given by the account server when the client created his player
-    * @param context context to set to messages ( see NetPersonality ).
+    * @param context context to set to messages ( see NetConnection ).
     */
 
    public JGameConnectionDialog(Frame frame,String server,int port, int serverID, String login,

@@ -29,7 +29,7 @@ import wotlas.server.message.chat.*;
 
 
 import wotlas.libs.net.NetConnectionListener;
-import wotlas.libs.net.NetPersonality;
+import wotlas.libs.net.NetConnection;
 import wotlas.libs.net.NetMessage;
 
 import wotlas.libs.pathfinding.*;
@@ -102,9 +102,9 @@ public class PlayerImpl implements Player, NetConnectionListener {
 
  /*------------------------------------------------------------------------------------*/
 
-   /** Our NetPersonality, useful if we want to send messages !
+   /** Our NetConnection, useful if we want to send messages !
     */
-       transient protected NetPersonality personality;
+       transient protected NetConnection connection;
 
    /** Our current Room ( if we are in a Room, null otherwise )
     */
@@ -138,9 +138,9 @@ public class PlayerImpl implements Player, NetConnectionListener {
 
  /*------------------------------------------------------------------------------------*/
 
-   /** Personality Lock
+   /** Connection Lock
     */
-       transient protected byte personalityLock[] = new byte[0];
+       transient protected byte connectionLock[] = new byte[0];
 
    /** ChatList Lock
     */
@@ -634,7 +634,7 @@ public class PlayerImpl implements Player, NetConnectionListener {
     * @return true if the player is in the game, false if the client is not connected.
     */
       public boolean isConnectedToGame() {
-            if(personality==null)
+            if(connection==null)
                return false;
             return true;
       }
@@ -668,12 +668,12 @@ public class PlayerImpl implements Player, NetConnectionListener {
 
   /** This method is called when a new network connection is created on this player.
    *
-   * @param personality the NetPersonality object associated to this connection.
+   * @param connection the NetConnection object associated to this connection.
    */
-     public void connectionCreated( NetPersonality personality ) {
+     public void connectionCreated( NetConnection connection ) {
 
-             synchronized( personalityLock ) {
-                 this.personality = personality;
+             synchronized( connectionLock ) {
+                 this.connection = connection;
              }
 
           // We forget a little about players we met if we last connected 5 days ago
@@ -709,13 +709,13 @@ public class PlayerImpl implements Player, NetConnectionListener {
   /** This method is called when the network connection of the client is no longer
    * of this world.
    *
-   * @param personality the NetPersonality object associated to this connection.
+   * @param connection the NetConnection object associated to this connection.
    */
-     public void connectionClosed( NetPersonality personality ) {
+     public void connectionClosed( NetConnection connection ) {
 
          // 0 - no more messages will be sent...
-             synchronized( personalityLock ) {
-                 this.personality = null;
+             synchronized( connectionLock ) {
+                 this.connection = null;
              }
              lastDisconnectedTime = System.currentTimeMillis();
              
@@ -777,11 +777,11 @@ public class PlayerImpl implements Player, NetConnectionListener {
    * @param message message to send to the player.
    */
      public void sendMessage( NetMessage message ) {
-             synchronized( personalityLock ) {
-                if( personality!=null ) {
+             synchronized( connectionLock ) {
+                if( connection!=null ) {
                     if( ServerDirector.SHOW_DEBUG )
                         System.out.println("Player "+primaryKey+" sending msg: "+message);
-                    personality.queueMessage( message );
+                    connection.queueMessage( message );
                 }
              }
      }
@@ -796,13 +796,13 @@ public class PlayerImpl implements Player, NetConnectionListener {
    * @param otherPlayerKey key of player who sent the message
    */
      public void sendChatMessage( SendTextMessage message, PlayerImpl otherPlayer) {
-             synchronized( personalityLock ) {
-                if( personality!=null ) {
+             synchronized( connectionLock ) {
+                if( connection!=null ) {
 
                    if( ServerDirector.SHOW_DEBUG )
                        System.out.println("Player "+primaryKey+" sending to:"+otherPlayer.getPrimaryKey()+" msg: "+message);
 
-                  personality.queueMessage( message );
+                  connection.queueMessage( message );
 
                   if( !primaryKey.equals(otherPlayer.getPrimaryKey()) )
                      lieManager.addMeet(otherPlayer, LieManager.MEET_CHATMESSAGE);
@@ -815,9 +815,9 @@ public class PlayerImpl implements Player, NetConnectionListener {
   /** To close the network connection if any.
    */
      public void closeConnection() {
-             synchronized( personalityLock ) {
-                if( personality!=null )
-                    personality.closeConnection();
+             synchronized( connectionLock ) {
+                if( connection!=null )
+                    connection.closeConnection();
              }
      }
 
@@ -845,9 +845,9 @@ public class PlayerImpl implements Player, NetConnectionListener {
    *  BotFactory.
    */
     public void removeConnectionListener() {
-             synchronized( personalityLock ) {
-                if( personality!=null )
-                    personality.removeConnectionListener(this);
+             synchronized( connectionLock ) {
+                if( connection!=null )
+                    connection.removeConnectionListener(this);
              }
     }
 

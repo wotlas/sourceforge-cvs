@@ -23,7 +23,7 @@ import java.net.Socket;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
-import wotlas.libs.net.personality.TormPersonality;
+import wotlas.libs.net.connection.TormConnection;
 import wotlas.libs.net.message.ClientRegisterMessage;
 import wotlas.libs.net.message.ClientRegisterMsgBehaviour;
 
@@ -31,13 +31,13 @@ import wotlas.utils.Debug;
 import wotlas.utils.Tools;
 
 /** A NetClient provides methods to initiate a connection with a server.
- *  The default NetPersonality it provides is a TormPersonality.
+ *  The default NetConnection it provides is a TormConnection.
  *
  *  IMPORTANT: The NetClient object is only a tool that can be erased after its use.
  *             If must also be re-created if it fails to connect to the server.
  *
  * @author Aldiss
- * @see wotlas.libs.net.NetPersonality
+ * @see wotlas.libs.net.NetConnection
  */
 
 public class NetClient implements NetErrorCodeList
@@ -50,11 +50,11 @@ public class NetClient implements NetErrorCodeList
 
  /*------------------------------------------------------------------------------------*/
 
-   /** Latest error message generated during the NetPersonality creation.
+   /** Latest error message generated during the NetConnection creation.
     */
        private String errorMessage;
 
-   /** Latest error code generated during the NetPersonality creation.
+   /** Latest error code generated during the NetConnection creation.
     *  see NetError interface to see system error codes.
     */
        private short errorCode;
@@ -71,9 +71,9 @@ public class NetClient implements NetErrorCodeList
     */
        private Object sessionContext;
 
-   /** NetPersonality created for this client
+   /** NetConnection created for this client
     */
-       private NetPersonality personality;
+       private NetConnection connection;
 
 
  /*------------------------------------------------------------------------------------*/
@@ -87,21 +87,21 @@ public class NetClient implements NetErrorCodeList
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Creates a personality object for the new connection.
-    *  Override this method if you don't want to use the LoparPersonality.
+   /** Creates a connection object for the new connection.
+    *  Override this method if you don't want to use the LoparConnection.
     *
-    * @return a new LoparPersonality associated to this socket.
+    * @return a new LoparConnection associated to this socket.
     * @exception IOException IO error.
     */
-      protected NetPersonality getNewDefaultPersonality( Socket socket )
+      protected NetConnection getNewDefaultConnection( Socket socket )
       throws IOException {
-              return new TormPersonality( socket, null );
+              return new TormConnection( socket, null );
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** We try to build a connection with a server. On success we create a
-   *  default NetPersonality and return it. If an error occurs, we return null
+   *  default NetConnection and return it. If an error occurs, we return null
    *  and an error message is set ( use getCurrentErrorMessage() to get it ).<p>
    *
    *  You have to give the name of the packages where we'll be able to find
@@ -109,16 +109,16 @@ public class NetClient implements NetErrorCodeList
    *
    *  If the connection is validated the context is immediately set and, if the
    *  given context object implements the NetConnectionListener, we sets it as the
-   *  default NetPersonality connection observer ( personality.setConnectionListener() )...
+   *  default NetConnection connection observer ( connection.setConnectionListener() )...
    *
    * @param serverName complete server name
    * @param serverPort port to reach
    * @param key key identifying this client on the server side.
-   * @param sessionContext an optional session context object (see NetPersonality for more details).
+   * @param sessionContext an optional session context object (see NetConnection for more details).
    * @param msgPackages a list of packages where we can find NetMsgBehaviour Classes.
-   * @return a NetPersonality on success, null on failure.
+   * @return a NetConnection on success, null on failure.
    */
-     public NetPersonality connectToServer( String serverName, int serverPort,
+     public NetConnection connectToServer( String serverName, int serverPort,
                                             String key, Object sessionContext,
                                             String msgPackages[] )
      {
@@ -147,14 +147,14 @@ public class NetClient implements NetErrorCodeList
                    return null;
                }
 
-            // We create a new personality and send our key.
+            // We create a new connection and send our key.
             // This client is the temporary context of the first
             // incoming message sent by the server.
-               personality = getNewDefaultPersonality( socket );
-               personality.setContext( (Object) this );
+               connection = getNewDefaultConnection( socket );
+               connection.setContext( (Object) this );
 
-               personality.queueMessage( new ClientRegisterMessage( key ) );
-               personality.pleaseSendAllMessagesNow();
+               connection.queueMessage( new ClientRegisterMessage( key ) );
+               connection.pleaseSendAllMessagesNow();
 
                if( stop() ) {
                    clean();
@@ -165,19 +165,19 @@ public class NetClient implements NetErrorCodeList
             // If something went wrong on the server the received message will
             // set an error_message. Otherwise "error_message" will remain null.
             
-               if( personality.getNetReceiver().isSynchronous() )
+               if( connection.getNetReceiver().isSynchronous() )
                {
                   // easier case: the synchronous NetReceiver
                   // yeah I know we don't use any timeout here...
                   // the waitForAMessage should be modified to
                   // support a timeout. Easy to say...
-                     personality.waitForAMessageToArrive();
-                     personality.pleaseReceiveAllMessagesNow();
+                     connection.waitForAMessageToArrive();
+                     connection.pleaseReceiveAllMessagesNow();
                }
                else {
                  // we cope with the asynchronous NetReceiver
                     synchronized( this ) {
-                       personality.start();
+                       connection.start();
 
                        try{
                           wait( CONNECTION_TIMEOUT );
@@ -204,7 +204,7 @@ public class NetClient implements NetErrorCodeList
                   return null;                   
                }
 
-               return personality;
+               return connection;
           }
           catch(IOException e){
            // Hum ! this server doesn't want to hear from us...
@@ -223,7 +223,7 @@ public class NetClient implements NetErrorCodeList
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To get the latest error message generated during the NetPersonality creation
+   /** To get the latest error message generated during the NetConnection creation
     *
     * @return the error message.
     */
@@ -233,7 +233,7 @@ public class NetClient implements NetErrorCodeList
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To get the latest error code generated during the NetPersonality creation
+   /** To get the latest error code generated during the NetConnection creation
     *
     * @return the error code.
     */
@@ -243,7 +243,7 @@ public class NetClient implements NetErrorCodeList
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To set an error message for the NetPersonality creation.
+   /** To set an error message for the NetConnection creation.
     *
     * @param errorMessage the new error message.
     */
@@ -253,7 +253,7 @@ public class NetClient implements NetErrorCodeList
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To set an error code for the NetPersonality creation.
+   /** To set an error code for the NetConnection creation.
     *
     * @param errorCode the new error code.
     */
@@ -287,11 +287,11 @@ public class NetClient implements NetErrorCodeList
      */
        public synchronized void validateConnection() {
              validConnection=true;
-             personality.setContext( sessionContext );
+             connection.setContext( sessionContext );
 
           // NetConnectionListener
              if(sessionContext instanceof NetConnectionListener)
-                personality.setConnectionListener( (NetConnectionListener) sessionContext );
+                connection.setConnectionListener( (NetConnectionListener) sessionContext );
        }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -310,10 +310,10 @@ public class NetClient implements NetErrorCodeList
     /** To clean this NetClient
      */
        private synchronized void clean(){
-              if(personality!=null)
-                 personality.closeConnection();
+              if(connection!=null)
+                 connection.closeConnection();
 
-              personality=null;
+              connection=null;
               sessionContext=null;
 
               if(errorCode==ERR_NONE) {

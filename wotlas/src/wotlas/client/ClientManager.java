@@ -27,7 +27,7 @@ import wotlas.common.message.description.*;
 import wotlas.common.*;
 
 import wotlas.libs.net.*;
-import wotlas.libs.net.personality.*;
+import wotlas.libs.net.connection.*;
 
 import wotlas.libs.graphics2D.FontFactory;
 import wotlas.libs.sound.SoundLibrary;
@@ -932,7 +932,7 @@ public class ClientManager extends JIntroWizard implements ActionListener {
 
             if ( jgconnect.hasSucceeded() ) {
               Debug.signal( Debug.NOTICE, null, "ClientManager connected to GameServer");              
-              jgconnect.getPersonality().queueMessage(new AccountRecoverMessage( atf_key.getText()) );
+              jgconnect.getConnection().queueMessage(new AccountRecoverMessage( atf_key.getText()) );
               
               start(DATAMANAGER_DISPLAY);
             } else {

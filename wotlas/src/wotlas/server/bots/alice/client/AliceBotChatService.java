@@ -60,17 +60,17 @@ public class AliceBotChatService implements BotChatService, ActionListener, NetC
     */
       protected int alicePort;
 
-   /** NetPersonality that represents the connection with the Alice server
+   /** NetConnection that represents the connection with the Alice server
     */
-      protected NetPersonality personality;
+      protected NetConnection connection;
 
    /** Timer to retry a connection if the previous attempt failed.
     */
       protected Timer timer;
 
-   /** Personality Lock
+   /** Connection Lock
     */
-      protected byte personalityLock[] = new byte[0];
+      protected byte connectionLock[] = new byte[0];
 
    /** To tell that we are shutting down...
     */
@@ -136,14 +136,14 @@ public class AliceBotChatService implements BotChatService, ActionListener, NetC
 
            String messagePackages[] = { "wotlas.server.bots.alice.client" };
 
-           personality = client.connectToServer(
+           connection = client.connectToServer(
                                           aliceHost, alicePort,
                                           "alicebot-access:"+ServerDirector.getServerID(),     // access key for that server (password)
                                           ServerDirector.getDataManager().getAccountManager(), // context for NetMessageBehaviour
                                           messagePackages ); // Message packages to load
 
-           synchronized( personalityLock ) {
-              if(personality==null) {
+           synchronized( connectionLock ) {
+              if(connection==null) {
                 // We failed to connect... we create a timer to retry later
                    Debug.signal(Debug.WARNING, null, "Bot Chat Service connect : failed to reach AliceBot server. We'll retry later.\n"
                                                      +client.getErrorMessage());
@@ -157,7 +157,7 @@ public class AliceBotChatService implements BotChatService, ActionListener, NetC
                    return false;
               }
               else {
-                   personality.setConnectionListener( this ); // WE will monitor the state of the connection
+                   connection.setConnectionListener( this ); // WE will monitor the state of the connection
 
                 // Connection succeeded !
                    if(timer!=null) {
@@ -184,12 +184,12 @@ public class AliceBotChatService implements BotChatService, ActionListener, NetC
       public boolean shutdown() {
       	  Debug.signal(Debug.NOTICE, null, "Bot Chat Service shutting down...");
       	  
-          synchronized( personalityLock ) {
+          synchronized( connectionLock ) {
              shutdown = true;
 
-             if(personality!=null) {
-      	        personality.closeConnection();
-                personality = null;
+             if(connection!=null) {
+      	        connection.closeConnection();
+                connection = null;
              }
 
              if(timer!=null) {
@@ -208,8 +208,8 @@ public class AliceBotChatService implements BotChatService, ActionListener, NetC
    *          the moment.
    */
       public boolean isAvailable() {
-          synchronized( personalityLock ) {
-             return personality!=null;
+          synchronized( connectionLock ) {
+             return connection!=null;
           }
       }
 
@@ -225,14 +225,14 @@ public class AliceBotChatService implements BotChatService, ActionListener, NetC
       public boolean openSession(  BotPlayer bot, Player player ) {
       	  // nothing special to do, alicebot manages its session itself...
           // We just send a hi! from the client
-             synchronized( personalityLock ) {
-                if(personality==null)
+             synchronized( connectionLock ) {
+                if(connection==null)
                    return false;
 
               //  String message = "Hi, my name is "+((PlayerImpl) player).getFullPlayerName( (PlayerImpl) bot );
                   String message = "Hi!";
               
-                personality.queueMessage(
+                connection.queueMessage(
                           new AliceWotlasMessage( player.getPrimaryKey(),
                                                   ((PlayerImpl)bot).getPrimaryKey(),
                                                   message,
@@ -256,11 +256,11 @@ public class AliceBotChatService implements BotChatService, ActionListener, NetC
       public void askForAnswer( String message, Player fromPlayer, BotPlayer toBot ) {
       	
       	  // We send the request to the Alice Server
-             synchronized( personalityLock ) {
-                if(personality==null)
+             synchronized( connectionLock ) {
+                if(connection==null)
                    return;
 
-                personality.queueMessage(
+                connection.queueMessage(
                           new AliceWotlasMessage( fromPlayer.getPrimaryKey(),
                                                   ((PlayerImpl)toBot).getPrimaryKey(),
                                                   message,
@@ -286,9 +286,9 @@ public class AliceBotChatService implements BotChatService, ActionListener, NetC
 
    /** This method is called when a new network connection is created on this player.
     *
-    * @param personality the NetPersonality object associated to this connection.
+    * @param connection the NetConnection object associated to this connection.
     */
-      public void connectionCreated( NetPersonality personality ) {
+      public void connectionCreated( NetConnection connection ) {
           // nothing to do...
       }
 
@@ -297,13 +297,13 @@ public class AliceBotChatService implements BotChatService, ActionListener, NetC
   /** This method is called when the network connection of the client is no longer
    * of this world.
    *
-   * @param personality the NetPersonality object associated to this connection.
+   * @param connection the NetConnection object associated to this connection.
    */
-     public void connectionClosed( NetPersonality personality ) {
+     public void connectionClosed( NetConnection connection ) {
 
          // 1 - no more messages will be sent...
-             synchronized( personalityLock ) {
-                 personality = null;
+             synchronized( connectionLock ) {
+                 connection = null;
 
                  if(!shutdown)
                     ServerDirector.getDataManager().getBotManager().refreshBotState();

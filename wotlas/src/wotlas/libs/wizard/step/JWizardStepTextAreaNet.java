@@ -20,7 +20,7 @@
 package wotlas.libs.wizard.step;
 
 import wotlas.common.message.account.*;
-import wotlas.libs.net.NetPersonality;
+import wotlas.libs.net.NetConnection;
 import wotlas.libs.wizard.*;
 import wotlas.libs.aswing.*;
 
@@ -70,14 +70,14 @@ public class JWizardStepTextAreaNet extends JWizardStepTextArea {
     parameters.setProperty("data.text0", getText0());
     parameters.setProperty("data.option0", ""+getOption0());
     
-    NetPersonality personality = (NetPersonality) context;
+    NetConnection connection = (NetConnection) context;
 
-    if( !personality.isConnected() ) {
+    if( !connection.isConnected() ) {
        JOptionPane.showMessageDialog( null, "The account server seems to have shutdown !\nPlease cancel & restart this wizard later...", "Connection Closed", JOptionPane.ERROR_MESSAGE);
        return false;
     }
 
-    personality.queueMessage(new AccountStepMessage(parameters)); 
+    connection.queueMessage(new AccountStepMessage(parameters)); 
     await();
     
     return true;
@@ -88,14 +88,14 @@ public class JWizardStepTextAreaNet extends JWizardStepTextArea {
    *  @return return true to validate the "Previous" button action, false to cancel it...
    */
    protected boolean onPrevious(Object context, JWizard wizard) {
-    NetPersonality personality = (NetPersonality) context;
+    NetConnection connection = (NetConnection) context;
 
-    if( !personality.isConnected() ) {
+    if( !connection.isConnected() ) {
        JOptionPane.showMessageDialog( null, "The account server seems to have shutdown !\nPlease cancel & restart this wizard later...", "Connection Closed", JOptionPane.ERROR_MESSAGE);
        return false;
     }
 
-    personality.queueMessage(new PreviousStepMessage());
+    connection.queueMessage(new PreviousStepMessage());
     await();
     
     return true;

@@ -22,7 +22,7 @@ package wotlas.server.bots.alice.server;
 import wotlas.server.bots.alice.AliceWotlasMessage;
 
 import wotlas.libs.net.NetServer;
-import wotlas.libs.net.NetPersonality;
+import wotlas.libs.net.NetConnection;
 import wotlas.libs.net.NetConnectionListener;
 
 import wotlas.common.ErrorCodeList;
@@ -77,38 +77,38 @@ public class AliceWotlasServer extends NetServer implements NetConnectionListene
    /** This method is called automatically when a new client establishes a connection
     *  with this server ( the client sends a ClientRegisterMessage ).
     *
-    * @param personality a previously created personality for this connection.
+    * @param connection a previously created connection for this connection.
     * @param key a string given by the client to identify itself. The key structure
     *        is the following "accountName:password". See wotlas.server.GameAccount
     *        for the accountName structure.
     */
-    public void accessControl( NetPersonality personality, String key ) {
+    public void accessControl( NetConnection connection, String key ) {
 
        // 1 - We check the key
           if( !key.startsWith("alicebot-access:") || key.endsWith(":") ) {
                Debug.signal( Debug.NOTICE, this, "A client tried to connect with a bad key format : "+key);
-               refuseClient( personality, ERR_WRONG_KEY, "You are trying to connect with a bad key !!!" );
+               refuseClient( connection, ERR_WRONG_KEY, "You are trying to connect with a bad key !!!" );
                return;
           }
 
-       // 2 - We extract the server ID and add its NetPersonality to our list
+       // 2 - We extract the server ID and add its NetConnection to our list
           try {
                int serverID = Integer.parseInt( key.substring(key.indexOf(':')+1) );
-               serverLinks.put(""+serverID,personality);
+               serverLinks.put(""+serverID,connection);
                Debug.signal(Debug.NOTICE,null,"AliceWotlasServer connection created for server "+serverID);
           }
           catch( Exception e ) {
                Debug.signal( Debug.NOTICE, this, "A client tried to connect with a bad key : "+key);
-               refuseClient( personality, ERR_WRONG_KEY, "The key you sent is not correct !!!" );
+               refuseClient( connection, ERR_WRONG_KEY, "The key you sent is not correct !!!" );
                return;
           }
 
        // 3 - we set the message context to our alice chat listener...
-          personality.setContext( aliceWotlas );     // requests will go to our AliceWOTLAS class
-          personality.setConnectionListener( this ); // we will listen to the connection's state
+          connection.setContext( aliceWotlas );     // requests will go to our AliceWOTLAS class
+          connection.setConnectionListener( this ); // we will listen to the connection's state
 
        // 4 - Final step, all inits have been done, we welcome our new client...
-          acceptClient( personality );
+          acceptClient( connection );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -123,11 +123,11 @@ public class AliceWotlasServer extends NetServer implements NetConnectionListene
      public void sendAnswer( String playerPrimaryKey, String botPrimaryKey, String answer, int serverID ) {
 
        // 1 - Search for the server's connection
-          NetPersonality personality = (NetPersonality) serverLinks.get(""+serverID);
+          NetConnection connection = (NetConnection) serverLinks.get(""+serverID);
        
        // 2 - Send the message...
-          if(personality!=null)
-             personality.queueMessage(
+          if(connection!=null)
+             connection.queueMessage(
                  new AliceWotlasMessage( playerPrimaryKey, botPrimaryKey, answer, serverID ) );
           else
              Debug.signal(Debug.ERROR,this,"AliceWotlasServer server "+serverID+" connection not found...");
@@ -137,9 +137,9 @@ public class AliceWotlasServer extends NetServer implements NetConnectionListene
 
   /** This method is called when a new network connection is created.
    *
-   * @param personality the NetPersonality object associated to this connection.
+   * @param connection the NetConnection object associated to this connection.
    */
-     public void connectionCreated( NetPersonality personality ) {
+     public void connectionCreated( NetConnection connection ) {
         // well nothing to do here...
      }
 
@@ -147,19 +147,19 @@ public class AliceWotlasServer extends NetServer implements NetConnectionListene
 
   /** This method is called when a network connection is no longer of this world.
    *
-   * @param personality the NetPersonality object associated to this connection.
+   * @param connection the NetConnection object associated to this connection.
    */
-     public void connectionClosed( NetPersonality personality ) {
+     public void connectionClosed( NetConnection connection ) {
 
        // We perform some cleaning...
-       // We search the server NetPersonality entry in our table
+       // We search the server NetConnection entry in our table
           synchronized( serverLinks ) {
               Iterator it = serverLinks.values().iterator();
           
               while( it.hasNext() ) {
-                  NetPersonality np = (NetPersonality) it.next();
+                  NetConnection np = (NetConnection) it.next();
                   
-                  if( np==personality ) {
+                  if( np==connection ) {
                     // ok, we found it... we can remove it...
                       it.remove();
                       Debug.signal(Debug.NOTICE,null,"AliceWotlasServer asked to close a connection.");
@@ -186,7 +186,7 @@ public class AliceWotlasServer extends NetServer implements NetConnectionListene
                 Iterator it = serverLinks.values().iterator();
           
                 while( it.hasNext() ) {
-                   NetPersonality np = (NetPersonality) it.next();
+                   NetConnection np = (NetConnection) it.next();
                    np.closeConnection();
                 }
             }

@@ -216,16 +216,16 @@ public class BotPlayerImpl extends PlayerImpl implements BotPlayer {
 
   /** This method does nothing here. It only produces an error message.
    */
-     public void connectionCreated( NetPersonality personality ) {
-            super.connectionCreated(personality);
+     public void connectionCreated( NetConnection connection ) {
+            super.connectionCreated(connection);
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** This method does nothing here. It only produces an error message.
    */
-     public void connectionClosed( NetPersonality personality ) {
-            super.connectionClosed( personality );
+     public void connectionClosed( NetConnection connection ) {
+            super.connectionClosed( connection );
             setIsConnectedToGame(isConnectedToGame());
      }
 

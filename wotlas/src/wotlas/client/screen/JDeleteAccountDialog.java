@@ -38,14 +38,14 @@ import java.awt.event.*;
  * <pre>
  *  Example :
  *
- *   NetPersonality myNetPersonality;
+ *   NetConnection myNetConnection;
  *
  *   JDeleteAccountDialog jconnect = new JDeleteAccountDialog( frame, "myServer", 
  *                                                             25000, "toto-1-23",
  *                                                             "myPassword" );
  * </pre>
  * 
- * A success message is displayed if the account has been deleted. There is no NetPersonality
+ * A success message is displayed if the account has been deleted. There is no NetConnection
  * to retrieve after the use of this dialog.
  *
  * @author Aldiss

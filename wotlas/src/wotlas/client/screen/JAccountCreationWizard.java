@@ -32,7 +32,7 @@ import wotlas.common.message.account.*;
 import wotlas.libs.wizard.*;
 import wotlas.libs.wizard.step.*;
 
-import wotlas.libs.net.NetPersonality;
+import wotlas.libs.net.NetConnection;
 import wotlas.libs.graphics2D.FontFactory;
 
 import wotlas.utils.*;
@@ -65,9 +65,9 @@ public class JAccountCreationWizard extends JWizard {
    	 Debug.signal( Debug.NOTICE, this, "Wizard finished.");
 
          if(context!=null) {
-            NetPersonality personality = (NetPersonality) context;
-            personality.queueMessage( new CancelAccountCreationMessage() );
-            personality.closeConnection();
+            NetConnection connection = (NetConnection) context;
+            connection.queueMessage( new CancelAccountCreationMessage() );
+            connection.closeConnection();
          }
 
          ClientManager clientManager = ClientDirector.getClientManager();
@@ -82,9 +82,9 @@ public class JAccountCreationWizard extends JWizard {
    	 Debug.signal( Debug.NOTICE, this, "Wizard canceled.");
 
          if(context!=null) {
-            NetPersonality personality = (NetPersonality) context;
-            personality.queueMessage( new CancelAccountCreationMessage() );
-            personality.closeConnection();
+            NetConnection connection = (NetConnection) context;
+            connection.queueMessage( new CancelAccountCreationMessage() );
+            connection.closeConnection();
          }
 
          ClientManager clientManager = ClientDirector.getClientManager();
@@ -267,9 +267,9 @@ public class JAccountCreationWizard extends JWizard {
                        currentServerConfig.getServerID(), wizard);
 
       if ( jaconnect.hasSucceeded() ) {
-        wizard.setContext(jaconnect.getPersonality());
+        wizard.setContext(jaconnect.getConnection());
         Debug.signal( Debug.NOTICE, null, "ClientManager connected to AccountServer");
-        jaconnect.getPersonality().queueMessage(new AccountCreationMessage());
+        jaconnect.getConnection().queueMessage(new AccountCreationMessage());
         await();
         
         return true;      

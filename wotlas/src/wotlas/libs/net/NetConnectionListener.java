@@ -24,7 +24,7 @@ package wotlas.libs.net;
  * A NetConnectionListener defines methods to follow the life of a network connection.
  * 
  * @author Aldiss
- * @see wotlas.libs.net.NetPersonality
+ * @see wotlas.libs.net.NetConnection
  */
 
 public interface NetConnectionListener {
@@ -33,17 +33,17 @@ public interface NetConnectionListener {
 
   /** This method is called when a new network connection is created for you.
    *
-   * @param personality the NetPersonality object associated to this connection.
+   * @param connection the NetConnection object associated to this connection.
    */
-     public void connectionCreated( NetPersonality personality );
+     public void connectionCreated( NetConnection connection );
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** This method is called when the network connection is no longer of this world.
    *
-   * @param personality the NetPersonality object associated to this connection.
+   * @param connection the NetConnection object associated to this connection.
    */
-     public void connectionClosed( NetPersonality personality );
+     public void connectionClosed( NetConnection connection );
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

@@ -25,7 +25,7 @@ package wotlas.libs.net;
  * Use the NetServer methods to register to this listener.
  * 
  * @author Aldiss
- * @see wotlas.libs.net.NetPersonality
+ * @see wotlas.libs.net.NetConnection
  */
 
 public interface NetServerErrorListener

@@ -29,7 +29,7 @@ import java.io.InterruptedIOException;
 
 import wotlas.utils.Debug;
 import wotlas.utils.Tools;
-import wotlas.libs.net.personality.TormPersonality;
+import wotlas.libs.net.connection.TormConnection;
 import wotlas.libs.net.message.ServerErrorMessage;
 import wotlas.libs.net.message.ServerWelcomeMessage;
 
@@ -46,13 +46,13 @@ import wotlas.libs.net.message.ServerWelcomeMsgBehaviour;
  *      extend this class and override the accessControl() method.
  *<br><p>
  *
- * This server uses a TormPersonality as default. If you want to use another
- * one override the getNewPersonality() method. Note also that when we create
- * our new personality we don't assign any "context" object. To assign one do it in
- * the initializeConnection() method with the "personality.setContext()" call.
+ * This server uses a TormConnection as default. If you want to use another
+ * one override the getNewConnection() method. Note also that when we create
+ * our new connection we don't assign any "context" object. To assign one do it in
+ * the initializeConnection() method with the "connection.setContext()" call.
  *
  * @author Aldiss
- * @see wotlas.libs.net.NetPersonality
+ * @see wotlas.libs.net.NetConnection
  */
 
 
@@ -220,7 +220,7 @@ public class NetServer extends Thread implements NetErrorCodeList
     *     the case of a repository server, a key would be a client login. You can then create
     *     your own set of messages to ask for a password.
     *
-    *  2) initialize the client session context ( personality.setContext() ). The context can be
+    *  2) initialize the client session context ( connection.setContext() ). The context can be
     *     any type of object and should be client dependent. It will be given to the messages
     *     coming from the client. For example, in a ChatServer the context could be the Chat
     *     chanel object the client wants to register to. Messages would have then a direct
@@ -232,23 +232,23 @@ public class NetServer extends Thread implements NetErrorCodeList
     *     close the connection.
     *
     *
-    * @param personality a previously created personality for this connection.
+    * @param connection a previously created connection for this connection.
     * @param key a string given by the client to identify itself.
     */
-      public void accessControl( NetPersonality personality, String key ) {
+      public void accessControl( NetConnection connection, String key ) {
            // we accept every client
-              acceptClient( personality );
+              acceptClient( connection );
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Creates a personality object for this new connection.
-    *  Override this method if you don't want to use the TormPersonality.
+   /** Creates a connection object for this new connection.
+    *  Override this method if you don't want to use the TormConnection.
     *
-    * @return a new TormPersonality associated to this socket.
+    * @return a new TormConnection associated to this socket.
     */
-      protected NetPersonality getNewPersonality( Socket socket ) throws IOException{
-              return new TormPersonality( socket, null, serverLocalID );
+      protected NetConnection getNewConnection( Socket socket ) throws IOException{
+              return new TormConnection( socket, null, serverLocalID );
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -256,11 +256,11 @@ public class NetServer extends Thread implements NetErrorCodeList
    /** Sends a message to tell a client that he is welcome on this server.
     *  Should be called by initializeConnection() if you decide to accept the client.
     *
-    * @param personality a previously created personality for this connection.
+    * @param connection a previously created connection for this connection.
     */
-      protected void acceptClient( NetPersonality personality ) {
-              personality.queueMessage( new ServerWelcomeMessage() );
-              personality.pleaseSendAllMessagesNow();
+      protected void acceptClient( NetConnection connection ) {
+              connection.queueMessage( new ServerWelcomeMessage() );
+              connection.pleaseSendAllMessagesNow();
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -268,12 +268,12 @@ public class NetServer extends Thread implements NetErrorCodeList
    /** Sends a message to tell a client that he is refused on this server.
     *  Should be called by initializeConnection() if you decide to refuse the client.
     *
-    * @param personality a previously created personality for this connection.
+    * @param connection a previously created connection for this connection.
     * @param errorMessage error message to send
     */
-      protected void refuseClient( NetPersonality personality, short errorCode, String errorMessage ) {
-              personality.queueMessage( new ServerErrorMessage( errorCode, errorMessage ) );
-              personality.closeConnection();
+      protected void refuseClient( NetConnection connection, short errorCode, String errorMessage ) {
+              connection.queueMessage( new ServerErrorMessage( errorCode, errorMessage ) );
+              connection.closeConnection();
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -284,7 +284,7 @@ public class NetServer extends Thread implements NetErrorCodeList
       public void run()
       {
         Socket client_socket;
-        NetPersonality personality;
+        NetConnection connection;
 
         // We print some info about this server.
            Debug.signal( Debug.NOTICE, null, "Starting Server #local-"+serverLocalID
@@ -296,7 +296,7 @@ public class NetServer extends Thread implements NetErrorCodeList
            while( !shouldStopServer() )
            {
                client_socket = null;
-               personality = null;
+               connection = null;
 
                try{
                   // we wait 5s for clients (InterruptedIOException after)
@@ -330,26 +330,26 @@ public class NetServer extends Thread implements NetErrorCodeList
 
             // Ok, a client has arrived.
                try{                           
-                  // We creates a personality object to take care of him...
-                     personality = getNewPersonality( client_socket );
+                  // We creates a connection object to take care of him...
+                     connection = getNewConnection( client_socket );
 
                   // we inspect our server state... can we really accept him ?
                      if( NetThread.getOpenedSocketNumber( serverLocalID ) >= maxOpenedSockets ) {
                        // we have reached the server's connections limit
-                          refuseClient( personality, ERR_MAX_CONN_REACHED, "Server has reached its maximum number of connections for the moment." );
+                          refuseClient( connection, ERR_MAX_CONN_REACHED, "Server has reached its maximum number of connections for the moment." );
                           Debug.signal(Debug.NOTICE,this,"Err:"+ERR_MAX_CONN_REACHED+" - Server has reached its max number of connections");
                      }
                      else if(serverLock) {
                        // we don't accept new connections for the moment
-                          refuseClient( personality, ERR_ACCESS_LOCKED, "Server does not accept connections for the moment." );
+                          refuseClient( connection, ERR_ACCESS_LOCKED, "Server does not accept connections for the moment." );
                           Debug.signal(Debug.NOTICE,this,"Err:"+ERR_ACCESS_LOCKED+" - Server Locked - just refused incoming connection");
                      }
                      else {
-                       // we can start this personality and inspect the client connection.
+                       // we can start this connection and inspect the client connection.
                        // the context provided is an helper for the NetClientRegisterMessage
                        // behaviour.
-                          personality.setContext( (Object) new NetServerEntry( this, personality ) );
-                          personality.start();
+                          connection.setContext( (Object) new NetServerEntry( this, connection ) );
+                          connection.start();
                      }
                }
                catch(IOException ioe) {

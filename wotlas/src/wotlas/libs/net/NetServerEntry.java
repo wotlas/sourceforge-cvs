@@ -20,7 +20,7 @@
 package wotlas.libs.net;
 
 /** 
- * A NetServerEntry is the association { NetServer, NetPersonality }
+ * A NetServerEntry is the association { NetServer, NetConnection }
  * It is only used in the NetServer and some server messages.
  * You should not be concerned with the use of this class.
  *
@@ -37,20 +37,20 @@ public class NetServerEntry
    */
       private NetServer server;
 
-  /** Our Personality.
+  /** Our Connection.
    */
-      private NetPersonality personality;
+      private NetConnection connection;
 
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor of this association
    *
    * @param server our server 
-   * @param personality our personality
+   * @param connection our connection
    */
-     public NetServerEntry( NetServer server, NetPersonality personality ) {
+     public NetServerEntry( NetServer server, NetConnection connection ) {
          this.server = server;
-         this.personality = personality;
+         this.connection = connection;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -65,12 +65,12 @@ public class NetServerEntry
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the NetPersonality
+  /** To get the NetConnection
    * 
-   * @return the NetPersonality
+   * @return the NetConnection
    */
-     public NetPersonality getPersonality() {
-           return personality;
+     public NetConnection getConnection() {
+           return connection;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

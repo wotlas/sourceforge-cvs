@@ -51,7 +51,7 @@ public abstract class JConnectionDialog extends JDialog implements Runnable {
     private JButton b_cancel; // cancel button
 
     protected boolean hasSucceeded; // has connection succeeded ?
-    private NetPersonality personality;
+    private NetConnection connection;
     private NetClient client;
 
     protected Frame frame;
@@ -80,7 +80,7 @@ public abstract class JConnectionDialog extends JDialog implements Runnable {
     * @param port server port
     * @param serverID Id of the server we want to join
     * @param key server key for this connection ( see the javadoc header of this class ).
-    * @param context context to set to messages ( see NetPersonality ).
+    * @param context context to set to messages ( see NetConnection ).
     */
 
    public JConnectionDialog(Frame frame,String server,int port,int serverID,String key, Object context) {
@@ -248,9 +248,9 @@ public abstract class JConnectionDialog extends JDialog implements Runnable {
 
         String packages[] = getPackages();
 
-        personality = client.connectToServer( server, port, key, context, packages );
+        connection = client.connectToServer( server, port, key, context, packages );
 
-        if(personality==null) {
+        if(connection==null) {
              if( client.getErrorCode()!=NetErrorCodeList.ERR_NONE ) {
                  errorCode = client.getErrorCode();
                  errorMessage = client.getErrorMessage();
@@ -285,12 +285,12 @@ public abstract class JConnectionDialog extends JDialog implements Runnable {
 
  /*------------------------------------------------------------------------------------*/
 
-   /** To get the created personality.
+   /** To get the created connection.
     *
-    * @return the created NetPersonality.
+    * @return the created NetConnection.
     */
-     public NetPersonality getPersonality() {
-     	 return personality;
+     public NetConnection getConnection() {
+     	 return connection;
      }
 
  /*------------------------------------------------------------------------------------*/

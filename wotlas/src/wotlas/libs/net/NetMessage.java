@@ -24,7 +24,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 /** 
- * A NetMessage is a simple message that you give to your NetPersonality ( which handles it
+ * A NetMessage is a simple message that you give to your NetConnection ( which handles it
  * to the NetSender) so it transmits it to a foreign ( i.e. NetReceiver ).
  *
  * To create a new message simply extends the NetMessage class : <pre>
@@ -58,7 +58,7 @@ import java.io.IOException;
  * which contains the associated code to execute on the remote side.</p>
  *
  * @author Aldiss
- * @see wotlas.libs.net.NetPersonality
+ * @see wotlas.libs.net.NetConnection
  * @see wotlas.libs.net.NetMessageBehaviour
  * @see java.io.DataOutputStream
  */

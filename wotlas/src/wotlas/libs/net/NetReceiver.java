@@ -63,9 +63,9 @@ public class NetReceiver extends NetThread {
      */
         private NetMessageFactory factory;
 
-    /** A link to our NetPersonality
+    /** A link to our NetConnection
      */
-        private NetPersonality personality;
+        private NetConnection connection;
 
     /** Session Object to give to messages when they arrive.
      */
@@ -89,19 +89,19 @@ public class NetReceiver extends NetThread {
      *   method to change that.
      *
      * @param socket a previously created & connected socket.
-     * @param personality a NetPersonality linked to the specified socket.
+     * @param connection a NetConnection linked to the specified socket.
      * @param sync do we have to work synchronously or asynchronously.
      * @param sessionContext session object to give to messages when they arrive.
      * @param bufferSize buffer size (in bytes) for the buffered input stream.
      * @exception IOException if the socket wasn't already connected.
      */
-      public NetReceiver( Socket socket, NetPersonality personality, boolean sync,
+      public NetReceiver( Socket socket, NetConnection connection, boolean sync,
                           Object sessionContext, int bufferSize ) throws IOException
       {
           super( socket );
           this.sync = sync;
           this.sessionContext = sessionContext;
-          this.personality = personality;
+          this.connection = connection;
           sendBackPingMessages = false;
 
           if(sync)  maxMsg = 15; // default value
@@ -144,9 +144,9 @@ public class NetReceiver extends NetThread {
 
                      if(msg instanceof PingMessage) {
                      	if(sendBackPingMessages)
-                           personality.queueMessage( (NetMessage)msg ); // send back the PingMessage
+                           connection.queueMessage( (NetMessage)msg ); // send back the PingMessage
                         else
-                           personality.receivedPingMessage( ((PingMessage) msg).getSeqID() );
+                           connection.receivedPingMessage( ((PingMessage) msg).getSeqID() );
                      }
                      else if(msg instanceof EndOfConnectionMessage)
                         break; // end of connection
@@ -174,9 +174,9 @@ public class NetReceiver extends NetThread {
                Debug.signal( Debug.ERROR, this, e ); // serious error while processing message
         }
 
-     // we ask the NetPersonality to perform some cleanup
+     // we ask the NetConnection to perform some cleanup
      // and signal that the connection was closed ( connectionListener )
-        personality.closeConnection();
+        connection.closeConnection();
         inStream=null;
     }
 
@@ -207,9 +207,9 @@ public class NetReceiver extends NetThread {
 
                      if(msg instanceof PingMessage) {
                      	if(sendBackPingMessages)
-                           personality.queueMessage( (NetMessage)msg ); // send back the PingMessage
+                           connection.queueMessage( (NetMessage)msg ); // send back the PingMessage
                         else
-                           personality.receivedPingMessage( ((PingMessage) msg).getSeqID() );
+                           connection.receivedPingMessage( ((PingMessage) msg).getSeqID() );
                      }
                      else
                         msg.doBehaviour( sessionContext );
@@ -232,9 +232,9 @@ public class NetReceiver extends NetThread {
            else
                Debug.signal( Debug.ERROR, this, e ); // serious error while processing message
 
-         // we ask the NetPersonality to perform some cleanup
+         // we ask the NetConnection to perform some cleanup
          // and signal that the connection was closed ( connectionListener )
-            personality.closeConnection();
+            connection.closeConnection();
         }
      }
 

@@ -55,9 +55,9 @@ public class AccountTransaction implements NetConnectionListener
     */
      private byte transactionRole;
 
-   /** Network Personality for message exchange
+   /** Network Connection for message exchange
     */
-     private NetPersonality personality;
+     private NetConnection connection;
 
    /** Lock for transaction response
     */
@@ -79,21 +79,21 @@ public class AccountTransaction implements NetConnectionListener
 
    /** Method called when the connection with the client is established.
     *
-    * @param personality 
+    * @param connection 
     */
-     public void connectionCreated( NetPersonality personality ) {
-         this.personality = personality;
+     public void connectionCreated( NetConnection connection ) {
+         this.connection = connection;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** Method called when the connection with the client is established.
     *
-    * @param personality 
+    * @param connection 
     */
-     public void connectionClosed( NetPersonality personality ) {
+     public void connectionClosed( NetConnection connection ) {
        // clean-up
-          personality = null;
+          connection = null;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -123,14 +123,14 @@ public class AccountTransaction implements NetConnectionListener
           }
 
        // 3 - Success !     	
-          if(personality!=null) {
+          if(connection!=null) {
              Debug.signal( Debug.NOTICE, null, account.getPrimaryKey()+" account transaction succeeded." );
              account.getPlayer().init();
 
              Debug.signal( Debug.NOTICE, this, "Created an account for the received client..." );
 
-             personality.queueMessage( new AccountTrSuccessMessage() );
-             personality.closeConnection();
+             connection.queueMessage( new AccountTrSuccessMessage() );
+             connection.closeConnection();
           }
           else {
              Debug.signal( Debug.ERROR, this, "Could'nt finish "+account.getPrimaryKey()+" account transaction." );
@@ -166,11 +166,11 @@ public class AccountTransaction implements NetConnectionListener
 
           synchronized( transactionLock ) {
             // 1 - We send the account.
-               if(personality!=null) {
-                  personality.queueMessage( new AccountTransactionMessage( account, thisServerID ) );
+               if(connection!=null) {
+                  connection.queueMessage( new AccountTransactionMessage( account, thisServerID ) );
                }
                else {
-                  Debug.signal( Debug.ERROR, this, "No network personality set !" );
+                  Debug.signal( Debug.ERROR, this, "No network connection set !" );
                   return false;
                }
 
@@ -210,9 +210,9 @@ public class AccountTransaction implements NetConnectionListener
 
          Debug.signal( Debug.ERROR, this, errorMsg );
      	
-     	 if(personality!=null) {
-            personality.queueMessage( new AccountTrFailedMessage( errorMsg ) );
-            personality.closeConnection();
+     	 if(connection!=null) {
+            connection.queueMessage( new AccountTrFailedMessage( errorMsg ) );
+            connection.closeConnection();
          }
      }
 

@@ -119,10 +119,10 @@ public class JSystemInfoPanel extends JPanel {
  /*------------------------------------------------------------------*/
 
    /** To initialize properly the current system info Panel.
-    * @param personality a valid Network Personality
+    * @param connection a valid Network Connection
     */
-    public void init( NetPersonality personality ) {
-        personality.setPingListener( (NetPingListener) pingPanel );
+    public void init( NetConnection connection ) {
+        connection.setPingListener( (NetPingListener) pingPanel );
 
      // extra inits
         switch( selectedType ) {

@@ -101,9 +101,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
     private MapData myMapData;
 
-  /** Our NetPersonality, represents the connection with the server.
+  /** Our NetConnection, represents the connection with the server.
    */
-    private NetPersonality personality;
+    private NetConnection connection;
 
   /** Our player's profile ( serverID, login, etc... ).
    */
@@ -147,9 +147,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
   /*** DATA ACCESS CONTROLLER ***/
 
-  /** Personality Lock
+  /** Connection Lock
    */
-    private byte personalityLock[] = new byte[1];
+    private byte connectionLock[] = new byte[1];
 
   /** Game Lock (unlocked by client.message.description.YourPlayerDataMsgBehaviour)
    */
@@ -208,7 +208,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       // 2 - Misc inits
          syncMessageQueue = new NetQueue(1,3);
          players = new Hashtable();
-         personalityLock = new byte[1];
+         connectionLock = new byte[1];
          startGameLock = new Object();
 
          pauseTickThreadLock = new Object();
@@ -331,19 +331,19 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
   /** This method is called when a new network connection is created
    *
-   * @param personality the NetPersonality object associated to this connection.
+   * @param connection the NetConnection object associated to this connection.
    */
-    public void connectionCreated( NetPersonality personality ) {
+    public void connectionCreated( NetConnection connection ) {
 
-      synchronized( personalityLock ) {
-        this.personality = personality;
-        personalityLock.notifyAll();
+      synchronized( connectionLock ) {
+        this.connection = connection;
+        connectionLock.notifyAll();
       }
 
-      personality.setContext(this);
+      connection.setContext(this);
 
       if (currentProfileConfig.getLocalClientID() == -1) {  
-          if (personality==null) {
+          if (connection==null) {
               Debug.signal( Debug.ERROR, this, "Connection closed by AccountServer" );
               return;
           }
@@ -364,13 +364,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
       long t0 = System.currentTimeMillis();
 
-      synchronized( personalityLock ) {
+      synchronized( connectionLock ) {
         do{
          long now = System.currentTimeMillis();
 
-           if( personality==null && timeout>(now-t0) )
+           if( connection==null && timeout>(now-t0) )
               try{
-                 personalityLock.wait(timeout-(now-t0));
+                 connectionLock.wait(timeout-(now-t0));
               }catch(Exception e ) {}
            else
               return;
@@ -383,11 +383,11 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
   /** This method is called when the network connection of the client is closed
    *
-   * @param personality the NetPersonality object associated to this connection.
+   * @param connection the NetConnection object associated to this connection.
    */
-  public void connectionClosed( NetPersonality personality ) {
-    synchronized( personalityLock ) {
-      this.personality = null;
+  public void connectionClosed( NetConnection connection ) {
+    synchronized( connectionLock ) {
+      this.connection = null;
     }
 
     Debug.signal( Debug.NOTICE, null, "DataManager not connected anymore to GameServer" );
@@ -427,9 +427,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    * @param message message to send to the player.
    */
   public void sendMessage( NetMessage message ) {
-    synchronized( personalityLock ) {
-      if ( personality!=null ) {
-        personality.queueMessage( message );
+    synchronized( connectionLock ) {
+      if ( connection!=null ) {
+        connection.queueMessage( message );
       }
     }
   }
@@ -439,9 +439,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** To close the network connection if any.
    */
   public void closeConnection() {
-    synchronized( personalityLock ) {
-      if ( personality!=null )
-        personality.closeConnection();
+    synchronized( connectionLock ) {
+      if ( connection!=null )
+        connection.closeConnection();
     }
   }
 
@@ -523,7 +523,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
        try {
          synchronized(startGameLock) {
-            personality.queueMessage(new MyPlayerDataPleaseMessage());
+            connection.queueMessage(new MyPlayerDataPleaseMessage());
             startGameLock.wait(CONNECTION_TIMEOUT);
          }
        } catch (InterruptedException ie) {
@@ -549,7 +549,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        pMonitor.setProgress("Setting Preferences...",80);
 
     // 6 - Final GUI inits
-       personality.setPingListener( (NetPingListener) clientScreen.getPingPanel() );
+       connection.setPingListener( (NetPingListener) clientScreen.getPingPanel() );
 
        clientScreen.init();
 
@@ -624,7 +624,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
        try {
          synchronized(startGameLock) {
-             personality.queueMessage(new MyPlayerDataPleaseMessage());
+             connection.queueMessage(new MyPlayerDataPleaseMessage());
              startGameLock.wait(CONNECTION_TIMEOUT);
          }
        } catch (InterruptedException ie) {
@@ -652,7 +652,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        clientScreen.getChatPanel().reset();
        clientScreen.getPlayerPanel().reset();
        players.clear();
-       personality.setPingListener( (NetPingListener) clientScreen.getPingPanel() );
+       connection.setPingListener( (NetPingListener) clientScreen.getPingPanel() );
 
     // 4 - Init map display, resume tick thread & show screen...
        pMonitor.setProgress("Loading Map Data...",85);

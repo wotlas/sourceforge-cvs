@@ -68,9 +68,9 @@ public class AccountBuilder implements NetConnectionListener
     */
      private PlayerImpl player;
 
-   /** Personality of our client.
+   /** Connection of our client.
     */
-     private NetPersonality personality;
+     private NetConnection connection;
 
    /** Our Account Server
     */
@@ -98,21 +98,21 @@ public class AccountBuilder implements NetConnectionListener
 
    /** Method called when the connection with the client is established.
     *
-    * @param personality 
+    * @param connection 
     */
-     public void connectionCreated( NetPersonality personality ) {
-         this.personality = personality;
+     public void connectionCreated( NetConnection connection ) {
+         this.connection = connection;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** Method called when the connection with the client is established.
     *
-    * @param personality 
+    * @param connection 
     */
-     public void connectionClosed( NetPersonality personality ) {
+     public void connectionClosed( NetConnection connection ) {
        // clean-up
-          personality = null;
+          connection = null;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -128,7 +128,7 @@ public class AccountBuilder implements NetConnectionListener
          JWizardStepParameters clientParams = currentParameters.getCopyWithNoServerProps();
          personalizeParameters( clientParams,  currentParameters );
 
-         personality.queueMessage( new AccountStepMessage( clientParams ) );
+         connection.queueMessage( new AccountStepMessage( clientParams ) );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -161,7 +161,7 @@ public class AccountBuilder implements NetConnectionListener
            JWizardStepParameters clientParams = currentParameters.getCopyWithNoServerProps();
            personalizeParameters( clientParams, currentParameters );
 
-           personality.queueMessage( new AccountStepMessage( clientParams ) );
+           connection.queueMessage( new AccountStepMessage( clientParams ) );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -256,7 +256,7 @@ public class AccountBuilder implements NetConnectionListener
            JWizardStepParameters clientParams = currentParameters.getCopyWithNoServerProps();
            personalizeParameters( clientParams, currentParameters );
 
-           personality.queueMessage( new AccountStepMessage( clientParams ) );
+           connection.queueMessage( new AccountStepMessage( clientParams ) );
         }
         catch( Exception ex2 ) {
            Debug.signal(Debug.ERROR,this,ex2);
@@ -382,7 +382,7 @@ public class AccountBuilder implements NetConnectionListener
    /** A small method to report a step error.
     */
      private void sendStepError( String message ) {
-        personality.queueMessage( new StepErrorMessage( message ) );
+        connection.queueMessage( new StepErrorMessage( message ) );
         Debug.signal( Debug.ERROR, this, "An error occured during account creation : "+message );
      }
 
@@ -392,7 +392,7 @@ public class AccountBuilder implements NetConnectionListener
     */
      public void cancelCreation() {
         Debug.signal( Debug.NOTICE, this, "Account Creation cancelled..." );
-        personality.closeConnection();
+        connection.closeConnection();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -421,13 +421,13 @@ public class AccountBuilder implements NetConnectionListener
               Debug.signal( Debug.NOTICE, this, "Client account created... ("+player.getPrimaryKey()+")." );
 
            // we send a Success Message
-              personality.queueMessage( new AccountCreationEndedMessage(account.getLocalClientID(),
+              connection.queueMessage( new AccountCreationEndedMessage(account.getLocalClientID(),
                                                                         account.getOriginalServerID(),
                                                                         account.getLogin(),
                                                                         account.getPassword(),
                                                                         player.getFullPlayerName() ) );
            // And close the connection
-              personality.closeConnection();
+              connection.closeConnection();
         }
         else {
            // Account not created for some reason

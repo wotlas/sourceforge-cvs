@@ -532,7 +532,7 @@ public class Room implements WotlasMap
   /** String Info.
    */
     public String toString(){
-         return "Room Id:"+roomID+" Name:"+fullName+" parent:"+myInteriorMap;
+         return "Room - "+fullName;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

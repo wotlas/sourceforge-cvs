@@ -418,7 +418,7 @@ public class Building extends ScreenRectangle
   /** String Info.
    */
     public String toString(){
-         return "Building - "+fullName;
+         return "Building - "+fullName+" (serverID:"+serverID+")";
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

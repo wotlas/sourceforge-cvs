@@ -484,7 +484,7 @@ public class ImageLibrary {
    * @param the path to the image
    * @return the loaded image...
    */
-    static Image loadImage( String path ) {
+    static public Image loadImage( String path ) {
        Image im;
        MediaTracker tracker = new MediaTracker(new Label());
 
@@ -511,7 +511,7 @@ public class ImageLibrary {
    * @param the path to the images
    * @return the loaded images...
    */
-    static Image[] loadImages( String path )
+    static public Image[] loadImages( String path )
     {
       File list[] = new File(path).listFiles();
       
@@ -547,7 +547,7 @@ public class ImageLibrary {
    * @param the path to the image
    * @return the loaded buffered image...
    */
-    static BufferedImage loadBufferedImage( String path )
+    static public BufferedImage loadBufferedImage( String path )
     {
      // We load the image.
         Image im = loadImage( path );
@@ -576,7 +576,7 @@ public class ImageLibrary {
    * @param the path to the images
    * @return the loaded images transformed into buffered images...
    */
-    static BufferedImage[] loadBufferedImages( String path )
+    static public BufferedImage[] loadBufferedImages( String path )
     {
      // We load all the images.
         Image im[] = loadImages( path );

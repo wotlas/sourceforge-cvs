@@ -151,9 +151,7 @@ public abstract class JConnectionDialog extends JDialog implements Runnable
          l_info.setText( "Connection succeeded..." );
          hasSucceeded = true;
 
-      // NetConnectionListener
-         if(context instanceof NetConnectionListener)
-            personality.setConnectionListener( (NetConnectionListener) context );
+         Tools.waitTime( 1500 );
     }
 
  /*------------------------------------------------------------------------------------*/

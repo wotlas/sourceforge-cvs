@@ -21,8 +21,9 @@ package wotlas.client;
 
 import wotlas.client.screen.JClientScreen;
 
-import wotlas.common.*;
+import wotlas.common.message.movement.*;
 import wotlas.common.universe.*;
+import wotlas.common.*;
 
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
@@ -55,12 +56,17 @@ public class TownMapData implements MapData
 
   /** True if we send netMessage
    */
-  public static boolean SEND_NETMESSAGE = false;
+  //public static boolean SEND_NETMESSAGE = false;
+  
+  /** lock to verify player can leave the map<br>
+   * unlocked by client.message.movement.YourCanLeaveMsgBehaviour
+   */
+  private Object changeMapLock = new Object();
   
   /** Our default dataManager
    */
   DataManager dataManager;
-
+    
  /*------------------------------------------------------------------------------------*/
 
   /** Set to true to show debug information
@@ -68,6 +74,14 @@ public class TownMapData implements MapData
   public void showDebug(boolean value) {
     SHOW_DEBUG = value;
   }
+
+ /*------------------------------------------------------------------------------------*/
+ 
+  /** To get changeMapLock
+   */
+  public Object getChangeMapLock() {
+    return changeMapLock;
+  }  
 
  /*------------------------------------------------------------------------------------*/
 
@@ -227,6 +241,19 @@ public class TownMapData implements MapData
 ///////////////////////////// FIN ALDISS
 
       myPlayer.setLocation( mapExit.getTargetWotlasLocation() );
+      
+      if (SEND_NETMESSAGE) {
+        try {
+          synchronized(changeMapLock) {
+            myPlayer.sendMessage( new CanLeaveTownMapMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation()) );
+            changeMapLock.wait(CONNECTION_TIMEOUT);
+          }
+        } catch (InterruptedException ie) {
+          dataManager.showWarningMessage("Cannot change the map !");
+          Debug.exit();
+        }      
+      }
+      
       dataManager.cleanInteriorMapData(); // suppress drawables, shadows, data
 
       ScreenPoint targetPoint = mapExit.getTargetPosition();
@@ -315,8 +342,20 @@ public class TownMapData implements MapData
       }
 
       myPlayer.setLocation(mapExit.getMapExitLocation());
+      
+      if (SEND_NETMESSAGE) {
+        try {
+          synchronized(changeMapLock) {
+            myPlayer.sendMessage( new CanLeaveTownMapMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation()) );
+            changeMapLock.wait(CONNECTION_TIMEOUT);
+          }
+        } catch (InterruptedException ie) {
+          dataManager.showWarningMessage("Cannot change the map !");
+          Debug.exit();
+        }      
+      }
+      
       dataManager.cleanInteriorMapData();
-
       
       myPlayer.setPosition( new ScreenPoint(myPlayer.getX(), myPlayer.getY()) );
 

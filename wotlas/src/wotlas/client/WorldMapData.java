@@ -21,8 +21,9 @@ package wotlas.client;
 
 import wotlas.client.screen.JClientScreen;
 
-import wotlas.common.*;
+import wotlas.common.message.movement.*;
 import wotlas.common.universe.*;
+import wotlas.common.*;
 
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
@@ -55,8 +56,13 @@ public class WorldMapData implements MapData
   
   /** True if we send netMessage
    */
-  public static boolean SEND_NETMESSAGE = false;
-  
+  //public static boolean SEND_NETMESSAGE = false;
+
+  /** lock to verify player can leave the map<br>
+   * unlocked by client.message.movement.YourCanLeaveMsgBehaviour
+   */
+  private Object changeMapLock = new Object();
+    
   /** Our default dataManager
    */
   DataManager dataManager;
@@ -69,6 +75,14 @@ public class WorldMapData implements MapData
     SHOW_DEBUG = value;
   }
 
+/*------------------------------------------------------------------------------------*/
+
+  /** To get changeMapLock
+   */
+  public Object getChangeMapLock() {
+    return changeMapLock;
+  }
+ 
  /*------------------------------------------------------------------------------------*/
 
   /** To init the display<br>
@@ -213,11 +227,22 @@ public class WorldMapData implements MapData
       myPlayer.stopMovement();
 ///////////////////////////// FIN ALDISS
 
-      
-
       MapExit mapExit = townMap.findTownMapExit( myPlayer.getCurrentRectangle() );
 
       myPlayer.setLocation( mapExit.getMapExitLocation() );
+      
+      if (SEND_NETMESSAGE) {
+        try {
+          synchronized(changeMapLock) {
+            myPlayer.sendMessage( new CanLeaveWorldMapMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation()) );
+            changeMapLock.wait(CONNECTION_TIMEOUT);
+          }
+        } catch (InterruptedException ie) {
+          dataManager.showWarningMessage("Cannot change the map !");
+          Debug.exit();
+        }      
+      }
+      
       dataManager.cleanInteriorMapData(); // suppress drawables, shadows, data
 
       // We set our player on the middle of the MapExit

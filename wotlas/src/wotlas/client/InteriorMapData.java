@@ -56,7 +56,12 @@ public class InteriorMapData implements MapData
 
   /** True if we send netMessage
    */
-  public static boolean SEND_NETMESSAGE = false;
+  //public static boolean SEND_NETMESSAGE = false;
+  
+  /** lock to verify player can leave the map<br>
+   * unlocked by client.message.movement.YourCanLeaveMsgBehaviour
+   */
+  private Object changeMapLock = new Object();
   
   /** Our default dataManager
    */
@@ -77,6 +82,14 @@ public class InteriorMapData implements MapData
   public void showDebug(boolean value) {
     SHOW_DEBUG = value;
   }
+
+ /*------------------------------------------------------------------------------------*/
+ 
+  /** To get changeMapLock
+   */
+  public Object getChangeMapLock() {
+    return changeMapLock;
+  }  
 
  /*------------------------------------------------------------------------------------*/
 
@@ -320,6 +333,19 @@ public class InteriorMapData implements MapData
 
         myRoom.removePlayer( myPlayer );
         myPlayer.setLocation( mapExit.getTargetWotlasLocation() );
+        
+        if (SEND_NETMESSAGE) {
+          try {
+            synchronized(changeMapLock) {
+              myPlayer.sendMessage( new CanLeaveIntMapMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation()) );
+              changeMapLock.wait(CONNECTION_TIMEOUT);
+            }
+          } catch (InterruptedException ie) {
+            dataManager.showWarningMessage("Cannot change the map !");
+            Debug.exit();
+          }      
+        }
+      
         dataManager.cleanInteriorMapData(); // suppress drawables, shadows, data
 
         ScreenPoint targetPoint = mapExit.getTargetPosition();

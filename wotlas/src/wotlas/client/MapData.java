@@ -33,6 +33,21 @@ public interface MapData
 {
   
  /*------------------------------------------------------------------------------------*/
+ 
+ /** True if we send netMessage
+   */
+  public static boolean SEND_NETMESSAGE = false;
+  
+  /** Connection timeout
+   */
+  public static final int CONNECTION_TIMEOUT = 5000;
+  
+  /** To get changeMap lock<br>
+   * called by client.message.movement.YourCanLeaveMsgBehaviour
+   */  
+  public Object getChangeMapLock();
+  
+ /*------------------------------------------------------------------------------------*/
 
   /** To init the display<br>
    * - load background and mask images<br>

@@ -54,7 +54,7 @@ public class Belt extends ContainerObject implements TransportableInterface, Arm
    objectName="standard belt";	  // to modify
   }
 
- /** The only constructor. Calls ContainerObject's constructor.
+ /** The parametric constructor. Calls ContainerObject's constructor.
   * @param capacity the number of objects that can be contained
   */
   public Belt(short capacity)

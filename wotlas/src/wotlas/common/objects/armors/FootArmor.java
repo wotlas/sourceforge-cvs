@@ -36,8 +36,20 @@ public class FootArmor extends Armor
 
  
  /*------------------------------------------------------------------------------------*/
-
-  /** The only constructor.
+ 
+  /** The default constructor.
+  	* Invoques Armor's constructor.
+   */			
+    public FootArmor()
+	{
+	 super();
+	 
+	 this.className="FootArmor";
+	 this.objectName="default foot armor";
+	}															
+ 
+ 
+  /** The parametric constructor.
   	* Invoques Armor's constructor.
 	* @param defense the defense of the armor - may be zero
 	* @param state the current state of the armor  	

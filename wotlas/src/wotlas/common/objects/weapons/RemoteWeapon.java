@@ -45,10 +45,9 @@ public abstract class RemoteWeapon extends Weapon implements RemoteWeaponInterfa
  /** The weapon's target. Should have also a building as target.
   */
   protected Player target; 
-    
 
  /*------------------------------------------------------------------------------------*/
-
+    
   /** Arms the weapon. The weapon is ready to Aim()/Loose().
    * @param ammo the ammo used 
    */

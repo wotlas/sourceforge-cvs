@@ -37,7 +37,18 @@ public class BodyArmor extends Armor
  
  /*------------------------------------------------------------------------------------*/
 
-  /** The only constructor.
+  /** The default constructor.
+  	* Invoques Armor's default constructor.
+   */			
+    public BodyArmor()
+	{
+	 super();
+	 
+	 this.className="BodyArmor";
+	 this.objectName="default body armor";
+	}															
+
+  /** The parametric constructor.
   	* Invoques Armor's constructor.
 	* @param defense the defense of the armor - may be zero
 	* @param state the current state of the armor  	

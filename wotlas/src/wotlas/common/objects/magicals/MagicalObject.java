@@ -34,7 +34,7 @@ public abstract class MagicalObject extends UsefulObject
 
  /*------------------------------------------------------------------------------------*/
 
-  /** The weave produced by the object. THE CLASS WEAVE DOES NOT EXIST.
+  /** The weave produced by the object.
    */
       private Weave magicEffect;
 	  
@@ -45,7 +45,17 @@ public abstract class MagicalObject extends UsefulObject
 	  
  /*------------------------------------------------------------------------------------*/
  
-  /** The only constructor
+  /** The default constructor. Invokes UsefulObject's constructor.
+   */
+   public MagicalObject()
+   {
+   	super();
+	
+	this.className="MagicalObject";
+	this.objectName="default magical object";
+   }
+
+  /** The parametric constructor. Invokes UsefulObject's constructor.
    * @param magicEffect The Weave produced
    * @param powersInvolved The Powers involved
    */
@@ -59,6 +69,8 @@ public abstract class MagicalObject extends UsefulObject
 	this.objectName="default magical object";
    }
  
+ /*------------------------------------------------------------------------------------*/
+
   /** Get the magical effect caused by the object when used.
    * @return magicEffect
    */  					

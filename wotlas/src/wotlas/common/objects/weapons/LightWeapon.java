@@ -54,6 +54,18 @@ public abstract class LightWeapon extends Weapon implements RepairInterface, Tra
   	  protected String position;	  	  
 
  /*------------------------------------------------------------------------------------*/
+	  
+ /** Default constructor
+  */ 
+   public LightWeapon()
+   {
+   	super();
+	
+	this.className="LightWeapon";
+	this.objectName="default light weapon";
+   }
+	  
+ /*------------------------------------------------------------------------------------*/
 
   /** Equips the weapon. The weapon is ready to use and plainly visible.
    * @param hand the hand in which it will be put 

@@ -43,6 +43,17 @@ public class Bow extends RemoteWeapon implements TransportableInterface
  
  /*------------------------------------------------------------------------------------*/
 
+ /** Default constructor
+  */ 
+   public Bow()
+   {
+   	super();
+	
+	this.className="Bow";
+	this.objectName="default bow";
+   }
+ 
+ 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Puts on the weapon to enable attack.<br>

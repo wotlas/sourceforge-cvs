@@ -58,11 +58,12 @@ public class Chapter
  
  /*------------------------------------------------------------------------------------*/
 
-  /** The default constructor.
+  /** The default constructor. <br>Sets the number of paragraphs to 0.
    */			
     public Chapter()
 	{
 	 nbParagraphs=0;
+	 paragraphs=null;
 	 chapterTitle="Untitled";	 
 	}															
  

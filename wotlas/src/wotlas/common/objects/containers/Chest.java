@@ -51,7 +51,7 @@ public class Chest extends ContainerObject implements LockableInterface
 	   super();
 	   	   
 	   className="Chest";
-	   objectName="default chest";  // to modify
+	   objectName="default chest";
 	   key=null;
 	  }
  
@@ -76,7 +76,7 @@ public class Chest extends ContainerObject implements LockableInterface
    super(capacity);
      
    className="Chest";
-   objectName="default chest";	  // to modify
+   objectName="default chest";
    key=null;
   }
 
@@ -110,6 +110,24 @@ public class Chest extends ContainerObject implements LockableInterface
     public void tryUnlock(Key key)
 	{
 	
+	}
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Get the associated Key
+   * @return key the key for this chest 
+   */
+    public void getKey()
+	{
+	 return key;
+	}
+
+  /** Set the associated Key
+   * @param key the new key for this chest 
+   */
+    public void setKey(Key key)
+	{
+	 this.key=key;
 	}
 	
  /*------------------------------------------------------------------------------------*/

@@ -41,7 +41,18 @@ public class Ammo extends BaseObject implements AmmoInterface, TransportableInte
    */
     protected boolean equipped;
   																						
- 
+ /*------------------------------------------------------------------------------------*/
+	
+ /** Default constructor
+  */ 
+   public Ammo()
+   {
+   	super();
+	
+	this.className="Ammo";
+	this.objectName="default ammo";
+   }
+	 
  /*------------------------------------------------------------------------------------*/
 
    /** Throw at target.

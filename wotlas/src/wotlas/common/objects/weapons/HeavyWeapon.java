@@ -56,6 +56,17 @@ public class HeavyWeapon extends Weapon implements HeavyWeaponInterface, RepairI
 	  
  /*------------------------------------------------------------------------------------*/
 
+ /** Default constructor
+  */ 
+   public HeavyWeapon()
+   {
+   	super();
+	
+	this.className="HeavyWeapon";
+	this.objectName="default heavy weapon";
+   }
+ 
+ /*------------------------------------------------------------------------------------*/
 
   /** Sheathes the weapon. The weapon can no longer be used without being unsheathed first but it'll escape casual look. 
    */

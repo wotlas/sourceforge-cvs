@@ -57,10 +57,13 @@ public class Book extends Document implements BookInterface
  
  /*------------------------------------------------------------------------------------*/
 
-  /** The default constructor.
+  /** The default constructor.<br>
+   * Initialize members but does not allocate chapters.
    */			
     public Book()
 	{
+	 super();
+	
 	 className="Book";
 	 objectName="default book";
 	 
@@ -68,7 +71,6 @@ public class Book extends Document implements BookInterface
 	 nbChapters=0;
 	 currentChapter=-1;
 	 title="Untitled";
-	 equipped=false;	 	 
 	}															
  
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -51,11 +51,18 @@ public class ValuedObject extends BaseObject
   
  /*------------------------------------------------------------------------------------*/
 	
- /** Default constructor
+ /** Default constructor. <br>
+  * Sets value and quantity to 0.
   */ 
    public ValuedObject()
    {
    	super();
+	
+	value=0.0;
+	quantity=0;
+	
+	className="ValuedObject";
+	objectName="default valued object";
    }
 	
  /*------------------------------------------------------------------------------------*/

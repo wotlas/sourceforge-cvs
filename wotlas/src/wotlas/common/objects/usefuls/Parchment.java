@@ -45,10 +45,13 @@ public class Parchment extends Document
  
  /*------------------------------------------------------------------------------------*/
 
-  /** The default constructor.
+  /** The default constructor.<br>
+   * Allocates the member paragraph.
    */			
     public Parchment()
 	{
+	 super();
+	 
 	 className="Parchment";
 	 objectName="default parchment";
 	 title="Untitled";
@@ -57,11 +60,14 @@ public class Parchment extends Document
 	 text.setChapterTitle(title);
 	}															
  
-  /** Constructor with title.
+  /** Constructor with title.<br>
+   * Allocates the member paragraph.  
    * @param title the parchment's title 
    */			
     public Parchment(String title)
 	{
+	 super();
+	
 	 className="Parchment";
 	 objectName="default parchment";
 	 this.title=title;

@@ -45,7 +45,7 @@ public class Shelf extends ContainerObject
    super();  
    
    className="Shelf";
-   objectName="standard shelf";	  // to modify
+   objectName="standard shelf";
   }
 
  /** The parametric constructor. Calls ContainerObject's constructor.
@@ -55,7 +55,7 @@ public class Shelf extends ContainerObject
   {
    super(capacity);  
    className="Shelf";
-   objectName="standard shelf";	  // to modify
+   objectName="standard shelf";
   }
   
  /*------------------------------------------------------------------------------------*/

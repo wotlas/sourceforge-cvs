@@ -37,7 +37,19 @@ public class HeadArmor extends Armor
  
  /*------------------------------------------------------------------------------------*/
 
-  /** The only constructor.
+  /** The default constructor.
+  	* Invoques Armor's constructor.
+   */			
+    public HeadArmor()
+	{
+	 super();
+	 
+	 this.className="HeadArmor";
+	 this.objectName="default head armor";
+	}															
+
+
+  /** The parametric constructor.
   	* Invoques Armor's constructor.
 	* @param defense the defense of the armor - may be zero
 	* @param state the current state of the armor  	

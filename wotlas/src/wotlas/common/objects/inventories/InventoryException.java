@@ -20,7 +20,8 @@
 package wotlas.common.objects.inventories;
 
 /** An exception that can be thrown at Runtime by the Inventory.<br>
- *  It's usually used if the player tries to use an object he shouldn't or he can't.
+ * It's thrown if the player tries to use an object he shouldn't or he can't.<br>
+ * There may be other exceptions for specific misuses.
  *
  * @author Elann
  */

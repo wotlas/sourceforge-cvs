@@ -46,6 +46,18 @@ public abstract class Document extends UsefulObject implements ReadableInterface
  
 	  
  /*------------------------------------------------------------------------------------*/
+
+  /** The default constructor.<br>
+   */			
+    public Document()
+	{
+	 super();
+	
+	 className="Document";
+	 objectName="default document";
+	 
+	 equipped=false;	 	 	 
+	}															
  
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  

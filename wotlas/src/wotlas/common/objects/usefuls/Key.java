@@ -57,6 +57,8 @@ public class Key extends UsefulObject implements TransportableInterface
    */			
     public Key()
 	{
+	 super();
+	 
 	 this.className="Key";
 	 this.objectName="default key";
 	}															

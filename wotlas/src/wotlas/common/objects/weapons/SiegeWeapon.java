@@ -41,6 +41,16 @@ public class SiegeWeapon extends RemoteWeapon
  
  /*------------------------------------------------------------------------------------*/
 
+ /** Default constructor
+  */ 
+   public SiegeWeapon()
+   {
+   	super();
+	
+	this.className="SiegeWeapon";
+	this.objectName="default siege weapon";
+   }
+ 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Puts on the weapon to enable attack.<br>

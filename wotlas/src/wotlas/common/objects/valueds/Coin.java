@@ -39,10 +39,13 @@ public class Coin extends ValuedObject
  /*------------------------------------------------------------------------------------*/
 
  /** Default constructor
-  */
+  */ 
    public Coin()
    {
    	super();
+	
+	this.className="Coin";
+	this.objectName="default coin";
    }
     
  /*------------------------------------------------------------------------------------*/

@@ -48,12 +48,7 @@ public class Armor extends BaseObject implements ArmorInterface, RepairInterface
   /** The current state of the armor. Goes from newly-made to broken.
    */
    	  protected short state;  
-	  
-	  protected static String[] stateList={"Newly-made","Good state","Used","Worned out","Broken"}; 
-	  		  // that's just place-holder stuff, OK ?
-			  // may be a file or a static list
-			  // but better if in a file => internationalization / evolution 
-	  	 
+	  	  	 
   /** Is the armor in a bag or on the char ?
    */
 	  protected boolean equipped;
@@ -64,8 +59,21 @@ public class Armor extends BaseObject implements ArmorInterface, RepairInterface
 	  
 	  
  /*------------------------------------------------------------------------------------*/
+
+  /** The default constructor.
+   * Sets defense & state to -1
+   */			
+    public Armor()
+	{
+	 this.defense=-1;
+	 this.state=-1;
+	 this.equipped=false;
+	 
+	 this.className="Armor";
+	 this.objectName="default armor";
+	}															
  
-  /** The only constructor.
+  /** The parametric constructor.
 	* @param defense the defense of the armor - may be zero
 	* @param state the current state of the armor  	
    */			

@@ -49,7 +49,7 @@ public class Bag extends ContainerObject implements TransportableInterface
    objectName="standard bag";	  // to modify -> player name ?
   }
 
- /** The only constructor. Calls ContainerObject's constructor.
+ /** The parametric constructor. Calls ContainerObject's constructor.
   * @param capacity the number of objects that can be contained
   */
   public Bag(short capacity)

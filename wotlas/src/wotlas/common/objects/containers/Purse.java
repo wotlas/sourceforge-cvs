@@ -56,7 +56,7 @@ public class Purse extends ContainerObject implements TransportableInterface
    super(defaultPurseCapacity);  
 
    className="Purse";
-   objectName="standard purse";	  // to modify -> player name ?
+   objectName="standard purse";
   }
 
  /** The parametric constructor.<br>
@@ -68,7 +68,7 @@ public class Purse extends ContainerObject implements TransportableInterface
    super(capacity);  
 
    className="Purse";
-   objectName="standard purse";	  // to modify -> player name ?
+   objectName="standard purse";
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

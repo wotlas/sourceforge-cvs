@@ -45,8 +45,12 @@ public abstract class UsefulObject extends BaseObject implements UsefulInterface
    */			
     public UsefulObject()
 	{
+	 super();
+	
 	 className="UsefulObject";
 	 objectName="default useful object";
+	 
+	 ready=false;	 
 	}															
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -70,7 +70,9 @@ public class JOptionsPanel extends JPanel implements MouseListener, ChangeListen
     //soundMin.setAlignmentY(Component.CENTER_ALIGNMENT);
     vPanel.add(soundMin);
     
-    volumeLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_VOLUME, SoundLibrary.MAX_VOLUME);
+    volumeLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_MUSIC_VOLUME, 30);
+    SoundLibrary.getSoundLibrary().changeMusicVolume((short) volumeLevel.getValue());
+    
     volumeLevel.setPaintTrack(false);
     volumeLevel.setOpaque(false);
     volumeLevel.setPreferredSize(new Dimension(50,30));
@@ -159,7 +161,7 @@ public class JOptionsPanel extends JPanel implements MouseListener, ChangeListen
   /** Invoked when volume is changed
    */
   public void stateChanged(ChangeEvent e) {
-    SoundLibrary.getSoundLibrary().setVolume((short) volumeLevel.getValue());
+    SoundLibrary.getSoundLibrary().changeMusicVolume((short) volumeLevel.getValue());
   }
   
   /** Invoked when check box state is changed

@@ -406,4 +406,12 @@ double ot = ((NodeDouble) nodes.elementAt(cur)).f;
     }
   }
   
+  /** To set the mask
+   */
+  public void setMask( boolean mask[][] ) {
+    map = mask;
+    mapWidth = mask.length;
+    mapHeight = mask[0].length;
+  }
+
 }

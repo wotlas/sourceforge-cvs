@@ -235,8 +235,8 @@ public class WorldGenerator {
              roomLink.setRoom2ID(14);  
 
              roomLink = rooms[2].addRoomLink( new ScreenRectangle( 700, 505, 50, 25) );
-             roomLink.setRoom1ID(2);
-             roomLink.setRoom2ID(5);  
+             roomLink.setRoom1ID(5);
+             roomLink.setRoom2ID(2);  
 
              rooms[2].addRoomLink( rooms[1].getRoomLink(0) );
 
@@ -245,8 +245,8 @@ public class WorldGenerator {
            rooms[3].setInsertionPoint( new ScreenPoint(960,640) );
 
              roomLink = rooms[3].addRoomLink( new ScreenRectangle( 800, 490, 250, 25) );
-             roomLink.setRoom1ID(3);
-             roomLink.setRoom2ID(4);  
+             roomLink.setRoom1ID(4);
+             roomLink.setRoom2ID(3);  
 
              roomLink = rooms[3].addRoomLink( new ScreenRectangle( 800, 785, 250, 25) );
              roomLink.setRoom1ID(3);
@@ -266,8 +266,8 @@ public class WorldGenerator {
            rooms[4].setInsertionPoint( new ScreenPoint(930,40) );
 
              roomLink = rooms[4].addRoomLink( new ScreenRectangle( 780, 150, 20, 40) );
-             roomLink.setRoom1ID(4);
-             roomLink.setRoom2ID(8);  
+             roomLink.setRoom1ID(8);
+             roomLink.setRoom2ID(4);  
 
              rooms[4].addRoomLink( rooms[3].getRoomLink(0) );
 
@@ -289,8 +289,8 @@ public class WorldGenerator {
            rooms[5].setInsertionPoint( new ScreenPoint(620,450) );
 
              roomLink = rooms[5].addRoomLink( new ScreenRectangle( 450, 385, 125, 20) );
-             roomLink.setRoom1ID(5);
-             roomLink.setRoom2ID(6);  
+             roomLink.setRoom1ID(6);
+             roomLink.setRoom2ID(5);  
 
              rooms[5].addRoomLink( rooms[2].getRoomLink(2) );
 
@@ -304,8 +304,8 @@ public class WorldGenerator {
              roomLink.setRoom2ID(7);  
 
              roomLink = rooms[6].addRoomLink( new ScreenRectangle( 460, 190, 120, 20) );
-             roomLink.setRoom1ID(6);
-             roomLink.setRoom2ID(8);  
+             roomLink.setRoom1ID(8);
+             roomLink.setRoom2ID(6);  
 
              rooms[6].addRoomLink( rooms[5].getRoomLink(0) );
 
@@ -320,8 +320,8 @@ public class WorldGenerator {
            rooms[8].setInsertionPoint( new ScreenPoint(660,170) );
 
              roomLink = rooms[8].addRoomLink( new ScreenRectangle( 680, 120, 40, 20) );
-             roomLink.setRoom1ID(8);
-             roomLink.setRoom2ID(9);
+             roomLink.setRoom1ID(9);
+             roomLink.setRoom2ID(8);
 
              rooms[8].addRoomLink( rooms[6].getRoomLink(1) );
              rooms[8].addRoomLink( rooms[4].getRoomLink(0) );
@@ -337,8 +337,8 @@ public class WorldGenerator {
            rooms[10].setInsertionPoint( new ScreenPoint(960,1150) );
 
              roomLink = rooms[10].addRoomLink( new ScreenRectangle( 780, 1110, 25, 40) );
-             roomLink.setRoom1ID(10);
-             roomLink.setRoom2ID(14);  
+             roomLink.setRoom1ID(14);
+             roomLink.setRoom2ID(10);  
 
              rooms[10].addRoomLink( rooms[3].getRoomLink(1) );
 
@@ -359,8 +359,8 @@ public class WorldGenerator {
            rooms[11].setInsertionPoint( new ScreenPoint(580,1140) );
 
              roomLink = rooms[11].addRoomLink( new ScreenRectangle( 570, 1110, 40, 20) );
-             roomLink.setRoom1ID(11);
-             roomLink.setRoom2ID(16);  
+             roomLink.setRoom1ID(16);
+             roomLink.setRoom2ID(11);  
 
            rooms[12].setFullName("West Gate - South Tower - Room");
            rooms[12].setShortName("bsouth-room1");
@@ -383,12 +383,12 @@ public class WorldGenerator {
            rooms[14].setInsertionPoint( new ScreenPoint( 730, 980 ) );
 
              roomLink = rooms[14].addRoomLink( new ScreenRectangle( 670, 920, 20, 40) );
-             roomLink.setRoom1ID(14);
-             roomLink.setRoom2ID(15);  
+             roomLink.setRoom1ID(15);
+             roomLink.setRoom2ID(14);  
 
              roomLink = rooms[14].addRoomLink( new ScreenRectangle( 670, 1070, 20, 40) );
-             roomLink.setRoom1ID(14);
-             roomLink.setRoom2ID(16);
+             roomLink.setRoom1ID(16);
+             roomLink.setRoom2ID(14);
 
              rooms[14].addRoomLink( rooms[2].getRoomLink(1) );
              rooms[14].addRoomLink( rooms[10].getRoomLink(0) );
@@ -400,8 +400,8 @@ public class WorldGenerator {
            rooms[15].setInsertionPoint( new ScreenPoint(600,940) );
 
              roomLink = rooms[15].addRoomLink( new ScreenRectangle( 520, 910, 20, 40) );
-             roomLink.setRoom1ID(15);
-             roomLink.setRoom2ID(17);  
+             roomLink.setRoom1ID(17);
+             roomLink.setRoom2ID(15);  
 
              rooms[15].addRoomLink( rooms[14].getRoomLink(0) );
 
@@ -410,8 +410,8 @@ public class WorldGenerator {
            rooms[16].setInsertionPoint( new ScreenPoint(600,1080) );
 
              roomLink = rooms[16].addRoomLink( new ScreenRectangle( 520, 1060, 20, 40) );
-             roomLink.setRoom1ID(16);
-             roomLink.setRoom2ID(17);
+             roomLink.setRoom1ID(17);
+             roomLink.setRoom2ID(16);
 
              rooms[16].addRoomLink( rooms[11].getRoomLink(0) );
              rooms[16].addRoomLink( rooms[14].getRoomLink(1) );

@@ -137,7 +137,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
                         while ( it.hasNext() ) {
                             p = (PlayerImpl)it.next();
                             if (p!=player && ( p.isChatMember() || isDefaultChat ) )
-                                p.sendMessage( this );
+                                p.sendChatMessage( this , senderPrimaryKey);
                         }
                      }
 
@@ -170,7 +170,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
                         while ( it.hasNext() ) {
                             p = (PlayerImpl)it.next();
                             if (p!=player)
-                                p.sendMessage( this );
+                                p.sendChatMessage( this, senderPrimaryKey );
                         }
                      }
 
@@ -194,7 +194,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
                         while ( it.hasNext() ) {
                             p = (PlayerImpl)it.next();
                             if (p!=player)
-                                p.sendMessage( this );
+                                p.sendChatMessage( this , senderPrimaryKey );
                         }
                      }
 
@@ -215,7 +215,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
                  
                             while( it.hasNext() ) {
                                PlayerImpl p = (PlayerImpl)it.next();
-                               p.sendMessage( this );
+                               p.sendChatMessage( this , senderPrimaryKey );
                             }
                          }
                      }
@@ -271,7 +271,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
             while ( it.hasNext() ) {
                p = (PlayerImpl)it.next();
                if (p!=player)
-                   p.sendMessage( this );
+                   p.sendChatMessage( this , senderPrimaryKey );
             }
        }
   }

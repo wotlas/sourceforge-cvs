@@ -22,6 +22,7 @@ package wotlas.server;
 import wotlas.common.character.*;
 import wotlas.common.chat.*;
 import wotlas.common.movement.*;
+import wotlas.common.message.chat.SendTextMessage;
 import wotlas.server.message.chat.*;
 
 import wotlas.libs.net.NetConnectionListener;
@@ -673,6 +674,24 @@ public class PlayerImpl implements Player, NetConnectionListener
                 }
              }
      }
+     
+  /** Use this method to send a SendTextMessage to this player. You can use it directly :
+   *  it does not lock, does not wait for the message to be sent before returning
+   *  AND checks that the player is connected.
+   *
+   * @param message message to send to the player.
+   * @param otherPlayerKey key of player who sent the message
+   */
+     public void sendChatMessage( SendTextMessage message, String otherPlayerKey) {
+             synchronized( personalityLock ) {
+                if( personality!=null ) {
+                    if( ServerDirector.SHOW_DEBUG )
+                        System.out.println("Player "+primaryKey+" sending msg: "+message);
+                    personality.queueMessage( message );
+                    lieManager.addMeet(otherPlayerKey, LieManager.MEET_CHATMESSAGE);
+                }
+             }
+     }    
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

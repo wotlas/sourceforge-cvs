@@ -33,7 +33,7 @@ public class RoomLink extends ScreenZone
   
   /** ID of the RoomLink (index in the array {@link Room#roomLinks Room.roomLinks})
    */
-   private int RoomLinkID;
+   private int roomLinkID;
    
   /** ID of the first Room
    */
@@ -68,10 +68,10 @@ public class RoomLink extends ScreenZone
    */
 
   public void setRoomLinkID(int myRoomLinkID) {
-    this.RoomLinkID = myRoomLinkID;
+    this.roomLinkID = myRoomLinkID;
   }
   public int getRoomLinkID() {
-    return RoomLinkID;
+    return roomLinkID;
   }
   public void setRoom1ID(int myRoom1ID) {
     this.room1ID = myRoom1ID;

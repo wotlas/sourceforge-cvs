@@ -23,6 +23,7 @@ import wotlas.common.Player;
 import wotlas.utils.Debug;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.Hashtable;
 
  /** A Room of an interiorMap.
@@ -97,6 +98,10 @@ public class Room
 
     public int getRoomID() {
       return roomID;
+    }
+
+    public RoomLink getRoomLink( int id ) {
+      return roomLinks[id];
     }
 
     public void setFullName(String myFullName) {
@@ -226,9 +231,9 @@ public class Room
    *
    * @return a new RoomLink object
    */
-    public RoomLink addRoomLink()
+    public RoomLink addRoomLink( Rectangle r )
     {
-       RoomLink myRoomLink = new RoomLink();
+       RoomLink myRoomLink = new RoomLink(r);
 
        if(roomLinks == null) {
          roomLinks = new RoomLink[1];
@@ -246,14 +251,33 @@ public class Room
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Add a new RoomLink object to the array {@link #roomLinks roomLinks}
+   *
+   * @param rl RoomLink object to add
+   */
+    public void addRoomLink( RoomLink rl )
+    {
+       if(roomLinks == null) {
+         roomLinks = new RoomLink[1];
+         roomLinks[0] = rl;
+       } else {
+         RoomLink[] myRoomLinks = new RoomLink[roomLinks.length+1];
+         System.arraycopy(roomLinks, 0, myRoomLinks, 0, roomLinks.length);
+         myRoomLinks[roomLinks.length] = rl;
+         roomLinks = myRoomLinks;
+       }
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
   
   /** Add a new MapExit object to the array {@link #mapExits mapExits}
    *
    * @return a new MapExit object
    */
-    public MapExit addMapExit()
+    public MapExit addMapExit(Rectangle r)
     {
-      MapExit myMapExit = new MapExit();
+      MapExit myMapExit = new MapExit(r);
     
       if (mapExits == null) {
          mapExits = new MapExit[1];
@@ -267,6 +291,25 @@ public class Room
          mapExits = myMapExits;
       }
       return myMapExit;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Add a new MapExit object to the array {@link #mapExits mapExits}
+   *
+   * @param me MapExit object
+   */
+    public void addMapExit( MapExit me )
+    {
+      if (mapExits == null) {
+         mapExits = new MapExit[1];
+         mapExits[0] = me;
+      } else {
+         MapExit[] myMapExits = new MapExit[mapExits.length+1];
+         System.arraycopy(mapExits, 0, myMapExits, 0, mapExits.length);
+         myMapExits[mapExits.length] = me;
+         mapExits = myMapExits;
+      }
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -63,6 +63,43 @@ public class WotlasLocation
 
  /*------------------------------------------------------------------------------------*/
 
+  /** Constructor for Rooms.
+   */
+    public WotlasLocation(int worldMapID, int townMapID, int buildingID, int interiorMapID,
+                          int roomID) {
+        this.worldMapID = worldMapID;
+        this.townMapID = townMapID;
+        this.buildingID = buildingID;
+        this.interiorMapID = interiorMapID;
+        this.roomID = roomID;
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Constructor for TownMap.
+   */
+    public WotlasLocation( int worldMapID, int townMapID ) {
+        this.worldMapID = worldMapID;
+        this.townMapID = townMapID;
+        this.buildingID = -1;
+        this.interiorMapID = -1;
+        this.roomID = -1;
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Constructor for WorldMap.
+   */
+    public WotlasLocation( int worldMapID ) {
+        this.worldMapID = worldMapID;
+        this.townMapID = -1;
+        this.buildingID = -1;
+        this.interiorMapID = -1;
+        this.roomID = -1;
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
    /** To get the WorldMapID
     *
     * @return WorldMapID

@@ -29,15 +29,25 @@ import java.awt.Rectangle;
 
 public class MapExit extends ScreenZone
 {
+  /** MapExit type
+   */
   public final static byte INTERIOR_MAP_EXIT = 0;
   public final static byte BUILDING_EXIT     = 1;
   public final static byte TOWN_EXIT         = 2;
+
+  /** MapExit Side
+   */
+  public final static byte NONE  = 0; // one-way MapExit
+  public final static byte NORTH = 1;
+  public final static byte SOUTH = 2;
+  public final static byte WEST  = 3;
+  public final static byte EAST  = 4;
   
  /*------------------------------------------------------------------------------------*/
 
   /** ID of the MapExit (index in the array {@link Room#mapExits Room.mapExits})
    */
-   public int MapExitID;
+   public int mapExitID;
   
   /** one of INTERIOR_MAP_EXIT, BUILDING_EXIT, TOWN_EXIT
    */
@@ -47,10 +57,10 @@ public class MapExit extends ScreenZone
    */
    public WotlasLocation targetWotlasLocation;
    
-  /** MapExitID of the target
-   * -1 if no target
+  /** MapExit Side
+   * 0 if none (one-way MapExit)
    */
-   public int targetMapExitID;
+   public int mapExitSide;
 
   /** Eventual position on the target map (null if none)
    */
@@ -76,15 +86,25 @@ public class MapExit extends ScreenZone
    }
 
  /*------------------------------------------------------------------------------------*/
+
+  /** Constructor with Rectangle & type.
+   */
+   public MapExit(Rectangle r, byte type) {
+      super(r);
+      this.type = type;
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
   /*
    * List of setter and getter used for persistence
    */
   
   public void setMapExitID(int myMapExitID) {
-    this.MapExitID = myMapExitID;
+    this.mapExitID = myMapExitID;
   }
   public int getMapExitID() {
-    return MapExitID;
+    return mapExitID;
   }
   public void setType(byte myType) {
     this.type = myType;
@@ -104,11 +124,11 @@ public class MapExit extends ScreenZone
   public Point getTargetPosition() {
     return targetPosition;
   }
-  public void setTargetMapExitID(int myTargetMapExitID) {
-    this.targetMapExitID = myTargetMapExitID;
+  public void setMapExitSide(int mapExitSide) {
+    this.mapExitSide = mapExitSide;
   }
-  public int getTargetMapExitID() {
-    return targetMapExitID;
+  public int getMapExitSide() {
+    return mapExitSide;
   }
   public void setRequiredKnowledgeID(int myRequiredKnowledgeID) {
     this.requiredKnowledgeID = myRequiredKnowledgeID;
@@ -116,5 +136,7 @@ public class MapExit extends ScreenZone
   public int getRequiredKnowledgeID() {
     return requiredKnowledgeID;
   }
+
+ /*------------------------------------------------------------------------------------*/
   
 }

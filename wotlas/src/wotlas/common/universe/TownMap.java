@@ -25,6 +25,7 @@ import wotlas.utils.Debug;
 
 import java.util.Hashtable;
 import java.awt.Rectangle;
+import java.awt.Point;
 
  /** A TownMap represents a town in our Game Universe.
   *
@@ -60,6 +61,10 @@ public class TownMap
   /** Full Image (identifier) of this town
    */
     private ImageIdentifier townImage;
+
+  /** Map exits...
+   */
+    private MapExit[] mapExits;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -140,6 +145,14 @@ public class TownMap
 
     public ImageIdentifier getTownImage() {
       return townImage;
+    }
+
+    public void setMapExits(MapExit[] myMapExits) {
+      this.mapExits = myMapExits;
+    }
+
+    public MapExit[] getMapExits() {
+      return mapExits;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -285,6 +298,49 @@ public class TownMap
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** Add a new MapExit object to the array {@link #mapExits mapExits}
+   *
+   * @return a new MapExit object
+   */
+    public MapExit addMapExit(Rectangle r)
+    {
+      MapExit myMapExit = new MapExit(r);
+    
+      if (mapExits == null) {
+         mapExits = new MapExit[1];
+         myMapExit.setMapExitID(0);
+         mapExits[0] = myMapExit;
+      } else {
+         MapExit[] myMapExits = new MapExit[mapExits.length+1];
+         myMapExit.setMapExitID(mapExits.length);
+         System.arraycopy(mapExits, 0, myMapExits, 0, mapExits.length);
+         myMapExits[mapExits.length] = myMapExit;
+         mapExits = myMapExits;
+      }
+      return myMapExit;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Add a new MapExit object to the array {@link #mapExits mapExits}
+   *
+   * @param me MapExit object
+   */
+    public void addMapExit( MapExit me )
+    {
+      if (mapExits == null) {
+         mapExits = new MapExit[1];
+         mapExits[0] = me;
+      } else {
+         MapExit[] myMapExits = new MapExit[mapExits.length+1];
+         System.arraycopy(mapExits, 0, myMapExits, 0, mapExits.length);
+         myMapExits[mapExits.length] = me;
+         mapExits = myMapExits;
+      }
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** To init this town ( it rebuilds shortcuts ). DON'T CALL this method directly, use
    *  the init() method of the associated world.
    *
@@ -320,6 +376,38 @@ public class TownMap
                 buildingsEnter[buildingsEnter.length-1] = buildings[i].getBuildingID();        
             }
     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Returns the MapExit that is on the side given by the specified point.
+   * @param a point which is out of the MapExit ScreenZone and should represent
+   *        the direction by which the player hits this TownMap zone.
+   * @return the appropriate MapExit, null if there are no MapExits.
+   */
+   public MapExit findTownMapExit( Point fromPosition ) {
+   	
+      if(mapExits==null)
+         return null;
+
+      if(mapExits.length==1)
+         return mapExits[0];
+   
+      for(int i=0; i<mapExits.length; i++ ) {
+         if( mapExits[i].getMapExitSide()==MapExit.WEST && fromPosition.x <= mapExits[i].getX() )
+             return mapExits[i];
+
+         if( mapExits[i].getMapExitSide()==MapExit.EAST && fromPosition.x >= mapExits[i].getX()+mapExits[i].getWidth() )
+             return mapExits[i];
+
+         if( mapExits[i].getMapExitSide()==MapExit.NORTH && fromPosition.y <= mapExits[i].getY() )
+             return mapExits[i];
+
+         if( mapExits[i].getMapExitSide()==MapExit.SOUTH && fromPosition.y >= mapExits[i].getY()+mapExits[i].getHeight() )
+             return mapExits[i];
+      }
+   
+      return mapExits[0]; // default
+   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

@@ -23,6 +23,7 @@ import wotlas.libs.graphics2D.ImageIdentifier;
 
 import wotlas.utils.Debug;
 import java.awt.Rectangle;
+import java.awt.Point;
 
  /** A Building of a town in our World. A building always belongs to a townMap.
   *
@@ -320,6 +321,39 @@ public class Building
                            }                    
                     }
             }
+   }
+
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Returns the buildingExit (MapExit) that is on the side given by the specified point.
+   * @param a point which is out of the MapExit ScreenZone and should represent
+   *        the direction by which the player hits this TownMap zone.
+   * @return the appropriate MapExit, null if there are no MapExits.
+   */
+   public MapExit findTownMapExit( Point fromPosition ) {
+   	
+      if(buildingExits==null)
+         return null;
+
+      if(buildingExits.length==1)
+         return buildingExits[0];
+   
+      for(int i=0; i<buildingExits.length; i++ ) {
+         if( buildingExits[i].getMapExitSide()==MapExit.WEST && fromPosition.x <= buildingExits[i].getX() )
+             return buildingExits[i];
+
+         if( buildingExits[i].getMapExitSide()==MapExit.EAST && fromPosition.x >= buildingExits[i].getX()+buildingExits[i].getWidth() )
+             return buildingExits[i];
+
+         if( buildingExits[i].getMapExitSide()==MapExit.NORTH && fromPosition.y <= buildingExits[i].getY() )
+             return buildingExits[i];
+
+         if( buildingExits[i].getMapExitSide()==MapExit.SOUTH && fromPosition.y >= buildingExits[i].getY()+buildingExits[i].getHeight() )
+             return buildingExits[i];
+      }
+   
+      return buildingExits[0]; // default
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

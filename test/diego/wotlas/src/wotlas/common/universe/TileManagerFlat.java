@@ -51,6 +51,12 @@ public class TileManagerFlat extends TileMapManager{
    */
     private byte[][][] mapBackgroundData;
     
+    /** wht's the basic floor id, eventually used for overlay tiles?
+     *  it's basicFloorId
+     */
+    private byte basicFloorId;
+    private byte basicFloorIdTileNr;
+    
  /*------------------------------------------------------------------------------------*/
  
   /** only for persistence
@@ -86,6 +92,8 @@ public class TileManagerFlat extends TileMapManager{
     throws java.io.IOException {
         objectOutput.writeInt( ExternalizeGetVersion() );
         objectOutput.writeObject( mapBackgroundData );
+        objectOutput.writeByte( basicFloorId );
+        objectOutput.writeByte( basicFloorIdTileNr );
     }
     
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -97,12 +105,22 @@ public class TileManagerFlat extends TileMapManager{
         int IdTmp = objectInput.readInt();
         if( IdTmp == ExternalizeGetVersion() ){
             mapBackgroundData = ( byte[][][] ) objectInput.readObject();
+            basicFloorId = objectInput.readByte();
+            basicFloorIdTileNr = objectInput.readByte();
        } else {
             // to do.... when new version
         }
     }
  
-    public void setMap( int x, int y, int layers, Dimension mapTileDim ){
+    public void setMap( int x, int y, Dimension mapTileDim ){
+//        this.basicFloorId = 0;
+//        this.basicFloorIdTileNr = 0;
+        setMap( x, y, mapTileDim, basicFloorId, basicFloorIdTileNr );
+    }
+ 
+    public void setMap( int x, int y, Dimension mapTileDim, byte basicFloorId, byte basicFloorIdTileNr ){
+        this.basicFloorId = basicFloorId;
+        this.basicFloorIdTileNr = basicFloorIdTileNr;
         this.tileMap.mapTileDim = mapTileDim;
         Dimension mapSize = new Dimension();
         mapSize.width  = x;
@@ -111,9 +129,9 @@ public class TileManagerFlat extends TileMapManager{
         mapBackgroundData = new byte[x][y][3];
         for( int xx=0; xx < x; xx++)
             for( int yy=0; yy < y; yy++) {
-                mapBackgroundData[xx][yy][0] = 0;
-                mapBackgroundData[xx][yy][1] = 0;
-                mapBackgroundData[xx][yy][2] = 0;
+                mapBackgroundData[xx][yy][0] = basicFloorId;
+                mapBackgroundData[xx][yy][1] = basicFloorIdTileNr;
+                mapBackgroundData[xx][yy][2] = TileMap.TILE_FREE;
             }
     }
     
@@ -131,7 +149,7 @@ public class TileManagerFlat extends TileMapManager{
          */
         mapBackgroundData[x][y][0] = (byte) map;
         mapBackgroundData[x][y][1] = (byte) tileNr;
-        mapBackgroundData[x][y][2] = 0;
+        mapBackgroundData[x][y][2] = TileMap.TILE_FREE;
     }
 
     public byte[][][] getMapBackGroundData() {
@@ -152,23 +170,50 @@ public class TileManagerFlat extends TileMapManager{
         
         for( int y=0; y<tileMap.getMapSize().height; y++ ) {
             for( int x=0; x<tileMap.getMapSize().width; x++ ) {
-                background = (Drawable) new MotionlessSprite( x*tileMap.getMapTileDim().width,  // ground x=0
+                if( getMapBackGroundData()[x][y][0] != basicFloorId ) {
+                    background = (Drawable) new MotionlessSprite( x*tileMap.getMapTileDim().width,  // ground x=0
                                                               y*tileMap.getMapTileDim().height, // ground y=0
-                                                              tileMap.getGroupOfGraphics()[0],  // GroupOfGraphics
-                                                              getMapBackGroundData()[x][y][1],      // number of internal tile
+                                                              tileMap.getGroupOfGraphics()[basicFloorId],  // GroupOfGraphics
+                                                              basicFloorIdTileNr,      // number of internal tile
                                                               ImageLibRef.MAP_PRIORITY          // priority
                                                               );
-                gDirector.addDrawable(background);
-                if( getMapBackGroundData()[x][y][0] != 0 ) {
+                    gDirector.addDrawable(background);
+                    if( getMapBackGroundData()[x][y][0] != basicFloorId ) {
+                        background = (Drawable) new MotionlessSprite( x*tileMap.getMapTileDim().width,          // ground x=0
+                                                                  y*tileMap.getMapTileDim().height,         // ground y=0
+                                                                  tileMap.getGroupOfGraphics()[getMapBackGroundData()[x][y][0]],  // GroupOfGraphics
+                                                                  getMapBackGroundData()[x][y][1],  // number of internal tile
+                                                                  ImageLibRef.SECONDARY_MAP_PRIORITY       // priority
+                                                                  );
+                        gDirector.addDrawable( background );
+                    }
+                } 
+                else {
                     background = (Drawable) new MotionlessSprite( x*tileMap.getMapTileDim().width,          // ground x=0
                                                                   y*tileMap.getMapTileDim().height,         // ground y=0
                                                                   tileMap.getGroupOfGraphics()[getMapBackGroundData()[x][y][0]],  // GroupOfGraphics
                                                                   getMapBackGroundData()[x][y][1],  // number of internal tile
                                                                   ImageLibRef.SECONDARY_MAP_PRIORITY       // priority
                                                                   );
-                    gDirector.addDrawable( background );
+                        gDirector.addDrawable( background );
                 }
             }
         }
+    }
+
+    public byte getBasicFloorId(){
+        return basicFloorId;
+    }
+
+    public void setBasicFloorId( byte value ){
+        this.basicFloorId = value;
+    }
+
+    public byte getBasicFloorNr(){
+        return basicFloorIdTileNr;
+    }
+
+    public void setBasicFloorNr( byte value ){
+        this.basicFloorIdTileNr = value;
     }
 }

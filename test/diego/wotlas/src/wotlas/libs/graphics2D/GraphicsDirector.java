@@ -150,7 +150,7 @@ public class GraphicsDirector extends JPanel {
    *        is dictated by the WindowPolicy and refers to this drawable.
    * @param screen initial dimension for this JPanel
    */
-   public void preTileMapInit(  Dimension screen) {
+   public void preTileMapInit(  Dimension screen ) {
 
       // we reset the GraphicsDirector's drawables
          drawables.clear();
@@ -159,12 +159,12 @@ public class GraphicsDirector extends JPanel {
       // Screen defaults
          this.screen = new Rectangle( screen );
          setPreferredSize( screen );
-         setMinimumSize( new Dimension(10,10) );
+         setMinimumSize( new Dimension(50,50) );
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   public void tileMapInit( Dimension background) {
+   public void tileMapInit( Dimension background ) {
          setMaximumSize( background );
          windowPolicy.tick();
          display = true;

@@ -73,17 +73,17 @@ public class WorldGenerator {
            tileMap.setInsertionPoint( new ScreenPoint(60,330) );
            tileMap.setSmallTileMapImage( new ImageIdentifier( "maps-1/town-small-1/shayol-ghul-2" ) );
            tileMap.setMusicName("tar-valon.mid");
-           tileMap.selectGroupOfGraphics( GroupOfGraphics.DEMO_SET );
+           tileMap.selectGroupOfGraphics( GroupOfGraphics.ROGUE_SET );
            
            TileManagerFlat manager = new TileManagerFlat(  tileMap );
-           manager.setMap( 10, 20, 7, TileMap.PIXEL_50 );
-           manager.setMapPoint(3,2,1,0);
-           manager.setMapPoint(4,2,1,1);
-           manager.setMapPoint(3,3,1,11);
-           manager.setMapPoint(4,3,1,10);
-           manager.setMapPoint(3,1,1,12);
-           manager.setMapPoint(4,1,1,13);
-           manager.setMapPoint(5,4,2,14);
+           manager.setMap( 10, 20, TileMap.PIXEL_32, (byte)10, (byte)9 );
+           manager.setMapPoint(3,2,0,0);
+           manager.setMapPoint(4,2,1,0);
+           manager.setMapPoint(5,2,2,0);
+           manager.setMapPoint(6,2,3,0);
+           manager.setMapPoint(7,2,4,0);
+           manager.setMapPoint(8,2,5,0);
+           manager.setMapPoint(9,2,6,0);
            tileMap.setManager( (TileMapManager)manager );
 
            // Rak Timin Creation   
@@ -99,27 +99,44 @@ public class WorldGenerator {
            tileMap.selectGroupOfGraphics( GroupOfGraphics.DEMO_SET );
 
            TileManagerFakeIso manager2 = new TileManagerFakeIso( tileMap );
-           manager2.setMap( 10, 20, 7, TileMap.PIXEL_50 );
-           manager2.setMapPoint(3,2,1,0);
-           manager2.setMapPoint(4,2,1,1);
-           manager2.setMapPoint(3,3,1,11);
-           manager2.setMapPoint(4,3,1,10);
-           manager2.setMapPoint(3,1,1,12);
-           manager2.setMapPoint(4,1,1,13);
-           manager2.setMapPoint(5,4,2,14);
+           manager2.setMap( 10, 20, TileMap.PIXEL_50, (byte)0, (byte)0 );
+           manager2.setMapPoint(5,2,1,0);
+           manager2.setMapPoint(6,2,1,1);
+           manager2.setMapPoint(5,3,1,11);
+           manager2.setMapPoint(6,3,1,10);
+           manager2.setMapPoint(5,1,1,12);
+           manager2.setMapPoint(6,1,1,13);
+           manager2.setMapPoint(7,4,2,14);
            // walls
            manager2.setFakeIsoLayers( 1 /* x */, 1 /* y */, (byte)0 /* floor/layer */, (byte)5, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
-           manager2.setFakeIsoLayers( 2 /* x */, 1 /* y */, (byte)0 /* floor/layer */, (byte)5, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
+           manager2.setFakeIsoLayers( 2 /* x */, 1 /* y */, (byte)0 /* floor/layer */, (byte)5, (byte)1, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
            manager2.setFakeIsoLayers( 3 /* x */, 1 /* y */, (byte)0 /* floor/layer */, (byte)5, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
-           manager2.setFakeIsoLayers( 1 /* x */, 1 /* y */, (byte)0 /* floor/layer */, (byte)6, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
+           manager2.setFakeIsoLayers( 1 /* x */, 3 /* y */, (byte)0 /* floor/layer */, (byte)5, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
+           manager2.setFakeIsoLayers( 2 /* x */, 3 /* y */, (byte)0 /* floor/layer */, (byte)9, (byte)4, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
+           manager2.setFakeIsoLayers( 3 /* x */, 3 /* y */, (byte)0 /* floor/layer */, (byte)5, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
+
+           manager2.setFakeIsoLayers( 0 /* x */, 2 /* y */, (byte)0 /* floor/layer */, (byte)6, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
+           manager2.setFakeIsoLayers( 0 /* x */, 3 /* y */, (byte)0 /* floor/layer */, (byte)6, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
+           manager2.setFakeIsoLayers( 3 /* x */, 2 /* y */, (byte)0 /* floor/layer */, (byte)6, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
+           manager2.setFakeIsoLayers( 3 /* x */, 3 /* y */, (byte)0 /* floor/layer */, (byte)6, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
+
+           // another wall
+           manager2.setFakeIsoLayers( 6 /* x */, 5 /* y */, (byte)0 /* floor/layer */, (byte)7, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
+           manager2.setFakeIsoLayers( 7 /* x */, 5 /* y */, (byte)0 /* floor/layer */, (byte)7, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
+           
            // floor
-           manager2.setFakeIsoLayers( 1 /* x */, 1 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
+//           manager2.setFakeIsoLayers( 1 /* x */, 1 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
            manager2.setFakeIsoLayers( 1 /* x */, 2 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
-           manager2.setFakeIsoLayers( 2 /* x */, 1 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
+           manager2.setFakeIsoLayers( 1 /* x */, 3 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
+//           manager2.setFakeIsoLayers( 2 /* x */, 1 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
            manager2.setFakeIsoLayers( 2 /* x */, 2 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
+           manager2.setFakeIsoLayers( 2 /* x */, 3 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
+//           manager2.setFakeIsoLayers( 3 /* x */, 1 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
+           manager2.setFakeIsoLayers( 3 /* x */, 2 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
+           manager2.setFakeIsoLayers( 3 /* x */, 3 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
            tileMap.setManager( (TileMapManager)manager2 );
 
-        // STEP 3b - TOWNS
+           // STEP 3b - TOWNS
            TownMap townMaps[] = new TownMap[5];
            worldMap.setTownMaps( townMaps );
 

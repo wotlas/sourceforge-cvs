@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
  
-package src.wotlas.editor;
+package wotlas.editor;
 
 import wotlas.libs.log.*;
 import wotlas.libs.persistence.*;
@@ -30,11 +30,13 @@ import wotlas.utils.Tools;
 
 import wotlas.common.*;
 
+import wotlas.client.*;
+
 import java.io.File;
 import java.util.Properties;
 import java.util.Iterator;
 
-/** The MAIN TileMapEditor class. 
+/** The MAIN EditTile class. 
  *
  * @author Diego
  */
@@ -45,37 +47,29 @@ public class EditTile {
 
     /** Server Command Line Help
    */
-    public final static String TILEMAPEDITOR_COMMAND_LINE_HELP =
-            "Usage: TileMapEditor -[debug|help] -[base <path>]\n\n"
+    public final static String EditTile_COMMAND_LINE_HELP =
+            "Usage: EditTile -[debug|help] -[base <path>]\n\n"
            +"Examples : \n"
-           +"  TileMapEditor -base ../base : sets the data location.\n\n"
+           +"  EditTile -base ../base : sets the data location.\n\n"
            +"If the -base option is not set we search for configs in "
            +ResourceManager.DEFAULT_BASE_PATH
            +"\n\n";
 
-  /** Name of the tilemapeditor log file.
+  /** Name of the EditTile log file.
    */
-    public final static String TILEMAPEDITOR_LOG_NAME = "wot-tilemapeditor.log";
+    public final static String EditTile_LOG_NAME = "wot-EditTile.log";
 
  /*------------------------------------------------------------------------------------*/
-
-  /** Our remote server properties.
-   */
-    private static RemoteServersPropertiesFile remoteServersProperties;
 
   /** Our resource manager
    */
     private static ResourceManager resourceManager;
 
  /*------------------------------------------------------------------------------------*/
-
-  /** Our tilemapeditor Manager.
-   */
-    private static ClientManager clientManager;
   
-  /** Our Data Manager.
+  /** Our Editor Data Manager.
    */
-    private static DataManager dataManager;
+    private static EditorDataManager editorDataManager;
 
   /** Our JLogStream
    */
@@ -87,7 +81,7 @@ public class EditTile {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Main Class. Starts the Wotlas tilemapeditor.
+  /** Main Class. Starts the Wotlas EditTile.
    */
    public static void main(String argv[]) {
 
@@ -109,7 +103,7 @@ public class EditTile {
 
                 if(i==argv.length-1) {
                    System.out.println("Location missing.");
-                   System.out.println(TILEMAPEDITOR_COMMAND_LINE_HELP);
+                   System.out.println(EditTile_COMMAND_LINE_HELP);
                    return;
                 }
 
@@ -117,7 +111,7 @@ public class EditTile {
             }
             else if(argv[i].equals("-help")) {   // -- TO DISPLAY THE HELP --
 
-                System.out.println(TILEMAPEDITOR_COMMAND_LINE_HELP);
+                System.out.println(EditTile_COMMAND_LINE_HELP);
                 return;
             }
        }
@@ -132,13 +126,13 @@ public class EditTile {
        try {
             if(!classicLogWindow)
                logStream = new JLogStream( new javax.swing.JFrame(),
-                                           resourceManager.getExternalLogsDir()+TILEMAPEDITOR_LOG_NAME,
+                                           resourceManager.getExternalLogsDir()+EditTile_LOG_NAME,
                                            "log-title.jpg", resourceManager );
 
             // DIEGO : I CAN SEE DEBUG DURING TILEMAP DEBUGGING
-            Debug.setPrintStream( logStream );
-            System.setOut( logStream );
-            System.setErr( logStream );
+            // Debug.setPrintStream( logStream );
+            // System.setOut( logStream );
+            // System.setErr( logStream );
        }
        catch( Exception e ) {
          e.printStackTrace();
@@ -164,24 +158,30 @@ public class EditTile {
            Debug.signal( Debug.NOTICE, null, "Data directory     : JAR File" );
 
     // STEP 4 - Creation of our Font Factory
+       FontFactory.DEBUG_MODE = SHOW_DEBUG;
        FontFactory.createDefaultFontFactory( resourceManager );
        Debug.signal( Debug.NOTICE, null, "Font Factory created..." );
 
-    // STEP 8 - We ask the DataManager to get ready
-       dataManager = new DataManager( resourceManager );
-       dataManager.showDebug(SHOW_DEBUG);
-       Debug.signal( Debug.NOTICE, null, "DataManager created..." );
+    // STEP 8 - We ask the editorDataManager to get ready
+       editorDataManager = new EditorDataManager( resourceManager );
+       editorDataManager.showDebug(SHOW_DEBUG);
+       Debug.signal( Debug.NOTICE, null, "EditorDataManager created..." );
+
+        Thread heavyProcessThread = new Thread() {
+            public void run() {
+                editorDataManager.showInterface();
+            }
+        };
+
+        heavyProcessThread.start();
+        logStream.setVisible( false );
    }
 
-  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    public static ResourceManager getResourceManager() {
+        return resourceManager;
+    }
 
-  /** To get the URL where are stored the remote server configs. This URL can also contain
-   *  a news.html file to display some news.
-   *
-   * @return remoteServerConfigHomeURL
-   */
-     public static String getRemoteServerConfigHomeURL() {
-        return remoteServersProperties.getProperty("info.remoteServerHomeURL");
-   }
-
+    public static EditorDataManager getDataManager() {
+        return editorDataManager;
+    }
 }

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE attributes PUBLIC "-//NetBeans//DTD DefaultAttributes 1.0//EN" "http://www.netbeans.org/dtds/attributes-1_0.dtd">
 <attributes version="1.0">
+    <fileobject name="MenuManager.java">
+        <attr name="class_dependency_wotlas.libs.graphics2D.menu.Menu2DManager" stringvalue="MenuManager"/>
+    </fileobject>
     <fileobject name="DataManager.java">
         <attr name="class_dependency_java.lang.Thread" stringvalue="DataManager"/>
     </fileobject>

@@ -39,4 +39,12 @@ public abstract class TileMapManager implements BackupReady {
     abstract public void drawAllLayer( GraphicsDirector gDirector );
     
     abstract public void setTileMap( TileMap tileMap );
+    
+    abstract public byte getBasicFloorId();
+
+    abstract public void setBasicFloorId( byte value );
+
+    abstract public byte getBasicFloorNr();
+
+    abstract public void setBasicFloorNr( byte value );
 }

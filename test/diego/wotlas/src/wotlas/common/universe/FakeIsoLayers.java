@@ -40,17 +40,25 @@ public class FakeIsoLayers implements BackupReady {
     
     public static final byte NO_FLOOR = -1;
     
-    public static final byte HOUSE_FLOOR_DIR          = 1;
-    public static final byte CARPET_FLOOR_DIR         = 5;
-    public static final byte PRIMARY_WALL_ANGLE_DIR   = 7;
-    public static final byte PRIMARY_WALL_POS1_DIR    = 9;
-    public static final byte PRIMARY_WALL_POS2_DIR    = 11;
-    public static final byte PRIMARY_WALL_END_DIR     = 13;
-    public static final byte CENTRAL_FLOOR_DIR        = 15;
-    public static final byte SECONDARY_WALL_ANGLE_DIR = 17;
-    public static final byte SECONDARY_WALL_POS1_DIR  = 19;
-    public static final byte SECONDARY_WALL_POS2_DIR  = 21;
-    public static final byte SECONDARY_WALL_END_DIR   = 23;
+    public static final byte HOUSE_FLOOR_DIR            = 1;
+    public static final byte CARPET_FLOOR_DIR           = 5;
+    public static final byte PRIMARY_WALL_ANGLE_DIR     = 7;
+    public static final byte PRIMARY_WALL_POS1_DIR_X    = 9;
+    public static final byte PRIMARY_WALL_POS2_DIR_X    = 11;
+    public static final byte PRIMARY_WALL_END_DIR_X     = 13;
+    public static final byte PRIMARY_WALL_ANGLE_DIR_Y   = 15;
+    public static final byte PRIMARY_WALL_POS1_DIR_Y    = 17;
+    public static final byte PRIMARY_WALL_POS2_DIR_Y    = 19;
+    public static final byte PRIMARY_WALL_END_DIR_Y     = 21;
+    public static final byte CENTRAL_FLOOR_DIR          = 23;
+    public static final byte SECONDARY_WALL_ANGLE_DIR_X = 25;
+    public static final byte SECONDARY_WALL_POS1_DIR_X  = 27;
+    public static final byte SECONDARY_WALL_POS2_DIR_X  = 29;
+    public static final byte SECONDARY_WALL_END_DIR_X   = 31;
+    public static final byte SECONDARY_WALL_ANGLE_DIR_Y = 33;
+    public static final byte SECONDARY_WALL_POS1_DIR_Y  = 35;
+    public static final byte SECONDARY_WALL_POS2_DIR_Y  = 37;
+    public static final byte SECONDARY_WALL_END_DIR_Y   = 39;
     
     FakeIsoLayers next;
     Vector data;
@@ -104,21 +112,28 @@ public class FakeIsoLayers implements BackupReady {
                 return ImageLibRef.CARPET_FLOOR_PRIORITY;
             case PRIMARY_WALL_ANGLE_DIR:
                 return ImageLibRef.PRIMARY_WALL_ANGLE_PRIORITY;
-            case PRIMARY_WALL_POS1_DIR:
+            case PRIMARY_WALL_POS1_DIR_X:
+            case PRIMARY_WALL_POS1_DIR_Y:
                 return ImageLibRef.PRIMARY_WALL_POS1_PRIORITY;
-            case PRIMARY_WALL_POS2_DIR:
+            case PRIMARY_WALL_POS2_DIR_X:
+            case PRIMARY_WALL_POS2_DIR_Y:
                 return ImageLibRef.PRIMARY_WALL_POS2_PRIORITY;
-            case PRIMARY_WALL_END_DIR:
+            case PRIMARY_WALL_END_DIR_X:
+            case PRIMARY_WALL_END_DIR_Y:
                 return ImageLibRef.PRIMARY_WALL_END_PRIORITY;
             case CENTRAL_FLOOR_DIR:
                 return ImageLibRef.CENTRAL_FLOOR_PRIORITY;
-            case SECONDARY_WALL_ANGLE_DIR:
+            case SECONDARY_WALL_ANGLE_DIR_X:
+            case SECONDARY_WALL_ANGLE_DIR_Y:
                 return ImageLibRef.SECONDARY_WALL_ANGLE_PRIORITY;
-            case SECONDARY_WALL_POS1_DIR:
+            case SECONDARY_WALL_POS1_DIR_X:
+            case SECONDARY_WALL_POS1_DIR_Y:
                 return ImageLibRef.SECONDARY_WALL_POS1_PRIORITY;
-            case SECONDARY_WALL_POS2_DIR:
+            case SECONDARY_WALL_POS2_DIR_X:
+            case SECONDARY_WALL_POS2_DIR_Y:
                 return ImageLibRef.SECONDARY_WALL_POS2_PRIORITY;
-            case SECONDARY_WALL_END_DIR:
+            case SECONDARY_WALL_END_DIR_X:
+            case SECONDARY_WALL_END_DIR_Y:
                 return ImageLibRef.SECONDARY_WALL_END_PRIORITY;
         }
         return -1;

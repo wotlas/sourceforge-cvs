@@ -37,6 +37,8 @@ import wotlas.utils.Debug;
 import wotlas.utils.ScreenPoint;
 import wotlas.utils.ScreenRectangle;
 
+import wotlas.editor.*;
+
 import java.awt.image.BufferedImage;
 import java.awt.Rectangle;
 import java.awt.*;
@@ -131,7 +133,8 @@ public class TileMapData implements MapData {
     // 2 - We set player's position if his position is incorrect
 
     // 3 - preInit the GraphicsDirector : reset it...
-    gDirector.preTileMapInit( new Dimension( JClientScreen.leftWidth, JClientScreen.mapHeight ) );
+    // ??? WHY DO THIS ??? gDirector.preTileMapInit( new Dimension( JClientScreen.leftWidth, JClientScreen.mapHeight ) );
+    gDirector.preTileMapInit( tileMap.getMapFullSize() );
 
     // 4 - We load the background tile and create the background
     tileMap.initGroupOfGraphics( gDirector );
@@ -169,7 +172,26 @@ public class TileMapData implements MapData {
     dataManager.sendMessage(new AllDataLeftPleaseMessage());
   }
 
- /*------------------------------------------------------------------------------------*/
+  /** To init the display editor<br>
+   * - load background and mask images<br>
+   * - init the AStar algorithm
+   * - init the Graphics Director
+   * - show the other images (shadows, buildings, towns...)
+   */
+    public void initDisplayEditor( EditorDataManager editorDataManager, WotlasLocation location ) {
+        TileMap tileMap = editorDataManager.getWorldManager().getTileMap( location );
+
+        GraphicsDirector gDirector = editorDataManager.getGraphicsDirector();
+        gDirector.preTileMapInit( tileMap.getMapFullSize() );
+        tileMap.initGroupOfGraphics( gDirector );
+        tileMap.drawAllLayer( gDirector );
+        gDirector.tileMapInit( tileMap.getMapFullSize() );
+        String[] strTemp2 = { tileMap.getFullName() };
+        MultiLineText mltLocationName = new MultiLineText(strTemp2, 10, 10, Color.black, 15.0f, "Lucida Blackletter", ImageLibRef.TEXT_PRIORITY, MultiLineText.RIGHT_ALIGNMENT);
+        gDirector.addDrawable(mltLocationName);
+    }
+
+  /*------------------------------------------------------------------------------------*/
 
   /** To update the location<br>
    * - test if player is intersecting a screenZone<br>

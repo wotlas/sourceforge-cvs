@@ -26,7 +26,7 @@ import java.awt.*;
 
 /** A simple window policy that always centers the refDrawable on the screen.
  *
- * @author MasterBob,Aldiss
+ * @author MasterBob,Aldiss,Petrus
  * @see wotlas.libs.graphics2D.WindowPolicy
  */
 
@@ -77,6 +77,14 @@ public class LimitWindowPolicy implements WindowPolicy{
         Rectangle screen = gDirector.getScreenRectangle();
         Dimension background = gDirector.getBackgroundDimension();
         Rectangle refDrawable = gDirector.getRefDrawable().getRectangle();
+        
+        System.out.println("screen.x = " + screen.x);
+        System.out.println("screen.width = " + screen.width);
+        System.out.println("background.width = " + background.width);          
+        System.out.println("refDrawable.x = " + refDrawable.x);
+        System.out.println("refDrawable.width = " + refDrawable.width);
+        
+        
 
        //calculate the pourcentage to the edge on the 4 directions
 	 //the top left corner of the refDrawable is taken for references for limitHaut and limitGauche	
@@ -131,10 +139,19 @@ public class LimitWindowPolicy implements WindowPolicy{
 	  }	
 
       // we correct the center if it's out of the backround dimension.
-	  if(screen.x<0) screen.x = 0;
-        if(screen.y<0) screen.y = 0;
-        if( (screen.x+screen.width)>=background.width ) screen.x = (background.width-screen.width)/2;
-        if( (screen.y+screen.height)>=background.height ) screen.y = (background.height-screen.height)/2;
+	    if (screen.x<0) screen.x = 0;
+      if (screen.y<0) screen.y = 0;
+            
+      if (background.width < screen.width)
+        screen.x = -(screen.width-background.width)/2;
+      else if( (screen.x+screen.width)>=background.width )
+        screen.x = background.width-screen.width-1;                 
+      
+      if (background.height < screen.height)
+        screen.y = 1;
+      else if ( (screen.y+screen.height)>=background.height )
+        screen.y = background.height-screen.height-1;
+      
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -112,6 +112,11 @@ public class PersistenceManager
              // we load the world object
                 String worldHome =  universeHome + File.separator + worldSaveList[w].getName();
 
+                if( ! new File(worldHome + File.separator + WORLD_FILE).exists() ) {
+                    Debug.signal(Debug.WARNING, this, "Found Empty World directory : "+worldHome);
+                    continue;
+                }
+
                 WorldMap world = (WorldMap) PropertiesConverter.load( worldHome + File.separator
                                                                  + WORLD_FILE );
 

@@ -446,7 +446,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
 
   /** Player default angular speed : 3 rad/s
    */
-  public float angularSpeed = 2;
+  public float angularSpeed = 3;
 
   //---------------------------------------------------------------------------//
 
@@ -491,7 +491,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
           return;
           
        long now = System.currentTimeMillis();
-       float deltaT = ( now-lastUpdateTime )/500.0f;
+       float deltaT = ( now-lastUpdateTime )/1000.0f;
        lastUpdateTime = now;
 
       if (turningAlongPath) {
@@ -571,7 +571,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
          }
 
          this.path = path;
-         pathIndex = 0;
+         pathIndex = 1;
          lastUpdateTime = System.currentTimeMillis();
 
          //prevPoint =  new Point( (int)position.x, (int)position.y );

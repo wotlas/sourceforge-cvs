@@ -53,6 +53,7 @@ public class ServerWelcomeMsgBehaviour extends ServerWelcomeMessage implements N
 
        // we awake our client with no error message
           synchronized( client ){
+             client.validateConnection();
              client.notify();
           }
      }

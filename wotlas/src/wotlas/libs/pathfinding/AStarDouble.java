@@ -24,6 +24,7 @@ import java.util.*;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
+import wotlas.client.DataManager;
 import wotlas.utils.List;
 
 /** A* algorithm finds the optimal path between 2 points
@@ -330,6 +331,15 @@ public class AStarDouble
    * @return true if point is valid (not blocked) in the {@link #mask mask}
    */
   public boolean isNotBlock(int x, int y) {
+    /*if ( (x+SPRITE_SIZE==mapWidth) && (y+SPRITE_SIZE<mapHeight) )
+      return (map[x][y] && map[x][y+SPRITE_SIZE]);
+    
+    if ( (x+SPRITE_SIZE<mapWidth) && (y+SPRITE_SIZE==mapHeight) )
+      return (map[x][y] && map[x+SPRITE_SIZE][y]);
+    
+    if ( (x+SPRITE_SIZE==mapWidth) && (y+SPRITE_SIZE==mapHeight) )
+      return map[x][y];*/
+          
     if ( (x<0) || (x+SPRITE_SIZE>=mapWidth) || (y<0) || (y+SPRITE_SIZE>=mapHeight) )
       return false;
 
@@ -347,19 +357,58 @@ public class AStarDouble
   public boolean isValidGoal(Point pointGoal) {
     int x = pointGoal.x;
     int y = pointGoal.y;
+    
     if (isNotBlock(x,y)) {
+      if (DataManager.SHOW_DEBUG)
+        System.out.println("valid point");
       return true;
+    } else {
+      if (DataManager.SHOW_DEBUG)
+        System.out.println("not a valid point -> search a valid point"); 
     }
+    
+    if (DataManager.SHOW_DEBUG) {
+      System.out.println("x = " + x);
+      System.out.println("y = " + y);
+      System.out.println("mapHeight = " + mapHeight);
+      System.out.println("mapWidth = " + mapWidth);
+    }
+    
+    // test if player is near border
+    if (x+SPRITE_SIZE>mapWidth) {      
+      if (DataManager.SHOW_DEBUG)
+        System.out.println("test x near border");      
+      if (map[x-SPRITE_SIZE-1][y]) {      
+        if (DataManager.SHOW_DEBUG)
+          System.out.print("player near border -> change x=mapWidth-SPRITE_SIZE-1");        
+        pointGoal.x = mapWidth-SPRITE_SIZE-1;
+        return true;
+      }      
+    }
+    if (y+SPRITE_SIZE>mapHeight) {
+      if (DataManager.SHOW_DEBUG)
+        System.out.println("test y near border");      
+      if (map[x][mapHeight-SPRITE_SIZE-1]) {      
+        if (DataManager.SHOW_DEBUG)
+          System.out.print("player near border -> change y=mapHeight-SPRITE_SIZE-1");        
+        pointGoal.y = mapHeight-SPRITE_SIZE-1;
+        return true;
+      }      
+    }    
+    
+    // Correct the position
     if (x+SPRITE_SIZE<mapWidth) {
       if (isNotBlock(x+SPRITE_SIZE,y)) {
-        //System.out.print("change");
+        if (DataManager.SHOW_DEBUG)
+          System.out.print("change x+");        
         pointGoal.x += SPRITE_SIZE;
         return true;
       }
     }
     if ((x+SPRITE_SIZE<mapWidth) && (y+SPRITE_SIZE<mapHeight)) {
       if (isNotBlock(x+SPRITE_SIZE,y+SPRITE_SIZE)) {
-        //System.out.print("change");
+        if (DataManager.SHOW_DEBUG)
+          System.out.print("change x+ y+");
         pointGoal.x += SPRITE_SIZE;
         pointGoal.y += SPRITE_SIZE;
         return true;
@@ -367,14 +416,16 @@ public class AStarDouble
     }
     if (y+SPRITE_SIZE<mapHeight) {
       if (isNotBlock(x,y+SPRITE_SIZE)) {
-        //System.out.print("change");
+        if (DataManager.SHOW_DEBUG)
+          System.out.print("change y+");
         pointGoal.y += SPRITE_SIZE;
         return true;
       }
     }
     if ((x>SPRITE_SIZE) && (y+SPRITE_SIZE<mapHeight)) {
       if (isNotBlock(x-SPRITE_SIZE,y+SPRITE_SIZE)) {
-        //System.out.print("change");
+        if (DataManager.SHOW_DEBUG)
+          System.out.print("change x- y+");
         pointGoal.x -= SPRITE_SIZE;
         pointGoal.y += SPRITE_SIZE;
         return true;
@@ -382,14 +433,16 @@ public class AStarDouble
     }
     if (x>SPRITE_SIZE) {
       if (isNotBlock(x-SPRITE_SIZE,y)) {
-        //System.out.print("change");
+        if (DataManager.SHOW_DEBUG)
+          System.out.print("change x-");
         pointGoal.x -= SPRITE_SIZE;
         return true;
       }
     }
     if ((x>SPRITE_SIZE) && (y>SPRITE_SIZE)) {
       if (isNotBlock(x-SPRITE_SIZE,y-SPRITE_SIZE)) {
-        //System.out.print("change");
+        if (DataManager.SHOW_DEBUG)
+          System.out.print("change x- y-");
         pointGoal.x -= SPRITE_SIZE;
         pointGoal.y -= SPRITE_SIZE;
         return true;
@@ -397,14 +450,16 @@ public class AStarDouble
     }
     if (y>SPRITE_SIZE) {
       if (isNotBlock(x,y-SPRITE_SIZE)) {
-        //System.out.print("change");
+        if (DataManager.SHOW_DEBUG)
+          System.out.print("change y-");
         pointGoal.y -= SPRITE_SIZE;
         return true;
       }
     }
     if ((x+SPRITE_SIZE<mapWidth) && (y>SPRITE_SIZE)) {
       if (isNotBlock(x+SPRITE_SIZE,y-SPRITE_SIZE)) {
-        //System.out.print("change");
+        if (DataManager.SHOW_DEBUG)
+         System.out.print("change x+ y-");
         pointGoal.x += SPRITE_SIZE;
         pointGoal.y -= SPRITE_SIZE;
         return true;

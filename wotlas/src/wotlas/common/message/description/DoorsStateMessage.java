@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package wotlas.common.message.movement;
+package wotlas.common.message.description;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -28,58 +28,60 @@ import wotlas.common.message.MessageRegistry;
 import wotlas.common.universe.*;
 
 /** 
- * To tell the server that we are changing location (Message Sent by Client or Server).
+ * To send a new state for the doors of a room...
+ * (Message Sent by Server/Client).
  *
  * @author Aldiss
  */
 
-public class LocationChangeMessage extends NetMessage
+public class DoorsStateMessage extends NetMessage
 {
  /*------------------------------------------------------------------------------------*/
 
-  /** Primary Key
+  /** Doors state.
    */
-    protected String primaryKey;
+    protected boolean isOpened[];
+
+  /** RoomLinkIDs that posseses doors...
+   */
+    protected int roomLinkIDs[];
   
-  /** WotlasLocation
+  /** WotlasLocation of the room.
    */
     protected WotlasLocation location;
-
-  /** x position on new location
-   */
-    protected int x;
-
-  /** y position on new location
-   */
-    protected int y;
 
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. Just initializes the message category and type.
    */
-     public LocationChangeMessage() {
-          super( MessageRegistry.MOVEMENT_CATEGORY,
-                 MovementMessageCategory.LOCATION_CHANGE_MSG );
-     }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Constructor with message category and type.
-   */
-     public LocationChangeMessage(byte msg_category, byte msg_type) {
-          super( msg_category, msg_type );
+     public DoorsStateMessage() {
+          super( MessageRegistry.DESCRIPTION_CATEGORY,
+                 DescriptionMessageCategory.DOORS_STATE_MSG );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Constructor with Player's primaryKey & location.
    */
-     public LocationChangeMessage(String primaryKey, WotlasLocation location, int x, int y) {
+     public DoorsStateMessage(WotlasLocation location, Room room ) {
           this();
-          this.primaryKey = primaryKey;
-          this.location = location;
-          this.x = x;
-          this.y = y;
+          this.location = new WotlasLocation(location);
+          
+          Door doors[] = room.getDoors();
+          RoomLink rl[] = room.getRoomLinks();
+          
+          roomLinkIDs = new int[doors.length];
+          isOpened = new boolean[doors.length];
+
+          int nb=0;
+
+          if( rl!=null && doors.length!=0 )
+              for( int i=0; i<rl.length; i++ )
+                   if(rl[i].getDoor()!=null) {
+                      roomLinkIDs[nb] = rl[i].getRoomLinkID();
+                      isOpened[nb] = rl[i].getDoor().isOpened();
+                      nb++;
+                   }
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -92,16 +94,18 @@ public class LocationChangeMessage extends NetMessage
    */
      public void encode( DataOutputStream ostream ) throws IOException {
 
-         writeString( primaryKey, ostream );
-
          ostream.writeInt( location.getWorldMapID() );
          ostream.writeInt( location.getTownMapID() );
          ostream.writeInt( location.getBuildingID() );
          ostream.writeInt( location.getInteriorMapID() );
          ostream.writeInt( location.getRoomID() );
 
-         ostream.writeInt( x );
-         ostream.writeInt( y );
+         ostream.writeInt( roomLinkIDs.length );
+
+          for( int i=0; i<roomLinkIDs.length; i++ ) {
+              ostream.writeInt( roomLinkIDs[i] );
+              ostream.writeBoolean( isOpened[i] );
+          }
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -114,8 +118,6 @@ public class LocationChangeMessage extends NetMessage
    */
      public void decode( DataInputStream istream ) throws IOException {
 
-         primaryKey = readString( istream );
-
          location = new WotlasLocation();
 
          location.setWorldMapID( istream.readInt() );
@@ -124,8 +126,14 @@ public class LocationChangeMessage extends NetMessage
          location.setInteriorMapID( istream.readInt() );
          location.setRoomID( istream.readInt() );
 
-         x = istream.readInt();
-         y = istream.readInt();
+         int size = istream.readInt();
+         roomLinkIDs = new int[size];
+         isOpened = new boolean[size];
+         
+         for( int i=0; i<size; i++ ) {
+              roomLinkIDs[i] = istream.readInt();
+              isOpened[i] = istream.readBoolean();
+         }
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -71,12 +71,30 @@ public class Door
     */
      transient private DoorDrawable doorDrawable;
 
+   /** For the server side : door opened ?
+    */
+     transient private boolean isOpened;
+
+   /** Door RoomID.
+    */
+     transient private int myRoomID;
+
+   /** Door RoomLinkID.
+    */
+     transient private int myRoomLinkID;
+
+   /** Is the door displayed on screen ?
+    */
+     transient private boolean isDisplayed;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor
    */
    public Door() {
          hasLock = false;
+         isOpened = false;
+         isDisplayed = false;
    }
 
  /*------------------------------------------------------------------------------------*/  
@@ -84,7 +102,7 @@ public class Door
   /** To construct a Door with no lock.
    */
    public Door(int x, int y, float variationAngle, byte doorType, ImageIdentifier doorImage ) {
-         hasLock = false;
+         this();
          this.x =x;
          this.y =y;
          this.doorType =doorType;
@@ -146,10 +164,37 @@ public class Door
 
  /*------------------------------------------------------------------------------------*/
 
+   /** To get one of my RoomID.
+    */
+     public int getMyRoomID() {
+     	return myRoomID;
+     }
+
+   /** To set one of my RoomID.
+    */
+     public void setMyRoomID( int myRoomID ) {
+     	this.myRoomID = myRoomID;
+     }
+
+   /** To get my RoomLinkID.
+    */
+     public int getMyRoomLinkID() {
+     	return myRoomLinkID;
+     }
+
+   /** To set my RoomLinkID.
+    */
+     public void setMyRoomLinkID( int myRoomLinkID ) {
+     	this.myRoomLinkID = myRoomLinkID;
+     }
+
+ /*------------------------------------------------------------------------------------*/
+
    /** To clean this door : erases the associated DoorDrawable.
     */
      public void clean(){
      	doorDrawable = null;
+     	isDisplayed = false;
      }
 
  /*------------------------------------------------------------------------------------*/  
@@ -169,6 +214,12 @@ public class Door
                                             doorImage, ImageLibRef.DOOR_PRIORITY );
            doorDrawable.useAntialiasing(true);
            doorDrawable.setOwner( this ); // we are the owner of this door draw...
+
+           if(isOpened)
+              doorDrawable.setOpened();
+           else
+              doorDrawable.setClosed();
+           
            return doorDrawable;
      }
 
@@ -177,9 +228,11 @@ public class Door
    /** To open the door...
     * @param from direction from where the door is opened (see DoorDrawable).
     */
-     public void open() {
-         if( getDoorDrawable()==null )
+     public synchronized void open() {
+         if( getDoorDrawable()==null ) {
+             isOpened = true;
              return;
+         }
 
          doorDrawable.open();
      }
@@ -189,9 +242,11 @@ public class Door
    /** To close the door...
     * @param from direction from where the door is opened (see DoorDrawable).
     */
-     public void close() {
-         if( getDoorDrawable()==null )
+     public synchronized void close() {
+         if( getDoorDrawable()==null ) {
+             isOpened = false;
              return;
+         }
 
          doorDrawable.close();
      }
@@ -204,7 +259,7 @@ public class Door
      	   if( getDoorDrawable()!=null )
      	       return doorDrawable.isOpened();
            else
-               return true;
+               return isOpened;
      }
 
  /*------------------------------------------------------------------------------------*/
@@ -212,7 +267,15 @@ public class Door
    /** To test if the door is displayed on screen...
     */
      public boolean isDisplayed() {
-           return doorDrawable!=null;
+           return isDisplayed;
+     }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To set that the door is displayed on screen...
+    */
+     public void setIsDisplayed( boolean isDisplayed) {
+           this.isDisplayed = isDisplayed;
      }
 
  /*------------------------------------------------------------------------------------*/

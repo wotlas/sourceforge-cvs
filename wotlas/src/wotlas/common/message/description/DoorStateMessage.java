@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package wotlas.common.message.movement;
+package wotlas.common.message.description;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -28,58 +28,46 @@ import wotlas.common.message.MessageRegistry;
 import wotlas.common.universe.*;
 
 /** 
- * To tell the server that we are changing location (Message Sent by Client or Server).
+ * To send a new state for a Door...
+ * (Message Sent by Server/Client).
  *
  * @author Aldiss
  */
 
-public class LocationChangeMessage extends NetMessage
+public class DoorStateMessage extends NetMessage
 {
  /*------------------------------------------------------------------------------------*/
 
-  /** Primary Key
+  /** Door state.
    */
-    protected String primaryKey;
+    protected boolean isOpened;
+
+  /** RoomLinkID that posseses the door...
+   */
+    protected int roomLinkID;
   
   /** WotlasLocation
    */
     protected WotlasLocation location;
 
-  /** x position on new location
-   */
-    protected int x;
-
-  /** y position on new location
-   */
-    protected int y;
-
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. Just initializes the message category and type.
    */
-     public LocationChangeMessage() {
-          super( MessageRegistry.MOVEMENT_CATEGORY,
-                 MovementMessageCategory.LOCATION_CHANGE_MSG );
-     }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Constructor with message category and type.
-   */
-     public LocationChangeMessage(byte msg_category, byte msg_type) {
-          super( msg_category, msg_type );
+     public DoorStateMessage() {
+          super( MessageRegistry.DESCRIPTION_CATEGORY,
+                 DescriptionMessageCategory.DOOR_STATE_MSG );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Constructor with Player's primaryKey & location.
    */
-     public LocationChangeMessage(String primaryKey, WotlasLocation location, int x, int y) {
+     public DoorStateMessage(WotlasLocation location, int roomLinkID, boolean isOpened) {
           this();
-          this.primaryKey = primaryKey;
-          this.location = location;
-          this.x = x;
-          this.y = y;
+          this.location = new WotlasLocation(location);
+          this.roomLinkID = roomLinkID;
+          this.isOpened = isOpened;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -92,16 +80,14 @@ public class LocationChangeMessage extends NetMessage
    */
      public void encode( DataOutputStream ostream ) throws IOException {
 
-         writeString( primaryKey, ostream );
-
          ostream.writeInt( location.getWorldMapID() );
          ostream.writeInt( location.getTownMapID() );
          ostream.writeInt( location.getBuildingID() );
          ostream.writeInt( location.getInteriorMapID() );
          ostream.writeInt( location.getRoomID() );
-
-         ostream.writeInt( x );
-         ostream.writeInt( y );
+         
+         ostream.writeInt( roomLinkID );
+         ostream.writeBoolean( isOpened );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -114,8 +100,6 @@ public class LocationChangeMessage extends NetMessage
    */
      public void decode( DataInputStream istream ) throws IOException {
 
-         primaryKey = readString( istream );
-
          location = new WotlasLocation();
 
          location.setWorldMapID( istream.readInt() );
@@ -124,8 +108,8 @@ public class LocationChangeMessage extends NetMessage
          location.setInteriorMapID( istream.readInt() );
          location.setRoomID( istream.readInt() );
 
-         x = istream.readInt();
-         y = istream.readInt();
+         roomLinkID = istream.readInt();
+         isOpened = istream.readBoolean();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -34,8 +34,15 @@ import java.awt.Rectangle;
 public class RoomLink extends ScreenRectangle
 { 
  /*------------------------------------------------------------------------------------*/
+
+  /** RoomLinkID counter
+   */
+   static private int roomLinkCounter = 0;
+
+ /*------------------------------------------------------------------------------------*/
   
-  /** ID of the RoomLink
+  /** A unique ID representing this RoomLink ( does NOT represent the room link index
+   *  in the room.roomLinks array. )
    */
    private int roomLinkID;
    
@@ -63,6 +70,15 @@ public class RoomLink extends ScreenRectangle
 
  /*------------------------------------------------------------------------------------*/
 
+   /** To get a valid ID for a new RoomLink.
+    */
+   static synchronized public int getNewRoomLinkID() {
+       roomLinkCounter++;
+       return roomLinkCounter;
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
   /** Constructor
    */
    public RoomLink() {}
@@ -84,9 +100,16 @@ public class RoomLink extends ScreenRectangle
    * List of setter and getter used for persistence
    */
 
+
+  /** Use the getNewRoomLinkID to get a valid ID.
+   */
   public void setRoomLinkID(int myRoomLinkID) {
     this.roomLinkID = myRoomLinkID;
   }
+
+  /**A unique ID representing this RoomLink ( does NOT represent the room link index
+   *  in the room.roomLinks array. )
+   */
   public int getRoomLinkID() {
     return roomLinkID;
   }

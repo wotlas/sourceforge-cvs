@@ -82,6 +82,15 @@ public class AuraEffect extends Drawable {
     */
      private boolean isDisappearing;
 
+   /** To limit the rotation of this aura (in radians). If -1 there is no
+    *  amplitude limit.
+    */
+     private float amplitudeLimit;
+
+   /** Direction in which we turn... (+1 or -1)
+    */
+     private byte direction;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
@@ -108,6 +117,8 @@ public class AuraEffect extends Drawable {
      this.timeLimit = System.currentTimeMillis()+lifeTime;
      isDisappearing = false;
      alpha=0.0f;
+     amplitudeLimit = -1.0f;
+     direction = -1;
 
      if(hasAnimation)
         sprAnim = new Animation( image );
@@ -115,28 +126,41 @@ public class AuraEffect extends Drawable {
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** To limit the rotation of this aura (in radians). If -1 there is no
+    *  amplitude limit.
+    * @param amplitudeLimit amplitude limit
+    */
+     public void setAmplitudeLimit( float amplitudeLimit ) {
+          this.amplitudeLimit = amplitudeLimit;
+     }
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
  /**
   * set alpha;
   */
- public void setAlpha(float f )
-  {
-   this.alpha = f;
-   this.timeLimit = System.currentTimeMillis()+lifeTime;
-   isDisappearing = false;
+   public void setAlpha(float f ) {
+     this.alpha = f;
+     this.timeLimit = System.currentTimeMillis()+lifeTime;
+     isDisappearing = false;
   }
-
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- /**
-  * set angle;
-  */
- public void setAngle(double a )
-  {
-   this.angle = a;
-  }
+  /**
+   * set angle;
+   */
+   public void setAngle(double a ) {
+      this.angle = a;
+   }
 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To set the direction in which we turn...
+   */
+   public void setDirection( byte direction ) {
+   	this.direction = direction;
+   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -204,7 +228,16 @@ public class AuraEffect extends Drawable {
        else if(alpha>0.01 && isDisappearing)
           alpha-=0.01f;
 
-       angle -= 0.15;
+       if( amplitudeLimit<0 )
+           angle -= 0.15;
+       else {
+       	   angle += direction*0.15;
+       	
+           if( angle >= amplitudeLimit )
+               direction = -1;
+           else if( angle <= -amplitudeLimit )
+               direction = +1;
+       }
 
        if( timeLimit<0 ) {
             return true;

@@ -98,10 +98,6 @@ public class Room
       return roomID;
     }
 
-    public RoomLink getRoomLink( int id ) {
-      return roomLinks[id];
-    }
-
     public void setFullName(String myFullName) {
       this.fullName = myFullName;
     }
@@ -235,11 +231,11 @@ public class Room
 
        if(roomLinks == null) {
          roomLinks = new RoomLink[1];
-         myRoomLink.setRoomLinkID(0);
+         myRoomLink.setRoomLinkID(RoomLink.getNewRoomLinkID());
          roomLinks[0] = myRoomLink;
        } else {
          RoomLink[] myRoomLinks = new RoomLink[roomLinks.length+1];
-         myRoomLink.setRoomLinkID(roomLinks.length);
+         myRoomLink.setRoomLinkID(RoomLink.getNewRoomLinkID());
          System.arraycopy(roomLinks, 0, myRoomLinks, 0, roomLinks.length);
          myRoomLinks[roomLinks.length] = myRoomLink;
          roomLinks = myRoomLinks;
@@ -250,7 +246,7 @@ public class Room
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Add a new RoomLink object to the array {@link #roomLinks roomLinks}
+  /** Add a RoomLink object to the array {@link #roomLinks roomLinks}
    *
    * @param rl RoomLink object to add
    */
@@ -265,6 +261,36 @@ public class Room
          myRoomLinks[roomLinks.length] = rl;
          roomLinks = myRoomLinks;
        }
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Returns a RoomLink from its id.
+    * @return null if not found...
+    */
+    public RoomLink getRoomLink( int roomLinkID ) {
+       if( roomLinks==null ) return null;
+       
+       for( int i=0; i<roomLinks.length; i++ ) 
+            if( roomLinks[i].getRoomLinkID()==roomLinkID )
+                return roomLinks[i];
+
+       return null; // not found
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Returns a Door from its RoomLink id.
+    * @return null if not found...
+    */
+    public Door getDoor( int roomLinkID ) {
+       if( roomLinks==null ) return null;
+       
+       for( int i=0; i<roomLinks.length; i++ ) 
+            if( roomLinks[i].getRoomLinkID()==roomLinkID )
+                return roomLinks[i].getDoor();
+
+       return null; // not found
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -341,6 +367,11 @@ public class Room
        	
        	    if(roomLinks[i].getRoom1()!=null)
        	       continue; // already done
+
+            if(roomLinks[i].getDoor()!=null) {
+               roomLinks[i].getDoor().setMyRoomLinkID( roomLinks[i].getRoomLinkID() );
+               roomLinks[i].getDoor().setMyRoomID( roomID );
+            }
 
        	    Room other = null;
        	    

@@ -60,26 +60,26 @@ public class AllDataLeftPleaseMsgBehaviour extends AllDataLeftPleaseMessage impl
         // 1 - PLAYER DATA
           if( player.getLocation().isRoom() ) {
 
-              Room room = player.getMyRoom();              
-              if( room==null ) return;
+              Room myRoom = player.getMyRoom();
+              if( myRoom==null ) return;
 
            // Current Room
               player.sendMessage( new RoomPlayerDataMessage( player.getLocation(),
-                                  player, room.getPlayers() ) );
+                                  player, myRoom.getPlayers() ) );
 
            // Other rooms
-              if(room.getRoomLinks()==null) return;
+              if(myRoom.getRoomLinks()==null) return;
               
-              for( int i=0; i<room.getRoomLinks().length; i++ ) {
-                   Room otherRoom = room.getRoomLinks()[i].getRoom1();
+              for( int i=0; i<myRoom.getRoomLinks().length; i++ ) {
+                   Room otherRoom = myRoom.getRoomLinks()[i].getRoom1();
                    
-                   if( otherRoom==room )
-                       otherRoom = room.getRoomLinks()[i].getRoom2();
+                   if( otherRoom==myRoom )
+                       otherRoom = myRoom.getRoomLinks()[i].getRoom2();
 
                    WotlasLocation roomLoc = new WotlasLocation( player.getLocation() );
                    roomLoc.setRoomID( otherRoom.getRoomID() );
 
-                   player.sendMessage( new RoomPlayerDataMessage( player.getLocation(),
+                   player.sendMessage( new RoomPlayerDataMessage( roomLoc,
                                        player, otherRoom.getPlayers() ) );
               }
           }

@@ -10,6 +10,7 @@
 CHANGES BETWEEN V1.2.1 AND V1.2.2 (3 April 2002)
 ------------------------------------------------
 
+ - new map : Emond's Field.
  - all the wotlas resources are now gathered in a same directory ( default is ../base ).
  - the wotlas server, client & server utilities ( register & setup ) are now completely independent
    from the location of the resources. By default they search data in "../base" but this can be changed

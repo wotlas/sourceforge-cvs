@@ -412,7 +412,6 @@ public class JAccountWizard extends JWizard
           personality.queueMessage( new wotlas.common.message.account.PlayerPastMessage(""));
       else
           personality.queueMessage( new wotlas.common.message.account.PlayerPastMessage(ta_past.getText()));
-
       return true;
     }
 
@@ -431,7 +430,8 @@ public class JAccountWizard extends JWizard
       setBackground(Color.white);
 
       setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-      setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+      
+      //setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
       //setAlignmentX(LEFT_ALIGNMENT);
 
       ta_infos = new ATextArea("    Please take some time to invent a past for your"+
@@ -468,8 +468,10 @@ public class JAccountWizard extends JWizard
         /*JPanel mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
       mainPanel.setBackground(Color.blue);
       mainPanel.setAlignmentX(LEFT_ALIGNMENT);*/
-        savePastLater = new ACheckBox("Saae this later...",false);
+        savePastLater = new ACheckBox("Save this later...",false);
+        
         //savePastLater.setAlignmentX(LEFT_ALIGNMENT);
+        //savePastLater.setPreferredSize(new Dimension(100,10));
         //mainPanel.add(savePastLater);
         
         add(savePastLater);

@@ -1,0 +1,32 @@
+#WotLas 1.0 Saved Object
+#Sat Dec 23 21:36:13 CET 2000
+class=wotlas.libs.wizard.JWizardStepParameters
+isDynamic=false
+isLastStep=false
+isNextButtonEnabled=true
+isPrevButtonEnabled=true
+
+stepClass=wotlas.libs.wizard.step.JWizardStep1TextFieldNet
+stepTitle=Keeper\ Key
+
+stepPropertiesKey=5
+stepPropertiesValue=5
+
+stepPropertiesKey.0=init.label0
+stepPropertiesValue.0=Enter your key :
+
+stepPropertiesKey.1=init.info0
+stepPropertiesValue.1=\nIf\ you\ don't\ have\ any\ key\ you\ should\ first\ mail\ us\ to\ ask\ if\ the\ Keeper of Chronicles's\ character\ is\ available.\ If\ it's\ the\ case\ we'll\ send\ you\ a\ key\ to\ use\ here\ to\ create\ your\ character.
+
+# SERVER SIDE INCLUDES
+
+# Method to call to proceed data
+stepPropertiesKey.2=server.text0.method
+stepPropertiesValue.2=setSpecialCharacter
+
+# Links
+stepPropertiesKey.3=server.next
+stepPropertiesValue.3=aes-sedai-hair.wiz
+
+stepPropertiesKey.4=server.previous
+stepPropertiesValue.4=special-chars.wiz

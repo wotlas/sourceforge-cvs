@@ -4,7 +4,7 @@ class=wotlas.libs.wizard.JWizardStepParameters
 isDynamic=false
 isLastStep=false
 isNextButtonEnabled=true
-isPrevButtonEnabled=true
+isPrevButtonEnabled=false
 
 stepClass=wotlas.libs.wizard.step.JWizardStepPasswordNet
 stepTitle=Login\ &\ Password

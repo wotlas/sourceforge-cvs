@@ -117,6 +117,27 @@ public class ServerConfig
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** To update this ServerConfig from another.
+    * @param other other ServerConfig.
+    */
+     public void update( ServerConfig other ) {
+        serverSymbolicName = other.getServerSymbolicName();
+        serverName = other.getServerName();
+        serverID = other.getServerID();
+        accountServerPort = other.getAccountServerPort();
+        gameServerPort = other.getGameServerPort();
+        gatewayServerPort = other.getGatewayServerPort();
+        maxNumberOfGameConnections = other.getMaxNumberOfGameConnections();
+        maxNumberOfAccountConnections = other.getMaxNumberOfAccountConnections();
+        maxNumberOfGatewayConnections = other.getMaxNumberOfGatewayConnections();
+        description = other.getDescription();
+        location = other.getLocation();
+        adminEmail = other.getAdminEmail();
+        configVersion = other.getConfigVersion();
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
    /** To get the Server Name. Normally it's the host name. Example: "tatoo.wotlas.org"
     *
     * @return server name

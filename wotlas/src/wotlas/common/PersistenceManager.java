@@ -361,6 +361,76 @@ public class PersistenceManager
 
  /*------------------------------------------------------------------------------------*/
 
+  /** Updates a server config of the SERVERS_HOME directory.
+   *  The oldServerConfig fields are updated with the new ones.
+   *
+   *  @param newConfigText new config loaded from an URL.
+   *  @param oldServerConfig server config
+   *  @return true in case of success, false if an error occured.
+   */
+   public boolean updateServerConfig( String newConfigText, ServerConfig oldServerConfig )
+   {
+      String serverFile = databasePath+File.separator+SERVERS_HOME+File.separator
+                            +SERVERS_PREFIX+oldServerConfig.getServerID()+SERVERS_SUFFIX;
+
+      try{
+          if( !FileTools.saveTextToFile( serverFile, newConfigText ) ) {
+            // Save Failed, we revert to previous config ( security )
+               saveServerConfig( oldServerConfig );
+               return false;
+          }
+
+        // We load the newly saved config...
+          ServerConfig newConfig = (ServerConfig) PropertiesConverter.load( serverFile );
+              
+          if( newConfig.getServerID()!= oldServerConfig.getServerID() ) {
+            // Save Failed, we revert to previous config ( security )
+               Debug.signal( Debug.ERROR, this, "New Config not saved: new config Server ID is "
+                             +newConfig.getServerID()+", was expecting "+oldServerConfig.getServerID() );
+               saveServerConfig( oldServerConfig );
+               return false;
+          }
+
+          oldServerConfig.update( newConfig );
+      }
+      catch( PersistenceException pe ) {
+          Debug.signal( Debug.ERROR, this, "Failed to update server config: "+pe.getMessage() );
+          saveServerConfig( oldServerConfig );
+          return false;
+      }
+
+      return true;
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To create a server config from a text file representing a previously saved ServerConfig.
+   *
+   *  @param newConfig new config loaded from an URL.
+   *  @param serverID server Id
+   *  @return the created ServerConfig in case of success, null if an error occured.
+   */
+   public ServerConfig createServerConfig( String newConfigText, int serverID )
+   {
+      String serverFile = databasePath+File.separator+SERVERS_HOME+File.separator
+                            +SERVERS_PREFIX+serverID+SERVERS_SUFFIX;
+
+      try{
+           if( !FileTools.saveTextToFile( serverFile, newConfigText ) )
+               return null; // Save Failed
+
+        // We load the newly saved config...
+           return (ServerConfig) PropertiesConverter.load( serverFile );
+      }
+      catch( PersistenceException pe ) {
+          Debug.signal( Debug.ERROR, this, "Failed to load just saved server config: "+pe.getMessage() );
+      }
+
+      return null;
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
   /** Loads all the server config files found in SERVERS_HOME.
    *
    * @param serverID id of the server which config is to be loaded.

@@ -999,7 +999,7 @@ public class WorldGenerator {
 
 
         // STEP 11bis d - Tar Valon White Tower - Hall
-           maps = new InteriorMap[4];
+           maps = new InteriorMap[5];
            buildings[4].setInteriorMaps( maps );
 
            map = new InteriorMap();
@@ -1080,6 +1080,20 @@ public class WorldGenerator {
                                new ImageIdentifier( "objects-2/doors-0/stone-40len-8th-5/hor-right-pivot-3.gif" ) ) );
 
              rooms[1].addRoomLink( rooms[0].getRoomLinks()[2] );
+
+               mapExit = rooms[1].addMapExit( new ScreenRectangle(70,500,50,140) );
+               mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,4,4,0) );
+               mapExit.setTargetPosition( new ScreenPoint(70,400) );
+               mapExit.setTargetOrientation( (float)-halfPI );
+
+               mapExit = rooms[1].addMapExit( new ScreenRectangle(630,510,50,140) );
+               mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,4,4,0) );
+               mapExit.setTargetPosition( new ScreenPoint(830,400) );
+               mapExit.setTargetOrientation( (float)-halfPI );
 
            rooms[2].setFullName("White Tower - Post Office");
            rooms[2].setShortName("post-office");
@@ -1649,6 +1663,138 @@ public class WorldGenerator {
                mapExit.setTargetPosition( new ScreenPoint(335,355) );
                mapExit.setTargetOrientation( (float)halfPI );
 
+
+        // STEP 11 bis l - Tar Valon White Tower - Ways
+           map = new InteriorMap();
+           maps[4] = map;
+
+           map.setInteriorMapID(4);
+           map.setFullName("White Tower - Library");
+           map.setShortName("wt-library");
+           map.setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/library-18" ) );
+           map.setImageWidth(920);
+           map.setImageHeight(500);
+           map.setImageRegionWidth(184);
+           map.setImageRegionHeight(500);
+           map.setMusicName("tv-white-tower-hall.mid");
+
+
+        // STEP 11 bis m - Rooms of White Tower - Ways
+           rooms = new Room[8];
+           map.setRooms( rooms );
+
+           for(int i=0; i<8; i++ ) {
+               rooms[i] = new Room();
+               rooms[i].setRoomID(i);
+               rooms[i].setMaxPlayers(30);
+           }
+
+           rooms[0].setFullName("White Tower - 5th Floor");
+           rooms[0].setShortName("Floor5");
+           rooms[0].setInsertionPoint( new ScreenPoint(340,370) );
+
+             roomLink = rooms[0].addRoomLink( new ScreenRectangle(430,330,60,10) );
+             roomLink.setRoom1ID(1);
+             roomLink.setRoom2ID(0);
+
+             roomLink = rooms[0].addRoomLink( new ScreenRectangle(160,280,30,10) );
+             roomLink.setRoom1ID(2);
+             roomLink.setRoom2ID(0);
+             roomLink.setDoor( new Door( 160, 282, halfPI, DoorDrawable.HORIZONTAL_RIGHT_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/stone-30len-5th-3/hor-right-pivot-3.gif" ) ) );
+
+             roomLink = rooms[0].addRoomLink( new ScreenRectangle(730,280,30,10) );
+             roomLink.setRoom1ID(6);
+             roomLink.setRoom2ID(0);
+             roomLink.setDoor( new Door( 730, 282, halfPI, DoorDrawable.HORIZONTAL_LEFT_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/stone-30len-5th-3/hor-left-pivot-2.gif" ) ) );
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(20,410,130,30) );
+               mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,4,0,1) );
+               mapExit.setTargetPosition( new ScreenPoint(120,570) );
+               mapExit.setTargetOrientation( (float)halfPI/3 );
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(770,410,130,30) );
+               mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,4,0,1) );
+               mapExit.setTargetPosition( new ScreenPoint(610,570) );
+               mapExit.setTargetOrientation( (float)halfPI*4/3 );
+
+           rooms[1].setFullName("White Tower - Library Hall");
+           rooms[1].setShortName("library-hall");
+           rooms[1].setInsertionPoint( new ScreenPoint(450,140) );
+
+             rooms[1].addRoomLink( rooms[0].getRoomLinks()[0] );
+
+           rooms[2].setFullName("Gray Ajah Quarters");
+           rooms[2].setShortName("quarters");
+           rooms[2].setInsertionPoint( new ScreenPoint(170,170) );
+
+             roomLink = rooms[2].addRoomLink( new ScreenRectangle(130,230,10,30) );
+             roomLink.setRoom1ID(3);
+             roomLink.setRoom2ID(2);
+             roomLink.setDoor( new Door( 132, 230, -halfPI, DoorDrawable.VERTICAL_TOP_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-5th-0/vert-top-pivot-0.gif" ) ) );
+
+             roomLink = rooms[2].addRoomLink( new ScreenRectangle(130,140,10,30) );
+             roomLink.setRoom1ID(4);
+             roomLink.setRoom2ID(2);
+             roomLink.setDoor( new Door( 132, 140, -halfPI, DoorDrawable.VERTICAL_TOP_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-5th-0/vert-top-pivot-0.gif" ) ) );
+
+             roomLink = rooms[2].addRoomLink( new ScreenRectangle(130,50,10,30) );
+             roomLink.setRoom1ID(5);
+             roomLink.setRoom2ID(2);
+             roomLink.setDoor( new Door( 132, 50, -halfPI, DoorDrawable.VERTICAL_TOP_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-5th-0/vert-top-pivot-0.gif" ) ) );
+
+             rooms[2].addRoomLink( rooms[0].getRoomLinks()[1] );
+
+           rooms[3].setFullName("Gray Ajah - Room 1");
+           rooms[3].setShortName("room1");
+           rooms[3].setInsertionPoint( new ScreenPoint(60,240) );
+
+             rooms[3].addRoomLink( rooms[2].getRoomLinks()[0] );
+
+           rooms[4].setFullName("Gray Ajah - Room 2");
+           rooms[4].setShortName("room2");
+           rooms[4].setInsertionPoint( new ScreenPoint(60,140) );
+
+             rooms[4].addRoomLink( rooms[2].getRoomLinks()[1] );
+
+           rooms[5].setFullName("Gray Ajah - Room 3");
+           rooms[5].setShortName("room3");
+           rooms[5].setInsertionPoint( new ScreenPoint(60,60) );
+
+             rooms[5].addRoomLink( rooms[2].getRoomLinks()[2] );
+
+           rooms[6].setFullName("White Tower - Corridor");
+           rooms[6].setShortName("corridor");
+           rooms[6].setInsertionPoint( new ScreenPoint(73,200) );
+
+             roomLink = rooms[6].addRoomLink( new ScreenRectangle(780,230,10,30) );
+             roomLink.setRoom1ID(6);
+             roomLink.setRoom2ID(7);
+             roomLink.setDoor( new Door( 782, 230, -halfPI, DoorDrawable.VERTICAL_TOP_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-5th-0/vert-top-pivot-0.gif" ) ) );
+
+             roomLink = rooms[6].addRoomLink( new ScreenRectangle(780,50,10,30) );
+             roomLink.setRoom1ID(6);
+             roomLink.setRoom2ID(7);
+             roomLink.setDoor( new Door( 782, 50, halfPI, DoorDrawable.VERTICAL_TOP_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-5th-0/vert-top-pivot-0.gif" ) ) );
+
+             rooms[6].addRoomLink( rooms[0].getRoomLinks()[2] );
+
+           rooms[7].setFullName("White Tower - Meeting Room");
+           rooms[7].setShortName("meeting-room");
+           rooms[7].setInsertionPoint( new ScreenPoint(840,230) );
+
+             rooms[7].addRoomLink( rooms[6].getRoomLinks()[0] );
+             rooms[7].addRoomLink( rooms[6].getRoomLinks()[1] );
 
         // STEP 12 - Blight Refuge Building
            buildings = new Building[1];

@@ -24,7 +24,7 @@ package wotlas.common.universe;
   * @author Petrus
   * @see wotlas.common.universe.RoomLink
   */
- 
+
 public class Door
 {
  /*------------------------------------------------------------------------------------*/
@@ -32,7 +32,8 @@ public class Door
   /** Constructor
    */
    public Door() {}
-  
+
+ /*------------------------------------------------------------------------------------*/  
 }
 
         

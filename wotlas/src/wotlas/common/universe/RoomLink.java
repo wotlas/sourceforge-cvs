@@ -19,14 +19,15 @@
  
 package wotlas.common.universe;
 
+import java.awt.Rectangle;
+
  /** RoomLink class
   *
-  * @author Petrus
-  * @see wotlas.common.universe.FrontierZone
+  * @author Petrus, Aldiss
   * @see wotlas.common.universe.Door
   */
   
-public class RoomLink extends wotlas.common.universe.FrontierZone
+public class RoomLink extends ScreenZone
 { 
  /*------------------------------------------------------------------------------------*/
   
@@ -53,6 +54,15 @@ public class RoomLink extends wotlas.common.universe.FrontierZone
    public RoomLink() {}
  
  /*------------------------------------------------------------------------------------*/
+
+  /** Constructor with Rectangle.
+   */
+   public RoomLink(Rectangle r) {
+       super(r);
+   }
+ 
+ /*------------------------------------------------------------------------------------*/
+
   /*
    * List of setter and getter used for persistence
    */

@@ -24,6 +24,7 @@ import wotlas.common.Player;
 import wotlas.utils.Debug;
 
 import java.util.Hashtable;
+import java.awt.Rectangle;
 
  /** A TownMap represents a town in our Game Universe.
   *
@@ -48,13 +49,9 @@ public class TownMap
    */
     private String shortName;
 
-  /** X Position of the town on the WorldMap.
+  /** Rectangle of the town on the WorldMap.
    */
-    private int worldMapEnterX;
-
-  /** Y Position of the town on the WorldMap.
-   */
-    private int worldMapEnterY;
+    private Rectangle worldMapRectangle;
 
   /** Small Image (identifier) of this town for WorldMaps.
    */
@@ -121,20 +118,12 @@ public class TownMap
       return shortName;
     }
 
-    public void setWorldMapEnterX(int worldMapEnterX) {
-      this.worldMapEnterX = worldMapEnterX;
+    public void setWorldMapRectangle(Rectangle r) {
+      worldMapRectangle = r;
     }
 
-    public int getWorldMapEnterX() {
-      return worldMapEnterX;
-    }
-
-    public void setWorldMapEnterY(int worldMapEnterY) {
-      this.worldMapEnterY = worldMapEnterY;
-    }
-
-    public int getWorldMapEnterY() {
-      return worldMapEnterY;
+    public Rectangle getWorldMapRectangle() {
+      return worldMapRectangle;
     }
 
     public void setSmallTownImage(ImageIdentifier smallTownImage) {

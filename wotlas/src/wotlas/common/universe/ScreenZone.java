@@ -19,13 +19,15 @@
  
 package wotlas.common.universe;
 
+import java.awt.Rectangle;
+
  /** ScreenZone is a rectangle zone on the screen
   *
-  * @author Petrus
+  * @author Petrus, Aldiss
   * @see wotlas.common.universe.FrontierZone
   */
   
-public class ScreenZone extends java.awt.Rectangle
+public class ScreenZone extends Rectangle
 {
  /*------------------------------------------------------------------------------------*/
   
@@ -44,6 +46,16 @@ public class ScreenZone extends java.awt.Rectangle
    */
    public ScreenZone( int x, int y, int width, int height ) {
       super(x,y,width,height);
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Constructor wit Rectangle.
+   *
+   *  @param r
+   */
+   public ScreenZone( Rectangle r ) {
+      super(r);
    }
 
  /*------------------------------------------------------------------------------------*/

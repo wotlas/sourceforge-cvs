@@ -22,6 +22,7 @@ package wotlas.common.universe;
 import wotlas.libs.graphics2D.ImageIdentifier;
 
 import wotlas.utils.Debug;
+import java.awt.Rectangle;
 
  /** A Building of a town in our World. A building always belongs to a townMap.
   *
@@ -58,13 +59,9 @@ public class Building
    */
     private boolean hasBuildingExits;
 
-  /** X Position of the building on the TownMap.
+  /** Rectangle of the building on the TownMap.
    */
-    private int townMapEnterX;
-
-  /** Y Position of the town on the TownMap.
-   */
-    private int townMapEnterY;
+    private Rectangle townMapRectangle;
 
   /** Small Image (identifier) of this building for TownMaps.
    */
@@ -151,20 +148,12 @@ public class Building
       return hasBuildingExits;
     }
 
-    public void setTownMapEnterX(int townMapEnterX) {
-      this.townMapEnterX = townMapEnterX;
+    public void setTownMapRectangle(Rectangle townMapRectangle) {
+      this.townMapRectangle = townMapRectangle;
     }
 
-    public int getTownMapEnterX() {
-      return townMapEnterX;
-    }
-
-    public void setTownMapEnterY(int townMapEnterY) {
-      this.townMapEnterY = townMapEnterY;
-    }
-
-    public int getTownMapEnterY() {
-      return townMapEnterY;
+    public Rectangle getTownMapRectangle() {
+      return townMapRectangle;
     }
 
     public void setSmallBuildingImage(ImageIdentifier smallBuildingImage) {

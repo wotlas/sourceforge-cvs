@@ -19,12 +19,15 @@
  
 package wotlas.common.universe;
 
+import java.awt.Point;
+import java.awt.Rectangle;
+
  /** MapExit class
   *
   * @author Petrus
   */
-  
-public class MapExit extends FrontierZone
+
+public class MapExit extends ScreenZone
 {
   public final static byte INTERIOR_MAP_EXIT = 0;
   public final static byte BUILDING_EXIT     = 1;
@@ -48,6 +51,10 @@ public class MapExit extends FrontierZone
    * -1 if no target
    */
    public int targetMapExitID;
+
+  /** Eventual position on the target map (null if none)
+   */
+   public Point targetPosition;
    
   /** knowledge required to use MapExit
    * -1 if no knowledge required
@@ -59,6 +66,14 @@ public class MapExit extends FrontierZone
   /** Constructor
    */
    public MapExit() {}
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Constructor with Rectangle.
+   */
+   public MapExit(Rectangle r) {
+      super(r);
+   }
 
  /*------------------------------------------------------------------------------------*/
   /*
@@ -82,6 +97,12 @@ public class MapExit extends FrontierZone
   }
   public WotlasLocation getTargetWotlasLocation() {
     return targetWotlasLocation;
+  }
+  public void setTargetPosition(Point myTargetPosition) {
+    this.targetPosition = myTargetPosition;
+  }
+  public Point getTargetPosition() {
+    return targetPosition;
   }
   public void setTargetMapExitID(int myTargetMapExitID) {
     this.targetMapExitID = myTargetMapExitID;

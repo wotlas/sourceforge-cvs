@@ -134,7 +134,7 @@ public class ClientDirector
     properties = FileTools.loadPropertiesFile( DATABASE_CONFIG );
 
     if (properties==null) {
-      Debug.signal( Debug.FAILURE, null, "No valid client-database.cfg file found !" );
+      Debug.signal( Debug.FAILURE, null, "No valid client.cfg file found !" );
       Debug.exit();
     }
     

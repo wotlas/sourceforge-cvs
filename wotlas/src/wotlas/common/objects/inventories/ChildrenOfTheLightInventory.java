@@ -36,6 +36,15 @@ public class ChildrenOfTheLightInventory extends Inventory
 
  /*------------------------------------------------------------------------------------*/
 
+ /*------------------------------------------------------------------------------------*/
+
+  /** Constructor.
+   */
+    public ChildrenOfTheLightInventory() {
+        super();
+    }
+
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
   /** Get the belt weapon.

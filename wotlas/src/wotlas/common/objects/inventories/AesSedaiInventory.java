@@ -35,6 +35,14 @@ public class AesSedaiInventory extends Inventory
 {
 
  /*------------------------------------------------------------------------------------*/
+
+  /** Constructor.
+   */
+    public AesSedaiInventory() {
+        super();
+    }
+
+ /*------------------------------------------------------------------------------------*/
  
   /** Get the body armor.
    * @return null

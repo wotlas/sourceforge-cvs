@@ -34,8 +34,7 @@ import wotlas.common.objects.interfaces.InventoryInterface;
  * @see wotlas.common.objects.interfaces.InventoryInterface
  */
 
-public class Inventory implements InventoryInterface
-{
+public class Inventory implements InventoryInterface {
 
  /*------------------------------------------------------------------------------------*/
 
@@ -43,56 +42,62 @@ public class Inventory implements InventoryInterface
 
   /** The main armor. At least shirt ?
    */
-      private BodyArmor bodyArmor;
+      protected BodyArmor bodyArmor;
 
   /** The head armor ie helmet, cap, ... or none
    */
-   	  private HeadArmor headArmor;
+      protected HeadArmor headArmor;
 	  
   /*-------------- Weapon -----------*/
 
   /** The heavy weapon. May be sword, axe, ... or none
    */
-      private HeavyWeapon heavyWeapon;
+      protected HeavyWeapon heavyWeapon;
 	  
   /** The bow. May be bow, crossbow, ... or none
    */
-      private Bow bow;
+      protected Bow bow;
 
   /** The light weapons. May be dagger, knife, ... or none
    */
-      private LightWeapon beltWeapon,
-	  		  			  rightSleeveWeapon,leftSleeveWeapon,
-						  rightBootWeapon,leftBootWeapon;
+      protected LightWeapon beltWeapon,
+                            rightSleeveWeapon,leftSleeveWeapon,
+                            rightBootWeapon,leftBootWeapon;
   
   /*------------ Container ----------*/
 
   /** The purse.
    */
-      private Purse purse;
+      protected Purse purse;
  
   /** The bag.
    */
-   	  private Bag bag;
+      protected Bag bag;
 	  
   /** The belt.
    */
-   	  private Belt belt;
+      protected Belt belt;
 	
 	  
   /*---------- UsefulObject ---------*/
 
   /** The useful object equipped.
    */
-      private UsefulObject rightObject,leftObject;
+      protected UsefulObject rightObject,leftObject;
   
   /*-------------- Book -------------*/
   
   /** The book owned. Contains lots of things in different chapters.
    */
-      private Book book;
-	  
+      protected Book book;
+
  /*------------------------------------------------------------------------------------*/
+
+  /** Constructor.
+   */
+    public Inventory() {
+        book = new Book();
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  

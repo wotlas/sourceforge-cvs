@@ -998,12 +998,12 @@ public class WorldGenerator {
              rooms[1].addRoomLink( rooms[0].getRoomLinks()[0] );
 
 
-        // STEP 5 - Tar Valon White Tower - Hall
-           maps = new InteriorMap[1];
+        // STEP 11bis d - Tar Valon White Tower - Hall
+           maps = new InteriorMap[4];
+           buildings[4].setInteriorMaps( maps );
+
            map = new InteriorMap();
            maps[0] = map;
-
-           buildings[4].setInteriorMaps( maps );
 
            map.setInteriorMapID(0);
            map.setFullName("White Tower - Hall");
@@ -1016,7 +1016,7 @@ public class WorldGenerator {
            map.setMusicName("tv-white-tower-hall.mid");
 
 
-        // STEP 11 bis d - Rooms of White Tower Hall
+        // STEP 11 bis e - Rooms of White Tower Hall
            rooms = new Room[26];
            map = maps[0];
            map.setRooms( rooms );
@@ -1153,6 +1153,13 @@ public class WorldGenerator {
 
              rooms[9].addRoomLink( rooms[7].getRoomLinks()[1] );
 
+               mapExit = rooms[9].addMapExit( new ScreenRectangle(30,1110,20,70) );
+               mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,4,1,0) );
+               mapExit.setTargetPosition( new ScreenPoint(100,350) );
+               mapExit.setTargetOrientation( (float)Math.PI );
+
            rooms[10].setFullName("Accepted Quarters A");
            rooms[10].setShortName("accepted-A");
            rooms[10].setInsertionPoint( new ScreenPoint(250,300) );
@@ -1282,6 +1289,13 @@ public class WorldGenerator {
 
              rooms[20].addRoomLink( rooms[19].getRoomLinks()[0] );
 
+               mapExit = rooms[20].addMapExit( new ScreenRectangle(600,10,30,80) );
+               mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,4,2,0) );
+               mapExit.setTargetPosition( new ScreenPoint(400,50) );
+               mapExit.setTargetOrientation( (float)Math.PI );
+
            rooms[21].setFullName("Accepted Quarters B");
            rooms[21].setShortName("accepted-B");
            rooms[21].setInsertionPoint( new ScreenPoint(530,210) );
@@ -1335,6 +1349,306 @@ public class WorldGenerator {
            rooms[25].setInsertionPoint( new ScreenPoint(570,130) );
 
              rooms[25].addRoomLink( rooms[21].getRoomLinks()[3] );
+
+
+        // STEP 11 bis f - Tar Valon White Tower - Basement 0
+           map = new InteriorMap();
+           maps[1] = map;
+
+           map.setInteriorMapID(1);
+           map.setFullName("White Tower - South Basement");
+           map.setShortName("wt-basement-0");
+           map.setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/basement-15" ) );
+           map.setImageWidth(780);
+           map.setImageHeight(400);
+           map.setImageRegionWidth(195);
+           map.setImageRegionHeight(400);
+           map.setMusicName("dark-basement.mid");
+
+
+        // STEP 11 bis g - Rooms of White Tower Basement 0
+           rooms = new Room[11];
+           map.setRooms( rooms );
+           roomLink = null;
+
+           for(int i=0; i<11; i++ ) {
+               rooms[i] = new Room();
+               rooms[i].setRoomID(i);
+               rooms[i].setMaxPlayers(30);
+           }
+
+           rooms[0].setFullName("White Tower - Basement Stairs");
+           rooms[0].setShortName("basement-stairs");
+           rooms[0].setInsertionPoint( new ScreenPoint(70,340) );
+
+             roomLink = rooms[0].addRoomLink( new ScreenRectangle(10,230,70,10) );
+             roomLink.setRoom1ID(1);
+             roomLink.setRoom2ID(0);
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(140,320,20,70) );
+               mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,4,0,9) );
+               mapExit.setTargetPosition( new ScreenPoint(60,1140) );
+               mapExit.setTargetOrientation( 0.0f );
+
+           rooms[1].setFullName("White Tower - South Basement");
+           rooms[1].setShortName("basement-south");
+           rooms[1].setInsertionPoint( new ScreenPoint(330,190) );
+
+             roomLink = rooms[1].addRoomLink( new ScreenRectangle(130,230,30,10) );
+             roomLink.setRoom1ID(1);
+             roomLink.setRoom2ID(2);
+             roomLink.setDoor( new Door( 130, 232, -halfPI, DoorDrawable.HORIZONTAL_RIGHT_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/stone-30len-5th-3/hor-right-pivot-3.gif" ) ) );
+
+             roomLink = rooms[1].addRoomLink( new ScreenRectangle(300,110,10,30) );
+             roomLink.setRoom1ID(3);
+             roomLink.setRoom2ID(1);
+             roomLink.setDoor( new Door( 302, 110, halfPI, DoorDrawable.VERTICAL_TOP_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/stone-30len-5th-3/vert-top-pivot-0.gif" ) ) );
+
+             roomLink = rooms[1].addRoomLink( new ScreenRectangle(300,350,10,30) );
+             roomLink.setRoom1ID(4);
+             roomLink.setRoom2ID(1);
+             roomLink.setDoor( new Door( 302, 350, halfPI, DoorDrawable.VERTICAL_TOP_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/stone-30len-5th-3/vert-top-pivot-0.gif" ) ) );
+
+             roomLink = rooms[1].addRoomLink( new ScreenRectangle(510,150,30,10) );
+             roomLink.setRoom1ID(5);
+             roomLink.setRoom2ID(1);
+
+             roomLink = rooms[1].addRoomLink( new ScreenRectangle(510,230,30,10) );
+             roomLink.setRoom1ID(1);
+             roomLink.setRoom2ID(6);
+
+             roomLink = rooms[1].addRoomLink( new ScreenRectangle(610,85,30,10) );
+             roomLink.setRoom1ID(7);
+             roomLink.setRoom2ID(1);
+             roomLink.setDoor( new Door( 611, 87, -halfPI, DoorDrawable.HORIZONTAL_RIGHT_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/jail-6/hor-0.gif" ) ) );
+
+             roomLink = rooms[1].addRoomLink( new ScreenRectangle(610,230,30,10) );
+             roomLink.setRoom1ID(1);
+             roomLink.setRoom2ID(8);
+
+             roomLink = rooms[1].addRoomLink( new ScreenRectangle(710,85,30,10) );
+             roomLink.setRoom1ID(9);
+             roomLink.setRoom2ID(1);
+             roomLink.setDoor( new Door( 711, 87, -halfPI, DoorDrawable.HORIZONTAL_RIGHT_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/jail-6/hor-0.gif" ) ) );
+
+             roomLink = rooms[1].addRoomLink( new ScreenRectangle(710,230,30,10) );
+             roomLink.setRoom1ID(1);
+             roomLink.setRoom2ID(10);
+
+             rooms[1].addRoomLink( rooms[0].getRoomLinks()[0] );
+
+               mapExit = rooms[1].addMapExit( new ScreenRectangle(310,0,160,20) );
+               mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,4,2,1) );
+               mapExit.setTargetPosition( new ScreenPoint(90,700) );
+               mapExit.setTargetOrientation( (float)-halfPI );
+
+           rooms[2].setFullName("White Tower - Basement Store S1");
+           rooms[2].setShortName("basement-store");
+           rooms[2].setInsertionPoint( new ScreenPoint(130,260) );
+
+             rooms[2].addRoomLink( rooms[1].getRoomLinks()[0] );
+
+           rooms[3].setFullName("White Tower - Basement Corridor");
+           rooms[3].setShortName("basement-store");
+           rooms[3].setInsertionPoint( new ScreenPoint(220,110) );
+
+             rooms[3].addRoomLink( rooms[1].getRoomLinks()[1] );
+
+           rooms[4].setFullName("White Tower - Basement Store S2");
+           rooms[4].setShortName("basement-store");
+           rooms[4].setInsertionPoint( new ScreenPoint(230,330) );
+
+             rooms[4].addRoomLink( rooms[1].getRoomLinks()[2] );
+
+           rooms[5].setFullName("White Tower - Basement Store S3");
+           rooms[5].setShortName("basement-store");
+           rooms[5].setInsertionPoint( new ScreenPoint(520,90) );
+
+             rooms[5].addRoomLink( rooms[1].getRoomLinks()[3] );
+
+           rooms[6].setFullName("White Tower - Basement Store S4");
+           rooms[6].setShortName("basement-store");
+           rooms[6].setInsertionPoint( new ScreenPoint(530,300) );
+
+             rooms[6].addRoomLink( rooms[1].getRoomLinks()[4] );
+
+           rooms[7].setFullName("White Tower - Basement Cell");
+           rooms[7].setShortName("basement-cell");
+           rooms[7].setInsertionPoint( new ScreenPoint(610,40) );
+
+             rooms[7].addRoomLink( rooms[1].getRoomLinks()[5] );
+
+           rooms[8].setFullName("White Tower - Basement Store S5");
+           rooms[8].setShortName("basement-store");
+           rooms[8].setInsertionPoint( new ScreenPoint(600,280) );
+
+             rooms[8].addRoomLink( rooms[1].getRoomLinks()[6] );
+
+           rooms[9].setFullName("White Tower - Basement Cell");
+           rooms[9].setShortName("basement-cell");
+           rooms[9].setInsertionPoint( new ScreenPoint(710,40) );
+
+             rooms[9].addRoomLink( rooms[1].getRoomLinks()[7] );
+
+           rooms[10].setFullName("White Tower - Basement Store S6");
+           rooms[10].setShortName("basement-store");
+           rooms[10].setInsertionPoint( new ScreenPoint(700,280) );
+
+             rooms[10].addRoomLink( rooms[1].getRoomLinks()[8] );
+
+        // STEP 11 bis h - Tar Valon White Tower - Basement 1
+           map = new InteriorMap();
+           maps[2] = map;
+
+           map.setInteriorMapID(2);
+           map.setFullName("White Tower - North Basement");
+           map.setShortName("wt-basement-1");
+           map.setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/basement-16" ) );
+           map.setImageWidth(500);
+           map.setImageHeight(760);
+           map.setImageRegionWidth(500);
+           map.setImageRegionHeight(190);
+           map.setMusicName("dark-basement.mid");
+
+
+        // STEP 11 bis i - Rooms of White Tower Basement 1
+           rooms = new Room[6];
+           map.setRooms( rooms );
+           roomLink = null;
+
+           for(int i=0; i<6; i++ ) {
+               rooms[i] = new Room();
+               rooms[i].setRoomID(i);
+               rooms[i].setMaxPlayers(30);
+           }
+
+           rooms[0].setFullName("White Tower - Basement Stairs");
+           rooms[0].setShortName("basement-stairs");
+           rooms[0].setInsertionPoint( new ScreenPoint(340,50) );
+
+             roomLink = rooms[0].addRoomLink( new ScreenRectangle(190,20,10,80) );
+             roomLink.setRoom1ID(1);
+             roomLink.setRoom2ID(0);
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(450,20,20,80) );
+               mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,4,0,20) );
+               mapExit.setTargetPosition( new ScreenPoint(650,40) );
+               mapExit.setTargetOrientation( 0.0f );
+
+           rooms[1].setFullName("White Tower - North Basement");
+           rooms[1].setShortName("basement-north");
+           rooms[1].setInsertionPoint( new ScreenPoint(100,140) );
+
+             roomLink = rooms[1].addRoomLink( new ScreenRectangle(170,120,10,40) );
+             roomLink.setRoom1ID(1);
+             roomLink.setRoom2ID(2);
+             roomLink.setDoor( new Door( 171, 120, -halfPI, DoorDrawable.VERTICAL_TOP_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/stone-40len-8th-5/vert-top-pivot-0.gif" ) ) );
+
+             roomLink = rooms[1].addRoomLink( new ScreenRectangle(170,680,10,40) );
+             roomLink.setRoom1ID(1);
+             roomLink.setRoom2ID(3);
+             roomLink.setDoor( new Door( 171, 680, -halfPI, DoorDrawable.VERTICAL_TOP_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/stone-40len-8th-5/vert-top-pivot-0.gif" ) ) );
+
+             rooms[1].addRoomLink( rooms[0].getRoomLinks()[0] );
+
+               mapExit = rooms[1].addMapExit( new ScreenRectangle(10,740,160,20) );
+               mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,4,1,1) );
+               mapExit.setTargetPosition( new ScreenPoint(380,30) );
+               mapExit.setTargetOrientation( (float)halfPI );
+
+           rooms[2].setFullName("White Tower - Basement Store");
+           rooms[2].setShortName("basement-store");
+           rooms[2].setInsertionPoint( new ScreenPoint(300,130) );
+
+             rooms[2].addRoomLink( rooms[1].getRoomLinks()[0] );
+
+           rooms[3].setFullName("White Tower - Basement Store");
+           rooms[3].setShortName("basement-store");
+           rooms[3].setInsertionPoint( new ScreenPoint(230,690) );
+
+             roomLink = rooms[3].addRoomLink( new ScreenRectangle(320,660,30,10) );
+             roomLink.setRoom1ID(4);
+             roomLink.setRoom2ID(3);
+             roomLink.setDoor( new Door( 320, 660, -halfPI, DoorDrawable.HORIZONTAL_LEFT_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-5th-0/hor-left-pivot-2.gif" ) ) );
+
+             rooms[3].addRoomLink( rooms[1].getRoomLinks()[1] );
+
+           rooms[4].setFullName("White Tower - Restricted Access Store");
+           rooms[4].setShortName("basement-store");
+           rooms[4].setInsertionPoint( new ScreenPoint(330,600) );
+
+             roomLink = rooms[4].addRoomLink( new ScreenRectangle(320,550,30,10) );
+             roomLink.setRoom1ID(5);
+             roomLink.setRoom2ID(4);
+             roomLink.setDoor( new Door( 320, 550, halfPI, DoorDrawable.HORIZONTAL_RIGHT_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wall-7/hor-0.gif" ) ) );
+
+             rooms[4].addRoomLink( rooms[3].getRoomLinks()[0] );
+
+           rooms[5].setFullName("White Tower - Secret Store");
+           rooms[5].setShortName("basement-store");
+           rooms[5].setInsertionPoint( new ScreenPoint(320,400) );
+
+             rooms[5].addRoomLink( rooms[4].getRoomLinks()[0] );
+
+               mapExit = rooms[5].addMapExit( new ScreenRectangle(320,330,50,20) );
+               mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,4,3,0) );
+               mapExit.setTargetPosition( new ScreenPoint(375,330) );
+               mapExit.setTargetOrientation( (float)-halfPI );
+
+
+        // STEP 11 bis j - Tar Valon White Tower - Ways
+           map = new InteriorMap();
+           maps[3] = map;
+
+           map.setInteriorMapID(3);
+           map.setFullName("White Tower - The Ways");
+           map.setShortName("ways-wt");
+           map.setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/ways-17" ) );
+           map.setImageWidth(700);
+           map.setImageHeight(400);
+           map.setImageRegionWidth(175);
+           map.setImageRegionHeight(400);
+           map.setMusicName("ways.mid");
+
+
+        // STEP 11 bis k - Rooms of White Tower - Ways
+           rooms = new Room[1];
+           map.setRooms( rooms );
+
+           rooms[0] = new Room();
+           rooms[0].setRoomID(0);
+           rooms[0].setMaxPlayers(30);
+
+           rooms[0].setFullName("The Ways - White Tower Entrance");
+           rooms[0].setShortName("ways");
+           rooms[0].setInsertionPoint( new ScreenPoint(370,300) );
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(360,350,50,20) );
+               mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,4,2,5) );
+               mapExit.setTargetPosition( new ScreenPoint(335,355) );
+               mapExit.setTargetOrientation( (float)halfPI );
+
 
         // STEP 12 - Blight Refuge Building
            buildings = new Building[1];

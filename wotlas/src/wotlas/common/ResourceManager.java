@@ -70,13 +70,13 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** A part of the Wotlas client JAR file name (without the extension .jar)
+   /** A part of the Wotlas client JAR file name.
     */
-     public static final String WOTLAS_CLIENT_JAR = "client";
+     public static final String WOTLAS_CLIENT_JAR = "client.jar";
 
-   /** A part of the Wotlas Server JAR file name (without the extension .jar).
+   /** A part of the Wotlas Server JAR file name.
     */
-     public static final String WOTLAS_SERVER_JAR = "server";
+     public static final String WOTLAS_SERVER_JAR = "server.jar";
 
    /** Wotlas root dir for resources located in a JAR. We'll search in this
     *  directory for every kind of resources.
@@ -226,7 +226,7 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
               return; // ResourceManager created
            }
 
-           Tools.displayDebugMesage("Wrong Jar Name","The Jar file name should contain at least a 'client' or 'server' keyword");
+           Tools.displayDebugMesage("Wrong Jar Name","The Jar file name should end with a 'client' or 'server' keyword");
            Debug.exit();
      }
 
@@ -256,26 +256,26 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-    /** Returns the name of the JAR we are into.
+    /** Returns the name of the JAR we are into. We return the path+name.
      *  @return null if we are not in a jar.
      */
         protected String getJarName() {
              URL url = this.getClass().getResource("ResourceManager.class");
-           
+
              if(url==null)
                 return null;
 
           // check the URL format
              String sUrl = ""+url;
 
-             if(!sUrl.startsWith("jar"))
+             if(!sUrl.startsWith("jar:"))
                 return null;
 
           // We are in a Jar, we extract the jar name.
              int end = sUrl.indexOf('!');
              if(end<0) return null;
 
-             int beg = sUrl.lastIndexOf("/",end);
+             int beg = sUrl.indexOf("/");
              if(beg<0) return null;
 
              return sUrl.substring(beg+1,end);
@@ -286,7 +286,7 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
    /** Repares the class path with the eventually missing current jar name.
     */
       protected void repairClassPath() {
-           if( Tools.findJarName(jarName)!=null )
+           if( !Tools.hasJar(jarName) )
                return; // our classpath has the current Jar name... nothing to repair.
 
            System.setProperty( "java.class.path", System.getProperty("java.class.path", ".")

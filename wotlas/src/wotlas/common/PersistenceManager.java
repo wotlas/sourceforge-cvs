@@ -30,7 +30,7 @@ import java.io.File;
 
  /** Persistence Manager for Wotlas Servers. The persistence manager is the central
   * class where are saved/loaded data for the game. Mainly, this common part deals with 
-  * World data ( wotlas.common.universe ).
+  * World data ( wotlas.common.universe ) and ServerConfig.
   *
   * @author Aldiss
   * @see wotlas.libs.persistence.PropertiesConverter
@@ -54,7 +54,9 @@ public class PersistenceManager
 
   /** Server Config
    */
-   public final static String SERVERCONFIG = "../src/config/server.cfg";
+   public final static String SERVERS_HOME = "servers";
+   public final static String SERVERS_PREFIX = "server-";
+   public final static String SERVERS_SUFFIX = ".cfg";
 
  /*------------------------------------------------------------------------------------*/
 
@@ -294,15 +296,18 @@ public class PersistenceManager
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Loads the server config located in config/server.cfg
+  /** Loads the server config associated to the given serverID.
    *
+   * @param serverID id of the server which config is to be loaded.
    * @return server config
    */
-
-   public ServerConfig loadServerConfig()
+   public ServerConfig loadServerConfig( int serverID )
    {
+      String serverFile = databasePath+File.separator+SERVERS_HOME+File.separator
+                            +SERVERS_PREFIX+serverID+SERVERS_SUFFIX;
+
       try{
-          return (ServerConfig) PropertiesConverter.load( SERVERCONFIG );
+          return (ServerConfig) PropertiesConverter.load( serverFile );
       }
       catch( PersistenceException pe ) {
           Debug.signal( Debug.ERROR, this, "Failed to load server config: "+pe.getMessage() );
@@ -312,16 +317,18 @@ public class PersistenceManager
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Saves the server config to config/server.cfg
+  /** Saves the server config to the SERVERS_HOME directory.
    *
    *  @param serverConfig server config
    *  @return true in case of success, false if an error occured.
    */
-
    public boolean saveServerConfig( ServerConfig serverConfig )
    {
+      String serverFile = databasePath+File.separator+SERVERS_HOME+File.separator
+                            +SERVERS_PREFIX+serverConfig.getServerID()+SERVERS_SUFFIX;
+
       try{
-          PropertiesConverter.save( serverConfig, SERVERCONFIG );
+          PropertiesConverter.save( serverConfig, serverFile );
           return true;
       }
       catch( PersistenceException pe ) {
@@ -332,4 +339,47 @@ public class PersistenceManager
 
  /*------------------------------------------------------------------------------------*/
 
+  /** Loads all the server config files found in SERVERS_HOME.
+   *
+   * @param serverID id of the server which config is to be loaded.
+   * @return server config
+   */
+   public ServerConfig[] loadServerConfigs()
+   {
+      String serversHome = databasePath+File.separator+SERVERS_HOME;
+      
+      File configFileList[] = new File(serversHome).listFiles();
+
+     // how many server files ?
+        int nbFiles=0;
+
+        for( int i=0; i<configFileList.length; i++ )
+           if(configFileList[i].isFile() && configFileList[i].getName().endsWith(SERVERS_SUFFIX) )
+              nbFiles++;
+       
+     // create ServerConfig array
+        if(nbFiles==0)
+           return null;
+
+        ServerConfig configList[] = new ServerConfig[nbFiles];
+        int index=0;
+
+      try
+      {
+        for( int i=0; i<configFileList.length; i++ )
+           if(configFileList[i].isFile() && configFileList[i].getName().endsWith(SERVERS_SUFFIX) ){
+               configList[index] = (ServerConfig) PropertiesConverter.load( serversHome
+                                                  +File.separator+configFileList[i].getName() );
+               index++;
+           }
+      }
+      catch( PersistenceException pe ) {
+          Debug.signal( Debug.ERROR, this, "Failed to load server config: "+pe.getMessage() );
+          return null;
+      }
+
+     return configList;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

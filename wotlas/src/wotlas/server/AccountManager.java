@@ -148,6 +148,17 @@ public class AccountManager
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To remove an account (note that we don't check if it already exists nor we delete
+   *  associated resources). Use with care !
+   *
+   * @param accountName name of the account to remove
+   */
+     public synchronized void removeAccount( String accountName ) {
+         accounts.remove( accountName );
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** To get an account from its name.
    *
    * @param accountName the account name...
@@ -162,9 +173,10 @@ public class AccountManager
   /** To delete an account from its name.
    *
    * @param accountName the account name...
+   * @param closeIfConnected if true we close the player's connection if he is connected.
    * @return true if the account was deleted.
    */
-     public synchronized boolean deleteAccount( String accountName ) {
+     public synchronized boolean deleteAccount( String accountName, boolean closeIfConnected ) {
            PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
            WorldManager wManager = DataManager.getDefaultDataManager().getWorldManager();
 
@@ -179,7 +191,7 @@ public class AccountManager
         // we remove the account hashmap entry
            accounts.remove( accountName );
 
-           if( account.getPlayer().isConnectedToGame() ) {
+           if( closeIfConnected && account.getPlayer().isConnectedToGame() ) {
                account.getPlayer().closeConnection();
                Debug.signal( Debug.WARNING, this, "Client connection was closed during the delete request.");
            }
@@ -191,7 +203,7 @@ public class AccountManager
            if( !pm.deleteAccount( accountName ) ) {
                Debug.signal( Debug.ERROR, this, "Failed to delete Account files: "+accountName );
                return true; // account erased but some files remain !
-           }           
+           }
 
            return true;
      }

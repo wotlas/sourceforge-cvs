@@ -154,7 +154,7 @@ public class AccountServer extends NetServer
             // The account exists... but do we have the right password ?
                if( account.isRightPassword( password ) ) {
                 // ok we delete the account...
-                   if( manager.deleteAccount( accountName ) ) {
+                   if( manager.deleteAccount( accountName, true ) ) {
                        Debug.signal( Debug.NOTICE, this, "Account "+accountName+" deleted successfully...");
                        refuseClient( personality, "Account Deleted SuccessFully." );
                        return;
@@ -179,6 +179,8 @@ public class AccountServer extends NetServer
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To get a valid ID for a new client. The new ID is saved on disk.
+   */
     synchronized public int getNewLocalClientID() {
         clientCounter++;
 

@@ -128,10 +128,11 @@ public class JChatDisplay extends LogStream
     text = Tools.subString(text, ";)",  "<img width=15 height=15 src='file:../base/gui/chat/wink.gif'>");
 
     text = Tools.subString(text, "<|",  "<img width=15 height=15 src='file:../base/gui/chat/rolleyes.gif'>");
-    text = Tools.subString(text, ":/ ",  "<img width=15 height=22 src='file:../base/gui/chat/confused.gif'> ");
+    text = Tools.subString(text, ":/ ",  "<img width=15 height=22 src='file:../base/gui/chat/confused.gif'>");
+
     text = Tools.subString(text, ">|",  "<img width=15 height=15 src='file:../base/gui/chat/shake.gif'>");
     text = Tools.subString(text, ">)",  "<img width=15 height=15 src='file:../base/gui/chat/devil.gif'>");
-    text = Tools.subString(text, ">D",  "<img width=15 height=15 src='file:../base/gui/chat/evilgrin.gif'>");
+    text = Tools.subString(text, ">D ",  "<img width=15 height=15 src='file:../base/gui/chat/evilgrin.gif'>");
     text = Tools.subString(text, ">(",  "<img width=16 height=16 src='file:../base/gui/chat/madfire.gif'>");
 
     text = Tools.subString(text, ";P",  "<img width=15 height=15 src='file:../base/gui/chat/flirt.gif'>");
@@ -150,6 +151,9 @@ public class JChatDisplay extends LogStream
    * @param text string to print
    */  
   protected void printedText( final String text ) {
+
+    if(messagesPane==null || text==null || text.length()==0)
+       return; // nothing to print... or constructor not fully initialized
     
     // too much messages displayed ?
     msg_number++;
@@ -164,12 +168,14 @@ public class JChatDisplay extends LogStream
     }
     
     strBuffer += text + "\n";
+
   	Runnable runnable = new Runnable() {
-      public void run() {
-        messagesPane.setText(strBuffer);
-        messagesPane.repaint();
-      }
-    };
+           public void run() {
+              messagesPane.setText(strBuffer);
+              messagesPane.repaint();
+           }
+        };
+
     SwingUtilities.invokeLater( runnable );
     
   }

@@ -18,7 +18,7 @@
 
         <!-- Possible value are here 'classic' if you want to use Javac
              or 'jikes' if you want to use jikes -->
-        <property name="build.compiler" value="jikes"/>
+        <property name="build.compiler" value="classic"/>
 
 
         <property name="debug" value="off"/>
@@ -27,11 +27,11 @@
         
         <property name="src.dir" value="../src"/>
         <property name="lib.dir" value="../lib"/>
-        <property name="packages" value="wotlas*"/>
+        <property name="wotlas-packages" value="wotlas.*"/>
         
         <property name="build.src" value="../src"/>
         <property name="build.dest" value="../classes"/>
-        <property name="build.javadocs" value="../docs/api"/>
+        <property name="build.javadoc" value="../docs/apis"/>
 
         <property name="alice.dir" value="../../alice/ProgramD"/>
         <property name="alice-classpath"  value="${alice.dir}/lib/aliceserver.jar"/>
@@ -115,7 +115,7 @@
         <javac srcdir="${build.src}"
             destdir="${build.dest}"
             includes="wotlas/server/**"
-            excludes="wotlas/server/bots/alice/**"
+            excludes="wotlas/server/bots/alice/server/**"
             debug="${debug}"
             deprecation="${deprecation}"
             optimize="${optimize}"/>
@@ -172,15 +172,14 @@
 
     <!-- COMPILE WOTLAS's ALICEBOT LISTENER -->
 
-    <target name="alice" depends="prepare,clean,libs,utils">
+    <target name="alice" depends="prepare,clean">
         <echo message="Compiling Wotlas Alice Listener..."/>
         <echo message="Note that other wotlas classes have been deleted..."/>
         <echo message=""/>
 
         <javac srcdir="${build.src}"
             destdir="${build.dest}"
-            includes="wotlas/server/bots/alice/**"
-            excludes="wotlas/common/**"
+            includes="wotlas/server/bots/alice/server/**"
             debug="${debug}"
             classpath="${alice-classpath}"
             deprecation="${deprecation}"
@@ -198,11 +197,11 @@
     <!-- =================================================================== -->
     <!-- Creates the API documentation                                       -->
     <!-- =================================================================== -->
-    <target name="javadoc">
-        <mkdir dir="${build.javadocs}"/>
-        <javadoc packagenames="${packages}"
+    <target name="javadoc" depends="init">
+        <mkdir dir="${build.javadoc}"/>
+        <javadoc packagenames="${wotlas-packages}"
             sourcepath="${build.src}"
-            destdir="${build.javadocs}"
+            destdir="${build.javadoc}"
             author="true"
             version="true"
             use="true"

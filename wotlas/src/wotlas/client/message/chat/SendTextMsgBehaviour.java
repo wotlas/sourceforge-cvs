@@ -63,15 +63,22 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
           DataManager dataManager = (DataManager) context;
           PlayerImpl player = dataManager.getMyPlayer();          
           
-       // Private message
+       // Send a private message
           if (message.startsWith("/msg:")) {
             JChatRoom chatRoom = dataManager.getChatPanel().getJChatRoom(chatRoomPrimaryKey);
             chatRoom.appendText("<font color='brown'><i> ** [" + senderFullName + "] " + message.substring(5) + " ** </i></font>");
             return;
           }
+       // Find a player
           else if(message.startsWith("/find:")) {
             JChatRoom chatRoom = dataManager.getChatPanel().getJChatRoom(chatRoomPrimaryKey);
             chatRoom.appendText("<font color='brown'><i>"+message.substring(6)+".</i></font>");
+            return;
+          }
+       // Get a list of online players
+          else if(message.startsWith("/who")) {
+            JChatRoom chatRoom = dataManager.getChatPanel().getJChatRoom(chatRoomPrimaryKey);
+            chatRoom.appendText("<font color='brown'>"+message.substring(4)+"</font>");
             return;
           }
             

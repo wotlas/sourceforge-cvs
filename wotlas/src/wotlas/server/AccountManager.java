@@ -197,5 +197,28 @@ public class AccountManager
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get a list of online players.
+   *
+   * @return a list of online players
+   */
+   public synchronized HashMap getOnlinePlayers() {
+     // HashMap init. ( initial size is Nb Accounts/2 )
+     HashMap onlinePlayers = new HashMap((int)accounts.size()/2);
+     
+     Iterator it = accounts.values().iterator();
+     PlayerImpl player;
+     
+     while ( it.hasNext() ) {
+       player = ( (GameAccount) it.next() ).getPlayer();
+       if (player.isConnectedToGame()) {
+         onlinePlayers.put(player.getPrimaryKey(), player);
+       }
+     }
+     
+     return onlinePlayers;
+   }
+   
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
 

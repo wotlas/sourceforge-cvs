@@ -72,8 +72,16 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
 
     // 0.1 - test shortcut/commands...
        if(message.charAt(0)=='/') {
-
-          if(message.equals("/blackajah") && voiceSoundLevel==ChatRoom.SHOUTING_VOICE_LEVEL) {
+          if( message.equals("/who") ) {
+              HashMap onlinePlayers = DataManager.getDefaultDataManager().getAccountManager().getOnlinePlayers();
+              Iterator it = onlinePlayers.values().iterator();
+              PlayerImpl onlinePlayer;
+              message += onlinePlayers.size() + " online players:";
+              while ( it.hasNext() ) {
+                onlinePlayer = (PlayerImpl) it.next();
+                message += "<br>" + onlinePlayer.getPlayerName() + " <i> ( " + onlinePlayer.getPrimaryKey() + " )</i>";
+              }                        
+          } else if (message.equals("/blackajah") && voiceSoundLevel==ChatRoom.SHOUTING_VOICE_LEVEL) {
 
               WotCharacter wotC = player.getWotCharacter();
        

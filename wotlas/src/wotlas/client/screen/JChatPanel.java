@@ -45,27 +45,27 @@ import java.util.Hashtable;
 public class JChatPanel extends JPanel implements MouseListener, ActionListener
 {
 
- /*------------------------------------------------------------------------------------*/  
-   
+ /*------------------------------------------------------------------------------------*/
+
   ImageIcon iconUp = new ImageIcon("../base/gui/pin.gif");
-  
+
   /** Our tabbedPane
    */
   JTabbedPane tabbedPane;
-  
+
   /** Button to create a new chatRoom
    */
   JButton b_createChatRoom;
-  
-  
+
+
   /** Button to leave the chatRoom
    */
   JButton b_leaveChatRoom;
-  
+
   /** TextField where player writes messages
    */
   JTextField inputBox;
-  
+
   /** Voice Sound Level
    */
   JSlider chatVoiceLevel;
@@ -73,11 +73,15 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
   /** Primary key of current ChatRoom
    */
   String currentPrimaryKey;
-   
- /*------------------------------------------------------------------------------------*/  
- 
+
+  /** Last message in input box
+   */
+  String lastMessage;
+
+ /*------------------------------------------------------------------------------------*/
+
   /** Constructor.
-   */ 
+   */
   public JChatPanel() {
     super();
 
@@ -86,19 +90,19 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     // NORTH
     JToolBar chatToolbar = new JToolBar();
     chatToolbar.setFloatable(false);
-        
+
     b_createChatRoom = new JButton(new ImageIcon("../base/gui/chat-new.gif"));
     b_createChatRoom.setActionCommand("createChatRoom");
     b_createChatRoom.addActionListener(this);
     b_createChatRoom.setToolTipText("Create a new chat room");
     chatToolbar.add(b_createChatRoom);
-    
+
     b_leaveChatRoom = new JButton(new ImageIcon("../base/gui/chat-leave.gif"));
     b_leaveChatRoom.setActionCommand("leaveChatRoom");
     b_leaveChatRoom.addActionListener(this);
     b_leaveChatRoom.setToolTipText("Leave the current chat room");
     chatToolbar.add(b_leaveChatRoom);
-        
+
     // SOUTH
     JPanel bottomChat = new JPanel(false);
 //    bottomChat.setLayout(new BorderLayout());
@@ -109,9 +113,15 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     inputBox.getCaret().setVisible(true);
     inputBox.addKeyListener(new KeyAdapter() {
         public void keyReleased(KeyEvent e) {
-          if ( e.getKeyCode()==KeyEvent.VK_ENTER )
-            okAction();
+          if ( e.getKeyCode()==KeyEvent.VK_UP )  {
+            inputBox.setText(lastMessage);
+            return;
           }
+          if ( e.getKeyCode()==KeyEvent.VK_ENTER ) {
+            okAction();
+            return;
+          }
+        }
     });
 
 //    bottomChat.add("Center", inputBox);
@@ -132,19 +142,19 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     bottomChat.add(chatVoiceLevel); // MasterBob revision
     bottomChat.add(inputBox); // MasterBob revision
 
-    
+
     setLayout(new BorderLayout());
     add("North", chatToolbar);
     add("Center", tabbedPane);
     add("South", bottomChat);
-    
+
     // Create main ChatRoom
     ChatRoom mainChat = new ChatRoom();
     mainChat.setPrimaryKey(ChatRoom.DEFAULT_CHAT);
     mainChat.setName("");
     JChatRoom jchatRoom = addJChatRoom(mainChat);
     currentPrimaryKey = ChatRoom.DEFAULT_CHAT;
-    
+
     jchatRoom.addPlayer(DataManager.getDefaultDataManager().getMyPlayer().getPrimaryKey(), DataManager.getDefaultDataManager().getMyPlayer().getFullPlayerName());
   }
 
@@ -155,7 +165,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
   public String getMyCurrentChatPrimaryKey() {
        return currentPrimaryKey;
   }
-  
+
   /** To set input box text
    *
    * @param text the new text of input box
@@ -164,7 +174,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     inputBox.setText(text);
   }
 
- /*------------------------------------------------------------------------------------*/  
+ /*------------------------------------------------------------------------------------*/
 
   /** To enable/disable a chatRoom
    *
@@ -180,7 +190,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     }
   }
 
- /*------------------------------------------------------------------------------------*/  
+ /*------------------------------------------------------------------------------------*/
 
   /** To reset the state of the JChatPanel
    */
@@ -198,7 +208,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
 
             if( !tabbedPane.getComponentAt(i).getName().equals(ChatRoom.DEFAULT_CHAT)  ) {
                 tabbedPane.remove(i);
-                if (DataManager.SHOW_DEBUG)                
+                if (DataManager.SHOW_DEBUG)
                    System.out.println("tab removed");
             }
             else {
@@ -212,7 +222,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
 //       addPlayer( ChatRoom.DEFAULT_CHAT, DataManager.getDefaultDataManager().getMyPlayer() );
    }
 
- /*------------------------------------------------------------------------------------*/  
+ /*------------------------------------------------------------------------------------*/
 
   /** To set the current ChatRoom.
    */
@@ -227,7 +237,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     } else {
       tabbedPane.setEnabledAt(0, false);
     }
-      
+
     for (int i=1; i<tabbedPane.getTabCount();i++) {
       if ( tabbedPane.getComponentAt(i).getName().equals(primaryKey) ) {
            tabbedPane.setEnabledAt(i, true);
@@ -236,7 +246,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
            found = true;
       }
       else {
-           tabbedPane.setEnabledAt(i, false);           
+           tabbedPane.setEnabledAt(i, false);
            JChatRoom jchatRoom = (JChatRoom) tabbedPane.getComponentAt(i);
            jchatRoom.removeAllPlayers(); // we remove all the players of disabled chats...
       }
@@ -245,7 +255,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     return found;
   }
 
- /*------------------------------------------------------------------------------------*/  
+ /*------------------------------------------------------------------------------------*/
 
   /** To add a JChatRoom.<br>
    * called by wotlas.client.message.chat.ChatRoomCreatedMessage
@@ -265,7 +275,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
 
     return jchatRoom;
   }
-  
+
   /** To remove a JChatRoom.
    *
    * @param primaryKey ChatRoom primary key
@@ -293,7 +303,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
       System.out.println("ERROR : Couldn't removeJChatRoom");
     return false;
   }
-  
+
   /** To remove currentChatRoom
    *
   public void removeCurrentChatRoom() {
@@ -309,15 +319,15 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
      else
            b_createChatRoom.setEnabled(true);
   }
-*/  
+*/
   /** To change the title of main JChatRoom associated to the room (first index)
    */
-  public void changeMainJChatRoom(String roomName) {    
+  public void changeMainJChatRoom(String roomName) {
     tabbedPane.setTitleAt(0, roomName);
     JChatRoom jchatRoom = (JChatRoom) tabbedPane.getComponentAt(0);
     jchatRoom.removeAllPlayers();
   }
-  
+
   /** To get a JChatRoom.
    *
    * @param primaryKey primary key of JChatRoom we want to get
@@ -334,7 +344,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
       System.out.println("ERROR : Couldn't getJChatRoom");
     return null;
   }
-  
+
   /** To get current JChatRoom.
    */
   public JChatRoom getCurrentJChatRoom() {
@@ -358,8 +368,8 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     return false;
   }
 */
- /*------------------------------------------------------------------------------------*/  
-  
+ /*------------------------------------------------------------------------------------*/
+
   /** To add a player to a JChatRoom.
    *
    * @param primaryKey primary key of ChatRoom to modify
@@ -377,7 +387,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
       System.out.println("ERROR : Couldn't addPlayer");
     return false;
   }
-  
+
   /** To remove a player from a ChatRoom.
    *
    * @param primaryKey primary key of ChatRoom to modify
@@ -395,7 +405,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
       System.out.println("ERROR : Couldn't removePlayer");
     return false;
   }
-  
+
   /** To get the list of players of a ChatRoom
    *
    * @param primaryKey primary key of the ChatRoom
@@ -412,24 +422,27 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
       System.out.println("ERROR : Couldn't get players");
     return null;
   }
-   
- /*------------------------------------------------------------------------------------*/ 
-  
+
+ /*------------------------------------------------------------------------------------*/
+
   /** To write some text in client's window
    */
-  
- /*------------------------------------------------------------------------------------*/ 
+
+ /*------------------------------------------------------------------------------------*/
 
   /** action when the user wants to send a message
    */
   private void okAction() {
-    String message = inputBox.getText();
+    String message;
+
+    lastMessage = inputBox.getText();
+    message = inputBox.getText();
 
     if(message.length()==0)
       return;
 
     DataManager dManager = DataManager.getDefaultDataManager();
-    
+
     // Shortcuts
     if (message.startsWith("/whisper")) {
       chatVoiceLevel.setValue(ChatRoom.WHISPERING_VOICE_LEVEL);
@@ -467,7 +480,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     chatVoiceLevel.setValue(ChatRoom.NORMAL_VOICE_LEVEL);
   }
 
- /*------------------------------------------------------------------------------------*/ 
+ /*------------------------------------------------------------------------------------*/
 
 /** ActionListener Implementation **/
 
@@ -475,7 +488,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
    */
   public void actionPerformed(ActionEvent e) {
       String actionCommand = e.getActionCommand();
- 
+
       if (actionCommand == null)
           return;
 
@@ -486,16 +499,16 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
 
       if( !myPlayer.getLocation().isRoom() ) {
           JOptionPane.showMessageDialog(null, "Sorry, but you can not create/leave chat channels\n"
-                                        +"on World/Town Maps.", "INFORMATION", JOptionPane.INFORMATION_MESSAGE); 
+                                        +"on World/Town Maps.", "INFORMATION", JOptionPane.INFORMATION_MESSAGE);
           return;
       }
-    
+
     // 1 - Get Button
       if (actionCommand.equals("createChatRoom")) {
-        
+
          WotlasLocation chatRoomLocation = myPlayer.getLocation();
 
-         String chatRoomName = JOptionPane.showInputDialog("Please enter a Name:"); 
+         String chatRoomName = JOptionPane.showInputDialog("Please enter a Name:");
 
          if( chatRoomName.length()==0 )
              return;
@@ -518,13 +531,13 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
       }
       else {
         if (DataManager.SHOW_DEBUG) {
-          System.out.println("Err : unknown actionCommand");      
+          System.out.println("Err : unknown actionCommand");
           System.out.println("No action command found!");
         }
-      }    
+      }
   }
 
- /*------------------------------------------------------------------------------------*/ 
+ /*------------------------------------------------------------------------------------*/
 
 /** MouseListener Implementation **/
 

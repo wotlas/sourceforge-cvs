@@ -199,4 +199,13 @@ public class Debug {
 
  /*------------------------------------------------------------------------------------*/
 
+  /** To flush the printStream.
+   *  @param out PrintStream to use.
+   */
+     static public void flushPrintStream() {
+     	 out.flush();
+     }
+
+ /*------------------------------------------------------------------------------------*/
+
 }

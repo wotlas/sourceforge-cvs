@@ -145,8 +145,7 @@ public class Sprite extends Drawable implements DrawableOwner {
    */
     public void setDynamicImageFilter( DynamicImageFilter imageFilter ) {
         if (imageFilters==null) {
-            imageFilters = new DynamicImageFilter[1];
-            System.out.println("Adding a first new ImageFilter");
+            imageFilters = new DynamicImageFilter[1];            
             imageFilters[0] = imageFilter;            
             return;
         }
@@ -154,15 +153,13 @@ public class Sprite extends Drawable implements DrawableOwner {
         // Search for an existing filter of same class        
         Class filterClass = imageFilter.getClass();
         for (int i=0; i<imageFilters.length; i++) {
-            if ( filterClass.isInstance(imageFilters[i]) ) {
-                System.out.println("Updating an existing ImageFilter");
+            if ( filterClass.isInstance(imageFilters[i]) ) {                
                 imageFilters[i] = imageFilter;
                 return;
             }
         }
         
-        // No existing similar filter found : create a new one
-        System.out.println("Adding a new ImageFilter");
+        // No existing similar filter found : create a new one        
         DynamicImageFilter[] myImageFilters = new DynamicImageFilter[imageFilters.length+1];
         System.arraycopy(imageFilters, 0, myImageFilters, 0, imageFilters.length);
         myImageFilters[imageFilters.length] = imageFilter;

@@ -46,10 +46,9 @@ public class GrayMask
     short[][] mask = new short[imgWidth][imgHeight];
 
     for (int j=0; j<imgHeight; j++) {
-      for (int i=0; i<imgWidth; i++) {
-        mask[i][j] = (short) buffImg.getRGB(i, j);        
-      }
-      System.out.print("\n");
+      for (int i=0; i<imgWidth; i++) {        
+        mask[i][j] = (short) (buffImg.getRGB(i, j) & 0xff); // Get the blue color        
+      }      
     }
     return mask;
   }

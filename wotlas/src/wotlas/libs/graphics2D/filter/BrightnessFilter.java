@@ -41,7 +41,7 @@ public class BrightnessFilter implements DynamicImageFilter {
             
       static private int tilesize;
       
-      private short brightness;
+      private float brightness;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -90,7 +90,7 @@ public class BrightnessFilter implements DynamicImageFilter {
     */          
      public void setBrightness(float x, float y) {
         if (brightnessMask!=null)
-            brightness = brightnessMask[(int) (x/tilesize)][(int) (y/tilesize)];
+            brightness = ((float) brightnessMask[(int) (x/tilesize)][(int) (y/tilesize)]-127)/255;
      }
      
 
@@ -114,7 +114,7 @@ public class BrightnessFilter implements DynamicImageFilter {
            Color.RGBtoHSB(redIndex, greenIndex, blueIndex, hsbvals);
            
            // Color replace
-           float newBrightness = hsbvals[2]-brightness;
+           float newBrightness = hsbvals[2]+brightness;
            if (newBrightness<0) {
            	newBrightness = 0;
            } else {

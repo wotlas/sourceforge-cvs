@@ -222,7 +222,7 @@ public class InteriorMapData implements MapData {
           File brightnessMaskFile = gDirector.getImageLibrary().getImageFile( brightnessMaskID );
           
           if(brightnessMaskFile!=null)
-             bufIm2 = ImageLibrary.loadBufferedImage( brightnessMaskFile.getPath(), BufferedImage.TYPE_USHORT_GRAY );
+             bufIm2 = ImageLibrary.loadBufferedImage( brightnessMaskFile.getPath(), BufferedImage.TYPE_INT_ARGB  );
        }
 
        if(bufIm2==null) {

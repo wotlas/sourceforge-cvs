@@ -268,7 +268,8 @@ public class AStarDouble
       nodes.removeFirstElement();
       addToNodes(children, nodes);
     }
-    System.out.println("no path found");
+    if (DataManager.SHOW_DEBUG)
+      System.out.println("no path found");
     nodes.removeAllElements();
     open.clear();
     closed.clear();
@@ -505,7 +506,8 @@ public class AStarDouble
     if (SHOW_DEBUG)
       System.out.print(pointGoal);
     if ( (!aStar.isValidGoal(pointGoal)) ) {
-      System.err.println("error : invalid point");
+      if (DataManager.SHOW_DEBUG)
+        System.err.println("error : invalid point");
       return null;
     }
     if (SHOW_DEBUG)
@@ -656,5 +658,27 @@ public class AStarDouble
     return true; // success ! found valid path between these two points!
   }
 
+ /*------------------------------------------------------------------------------------*/
+ 
+  /** To dynamically modify the mask setting all pixels of a rectangle to true
+   *
+   * @param cr the rectangle to clean (in screen pixels coordinate)
+   * @param maskTileSize mask tile size (in pixels)
+   */
+  public void cleanRectangle(Rectangle cr, int maskTileSize) {
+    ;
+  }
+  
+  /** To dynamically modify the mask setting all pixels of a rectangle to false
+   *
+   * @param cr the rectangle to fill (in screen pixels coordinate)
+   * @param maskTileSize mask tile size (in pixels)
 
+   */
+  public void fillRectangle(Rectangle fr, int maskTileSize) {
+    ;
+  }
+  
+ /*------------------------------------------------------------------------------------*/
+   
 }

@@ -154,14 +154,10 @@ public class PlayerImpl implements Player, NetConnectionListener
              int worldID = worldManager.getAValidWorldID();
              
              if( worldID<0 )
-                 Debug.signal( Debug.WARNING, this, "No world data given to initialize player." );
+                 Debug.signal( Debug.CRITICAL, this, "No world data given to initialize player." );
 
-             location = new WotlasLocation();
+             location = new WotlasLocation(worldID,0);
              location.setWorldMapID( worldID );
-             location.setTownMapID( 0 );
-             location.setBuildingID( -1 );
-             location.setInteriorMapID( -1 );
-             location.setRoomID( -1 );
 
              TownMap tMap = worldManager.getTownMap( location );
              
@@ -170,15 +166,9 @@ public class PlayerImpl implements Player, NetConnectionListener
                 return;
              }
 
-             MapExit mExits[] = tMap.getMapExits();
-             
-             if( mExits==null || mExits[0]==null ) {
-                Debug.signal( Debug.CRITICAL, this, "No mapExits on town 0..." );
-                return;
-             }
-
-             setX( mExits[0].x+mExits[0].width/2 );
-             setY( mExits[0].y+mExits[0].height/2 );
+             ScreenPoint insPoint = tMap.getInsertionPoint();
+             setX( insPoint.x );
+             setY( insPoint.y );
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

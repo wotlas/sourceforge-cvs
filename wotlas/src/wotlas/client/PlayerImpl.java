@@ -542,9 +542,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
                 path=null;
                 nextPoint=null;
                 prevPoint=null;
-                
-                
-               System.out.println("End of path");
+                                              
                 return;
             }
          

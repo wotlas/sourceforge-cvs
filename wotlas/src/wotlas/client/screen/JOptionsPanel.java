@@ -91,7 +91,7 @@ public class JOptionsPanel extends JPanel implements MouseListener
     //b_help.setPreferredSize( new Dimension(90,30) );    
     b_help.addActionListener(new ActionListener() {
       public void actionPerformed (ActionEvent e) {
-        new JHTMLWindow( DataManager.getDefaultDataManager().getClientScreen(), "Help", "../docs/help/index.html", 340, 450, false );
+        new JHTMLWindow( DataManager.getDefaultDataManager().getClientScreen(), "Help", "../docs/help/index.html", 640, 340, false );
       }
     });
     innerPanel.add(b_help);

@@ -90,6 +90,7 @@ public class JIntroWizard extends JFrame
    */
   public void removeLeftPanel() {
     if (this.leftPanel != null) {
+      
       bgPanel.remove(this.leftPanel);
       leftPanel = null;
     }
@@ -136,7 +137,11 @@ public class JIntroWizard extends JFrame
    */
   public void showScreen() {    
     pack();
-    setSize(leftWidth+rightWidth, height);    
+    setSize(leftWidth+rightWidth, height);
+    leftPanel.repaint();
+    rightPanel.repaint();
+    leftPanel.validate();
+    rightPanel.validate();
     show();
   }
   

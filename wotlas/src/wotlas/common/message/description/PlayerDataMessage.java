@@ -106,6 +106,8 @@ public class PlayerDataMessage extends NetMessage
          writeString( player.getPlayerName(), ostream );
          writeString( player.getFullPlayerName(), ostream );
 
+         writeString( player.getPrimaryKey(), ostream );
+
       // Wotlas Character Data
          writeString( player.getWotCharacter().getClass().getName(), ostream );
          ostream.writeBoolean( publicInfoOnly );
@@ -143,6 +145,8 @@ public class PlayerDataMessage extends NetMessage
 
          player.setPlayerName( readString( istream ) );
          player.setFullPlayerName( readString( istream ) );
+
+         player.setPrimaryKey( readString( istream ) );
 
       // Wotlas Character
          WotCharacter wotChar = (WotCharacter) Tools.getInstance( readString( istream ) );

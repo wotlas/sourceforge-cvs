@@ -2,14 +2,25 @@ Quelques règles de programmation Java
 -------------------------------------
 
 Contributeurs: Aldiss, Hari
+Révision: 10 Juin 2001
+
+Menu:
+
+  1- La Visibilité
+  2- Les exceptions
+  3- Les tableaux
+  4- La synchronisation
+  5- Références Fantomes
+  6- Design Patterns
+
 
 
 Pour wotlas, il s'agit de faire un système stable et performant,
-voici quelques recommandations importantes :
+voici donc quelques recommandations importantes.
 
 
-LA VISIBILITE
--------------
+1 - LA VISIBILITE
+-----------------
 
 Quelques règles de visibilité/accès aux variables/méthodes de classes :
 
@@ -64,9 +75,7 @@ Quelques règles de visibilité/accès aux variables/méthodes de classes :
                  // Retourne la version "String" de l'élément du tableau
                     int getTabElement( int i ) {
                          return ""+tab[i];
-                    }
-
-                    
+                    }                    
              }
 
 
@@ -82,7 +91,6 @@ Quelques règles de visibilité/accès aux variables/méthodes de classes :
 
              class Bob
              {
-
                  Object tab[] = new Object[10];
 
                // Retourne la version "String" de l'élément du tableau
@@ -145,13 +153,19 @@ Quelques règles de visibilité/accès aux variables/méthodes de classes :
 
 
 
-LES EXCEPTIONS
---------------
+2 - LES EXCEPTIONS
+------------------
 
-* Le code suivant est interdit :
+* Le code suivant est à éviter :
 
-    catch(Exception e)
-    {}
+    try{
+
+       ....
+
+    }
+    catch(Exception e){
+        // on ne fait rien
+    }
 
   Il faut toujours traiter les exceptions ou alors les laisser se propager ( via throws ).
   De plus évitez autant que possible de capturer tous les types d'exceptions. Raffinez, raffinez...
@@ -161,13 +175,32 @@ LES EXCEPTIONS
 
   Voici un exemple de code :
 
+    try{
+
+      ....
+
+    }
     catch( UnknownHostException e ) {
-        Debug.declareError( Debug.FATAL, e );
+        Debug.signal( Debug.ERROR, this, e );
     }
 
 
-LES TABLEAUX
-------------
+  Enfin dernier point, vous pouvez intercepter l'erreur suivante :
+
+    try{
+       int mon_tab[] = new int[1000000];
+       ....
+    }
+    catch( OutOfMemoryError e ) {
+        Debug.signal( Debug.ERROR, this, e );
+        ....
+    }
+
+  Ce qui peut-être utile par exemple côté serveur lors de la création de gros objets.
+
+
+3 - LES TABLEAUX
+----------------
 
 * PAS DE VECTOR ! Sauf éventuellement côté client pour des classes peu importantes.
   Un Vector c'est 40 FOIS plus lent qu'un simple tableau.
@@ -204,24 +237,80 @@ LES TABLEAUX
        }
 
       Notez l'utilisation de la fonction système de recopie de tableaux d'objets. Il n'y a
-      pas plus rapide pour faire des recopies !
+      pas plus rapide pour faire des recopies ! (appel système à bcopy)
 
     - il y a aussi les java.util.ArrayList. Ce sont comme des Vector mais non synchronisés.
       Ils sont encore 10 fois plus lents que les tableaux.
 
 
-SYNCHRONISATION
----------------
+4 - LA SYNCHRONISATION
+----------------------
 
-* Attention aux synchronized ! plus de détails dans une prochaine version de ce document !
-  Bien utilisé c'est très puissant... mal utilisé c'est une catastrophe pour les performances !
+* Attention aux synchronized ! Bien utilisé c'est très puissant... mal utilisé c'est une catastrophe pour les performances ! Pensez à bien séparer les domaines de synchronisation. Jettez un coup d'oeil à l'exemple suivant:
 
-  Bientôt quelques Design Patterns...
+  class MonExemple1
+  {
+     private int bob;
+     private int tony;
+
+     synchronized public int getBob(){
+        return bob;
+     }
+
+     synchronized public void setBob( int val){
+        bob = val;
+     }
+
+     synchronized public int getTony(){
+        return tony;
+     }
+
+     synchronized public void setTony( int val){
+        tony = val;
+     }
+  }
+
+Ici le synchronized est sur l'appel de méthode. Le lock considéré est celui de l'instance courante de MonExemple1. Un appel à getTony() va bloquer si setBob() est appelé... même si ce n'est pas trop grave ici (les traitements sont courts) c'est un peu bête puisque les variables tony/bob n'ont rien en commun. Une deuxième solution bien meilleure est la suivante :
+
+  class MonExemple2
+  {
+     private int bob;
+     private Object lock_bob = new Object();
+
+     private int tony;
+     private Object lock_tony = new Object();
+
+     public int getBob(){
+        synchronized( lock_bob ) {
+           return bob;
+        }
+     }
+
+     public void setBob( int val){
+        synchronized( lock_bob ) {
+           bob = val;
+        }
+     }
+
+     public int getTony(){
+        synchronized( lock_tony ) {
+           return tony;
+        }
+     }
+
+     public void setTony( int val){
+        synchronized( lock_tony ) {
+           tony = val;
+        }
+     }
+  }
+  
+Bon là je suis d'accord c'est un peu extrème dans cet exemple. Mais c'est juste pour souligner l'importance de la séparation des domaines de concurrence d'accès.
 
 
 
-REFERENCES FANTOMES
--------------------
+5 - REFERENCES FANTOMES
+-----------------------
 
 Ce sont des références à des objets qui ne sont plus utilisés mais qui existent encore en mémoire.
 En effet le garbage collector compte le nombre de références sur un objet, et attend que ce nombre passe à 0 pour déclarer l'objet "Mort" et récupérer plus tard la mémoire. Donc dans le cas suivant :
@@ -241,3 +330,100 @@ Ca c'est un cas simple car on peut aussi attendre la fin de la fonction pour que
 locale soit effacée... là où ça se complique c'est si on utilise des HashTable ou des tableaux.
 
 Dans ces cas on peut oublier d'effacer des anciennes références, les objets ne sont pas effacés et au bout d'un moment c'est le "Exit: Out Of Memory"... donc attention aux références d'objets ! n'hésitez pas à faire des obj=null , ça n'a rien de ridicule.
+
+
+6 - DESIGN PATTERNS
+-------------------
+
+Voici brivèment quelques motifs de programmation orientée objet. Vous les connaissez sans doute mais ça ne fait pas de mal de les rappeler.
+
+ * Nom: Singleton
+   But: Limiter l'utilisation d'un objet à une seule instance. Le principe peut être étendu au contrôle
+        de création d'objets.
+
+   Code:
+
+      class MaClasse{
+
+         private static MaClasse maclasse;  // unique instance de la classe
+
+         private MaClasse( ... ){         // constructeur privé
+            ....
+         }
+
+         public static MaClasse createMaClasse( ... ){
+              if(maclasse==null)
+                  maclasse = new MaClasse( ... );
+ 
+            return maclasse;
+         }
+
+         public static MaClasse getDefaultMaClasse( ... ){
+            return maclasse;
+         }
+      }
+
+  * Nom: Factory
+    But: Déléguer la création d'objets génériques à un objet "Factory" qui sait quelles types d'objets créer.
+         On centralise ainsi toute l'intelligence de création d'objets. Il y a de nombreux types de Factory
+         (cf. littérature). Une factory est généralement un bon exemple de singleton.
+         ( un exemple plus détaillé de factory se trouve dans wotlas.libs.net.NetMessageFactory ).
+ 
+    Code:
+
+      class MaMessageFactory{
+
+         private static MaMessageFactory ma_factory;
+
+         public Message getMessageInstance( int id ){    // méthode de création
+
+             switch( id ) {
+                case MESSAGE_BOB:
+                      return (Message) new MessageBob();
+
+                case MESSAGE_STRING:
+                      return (Message) new MessageString();
+
+                default:
+                      return null;
+             }
+         }
+      }
+
+  * Nom: Façade
+    But: Masquer la complexité d'un package/groupe de classes en proposant une classe qui sert de point d'entrée.
+         Les avantages principaux sont en contrôle et en maintenabilité : vu que tout le monde utilise le même point
+         d'entrée on peut effectuer de nombreux changements sur les classes métiers qu'il y a derrière sans que
+         cela gène les utilisateurs.
+
+    Code:
+
+      classe MaFaçade {
+
+          MonObjetTechnique1 obj_tech_1;
+          MonObjetTechnique1 obj_tech_2;
+          MonObjetTechnique1 obj_tech_3;
+
+          int appelIznogoud() {
+              return obj_tech_1.appelIznogoud();
+          }
+
+          int appelBozo() {
+              return obj_tech_2.appelBozo();
+          }
+
+          void faireTraitementTony( int val ) {
+
+              if( val==1 )
+                 obj_tech_2.recevoirCadeauxTony();
+              else
+                 obj_tech_3.acheterCadeauxTony();              
+          }
+      }
+
+
+  * Nom: Observateur (type listener)
+
+  * Nom: Composite  (listes chainées...)
+
+    et bien d'autres... à suivre...

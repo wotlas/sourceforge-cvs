@@ -621,6 +621,10 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         }
         circle = new CircleDrawable(myPlayer.getDrawable(), 20, Color.yellow, (short) ImageLibRef.AURA_PRIORITY);
         gDirector.addDrawable(circle);
+        
+        TextDrawable textDrawable = new TextDrawable( myPlayer.getFullPlayerName(), myPlayer.getDrawable(), Color.black, 12.0f, "Lblack.ttf", ImageLibRef.AURA_PRIORITY, 5000 );
+        gDirector.addDrawable(textDrawable);
+        
       }
     }
   }
@@ -630,12 +634,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
  /** Called when user right-clic on JMapPanel
    */
   public void onRightClicJMapPanel(MouseEvent e) {
-    if (SHOW_DEBUG) {
-      System.out.println("Hiding debug informations");      
-    } else {
-      System.out.println("Showing debug informations");
-    }
-    SHOW_DEBUG = !SHOW_DEBUG;
+    
+    
+    
 
     /*PlayerImpl newPlayer;
     Rectangle screen = gDirector.getScreenRectangle();

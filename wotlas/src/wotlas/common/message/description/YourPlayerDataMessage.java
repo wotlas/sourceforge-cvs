@@ -52,7 +52,7 @@ public class YourPlayerDataMessage extends PlayerDataMessage
      public YourPlayerDataMessage( Player player ) {
          super();
          this.player = player;
-         this.otherPlayerKey = player.getPrimaryKey();         
+         this.otherPlayer = player;         
          this.publicInfoOnly = false;
      }
 

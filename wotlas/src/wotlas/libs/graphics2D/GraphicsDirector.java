@@ -68,6 +68,14 @@ public class GraphicsDirector extends JPanel {
    */
     private boolean display;
 
+  /** Lock for repaint...
+   */
+    private byte lockPaint[] = new byte[0];
+
+  /** OffScreen image for the GraphicsDirector. 
+   */
+    private Image backBufferImage;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. The window policy is not supposed to change during the life of the
@@ -77,7 +85,7 @@ public class GraphicsDirector extends JPanel {
    * @param windowPolicy a policy that manages window scrolling.
    */
     public GraphicsDirector( WindowPolicy windowPolicy ) {
-      super(true);
+      super(false); // we don't use the default JPanel double-buffering
       drawables = new DrawableIterator();
       setWindowPolicy( windowPolicy );
       setBackground( Color.white );
@@ -129,54 +137,95 @@ public class GraphicsDirector extends JPanel {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
   
+  /** Our customized repaint method
+   */
+    public void repaint() {
+       if(lockPaint==null) return;
+
+       Thread paintThread =new Thread() {
+            public void run() {
+                try{
+                   synchronized( lockPaint ) {
+                     GraphicsDirector.this.paint( GraphicsDirector.this.getGraphics() );
+                   }
+                }catch( Exception e ) {
+                   System.out.println("Exception in repaint() : "+e);
+                }
+            }
+       };
+
+       synchronized( lockPaint ) {
+           paintThread.start();
+       }
+}
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To avoid flickering.
+   */
+    public void update( Graphics g ) {
+       paint( g );
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** To paint this JPanel.
    *
    * @param gc graphics object.
    */
     public void paint(Graphics gc) {
-        super.paint(gc);
+         if(gc==null) return;
 
-     // Fill the background.
-        if(!display) {
-           gc.setColor( Color.white );
-           gc.fillRect( 0, 0, getWidth(), getHeight() );
-           return;
-        }
+       // double-buffer init
+         if (backBufferImage == null || getWidth() != backBufferImage.getWidth(this) || getHeight() != backBufferImage.getHeight(this))
+             backBufferImage = createImage(getWidth(),getHeight());
 
-        Graphics2D gc2D = (Graphics2D) gc;
+         Graphics backBufferGraphics = backBufferImage.getGraphics();
 
+         backBufferGraphics.setColor( Color.white );
+         backBufferGraphics.fillRect( 0, 0, getWidth(), getHeight() );
 
-      // Anti-aliasing init
-         RenderingHints savedRenderHints = gc2D.getRenderingHints(); // save    
-         RenderingHints antiARenderHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING,
-                                                              RenderingHints.VALUE_ANTIALIAS_ON);
-         antiARenderHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-
-         boolean previousHadAntiA = false;
-
-         synchronized( drawables ) {
-            drawables.resetIterator();
-        
-            while( drawables.hasNext() ) {
-                   Drawable d = drawables.next();
-
-                // Set Anti-aliasing or not ?
-                   if( d.wantAntialiasing() && !previousHadAntiA ) {
-                      previousHadAntiA = true;
-                      gc2D.setRenderingHints( antiARenderHints );
-                   }
-                   else if( !d.wantAntialiasing() && previousHadAntiA ) {
-                      previousHadAntiA = false;
-                      gc2D.setRenderingHints( savedRenderHints );
-                   }
-
-                // paint ?
-                   d.paint( gc2D, new Rectangle( screen ) );
-            }
+         if(!display) {
+            gc.drawImage(backBufferImage, 0, 0, this);
+            return;
          }
 
-      // Rendering Hints restore...
-         gc2D.setRenderingHints( savedRenderHints );
+         Graphics2D gc2D = (Graphics2D) backBufferGraphics;
+
+       // Anti-aliasing init
+          RenderingHints savedRenderHints = gc2D.getRenderingHints(); // save    
+          RenderingHints antiARenderHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING,
+                                                              RenderingHints.VALUE_ANTIALIAS_ON);
+          antiARenderHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+
+          boolean previousHadAntiA = false;
+
+          synchronized( drawables ) {
+             drawables.resetIterator();
+        
+             while( drawables.hasNext() ) {
+                    Drawable d = drawables.next();
+
+                 // Set Anti-aliasing or not ?
+                    if( d.wantAntialiasing() && !previousHadAntiA ) {
+                        previousHadAntiA = true;
+                        gc2D.setRenderingHints( antiARenderHints );
+                    }
+                    else if( !d.wantAntialiasing() && previousHadAntiA ) {
+                        previousHadAntiA = false;
+                        gc2D.setRenderingHints( savedRenderHints );
+                    }
+
+                 // paint ?
+                    d.paint( gc2D, new Rectangle( screen ) );
+             }
+          }
+
+       // Rendering Hints restore...
+          gc2D.setRenderingHints( savedRenderHints );
+
+       // double-buffer print
+         gc.drawImage(backBufferImage, 0, 0, this);
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

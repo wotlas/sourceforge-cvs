@@ -19,6 +19,7 @@
  
 package wotlas.libs.net;
 
+import java.io.File;
 
 import wotlas.utils.Debug;
 
@@ -40,12 +41,59 @@ public class NetMessageFactory
    */
       private static NetMessageFactory msg_factory;
 
+ /*------------------------------------------------------------------------------------*/
 
   /** MessageBehaviour Classes, classified by categoryID and typeID.
    */
       private Class msg_class[][];
 
  /*------------------------------------------------------------------------------------*/
+
+  /** To get the default MessageFactory.
+   * 
+   * @return the default NetMessageFactory, null if there is none
+   *         (use createMessageFactory() to create one).
+   */
+     public static NetMessageFactory getDefaultMessageFactory() {
+           return msg_factory;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Constructs a new NetMessageFactory if none exists. You have to give the name
+   *  of the packages where we'll be able to find the NetMessageBehaviour classes.
+   *
+   * @param msg_package a list of packages where we can find NetMsgBehaviour Classes.
+   * @return the created (or previouly created) factory
+   */
+     public static NetMessageFactory createMessageFactory( String msg_packages[] )
+     {
+        if(msg_factory!=null)
+           return msg_factory;  // there is one already
+
+        String package_list[];
+
+     // We add the "wotlas.libs.net.message" package where
+     // can be found the system behaviour messages
+        if(msg_packages==null) {
+            Debug.signal( Debug.WARNING, null, "No packages specified for behaviour messages!" );
+            package_list = new String[1];
+            package_list[0] = new String("wotlas.libs.net.message");
+        }
+        else {
+              package_list = new String[msg_packages.length+1];
+              System.arraycopy( msg_packages, 0, package_list, 0, msg_packages.length );
+              package_list[msg_packages.length] = new String("wotlas.libs.net.message");
+        }
+
+     // We create the factory
+        NetMessageFactory factory = new NetMessageFactory();
+        factory.loadMessageClasses( package_list );
+
+        return factory;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Private Constructor. 
    */
@@ -55,54 +103,72 @@ public class NetMessageFactory
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructs a new NetMessageFactory if none exists.
+  /** Retrieves all the classes added using the addMessageBehaviourClass method. These
+   *  classes implements the NetMessageBehaviour interface and extends some kind of
+   *  NetMessage. It then constructs the mg_class array with them, indexing the array
+   *  by message category and message type.
    *
-   * @return the created (or previouly created) factory
+   * This method is only called one time when we construct the singleton MessageFactory.
+   *
+   * @param package_list a list of packages where we can find NetMsgBehaviour Classes.
    */
-     public static NetMessageFactory createMessageFactory()
+     private void loadMessageClasses( String package_list[] )
      {
-        if(msg_factory!=null)
-           return msg_factory;  // there is one already
+          NetMessage msg_list[] = new NetMessage[1];
+     	  int nb_msg = 0;
+          int max_category=-1;  // to determine the nb of categories
 
-        NetMessageFactory factory = new NetMessageFactory();
-        factory.loadMessageClasses();
+       // we load the classes from the different packages
+       // and keep only the behaviour classes
+          for(int i=0; i<package_list.length; i++)
+          {
+             String package_path = package_list[i].replace( '.', '/' );
+             File package_files[] = new File( package_path ).listFiles();
 
-        return factory;
-     }
+             if( package_files==null ) {
+                 Debug.signal( Debug.WARNING, this, "Empty Package : "+package_list[i] );
+                 continue;
+             }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+             for( int j=0; j<package_files.length; j++ )
+             {
+                if( !package_files[j].isFile() || !package_files[j].getName().endsWith(".class") )
+                    continue;
 
-  /** Seek all the classes that implements the NetMessageBehaviour interface and 
-   *  extends some kind of NetMessage. It then constructs the mg_class array
-   *  with them, indexing the array by message category and message type.
-   */
-     private void loadMessageClasses()
-     {
-       // We load the Behaviour classes in a temporary array...
-          Class class_list[] = NetMessageBehaviour.class.getClasses();
+                try{
+                     String name = package_files[j].getName();
+                     Class cl = Class.forName( package_list[i] + '.'
+                                                  + name.substring( 0, name.lastIndexOf(".class") ) );
 
-       // We create instances of these classes and determine the number
-       // of message categories.
-          NetMessage net_msg[] = new NetMessage[class_list.length];
-          int max_category=-1;
+                     if(cl.isInterface())
+                           continue;
 
-          for( int i=0; i<class_list.length; i++ )
-             if( class_list[i].isAssignableFrom( NetMessage.class ) ) {
-             	try{
-                   net_msg[i] = (NetMessage) class_list[i].newInstance();
+                     Object o = cl.newInstance();
+
+                     if( !(o instanceof NetMessage) || !(o instanceof NetMessageBehaviour ) )
+                         continue;
+
+                  // is the array bigger enough ?
+                     if( nb_msg>=msg_list.length ) {
+                         NetMessage tmp_list[] = new NetMessage[msg_list.length+1];
+                         System.arraycopy( msg_list, 0, tmp_list, 0, nb_msg );
+                         msg_list = tmp_list;
+                     }
+
+                     msg_list[nb_msg] = (NetMessage) o;
+                     nb_msg++;
+
+                     if( max_category < msg_list[nb_msg-1].getMessageCategory() )
+                         max_category = msg_list[nb_msg-1].getMessageCategory();
                 }
                 catch( Exception e ) {
                    Debug.signal( Debug.WARNING, this, e );
-                   continue;
                 }
-
-                if( max_category < net_msg[i].getMessageCategory() )
-                    max_category = net_msg[i].getMessageCategory();
              }
+          }
   
-
           if(max_category==-1) {
-              Debug.signal( Debug.ERROR, this, "No MessageBehaviour Classes Found !" );
+              Debug.signal( Debug.ERROR, this, "No MessageBehaviour Classes Found !");
               return;
           }
 
@@ -113,14 +179,9 @@ public class NetMessageFactory
           for(int i=0; i<=max_category; i++)
               max_types[i]=-1;
 
-           for(int i=0; i<net_msg.length; i++)
-           {
-              if(net_msg[i]==null)
-                    continue;
-
-              if( max_types[net_msg[i].getMessageCategory()] < net_msg[i].getMessageType() )
-                    max_types[net_msg[i].getMessageCategory()] = net_msg[i].getMessageType();
-           }
+           for(int i=0; i<nb_msg; i++)
+              if( max_types[msg_list[i].getMessageCategory()] < msg_list[i].getMessageType() )
+                    max_types[msg_list[i].getMessageCategory()] = msg_list[i].getMessageType();
 
 
        // We create the final Class Array
@@ -130,28 +191,12 @@ public class NetMessageFactory
              if( max_types[i]!=-1 )
                  msg_class[i] = new Class[max_types[i]+1];
 
-          for(int i=0; i<net_msg.length; i++)
-          {
-              if(net_msg[i]==null)
-                    continue;
-
-              msg_class[ net_msg[i].getMessageCategory() ][ net_msg[i].getMessageType() ] = class_list[i];
-          }
+          for(int i=0; i<nb_msg; i++)
+              msg_class[ msg_list[i].getMessageCategory() ][ msg_list[i].getMessageType() ] = msg_list[i].getClass();
 
 
        // ... the dynamic load has succeed
           this.msg_class = msg_class;
-     }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To get the default MessageFactory.
-   * 
-   * @return the default NetMessageFactory, null if there is none
-   *         (use createMessageFactory() to create one).
-   */
-     public static NetMessageFactory getDefaultMessageFactory() {
-           return msg_factory;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

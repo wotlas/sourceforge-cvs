@@ -408,26 +408,29 @@ public class AStarDouble
       Debug.signal( Debug.NOTICE, null, "not a valid goal point -> search a valid point");              
     }
 
+    if(x<0) pointGoal.x = 0;
+    if(y<0) pointGoal.y = 0;
+
     // test if player is near border    
     if (x+SPRITE_SIZE>=mapWidth) {
-      if (SHOW_DEBUG)
-        System.out.println("test x near border");
-      if (map[x-SPRITE_SIZE-1][y]) {
+//      if (SHOW_DEBUG)
+//        System.out.println("test x near border");
+//      if (map[x-SPRITE_SIZE-1][y]) {
         if (SHOW_DEBUG)
           System.out.print("player near border -> change x=mapWidth-SPRITE_SIZE-1");
         pointGoal.x = mapWidth-SPRITE_SIZE-1;
-        return true;
-      }
+//        return true;
+//      }
     }
     if (y+SPRITE_SIZE>=mapHeight) {
-      if (SHOW_DEBUG)
-        System.out.println("test y near border");
-      if (map[x][mapHeight-SPRITE_SIZE-1]) {
+//      if (SHOW_DEBUG)
+//        System.out.println("test y near border");
+//      if (map[x][mapHeight-SPRITE_SIZE-1]) {
         if (SHOW_DEBUG)
           System.out.print("player near border -> change y=mapHeight-SPRITE_SIZE-1");
         pointGoal.y = mapHeight-SPRITE_SIZE-1;
-        return true;
-      }
+//        return true;
+//      }
     }
 
     // Correct the position

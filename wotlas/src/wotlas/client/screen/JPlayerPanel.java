@@ -51,16 +51,23 @@ public class JPlayerPanel extends JPanel implements MouseListener
      playerTabbedPane.addTab("Away", new ImageIcon("../base/gui/pin.gif"),
                                      new AwayPanel(), "Not Connected Options" );
      playerTabbedPane.getComponentAt(1).setName("-away-");
+  
+  // We add a Lie Panel
+     playerTabbedPane.addTab("Lie", new ImageIcon("../base/gui/pin.gif"),
+                                    new LiePanel(), "Lie on your name" );
+     playerTabbedPane.getComponentAt(2).setName("-lie");
 
      add(playerTabbedPane);
   }
   
-  
-  
- public Component getTab(String nom)
+  /** To get a TabbedPane
+   *
+   * @name name of tabbed pane
+   */
+  public Component getTab(String name)
   {
    for (int i=0; i<playerTabbedPane.getTabCount();i++) {
-    if ( playerTabbedPane.getComponentAt(i).getName().equals(nom) ) {
+    if ( playerTabbedPane.getComponentAt(i).getName().equals(name) ) {
       return playerTabbedPane.getComponentAt(i);
     }
    } 
@@ -74,6 +81,7 @@ public class JPlayerPanel extends JPanel implements MouseListener
   public void reset() {
   	( (InfoPanel)playerTabbedPane.getComponentAt(0) ).reset();
   	( (AwayPanel)playerTabbedPane.getComponentAt(1) ).reset();
+  	( (LiePanel )playerTabbedPane.getComponentAt(2) ).reset();
   }
   
  /*------------------------------------------------------------------------------------*/

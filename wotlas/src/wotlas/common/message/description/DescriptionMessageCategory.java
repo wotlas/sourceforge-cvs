@@ -43,5 +43,6 @@ public interface DescriptionMessageCategory extends NetMessageCategory {
        public final static byte PLAYER_PAST_MSG             = 10;
        public final static byte PLAYER_CONNECTED_GAME_MSG   = 11;
        public final static byte PLAYER_AWAY_MSG             = 12;
+       public final static byte WELCOME_MSG                 = 13;
 }
 

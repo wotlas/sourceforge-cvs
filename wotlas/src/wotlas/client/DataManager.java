@@ -553,6 +553,10 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
     if (SHOW_DEBUG)
         System.out.println("Displaying window");
+    
+    
+    // Welcome message
+    sendMessage(new WelcomeMessage());
 
     // 5 - Create main Frame
     mFrame = new JClientScreen(infosPanel, mapPanel, chatPanel, optionsPanel, playerPanel, logPanel, pingPanel);

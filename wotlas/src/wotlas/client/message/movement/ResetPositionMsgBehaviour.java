@@ -86,9 +86,7 @@ public class ResetPositionMsgBehaviour extends ResetPositionMessage implements N
            }
 
        // code to invoke after the current tick :
-          if (DataManager.SHOW_DEBUG)
-            System.out.println("Position reseted by server !");
-          Debug.signal( Debug.WARNING, this, "Position reseted by server !" );          
+          Debug.signal( Debug.WARNING, this, "Position reseted by server !" );
           myPlayer.getMovementComposer().resetMovement();
           myPlayer.setX(x);
           myPlayer.setY(y);
@@ -96,6 +94,8 @@ public class ResetPositionMsgBehaviour extends ResetPositionMessage implements N
           myPlayer.setLocation( location );
           myPlayer.setSyncID( syncID );
           dataManager.getMapData().setIsNotMovingToAnotherMap(true);
+          
+          dataManager.showWarningMessage("Error detected.\nYour position has been reseted by the server.");
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

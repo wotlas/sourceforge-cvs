@@ -50,6 +50,11 @@ public class PlayerDataMessage extends NetMessage
    */
       protected boolean publicInfoOnly;
 
+  /** Player Class to use when building the Player object.
+   *  Default is client implementation. Use the appropriate constructor to change that.
+   */
+      private String playerClass = "wotlas.client.PlayerImpl";
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. Just initializes the message category and type.
@@ -69,6 +74,21 @@ public class PlayerDataMessage extends NetMessage
          super();
          this.player = player;
          this.publicInfoOnly = publicInfoOnly;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Constructor with the Player object and playerClass to use.
+   *
+   * @param player Player object to send.
+   * @param publicInfoOnly tells if we have to write/read public info or all the player's data
+   * @param playerClass to use when building the Player object.
+   */
+     public PlayerDataMessage( Player player, boolean publicInfoOnly, String playerClass ) {
+         super();
+         this.player = player;
+         this.publicInfoOnly = publicInfoOnly;
+         this.playerClass = playerClass;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -133,7 +153,7 @@ public class PlayerDataMessage extends NetMessage
 
       // Player Client Instance creation ( no direct call to "server"
       // or "client" packages are issued from the "common" package )
-         player = (Player) Tools.getInstance( "wotlas.client.PlayerImpl" );
+         player = (Player) Tools.getInstance( playerClass );
 
       // Wotlas Location
          WotlasLocation wotLoc = new WotlasLocation();
@@ -177,6 +197,14 @@ public class PlayerDataMessage extends NetMessage
          mvComposer.init( player );
          mvComposer.setUpdate( uMsg ); // in this order, because the player must have been fully initialized
          player.setMovementComposer( mvComposer );
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the player subject of this message.
+    */
+     public Player getPlayer() {
+     	return player;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

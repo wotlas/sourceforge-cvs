@@ -877,13 +877,16 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
           return;
        }
 
-       myPlayer.getMovementComposer().setOrientationAngle(refOrientation-(double)dx/50);
+       if( Math.abs((double)dx/100)>3.4 )
+           return;
+
+       myPlayer.getMovementComposer().setOrientationAngle(refOrientation-(double)dx/100);
        orientation = myPlayer.getMovementComposer().getOrientationAngle();
 
      // send an update message ?
        if( Math.abs(orientation-ghostOrientation) > 1.0
-           || (movementType==JMapPanel.INIT_MOUSE_MOVEMENT
-               && Math.abs(orientation-ghostOrientation) >= 0.1) ) {
+           || (movementType==JMapPanel.END_MOUSE_MOVEMENT
+               && Math.abs(orientation-ghostOrientation) >= 0.05) ) {
           myPlayer.getMovementComposer().rotateTo( orientation );
           ghostOrientation = orientation;
        }

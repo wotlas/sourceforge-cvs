@@ -322,6 +322,11 @@ public class ClientManager extends JIntroWizard implements ActionListener {
         indexScreen = MAIN_SCREEN;
         state = MAIN_SCREEN;
 
+      // Test if an account exists
+       if ( profileConfigList.size()==0 ) {
+         start(ACCOUNT_CREATION_SCREEN);
+         return;
+       }
 
      case MAIN_SCREEN:
 
@@ -329,12 +334,6 @@ public class ClientManager extends JIntroWizard implements ActionListener {
 
        if( SoundLibrary.getSoundLibrary()!=null )
           SoundLibrary.getSoundLibrary().stopMusic();
-
-      // Test if an account exists
-       if ( profileConfigList.size()==0 ) {
-         start(ACCOUNT_CREATION_SCREEN);
-         return;
-       }
 
       // Create panels
        leftPanel = new JPanel();

@@ -51,7 +51,7 @@ public class MacroPlugIn extends JPanelPlugIn {
 
   /** Max Number of macros the user can create.
    */
-    private final static int MAX_MACROS = 15;
+    private final static int MAX_MACROS = 20;
 
  /*------------------------------------------------------------------------------------*/ 
 
@@ -458,7 +458,7 @@ public class MacroPlugIn extends JPanelPlugIn {
     * @return true means system plug-in, false means user plug-in
     */
       public boolean isSystemPlugIn() {
-      	  return false;
+      	  return true;
       }
 
  /*------------------------------------------------------------------------------------*/

@@ -93,6 +93,14 @@ public class AwayPlugIn extends JPanelPlugIn {
 
                 String awayMessage = playerTextArea.getText();
                 
+             // Any macro to process ?
+                MacroPlugIn macroPlugIn = (MacroPlugIn) ClientDirector.getDataManager().getClientScreen().getPlayerPanel().getPlugIn("Macro");
+
+                if(macroPlugIn!=null) {
+                   awayMessage = macroPlugIn.processMacros( awayMessage );
+                   playerTextArea.setText(awayMessage);
+                }
+                
                 if( player.getPlayerAwayMessage()!=null &&
                     player.getPlayerAwayMessage().equals(awayMessage) )
                    return;

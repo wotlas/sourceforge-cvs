@@ -71,7 +71,7 @@ public class JAbout extends JCroppedWindow implements ActionListener {
   	" Wheel of Time",
   	"---",
   	" Light and Shadow",
-  	"v1.2.2 - March 2002",
+  	"v1.2.2 - April 2002",
   	" ",
   	" ",
   	" Project Management",

@@ -81,5 +81,7 @@ public class RoomLink extends wotlas.common.universe.FrontierZone
   public Door getDoor() {
     return door;
   }
+
+ /*------------------------------------------------------------------------------------*/
   
 }

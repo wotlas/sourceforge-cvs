@@ -19,14 +19,15 @@
  
 package wotlas.common.universe;
 
+import wotlas.libs.graphics2D.ImageIdentifier;
 import wotlas.common.Player;
 import wotlas.utils.Debug;
 
 import java.util.Hashtable;
 
- /** TownMap class
+ /** A TownMap represents a town in our Game Universe.
   *
-  * @author Petrus
+  * @author Petrus, Aldiss
   * @see wotlas.common.universe.WorldMap
   * @see wotlas.common.universe.Building
   */
@@ -37,121 +38,161 @@ public class TownMap
  
   /** ID of the TownMap (index in the array {@link WorldMap#towns WorldMap.towns})
    */
-   private int townMapID;
+    private int townMapID;
      
   /** Full name of the Town
    */
-   private String fullName;
+    private String fullName;
    
   /** Short name of the Town
    */
-   private String shortName;
-  
-  /** ID of WorldMap the TownMap belongs to
-   */
-   private int fromWorldMapID;
-  
-  /** Position on the WorldMap
-   * to enter the town
-   */
-   private int worldMapEnterX;
-   private int worldMapEnterY;
+    private String shortName;
 
-  /** To add : image identifier.
+  /** X Position of the town on the WorldMap.
    */
-   // private ImageIdentifier townImage;
+    private int worldMapEnterX;
+
+  /** Y Position of the town on the WorldMap.
+   */
+    private int worldMapEnterY;
+
+  /** Small Image (identifier) of this town for WorldMaps.
+   */
+    private ImageIdentifier smallTownImage;
+
+  /** Full Image (identifier) of this town
+   */
+    private ImageIdentifier townImage;
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Link to the worldMap we belong to...
+   */
+    private transient WorldMap myWorldMap;
 
   /** Array of Building
    */
-   private transient Building[] buildings;
+    private transient Building[] buildings;
   
   /** List of players in the Town
    */
-   private transient Hashtable players;
+    private transient Hashtable players;
 
   /** List of buildings to enter the town
    * first  element : BuildingID
    */
-   private transient int[] buildingsEnter;
+    private transient int[] buildingsEnter;
 
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor
    */
-   public TownMap() {}
+    public TownMap() {
+       players = new Hashtable(10);
+    }
    
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /*
    * List of setter and getter used for persistence
    */
 
-  public void setTownMapID(int myTownMapID) {
-    this.townMapID = myTownMapID;
-  }
-  public int getTownMapID() {
-    return townMapID;
-  }
-  public void setFullName(String myFullName) {
-    this.fullName = myFullName;
-  }
-  public String getFullName() {
-    return fullName;
-  }
-  public void setShortName(String myShortName) {
-    this.shortName = myShortName;
-  }
-  public String getShortName() {
-    return shortName;
-  }
-  public void setFromWorldMapID(int myFromWorldMapID) {
-    this.fromWorldMapID = myFromWorldMapID;
-  }
-  public int getFromWorldMapID() {
-    return fromWorldMapID;
-  }
+    public void setTownMapID(int myTownMapID) {
+      this.townMapID = myTownMapID;
+    }
 
-  public void setWorldMapEnterX(int worldMapEnterX) {
-    this.worldMapEnterX = worldMapEnterX;
-  }
-  public int getWorldMapEnterX() {
-    return worldMapEnterX;
-  }
+    public int getTownMapID() {
+      return townMapID;
+    }
 
-  public void setWorldMapEnterY(int worldMapEnterY) {
-    this.worldMapEnterY = worldMapEnterY;
-  }
-  public int getWorldMapEnterY() {
-    return worldMapEnterY;
-  }
+    public void setFullName(String myFullName) {
+      this.fullName = myFullName;
+    }
 
-  public void setBuildings(Building[] myBuildings) {
-    this.buildings = myBuildings;
-  }
-  public Building[] getBuildings() {
-    return buildings;
-  }
-  public void setBuildingsEnter(int[] myBuildingsEnter) {
-    this.buildingsEnter = myBuildingsEnter;
-  }
-  public int[] getBuildingsEnter() {
-    return buildingsEnter;
-  }
-  
- /*------------------------------------------------------------------------------------*/
+    public String getFullName() {
+      return fullName;
+    }
+
+    public void setShortName(String myShortName) {
+      this.shortName = myShortName;
+    }
+
+    public String getShortName() {
+      return shortName;
+    }
+
+    public void setWorldMapEnterX(int worldMapEnterX) {
+      this.worldMapEnterX = worldMapEnterX;
+    }
+
+    public int getWorldMapEnterX() {
+      return worldMapEnterX;
+    }
+
+    public void setWorldMapEnterY(int worldMapEnterY) {
+      this.worldMapEnterY = worldMapEnterY;
+    }
+
+    public int getWorldMapEnterY() {
+      return worldMapEnterY;
+    }
+
+    public void setSmallTownImage(ImageIdentifier smallTownImage) {
+      this.smallTownImage = smallTownImage;
+    }
+
+    public ImageIdentifier getSmallTownImage() {
+      return smallTownImage;
+    }
+
+    public void setTownImage(ImageIdentifier townImage) {
+      this.townImage = townImage;
+    }
+
+    public ImageIdentifier getTownImage() {
+      return townImage;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Transient fields getter & setter
+   */
+
+    public WorldMap getMyWorldMap() {
+      return myWorldMap;
+    }
+
+    public void setBuildings(Building[] myBuildings) {
+      this.buildings = myBuildings;
+    }
+
+    public Building[] getBuildings() {
+      return buildings;
+    }
+
+    public void setBuildingsEnter(int[] myBuildingsEnter) {
+      this.buildingsEnter = myBuildingsEnter;
+    }
+
+    public int[] getBuildingsEnter() {
+      return buildingsEnter;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To Get a building by its ID.
    *
    * @param id buildingID
    * @return corresponding building, null if ID does not exist.
    */
-   public Building getBuildingByID( int id ) {
+    public Building getBuildingByID( int id ) {
    	if(id>=buildings.length || id<0) {
            Debug.signal( Debug.ERROR, this, "getBuildingByID : Bad building ID "+id );
    	   return null;
    	}
    	
         return buildings[id];
-   }
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -171,7 +212,7 @@ public class TownMap
         return players;
     }
 
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Add a player to this town. The player must have been previously initialized.
    *  We suppose that the player.getLocation() points out to this town.
@@ -179,16 +220,16 @@ public class TownMap
    * @param player player to add
    * @return false if the player already exists on this TownMap, true otherwise
    */
-   public boolean addPlayer( Player player ) {
+    public boolean addPlayer( Player player ) {
        if( players.contains( player.getPrimaryKey() ) ) {
            Debug.signal( Debug.CRITICAL, this, "addPlayer failed: key "+player.getPrimaryKey()
-                         +" already in this town "+townMapID );
+                         +" already in "+this);
            return false;
        }
 
        players.put( player.getPrimaryKey(), player );
        return true;
-   }
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -198,79 +239,82 @@ public class TownMap
    * @param player player to remove
    * @return false if the player doesn't exists on this townMap, true otherwise
    */
-   public boolean removePlayer( Player player ) {
+    public boolean removePlayer( Player player ) {
        if( !players.contains( player.getPrimaryKey() ) ) {
            Debug.signal( Debug.CRITICAL, this, "removePlayer failed: key "+player.getPrimaryKey()
-                         +" not found in this town "+townMapID );
+                         +" not found in"+this);
            return false;
        }
 
        players.remove( player.getPrimaryKey() );
        return true;
-   }
+    }
 
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Add a new Building object to our list {@link #buildings buildings})
    *
    * @param building Building object to add
    */
-   public void addBuilding( Building building )
-   {
-      if ( buildings == null ) {
-           buildings = new Building[building.getBuildingID()+1];
-      }
-      else if( buildings.length <= building.getBuildingID() ) {
-         Building[] myBuildings = new Building[building.getBuildingID()+1];
-         System.arraycopy( buildings, 0, myBuildings, 0, buildings.length );
-         buildings = myBuildings;
-      }
+    public void addBuilding( Building building ) {
+        if ( buildings == null ) {
+             buildings = new Building[building.getBuildingID()+1];
+        }
+        else if( buildings.length <= building.getBuildingID() ) {
+           Building[] myBuildings = new Building[building.getBuildingID()+1];
+           System.arraycopy( buildings, 0, myBuildings, 0, buildings.length );
+           buildings = myBuildings;
+        }
 
-      buildings[building.getBuildingID()] = building;        
-   }
+        buildings[building.getBuildingID()] = building;        
+    }
 
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Add a new Building object to the array {@@link #buildings buildings})
    *
    * @return a new Building object
    */
-  public Building addNewBuilding()
-  {
-    Building myBuilding = new Building();
+    public Building addNewBuilding()
+    {
+       Building myBuilding = new Building();
     
-    if (buildings == null) {
-      buildings = new Building[1];      
-      myBuilding.setBuildingID(0);
-      buildings[0] = myBuilding;
-    } else {
-      Building[] myBuildings = new Building[buildings.length+1];
-      myBuilding.setBuildingID(buildings.length);
-      System.arraycopy(buildings, 0, myBuildings, 0, buildings.length);
-      myBuildings[buildings.length] = myBuilding; 
-      buildings = myBuildings;      
-    }    
-    return myBuilding;
-  }
+       if (buildings == null) {
+           buildings = new Building[1];      
+           myBuilding.setBuildingID(0);
+           buildings[0] = myBuilding;
+       } else {
+           Building[] myBuildings = new Building[buildings.length+1];
+           myBuilding.setBuildingID(buildings.length);
+           System.arraycopy(buildings, 0, myBuildings, 0, buildings.length);
+           myBuildings[buildings.length] = myBuilding; 
+           buildings = myBuildings;      
+       }
 
- /*------------------------------------------------------------------------------------*/
+       return myBuilding;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To init this town ( it rebuilds shortcuts ). DON'T CALL this method directly, use
    *  the init() method of the associated world.
+   *
+   * @param myWorldMap our parent WorldMap.
    */
-   public void init(){
+    public void init( WorldMap myWorldMap ) {
+
+       this.myWorldMap = myWorldMap;
 
     // 1 - any data ?
        if(buildings==null) {
-          Debug.signal(Debug.WARNING, this, "Town has no buildings, world:"+fromWorldMapID
-                                            +" town:"+townMapID);
+          Debug.signal(Debug.WARNING, this, "Town has no buildings ! "+this);
           return;
        }
 
     // 2 - we transmit the init() call
        for( int i=0; i<buildings.length; i++ )
             if( buildings[i]!=null )
-                buildings[i].init();
+                buildings[i].init( this );
 
     // 3 - we reconstruct the shortcuts... (here, buildings to enter the town)
        for( int i=0; i<buildings.length; i++ )
@@ -286,9 +330,20 @@ public class TownMap
 
                 buildingsEnter[buildingsEnter.length-1] = buildings[i].getBuildingID();        
             }
-   }
+    }
 
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** String Info.
+   */
+    public String toString(){
+      if(buildings==null)
+         return "TownMap tId:"+townMapID+" Name:"+fullName+" maxIdBuilding: no array";
+      else
+         return "TownMap tId:"+townMapID+" Name:"+fullName+" maxIdBuilding:"+buildings.length;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
 

@@ -19,63 +19,62 @@
  
 package wotlas.common.universe;
 
+import wotlas.libs.graphics2D.ImageIdentifier;
+
 import wotlas.utils.Debug;
 
- /** Building class
+ /** A Building of a town in our World. A building always belongs to a townMap.
   *
-  * @author Petrus
+  * @author Petrus, Aldiss
   * @see wotlas.common.universe.TownMap
-  * @see wotlas.common.universe.TownExit
-  * @see wotlas.common.universe.BuildingExit
+  * @see wotlas.common.universe.MapExit
   */
  
 public class Building
 {
  /*------------------------------------------------------------------------------------*/
-  /*
-   * properties in all servers
-   */
    
   /** ID of the Building
    */
-   private int buildingID;
+    private int buildingID;
      
   /** Full name of the Building
    */
-   private String fullName;
+    private String fullName;
    
   /** Short name of the Building
    */
-   private String shortName;
+    private String shortName;
   
-  /** Server ID of the server that posses this Building
+  /** Server ID of the server that possesses this Building
    */
-   private int serverID;
-   
-  /** ID of WorldMap the Building belongs to
-   */
-   private int fromWorldMapID;
-  
-  /** ID of TownMap the Building belongs to
-   */
-   private int fromTownMapID;
+    private int serverID;
 
   /** is true if the Building has some TownExit
    */
-   private boolean hasTownExits;
+    private boolean hasTownExits;
   
   /** is true if the Building has some BuildingExit
    */
-   private boolean hasBuildingExits;
-   
-  /** ScreenZone to clic in the TownMap to enter the building
+    private boolean hasBuildingExits;
+
+  /** X Position of the building on the TownMap.
    */
-   // private ScreenZone townMapEnter;
+    private int townMapEnterX;
+
+  /** Y Position of the town on the TownMap.
+   */
+    private int townMapEnterY;
+
+  /** Small Image (identifier) of this building for TownMaps.
+   */
+    private ImageIdentifier smallBuildingImage;
 
  /*------------------------------------------------------------------------------------*/
-  /*
-   * properties only in the server the Building belongs to
+
+  /** A link to our father town...
    */
+    private transient TownMap myTownMap;
    
   /** Our interior maps.
    */
@@ -85,96 +84,137 @@ public class Building
    */
     private transient MapExit[] buildingExits;
    
-   /** Map exits that are town exits.
-    */
+  /** Map exits that are town exits.
+   */
     private transient MapExit[] townExits;
    
  /*------------------------------------------------------------------------------------*/
   
   /** Constructor
    */
-   public Building() {
+    public Building() {
        hasBuildingExits = false; // default
        hasTownExits = false;     // default
-   }
+    }
     
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /*
    * List of setter and getter used for persistence
    */
 
-  public void setBuildingID(int myBuildingID) {
-    this.buildingID = myBuildingID;
-  }
-  public int getBuildingID() {
-    return buildingID;
-  }
+    public void setBuildingID(int myBuildingID) {
+      this.buildingID = myBuildingID;
+    }
 
-  public void setServerID(int myServerID) {
-    this.serverID = myServerID;
-  }
-  public int getServerID() {
-    return serverID;
-  }
+    public int getBuildingID() {
+      return buildingID;
+    }
 
-  public void setFullName(String myFullName) {
-    this.fullName = myFullName;
-  }
-  public String getFullName() {
-    return fullName;
-  }
-  public void setShortName(String myShortName) {
-    this.shortName = myShortName;
-  }
-  public String getShortName() {
-    return shortName;
-  }
-  public void setFromWorldMapID(int myFromWorldMapID) {
-    this.fromWorldMapID = myFromWorldMapID;
-  }
-  public int getFromWorldMapID() {
-    return fromWorldMapID;
-  }
-  public void setFromTownMapID(int myTownMapID) {
-    this.fromTownMapID = myTownMapID;
-  }
-  public int getFromTownMapID() {
-    return fromTownMapID;
-  }
-  public void setHasTownExits(boolean myHasTownExits) {
-    this.hasTownExits = myHasTownExits;
-  }
-  public boolean getHasTownExits() {
-    return hasTownExits;
-  }
-  public void setHasBuildingExits(boolean myHasBuildingExits) {
-    this.hasBuildingExits = myHasBuildingExits;
-  }
-  public boolean getHasBuildingExits() {
-    return hasBuildingExits;
-  }
-  public void setInteriorMaps(InteriorMap[] myInteriorMaps) {
-    this.interiorMaps = myInteriorMaps;
-  }
-  public InteriorMap[] getInteriorMaps() {
-    return interiorMaps;
-  }
+    public void setServerID(int myServerID) {
+      this.serverID = myServerID;
+    }
+
+    public int getServerID() {
+      return serverID;
+    }
+
+    public void setFullName(String myFullName) {
+      this.fullName = myFullName;
+    }
+
+    public String getFullName() {
+      return fullName;
+    }
+
+    public void setShortName(String myShortName) {
+      this.shortName = myShortName;
+    }
+
+    public String getShortName() {
+      return shortName;
+    }
+
+    public void setHasTownExits(boolean myHasTownExits) {
+      this.hasTownExits = myHasTownExits;
+    }
+
+    public boolean getHasTownExits() {
+      return hasTownExits;
+    }
+
+    public void setHasBuildingExits(boolean myHasBuildingExits) {
+      this.hasBuildingExits = myHasBuildingExits;
+    }
+
+    public boolean getHasBuildingExits() {
+      return hasBuildingExits;
+    }
+
+    public void setTownMapEnterX(int townMapEnterX) {
+      this.townMapEnterX = townMapEnterX;
+    }
+
+    public int getTownMapEnterX() {
+      return townMapEnterX;
+    }
+
+    public void setTownMapEnterY(int townMapEnterY) {
+      this.townMapEnterY = townMapEnterY;
+    }
+
+    public int getTownMapEnterY() {
+      return townMapEnterY;
+    }
+
+    public void setSmallBuildingImage(ImageIdentifier smallBuildingImage) {
+      this.smallBuildingImage = smallBuildingImage;
+    }
+
+    public ImageIdentifier getSmallBuildingImage() {
+      return smallBuildingImage;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Transient fields getter & setter
+   */
+
+    public TownMap getMyTownMap() {
+      return myTownMap;
+    }
+
+    public void setInteriorMaps(InteriorMap[] myInteriorMaps) {
+      this.interiorMaps = myInteriorMaps;
+    }
+
+    public InteriorMap[] getInteriorMaps() {
+      return interiorMaps;
+    }
+
+    public MapExit[] getBuidlingExits() {
+      return buildingExits;
+    }
+
+    public MapExit[] getTownExits() {
+      return townExits;
+    }
     
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To Get a interiorMap by its ID.
    *
    * @param id interiorMapID
    * @return corresponding interiorMap, null if ID does not exist.
    */
-   public InteriorMap getInteriorMapByID( int id ) {
+    public InteriorMap getInteriorMapByID( int id ) {
    	if(id>=interiorMaps.length || id<0) {
-           Debug.signal( Debug.ERROR, this, "getInteriorMapByID : Bad interiorMap ID "+id );
+           Debug.signal( Debug.ERROR, this, "getInteriorMapByID : Bad interiorMap ID "+id+". "+this );
    	   return null;
    	}
 
         return interiorMaps[id];
-   }
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -182,63 +222,66 @@ public class Building
    *
    * @return a new InteriorMap object
    */
-  public InteriorMap addNewInteriorMap()
-  {
-    InteriorMap myInteriorMap = new InteriorMap();
+    public InteriorMap addNewInteriorMap()
+    {
+      InteriorMap myInteriorMap = new InteriorMap();
     
-    if (interiorMaps == null) {
-      interiorMaps = new InteriorMap[1];
-      myInteriorMap.setInteriorMapID(0);
-      interiorMaps[0] = myInteriorMap;
-    } else {
-      InteriorMap[] myInteriorMaps = new InteriorMap[interiorMaps.length+1];
-      myInteriorMap.setInteriorMapID(interiorMaps.length);
-      System.arraycopy(interiorMaps, 0, myInteriorMaps, 0, interiorMaps.length);
-      myInteriorMaps[interiorMaps.length] = myInteriorMap;
-      interiorMaps = myInteriorMaps;
-    }
-    return myInteriorMap;
-  }
+      if (interiorMaps == null) {
+        interiorMaps = new InteriorMap[1];
+        myInteriorMap.setInteriorMapID(0);
+        interiorMaps[0] = myInteriorMap;
+      } else {
+        InteriorMap[] myInteriorMaps = new InteriorMap[interiorMaps.length+1];
+        myInteriorMap.setInteriorMapID(interiorMaps.length);
+        System.arraycopy(interiorMaps, 0, myInteriorMaps, 0, interiorMaps.length);
+        myInteriorMaps[interiorMaps.length] = myInteriorMap;
+        interiorMaps = myInteriorMaps;
+      }
 
- /*------------------------------------------------------------------------------------*/
+      return myInteriorMap;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Add a InteriorMap to our array interiorMaps {@link #buildings buildings})
    *
    * @param building Building object to add
    */
-   public void addInteriorMap( InteriorMap map )
-   {
-      if ( interiorMaps == null ) {
-           interiorMaps = new InteriorMap[map.getInteriorMapID()+1];
-      }
-      else if( interiorMaps.length <= map.getInteriorMapID() ) {
-         InteriorMap[] myInteriorMap = new InteriorMap[map.getInteriorMapID()+1];
-         System.arraycopy( interiorMaps, 0, myInteriorMap, 0, interiorMaps.length );
-         interiorMaps = myInteriorMap;
-      }
+    public void addInteriorMap( InteriorMap map )
+    {
+       if ( interiorMaps == null ) {
+            interiorMaps = new InteriorMap[map.getInteriorMapID()+1];
+       }
+       else if( interiorMaps.length <= map.getInteriorMapID() ) {
+          InteriorMap[] myInteriorMap = new InteriorMap[map.getInteriorMapID()+1];
+          System.arraycopy( interiorMaps, 0, myInteriorMap, 0, interiorMaps.length );
+          interiorMaps = myInteriorMap;
+       }
 
-      interiorMaps[map.getInteriorMapID()] = map;        
-   }
+       interiorMaps[map.getInteriorMapID()] = map;        
+    }
 
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To init this building ( it rebuilds shortcuts ). DON'T CALL this method directly, use
    *  the init() method of the associated world.
+   *
+   * @param townMap our father townMap
    */
-   public void init(){
+    public void init( TownMap myTownMap ){
+
+       this.myTownMap = myTownMap;
 
     // 1 - any data ?
        if(interiorMaps==null) {
-          Debug.signal(Debug.NOTICE, this, "Building w:"+fromWorldMapID
-                                            +" t:"+fromTownMapID+" b:"+buildingID
-                                            +" has no interior maps" );
+          Debug.signal(Debug.NOTICE, this, "Building has no interior maps: "+this );
           return;
        }
 
     // 2 - we transmit the init() call
        for( int i=0; i<interiorMaps.length; i++ )
             if( interiorMaps[i]!=null )
-                interiorMaps[i].init();
+                interiorMaps[i].init( this );
 
     // 3 - we reconstruct the shortcuts (now that interiorMaps shortcuts have been rebuild)
        for( int i=0; i<interiorMaps.length; i++ )
@@ -290,6 +333,18 @@ public class Building
             }
    }
 
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** String Info.
+   */
+    public String toString(){
+      if(interiorMaps==null)
+         return "Building bId:"+buildingID+" Name:"+fullName+" maxIdTownMap: no array";
+      else
+         return "Building bId:"+buildingID+" Name:"+fullName+" maxIdTownMap:"+interiorMaps.length;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 
 }

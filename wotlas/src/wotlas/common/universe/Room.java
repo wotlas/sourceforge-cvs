@@ -25,9 +25,9 @@ import wotlas.utils.Debug;
 import java.awt.Point;
 import java.util.Hashtable;
 
- /** Room class
+ /** A Room of an interiorMap.
   *
-  * @author Petrus
+  * @author Petrus, Aldiss
   * @see wotlas.common.universe.RoomLink
   */
 
@@ -37,102 +37,134 @@ public class Room
 
   /** ID of the Room (index in the array {@link InteriorMap#rooms InteriorMap.rooms})
    */
-   private int roomID;
+    private int roomID;
 
-  /** Full name of the World
+  /** Full name of the Room
    */
-   private String fullName;
+    private String fullName;
 
   /** Short name of the World
    */
-   private String shortName;
+    private String shortName;
 
   /** Point of insertion (teleportation, arrival)
    */
-   private Point insertionPoint;
+    private Point insertionPoint;
 
   /** Number maximum of players
    */
-   private int maxPlayers;
+    private int maxPlayers;
 
-  /**
+  /** Room links...
    */
-   private RoomLink[] roomLinks;
+    private RoomLink[] roomLinks;
 
-  /**
+  /** Map exits...
    */
-   private MapExit[] mapExits;
-
-  /** List of players in the Room
-   */
-   private transient Hashtable players;
+    private MapExit[] mapExits;
 
   /** List of items in the Room
    */
-   private WotlasObject[] wotlasObjects;
+    private WotlasObject[] wotlasObjects;
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Our interiorMap wher this room is.
+   */
+    private transient InteriorMap myInteriorMap;
+
+  /** List of players in the Room
+   */
+    private transient Hashtable players;
 
  /*------------------------------------------------------------------------------------*/
   
-  /**
-   * Constructor
+  /** Constructor
    */
-   public Room() {}
+    public Room() {
+       players = new Hashtable(10);
+    }
 
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /*
    * List of setter and getter used for persistence
    */
 
-  public void setRoomID(int myRoomID) {
-    this.roomID = myRoomID;
-  }
-  public int getRoomID() {
-    return roomID;
-  }
-  public void setFullName(String myFullName) {
-    this.fullName = myFullName;
-  }
-  public String getFullName() {
-    return fullName;
-  }
-  public void setShortName(String myShortName) {
-    this.shortName = myShortName;
-  }
-  public String getShortName() {
-    return shortName;
-  }
-  public void setInsertionPoint(Point myInsertionPoint) {
-    this.insertionPoint = myInsertionPoint;
-  }
-  public Point getInsertionPoint() {
-    return insertionPoint;
-  }
-  public void setMaxPlayers(int myMaxPlayers) {
-    this.maxPlayers = myMaxPlayers;
-  }
-  public int getMaxPlayers() {
-    return maxPlayers;
-  }
-  public void setRoomLinks(RoomLink[] myRoomLinks) {
-    this.roomLinks = myRoomLinks;
-  }
-  public RoomLink[] getRoomLinks() {
-    return roomLinks;
-  }
-  public void setMapExits(MapExit[] myMapExits) {
-    this.mapExits = myMapExits;
-  }
-  public MapExit[] getMapExits() {
-    return mapExits;
-  }
-  public void setWotlasObjects(WotlasObject myWotlasObject) {
-  }
-  public WotlasObject[] getWotlasObjects() {
-    return null;
-  }
-  
-  /*------------------------------------------------------------------------------------*/
+    public void setRoomID(int myRoomID) {
+      this.roomID = myRoomID;
+    }
 
+    public int getRoomID() {
+      return roomID;
+    }
+
+    public void setFullName(String myFullName) {
+      this.fullName = myFullName;
+    }
+
+    public String getFullName() {
+      return fullName;
+    }
+
+    public void setShortName(String myShortName) {
+      this.shortName = myShortName;
+    }
+
+    public String getShortName() {
+      return shortName;
+    }
+
+    public void setInsertionPoint(Point myInsertionPoint) {
+      this.insertionPoint = myInsertionPoint;
+    }
+
+    public Point getInsertionPoint() {
+      return insertionPoint;
+    }
+
+    public void setMaxPlayers(int myMaxPlayers) {
+      this.maxPlayers = myMaxPlayers;
+    }
+
+    public int getMaxPlayers() {
+      return maxPlayers;
+    }
+
+    public void setRoomLinks(RoomLink[] myRoomLinks) {
+      this.roomLinks = myRoomLinks;
+    }
+
+    public RoomLink[] getRoomLinks() {
+      return roomLinks;
+    }
+
+    public void setMapExits(MapExit[] myMapExits) {
+      this.mapExits = myMapExits;
+    }
+
+    public MapExit[] getMapExits() {
+      return mapExits;
+    }
+
+    public void setWotlasObjects(WotlasObject myWotlasObject) {
+       // none for now
+    }
+
+    public WotlasObject[] getWotlasObjects() {
+      return null; // none for now
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Transient fields getter & setter
+   */
+  
+    public InteriorMap getMyInteriorMap() {
+      return myInteriorMap;
+    }
+  
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To get the list of all the players on this map.
    * IMPORTANT: before ANY process on this list synchronize your code on the "players"
@@ -150,7 +182,7 @@ public class Room
         return players;
     }
 
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Add a player to this world. The player must have been previously initialized.
    *  We suppose that the player.getLocation() points out to this Room.
@@ -158,16 +190,16 @@ public class Room
    * @param player player to add
    * @return false if the player already exists on this RoomMap, true otherwise
    */
-   public boolean addPlayer( Player player ) {
+    public boolean addPlayer( Player player ) {
        if( players.contains( player.getPrimaryKey() ) ) {
            Debug.signal( Debug.CRITICAL, this, "addPlayer failed: key "+player.getPrimaryKey()
-                         +" already in this room "+roomID );
+                         +" already in "+this );
            return false;
        }
 
        players.put( player.getPrimaryKey(), player );
        return true;
-   }
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -177,73 +209,85 @@ public class Room
    * @param player player to remove
    * @return false if the player doesn't exists in this Room, true otherwise
    */
-   public boolean removePlayer( Player player ) {
+    public boolean removePlayer( Player player ) {
        if( !players.contains( player.getPrimaryKey() ) ) {
            Debug.signal( Debug.CRITICAL, this, "removePlayer failed: key "+player.getPrimaryKey()
-                         +" not found in this room "+roomID );
+                         +" not found in "+this );
            return false;
        }
 
        players.remove( player.getPrimaryKey() );
        return true;
-   }
+    }
 
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Add a new RoomLink object to the array {@link #roomLinks roomLinks}
    *
    * @return a new RoomLink object
    */
-  public RoomLink addRoomLink()
-  {
-    RoomLink myRoomLink = new RoomLink();
-    
-    if (roomLinks == null) {
-      roomLinks = new RoomLink[1];
-      myRoomLink.setRoomLinkID(0);
-      roomLinks[0] = myRoomLink;
-    } else {
-      RoomLink[] myRoomLinks = new RoomLink[roomLinks.length+1];
-      myRoomLink.setRoomLinkID(roomLinks.length);
-      System.arraycopy(roomLinks, 0, myRoomLinks, 0, roomLinks.length);
-      myRoomLinks[roomLinks.length] = myRoomLink;
-      roomLinks = myRoomLinks;
-    }
-    return myRoomLink;
-  }
+    public RoomLink addRoomLink()
+    {
+       RoomLink myRoomLink = new RoomLink();
 
- /*------------------------------------------------------------------------------------*/
+       if(roomLinks == null) {
+         roomLinks = new RoomLink[1];
+         myRoomLink.setRoomLinkID(0);
+         roomLinks[0] = myRoomLink;
+       } else {
+         RoomLink[] myRoomLinks = new RoomLink[roomLinks.length+1];
+         myRoomLink.setRoomLinkID(roomLinks.length);
+         System.arraycopy(roomLinks, 0, myRoomLinks, 0, roomLinks.length);
+         myRoomLinks[roomLinks.length] = myRoomLink;
+         roomLinks = myRoomLinks;
+       }
+
+       return myRoomLink;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
   
   /** Add a new MapExit object to the array {@link #mapExits mapExits}
    *
    * @return a new MapExit object
    */
-  public MapExit addMapExit()
-  {
-    MapExit myMapExit = new MapExit();
+    public MapExit addMapExit()
+    {
+      MapExit myMapExit = new MapExit();
     
-    if (mapExits == null) {
-      mapExits = new MapExit[1];
-      myMapExit.setMapExitID(0);
-      mapExits[0] = myMapExit;
-    } else {
-      MapExit[] myMapExits = new MapExit[mapExits.length+1];
-      myMapExit.setMapExitID(mapExits.length);
-      System.arraycopy(mapExits, 0, myMapExits, 0, mapExits.length);
-      myMapExits[mapExits.length] = myMapExit;
-      mapExits = myMapExits;
+      if (mapExits == null) {
+         mapExits = new MapExit[1];
+         myMapExit.setMapExitID(0);
+         mapExits[0] = myMapExit;
+      } else {
+         MapExit[] myMapExits = new MapExit[mapExits.length+1];
+         myMapExit.setMapExitID(mapExits.length);
+         System.arraycopy(mapExits, 0, myMapExits, 0, mapExits.length);
+         myMapExits[mapExits.length] = myMapExit;
+         mapExits = myMapExits;
+      }
+      return myMapExit;
     }
-    return myMapExit;
-  }
 
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To init this room ( it rebuilds shortcuts ). DON'T CALL this method directly,
    *  use the init() method of the associated world.
+   *
+   * @param myInteriorMap our father InteriorMap
    */
-   public void init(){
-   }
+    public void init( InteriorMap myInteriorMap ){
+       this.myInteriorMap = myInteriorMap;
+    }
 
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** String Info.
+   */
+    public String toString(){
+         return "Room Id:"+roomID+" Name:"+fullName+" parent:"+myInteriorMap;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

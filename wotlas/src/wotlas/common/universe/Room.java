@@ -447,6 +447,7 @@ public class Room implements WotlasMap
 
         for( int i=0; i<mapExits.length; i++ )
              if( ( mapExits[i].toRectangle().contains(destX,destY)
+                 || mapExits[i].toRectangle().contains(destX+rCurrent.width/2,destY+rCurrent.height/2)
                  || mapExits[i].toRectangle().contains(destX+rCurrent.width,destY+rCurrent.height) )
                  && mapExits[i].toRectangle().intersects( rCurrent ) )
                  return mapExits[i]; // mapExits reached
@@ -472,12 +473,12 @@ public class Room implements WotlasMap
              if( rlink.width < rlink.height ) {
                  if( rlink.getRoom1ID()==roomID ){
                    // ok, we are the west Room
-                      if( rlink.x < rCurrent.x )
+                      if( rlink.x < rCurrent.x+rCurrent.width/2 )
                           return rlink.getRoom2ID(); // we are in the other room
                  }
                  else {
                   // ok, we are the east Room
-                      if( rCurrent.x+rCurrent.width < rlink.x  + rlink.width )
+                      if( rCurrent.x+rCurrent.width/2 < rlink.x  + rlink.width )
                           return rlink.getRoom1ID(); // we are in the other room
                  }
              }

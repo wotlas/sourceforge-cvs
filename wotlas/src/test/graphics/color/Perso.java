@@ -40,9 +40,14 @@ public class Perso implements SpriteDataSupplier
        this.x = x;
        this.y = y;
      
-       imId = new Animation( new ImageIdentifier( (short)0,(short)0,(short)0 ),(byte)3 );
+       imId = new Animation( new ImageIdentifier( (short)0,(short)0,(short)0 ),(byte)1 );
        sprAnt = new Sprite( (SpriteDataSupplier) this, (short)10 );
-       sprAnt.setDynamicImageFilter( new ColorImageFilter() );
+
+       ColorImageFilter filter = new ColorImageFilter();
+       filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.white );
+       filter.addColorChangeKey( ColorImageFilter.yellow, ColorImageFilter.brown );
+       sprAnt.setDynamicImageFilter( filter );
+
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

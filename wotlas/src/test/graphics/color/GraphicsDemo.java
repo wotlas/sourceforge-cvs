@@ -30,6 +30,9 @@ public class GraphicsDemo extends JFrame implements AWTEventListener {
   // Our ImageLibrary
      ImageLibrary imageLib;
 
+  // Perso Array
+     Perso perso[];
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** Constructor
@@ -95,19 +98,21 @@ public class GraphicsDemo extends JFrame implements AWTEventListener {
                System.exit(0);
              }
           });
-/*
-       // 7 - we add 50 ants on the map...       
+
+          perso = new Perso[50];
+
+       // 7 - we add 50 perso on the map...       
           for( int i=0; i<50; i++ ) {
               int x = (int)(Math.random()*(groundSpr.getWidth()-100) )+50;
               int y = (int)(Math.random()*(groundSpr.getHeight()-100) )+50;
               double angleDeg = Math.random()*360;
 
-              Perso perso = new Perso( x, y );
-              perso.setAngle( angleDeg );
+              perso[i] = new Perso( x, y );
+              perso[i].setAngle( angleDeg );
 
-              gDirector.addDrawable( perso.getDrawable() );
+              gDirector.addDrawable( perso[i].getDrawable() );
           }
-*/
+
           System.out.println("Added 50 persos...");
 
        // 8 - We display the whole...
@@ -171,6 +176,9 @@ public class GraphicsDemo extends JFrame implements AWTEventListener {
         // We tick our GraphicsDirector
           gDirector.tick();
           myPerso.tick();
+          
+          for( int i=0; i<50; i++)
+            perso[i].tick();
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

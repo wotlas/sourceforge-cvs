@@ -159,9 +159,10 @@ public class ClientDirector {
             System.setOut( logStream );
             System.setErr( logStream );
        }
-       catch( java.io.FileNotFoundException e ) {
+       catch( Exception e ) {
          e.printStackTrace();
-         return;
+         Tools.displayDebugMesage("Start-up Error",""+e);
+         Debug.exit();
        }
 
        if(SHOW_DEBUG)

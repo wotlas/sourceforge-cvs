@@ -135,15 +135,20 @@ public class SoundLibrary implements MetaEventListener, ControllerEventListener
         try{
             sequencer = MidiSystem.getSequencer();
 
-              if (sequencer instanceof Synthesizer) {
-                   synthesizer = (Synthesizer)sequencer;
-                   channels = synthesizer.getChannels();
-              }
-
-              sequencer.open();
-              sequencer.addMetaEventListener(this);
-              int[] controllers = {7};
-              sequencer.addControllerEventListener(this, controllers);
+              if (sequencer == null) {
+                Debug.signal( Debug.WARNING, null, "no valid MIDI sequencers");
+                noSoundDevice = true;
+                return;
+              } else {
+                if (sequencer instanceof Synthesizer) {
+                  synthesizer = (Synthesizer)sequencer;
+                  channels = synthesizer.getChannels();
+                }              
+                sequencer.open();
+                sequencer.addMetaEventListener(this);
+                int[] controllers = {7};
+                sequencer.addControllerEventListener(this, controllers);
+             }
         }
         catch (Exception ex) {
           // Failed to init Sequencer
@@ -282,7 +287,7 @@ public class SoundLibrary implements MetaEventListener, ControllerEventListener
            }
 
            try{
-                sequencer.open();
+                //sequencer.open();                
                 sequencer.setSequence(currentMusic);
            }
            catch (InvalidMidiDataException imde) { 
@@ -376,7 +381,8 @@ public class SoundLibrary implements MetaEventListener, ControllerEventListener
             if(noSoundDevice || sequencer==null)
                return;
 
-            if(currentMusic!=null) {
+            if(currentMusic!=null) {              
+               //sequencer.stop();
                sequencer.start();
             }
         }       

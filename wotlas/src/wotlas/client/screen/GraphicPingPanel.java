@@ -36,8 +36,8 @@ import java.awt.font.*;
  *  @author Aldiss
  */
 
-public class GraphicPingPanel extends JPanel implements NetPingListener
-{
+public class GraphicPingPanel extends JPanel implements NetPingListener {
+
  /*------------------------------------------------------------------------------------*/
 
  // The different ping background images red, yellow, green,
@@ -176,6 +176,11 @@ public class GraphicPingPanel extends JPanel implements NetPingListener
      	
      	if( ping==PING_FAILED && pleaseWait==null) {
             DataManager dManager = ClientDirector.getDataManager();
+
+            if(dManager.getMyPlayer()==null ||
+               dManager.getMyPlayer().getMovementComposer()==null)
+               return;
+
             dManager.getMyPlayer().getMovementComposer().resetMovement();
             pleaseWait = new JPleaseWait( dManager.getClientScreen() );
         }

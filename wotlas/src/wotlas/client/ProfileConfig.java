@@ -31,30 +31,30 @@ public class ProfileConfig
   /** client's login
    */
   private String login;
-  
+
   /** client's password
    */
   private transient String password;
-  
+
   /** serverID where the client last connected
    */
   private int serverID;
 
   /** serverName where the client last connected
-   */  
+   */
   private transient String serverName;
-  
+
   /** serverPort where the client last connected
    */
   private transient int serverPort;
-  
+
   /** serverID where the client was first created
    */
-  private int originalServerID;  
-  
+  private int originalServerID;
+
   /** local clientID of the server where the client was first created
    */
-  private int localClientID;  
+  private int localClientID;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -70,95 +70,97 @@ public class ProfileConfig
     originalServerID = -1;
     localClientID = -1;
   }
-  
+
   /** To get the client's Login
    */
   public String getLogin() {
     return login;
   }
-  
+
   /** To set the client's Login
    */
   public void setLogin(String login) {
     this.login = login;
   }
-  
+
   /** To get the client's password
    */
   public String getPassword() {
     return password;
   }
-  
+
   /** To set the client's password
    */
   public void setPassword(String password) {
     this.password = password;
   }
-  
+
   /** To get the serverID where the client last connected
    */
   public int getServerID() {
     return serverID;
-  } 
-  
+  }
+
   /** To set the serverID where the client last connected
    */
   public void setServerID(int serverID) {
     this.serverID = serverID;
   }
-  
+
   /** To get the serverName where the client last connected
    */
   public String getServerName() {
     return serverName;
   }
-  
+
   /** To set the serverName where the client last connected
    */
   public void setServerName(String serverName) {
     this.serverName = serverName;
   }
-  
+
   /** To get the serverPort where the client last connected
    */
   public int getServerPort() {
     return serverPort;
   }
-  
+
   /** To set the serverPort where the client last connected
    */
   public void setServerPort(int serverPort) {
     this.serverPort = serverPort;
   }
-  
+
   /** To get the serverID of the server where the client was first created
    */
   public int getOriginalServerID() {
     return originalServerID;
   }
-  
+
   /** To set the serverID of the server where the client was first created
    */
   public void setOriginalServerID(int originalServerID) {
     this.originalServerID = originalServerID;
   }
-  
+
   /** To get the localClientID
    */
   public int getLocalClientID() {
     return localClientID;
   }
-  
+
   /** To set the localClientID
    */
   public void setLocalClientID(int localClientID) {
     this.localClientID = localClientID;
-  }  
-  
+  }
+
   /** To get the client's identification key
    */
   public String getKey() {
     return ""+originalServerID+"-"+localClientID;
-  }  
-  
+  }
+
+ /*------------------------------------------------------------------------------------*/
+
 }

@@ -23,6 +23,7 @@ import wotlas.common.*;
 import wotlas.common.universe.*;
 
 import wotlas.libs.persistence.*;
+
 import wotlas.utils.Debug;
 import wotlas.utils.FileTools;
 import wotlas.utils.Tools;
@@ -36,9 +37,10 @@ import java.io.File;
   * @author Petrus
   * @see wotlas.libs.persistence.PropertiesConverter
   */
-  
+
 public class PersistenceManager extends wotlas.common.PersistenceManager
 {
+
  /*------------------------------------------------------------------------------------*/
 
   public final static String CLIENT_PROFILES = "../src/config/client-profiles.cfg";
@@ -55,7 +57,7 @@ public class PersistenceManager extends wotlas.common.PersistenceManager
   /** Constructor.
    *
    * @param databasePath path to the local server database
-   */  
+   */
   private PersistenceManager(String databasePath) {
     super(databasePath);
   }
@@ -116,7 +118,7 @@ public class PersistenceManager extends wotlas.common.PersistenceManager
       return false;
     }
   }
-  
+
  /*------------------------------------------------------------------------------------*/
 
   /** Loads the client's profiles located in config/client-profiles.cfg
@@ -133,4 +135,7 @@ public class PersistenceManager extends wotlas.common.PersistenceManager
       return null;
     }
   }
+
+ /*------------------------------------------------------------------------------------*/
+
 }

@@ -19,50 +19,42 @@
 
 package wotlas.client;
 
-import wotlas.common.ServerConfigList;
 import wotlas.common.ServerConfig;
-
-import javax.swing.table.AbstractTableModel;
+import wotlas.common.ServerConfigList;
 
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.JScrollPane;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.JOptionPane;
-import java.awt.*;
-import java.awt.event.*;
 
-/** An AbstractTableModel to diplay the client's profiles in a JTable
+/** An AbstractTableModel to display the client's profiles in a JTable
  *
- * @author Petrus  
- * @see wotlas.client.ProfileConfig 
+ * @author Petrus
+ * @see wotlas.client.ProfileConfig
  * @see wotlas.common.ServerConfig
  */
 
 public class ProfileConfigListTableModel extends AbstractTableModel
 {
-  
+
  /*------------------------------------------------------------------------------------*/
 
-  /** Array of client's profiles 
+  /** Array of client's profiles
    */
-  private ProfileConfig profiles[];    
-    
+  private ProfileConfig profiles[];
+
   /** Array of servers
    */
   private ServerConfigList servers;
-  
+
   /** temporary server
    */
   private ServerConfig serverConfig;
-  
+
   /** Names of the table columns
    */
-  private final String[] columnNames = {"login", "server", "key"};  
+  private final String[] columnNames = {"login", "server", "key"};
 
  /*------------------------------------------------------------------------------------*/
- 
+
   /** Constructor
    *
    * @param ProfileConfigList client's accounts
@@ -76,13 +68,13 @@ public class ProfileConfigListTableModel extends AbstractTableModel
  /*------------------------------------------------------------------------------------*/
 
   /** To get the number of columns
-   */  
+   */
   public int getColumnCount() {
     return columnNames.length;
   }
-  
+
   /** To get the number of rows
-   */  
+   */
   public int getRowCount() {
     return profiles.length;
   }
@@ -93,8 +85,8 @@ public class ProfileConfigListTableModel extends AbstractTableModel
    */
   public String getColumnName(int col) {
     return columnNames[col];
-  }  
-  
+  }
+
   /** To get the value of a cell
    *
    * @param row index of cell row
@@ -104,14 +96,14 @@ public class ProfileConfigListTableModel extends AbstractTableModel
     switch(col) {
       case 0:
         return profiles[row].getLogin();
-        
-      case 1:        
+
+      case 1:
         serverConfig = servers.getServerConfig(profiles[row].getServerID());
-        return serverConfig.getServerName();        
-        
+        return serverConfig.getServerName();
+
       case 2:
         return profiles[row].getKey();
-        
+
       default:
         return null;
     }
@@ -119,10 +111,12 @@ public class ProfileConfigListTableModel extends AbstractTableModel
 
   /* JTable uses this method to determine the default renderer/
    * editor for each cell
-   */  
+   */
   /*public Class getColumnClass(int c) {
     String dummy = "";
     return dummy.getClass();
   }*/
-  
+
+ /*------------------------------------------------------------------------------------*/
+
 }  

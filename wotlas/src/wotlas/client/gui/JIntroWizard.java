@@ -68,7 +68,7 @@ public class JIntroWizard extends JFrame
     removeLeftPanel();
     this.leftPanel = leftPanel;
     this.leftPanel.setBackground(Color.white);
-    getContentPane().add(this.leftPanel, BorderLayout.CENTER);
+    getContentPane().add(this.leftPanel, BorderLayout.CENTER);        
   }
 
   /** Set the right JPanel of the interface
@@ -80,7 +80,7 @@ public class JIntroWizard extends JFrame
     rightPanel.setPreferredSize(rightDimension);
     this.rightPanel = rightPanel;
     this.rightPanel.setBackground(Color.white);
-    getContentPane().add(this.rightPanel, BorderLayout.EAST);
+    getContentPane().add(this.rightPanel, BorderLayout.EAST);        
   }
 
   /** Remove the left panel
@@ -132,6 +132,7 @@ public class JIntroWizard extends JFrame
   /** Show the interface
    */
   public void showScreen() {  
+    //pack();
     show();
   }
 
@@ -169,12 +170,11 @@ public class JIntroWizard extends JFrame
     
     UIManager.put("TextArea.font", f.deriveFont(16f));
     UIManager.put("TextArea.foreground", Color.black);
-    
-    
-    UIManager.put("TableHeader.font", f.deriveFont(20f));
+        
+    UIManager.put("TableHeader.font", f.deriveFont(18f));
     UIManager.put("TableHeader.foreground", Color.black);
     
-    UIManager.put("Table.font", f.deriveFont(18f));
+    UIManager.put("Table.font", f.deriveFont(16f));
     UIManager.put("Table.foreground", Color.black);    
   }
   

@@ -16,12 +16,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
+
+// TODO :
+// - gameHeight
+
 package wotlas.client.screen;
 
-import javax.swing.*;
+import wotlas.libs.graphics2D.*;
+import wotlas.libs.graphics2D.drawable.*;
+import wotlas.libs.graphics2D.policy.*;
+
 import java.awt.*;
 import java.awt.event.*;
+
+import javax.swing.*;
 
 /** The main frame of wotlas client interface.<br>
  * It contains :<br>
@@ -41,13 +50,14 @@ public class JClientScreen extends JFrame
 
  /*------------------------------------------------------------------------------------*/
 
-  private final static int mainWidth = 800;
-  private final static int mainHeight = 600;
+  public final static int mainWidth = 800;
+  public final static int mainHeight = 600;
 
   private final static int northHeight = 50;
-  private final static int leftWidth = 600;
+  public final static int leftWidth = 600;
   
   private final static int gameHeight = 400;
+  public final static int mapHeight = 400;
   private final static int gameMinHeight = 200;
   
   private final static int thumbHeight = 100;
@@ -60,6 +70,7 @@ public class JClientScreen extends JFrame
   
   private JInfosPanel infosPanel;  
   private JMapPanel mapPanel;
+  private GraphicsDirector gDirector;
   private JChatPanel chatPanel;
   private JPreviewPanel previewPanel;
   private JPlayerPanel playerPanel;  
@@ -74,11 +85,23 @@ public class JClientScreen extends JFrame
     setDefaultCloseOperation(EXIT_ON_CLOSE);
   }
   
+  public JClientScreen(JInfosPanel infosPanel, GraphicsDirector gDirector, JChatPanel chatPanel,
+                       JPreviewPanel previewPanel, JPlayerPanel playerPanel, JLogPanel logPanel) {
+    super("Wotlas client");
+    this.infosPanel = infosPanel;    
+    this.gDirector = gDirector;
+    this.chatPanel = chatPanel;
+    this.previewPanel = previewPanel;
+    this.playerPanel = playerPanel;
+    this.logPanel = logPanel;
+    setDefaultCloseOperation(EXIT_ON_CLOSE);
+  }
+  
   public JClientScreen(JInfosPanel infosPanel, JMapPanel mapPanel, JChatPanel chatPanel,
                        JPreviewPanel previewPanel, JPlayerPanel playerPanel, JLogPanel logPanel) {
     super("Wotlas client");
     this.infosPanel = infosPanel;
-    this.mapPanel = mapPanel;
+    this.mapPanel = mapPanel;    
     this.chatPanel = chatPanel;
     this.previewPanel = previewPanel;
     this.playerPanel = playerPanel;
@@ -126,6 +149,7 @@ public class JClientScreen extends JFrame
       // *** Map panel ***
       
       mapPanel.setMinimumSize(new Dimension(leftWidth, gameMinHeight));
+      //gDirector.setMinimumSize(new Dimension(leftWidth, gameMinHeight));
 
       // *** Chat Panel ***      
 
@@ -133,7 +157,9 @@ public class JClientScreen extends JFrame
       //myChatPanel.setMinimumSize(new Dimension(leftWidth, mainHeight-northHeight-gameHeight));
       myChatPanel.setMinimumSize(new Dimension(leftWidth, chatMinHeight));
 
-      JSplitPane leftPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT,mapPanel, myChatPanel);
+      JSplitPane leftPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mapPanel, myChatPanel);
+      //JSplitPane leftPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, gDirector, myChatPanel);
+      
       leftPanel.setOneTouchExpandable(true);
       leftPanel.setDividerLocation(gameHeight);
 

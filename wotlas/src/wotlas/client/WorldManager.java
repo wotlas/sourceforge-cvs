@@ -19,6 +19,11 @@
 
 package wotlas.client;
 
+import wotlas.common.Player;
+import wotlas.common.universe.*;
+
+import wotlas.utils.Debug;
+
  /** A WorldManager provides all the methods needed to handle & manage the game world
   *  from its root.<p><br>
   *
@@ -36,11 +41,14 @@ public class WorldManager extends wotlas.common.WorldManager
 {
 
  /*------------------------------------------------------------------------------------*/
-  
+
   /** Constructor. Attemps to load the local universe data. Any error at this
    * step will stop the program.
    */
   WorldManager() {
     super();
   }
+
+ /*------------------------------------------------------------------------------------*/
+
 }

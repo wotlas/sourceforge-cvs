@@ -19,6 +19,7 @@
  
 package wotlas.client;
 
+import wotlas.libs.log.*;
 import wotlas.libs.persistence.*;
 
 import wotlas.utils.Debug;
@@ -45,6 +46,10 @@ class ClientDirector
    */
   public final static String DATABASE_CONFIG = "../src/config/client.cfg";
 
+  /** Static Link to Log File.
+   */
+  public final static String CLIENT_LOG = "../log/wot-client.log";
+  
   /** Complete Path to the database where are stored the client's profiles
    */
   private static String databasePath;
@@ -71,7 +76,17 @@ class ClientDirector
    */
   public static void main(String argv[])
   {
-    // STEP 0 - Print some info...
+    
+    System.out.println("Log started");
+    // STEP 0 - Start a JLogStream to display our Debug messages
+    try {
+      Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(), CLIENT_LOG, "title.jpg" ) );
+    } catch( java.io.FileNotFoundException e ) {
+      e.printStackTrace();
+      return;
+    }    
+    System.out.println("Log created");
+    
     Debug.signal( Debug.NOTICE, null, "*-----------------------------------*" );
     Debug.signal( Debug.NOTICE, null, "|   Wheel Of Time - Light & Shadow  |" );
     Debug.signal( Debug.NOTICE, null, "|  Copyright (C) 2001 - WOTLAS Team |" );
@@ -82,14 +97,14 @@ class ClientDirector
 
     if (properties==null) {
       Debug.signal( Debug.FAILURE, null, "No valid client-database.cfg file found !" );
-      System.exit(1);
+      Debug.exit();
     }
     
     databasePath = properties.getProperty( "DATABASE_PATH" );
 
     if (databasePath==null) {
       Debug.signal( Debug.FAILURE, null, "No Database Path specified in config file !" );
-      System.exit(1);
+      Debug.exit();
     }
     
     Debug.signal( Debug.NOTICE, null, "DataBase Path Found : "+databasePath );
@@ -99,16 +114,17 @@ class ClientDirector
     Debug.signal( Debug.NOTICE, null, "Persistence Manager Created..." );
                 
     // STEP 3 - We ask the ClientManager to get ready
-    clientManager = ClientManager.createClientManager();
+    clientManager = ClientManager.createClientManager(databasePath);
     Debug.signal( Debug.NOTICE, null, "Client Created (but not started)..." );
 
     // STEP 4 - We ask the DataManager to get ready
-    dataManager = DataManager.createDataManager();
+    dataManager = DataManager.createDataManager(databasePath);
     Debug.signal( Debug.NOTICE, null, "DataManager created..." );
     
-    // STEP 5 - Start of the ClientManager
+    // STEP 5 - Start the ClientManager
     clientManager.start(0);
-    Debug.signal( Debug.NOTICE, null, "WOTLAS Client started with success..." );    
+    Debug.signal( Debug.NOTICE, null, "WOTLAS Client started with success..." );
+        
   }
   
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

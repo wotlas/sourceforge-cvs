@@ -23,7 +23,7 @@ package wotlas.client;
 
 /** Profile Config List contains the list of the client's profiles:<br>
  * The ProfileConfigList class is saved by the PersistenceManager in config/client-profiles.cfg.
- *  
+ *
  * @author Petrus
  * @see wotlas.client.ProfileConfig
  */
@@ -36,7 +36,7 @@ public class ProfileConfigList
   /** List of client's profiles
    */
   private ProfileConfig[] profiles;
-  
+
   /** Index of the latest used client's profile
    */
   private int currentProfileIndex;
@@ -49,7 +49,7 @@ public class ProfileConfigList
   public ProfileConfigList() {
     currentProfileIndex = 0;
   }
-  
+
   /*------------------------------------------------------------------------------------*/
 
   /** To get the profiles
@@ -57,19 +57,19 @@ public class ProfileConfigList
   public ProfileConfig[] getProfiles() {
     return profiles;
   }
-  
+
   /** To set the profiles
    */
   public void setProfiles(ProfileConfig[] profiles) {
     this.profiles = profiles;
   }
-  
+
   /** To get the currentProfileIndex
    */
   public int getCurrentProfileIndex() {
     return currentProfileIndex;
   }
-  
+
   /** To set currentProfileIndex
    */
   public void setCurrentProfileIndex(int currentProfileIndex) {
@@ -83,7 +83,7 @@ public class ProfileConfigList
   public ProfileConfig addProfile()
   {
     ProfileConfig myProfile = new ProfileConfig();
-    
+
     if (profiles == null) {
       profiles = new ProfileConfig[1];
       profiles[0] = myProfile;
@@ -95,7 +95,7 @@ public class ProfileConfigList
     }
     return myProfile;
   }
-  
+
   /** Add a new Profile to the array <b>profiles</b>
    */
   public void addProfile(ProfileConfig profile) {
@@ -111,7 +111,7 @@ public class ProfileConfigList
   }
 
  /*------------------------------------------------------------------------------------*/
-  
+
   /** Remove a profile of the array profiles
    *
    * @param index of the profile to be removed
@@ -129,7 +129,7 @@ public class ProfileConfigList
       return 0;
     return profiles.length;
   }
-  
+
  /*------------------------------------------------------------------------------------*/
 
 }

@@ -36,6 +36,9 @@
         <property name="alice.dir" value="../../alice/ProgramD"/>
         <property name="alice-classpath"  value="${alice.dir}/lib/aliceserver.jar"/>
         <property name="alice-wotlas-jar" value="${alice.dir}/lib/alicewotlas.jar"/>
+
+        <property name="wotlas-client-jar" value="${lib.dir}/wotlas-client.jar"/>
+        <property name="wotlas-client-manifest" value="wotlas.mf"/>
         
         <filter token="year" value="${year}"/>
         <filter token="version" value="${version}"/>
@@ -63,6 +66,7 @@
         <echo message=""/>
         <echo message="   client --> compiles the client side only (client,common,libs)"/>
         <echo message="   client-only --> compiles the client packages only"/>
+        <echo message="   client-jar --> compiles the client packages and build the client JAR."/>
         <echo message=""/>
         <echo message="   libs --> compiles the wotlas libs only"/>
         <echo message="   common --> compiles the common wotlas packages only"/>
@@ -93,7 +97,7 @@
 
     <!-- COMPILE ALL -->
 
-    <target name="all" depends="prepare,utils,libs,common,server-only,client-only">
+    <target name="all" depends="prepare,client,server">
     </target>
 
 
@@ -108,6 +112,13 @@
     <target name="client" depends="prepare,utils,libs,common,client-only">
     </target>
 
+    <target name="client-jar" depends="prepare,utils,libs,common,client-only">
+        <echo message="Creating the ${wotlas-client-jar} JAR file..."/>
+        <jar jarfile="${wotlas-client-jar}"
+             basedir="${build.dest}"
+             manifest="${wotlas-client-manifest}"
+        />
+    </target>
 
     <!-- COMPILE SERVER ONLY -->
 

@@ -135,7 +135,7 @@ public abstract class JConnectionDialog extends JDialog implements Runnable
 
         tryConnection();
         dispose();
-        System.out.println("fin");
+        Debug.signal( Debug.NOTICE, null, "close JConnectionDialog");
     }
 
  /*------------------------------------------------------------------------------------*/

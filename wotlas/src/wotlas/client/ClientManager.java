@@ -19,14 +19,19 @@
 
 package wotlas.client;
 
+import wotlas.client.gui.*;
 import wotlas.client.screen.*;
 import wotlas.utils.Tools;
+import wotlas.utils.Debug;
+
+import wotlas.libs.net.*;
+import wotlas.libs.net.personality.*;
+import wotlas.common.message.account.*;
 
 import javax.swing.*;
+import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
-
-import wotlas.utils.Debug;
 
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
@@ -34,15 +39,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.JOptionPane;
-import javax.swing.event.*;
-import java.awt.*;
-import java.awt.event.*;
 
 public class ClientManager
 {
  /*------------------------------------------------------------------------------------*/
  
-  /** Our Default ServerManager.
+  /** Our Default ClientManager.
    */
   private static ClientManager clientManager;
 
@@ -52,7 +54,7 @@ public class ClientManager
   
   /** Generic interface of Wotlas client
    */
-  private ScreenIntro screenIntro;
+  public JIntroWizard screenIntro;
   
   /** Index of current screen shown
    */
@@ -61,6 +63,8 @@ public class ClientManager
   /** Current profile
    */
   private Profile currentProfile;
+  
+  private NetPersonality myNetPersonality;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -77,7 +81,7 @@ public class ClientManager
       System.exit(1);
     }
     
-    screenIntro = new ScreenIntro();
+    screenIntro = new JIntroWizard();
 
   }
 
@@ -128,30 +132,36 @@ public class ClientManager
     JLabel label4;
     JLabel label5;
     JTextField tfield1;
-    JPasswordField pfield1;
+    final JPasswordField pfield1;
     JButton b_ok;
     JButton b_cancel;
     
     indexScreen = state;
     
+    Font f = new Font("Monospaced", Font.BOLD, 10);
+    UIManager.put("Button.font", f);
+      
+    System.out.println("indexScreen : " + indexScreen + " state : " + state);
+    
     switch(state)
     {
       case 0:      
 
-      // Left JPanel
-      leftPanel = new JPanel();      
-      leftPanel.setLayout(new FlowLayout(FlowLayout.CENTER, screenIntro.getLeftWidth(), 30));
+      // *** Left JPanel ***
+      leftPanel = new JPanel();
+      leftPanel.setLayout(new FlowLayout(FlowLayout.CENTER, screenIntro.getLeftWidth(), 20));            
       
       label1 = new JLabel("Welcome to WOTLAS");
       leftPanel.add(label1);      
-      label2 = new JLabel("Choose your profile:");      
+      label2 = new JLabel("Choose your profile :");      
       leftPanel.add(label2);
-        
+             
       // Creates a table of profiles
       // data
       ProfilesTableModel profilesTabModel = new ProfilesTableModel(profilesConfig.getProfiles());      
       JTable profilesTable = new JTable(profilesTabModel);      
-      profilesTable.setPreferredScrollableViewportSize(new Dimension(200, 200)); 
+      profilesTable.setOpaque(false);
+      profilesTable.setPreferredScrollableViewportSize(new Dimension(200, 50)); 
       // selection
       profilesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       ListSelectionModel rowSM = profilesTable.getSelectionModel();
@@ -172,12 +182,13 @@ public class ClientManager
         }
       });
       // show table
-      JScrollPane scrollPane = new JScrollPane(profilesTable);           
+      JScrollPane scrollPane = new JScrollPane(profilesTable);    
+      scrollPane.setOpaque(false);       
       leftPanel.add(scrollPane);
                
-      // Right Panel
+      // *** Right Panel ***
       rightPanel = new JPanel();      
-      rightPanel.setLayout(new FlowLayout(FlowLayout.CENTER, screenIntro.getRightWidth(), 30));
+      rightPanel.setLayout(new FlowLayout(FlowLayout.CENTER, screenIntro.getRightWidth(), 10));
         
       b_ok = new JButton("ok");      
       b_ok.addActionListener(new ActionListener() {
@@ -195,18 +206,18 @@ public class ClientManager
           }
         }
       );
-      rightPanel.add(b_cancel);
+      rightPanel.add(b_cancel);            
       
-      JButton b_newProfile = new JButton("New profile");
+      JButton b_newProfile = new JButton("New ");
       rightPanel.add(b_newProfile);
       
-      JButton b_loadProfile = new JButton("Load profile");
+      JButton b_loadProfile = new JButton("Load ");
       rightPanel.add(b_loadProfile);
             
-      JButton b_delProfile = new JButton("Delete profile");
+      JButton b_delProfile = new JButton("Delete ");
       rightPanel.add(b_delProfile);
       
-      // Adding the panels
+      // *** Adding the panels ***
       screenIntro.setLeftPanel(leftPanel);
       screenIntro.setRightPanel(rightPanel);
       screenIntro.showScreen();
@@ -214,7 +225,7 @@ public class ClientManager
       
     case 1:      
     
-      // Left JPanel
+      // *** Left JPanel ***
       leftPanel = new JPanel();      
       leftPanel.setLayout(new FlowLayout(FlowLayout.CENTER, screenIntro.getLeftWidth(), 20));
       
@@ -227,25 +238,51 @@ public class ClientManager
       label3 = new JLabel("your serial : " + currentProfile.getSerial());
       leftPanel.add(label3);            
       
-      // Adding the panels 
-      screenIntro.setLeftPanel(leftPanel);      
+      // *** Right Panel ***      
+      rightPanel = new JPanel();      
+      rightPanel.setLayout(new FlowLayout(FlowLayout.CENTER, screenIntro.getRightWidth(), 10));
+        
+      b_ok = new JButton("ok");      
+      b_ok.addActionListener(new ActionListener() {
+        public void actionPerformed (ActionEvent e) {                        
+          char charPasswd[] = pfield1.getPassword();
+          String passwd = "";
+          for (int i=0; i<charPasswd.length; i++) {
+            passwd += charPasswd[i];
+          }
+          System.out.println(passwd);
+          wotlas.client.Client.FalseClient falseC = new wotlas.client.Client.FalseClient( currentProfile.getLogin(), passwd );            
+          wotlas.client.screen.JGameConnectionDialog jconnect = new wotlas.client.screen.JGameConnectionDialog( new JFrame(), currentProfile.getServerName(), 26500, currentProfile.getLogin(), passwd, "1", "5", falseC );
+          if ( jconnect.hasSucceeded() ) {
+            System.out.println("connected");
+            myNetPersonality = jconnect.getPersonality();
+          } else {
+            System.out.println("not connected");
+          }
+        }
+      }      
+      );
+      rightPanel.add(b_ok);
+            
+      b_cancel = new JButton("cancel");
+      b_cancel.addActionListener(new ActionListener() {          
+        public void actionPerformed (ActionEvent e) {                        
+            start(0);          
+        }
+      }
+      );
+      rightPanel.add(b_cancel);  
+      
+      // *** Adding the panels ***      
+      screenIntro.setLeftPanel(leftPanel);
+      screenIntro.setRightPanel(rightPanel);
       screenIntro.showScreen();
       break;
     
-    case 2:
+    case 2:        
     
-      // Left JPanel
-      leftPanel = new JPanel();
-      leftPanel.setLayout(new FlowLayout(FlowLayout.CENTER, screenIntro.getLeftWidth(), 30));
-      
-      label1 = new JLabel("Connecting to Wotlas WORLD...");
-      leftPanel.add(label1);      
-      
-      // Adding the panels
-      screenIntro.setLeftPanel(leftPanel);
-      screenIntro.removeRightPanel();
-      screenIntro.showScreen();                
-      break;      
+    case 3:
+    
       
     default:
       

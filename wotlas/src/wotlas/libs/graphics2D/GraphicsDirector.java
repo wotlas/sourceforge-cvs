@@ -279,6 +279,7 @@ public class GraphicsDirector extends JPanel {
     *  @return the owner of the targeted drawable, null if none or not found.
     */
      public Object findOwner( int x, int y ) {
+
         synchronized( drawables ) {
             drawables.resetIterator();
         
@@ -286,7 +287,8 @@ public class GraphicsDirector extends JPanel {
                Drawable d = drawables.next();
 
                if( d instanceof DrawableOwner )
-                   if ( d.contains(x,y) && ((DrawableOwner)d).getOwner()!=null )
+                   if ( d.contains( x+screen.x, y+screen.y )
+                        && ((DrawableOwner)d).getOwner()!=null )
                       return ( (DrawableOwner)d ).getOwner();
             }
         }

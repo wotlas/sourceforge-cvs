@@ -3,11 +3,16 @@ CHANGES BETWEEN V1.2 AND V1.1.2
 
  - added new maps : "Shayol Ghul" (2 maps), "White Tower" (2 maps), and "South Tv Ruins" is no longer hidden
  - added multi-server support. A player account can now travel from a server to another.
-   The game universe can now be shared between servers. Each server possess a set of buildings.
+   The game universe can now be shared between servers. Each server possesses a set of buildings.
  - corrected bugs in ServerConfigList : the previous code was sometimes attempting to reach wrong URI.
- - added ServerConfigList buffer flush every hour (to force update of the server table)
+ - added ServerConfigList buffer flush every six hour (to force update of the server table)
+   The server's IP/DNS name is now stored in a separate file server-X.cfg.adr that has a short buffer life
+   (twenty minutes) also our system is now on a "fail-first" mode. We don't check for a new server address
+   unless we fail to connect to it.
  - added server-map-setup tool (see .bat .sh commands) to manage server/building asssociation.
- - reformed chat command systems : it now has generic interfaces, processor and online doc.
+   we also reformed the 'server-setup' to make the transfer of the server address easier,
+   a new command 'register-setup' is now used for step by step server registration.
+ - reformed the chat command system : it now has generic interfaces, processor pattern and online doc.
  - added new chat commands : /server to get info on your current server, /help to get the list of
    available commands, /info to get information on a command, /log to print something in the server log.
  - added "sound" chat commands : /fanfare to play the fanfare, /bell to ring a bell,
@@ -15,15 +20,18 @@ CHANGES BETWEEN V1.2 AND V1.1.2
  - about 8 new musics for all the levels...
  - local password storage. Your passwords are now saved on disk. This option can be unset.
  - behaviour part of some messages are now in the "invokeLater" mode to avoid events error.
-   we made extensive use of the SwingUtilities.invokeLater() util.
+   we made extensive use of the SwingUtilities.invokeLater() utility.
  - reformed and improved the wotlas.libs.net library : it no longuer uses a static registry.
    Our network library is now easier to use : you write a message and its associated behaviour and that's all.
  - The JCroppedWindow code has been improved : it now uses SwingUtilities.invokeLater() and doesn't crash
-   Also it now uses a MouseMotionListener for better movement management. The About window now uses
-   JCroppedWindow.
+   anymore. Also it now uses a MouseMotionListener for better movement management.
+   The About window now uses JCroppedWindow.
  - Music management improved : the current music is not stopped if the new level one's is the same.
  - chat display enhanced : we now use our own version of the HTMLEditorKit.
  - persistence manager behaviour changed : we no longer save universe data during daily persistence save.
+ - Our wizard classes for wotlas setup have now been gathered into a library. The new approach uses a factory
+   to build steps from a class of parameters. These parameters can be saved to a configuration file or sent
+   on a stream. 8 generic steps are available.
 
 
 CHANGES BETWEEN V1.1.2 AND V1.1.1

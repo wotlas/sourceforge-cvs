@@ -157,8 +157,6 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     animation = new Animation(wotCharacter.getImage(location));
     sprite = (Sprite) wotCharacter.getDrawable(this);              
     movementComposer.init( this );
-
-    SoundLibrary.getSoundLibrary().playSound("human-steps.wav");
   }
 
   /** Called after graphicsDirector's init to add some visual effects to the master player

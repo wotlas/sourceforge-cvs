@@ -57,24 +57,24 @@ public class AStarDouble
 
   /** start of the path
    */  
-  private Point pointStart;
+  //private Point pointStart;
 
   /** goal of the path
    */
-  private Point pointGoal;
+  //private Point pointGoal;
   
   /** list of not visited {@link NodeDouble Nodes}
    */
-  private Hashtable open = new Hashtable(500);
+  private Hashtable open;
 
   /** list of visited {@link NodeDouble Nodes}
    */
-  private Hashtable closed = new Hashtable(500);
+  private Hashtable closed;
 
   /** sorted open {@link NodeDouble Node}
    */
   //private Vector nodes = new Vector();
-  private List nodes = new List();
+  private List nodes;
    
  /*------------------------------------------------------------------------------------*/
   
@@ -100,7 +100,7 @@ public class AStarDouble
   /**
    * begins optimal path search
    */
-  private NodeDouble searchNode()
+  private NodeDouble searchNode(Point pointStart, Point pointGoal)
   {
     NodeDouble bestNode;			           // best node of Vector "nodes" (the lowest f)    
     List childPoints;                 // children Points of "bestNode"    
@@ -316,18 +316,21 @@ double ot = ((NodeDouble) nodes.elementAt(cur)).f;
    * @param pGoal end of the path
    */
   //public Vector findPath(Point pStart, Point pGoal)
-  public List findPath(Point pStart, Point pGoal)
+  public List findPath(Point pointStart, Point pointGoal)
   {
+    nodes = new List();
+    open = new Hashtable(500);
+    closed = new Hashtable(500);
     NodeDouble firstNode = new NodeDouble();
     NodeDouble solution = new NodeDouble();
     
     double estimation;
     double cost;    
 
-    pointStart = pStart;
-    pointGoal = pGoal;
+    //pointStart = pStart;
+    //pointGoal = pGoal;
     
-    if ( (!isNotBlock(pStart.x, pStart.y)) || (!isNotBlock(pGoal.x, pGoal.y)) ) {
+    if ( (!isNotBlock(pointStart.x, pointStart.y)) || (!isNotBlock(pointGoal.x, pointGoal.y)) ) {
       System.err.println("error : invalid point");
       return null;
     }
@@ -345,7 +348,7 @@ double ot = ((NodeDouble) nodes.elementAt(cur)).f;
     nodes.addElement(firstNode);    
     
     //System.out.println("Beginning of the search");
-    solution = searchNode();
+    solution = searchNode(pointStart, pointGoal);
     
     //System.out.println("End");        
     nodes.removeAllElements();

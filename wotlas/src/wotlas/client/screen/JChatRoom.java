@@ -242,20 +242,18 @@ public class JChatRoom extends JPanel
       } 
 
       // Search for smileys
+       
+      text = Tools.subString(text, ":,(", "<img src='file:..\\base\\gui\\chat\\cry.gif'>");
+      text = Tools.subString(text, ":o", "<img src='file:..\\base\\gui\\chat\\eek.gif'>");
+      text = Tools.subString(text, ":D", "<img src='file:..\\base\\gui\\chat\\laugh.gif'>");      
+      text = Tools.subString(text, ":(", "<img src='file:..\\base\\gui\\chat\\mad.gif'>");      
+      text = Tools.subString(text, ">0", "<img src='file:..\\base\\gui\\chat\\rant.gif'>");
+      text = Tools.subString(text, "|I", "<img src='file:..\\base\\gui\\chat\\sleep.gif'>");
+      text = Tools.subString(text, ":)", "<img src='file:..\\base\\gui\\chat\\smile.gif'>");
+      text = Tools.subString(text, ":|", "<img src='file:..\\base\\gui\\chat\\squint.gif'>");
       text = Tools.subString(text, ";)", "<img src='file:..\\base\\gui\\chat\\wink.gif'>");
       
-      text = Tools.subString(text, ":)", "<img src='file:..\\base\\gui\\chat\\smile.gif'>");
       
-      text = Tools.subString(text, ":|", "<img src='file:..\\base\\gui\\chat\\squint.gif'>");
-      
-      text = Tools.subString(text, ">0", "<img src='file:..\\base\\gui\\chat\\rant.gif'>");
-      
-      text = Tools.subString(text, ":D", "<img src='file:..\\base\\gui\\chat\\laugh.gif'>");      
-      
-      text = Tools.subString(text, ":(", "<img src='file:..\\base\\gui\\chat\\mad.gif'>");
-      
-      text = Tools.subString(text, "|I", "<img src='file:..\\base\\gui\\chat\\sleepy.gif'>");
-
     //try {
       System.out.println("insertString");
       //doc_chat.insertString (doc_chat.getLength(), text+"<br>\n", attribut );

@@ -195,6 +195,10 @@ public class JIntroWizard extends JFrame
     
     UIManager.put("TextField.font", f.deriveFont(18f));
     UIManager.put("TextField.foreground", Color.black);    
+    
+    UIManager.put("CheckBox.font", f.deriveFont(14f));
+    UIManager.put("CheckBox.foreground", Color.black);    
+    
    
   }
   

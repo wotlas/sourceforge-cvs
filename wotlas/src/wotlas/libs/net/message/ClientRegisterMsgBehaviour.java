@@ -19,8 +19,14 @@
  
 package wotlas.libs.net.message;
 
+import java.io.IOException;
+
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.libs.net.NetServerEntry;
+import wotlas.libs.net.NetEngineVersion;
+
+import wotlas.utils.Debug;
+
 
 /**
  * Associated behaviour to the ClientRegisterMessage...
@@ -47,10 +53,48 @@ public class ClientRegisterMsgBehaviour extends ClientRegisterMessage implements
    *        this message.
    */
      public void doBehaviour( Object context ) {
+
+        // the context is here an entry on this server ( server + personality )
+           NetServerEntry entry = (NetServerEntry) context;
+
      	// this message is the first one sent by a client 
      	// when he establishes a new connection. Arrived on the server
-     	// we call the server's accessControl method.
-           NetServerEntry entry = (NetServerEntry) context;
+        // we check that we have the same NetEngineVersion.
+           if( netEngineVersion != NetEngineVersion.VERSION )
+           {
+                if( netEngineVersion > NetEngineVersion.VERSION )
+                {
+                     entry.getPersonality().queueMessage(
+                           new ServerErrorMessage( "The Server Network Engine Version is old : "
+                                                   + NetEngineVersion.VERSION
+                                                   + ". Please Signal it ! You have version "
+                                                   + netEngineVersion ) );
+
+                     entry.getPersonality().closeConnection();
+
+                     Debug.signal( Debug.WARNING, this,
+                                     "Client tried to connect with a more recent network engine version :"
+                                      +netEngineVersion+". This server has version "
+                                      +NetEngineVersion.VERSION );
+                }
+                else
+                {
+                       entry.getPersonality().queueMessage(
+                           new ServerErrorMessage( "You have an old version of the Wotlas Network Engine (v"
+                                                        + netEngineVersion + "). Please update to v"
+                                                        + NetEngineVersion.VERSION ) );
+
+                       entry.getPersonality().closeConnection();
+
+                       Debug.signal( Debug.WARNING, this,
+                                     "Client tried to connect with an old version of the network engine (v"
+                                      +netEngineVersion+")." );
+                }
+
+              return;
+           }
+
+     	// if the version are the same, we call the server's accessControl method.
            entry.getServer().accessControl( entry.getPersonality(), key );
      }
 

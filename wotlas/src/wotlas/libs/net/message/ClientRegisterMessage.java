@@ -25,6 +25,7 @@ import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
 import wotlas.libs.net.NetMessageRegistry;
+import wotlas.libs.net.NetEngineVersion;
 
 
 /** 
@@ -43,6 +44,10 @@ public class ClientRegisterMessage extends NetMessage
    */
       protected String key;
 
+  /** The version of the client's netwaork engine.
+   */
+      protected float netEngineVersion;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. Just initializes the message category and type.
@@ -60,6 +65,7 @@ public class ClientRegisterMessage extends NetMessage
      public ClientRegisterMessage( String key ) {
          this();
          this.key = key;
+         netEngineVersion = NetEngineVersion.VERSION;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -72,6 +78,7 @@ public class ClientRegisterMessage extends NetMessage
    */
      public void encode( DataOutputStream ostream ) throws IOException {
          writeString( key, ostream );
+         ostream.writeFloat( netEngineVersion );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -84,6 +91,7 @@ public class ClientRegisterMessage extends NetMessage
    */
      public void decode( DataInputStream istream ) throws IOException {
           key = readString( istream );
+          netEngineVersion = istream.readFloat();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

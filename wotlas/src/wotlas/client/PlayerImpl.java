@@ -90,6 +90,9 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
    */
   private Animation animation;
 
+  // Test : sens of trajectory
+  private boolean reverse = false;
+  
   /** Our sprite.
    */
   private Sprite sprite;
@@ -359,8 +362,16 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
 
   /** Tick
    */
-  public void tick() {
-    if (indexTrajectory < trajectory.size()) {
+  public void tick() {    
+    if (indexTrajectory == trajectory.size()) {
+      reverse = true;
+      indexTrajectory--;
+    }
+    if (indexTrajectory == -1) {
+      reverse = false;
+      indexTrajectory++;
+    }
+    if ((reverse == false) && (indexTrajectory < trajectory.size())) {
       Point newPosition = (Point) trajectory.elementAt(indexTrajectory);
       x = newPosition.x*10;
       y = newPosition.y*10;
@@ -368,6 +379,14 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
       sprite.tick();
       indexTrajectory++;
     }
+    if ((reverse == true) && (indexTrajectory > -1)) {
+      Point newPosition = (Point) trajectory.elementAt(indexTrajectory);
+      x = newPosition.x*10;
+      y = newPosition.y*10;
+      animation.tick();
+      sprite.tick();
+      indexTrajectory--;
+    }            
   }
 
  /*------------------------------------------------------------------------------------*/

@@ -39,6 +39,7 @@ public abstract class Human implements WotCharacter {
     public final static byte BLACK_HAIR  = 3;
     public final static byte GREY_HAIR   = 4;
     public final static byte WHITE_HAIR  = 5;
+    public final static byte REDDISH_HAIR= 6;
 
  /*------------------------------------------------------------------------------------*/
 

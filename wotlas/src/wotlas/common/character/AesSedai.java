@@ -24,6 +24,7 @@ import java.io.*;
 import wotlas.common.*;
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
+import wotlas.libs.graphics2D.filter.*;
 
 
 /** An Aes Sedai character.
@@ -89,7 +90,68 @@ public class AesSedai extends Female {
          if(aesSedaiSprite!=null)
              return (Drawable) aesSedaiSprite; 
 
-         aesSedaiSprite = new Sprite( (SpriteDataSupplier) player, ImageLibRef.PLAYER_PRIORITY );
+       // 1 - Sprite Creation + Filter
+          aesSedaiSprite = new Sprite( (SpriteDataSupplier) player, ImageLibRef.PLAYER_PRIORITY );
+
+          ColorImageFilter filter = new ColorImageFilter();
+
+          switch( aesSedaiStatus ) {
+              case AES_NOVICE :
+                      filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.white );
+                      break;
+              case AES_ACCEPTED :
+                      filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.white );
+                      break;
+              case AES_BROWN_AJAH :
+                      filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.brown );
+                      break;
+              case AES_WHITE_AJAH:
+                      filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.white );
+                      break;
+              case AES_BLUE_AJAH :
+                      break;
+              case AES_GREEN_AJAH :
+                      filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.green );
+                      break;
+              case AES_RED_AJAH :
+                      filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.red );
+                      break;
+              case AES_GRAY_AJAH :
+                      filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.gray );
+                      break;
+              case AES_YELLOW_AJAH :
+                      filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.yellow );
+                      break;
+              case AES_AMYRLIN :
+                      filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.lightgray );
+                      break;
+          }
+
+
+      // 2 - Hair Color
+          switch( aesSedaiStatus ) {
+              case BALD :
+                      break;
+              case GOLDEN_HAIR :
+                      break;
+              case BROWN_HAIR :
+                      filter.addColorChangeKey( ColorImageFilter.yellow, ColorImageFilter.brown );
+                      break;
+              case BLACK_HAIR:
+                      filter.addColorChangeKey( ColorImageFilter.yellow, ColorImageFilter.darkgray );
+                      break;
+              case GREY_HAIR :
+                      filter.addColorChangeKey( ColorImageFilter.yellow, ColorImageFilter.gray );
+                      break;
+              case WHITE_HAIR :
+                      filter.addColorChangeKey( ColorImageFilter.yellow, ColorImageFilter.lightgray );
+                      break;
+              case REDDISH_HAIR :
+                      filter.addColorChangeKey( ColorImageFilter.yellow, ColorImageFilter.red );
+                      break;
+          }
+
+         aesSedaiSprite.setDynamicImageFilter( filter );
          return aesSedaiSprite;
       }
 
@@ -100,10 +162,8 @@ public class AesSedai extends Female {
    *  @return image identifier of this character.
    */
      public ImageIdentifier getImage() {
-     
-       // default for now. TO ADD : return a different image by considering the
-       // hair color and aesSedaiStatus.
-         return new ImageIdentifier( ImageLibRef.PLAYERS_CATEGORY ,
+         // We return the default Aes Sedai Sprite...
+              return new ImageIdentifier( ImageLibRef.PLAYERS_CATEGORY ,
                                      ImageLibRef.AES_SEDAI_SET ,
                                      ImageLibRef.AES_BLUE_GOLDH_WALKING_ACTION
                                    );

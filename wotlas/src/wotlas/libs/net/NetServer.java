@@ -34,13 +34,13 @@ import wotlas.libs.net.message.ServerWelcomeMsgBehaviour;
 
 
 /** A NetServer awaits client connections. There are two types of Server :
- *
+ *<br>
  *    - server that have no predefined connection list. That means we
  *      don't know the clients that we are connected to (default).
- *
+ *<br>
  *    - server that maintains client accounts. To create this type of server
  *      extend this class and override the accessControl() method.
- *
+ *<br><p>
  *
  * This server uses a TormPersonality as default. If you want to use another
  * one override the getNewDefaultPersonality() method. Note also that when we create
@@ -58,19 +58,11 @@ abstract public class NetServer extends Thread
 
   /** Server Socket
    */
-     private ServerSocket server;
-
-  /** Current number of clients
-   */
-     private int current_nb_clients;
+     protected ServerSocket server;
 
   /** Stop server ?
    */
      private boolean stop_server;
-
-  /** Maximum number of clients to accept at the same time.
-   */
-     private int max_clients;
 
   /** User lock to temporarily forbid new connections
    */
@@ -84,15 +76,13 @@ abstract public class NetServer extends Thread
       *   where we'll be able to find the NetMessageBehaviour classes.
       *
       *  @param server_port port on which the server listens to clients.
-      *  @param max_clients maximum number of clients to accept at the same time.
       *  @param msg_packages a list of packages where we can find NetMsgBehaviour Classes.
       */
-        public NetServer( int server_port, int max_clients, String msg_packages[] )
+        public NetServer( int server_port, String msg_packages[] )
         {
               super("Server");
               stop_server = false;
               server_lock = false;
-              this.max_clients = max_clients;
 
            // we create a message factory
               NetMessageFactory.createMessageFactory( msg_packages );
@@ -181,7 +171,7 @@ abstract public class NetServer extends Thread
       protected void refuseClient( NetPersonality personality, String error_message )
       throws IOException{
               personality.queueMessage( new ServerErrorMessage( error_message ) );
-              personality.pleaseSendAllMessagesNow();       
+              personality.pleaseSendAllMessagesNow();
               personality.closeConnection();
       }
 
@@ -221,15 +211,9 @@ abstract public class NetServer extends Thread
                try{                           
                   // We creates a personality object to take care of him...
                      personality = getNewDefaultPersonality( client_socket );
-                     current_nb_clients++;
 
                   // we inspect our server state... do we really accept him ?
-                     if( current_nb_clients>=max_clients ) {
-                       // maximum clients reached...
-                          refuseClient( personality, "maximum number of clients reached for the moment." );
-                          Debug.signal(Debug.NOTICE,this,"maximum number of clients reached");
-                     }
-                     else if(server_lock) {
+                     if(server_lock) {
                        // we don't accept new connections for the moment
                           refuseClient( personality, "Server does not accept connections for the moment." );
                           Debug.signal(Debug.NOTICE,this,"Server Locked - just refused incoming connection");
@@ -258,17 +242,6 @@ abstract public class NetServer extends Thread
                 Debug.signal( Debug.WARNING, this, e );
           }
       }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-   /** The number of connected clients... 
-    *
-    *  @return the current clients number 
-    */
-      public int getCurrentClientsNumber(){
-             return current_nb_clients;
-      }
-
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

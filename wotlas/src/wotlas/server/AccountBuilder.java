@@ -138,6 +138,7 @@ public class AccountBuilder implements NetConnectionListener
            account = new GameAccount();
            player = new PlayerImpl();
            player.setDefaultPlayerLocation();
+
            canGoToPreviousState = false;
 
            state = ACCOUNT_LOGIN_PASSWD_STATE;   // first state...
@@ -300,7 +301,6 @@ public class AccountBuilder implements NetConnectionListener
            return;
         }
 
-        PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
         AccountManager accountManager = DataManager.getDefaultDataManager().getAccountManager();
 
      // final inits
@@ -317,9 +317,8 @@ public class AccountBuilder implements NetConnectionListener
               return;
         }
 
-        if( pm.createAccount( account ) ) {
-           // we add the account to the AccountManager & the player to the world...
-              accountManager.addAccount( account );
+        if( accountManager.createAccount( account ) ) {
+           // we add the player to the world...
               player.init();
               
               DataManager.getDefaultDataManager().getWorldManager().addNewPlayer( account.getPlayer() );

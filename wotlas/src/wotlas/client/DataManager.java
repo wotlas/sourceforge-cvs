@@ -664,9 +664,11 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     
     // I - ROOMLINK INTERSECTION UPDATE ( is the player moving to another room ? )
     RoomLink rl = myRoom.isIntersectingRoomLink( myPlayer.getCurrentRectangle() );
+    //System.out.println("currentRectangle" + myPlayer.getCurrentRectangle());    
   
       if ( rl!=null && !couldBeMovingToAnotherRoom ) {
         // Player is intersecting a RoomLink
+        System.out.println("Insersecting a RoomLink");
         latestRoomLink = rl;
         couldBeMovingToAnotherRoom = true;
   
@@ -674,8 +676,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         if ( rl.getDoor()!=null ) {
           // nothing for now
         }
-      } else if ( couldBeMovingToAnotherRoom ) {
+      } else if ( rl==null && couldBeMovingToAnotherRoom ) {
         // ok, no intersection now, are we in an another room ?
+        System.out.println("// ok, no intersection now, are we in an another room ?");
         couldBeMovingToAnotherRoom = false;
   
         int newRoomID = myRoom.isInOtherRoom( latestRoomLink, myPlayer.getCurrentRectangle() );
@@ -685,10 +688,18 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
           myRoom.removePlayer( myPlayer );
           myPlayer.getLocation().setRoomID( newRoomID );
           myRoom.addPlayer( myPlayer );
-          System.out.print("Move to another room : ");
+          System.out.print("Move to another room : " + newRoomID);
           Room room = worldManager.getRoom(myPlayer.getLocation());
-          System.out.println(room.getFullName());
-          
+          System.out.println(room.getFullName());      
+          RoomLink[] roomLinks = room.getRoomLinks();
+          System.out.println("\tRoomLink");
+          for (int i=0; i<roomLinks.length; i++) {
+            System.out.println("\t\troomLinks["+i+"] = " + roomLinks[i]);
+            drawScreenRectangle(roomLinks[i].toRectangle());
+          }
+              
+        } else {
+          System.out.println("We are still in the same room" + newRoomID);
         }
     } // End of part I
   
@@ -845,21 +856,17 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   }
   
  /*------------------------------------------------------------------------------------*/
+  
   /** To draw a rectangle on the screen
    *
    * @param rect the rectangle to display
    */
-  private void drawScreenRectangle(Rectangle rect) {
-    System.out.println("DataManager::drawScreenRectangle " + rect);
+  private void drawScreenRectangle(Rectangle rect) {    
     Point p[] = new Point[5];
     int x = (int) rect.getX();
     int y = (int) rect.getY();
     int width = (int) rect.getWidth();
-    int height = (int) rect.getHeight();
-    System.out.println(x);
-    System.out.println(y);
-    System.out.println(width);
-    System.out.println(height);
+    int height = (int) rect.getHeight();    
     p[0] = new Point(x,y);
     p[1] = new Point(x+width, y);
     p[2] = new Point(x+width, y+height);
@@ -868,4 +875,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     Drawable pathDrawable = (Drawable) new PathDrawable( p, Color.green, (short) ImageLibRef.AURA_PRIORITY ); 
     gDirector.addDrawable( pathDrawable);
   }
+
+ /*------------------------------------------------------------------------------------*/
+ 
 }

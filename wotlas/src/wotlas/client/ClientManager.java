@@ -201,14 +201,7 @@ public class ClientManager
 
       case 0:
       screenIntro.setTitle("Wotlas - Account selection...");
-      
-      // Test if an account exists
-      if (profileConfigList==null) {
-        profileConfigList = new ProfileConfigList();
-        start(10);
-        return;
-      }
-
+         
       // Load images of buttons
       im_cancelup = new ImageIcon("..\\base\\gui\\cancel-up.gif");
       im_canceldo = new ImageIcon("..\\base\\gui\\cancel-do.gif");
@@ -224,6 +217,13 @@ public class ClientManager
       im_okdo     = new ImageIcon("..\\base\\gui\\ok-do.gif");
       im_okun     = new ImageIcon("..\\base\\gui\\ok-un.gif");
 
+      // Test if an account exists
+      if (profileConfigList==null) {
+        profileConfigList = new ProfileConfigList();
+        start(10);
+        return;
+      }
+      
       // Create panels
       leftPanel = new JPanel();
       leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));

@@ -25,30 +25,33 @@ import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.common.message.description.*;
 import wotlas.client.*;
 
+import wotlas.client.DataManager;
+
 /**
  * Associated behaviour to the YourPlayerDataMessage...
  *
- * @author Aldiss
+ * @author Aldiss, Petrus
  */
 
 public class YourPlayerDataMsgBehaviour extends YourPlayerDataMessage implements NetMessageBehaviour
 {
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
    */
-     public YourPlayerDataMsgBehaviour() {
-          super();
-     }
+  public YourPlayerDataMsgBehaviour() {
+    super();
+  }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ /*------------------------------------------------------------------------------------*/
 
   /** Associated code to this Message...
    *
    * @param context an object giving specific access to other objects needed to process
    *        this message.
    */
-     public void doBehaviour( Object context ) {
+  public void doBehaviour( Object context ) {
 
         // The context is a DataManager
 
@@ -61,13 +64,13 @@ public class YourPlayerDataMsgBehaviour extends YourPlayerDataMessage implements
 
 
 /** Soluce 2 : The dataManager is awaiting on a lock. We set the data and awake him.
-
+ **/
+            System.out.println("YourPlayerDataMsg");
            DataManager dataManager = (DataManager) context;
 
            dataManager.setCurrentPlayer( player );
            
            dataManager.getStartGameLock().notify();
- **/
 
 // My comment : the Soluce 2 seems better as we quit as soon as the data is set...
 //              ( in soluce 1 we have to wait for the server to finish its process )

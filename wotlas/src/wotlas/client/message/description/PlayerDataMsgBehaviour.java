@@ -25,41 +25,40 @@ import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.common.message.description.*;
 import wotlas.client.*;
 
+import wotlas.client.DataManager;
+import wotlas.common.Player;
+
 /**
  * Associated behaviour to the PlayerDataMessage...
  *
- * @author Aldiss
+ * @author Aldiss, Petrus
  */
 
 public class PlayerDataMsgBehaviour extends PlayerDataMessage implements NetMessageBehaviour
 {
+  
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
    */
-     public PlayerDataMsgBehaviour() {
-          super();
-     }
+  public PlayerDataMsgBehaviour() {
+    super();
+  }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ /*------------------------------------------------------------------------------------*/
 
   /** Associated code to this Message...
    *
    * @param context an object giving specific access to other objects needed to process
    *        this message.
    */
-     public void doBehaviour( Object context ) {
+  public void doBehaviour( Object context ) {
+    System.out.println("PlayerDataMsg");
+    DataManager dataManager = (DataManager) context;
+    dataManager.addPlayer( player );
+  }
 
-        // The context is a DataManager
+ /*------------------------------------------------------------------------------------*/
 
-/** Soluce 1 : all is done in a method call.
-
-           DataManager dataManager = (DataManager) context;
-
-           dataManager.addPlayer( player );
- **/
-     }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
 

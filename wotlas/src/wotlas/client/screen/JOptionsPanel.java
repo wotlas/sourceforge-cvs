@@ -107,6 +107,9 @@ public class JOptionsPanel extends JPanel implements MouseListener, ChangeListen
     innerPanel.add(qTextPanel);
     innerPanel.add(new JLabel(" "));
     innerPanel.add(b_help);
+    
+    JMemory memo = new JMemory();
+    memo.init();
         
     add(innerPanel);
   }

@@ -232,13 +232,13 @@ public class JAccountCreationWizard extends wotlas.libs.wizard.JWizard
      *  @return return true to validate the "Next" button action, false to cancel it...
      */
     protected boolean onNext(Object context, JWizard wizard) {
-      DataManager dataManager = DataManager.getDefaultDataManager();
-
+      
       JAccountConnectionDialog jaconnect = new JAccountConnectionDialog( null,
                        currentServerConfig.getServerName(), currentServerConfig.getAccountServerPort(),
                        currentServerConfig.getServerID(), wizard);
 
       if ( jaconnect.hasSucceeded() ) {
+        wizard.setContext(jaconnect.getPersonality());
         Debug.signal( Debug.NOTICE, null, "ClientManager connected to AccountServer");
         jaconnect.getPersonality().queueMessage(new AccountCreationMessage());
         await();

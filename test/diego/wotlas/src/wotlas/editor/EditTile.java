@@ -89,14 +89,17 @@ public class EditTile {
 
   /** Main Class. Starts the Wotlas EditTile.
    */
-   public static void main(String argv[]) {
+    public static void main(String argv[]) {
 
-    // STEP 0 - We parse the command line options
-       boolean classicLogWindow = false;
-       String basePath = ResourceManager.DEFAULT_BASE_PATH;
-       Debug.displayExceptionStack( true );
+        /*  first of all Manage the Preloader for EditTile*/
+        WorldManager.PRELOADER_STATUS = PreloaderEnabled.LOAD_ALL;
+        
+        // STEP 0 - We parse the command line options
+        boolean classicLogWindow = false;
+        String basePath = ResourceManager.DEFAULT_BASE_PATH;
+        Debug.displayExceptionStack( true );
 
-       for( int i=0; i<argv.length; i++ ) {
+        for( int i=0; i<argv.length; i++ ) {
 
             if( !argv[i].startsWith("-") )
                 continue;

@@ -34,6 +34,7 @@ import wotlas.common.RemoteServersPropertiesFile;
 import wotlas.libs.aswing.ALoginDialog;
 
 import wotlas.common.environment.*;
+import wotlas.common.universe.*;
 
 import java.awt.Frame;
 import java.io.File;
@@ -130,44 +131,47 @@ public class ServerDirector implements Runnable, NetServerListener {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Main Class. Starts the Wotlas Server.
-   * @param argv enter -help to get some help info.
-   */
+    /** Main Class. Starts the Wotlas Server.
+    * @param argv enter -help to get some help info.
+    */
      public static void main( String argv[] ) {
 
+        /*  first of all Manage the Preloader for WorldGenerator*/
+        WorldManager.PRELOADER_STATUS = PreloaderEnabled.LOAD_SERVER_DATA;
+
         // STEP 0 - We parse the command line options
-           boolean isDaemon = false;
-           boolean displayAdminGUI = false;
-           String basePath = ResourceManager.DEFAULT_BASE_PATH;
-           Debug.displayExceptionStack( false );
+        boolean isDaemon = false;
+        boolean displayAdminGUI = false;
+        String basePath = ResourceManager.DEFAULT_BASE_PATH;
+        Debug.displayExceptionStack( false );
 
-           for( int i=0; i<argv.length; i++ ) {
+        for( int i=0; i<argv.length; i++ ) {
 
-              if( !argv[i].startsWith("-") )
-                  continue;
+            if( !argv[i].startsWith("-") )
+                continue;
 
-              if (argv[i].equals("-debug")) {    // -- TO SET THE DEBUG MODE --
-                  if(isDaemon) {
-                      System.out.println("Incompatible options.");
-                      System.out.println(SERVER_COMMAND_LINE_HELP);
-                      return;
-                  }
+            if (argv[i].equals("-debug")) {    // -- TO SET THE DEBUG MODE --
+                if(isDaemon) {
+                    System.out.println("Incompatible options.");
+                    System.out.println(SERVER_COMMAND_LINE_HELP);
+                    return;
+                }
 
-                  System.out.println("mode DEBUG on");
-                  SHOW_DEBUG = true;
-                  Debug.displayExceptionStack( true );
-              }
-              else if (argv[i].equals("-erroronly")) {  // -- TO ONLY DISPLAY ERRORS --
-                  if(SHOW_DEBUG) {
-                     System.out.println("Incompatible options.");
-                     System.out.println(SERVER_COMMAND_LINE_HELP);
-                     return;
-                   }
+                System.out.println("mode DEBUG on");
+                SHOW_DEBUG = true;
+                Debug.displayExceptionStack( true );
+            }
+            else if (argv[i].equals("-erroronly")) {  // -- TO ONLY DISPLAY ERRORS --
+                if(SHOW_DEBUG) {
+                    System.out.println("Incompatible options.");
+                    System.out.println(SERVER_COMMAND_LINE_HELP);
+                    return;
+                }
 
-                   Debug.displayExceptionStack( false );
-                   Debug.setLevel(Debug.ERROR);
-              }
-              else if (argv[i].equals("-admin")) {  // -- TO ONLY DISPLAY THE ADMIN GUI --
+                Debug.displayExceptionStack( false );
+                Debug.setLevel(Debug.ERROR);
+            }
+            else if (argv[i].equals("-admin")) {  // -- TO ONLY DISPLAY THE ADMIN GUI --
                   if(isDaemon) {
                      System.out.println("Incompatible options.");
                      System.out.println(SERVER_COMMAND_LINE_HELP);

@@ -583,12 +583,16 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     // 9 - Welcome message
        sendMessage(new WelcomeMessage());
 
+    // 10 - ask for server environment
+    // diego : at least i'm trying to ask for it.....
+       sendMessage(new TheServerEnvironmentPleaseMessage());
+       
        if(SHOW_DEBUG)
           System.out.println("End of DataManager's showInterface !");
                  
-    // 10 - Add extra plugin
+    // 11 - Add extra plugin
           //clientScreen.getPlayerPanel().addPlugIn((JPanelPlugIn) new ChangeAspectPlugIn(), -1);
-          
+
 // Test Petrus
       String empty[] = { "head", "body", "left hand", "right hand" };
       SimpleMenu2D emptyMenu = new SimpleMenu2D("emptyMenu",empty);

@@ -1,5 +1,3 @@
-
-
 /*
  * Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
  * Copyright (C) 2001-2003 WOTLAS Team

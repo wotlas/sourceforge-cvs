@@ -17,63 +17,62 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package wotlas.common.message.movement;
+package wotlas.common.message.description;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.universe.*;
+import wotlas.common.environment.*;
 
 /** 
- * To tell the client that he can change location (Message Sent by Server).
+ * To send the Server Environment
+ * (Message Sent by Server).
  *
- * @author Aldiss
+ * @author Diego
  */
 
-public class YouCanLeaveMapMessage extends LocationChangeMessage
+public class ServerEnvironmentMessage extends NetMessage
 {
- /*------------------------------------------------------------------------------------*/
 
-  /** SyncID of our player.
-   */
-     protected byte syncID;
-
+    protected EnvironmentManager data;
+    
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. Just initializes the message category and type.
    */
-     public YouCanLeaveMapMessage() {
+     public ServerEnvironmentMessage() {
           super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor with Player's primaryKey & location.  The syncID is the new synchronization
-   *  ID that needs to be set for the player.
+  /** Constructor with the server environment
    */
-     public YouCanLeaveMapMessage(String primaryKey, WotlasLocation location, int x, int y, float orientation, byte syncID) {
+/*
+     public ServerEnvironmentMessage(EnvironmentManager data) {
           super();
-          this.primaryKey = primaryKey;
-          this.location = location;
-          this.x = x;
-          this.y = y;
-          this.orientation = orientation;
-          this.syncID = syncID;
+          this.data = new EnvironmentManager( data );
      }
+*/
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** This is where we put your message data on the stream. You don't need
    * to invoke this method yourself, it's done automatically.
    *
-   * @param ostream data stream where to put your data (see java.io.DataOutputStream)
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void encode( DataOutputStream ostream ) throws IOException {
-            super.encode( ostream );
-            ostream.writeByte( syncID );
+         try{
+             new ObjectOutputStream(ostream).writeObject( new EnvironmentManager(EnvironmentManager.getServerEnvironment()) );
+         } catch (Exception e) {
+             e.printStackTrace();
+             System.out.println(" diego(2): error, should still decide how to manage this error");
+         }
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -81,14 +80,16 @@ public class YouCanLeaveMapMessage extends LocationChangeMessage
   /** This is where we retrieve our message data from the stream. You don't need
    * to invoke this method yourself, it's done automatically.
    *
-   * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void decode( DataInputStream istream ) throws IOException {
-            super.decode( istream );
-            syncID = istream.readByte();
+         try {
+             EnvironmentManager.setServerEnvironment( (EnvironmentManager) new ObjectInputStream(istream).readObject() );
+         } catch (Exception e) {
+             e.printStackTrace();
+             System.out.println(" diego(1): error, should still decide how to manage this error");
+         }
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

@@ -27,6 +27,7 @@ import wotlas.libs.graphics2D.FontFactory;
 import wotlas.utils.Debug;
 import wotlas.utils.FileTools;
 import wotlas.utils.Tools;
+import wotlas.common.universe.*;
 
 import wotlas.common.*;
 
@@ -99,17 +100,20 @@ public class ClientDirector {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Main Class. Starts the Wotlas Client.
-   *  @param argv enter -help to get some help info.
-   */
-   public static void main(String argv[]) {
+    /** Main Class. Starts the Wotlas Client.
+    *  @param argv enter -help to get some help info.
+    */
+    public static void main(String argv[]) {
 
-    // STEP 0 - We parse the command line options
-       boolean classicLogWindow = false;
-       String basePath = ResourceManager.DEFAULT_BASE_PATH;
-       Debug.displayExceptionStack( true );
+        /*  first of all Manage the Preloader for ClientDirector*/
+        WorldManager.PRELOADER_STATUS = PreloaderEnabled.LOAD_CLIENT_DATA;
 
-       for( int i=0; i<argv.length; i++ ) {
+        // STEP 0 - We parse the command line options
+        boolean classicLogWindow = false;
+        String basePath = ResourceManager.DEFAULT_BASE_PATH;
+        Debug.displayExceptionStack( true );
+
+        for( int i=0; i<argv.length; i++ ) {
 
             if( !argv[i].startsWith("-") )
                 continue;

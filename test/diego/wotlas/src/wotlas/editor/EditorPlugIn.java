@@ -58,11 +58,10 @@ public class EditorPlugIn extends JPanelPlugIn {
     transient static private String MAP_EXIT_START_MSG = "<html><b>Write a name in Name field then <p>"
     +"click the Add button to start adding a Map Exit.....</b></html>";
  
-    transient static public boolean selectedIsFree = false;
+    transient static public boolean selectedIsFree = TileMap.TILE_NOT_FREE;
     transient static public int selectedGroup = 0;
     transient static public int selectedGroupImgNr = 0;
     transient static private GraphicsDirector gDirector;
-    transient static private WotlasLocation location;
     transient static public DefaultMutableTreeNode treeOfTileMapNode;
 
     transient static private int indexMapsExitsForExitPan = 0;
@@ -112,14 +111,14 @@ public class EditorPlugIn extends JPanelPlugIn {
         MainTabb = new javax.swing.JTabbedPane();
         TileMapsPan = new javax.swing.JPanel();
         TileMapTabb = new javax.swing.JTabbedPane();
-        LoadTileMaps = new javax.swing.JPanel();
+        LoadTileMap = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         BigTree = new JTree( treeOfTileMapNode );
         jPanel3 = new javax.swing.JPanel();
-        jLabel26 = new javax.swing.JLabel();
-        mapData = new javax.swing.JPanel();
-        jPanel28 = new javax.swing.JPanel();
         buttonNew = new javax.swing.JButton();
+        jLabel26 = new javax.swing.JLabel();
+        SaveTileMap = new javax.swing.JPanel();
+        jPanel28 = new javax.swing.JPanel();
         buttonSave = new javax.swing.JButton();
         buttonRefresh = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
@@ -184,7 +183,7 @@ public class EditorPlugIn extends JPanelPlugIn {
         TileNotFree = new javax.swing.JCheckBox();
         InfoOnBrushPan = new javax.swing.JPanel();
         jLabel20 = new javax.swing.JLabel();
-        jPanel29 = new javax.swing.JPanel();
+        MapExitsPan = new javax.swing.JPanel();
         jPanel36 = new javax.swing.JPanel();
         jSplitPane2 = new javax.swing.JSplitPane();
         jListExits = GetExitList();
@@ -211,7 +210,7 @@ public class EditorPlugIn extends JPanelPlugIn {
         ResumeExit = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         HelpOnMapExit = new javax.swing.JLabel();
-        jPanel37 = new javax.swing.JPanel();
+        SchedulePan = new javax.swing.JPanel();
         jPanel38 = new javax.swing.JPanel();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
@@ -237,24 +236,11 @@ public class EditorPlugIn extends JPanelPlugIn {
         TileMapsPan.setLayout(new java.awt.BorderLayout());
 
         TileMapTabb.setTabPlacement(javax.swing.JTabbedPane.LEFT);
-        LoadTileMaps.setLayout(new java.awt.BorderLayout());
+        LoadTileMap.setLayout(new java.awt.BorderLayout());
 
         jScrollPane1.setViewportView(BigTree);
 
-        LoadTileMaps.add(jScrollPane1, java.awt.BorderLayout.CENTER);
-
-        jLabel26.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel26.setText("<html><b>To load Maps,  simply click on <p> the name of the one you want <p> to load</b></html>\"");
-        jLabel26.setMaximumSize(new java.awt.Dimension(364, 50));
-        jLabel26.setMinimumSize(new java.awt.Dimension(364, 50));
-        jLabel26.setPreferredSize(new java.awt.Dimension(364, 50));
-        jPanel3.add(jLabel26);
-
-        LoadTileMaps.add(jPanel3, java.awt.BorderLayout.SOUTH);
-
-        TileMapTabb.addTab("Load", LoadTileMaps);
-
-        mapData.setLayout(new java.awt.BorderLayout());
+        LoadTileMap.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
         buttonNew.setText("New");
         buttonNew.addActionListener(new java.awt.event.ActionListener() {
@@ -263,7 +249,20 @@ public class EditorPlugIn extends JPanelPlugIn {
             }
         });
 
-        jPanel28.add(buttonNew);
+        jPanel3.add(buttonNew);
+
+        jLabel26.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel26.setText("<html><b>To load Maps,  simply click on <p> the name of the one you want <p> to load</b></html>\"");
+        jLabel26.setMaximumSize(new java.awt.Dimension(364, 50));
+        jLabel26.setMinimumSize(new java.awt.Dimension(364, 50));
+        jLabel26.setPreferredSize(new java.awt.Dimension(200, 50));
+        jPanel3.add(jLabel26);
+
+        LoadTileMap.add(jPanel3, java.awt.BorderLayout.SOUTH);
+
+        TileMapTabb.addTab("Load/New", LoadTileMap);
+
+        SaveTileMap.setLayout(new java.awt.BorderLayout());
 
         buttonSave.setText("Save");
         buttonSave.addActionListener(new java.awt.event.ActionListener() {
@@ -283,7 +282,7 @@ public class EditorPlugIn extends JPanelPlugIn {
 
         jPanel28.add(buttonRefresh);
 
-        mapData.add(jPanel28, java.awt.BorderLayout.SOUTH);
+        SaveTileMap.add(jPanel28, java.awt.BorderLayout.SOUTH);
 
         jLabel16.setText("Area Name");
         jPanel30.add(jLabel16);
@@ -435,9 +434,9 @@ public class EditorPlugIn extends JPanelPlugIn {
 
         jPanel4.add(jPanel11);
 
-        mapData.add(jPanel4, java.awt.BorderLayout.CENTER);
+        SaveTileMap.add(jPanel4, java.awt.BorderLayout.CENTER);
 
-        TileMapTabb.addTab("Save/New", mapData);
+        TileMapTabb.addTab("Save", SaveTileMap);
 
         TileMapsPan.add(TileMapTabb, java.awt.BorderLayout.CENTER);
 
@@ -474,16 +473,17 @@ public class EditorPlugIn extends JPanelPlugIn {
 
         jPanel10.setLayout(new java.awt.BorderLayout());
 
-        OneGroupList.setLayoutOrientation(javax.swing.JList.VERTICAL_WRAP);
-        OneGroupList.setPreferredSize(new java.awt.Dimension(80, 100));
+        OneGroupList.setPreferredSize(new java.awt.Dimension(100, 200));
         OneGroupList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane2.setViewportView(OneGroupList);
 
         jSplitPane1.setLeftComponent(jScrollPane2);
 
-        jScrollPane3.setPreferredSize(new java.awt.Dimension(80, 300));
+        jScrollPane3.setPreferredSize(new java.awt.Dimension(200, 300));
         HisTileList.setLayoutOrientation(javax.swing.JList.HORIZONTAL_WRAP);
-        HisTileList.setPreferredSize(new java.awt.Dimension(80, 100));
+        HisTileList.setMaximumSize(new java.awt.Dimension(200, 300));
+        HisTileList.setMinimumSize(new java.awt.Dimension(200, 300));
+        HisTileList.setPreferredSize(new java.awt.Dimension(200, 300));
         HisTileList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane3.setViewportView(HisTileList);
 
@@ -497,19 +497,16 @@ public class EditorPlugIn extends JPanelPlugIn {
 
         GraphicsPan.add(jTabbedPane4, java.awt.BorderLayout.CENTER);
 
-        SelectedBrushPan.setLayout(null);
-
         SelectedBrushPan.setBackground(new java.awt.Color(255, 255, 255));
         SelectedBrushPan.setMinimumSize(new java.awt.Dimension(100, 50));
         jLabel15.setText("Selected :");
         SelectedBrushPan.add(jLabel15);
-        jLabel15.setBounds(105, 22, 56, 16);
 
         Preview.setPreferredSize(new java.awt.Dimension(50, 50));
         SelectedBrushPan.add(Preview);
-        Preview.setBounds(166, 5, 50, 50);
 
         TileNotFree.setBackground(new java.awt.Color(255, 255, 255));
+        TileNotFree.setSelected(true);
         TileNotFree.setText("Not Free");
         TileNotFree.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -518,7 +515,6 @@ public class EditorPlugIn extends JPanelPlugIn {
         });
 
         SelectedBrushPan.add(TileNotFree);
-        TileNotFree.setBounds(221, 18, 72, 24);
 
         GraphicsPan.add(SelectedBrushPan, java.awt.BorderLayout.SOUTH);
 
@@ -530,7 +526,7 @@ public class EditorPlugIn extends JPanelPlugIn {
 
         MainTabb.addTab("Select Brush", null, GraphicsPan, "null");
 
-        jPanel29.setLayout(new java.awt.BorderLayout());
+        MapExitsPan.setLayout(new java.awt.BorderLayout());
 
         jPanel36.setLayout(new java.awt.BorderLayout());
 
@@ -682,16 +678,15 @@ public class EditorPlugIn extends JPanelPlugIn {
         jPanel1.setPreferredSize(new java.awt.Dimension(298, 50));
         HelpOnMapExit.setForeground(new java.awt.Color(255, 51, 51));
         HelpOnMapExit.setText("<html><b>Write a name in Name field then <p>click the Add button to start adding a Map Exit.....</b></html>");
-        HelpOnMapExit.setToolTipText("null");
         jPanel1.add(HelpOnMapExit);
 
         jPanel36.add(jPanel1, java.awt.BorderLayout.NORTH);
 
-        jPanel29.add(jPanel36, java.awt.BorderLayout.CENTER);
+        MapExitsPan.add(jPanel36, java.awt.BorderLayout.CENTER);
 
-        MainTabb.addTab("Map Exits", jPanel29);
+        MainTabb.addTab("Map Exits", MapExitsPan);
 
-        jPanel37.setLayout(new java.awt.BorderLayout());
+        SchedulePan.setLayout(new java.awt.BorderLayout());
 
         jButton3.setText("Add");
         jPanel38.add(jButton3);
@@ -699,12 +694,12 @@ public class EditorPlugIn extends JPanelPlugIn {
         jButton4.setText("Delete");
         jPanel38.add(jButton4);
 
-        jPanel37.add(jPanel38, java.awt.BorderLayout.SOUTH);
+        SchedulePan.add(jPanel38, java.awt.BorderLayout.SOUTH);
 
         jLabel21.setText(".............");
         jPanel9.add(jLabel21);
 
-        jPanel37.add(jPanel9, java.awt.BorderLayout.NORTH);
+        SchedulePan.add(jPanel9, java.awt.BorderLayout.NORTH);
 
         jPanel23.setLayout(new java.awt.BorderLayout());
 
@@ -720,9 +715,9 @@ public class EditorPlugIn extends JPanelPlugIn {
 
         jPanel23.add(jSplitPane3, java.awt.BorderLayout.CENTER);
 
-        jPanel37.add(jPanel23, java.awt.BorderLayout.CENTER);
+        SchedulePan.add(jPanel23, java.awt.BorderLayout.CENTER);
 
-        MainTabb.addTab("Schedule", jPanel37);
+        MainTabb.addTab("Schedule", SchedulePan);
 
         ImporExportPan.setFocusCycleRoot(true);
         MainTabb.addTab("Import/Export", ImporExportPan);
@@ -753,7 +748,7 @@ public class EditorPlugIn extends JPanelPlugIn {
         addListMapsForExitPan();
         itSelf.HelpOnMapExit.setText(MAP_EXIT_START_MSG);
         gDirector.removeAllDrawables();
-        EditTile.getDataManager().myMapData.initDisplayEditor( EditTile.getDataManager(), location );
+        EditTile.getDataManager().myMapData.initDisplayEditor( EditTile.getDataManager(), EditTile.workingOnThisTileMap.getLocation() );
     }//GEN-LAST:event_CompleteExitActionPerformed
 
     private void SuspendExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SuspendExitActionPerformed
@@ -789,7 +784,7 @@ public class EditorPlugIn extends JPanelPlugIn {
         addListMapsForExitPan();
         itSelf.HelpOnMapExit.setText(MAP_EXIT_START_MSG);
         gDirector.removeAllDrawables();
-        EditTile.getDataManager().myMapData.initDisplayEditor( EditTile.getDataManager(), location );
+        EditTile.getDataManager().myMapData.initDisplayEditor( EditTile.getDataManager(), EditTile.workingOnThisTileMap.getLocation() );
     }//GEN-LAST:event_SuspendExitActionPerformed
 
     private void DeleteExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DeleteExitActionPerformed
@@ -806,7 +801,8 @@ public class EditorPlugIn extends JPanelPlugIn {
         if( addExitStatus != 4 )
             return;
         if( ExitName.getText().length() == 0)
-            JOptionPane.showMessageDialog( EditTile.getDataManager().getScreen(), "You miss to write a name for this exit!" 
+            JOptionPane.showMessageDialog( EditTile.getDataManager().getScreen()
+            , "You miss to write a name for this exit!" 
             ,"Warning" , JOptionPane.WARNING_MESSAGE );
         int x=0,y=0,xx=0,yy=0;
         x = tmp1.x;
@@ -824,7 +820,8 @@ public class EditorPlugIn extends JPanelPlugIn {
         else
             yy = tmp2.y+1;
         MapExit mapExit1 = null;
-        mapExit1 = EditTile.workingOnThisTileMap.getManager().addMapExit( new ScreenRectangle(x*32,y*32,xx*32,yy*32), ExitName.getText()  );
+//        System.out.println( (x*32)+","+(y*32)+","+(xx*32)+","+(yy*32) );
+        mapExit1 = EditTile.workingOnThisTileMap.getManager().addMapExit( new ScreenRectangle(x*32,y*32,(xx+1)*32,(yy+1)*32), ExitName.getText()  );
         mapExit1.setType( MapExit.TILEMAP_EXIT );
         mapExit1.setMapExitSide( MapExit.NONE );        
         mapExit1.setTargetWotlasLocation( EditTile.getDataManager().getWorldManager(
@@ -838,7 +835,7 @@ public class EditorPlugIn extends JPanelPlugIn {
         addListMapsForExitPan();
         itSelf.HelpOnMapExit.setText(MAP_EXIT_START_MSG);
         gDirector.removeAllDrawables();
-        EditTile.getDataManager().myMapData.initDisplayEditor( EditTile.getDataManager(), location );
+        EditTile.getDataManager().myMapData.initDisplayEditor( EditTile.getDataManager(), EditTile.workingOnThisTileMap.getLocation() );
     }//GEN-LAST:event_SaveExitActionPerformed
 
     private void AddExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddExitActionPerformed
@@ -848,49 +845,45 @@ public class EditorPlugIn extends JPanelPlugIn {
 
     private void buttonNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonNewActionPerformed
         gDirector.removeAllDrawables();
-        TileMap origin = EditTile.getDataManager().getWorldManager().getTileMap( location );
         TileMap destination = EditTile.getDataManager().getWorldManager().getWorldMapFromID(0).addNewTileMap();
         destination.initNewTileMap( EditTile.getDataManager().getWorldManager().getWorldMapFromID(0) );
-        location = destination.getLocation();
-        System.out.println( " new location "+location.toString() );
         destination.setAreaName("");
-        destination.setFullName("new full name");
-        destination.setShortName("shortname");
-        destination.setInsertionPoint( origin.getInsertionPoint() );
-        destination.setSmallTileMapImage( origin.getSmallTileMapImage() );
-        destination.setMusicName( origin.getMusicName() );
+        destination.setFullName("New Map");
+        destination.setShortName("");
+        destination.setInsertionPoint( new ScreenPoint(10,10) );
+        destination.setSmallTileMapImage( new ImageIdentifier( "maps-1/town-small-1/shayol-ghul-2" ) );
+        destination.setMusicName("tar-valon.mid");
         destination.selectGroupOfGraphics( GroupOfGraphics.ROGUE_SET );
         TileManagerFlat manager = new TileManagerFlat(  destination );
-        manager.setMap( 10, 20, TileMap.PIXEL_32
-        , origin.getManager().getBasicFloorId()
-        , origin.getManager().getBasicFloorNr() );
+        manager.setMap( 10, 20, TileMap.PIXEL_32,  (byte)0, (byte)121 );
         destination.setManager( (TileMapManager)manager );
         EditTile.workingOnThisTileMap = destination;
-        EditTile.getDataManager().myMapData.initDisplayEditor( EditTile.getDataManager(), location );
+        ShowTileMapData();
+        SetListExitMod();
+        EditTile.getDataManager().myMapData.initDisplayEditor( EditTile.getDataManager(), EditTile.workingOnThisTileMap.getLocation() );
     }//GEN-LAST:event_buttonNewActionPerformed
 
     private void buttonRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRefreshActionPerformed
         gDirector.removeAllDrawables();
-        EditTile.getDataManager().myMapData.initDisplayEditor( EditTile.getDataManager(), location );
+        EditTile.getDataManager().myMapData.initDisplayEditor( EditTile.getDataManager(), EditTile.workingOnThisTileMap.getLocation() );
     }//GEN-LAST:event_buttonRefreshActionPerformed
 
     private void buttonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSaveActionPerformed
         try{
-            System.out.println( " saving location "+location.toString() );
-            TileMap tileMap = EditTile.getDataManager().getWorldManager().getTileMap( location );
+            TileMap tileMap = EditTile.getDataManager().getWorldManager().getTileMap( EditTile.workingOnThisTileMap.getLocation() );
             EditTile.workingOnThisTileMap.setAreaName( DataAreaName.getText() );
             EditTile.workingOnThisTileMap.setFullName( DataFullName.getText() );
             EditTile.workingOnThisTileMap.setShortName( DataShortName.getText() );
+            EditTile.workingOnThisTileMap.setMusicName( DataMusicName.getText( ));
             // DataInsertionPoint.setText("xxx");
             // DataSmallImage.setText("xxx");
-            DataMusicName.setText(EditTile.workingOnThisTileMap.getMusicName());
             // DataBasicSetId.setText( "" + EditTile.workingOnThisTileMap.getManager().getBasicFloorId() );
             // DataBasicSetIdNr.setText( "" + EditTile.workingOnThisTileMap.getManager().getBasicFloorNr() );
         } catch (Exception e) {
             System.out.println("not saved as");
             return;
         }
-        EditTile.letsTryToSave( location.getTileMapID() );
+        EditTile.letsTryToSave( EditTile.workingOnThisTileMap.tileMapID );
     }//GEN-LAST:event_buttonSaveActionPerformed
 
     private void TileNotFreeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TileNotFreeActionPerformed
@@ -914,8 +907,6 @@ public class EditorPlugIn extends JPanelPlugIn {
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel jPanel37;
-    private javax.swing.JPanel LoadTileMaps;
     private javax.swing.JTabbedPane jTabbedPane4;
     private javax.swing.JList DataMapSize;
     private javax.swing.JTextField StartPointText;
@@ -924,9 +915,11 @@ public class EditorPlugIn extends JPanelPlugIn {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JTextField DataBasicSetId;
     private javax.swing.JButton DeleteExit;
+    private javax.swing.JPanel LoadTileMap;
     private javax.swing.JTree BigTree;
     private javax.swing.JList jListExits;
     private javax.swing.JButton buttonSave;
+    private javax.swing.JPanel SchedulePan;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel34;
     private javax.swing.JPanel jPanel28;
@@ -972,10 +965,12 @@ public class EditorPlugIn extends JPanelPlugIn {
     private javax.swing.JList DataGroupOfGraphics;
     private javax.swing.JPanel jPanel32;
     private javax.swing.JPanel jPanel16;
+    private javax.swing.JPanel MapExitsPan;
     private javax.swing.JButton ResumeExit;
     private javax.swing.JPanel jPanel19;
     private javax.swing.JTextField ExitName;
     private javax.swing.JPanel jPanel13;
+    private javax.swing.JPanel SaveTileMap;
     private javax.swing.JTextField DataHeight;
     private javax.swing.JTextField DataBasicSetIdNr;
     private javax.swing.JPanel jPanel10;
@@ -983,7 +978,6 @@ public class EditorPlugIn extends JPanelPlugIn {
     private javax.swing.JButton jButton3;
     private javax.swing.JList OneGroupList;
     private javax.swing.JPanel jPanel30;
-    private javax.swing.JPanel mapData;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JButton SuspendExit;
     private javax.swing.JList jList1;
@@ -1024,7 +1018,6 @@ public class EditorPlugIn extends JPanelPlugIn {
     public transient javax.swing.JTabbedPane MainTabb;
     private javax.swing.JButton buttonRefresh;
     private javax.swing.JButton jButton4;
-    private javax.swing.JPanel jPanel29;
     private javax.swing.JTextField DataInsertionPoint;
     private javax.swing.JCheckBox TileNotFree;
     private javax.swing.JScrollPane jScrollPane3;
@@ -1038,23 +1031,10 @@ public class EditorPlugIn extends JPanelPlugIn {
    *          this init(), this way the plug-in won't be displayed.
    */
     public boolean init() {
-        location = new WotlasLocation();
+        WotlasLocation location = new WotlasLocation();
         location.WotlasLocationChangeToTileMap(0);
         EditTile.workingOnThisTileMap = EditTile.getDataManager().getWorldManager().getTileMap( location );
-        DataID.setText("xxx");
-        DataAreaName.setText(EditTile.workingOnThisTileMap.getAreaName());
-        DataFullName.setText(EditTile.workingOnThisTileMap.getFullName());
-        DataShortName.setText(EditTile.workingOnThisTileMap.getShortName());
-        DataInsertionPoint.setText("xxx");
-        DataSmallImage.setText("xxx");
-        DataMusicName.setText(EditTile.workingOnThisTileMap.getMusicName());
-        //  doing this lose the right object
-        // DataGroupOfGraphics = GetNewGOGList();
-        DataLength.setText( "" + EditTile.workingOnThisTileMap.getMapSize().width );
-        DataHeight.setText( "" + EditTile.workingOnThisTileMap.getMapSize().height );
-        // DataMapTileSize.setText();
-        DataBasicSetId.setText( "" + EditTile.workingOnThisTileMap.getManager().getBasicFloorId() );
-        DataBasicSetIdNr.setText( "" + EditTile.workingOnThisTileMap.getManager().getBasicFloorNr() );
+        ShowTileMapData();
         SetListExitMod();
         addListMapsForExitPan();
         return true; // this plug-in always works...
@@ -1254,29 +1234,48 @@ public class EditorPlugIn extends JPanelPlugIn {
         BigTree.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent e) {
                 DefaultMutableTreeNode node = (DefaultMutableTreeNode)
-                                   BigTree.getLastSelectedPathComponent();
+                                              BigTree.getLastSelectedPathComponent();
 
                 if (node == null) return;
 
                 Object nodeInfo = node.getUserObject();
                 if (node.isLeaf()) {
-                    TreeMapInfo item = (TreeMapInfo)nodeInfo;
                     
-                    location = new WotlasLocation();
-                    location.WotlasLocationChangeToTileMap( item.Id );
+                    TreeMapInfo item = (TreeMapInfo)nodeInfo;
+                    System.out.println( "id " + item.map.tileMapID 
+                    + " loc " + item.map.getLocation() );
+                    
+                    // free graphics area
                     gDirector.removeAllDrawables();
-                    EditTile.getDataManager().myMapData.initDisplayEditor( EditTile.getDataManager(), location );
+
+                    // reload data
+                    PreloaderEnabled.Reload( EditTile.getResourceManager()
+                    , EditTile.getDataManager().getWorldManager()
+                    , EditTile.getDataManager().getWorldManager().getTileMap( item.map.getLocation() ) 
+                    , PreloaderEnabled.LOAD_ALL );
+
+                    // set the used map for edito
+                    EditTile.workingOnThisTileMap = EditTile.getDataManager().getWorldManager(
+                    ).getTileMap( item.map.getLocation() );
+
+                    // init display on this data
+                    EditTile.getDataManager().myMapData.initDisplayEditor( EditTile.getDataManager()
+                    , EditTile.workingOnThisTileMap.getLocation() );
+
+                    ShowTileMapData();
+                    SetListExitMod();
+                    
                 } else {
                     // .....
                 }
             }
-        });        
+        });
 //        treeView.setMinimumSize(minimumSize);
     }
 
     static public DefaultMutableTreeNode createNode( TileMap value ) {
         DefaultMutableTreeNode map = null;
-        map = new DefaultMutableTreeNode( new TreeMapInfo( value.getFullName(), value.tileMapID ) );
+        map = new DefaultMutableTreeNode( new TreeMapInfo(value) );
         return map;
     }
 
@@ -1305,6 +1304,8 @@ public class EditorPlugIn extends JPanelPlugIn {
         listExitMod.removeAllElements();
         MapExit[] exits = EditTile.workingOnThisTileMap.getMapExits();
         String tmp;
+        if(exits==null)
+            return;
         for(int i=0; i<exits.length; i++) {
             tmp = ""+exits[i];
             listExitMod.addElement( tmp );
@@ -1381,8 +1382,27 @@ public class EditorPlugIn extends JPanelPlugIn {
     public void addListMapsExitsForExitPan() {
         listMapsExitsForExitPan.removeAllElements();
         MapExit[] exits = EditTile.getDataManager().getWorldManager().getWorldMapFromID(0).getTileMapFromID(indexMapsForExitPan).getMapExits();
+        if( exits == null )
+            return;
         for(int i=0; i<exits.length; i++) {
             listMapsExitsForExitPan.addElement( ""+exits[i] );
         }
+    }
+
+    public void ShowTileMapData(){
+        DataAreaName.setText( EditTile.workingOnThisTileMap.getAreaName() );
+        DataFullName.setText( EditTile.workingOnThisTileMap.getFullName() );
+        DataShortName.setText( EditTile.workingOnThisTileMap.getShortName() );
+        DataMusicName.setText( EditTile.workingOnThisTileMap.getMusicName() );
+        DataID.setText( ""+EditTile.workingOnThisTileMap.tileMapID );
+        DataInsertionPoint.setText("xxx");
+        DataSmallImage.setText("xxx");
+        //  doing this lose the right object
+        // DataGroupOfGraphics = GetNewGOGList();
+        DataLength.setText( "" + EditTile.workingOnThisTileMap.getMapSize().width );
+        DataHeight.setText( "" + EditTile.workingOnThisTileMap.getMapSize().height );
+        // DataMapTileSize.setText();
+        DataBasicSetId.setText( "" + EditTile.workingOnThisTileMap.getManager().getBasicFloorId() );
+        DataBasicSetIdNr.setText( "" + EditTile.workingOnThisTileMap.getManager().getBasicFloorNr() );
     }
 }

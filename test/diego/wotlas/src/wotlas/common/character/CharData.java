@@ -136,6 +136,9 @@ public abstract class CharData implements BackupReady {
     public long[] gold;
     public long[] exp;
 
+    public int[] maskCharClasses;
+    public int[] maskCharRaces;
+
     public int[] maskCharSkills;
     /**
     *   list of skills/knowledge with an int value:
@@ -203,6 +206,8 @@ public abstract class CharData implements BackupReady {
     public void writeExternal(java.io.ObjectOutput objectOutput)
     throws java.io.IOException {
         objectOutput.writeInt( ExternalizeGetVersion() );
+        objectOutput.writeObject( maskCharClasses );
+        objectOutput.writeObject( maskCharRaces );
         objectOutput.writeObject( maskCharAttributes );
         objectOutput.writeObject( charAttributes );
         objectOutput.writeObject( levels );
@@ -225,6 +230,8 @@ public abstract class CharData implements BackupReady {
     throws java.io.IOException, java.lang.ClassNotFoundException {
         int IdTmp = objectInput.readInt();
         if( IdTmp == ExternalizeGetVersion() ){
+            maskCharClasses = ( int[] ) objectInput.readObject();
+            maskCharRaces = ( int[] ) objectInput.readObject();
             maskCharAttributes = ( int[] ) objectInput.readObject();
             charAttributes = ( short[][] ) objectInput.readObject();
             levels = ( byte[][] ) objectInput.readObject();

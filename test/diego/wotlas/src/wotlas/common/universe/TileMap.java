@@ -37,7 +37,7 @@ import java.awt.*;
   * @see wotlas.common.universe.WorldMap
   * @see wotlas.common.universe.Building
   */
-public class TileMap extends PreloaderEnabled implements WotlasMap,BackupReady {
+public class TileMap extends PreloaderEnabled implements WotlasMap,BackupReady,SendObjectReady {
     
     /** id used in Serialized interface.
      */
@@ -119,6 +119,7 @@ public class TileMap extends PreloaderEnabled implements WotlasMap,BackupReady {
   /** Constructor for persistence.
    */
     public TileMap() {
+        loadStatus = PreloaderEnabled.LOAD_ALL;
     }
    
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -131,6 +132,7 @@ public class TileMap extends PreloaderEnabled implements WotlasMap,BackupReady {
    */
     public TileMap(int x, int y, int width, int height) {
         super(x,y,width,height);
+        loadStatus = PreloaderEnabled.LOAD_ALL;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -291,6 +293,11 @@ public class TileMap extends PreloaderEnabled implements WotlasMap,BackupReady {
    */
     public void writeExternal(java.io.ObjectOutput objectOutput)
     throws java.io.IOException {
+        if( loadStatus != LOAD_ALL){
+            System.out.println( "Map ["+this.fullName+"] damaged, cause status of data before saving : "+ this.loadStatus );
+            return;
+//            throw new PreloaderException(loadStatus);
+        }
         objectOutput.writeInt( ExternalizeGetVersion() );
         super.writeExternal( objectOutput );
         objectOutput.writeInt( tileMapID );
@@ -315,6 +322,7 @@ public class TileMap extends PreloaderEnabled implements WotlasMap,BackupReady {
     public void readExternal(java.io.ObjectInput objectInput)
     throws java.io.IOException, java.lang.ClassNotFoundException {
         int IdTmp = objectInput.readInt();
+        loadStatus = setClassPreloader;
         if( IdTmp == ExternalizeGetVersion() ){
             super.readExternal(objectInput);
             tileMapID= objectInput.readInt();
@@ -325,18 +333,18 @@ public class TileMap extends PreloaderEnabled implements WotlasMap,BackupReady {
             mapType = objectInput.readByte();
             smallTileMapImage = ( ImageIdentifier ) objectInput.readObject();
             musicName = ( String ) objectInput.readObject();
-            if( loadStatus == LOAD_MINIMUM_DATA)
+            if( setClassPreloader == LOAD_MINIMUM_DATA)
                 return;
             mapTileDim = ( Dimension ) objectInput.readObject();
             groupOfGraphics = ( GroupOfGraphics[] ) objectInput.readObject();
             mapSize = ( Dimension ) objectInput.readObject();
             manager = ( TileMapManager ) objectInput.readObject();
             manager.setTileMap(this);
-            if( loadStatus == LOAD_SERVER_DATA){
+            if( setClassPreloader == LOAD_CLIENT_DATA)
+                return;
+            if( setClassPreloader == LOAD_SERVER_DATA){
                 manager.freeMapBackGroundData();
             }
-            if( loadStatus == LOAD_CLIENT_DATA)
-                return;
             encounterSchedules = ( EncounterSchedule[] ) objectInput.readObject();
        } else {
             // to do.... when new version
@@ -426,26 +434,60 @@ public class TileMap extends PreloaderEnabled implements WotlasMap,BackupReady {
         return my;
     }
     
-    
-    /* -------------------- INTERNAL LOAD/UNLOAD DATA -------------------- */
-    
-    public void InternalUnloadAll() {
-    
+    public void readObject(java.io.ObjectInputStream objectInput)
+    throws java.io.IOException, java.lang.ClassNotFoundException {
+        int IdTmp = objectInput.readInt();
+        if( IdTmp == ExternalizeGetVersion() ){
+            loadStatus = objectInput.readByte();
+            super.readObject(objectInput);
+            tileMapID= objectInput.readInt();
+            areaName = ( String ) objectInput.readObject();
+            fullName = ( String ) objectInput.readObject();
+            shortName = ( String ) objectInput.readObject();
+            insertionPoint = ( ScreenPoint ) objectInput.readObject();
+            mapType = objectInput.readByte();
+            smallTileMapImage = ( ImageIdentifier ) objectInput.readObject();
+            musicName = ( String ) objectInput.readObject();
+            if( loadStatus == LOAD_MINIMUM_DATA)
+                return;
+            mapTileDim = ( Dimension ) objectInput.readObject();
+            groupOfGraphics = ( GroupOfGraphics[] ) objectInput.readObject();
+            mapSize = ( Dimension ) objectInput.readObject();
+            manager = ( TileMapManager ) objectInput.readObject();
+            manager.setTileMap(this);
+            if( loadStatus == LOAD_CLIENT_DATA)
+                return;
+            if( loadStatus == LOAD_SERVER_DATA){
+                manager.freeMapBackGroundData();
+            }
+            encounterSchedules = ( EncounterSchedule[] ) objectInput.readObject();
+        } else {
+            // ERORR IN THE STREAM : DIFFERENT VERSION OF CLIENT/SERVER
+            // to do.... when new version
+        }
     }
     
-    public void InternalLoadMinimum() {
-    
-    }
-    
-    public void InternalLoadClient() {
-    
-    }
-    
-    public void InternalLoadServer() {
-    
-    }
-    
-    public void InternalLoadAll() {
-    
+    public void writeObject(java.io.ObjectOutputStream objectOutput) 
+    throws java.io.IOException {
+        objectOutput.writeInt( ExternalizeGetVersion() );
+        objectOutput.writeByte( loadStatus );
+        super.writeExternal( objectOutput );
+        objectOutput.writeInt( tileMapID );
+        objectOutput.writeObject( areaName );
+        objectOutput.writeObject( fullName );
+        objectOutput.writeObject( shortName );
+        objectOutput.writeObject( insertionPoint );
+        objectOutput.writeByte( manager.getMapType() );
+        objectOutput.writeObject( smallTileMapImage );
+        objectOutput.writeObject( musicName );
+        if( loadStatus == LOAD_MINIMUM_DATA)
+            return;
+        objectOutput.writeObject( mapTileDim );
+        objectOutput.writeObject( groupOfGraphics );
+        objectOutput.writeObject( mapSize );
+        objectOutput.writeObject( manager );
+        if( loadStatus == LOAD_CLIENT_DATA)
+            return;
+        objectOutput.writeObject( encounterSchedules ); 
     }
 }

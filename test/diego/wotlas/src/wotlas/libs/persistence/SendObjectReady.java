@@ -1,7 +1,7 @@
 /*
  * Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
  * Copyright (C) 2001-2002 WOTLAS Team
- *
+ * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -16,24 +16,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package wotlas.editor;
+package wotlas.libs.persistence;
 
-import wotlas.common.universe.*;
+import java.io.*;
 
-/**  only used to manage nodes in editor.
- *
- * @author Diego
- *   
- */
-public class TreeMapInfo {
+public interface SendObjectReady extends Serializable{
+    
+	/** return Version of the Serialized object to
+	 * fullfill auto-serialize upgrade
+	 * @return number of version for this class to be used
+	 * in serialize auto-upgrade
+	 */
+	public int ExternalizeGetVersion();
         
-    public TileMap map;
+	public void writeObject(java.io.ObjectOutputStream objectOutput)
+	throws java.io.IOException;
 
-    public TreeMapInfo(TileMap map) {
-        this.map = map;
-    }
-
-    public String toString() {
-        return map.getFullName();
-    }
+	public void readObject(java.io.ObjectInputStream objectInput)
+	throws java.io.IOException, java.lang.ClassNotFoundException;
 }

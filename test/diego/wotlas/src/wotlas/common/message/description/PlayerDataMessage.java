@@ -22,6 +22,8 @@ package wotlas.common.message.description;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 import wotlas.libs.net.NetMessage;
 import wotlas.common.message.movement.*;
@@ -32,8 +34,6 @@ import wotlas.common.universe.WotlasLocation;
 import wotlas.common.movement.*;
 
 import wotlas.utils.Tools;
-
-import java.io.*;
 
 /** 
  * To send player data (Message Sent by Server).
@@ -154,13 +154,11 @@ public class PlayerDataMessage extends NetMessage
 
       // Wotlas Character Data
          ostream.writeUTF( player.getBasicChar().getClass().getName() );
-         System.out.println( player.getBasicChar().getClass().getName() );
-      //   player.getBasicChar().writeObject( ostream ); // call to encode character's data
          try{
              new ObjectOutputStream(ostream).writeObject( player.getBasicChar() ); // call to encode character's data
          } catch (Exception e) {
-             System.out.println(" diego: error");
-         }   
+             System.out.println(" diego: error, should still decide how to manage this error");
+         }
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -214,13 +212,10 @@ public class PlayerDataMessage extends NetMessage
 
       // Wotlas Character
          BasicChar wotChar = (BasicChar) Tools.getInstance( istream.readUTF() );
-         System.out.println( wotChar.getClass().getName() );
-      //   wotChar.readObject( istream );
-      //   player.setBasicChar( wotChar );
          try {
              player.setBasicChar( (BasicChar) new ObjectInputStream(istream).readObject() );
          } catch (Exception e) {
-             System.out.println(" diego: error");
+             System.out.println(" diego: error, should still decide how to manage this error");
          }
 
       // Movement Composer init

@@ -56,75 +56,212 @@ public class CanLeaveTileMapMsgBehaviour extends CanLeaveTileMapMessage implemen
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public CanLeaveTileMapMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+    */
+    public CanLeaveTileMapMsgBehaviour() {
+        super();
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {
+    /** Associated code to this Message...
+    *
+    * @param sessionContext an object giving specific access to other objects needed to process
+    *        this message.
+    */
+    public void doBehaviour( Object sessionContext ) {
 
         // The sessionContext is here a PlayerImpl.
-           PlayerImpl player = (PlayerImpl) sessionContext;
+        PlayerImpl player = (PlayerImpl) sessionContext;
 
         // 1 - CONTROL
-           if(primaryKey==null) {
-              Debug.signal( Debug.ERROR, this, "No primary key specified !" );
-              return;
-           }
+        if(primaryKey==null) {
+            Debug.signal( Debug.ERROR, this, "No primary key specified !" );
+            return;
+        }
 
-           if( !player.getPrimaryKey().equals( primaryKey ) ) {
-              Debug.signal( Debug.ERROR, this, "The specified primary Key is not our player one's !" );
-              return;
-           }
+        if( !player.getPrimaryKey().equals( primaryKey ) ) {
+            Debug.signal( Debug.ERROR, this, "The specified primary Key is not our player one's !" );
+            return;
+        }
        
-           if( !player.getLocation().isTileMap() ) {
-              sendError( player, "Current Player Location is not a TileMap !! "+player.getLocation() );
-              return;
-           }
+        if( !player.getLocation().isTileMap() ) {
+            sendError( player, "Current Player Location is not a TileMap !! "+player.getLocation() );
+            return;
+        }
 
-       // Is the movement possible ?
-          WorldManager wManager = ServerDirector.getDataManager().getWorldManager();
-          TileMap currentTileMap = wManager.getTileMap( player.getLocation() );
+        // Is the movement possible ?
+        WorldManager wManager = ServerDirector.getDataManager().getWorldManager();
+        TileMap currentTileMap = wManager.getTileMap( player.getLocation() );
 
-          if( currentTileMap==null ) {
-             sendError( player, "Failed to get tilemap !! " +player.getLocation() );
-             return;
-          }
+        // Going to a WorldMap ?
+        if( location.isWorld() && currentTileMap.getMapExits()!=null ) {
 
-       // Going to a WorldMap ?
-          if( location.isWorld() && currentTileMap.getMapExits()!=null ) {
+            boolean found = false;
+
+            for( int i=0; i<currentTileMap.getMapExits().length; i++ ) {
+
+                MapExit mapExit = currentTileMap.getMapExits()[i];
+              
+                if( mapExit.getTargetWotlasLocation().equals( location ) ) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if(!found) {
+                // MapExit not found...
+                sendError( player, "Target Map not found !"+location );
+                return;
+            }
+
+            // move to our brave new world...
+            WorldMap targetWorld = wManager.getWorldMap( location );
+
+            if( targetWorld==null  ) {
+                sendError( player, "Target World not found !"+location );
+                return;
+            }
+
+            // Location Update
+            currentTileMap.getMessageRouter().removePlayer(player);
+
+            player.setLocation( location );
+            player.updateSyncID();
+            player.getMovementComposer().resetMovement();
+            player.setX( x );
+            player.setY( y );
+            player.setOrientation( orientation );
+            player.getLieManager().removeMeet(LieManager.FORGET_TOWNMAP);
+            player.getLieManager().forget(LieManager.MEET_CHANGETOWNMAP);
+
+            player.sendMessage( new YouCanLeaveMapMessage( primaryKey, location, x ,y,
+                                                         orientation, player.getSyncID() ) );
+            return;
+        }
+
+        // Going to a TileMap ?
+        if( currentTileMap==null ) {
+            sendError( player, "Failed to get tilemap !! " +player.getLocation() );
+            return;
+        }
+
+        if( location.isTileMap() && currentTileMap.getMapExits()!=null ) {
+
+            boolean found = false;
+
+            for( int i=0; i<currentTileMap.getMapExits().length; i++ ) {
+
+                MapExit mapExit = currentTileMap.getMapExits()[i];
+              
+                if( mapExit.getTargetWotlasLocation().equals( location ) ) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if(!found) {
+                // MapExit not found...
+                sendError( player, "Target Map not found !"+location );
+                return;
+            }
+
+            // move to our brave new world...
+            TileMap targetTileMap = wManager.getTileMap( location );
+
+            if( targetTileMap==null  ) {
+                sendError( player, "Target TileMap not found !"+location );
+                return;
+            }
+
+            // Location Update
+            currentTileMap.getMessageRouter().removePlayer(player);
+
+            player.setLocation( location );
+            player.updateSyncID();
+            player.getMovementComposer().resetMovement();
+            player.setX( x );
+            player.setY( y );
+            player.setOrientation( orientation );
+            player.getLieManager().removeMeet(LieManager.FORGET_TOWNMAP);
+            player.getLieManager().forget(LieManager.MEET_CHANGETOWNMAP);
+
+            player.sendMessage( new YouCanLeaveMapMessage( primaryKey, location, x ,y,
+                                                         orientation, player.getSyncID() ) );
+            return;
+        }
+
+/*
+          if( location.isTileMap() && currentTileMap.getMapExits()!=null ) {
 
               boolean found = false;
 
               for( int i=0; i<currentTileMap.getMapExits().length; i++ ) {
 
                  MapExit mapExit = currentTileMap.getMapExits()[i];
-              
-                 if( mapExit.getTargetWotlasLocation().equals( location ) ) {
-                     found = true;
-                     break;
+
+                 if( !mapExit.getMapExitLocation().equals( location ) )
+                     continue;
+
+                 // Ok target mapExit found
+                 // is the building on the same server ?
+                 int targetServerID = xxxxxxxxxxx.getServerID();
+
+                 if( targetServerID!=ServerDirector.getServerID() ) {
+                       
+                    // ok ! we must transfer this account to another server !!   
+                    GatewayServer gateway = ServerDirector.getServerManager().getGatewayServer();
+
+                    WotlasLocation oldLocation = player.getLocation();
+                    int oldX = player.getX();
+                    int oldY = player.getY();
+                    float oldOrientation = player.getOrientation();
+
+                    // We update the player's location
+                    player.setLocation( location );
+                    player.getMovementComposer().resetMovement();
+                    player.setX( x );
+                    player.setY( y );
+                    player.setOrientation( orientation );
+                    player.getLieManager().removeMeet(LieManager.FORGET_TOWNMAP);
+                    player.getLieManager().forget(LieManager.MEET_CHANGETOWNMAP);
+
+                    if( gateway.transfertAccount( primaryKey, targetServerID ) ) {
+                        Debug.signal(Debug.NOTICE, null, "Account Transaction "+primaryKey+" succeeded... sending redirection message.");
+                        player.updateSyncID();
+
+                        // We remove our player from the world
+                        currentTileMap.getMessageRouter().removePlayer(player);
+
+                        // ... and send a redirection message
+                        player.sendMessage(new RedirectConnectionMessage(primaryKey,targetServerID) ); // success
+                        return;
+                    }
+                    else {
+                        Debug.signal(Debug.NOTICE, null, "Account Transaction "+primaryKey+" failed... reverting to previous state.");
+
+                        // we revert to previous position
+                        player.setLocation( oldLocation );
+                        player.setX( mapExit.getTargetPosition().getX() );
+                        player.setY( mapExit.getTargetPosition().getY() );
+                        player.setOrientation( oldOrientation );
+
+                        // and send an error message to the client...
+                        player.sendMessage(new RedirectErrorMessage("Movement Failed. Retry later.\nTarget server ("
+                                            +targetServerID+") is not running.",
+                                            mapExit.getTargetPosition().getX(),
+                                            mapExit.getTargetPosition().getY() ) ); // failed
+                        return;
+                    }
                  }
+
               }
 
-              if(!found) {
-                 // MapExit not found...
-                    sendError( player, "Target Map not found !"+location );
-                    return;
-              }
+              // move to our brave new world...
+              TileMap targetTileMap = wManager.getTileMap( location );
 
-           // move to our brave new world...
-              WorldMap targetWorld = wManager.getWorldMap( location );
-
-              if( targetWorld==null  ) {
-                  sendError( player, "Target World not found !"+location );
+              if( targetTileMap==null  ) {
+                  sendError( player, "Target TileMap not found !"+location );
                   return;
               }
 
@@ -144,104 +281,12 @@ public class CanLeaveTileMapMsgBehaviour extends CanLeaveTileMapMessage implemen
                                                          orientation, player.getSyncID() ) );
               return;
           }
-
-       // Going to a room ?
-/*
-          if( location.isRoom() && currentTileMap.getBuildings()!=null )
-             for( int i=0; i<currentTileMap.getBuildings().length; i++ ) {
-                Building building = currentTileMap.getBuildings()[i];
               
-                if( building.getBuildingExits() == null )
-                    continue;
-              
-                for( int j=0; j<building.getBuildingExits().length; j++ ) {
-                   MapExit mapExit = building.getBuildingExits()[j];
-
-                   if( !mapExit.getMapExitLocation().equals( location ) )
-                       continue;
-
-                // Ok target mapExit found
-                // is the building on the same server ?
-                   int targetServerID = building.getServerID();
-
-                   if( targetServerID!=ServerDirector.getServerID() ) {
-                       
-                     // ok ! we must transfer this account to another server !!   
-                       GatewayServer gateway = ServerDirector.getServerManager().getGatewayServer();
-
-                       WotlasLocation oldLocation = player.getLocation();
-                       int oldX = player.getX();
-                       int oldY = player.getY();
-                       float oldOrientation = player.getOrientation();
-
-                     // We update the player's location
-                       player.setLocation( location );
-                       player.getMovementComposer().resetMovement();
-                       player.setX( x );
-                       player.setY( y );
-                       player.setOrientation( orientation );
-                       player.getLieManager().removeMeet(LieManager.FORGET_TOWNMAP);
-                       player.getLieManager().forget(LieManager.MEET_CHANGETOWNMAP);
-
-                       if( gateway.transfertAccount( primaryKey, targetServerID ) ) {
-                           Debug.signal(Debug.NOTICE, null, "Account Transaction "+primaryKey+" succeeded... sending redirection message.");
-                           player.updateSyncID();
-
-                         // We remove our player from the world
-                           currentTileMap.getMessageRouter().removePlayer(player);
-
-                         // ... and send a redirection message
-                           player.sendMessage(new RedirectConnectionMessage(primaryKey,targetServerID) ); // success
-                           return;
-                       }
-                       else {
-                           Debug.signal(Debug.NOTICE, null, "Account Transaction "+primaryKey+" failed... reverting to previous state.");
-
-                         // we revert to previous position
-                           player.setLocation( oldLocation );
-                           player.setX( mapExit.getTargetPosition().getX() );
-                           player.setY( mapExit.getTargetPosition().getY() );
-                           player.setOrientation( oldOrientation );
-
-                         // and send an error message to the client...
-                           player.sendMessage(new RedirectErrorMessage("Movement Failed. Retry later.\nTarget server ("
-                                                  +targetServerID+") is not running.",
-                                                  mapExit.getTargetPosition().getX(),
-                                                  mapExit.getTargetPosition().getY() ) ); // failed
-                           return;
-                       }
-                   }
-
-                // just move to our new room
-                   Room targetRoom = wManager.getRoom( location );
-
-                   if( targetRoom==null ) {
-                      sendError( player, "Target Room not found ! " +location );
-                      return;
-                   }
-
-                // Location update...
-                   currentTileMap.getMessageRouter().removePlayer( player );
-                
-                   player.setLocation( location );
-                   player.updateSyncID();
-                   player.getMovementComposer().resetMovement();
-                   player.setX( x );
-                   player.setY( y );
-                   player.setOrientation( orientation );
-                   player.getLieManager().removeMeet(LieManager.FORGET_TOWNMAP);
-                   player.getLieManager().forget(LieManager.MEET_CHANGETOWNMAP);
-
-                   player.sendMessage( new YouCanLeaveMapMessage( primaryKey, location,
-                                                                  x, y, orientation, player.getSyncID() ) );
-                   return;
-               }
-            }
  */
 
-       // MapExit not found...
-          sendError( player, "Target Map not found ! "+location );
-     }
+        // MapExit not found...
+        sendError( player, "Target Map not found ! "+location );
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

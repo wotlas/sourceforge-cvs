@@ -495,7 +495,8 @@ public class WorldManager {
     /*** STEP 1 - WE LOAD LOCATIONS (default data) ***/
 
       String worldList[] = rManager.listUniverseDirectories( universeHome );
-      Debug.signal( Debug.NOTICE, null, "Loading Universe Data from :"+universeHome );
+      Debug.signal( Debug.NOTICE, null, "Loading Universe Data from : "
+      +universeHome+" preloader status ["+PRELOADER_STATUS+"]" );
       worldMaps = null;
 
      // ok, here we go ! we load all the worlds we can find...
@@ -584,12 +585,12 @@ public class WorldManager {
 
              // managing tile maps : PART I
              // we load all the tilemap of this world that are cities on the map
+             TileMap.SetClassPreloader( PRELOADER_STATUS );
              String tileMapList[] = rManager.listUniverseDirectories( worldList[w], TILEMAP_DIR_EXT );
              for( int t=0; t<tileMapList.length; t++ ) {
                // we load the tileMap objects
                   TileMap tileMap = (TileMap) rManager.RestoreObject( tileMapList[t] + TILEMAP_FILE );
-                  tileMap.SetPreloader(tileMapList[t] + TILEMAP_FILE, WorldManager.PRELOADER_STATUS);
-                  tileMap.initPreloader();
+                  tileMap.SetPreloader(tileMapList[t] + TILEMAP_FILE);
                   if( tileMap==null ) {
                       Debug.signal(Debug.WARNING, this, "Failed to load TileMap : "+tileMapList[t]);
                       continue;
@@ -608,8 +609,7 @@ public class WorldManager {
                   String insideAreaTileMapList[] = rManager.listUniverseFiles( areaMapList[index], TILEMAP_EXT );
                   for( int index2=0; index2<insideAreaTileMapList.length; index2++ ) {
                       TileMap tileMap = (TileMap) rManager.RestoreObject( insideAreaTileMapList[index2] );
-                      tileMap.SetPreloader(insideAreaTileMapList[index2], WorldManager.PRELOADER_STATUS);
-                      tileMap.initPreloader();
+                      tileMap.SetPreloader(insideAreaTileMapList[index2]);
                       if( tileMap==null ) {
                           Debug.signal(Debug.WARNING, this, "Failed to load TileMap : "+insideAreaTileMapList[index2]);
                           continue;

@@ -26,6 +26,7 @@ import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.ImageIdentifier;
 import wotlas.libs.graphics2D.drawable.DoorDrawable;
 import wotlas.utils.*;
+import wotlas.common.universe.*;
 
 import java.util.Properties;
 
@@ -39,33 +40,36 @@ public class WorldGenerator {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Main method.
-   *  @param argv not used
-   */
+    /** Main method.
+    *  @param argv not used
+    */
     public static void main( String argv[] ) {
 
-           float halfPI = (float)(Math.PI/2);
+        /*  first of all Manage the Preloader for WorldGenerator*/
+        WorldManager.PRELOADER_STATUS = PreloaderEnabled.LOAD_ALL;
+
+        float halfPI = (float)(Math.PI/2);
 
         // STEP 2 - WORLD CREATION : RANDLAND
-           WorldMap worldMaps[] = new WorldMap[1];
+        WorldMap worldMaps[] = new WorldMap[1];
 
-           WorldMap worldMap = new WorldMap();
-           worldMaps[0] = worldMap;
+        WorldMap worldMap = new WorldMap();
+        worldMaps[0] = worldMap;
 
-           worldMap.setWorldMapID(0);
-           worldMap.setFullName("RandLand");
-           worldMap.setShortName("randland");
-           worldMap.setInsertionPoint( new ScreenPoint(680,455) );
-           worldMap.setWorldImage( new ImageIdentifier( "maps-1/universe-2/randland-0") );
-           worldMap.setMusicName("stedding.mid");
+        worldMap.setWorldMapID(0);
+        worldMap.setFullName("RandLand");
+        worldMap.setShortName("randland");
+        worldMap.setInsertionPoint( new ScreenPoint(680,455) );
+        worldMap.setWorldImage( new ImageIdentifier( "maps-1/universe-2/randland-0") );
+        worldMap.setMusicName("stedding.mid");
 
         // new STEP 3a - MAPTILES
-           TileMap tileMaps[] = new TileMap[2];
-           worldMap.setTileMaps( tileMaps );
+        TileMap tileMaps[] = new TileMap[2];
+        worldMap.setTileMaps( tileMaps );
            
         // Mishra Creation   
-           TileMap tileMap = new TileMap(700,247,17,17);
-           tileMaps[0] = tileMap;
+        TileMap tileMap = new TileMap(700,247,17,17);
+        tileMaps[0] = tileMap;
 
            tileMap.setTileMapID(0);
            tileMap.setAreaName("");
@@ -78,11 +82,12 @@ public class WorldGenerator {
            
            TileManagerFlat manager = new TileManagerFlat(  tileMap );
            manager.setMap( 10, 20, TileMap.PIXEL_32, (byte)0, (byte)121 );
-           manager.setMapPoint(3,2,0,0,TileMap.TILE_FREE);
-           manager.setMapPoint(4,2,1,0,TileMap.TILE_FREE);
-           manager.setMapPoint(5,2,2,0,TileMap.TILE_FREE);
-           manager.setMapPoint(6,2,3,0,TileMap.TILE_FREE);
-           manager.setMapPoint(5,2,4,0,TileMap.TILE_FREE);
+           manager.setMapPoint(3,2,2,79,TileMap.TILE_NOT_FREE);
+           manager.setMapPoint(4,2,2,78,TileMap.TILE_NOT_FREE);
+           manager.setMapPoint(5,2,2,78,TileMap.TILE_NOT_FREE);
+           manager.setMapPoint(6,2,2,79,TileMap.TILE_NOT_FREE);
+           manager.setMapPoint(5,3,2,79,TileMap.TILE_NOT_FREE);
+           manager.setMapPoint(6,3,2,79,TileMap.TILE_NOT_FREE);
            tileMap.setManager( (TileMapManager)manager );
            
            MapExit mapExit1 = null;

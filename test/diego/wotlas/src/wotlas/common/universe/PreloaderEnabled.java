@@ -36,30 +36,22 @@ import java.awt.*;
  * @author Diego
  * @see wotlas.common.universe.TileMaps
  */
-public abstract class PreloaderEnabled extends ScreenRectangle implements BackupReady {
+public abstract class PreloaderEnabled extends ScreenRectangle implements BackupReady,SendObjectReady {
     
     /** id used in Serialized interface.
      */
     private static final long serialVersionUID = 556565L;
 
-//    final static public byte LOAD_NOTHING = 0; // nothing loaded
     final static public byte LOAD_MINIMUM_DATA = 1; // wotlocation,id,name,full name, exits(?).
     final static public byte LOAD_CLIENT_DATA = 2;  // no encounterSchedule nor npc, nor items
     final static public byte LOAD_SERVER_DATA = 3;  // no graphics[][] or groupOfGraphics
     final static public byte LOAD_ALL = 4; // all loaded
 
-    transient static byte loadStatus;
+    transient protected byte loadStatus;
+    transient static byte setClassPreloader;
     transient protected String fileName;
     transient protected int useCounter;
     transient protected long lastUse;
-
-    /*
-    abstract public void InternalUnloadAll();
-    abstract public void InternalLoadMinimum();
-    abstract public void InternalLoadClient();
-    abstract public void InternalLoadServer();
-    abstract public void InternalLoadAll();
-    */
     
     /** used to know if map can be loaded
      * : used to disable the map
@@ -141,68 +133,56 @@ public abstract class PreloaderEnabled extends ScreenRectangle implements Backup
             // to do.... when new version
         }
     }
-    
-    public void SetPreloader(String fileName, byte loadStatus){
+
+    public void SetPreloader(String fileName){ //, byte loadStatus){
         this.fileName = fileName;
-        this.loadStatus = loadStatus;
+        // this.loadStatus = loadStatus;
         useCounter = 0;
         lastUse = -1;
     }
 
-    public void initPreloader(){
-        switch(loadStatus){
-            case LOAD_MINIMUM_DATA:
-                break;
-            case LOAD_CLIENT_DATA:
-                break;
-            case LOAD_SERVER_DATA:
-                break;
-            case LOAD_ALL:
-                break;
+    static public void SetClassPreloader(byte value) {
+        setClassPreloader = value;
+    }
+
+    public void readObject(java.io.ObjectInputStream objectInput)
+    throws java.io.IOException, java.lang.ClassNotFoundException {
+        int IdTmp = objectInput.readInt();
+        if( IdTmp == ExternalizeGetVersion() ){
+            super.readExternal(objectInput);
+            enabled = objectInput.readBoolean();
+            timeStamp = objectInput.readLong();
+            creator = ( String ) objectInput.readObject();
+            approved = ( String ) objectInput.readObject();
+            lastChange = ( String ) objectInput.readObject();
+            reserved = objectInput.readBoolean();
+        } else {
+            // eRROR caused of new version.....
+            // to do.... when new version
         }
     }
 
-    /*
-    public void Unload(){
-        if(loadStatus != this.LOAD_NOTHING)
-            return;
-        InternalUnloadAll();
-        loadStatus = this.LOAD_NOTHING;
+    public void writeObject(java.io.ObjectOutputStream objectOutput) 
+    throws java.io.IOException {
+        objectOutput.writeInt( ExternalizeGetVersion() );
+        super.writeExternal( objectOutput );
+        objectOutput.writeBoolean( enabled );
+        objectOutput.writeLong( System.currentTimeMillis() );
+        this.timeStamp = System.currentTimeMillis();
+        objectOutput.writeObject( creator );
+        objectOutput.writeObject( approved );
+        objectOutput.writeObject( lastChange );
+        objectOutput.writeBoolean( reserved );
     }
 
-    public void LoadMinimumData(){
-        if(loadStatus != this.LOAD_MINIMUM)
-            return;
-        InternalLoadMinimum();
-        loadStatus = this.LOAD_MINIMUM;
+    static public void Reload( ResourceManager rManager, WorldManager worldMan
+    ,TileMap previousData, byte status){
+        TileMap.SetClassPreloader( status );
+        TileMap[] data = worldMan.getWorldMap( new WotlasLocation() ).getTileMaps();
+        data[previousData.tileMapID] = (TileMap) rManager.RestoreObject( previousData.fileName );
+        data[previousData.tileMapID].SetPreloader( previousData.fileName );
+        data[previousData.tileMapID].init( worldMan.getWorldMap( new WotlasLocation()) );
+        System.out.println( "id " + data[previousData.tileMapID].tileMapID 
+        + " loc " + data[previousData.tileMapID].getLocation() );
     }
-    
-    public void LoadClientData(){
-        if(loadStatus != this.LOAD_CLIENT_DATA)
-            return;
-        InternalLoadClient();
-        loadStatus = this.LOAD_CLIENT_DATA;
-    }
-    
-    public void LoadServerData(){
-        if(loadStatus != this.LOAD_SERVER_DATA)
-            return;
-        InternalLoadServer();
-        loadStatus = this.LOAD_SERVER_DATA;
-    }
-    
-    public void LoadAllData(){
-        if(loadStatus != this.LOAD_ALL)
-            return;
-        InternalLoadAll();
-        loadStatus = this.LOAD_ALL;
-    }
-
-    public boolean Save(){
-        if(loadStatus != this.LOAD_ALL)
-            return false ;        
-        // .....
-        return true;
-    }
-    */
 }

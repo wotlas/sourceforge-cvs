@@ -20,13 +20,18 @@ package wotlas.common.environment;
 
 import wotlas.utils.Debug;
 import wotlas.libs.graphics2D.*;
+import wotlas.libs.persistence.*;
 
 import java.util.*;
 
 /** Manages the environment of the server.
  * @author Diego
  */
-public class EnvironmentManager {
+public class EnvironmentManager implements SendObjectReady {
+
+    /** id used in Serialized interface.
+     */
+    private static final long serialVersionUID = 556565L;
 
     /** Show debug information ?
     */
@@ -66,6 +71,14 @@ public class EnvironmentManager {
         this.graphicsSet = graphicsSet;
     }
 
+    /**  Create an enviroment from another.
+     */
+    public EnvironmentManager( EnvironmentManager data ){
+        this.oneHourEveryThisMinutes = data.oneHourEveryThisMinutes;
+        this.environmentType = data.environmentType;
+        this.graphicsSet = data.graphicsSet;
+    }
+    
     /** return the graphicSet used on this server.
      *
      */
@@ -179,5 +192,33 @@ public class EnvironmentManager {
         else 
             Debug.signal( Debug.ERROR, null, "Error initializing graphics : request of non existing graphics set." );
         return 0;
+    }
+
+    /** id version of data, used in serialized persistance.
+    */
+    public int ExternalizeGetVersion(){
+        return 1;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    public void writeObject(java.io.ObjectOutputStream objectOutput)
+    throws java.io.IOException {
+        objectOutput.writeInt( ExternalizeGetVersion() );
+        objectOutput.writeByte( oneHourEveryThisMinutes );
+        objectOutput.writeByte( environmentType );
+        objectOutput.writeByte( graphicsSet );
+    }
+    
+    public void readObject(java.io.ObjectInputStream objectInput)
+    throws java.io.IOException, java.lang.ClassNotFoundException {
+        int IdTmp = objectInput.readInt();
+        if( IdTmp == ExternalizeGetVersion() ){
+            oneHourEveryThisMinutes = objectInput.readByte();
+            environmentType = objectInput.readByte();
+            graphicsSet = objectInput.readByte();
+        } else {
+            // to do.... when new version
+        }
     }
 }

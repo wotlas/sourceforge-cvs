@@ -666,30 +666,30 @@ public class AStarDouble
   private synchronized void changeRectangle(Rectangle r, int maskTileSize, boolean value) {
     int cx = (int) (r.x/maskTileSize);
     int cy = (int) (r.y/maskTileSize);
-    int cWidth = (int) r.getWidth() + 1;
-    int cHeight = (int) r.getHeight() + 1;
+    int cWidth = (int) (r.getWidth()/maskTileSize) + 1;
+    int cHeight = (int) (r.getHeight()/maskTileSize) + 1;
+    if (DataManager.SHOW_DEBUG) {
+      System.out.println("cWidth = " + cWidth + " cHeight = " + cHeight);
+    }
     for (int i=0; i<cWidth; i++)
       for (int j=0; j<cHeight; j++)
-        map[i][j] = value;
+        map[cx+i][cy+j] = value;
   }
 
   /** To dynamically modify the mask setting all pixels of a rectangle to true
    *
    * @param r the rectangle to clean (in screen pixels coordinate)
-   * @param maskTileSize mask tile size (in pixels)
    */
-  public void cleanRectangle(Rectangle r, int maskTileSize) {
-    changeRectangle(r, maskTileSize, true);
+  static public void cleanRectangle(Rectangle r) {
+    aStar.changeRectangle(r, 5, true);
   }
   
   /** To dynamically modify the mask setting all pixels of a rectangle to false
    *
    * @param r the rectangle to fill (in screen pixels coordinate)
-   * @param maskTileSize mask tile size (in pixels)
-
    */
-  public void fillRectangle(Rectangle r, int maskTileSize) {
-    changeRectangle(r, maskTileSize, false);
+  static public void fillRectangle(Rectangle r) {
+    aStar.changeRectangle(r, 5, false);
   }
   
  /*------------------------------------------------------------------------------------*/

@@ -113,6 +113,8 @@ public class NetMessageFactory {
    */
      protected int addMessagePackage( String packageName ) {
 
+          if(packageName==null) return 0; // no packages to add
+
      	  int nbMsg = 0;
 
        // We get & load the classes of the given package

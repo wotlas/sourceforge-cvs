@@ -20,6 +20,7 @@
 package wotlas.client.screen;
 
 import wotlas.libs.sound.*;
+import wotlas.utils.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -45,13 +46,18 @@ public class JOptionsPanel extends JPanel implements MouseListener, ChangeListen
    */
   public JOptionsPanel() {
     super();
-    JLabel label1 = new JLabel("Options...");
+    JLabel label1 = new ALabel("Options");
+    
+    JPanel vPanel = new JPanel();
+    vPanel.add(new JLabel(new ImageIcon("../base/gui/volume16.gif")));
     volumeLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_VOLUME, SoundLibrary.MAX_VOLUME);
     volumeLevel.addChangeListener(this);
+    vPanel.add(volumeLevel);
+    vPanel.add(new JLabel(new ImageIcon("../base/gui/volume24.gif")));
     
     
-    add(label1);
-    add(volumeLevel);
+    add(label1, BorderLayout.NORTH);
+    add(vPanel, BorderLayout.CENTER);
   }
 
  /*------------------------------------------------------------------------------------*/

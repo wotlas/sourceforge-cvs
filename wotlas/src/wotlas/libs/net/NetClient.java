@@ -82,8 +82,8 @@ public class NetClient
    * @return a NetPersonality on success, null on failure.
    */
      public NetPersonality connectToServer( String server_name, int server_port,
-                                                   String key, Object context,
-                                                   String msg_packages[] )
+                                            String key, Object context,
+                                            String msg_packages[] )
      {
        Socket socket;
        NetPersonality personality=null;
@@ -117,11 +117,16 @@ public class NetClient
                personality.start();
                personality.pleaseReceiveAllMessagesNow();
 
-               Tools.waitTime(200); // if the NetReceiver is asynchronous
+               Tools.waitTime(200); // if the NetReceiver is asynchronous we have returned
+                                    // immediately from the previous method call... this is
+                                    // a dirty way to wait for the message to be processed.
+                                    // the pleaseReceive... method should be extended with
+                                    // an extra parameter WAIT, NO_WAIT.
 
             // Success ?
                if(error_message!=null) {
                   Debug.signal(Debug.ERROR, this, "Server returned an Error");
+                  personality.closeConnection();
                   return null;
                }
 
@@ -131,6 +136,7 @@ public class NetClient
           catch(IOException e){
            // Hum ! this server doesn't want to hear from us...
               error_message = e.getMessage();
+              personality.closeConnection();
               return null;
  	  }
        }

@@ -34,6 +34,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import java.io.*;
+import java.net.URL;
 import java.util.*;
 
 /** JEditorPane where messages are displayed...<br>
@@ -134,11 +135,38 @@ public class JChatDisplay extends LogStream {
          msg_number = 0;
          strBuffer = "";
 
+         URL url=null;
+         String smileysHome = ClientDirector.getResourceManager().getGuiSmileysDir();
+
+         if( ClientDirector.getResourceManager().inJar() ) {
+
+              url = getClass().getResource(smileysHome+"smileys.html");
+
+              if(url!=null) {
+                 String urlName = url.toString();
+                 urlName = urlName.substring( 0, urlName.indexOf("smileys.html") );
+
+                 try{
+                     url = new URL(urlName);
+                 }catch(Exception e ) {
+                     e.printStackTrace();
+                 }
+              }
+         }
+         else try{
+                url = new File(smileysHome).toURL();
+             }catch(Exception e) {
+                e.printStackTrace();
+             }
+
          messagesPane = new JEditorPane();
+
          messagesPane.setEditable(false);
     
          MyHTMLEditorKit kit = new MyHTMLEditorKit();
          messagesPane.setEditorKit(kit);
+
+         ((HTMLDocument)messagesPane.getDocument()).setBase(url);
     
          print("<font color='green'><i>Entering " + chatRoom.getName() + " chat room</i></font><br>\n");
     }
@@ -168,7 +196,6 @@ public class JChatDisplay extends LogStream {
        }
 
     // Search for smileys
-       String smileysHome = ClientDirector.getResourceManager().getGuiSmileysDir();
 
        for( int i=0; i<SMILEYS.length; i++ ) {
        	  int pos=0, posD=0;
@@ -185,8 +212,7 @@ public class JChatDisplay extends LogStream {
                   buf.append(SMILEYS[i][1]);
                   buf.append("' height='");
                   buf.append(SMILEYS[i][2]);
-                  buf.append("' src='file:");
-                  buf.append(smileysHome);
+                  buf.append("' src='");
                   buf.append(SMILEYS[i][3]);
                   buf.append("'> ");
               }

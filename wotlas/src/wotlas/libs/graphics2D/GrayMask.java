@@ -47,8 +47,8 @@ public class GrayMask
     byte[][] mask = new byte[imgWidth][imgHeight];
 
     for (int j=0; j<imgHeight; j++) {
-      for (int i=0; i<imgWidth; i++) {        
-        mask[i][j] = (byte) ((buffImg.getRGB(i, j) & 0xff)-128); // Get the blue color        
+      for (int i=0; i<imgWidth; i++) {
+        mask[i][j] = (byte) ((buffImg.getRGB(i, j) & 0xff)-128); // Get the blue color
       }      
     }
     return mask;

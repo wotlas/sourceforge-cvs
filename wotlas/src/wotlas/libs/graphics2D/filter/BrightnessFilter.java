@@ -89,6 +89,8 @@ public class BrightnessFilter implements DynamicImageFilter {
     * @param y y coordinate of pixel    
     */          
      public void setBrightness(float x, float y) {
+     	if(brightnessMask==null) return;
+     	
      	int xb = (int) (x/tilesize);
      	int yb = (int) (y/tilesize);
 
@@ -113,7 +115,7 @@ public class BrightnessFilter implements DynamicImageFilter {
 
            if( alpha == 0 )
                return argb; // transparent pixel
-	   	   
+	   	  
            short redIndex   = Converter.getRed( argb );
            short blueIndex  = Converter.getBlue( argb );
            short greenIndex = Converter.getGreen( argb );

@@ -84,12 +84,14 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
 
    /** Wotlas root dir for resources located in a JAR. We'll search in this
     *  directory for every kind of resources.
+    *  MUST START WITH A "/".
     */
-     public static final String WOTLAS_JAR_ROOT_RESOURCE_DIR = "base";
+     public static final String WOTLAS_JAR_ROOT_RESOURCE_DIR = "/base";
 
    /** Wotlas root dir for docs located in the JAR
+    *  MUST START WITH A "/".
     */
-     public static final String WOTLAS_JAR_ROOT_DOCS_DIR = "docs/help";
+     public static final String WOTLAS_JAR_ROOT_DOCS_DIR = "/docs/help";
 
    /** Tells in which dir we can store external files.
     */

@@ -112,8 +112,13 @@ public class JHTMLWindow extends JDialog implements ActionListener {
         }
         else if( fileName.startsWith( "text:" ) )
               htmlText = fileName.substring(5,fileName.length());
-        else
-              htmlText = rManager.loadText( fileName );
+        else if( rManager.inJar() )
+              url = getClass().getResource(fileName);
+        else try{
+                url = new File(fileName).toURL();
+             }catch(Exception e) {
+                e.printStackTrace();
+             }
 
         if( htmlText == null && url==null)
             htmlText = "<b>ERROR</b><br>Could not open file: <i>"+fileName+"</i>";

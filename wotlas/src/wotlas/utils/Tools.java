@@ -523,6 +523,9 @@ public class Tools {
            if(!dirPath.endsWith("/"))
               dirPath = dirPath + "/";
 
+           if(dirPath.startsWith("/"))
+              dirPath = dirPath.substring( 1, dirPath.length() );
+
            jarName = jarName.toLowerCase();
 
            if( !hasJar( jarName ) )
@@ -571,7 +574,7 @@ public class Tools {
                      if( index<0 || index<name.length()-1 )
                         continue; // error, or not an immediate sub-directory
 
-                     list.addElement(name);
+                     list.addElement("/"+name);
                  }
                  else if( entry.getName().endsWith(ext) ) {
                      if(entry.isDirectory())
@@ -593,7 +596,7 @@ public class Tools {
                      if( index>=0 )
                         continue; // not an immediate file...
 
-                     list.addElement(name);
+                     list.addElement("/"+name);
                  }
            }
 

@@ -12,7 +12,7 @@ import javax.swing.text.html.*;
 import javax.swing.event.*;
 
 /**
- * see http://www.javaworld.com/javatips/javatip109/javatip109.zip
+ *  Enhanced Image View for HTML documents. Thanks to JavaWorld for the tip.
  */
 
 public class MyImageView extends View implements ImageObserver, MouseListener,
@@ -61,6 +61,7 @@ public class MyImageView extends View implements ImageObserver, MouseListener,
 	    AttributeSet attr = elem.getAttributes();
             if (isURL()) {
 	      URL src = getSourceURL();
+
 	      if( src != null ) {
 		  Dictionary cache = (Dictionary) getDocument().getProperty(IMAGE_CACHE_PROPERTY);
 		  if( cache != null )
@@ -77,10 +78,17 @@ public class MyImageView extends View implements ImageObserver, MouseListener,
                    (HTML.Attribute.SRC);
               //System.out.println("before src: " + src);
               src = processSrcPath(src);
-              //System.out.println("after src: " + src);
-              fImage = Toolkit.getDefaultToolkit().createImage(src);
-              try { waitForImage(); }
-              catch (InterruptedException e) { fImage = null; }
+
+              fImage = Toolkit.getDefaultToolkit().getImage(src);
+              
+              if(fImage==null) {
+                 URL imUrl = getClass().getResource(src);
+                 fImage = Toolkit.getDefaultToolkit().getImage(imUrl);
+              }
+              
+              if(fImage!=null)              
+                 try { waitForImage(); }
+                 catch (InterruptedException e) { fImage = null; }
               /******************************************************/
 
             }
@@ -139,10 +147,13 @@ public class MyImageView extends View implements ImageObserver, MouseListener,
 
     /** Determines if path is in the form of a URL */
     private boolean isURL() {
+          return true;
+
+/*  THIS CODE IS TOO RESTRICTIVE :
         String src =
           (String) fElement.getAttributes().getAttribute(HTML.Attribute.SRC);
         return src.toLowerCase().startsWith("file") ||
-               src.toLowerCase().startsWith("http");
+               src.toLowerCase().startsWith("http"); */
     }    
 
     /** Checks to see if the absolute path is availabe thru an application
@@ -260,12 +271,13 @@ public class MyImageView extends View implements ImageObserver, MouseListener,
  	  if ( src==null ) return null;
 
 	  URL reference = ((HTMLDocument)getDocument()).getBase();
-    try {
+
+         try {
  	    URL u = new URL(reference,src);
 	    return u;
-    } catch (MalformedURLException e) {
+         } catch (MalformedURLException e) {
 	    return null;
-    }
+         }
   }
     
   /** Look up an integer-valued attribute. <b>Not</b> recursive.

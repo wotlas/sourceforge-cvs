@@ -156,6 +156,8 @@ public class ClientDirector {
                                            "log-title-dark.jpg", resourceManager );
 
             Debug.setPrintStream( logStream );
+            System.setOut( logStream );
+            System.setErr( logStream );
        }
        catch( java.io.FileNotFoundException e ) {
          e.printStackTrace();

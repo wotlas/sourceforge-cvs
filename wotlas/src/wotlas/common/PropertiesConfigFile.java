@@ -73,7 +73,7 @@ public class PropertiesConfigFile extends Properties {
 
              String text = rManager.loadText( rManager.getConfigsDir()+configName );
              
-             if( text!=null || !rManager.saveText( configPath, text ) ) {
+             if( text==null || !rManager.saveText( configPath, text ) ) {
                 Debug.signal( Debug.FAILURE, this, "Failed to retrieve "+configName+" from the JAR !");
                 Debug.exit();
              }

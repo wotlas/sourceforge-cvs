@@ -460,6 +460,26 @@ public class TownMap extends ScreenRectangle
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** Returns the eventual MapExit the given player is intersecting.
+   *
+   * @param rCurrent rectangle containing the player's current position, width & height
+   * @return the Building the player is heading to (if he has reached it, or if there
+   *         are any), null if none.
+   */
+     public MapExit isIntersectingMapExit( int destX, int destY, Rectangle rCurrent ) {
+        if(mapExits==null)
+           return null;
+
+        for( int i=0; i<mapExits.length; i++ )
+             if( mapExits[i].toRectangle().contains(destX,destY)
+                 && mapExits[i].toRectangle().intersects( rCurrent ) )
+                 return mapExits[i]; // mapExits reached
+
+        return null;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** String Info.
    */
     public String toString(){

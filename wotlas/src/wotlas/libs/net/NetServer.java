@@ -256,6 +256,10 @@ public class NetServer extends Thread
         Socket client_socket;
         NetPersonality personality;
 
+        // We print some info about this server.
+           Debug.signal( Debug.NOTICE, null, "Starting Server #local-"+server_local_ID
+                         +" on IP:"+server.getInetAddress()+" Port:"+server.getLocalPort() );
+
         // We wait for clients.
         // We catch exceptions at different levels because
         // their importance is linked to where they are generated.

@@ -82,6 +82,7 @@ public class JClientScreen extends JFrame
   private JOptionsPanel optionsPanel;
   private JPlayerPanel playerPanel;
   private JLogPanel logPanel;
+  private GraphicPingPanel pingPanel;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -92,7 +93,8 @@ public class JClientScreen extends JFrame
   }
 
   public JClientScreen(JInfosPanel infosPanel, GraphicsDirector gDirector, JChatPanel chatPanel,
-                       JOptionsPanel optionsPanel, JPlayerPanel playerPanel, JLogPanel logPanel) {
+                       JOptionsPanel optionsPanel, JPlayerPanel playerPanel, JLogPanel logPanel,
+                       GraphicPingPanel pingPanel) {
     super("Wotlas client");
     this.infosPanel = infosPanel;
     this.gDirector = gDirector;
@@ -100,6 +102,7 @@ public class JClientScreen extends JFrame
     this.optionsPanel = optionsPanel;
     this.playerPanel = playerPanel;
     this.logPanel = logPanel;
+    this.pingPanel = pingPanel;
     addWindowListener( new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
         //System.out.println("See you soon!");
@@ -113,7 +116,8 @@ public class JClientScreen extends JFrame
   }
 
   public JClientScreen(JInfosPanel infosPanel, JMapPanel myMapPanel, JChatPanel chatPanel,
-                       JOptionsPanel optionsPanel, JPlayerPanel playerPanel, JLogPanel logPanel) {
+                       JOptionsPanel optionsPanel, JPlayerPanel playerPanel, JLogPanel logPanel,
+                       GraphicPingPanel pingPanel) {
     super("Wotlas client");
     this.infosPanel = infosPanel;
     this.mapPanel = myMapPanel;
@@ -121,6 +125,7 @@ public class JClientScreen extends JFrame
     this.optionsPanel = optionsPanel;
     this.playerPanel = playerPanel;
     this.logPanel = logPanel;
+    this.pingPanel = pingPanel;
     addWindowListener( new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
         //System.out.println("See you soon!");
@@ -167,6 +172,27 @@ public class JClientScreen extends JFrame
       // *** Log Panel ***
       //logPanel.setPreferredSize(new Dimension(mainWidth-leftWidth, mainHeight-thumbHeight-playerHeight));      
       //rightPanel.add(logPanel);
+      
+      rightPanel.add(Box.createRigidArea(new Dimension(0,2)));
+      
+      // *** Ping Panel ***
+      JPanel fillPanel = new JPanel( );
+      fillPanel.setLayout(new GridLayout(1,1,0,0));
+      fillPanel.setBackground(Color.yellow);
+      //fillPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
+      
+      /*fillPanel.setPreferredSize( new Dimension(mainWidth-leftWidth-4,40) );      
+      fillPanel.setMinimumSize( new Dimension(mainWidth-leftWidth-4,40) );
+      fillPanel.setMaximumSize( new Dimension(mainWidth-leftWidth-4,40) );     
+      */
+      
+      fillPanel.setPreferredSize( new Dimension(160,40) );      
+      fillPanel.setMinimumSize( new Dimension(160,40) );
+      fillPanel.setMaximumSize( new Dimension(160,40) );     
+      
+      fillPanel.setAlignmentX(Component.CENTER_ALIGNMENT);            
+      fillPanel.add(pingPanel);
+      rightPanel.add(fillPanel);
 
       //rightPanel.add(innerRightPanel);
       

@@ -83,7 +83,11 @@ public class ClientDirector {
   /** Our Data Manager.
    */
   private static DataManager dataManager;
-  
+
+  /** Client configuration (window size, sound volume, etc... )
+   */
+  private static ClientConfiguration clientConfiguration;
+
   /** True if we show debug informations
    */
   public static boolean SHOW_DEBUG = false;
@@ -183,20 +187,33 @@ public class ClientDirector {
     // STEP 5 - Creation of our Font Factory
     FontFactory.createDefaultFontFactory( databasePath + File.separator + "fonts" );
     Debug.signal( Debug.NOTICE, null, "Font factory created..." );
+
+    // STEP 6 - We load the client configuration
+    try {
+         if(new File(CLIENT_OPTIONS).exists())
+            clientConfiguration = (ClientConfiguration) PropertiesConverter.load(CLIENT_OPTIONS);
+         else {
+            Debug.signal( Debug.ERROR, null, "Failed to load client configuration. Creating a new one." );
+            clientConfiguration = new ClientConfiguration();
+         }
+    }
+    catch (PersistenceException pe) {
+         Debug.signal( Debug.ERROR, null, "Failed to load client configuration : " + pe.getMessage()+". Creating a new one." );
+         clientConfiguration = new ClientConfiguration();
+    }
  
-    // STEP 6 - We ask the ClientManager to get ready
+    // STEP 7 - We ask the ClientManager to get ready
     clientManager = ClientManager.createClientManager(databasePath);
     Debug.signal( Debug.NOTICE, null, "Client Created (but not started)..." );
 
-    // STEP 7 - We ask the DataManager to get ready
+    // STEP 8 - We ask the DataManager to get ready
     dataManager = DataManager.createDataManager(databasePath);
     dataManager.showDebug(SHOW_DEBUG);
     Debug.signal( Debug.NOTICE, null, "DataManager created..." );
     
-    // STEP 8 - Start the ClientManager
+    // STEP 9 - Start the ClientManager
     clientManager.start(-1);
     Debug.signal( Debug.NOTICE, null, "WOTLAS Client started with success..." );
-        
   }
   
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -223,6 +240,27 @@ public class ClientDirector {
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To get client Configuration and get some user preferences ( window size, etc... )
+   *  @return Client Config, you can use the save() method to save it to disk...
+   */
+   public static ClientConfiguration getClientConfiguration() {
+      return clientConfiguration;
+   }
+
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To close the client.
+   */
+   public static void saveClientConfiguration() {
+      try{
+         PropertiesConverter.save(clientConfiguration, CLIENT_OPTIONS );
+      }
+      catch (PersistenceException pe) {
+         Debug.signal( Debug.ERROR, null, "Failed to save client configuration : " + pe.getMessage() );
+      }
+   }
+
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
 

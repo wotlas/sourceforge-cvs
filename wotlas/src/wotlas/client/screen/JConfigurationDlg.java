@@ -26,7 +26,7 @@ import wotlas.libs.persistence.*;
 import wotlas.libs.sound.*;
 
 import wotlas.utils.aswing.*;
-import wotlas.utils.Debug;
+import wotlas.utils.*;
 import wotlas.utils.SwingTools;
 
 import java.awt.*;
@@ -50,6 +50,8 @@ public class JConfigurationDlg extends JDialog {
   protected JSlider soundVolLevel, musicVolLevel;
   protected JCheckBox cButton;
   protected JCheckBox savePassButton;
+  protected JCheckBox policyButton;
+  protected JCheckBox hardwareButton;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -91,34 +93,30 @@ public class JConfigurationDlg extends JDialog {
       super(frame, "Options", true);
       setSize(400,300);
 
-      ClientConfiguration clientConfiguration;
+      ClientConfiguration clientConfiguration = ClientDirector.getClientConfiguration();
 
-      try {
-           if(new File(ClientDirector.CLIENT_OPTIONS).exists())
-              clientConfiguration = (ClientConfiguration) PropertiesConverter.load(ClientDirector.CLIENT_OPTIONS);
-           else {
-              Debug.signal( Debug.ERROR, this, "Failed to load sound & music configuration. Creating a new one." );
-              clientConfiguration = new ClientConfiguration();
-           }
-      }
-      catch (PersistenceException pe) {
-         Debug.signal( Debug.ERROR, this, "Failed to load sound & music configuration : " + pe.getMessage()+". Creating a new one." );
-         clientConfiguration = new ClientConfiguration();
-      }
-    
       musicVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_MUSIC_VOLUME,
                                   (short)clientConfiguration.getMusicVolume());
 
       soundVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_SOUND_VOLUME,
                                   (short)clientConfiguration.getSoundVolume());
 
-      cButton = new JCheckBox("High details for text display.");
+      cButton = new JCheckBox("High details for player name display.");
       cButton.setSelected(clientConfiguration.getHighDetails());
       TextDrawable.setHighQualityTextDisplay(clientConfiguration.getHighDetails());
 
-      savePassButton = new JCheckBox("Remember passwords.");
+      savePassButton = new JCheckBox("Remember passwords (saved to disk).");
       savePassButton.setSelected( clientConfiguration.getRememberPasswords() );
       ClientManager.setRememberPasswords( clientConfiguration.getRememberPasswords() );
+
+      policyButton = new JCheckBox("Always center the game screen on the player.");
+      policyButton.setSelected( clientConfiguration.getCenterScreenPolicy() );
+
+      hardwareButton = new JCheckBox("Use hardware acceleration for 2D graphics (Java 1.4).");
+      hardwareButton.setSelected( clientConfiguration.getUseHardwareAcceleration() );
+
+      if(!Tools.javaVersionHigherThan("1.4.0"))
+         hardwareButton.setEnabled(false);
 
       JPanel pane = (JPanel) getContentPane();
     
@@ -158,7 +156,8 @@ public class JConfigurationDlg extends JDialog {
    // Save the configuration
      b_ok.addActionListener(new ActionListener() {
        public void actionPerformed (ActionEvent e) {
-        ClientConfiguration clientConfiguration = new ClientConfiguration();
+
+        ClientConfiguration clientConfiguration = ClientDirector.getClientConfiguration();
 
         clientConfiguration.setMusicVolume((short) musicVolLevel.getValue());
         clientConfiguration.setSoundVolume((short) soundVolLevel.getValue());
@@ -173,12 +172,17 @@ public class JConfigurationDlg extends JDialog {
         clientConfiguration.setHighDetails(cButton.isSelected());
         clientConfiguration.setRememberPasswords(savePassButton.isSelected());
 
-        try {
-           PropertiesConverter.save(clientConfiguration, ClientDirector.CLIENT_OPTIONS);
-        } catch (PersistenceException pe) {
-           Debug.signal( Debug.ERROR, this, "Failed to save sound & music configuration : " + pe.getMessage() );
-        }
+        if( clientConfiguration.getCenterScreenPolicy()!=policyButton.isSelected() 
+            || clientConfiguration.getUseHardwareAcceleration()!=hardwareButton.isSelected() )
+            JOptionPane.showMessageDialog( null, "You've modified the behaviour of the 2D graphics engine.\n"
+                                                +"If you are connected to the game you'll need to reconnect\n"
+                                                +"to let the changes apply.",
+                                                 "Information", JOptionPane.INFORMATION_MESSAGE);
 
+        clientConfiguration.setCenterScreenPolicy(policyButton.isSelected());
+        clientConfiguration.setUseHardwareAcceleration(hardwareButton.isSelected());
+
+        ClientDirector.saveClientConfiguration();
         dispose();
       }
     });
@@ -208,7 +212,7 @@ public class JConfigurationDlg extends JDialog {
       qTextTitle.setForeground(Color.white);
       add(qTextTitle, BorderLayout.NORTH);*/
 
-      JPanel innerPanel = new JPanel(new GridLayout(2,1,10,10));
+      JPanel innerPanel = new JPanel(new GridLayout(4,1,10,10));
       innerPanel.setBackground(Color.white);
       add(innerPanel);
       
@@ -225,6 +229,12 @@ public class JConfigurationDlg extends JDialog {
       savePassButton.setBackground(Color.white);      
       savePassButton.addItemListener(this);
       innerPanel.add(savePassButton);
+
+      policyButton.setBackground(Color.white);      
+      innerPanel.add(policyButton);
+
+      hardwareButton.setBackground(Color.white);      
+      innerPanel.add(hardwareButton);
     }
     
     /** Invoked when check box state is changed

@@ -57,12 +57,20 @@ public class ClientConfiguration {
   
   /** client screen width.
    */
-  private int clientWidth = 810;
+  private int clientWidth = 800;
   
   /** client screeen height.
    */
-  private int clientHeight = 610;
-  
+  private int clientHeight = 600;
+
+  /** To tell the WindowPolicy we want the GraphicsDirector to use.
+   */
+  private boolean centerScreenPolicy = false;
+
+  /** To tell if we want to create a GraphicsDirector that uses hardware acceleration.
+   */
+  private boolean useHardwareAcceleration = false;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Empty Constructor for persitence.
@@ -179,6 +187,34 @@ public class ClientConfiguration {
    */
   public void setRememberPasswords(boolean rememberPasswords) {
     this.rememberPasswords = rememberPasswords;
+  }
+
+ /*------------------------------------------------------------------------------------*/ 
+
+  /** Getter of centerScreenPolicy.
+   */
+  public boolean getCenterScreenPolicy() {
+    return centerScreenPolicy;
+  }
+  
+  /** Setter of CenterScreenPolicy.
+   */
+  public void setCenterScreenPolicy(boolean centerScreenPolicy) {
+    this.centerScreenPolicy = centerScreenPolicy;
+  }
+
+ /*------------------------------------------------------------------------------------*/ 
+
+  /** Getter of useHardwareAcceleration.
+   */
+  public boolean getUseHardwareAcceleration() {
+    return useHardwareAcceleration;
+  }
+  
+  /** Setter of useHardwareAcceleration.
+   */
+  public void setUseHardwareAcceleration(boolean useHardwareAcceleration) {
+    this.useHardwareAcceleration = useHardwareAcceleration;
   }
 
  /*------------------------------------------------------------------------------------*/ 

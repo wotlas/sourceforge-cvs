@@ -46,7 +46,11 @@ public class EnvironmentManager implements SendObjectReady {
     ,"Rogue Like"};
 
     public static final byte GRAPHICS_SET_ROGUE = 0;
+    public static final byte GRAPHICS_SET_FAKEISO = 1;
     
+    // first is rogue, second is for set_fakeiso. 
+    private static boolean[] graphicSetsInit = {false,false};
+
     public static final byte SET_OF_NPC  = 0;
     public static final byte SET_OF_ITEM = 1;
     public static final byte SET_OF_EFFECT = 2;
@@ -83,7 +87,8 @@ public class EnvironmentManager implements SendObjectReady {
      *
      */
     static public GroupOfGraphics[] getGraphics( byte graphicSet ){
-        if( serverEnvironment.graphicsSet == GRAPHICS_SET_ROGUE ){
+        if(( serverEnvironment.graphicsSet == GRAPHICS_SET_ROGUE )
+        || ( serverEnvironment.graphicsSet == GRAPHICS_SET_FAKEISO )){
             switch( graphicSet ){
                 case SET_OF_NPC:
                     return GroupOfGraphics.ROGUE_NPC_SET;
@@ -161,7 +166,8 @@ public class EnvironmentManager implements SendObjectReady {
     static public void initGraphics( GraphicsDirector gDirector ){
         if( justInitGraphics )
             return;
-        if( serverEnvironment.graphicsSet == GRAPHICS_SET_ROGUE ){
+        if(( serverEnvironment.graphicsSet == GRAPHICS_SET_ROGUE )
+        || ( serverEnvironment.graphicsSet == GRAPHICS_SET_FAKEISO )){
             GroupOfGraphics.initGroupOfGraphics( gDirector, GroupOfGraphics.ROGUE_NPC_SET );
             GroupOfGraphics.initGroupOfGraphics( gDirector, GroupOfGraphics.ROGUE_ITEM_SET );
             GroupOfGraphics.initGroupOfGraphics( gDirector, GroupOfGraphics.ROGUE_EFFECT_SET );
@@ -181,6 +187,8 @@ public class EnvironmentManager implements SendObjectReady {
     static public byte getDefaultNpcImageNr(){
         if( serverEnvironment.graphicsSet == GRAPHICS_SET_ROGUE )
             return (byte)0;
+        else if( serverEnvironment.graphicsSet == GRAPHICS_SET_FAKEISO )
+            return (byte)0;
         else 
             Debug.signal( Debug.ERROR, null, "Error initializing graphics : request of non existing graphics set." );
         return (byte)0;
@@ -189,6 +197,8 @@ public class EnvironmentManager implements SendObjectReady {
     static public int getDefaultPlayerImage(){
         if( serverEnvironment.graphicsSet == GRAPHICS_SET_ROGUE )
             return 0;
+        else if( serverEnvironment.graphicsSet == GRAPHICS_SET_FAKEISO )
+            return (byte)0;
         else 
             Debug.signal( Debug.ERROR, null, "Error initializing graphics : request of non existing graphics set." );
         return 0;
@@ -220,5 +230,29 @@ public class EnvironmentManager implements SendObjectReady {
         } else {
             // to do.... when new version
         }
+    }
+
+    static public GroupOfGraphics[] getGraphicsForMaps( byte graphicSet ){
+        switch( graphicSet ){
+            case GRAPHICS_SET_ROGUE:
+                return GroupOfGraphics.ROGUE_SET;
+            case GRAPHICS_SET_FAKEISO:
+                return GroupOfGraphics.DEMO_SET;
+        } 
+        Debug.signal( Debug.ERROR, null, "Error initializing graphics :"
+        +" request of non existing graphics set for maps." );
+        return GroupOfGraphics.ROGUE_EFFECT_SET;
+    }
+
+    static public void initGraphics( GraphicsDirector gDirector, byte choosed ){
+        if( graphicSetsInit[choosed] )
+            return;
+        if( choosed == GRAPHICS_SET_ROGUE )
+            GroupOfGraphics.initGroupOfGraphics( gDirector, GroupOfGraphics.ROGUE_SET );
+        else if( choosed == GRAPHICS_SET_FAKEISO )
+            GroupOfGraphics.initGroupOfGraphics( gDirector, GroupOfGraphics.DEMO_SET );
+        else 
+            Debug.signal( Debug.ERROR, null, "Error initializing graphics : request of non existing graphics set." );
+        graphicSetsInit[choosed] = true;
     }
 }

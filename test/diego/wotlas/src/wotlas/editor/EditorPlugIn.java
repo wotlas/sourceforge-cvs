@@ -27,18 +27,14 @@ import java.io.File;
 
 import wotlas.utils.*;
 import wotlas.libs.aswing.*;
-
 import wotlas.libs.persistence.*;
 import wotlas.libs.graphics2D.*;
 import wotlas.common.*;
-
 import wotlas.utils.Debug;
-
 import wotlas.common.universe.*;
-
+import wotlas.common.environment.*;
 import wotlas.client.*;
 import wotlas.client.screen.*;
-
 import wotlas.libs.graphics2D.drawable.*;
 
 import javax.swing.event.*;
@@ -235,6 +231,7 @@ public class EditorPlugIn extends JPanelPlugIn {
         MainTabb.setName("");
         TileMapsPan.setLayout(new java.awt.BorderLayout());
 
+        TileMapTabb.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
         TileMapTabb.setTabPlacement(javax.swing.JTabbedPane.LEFT);
         LoadTileMap.setLayout(new java.awt.BorderLayout());
 
@@ -450,8 +447,6 @@ public class EditorPlugIn extends JPanelPlugIn {
 
         GraphicsPan.setLayout(new java.awt.BorderLayout());
 
-        jTabbedPane4.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
-        jTabbedPane4.setTabPlacement(javax.swing.JTabbedPane.LEFT);
         jPanel5.setLayout(new java.awt.BorderLayout());
 
         jPanel5.setEnabled(false);
@@ -473,17 +468,24 @@ public class EditorPlugIn extends JPanelPlugIn {
 
         jPanel10.setLayout(new java.awt.BorderLayout());
 
+        jSplitPane1.setMaximumSize(new java.awt.Dimension(100, 300));
+        jSplitPane1.setMinimumSize(new java.awt.Dimension(100, 300));
+        jSplitPane1.setPreferredSize(new java.awt.Dimension(100, 300));
         OneGroupList.setPreferredSize(new java.awt.Dimension(100, 200));
         OneGroupList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane2.setViewportView(OneGroupList);
 
         jSplitPane1.setLeftComponent(jScrollPane2);
 
-        jScrollPane3.setPreferredSize(new java.awt.Dimension(200, 300));
-        HisTileList.setLayoutOrientation(javax.swing.JList.HORIZONTAL_WRAP);
-        HisTileList.setMaximumSize(new java.awt.Dimension(200, 300));
-        HisTileList.setMinimumSize(new java.awt.Dimension(200, 300));
-        HisTileList.setPreferredSize(new java.awt.Dimension(200, 300));
+        HisTileList.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { null };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        HisTileList.setLayoutOrientation(javax.swing.JList.VERTICAL_WRAP);
+        HisTileList.setMaximumSize(new java.awt.Dimension(300, 200));
+        HisTileList.setMinimumSize(new java.awt.Dimension(100, 200));
+        HisTileList.setPreferredSize(new java.awt.Dimension(100, 200));
         HisTileList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane3.setViewportView(HisTileList);
 
@@ -499,6 +501,7 @@ public class EditorPlugIn extends JPanelPlugIn {
 
         SelectedBrushPan.setBackground(new java.awt.Color(255, 255, 255));
         SelectedBrushPan.setMinimumSize(new java.awt.Dimension(100, 50));
+        SelectedBrushPan.setPreferredSize(new java.awt.Dimension(100, 50));
         jLabel15.setText("Selected :");
         SelectedBrushPan.add(jLabel15);
 
@@ -518,6 +521,9 @@ public class EditorPlugIn extends JPanelPlugIn {
 
         GraphicsPan.add(SelectedBrushPan, java.awt.BorderLayout.SOUTH);
 
+        InfoOnBrushPan.setMaximumSize(new java.awt.Dimension(100, 20));
+        InfoOnBrushPan.setMinimumSize(new java.awt.Dimension(100, 20));
+        InfoOnBrushPan.setPreferredSize(new java.awt.Dimension(100, 20));
         jLabel20.setForeground(new java.awt.Color(255, 51, 51));
         jLabel20.setText("While this panel is selected you can paint selected tiles on map.");
         InfoOnBrushPan.add(jLabel20);
@@ -844,6 +850,57 @@ public class EditorPlugIn extends JPanelPlugIn {
     }//GEN-LAST:event_AddExitActionPerformed
 
     private void buttonNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonNewActionPerformed
+ 	// In a ComponentDialog, you can show as many message components and 
+        // as many options as you want: 
+
+        JTextField dimX,dimY;
+
+ 	// Messages 
+        Object[]      message = new Object[6]; 
+        message[0] = "Insert witdh";
+        message[1] = dimX = new JTextField(""+60); 
+        message[2] = "Insert height";
+        message[3] = dimY = new JTextField(""+60); 
+
+        JComboBox basicTileSelect = new JComboBox();
+        ImageLibrary imageLib = EditTile.getDataManager().getImageLibrary();
+//        JLabel tmp;
+        for( int i=0; i < GroupOfGraphics.ROGUE_SET[6].totalImage(); i++) {
+//            tmp = new JLabel( GroupOfGraphics.ROGUE_SET[6].getAsIcon(i, imageLib), JLabel.LEFT );
+            basicTileSelect.addItem( GroupOfGraphics.ROGUE_SET[6].getAsIcon(i, imageLib) );
+        }
+        message[4] = basicTileSelect;
+        message[5] = "Select the basic tile to use";
+
+ 	// Options 
+        String[] options = { "Create","Cancel" }; 
+        int result = JOptionPane.showOptionDialog(
+            this,       // the parent that the dialog blocks 
+            message,    // the dialog message array 
+            "New map",  // the title of the dialog window 
+            JOptionPane.DEFAULT_OPTION,                 // option type
+            JOptionPane.INFORMATION_MESSAGE,            // message type
+            null,                                       // optional icon, use null to use the default icon 
+            options,                                    // options string array, will be made into buttons 
+            options[0]                                  // option that should be made into a default button 
+ 	); 
+ 	switch(result) { 
+            case 0: // yes 
+                break; 
+            case 1: // no 
+                return;
+            default: 
+                break; 
+ 	}
+        
+        int gotDimX,gotDimY;
+        try{
+            gotDimX = new Integer(dimX.getText()).intValue() ;
+            gotDimY = new Integer(dimX.getText()).intValue() ;
+ 	} catch (Exception e){
+            return;
+ 	}
+
         gDirector.removeAllDrawables();
         TileMap destination = EditTile.getDataManager().getWorldManager().getWorldMapFromID(0).addNewTileMap();
         destination.initNewTileMap( EditTile.getDataManager().getWorldManager().getWorldMapFromID(0) );
@@ -853,9 +910,9 @@ public class EditorPlugIn extends JPanelPlugIn {
         destination.setInsertionPoint( new ScreenPoint(10,10) );
         destination.setSmallTileMapImage( new ImageIdentifier( "maps-1/town-small-1/shayol-ghul-2" ) );
         destination.setMusicName("tar-valon.mid");
-        destination.selectGroupOfGraphics( GroupOfGraphics.ROGUE_SET );
-        TileManagerFlat manager = new TileManagerFlat(  destination );
-        manager.setMap( 10, 20, TileMap.PIXEL_32,  (byte)0, (byte)121 );
+        destination.selectGraphicSet( EnvironmentManager.GRAPHICS_SET_ROGUE );
+        TileManagerFlat manager = new TileManagerFlat( destination );
+        manager.setMap( gotDimX, gotDimY, TileMap.PIXEL_32,  (byte)6, (byte)basicTileSelect.getSelectedIndex() );
         destination.setManager( (TileMapManager)manager );
         EditTile.workingOnThisTileMap = destination;
         ShowTileMapData();
@@ -970,8 +1027,8 @@ public class EditorPlugIn extends JPanelPlugIn {
     private javax.swing.JPanel jPanel19;
     private javax.swing.JTextField ExitName;
     private javax.swing.JPanel jPanel13;
-    private javax.swing.JPanel SaveTileMap;
     private javax.swing.JTextField DataHeight;
+    private javax.swing.JPanel SaveTileMap;
     private javax.swing.JTextField DataBasicSetIdNr;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JLabel jLabel14;
@@ -1109,7 +1166,7 @@ public class EditorPlugIn extends JPanelPlugIn {
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         list.setSelectedIndex(0);
         list.setCellRenderer(new RendIcon());
-        list.setVisibleRowCount(5);
+        list.setVisibleRowCount(10);
         list.getSelectionModel().addListSelectionListener( new ListSelectionListener() {
             public void valueChanged( ListSelectionEvent e ) {
                 ListSelectionModel lsm = (ListSelectionModel)e.getSource();
@@ -1138,6 +1195,12 @@ public class EditorPlugIn extends JPanelPlugIn {
             setOpaque(true);
             setBackground(isSelected ? Color.cyan : Color.white);
             setForeground(isSelected ? Color.black : Color.black);
+            /*
+            setPreferredSize( new Dimension(50,50) );
+            setMaximumSize( new Dimension(50,50) );
+            setMinimumSize( new Dimension(50,50) );
+            setSize(50,50);
+             */
             return this;
         }
     }
@@ -1148,6 +1211,12 @@ public class EditorPlugIn extends JPanelPlugIn {
         listModel2.removeAllElements();
         for( int i=0; i < GroupOfGraphics.ROGUE_SET.length; i++) {
             tmp = new JLabel("Rogue", GroupOfGraphics.ROGUE_SET[i].getAsIcon(0, imageLib), JLabel.LEFT );
+            /*
+            tmp.setPreferredSize( new Dimension(50,50) );
+            tmp.setMaximumSize( new Dimension(50,50) );
+            tmp.setMinimumSize( new Dimension(50,50) );
+            tmp.setSize(50,50);
+             */
             listModel2.addElement( tmp );
         }
     }
@@ -1161,7 +1230,7 @@ public class EditorPlugIn extends JPanelPlugIn {
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         list.setSelectedIndex(0);
         list.setCellRenderer(new RendIcon());
-        list.setVisibleRowCount(5);    
+        list.setVisibleRowCount(10);
         list.getSelectionModel().addListSelectionListener( new ListSelectionListener() {
             public void valueChanged( ListSelectionEvent e ) {
                 ListSelectionModel lsm = (ListSelectionModel)e.getSource();
@@ -1183,6 +1252,7 @@ public class EditorPlugIn extends JPanelPlugIn {
         listModel3.removeAllElements();
         for( int i=0; i < GroupOfGraphics.ROGUE_SET[index].totalImage(); i++) {
             tmp = new JLabel( GroupOfGraphics.ROGUE_SET[index].getAsIcon(i, imageLib), JLabel.LEFT );
+            tmp.setPreferredSize(new Dimension(32,32));
             listModel3.addElement( tmp );
         }
     }
@@ -1196,7 +1266,7 @@ public class EditorPlugIn extends JPanelPlugIn {
         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         list.setSelectedIndex(0);
         list.setCellRenderer(new RendIcon());
-        list.setVisibleRowCount(5);
+        list.setVisibleRowCount(10);
         list.getSelectionModel().addListSelectionListener( new ListSelectionListener() {
             public void valueChanged( ListSelectionEvent e ) {
                 ListSelectionModel lsm = (ListSelectionModel)e.getSource();
@@ -1215,7 +1285,7 @@ public class EditorPlugIn extends JPanelPlugIn {
         Drawable background = null;             // background image
         background = (Drawable) new MotionlessSprite( x*tileMap.getMapTileDim().width, // ground x=0
             y*tileMap.getMapTileDim().height,       // ground y=0
-            tileMap.getGroupOfGraphics()[tileMap.getManager().getMapBackGroundData()[x][y][0]],  // GroupOfGraphics
+            EnvironmentManager.getGraphicsForMaps(tileMap.getGraphicSet())[tileMap.getManager().getMapBackGroundData()[x][y][0]],  // GroupOfGraphics
             tileMap.getManager().getMapBackGroundData()[x][y][1],        // number of internal tile
             ImageLibRef.SECONDARY_MAP_PRIORITY      // priority
         );

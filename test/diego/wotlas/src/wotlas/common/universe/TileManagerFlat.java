@@ -25,6 +25,7 @@ import wotlas.libs.persistence.*;
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
 import wotlas.utils.*;
+import wotlas.common.environment.*;
 
 import java.awt.*;
 import java.util.*;
@@ -192,7 +193,7 @@ public class TileManagerFlat extends TileMapManager{
                 if( getMapBackGroundData()[x][y][0] != basicFloorId ) {
                     background = (Drawable) new MotionlessSprite( x*tileMap.getMapTileDim().width,  // ground x=0
                                                               y*tileMap.getMapTileDim().height, // ground y=0
-                                                              tileMap.getGroupOfGraphics()[basicFloorId],  // GroupOfGraphics
+                                                              EnvironmentManager.getGraphicsForMaps(tileMap.getGraphicSet())[basicFloorId],  // GroupOfGraphics
                                                               basicFloorIdTileNr,      // number of internal tile
                                                               ImageLibRef.MAP_PRIORITY          // priority
                                                               );
@@ -200,7 +201,7 @@ public class TileManagerFlat extends TileMapManager{
                     if( getMapBackGroundData()[x][y][0] != basicFloorId ) {
                         background = (Drawable) new MotionlessSprite( x*tileMap.getMapTileDim().width,          // ground x=0
                                                                   y*tileMap.getMapTileDim().height,         // ground y=0
-                                                                  tileMap.getGroupOfGraphics()[getMapBackGroundData()[x][y][0]],  // GroupOfGraphics
+                                                                  EnvironmentManager.getGraphicsForMaps(tileMap.getGraphicSet())[getMapBackGroundData()[x][y][0]],  // GroupOfGraphics
                                                                   getMapBackGroundData()[x][y][1],  // number of internal tile
                                                                   ImageLibRef.SECONDARY_MAP_PRIORITY       // priority
                                                                   );
@@ -210,7 +211,7 @@ public class TileManagerFlat extends TileMapManager{
                 else {
                     background = (Drawable) new MotionlessSprite( x*tileMap.getMapTileDim().width,          // ground x=0
                                                                   y*tileMap.getMapTileDim().height,         // ground y=0
-                                                                  tileMap.getGroupOfGraphics()[getMapBackGroundData()[x][y][0]],  // GroupOfGraphics
+                                                                  EnvironmentManager.getGraphicsForMaps(tileMap.getGraphicSet())[getMapBackGroundData()[x][y][0]],  // GroupOfGraphics
                                                                   getMapBackGroundData()[x][y][1],  // number of internal tile
                                                                   ImageLibRef.SECONDARY_MAP_PRIORITY       // priority
                                                                   );

@@ -26,6 +26,7 @@ import wotlas.libs.persistence.*;
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.schedule.*;
+import wotlas.common.environment.*;
 
 import java.awt.Rectangle;
 import java.awt.Point;
@@ -104,7 +105,8 @@ public class TileMap extends PreloaderEnabled implements WotlasMap,BackupReady,S
    */
     private String musicName;
     
-    private GroupOfGraphics[] groupOfGraphics;
+    private byte graphicSet;
+//    private GroupOfGraphics[] groupOfGraphics;
     
     /** Link to the worldMap we belong to...
     */
@@ -309,7 +311,7 @@ public class TileMap extends PreloaderEnabled implements WotlasMap,BackupReady,S
         objectOutput.writeObject( smallTileMapImage );
         objectOutput.writeObject( musicName );
         objectOutput.writeObject( mapTileDim );
-        objectOutput.writeObject( groupOfGraphics );
+        objectOutput.writeByte( graphicSet );
         objectOutput.writeObject( mapSize );
         objectOutput.writeObject( manager );
         objectOutput.writeObject( encounterSchedules ); 
@@ -336,7 +338,7 @@ public class TileMap extends PreloaderEnabled implements WotlasMap,BackupReady,S
             if( setClassPreloader == LOAD_MINIMUM_DATA)
                 return;
             mapTileDim = ( Dimension ) objectInput.readObject();
-            groupOfGraphics = ( GroupOfGraphics[] ) objectInput.readObject();
+            graphicSet = objectInput.readByte();
             mapSize = ( Dimension ) objectInput.readObject();
             manager = ( TileMapManager ) objectInput.readObject();
             manager.setTileMap(this);
@@ -376,18 +378,17 @@ public class TileMap extends PreloaderEnabled implements WotlasMap,BackupReady,S
         return mapFullSize;
     }
     
-    public void selectGroupOfGraphics( GroupOfGraphics[] groupOfGraphics ) {
-        this.groupOfGraphics = groupOfGraphics;
+    public void selectGraphicSet( byte graphicSet ) {
+        this.graphicSet = graphicSet;
     }
 
-    public void initGroupOfGraphics( GraphicsDirector gDirector ) {
-        for( int index=0; index < groupOfGraphics.length; index++ )
-            groupOfGraphics[index].init( gDirector );
+    public void initGraphicSet( GraphicsDirector gDirector ) {
+        EnvironmentManager.initGraphics( gDirector, graphicSet );
         return ;
     }
 
-    public GroupOfGraphics[] getGroupOfGraphics() {
-        return groupOfGraphics;
+    public byte getGraphicSet() {
+        return graphicSet;
     }
 
     public void drawAllLayer( GraphicsDirector gDirector ) {
@@ -396,7 +397,7 @@ public class TileMap extends PreloaderEnabled implements WotlasMap,BackupReady,S
     
     public void initNewTileMap( WorldMap myWorldMap ) {
         this.myWorldMap = myWorldMap;
-    }        
+    }
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Returns the eventual MapExit the given player is intersecting.
@@ -451,7 +452,8 @@ public class TileMap extends PreloaderEnabled implements WotlasMap,BackupReady,S
             if( loadStatus == LOAD_MINIMUM_DATA)
                 return;
             mapTileDim = ( Dimension ) objectInput.readObject();
-            groupOfGraphics = ( GroupOfGraphics[] ) objectInput.readObject();
+            graphicSet = objectInput.readByte();
+            // groupOfGraphics = ( GroupOfGraphics[] ) objectInput.readObject();
             mapSize = ( Dimension ) objectInput.readObject();
             manager = ( TileMapManager ) objectInput.readObject();
             manager.setTileMap(this);
@@ -483,7 +485,8 @@ public class TileMap extends PreloaderEnabled implements WotlasMap,BackupReady,S
         if( loadStatus == LOAD_MINIMUM_DATA)
             return;
         objectOutput.writeObject( mapTileDim );
-        objectOutput.writeObject( groupOfGraphics );
+        objectOutput.writeByte( graphicSet );
+//        objectOutput.writeObject( groupOfGraphics );
         objectOutput.writeObject( mapSize );
         objectOutput.writeObject( manager );
         if( loadStatus == LOAD_CLIENT_DATA)

@@ -124,7 +124,7 @@ public class TileMapData implements MapData {
     currentTileMapID = location.getTileMapID();
 
     TileMap tileMap = dataManager.getWorldManager().getTileMap(location);
-    tileMap.initGroupOfGraphics( gDirector );
+    tileMap.initGraphicSet( gDirector );
     EnvironmentManager.initGraphics( gDirector );
 
       if (SHOW_DEBUG) {
@@ -196,7 +196,7 @@ public class TileMapData implements MapData {
         GraphicsDirector gDirector = editorDataManager.getGraphicsDirector();
         EditorPlugIn.rememberTheGDirector( gDirector );
         gDirector.preTileMapInit( tileMap.getMapFullSize() );
-        tileMap.initGroupOfGraphics( gDirector );
+        tileMap.initGraphicSet( gDirector );
         tileMap.drawAllLayer( gDirector );
         gDirector.tileMapInit( tileMap.getMapFullSize() );
         // 8 - We add MapExits' images

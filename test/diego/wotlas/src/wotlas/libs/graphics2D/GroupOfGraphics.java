@@ -100,6 +100,7 @@ public class GroupOfGraphics implements BackupReady {
     ,new GroupOfGraphics( (byte)3, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_extra132-8.png" )
     ,new GroupOfGraphics( (byte)4, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_features32-9.png" )
     ,new GroupOfGraphics( (byte)5, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_grounds32-11.png" )
+    ,new GroupOfGraphics( (byte)6, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/onlygrounds32bit-30.png" )
     };
 
     static public GroupOfGraphics[] ROGUE_SET_ISO = {

@@ -27,6 +27,7 @@ import wotlas.libs.graphics2D.ImageIdentifier;
 import wotlas.libs.graphics2D.drawable.DoorDrawable;
 import wotlas.utils.*;
 import wotlas.common.universe.*;
+import wotlas.common.environment.*;
 
 import java.util.Properties;
 
@@ -66,93 +67,93 @@ public class WorldGenerator {
         // new STEP 3a - MAPTILES
         TileMap tileMaps[] = new TileMap[2];
         worldMap.setTileMaps( tileMaps );
-           
+
         // Mishra Creation   
         TileMap tileMap = new TileMap(700,247,17,17);
         tileMaps[0] = tileMap;
 
-           tileMap.setTileMapID(0);
-           tileMap.setAreaName("");
-           tileMap.setFullName("Mishra");
-           tileMap.setShortName("mishra");
-           tileMap.setInsertionPoint( new ScreenPoint(10,10) );
-           tileMap.setSmallTileMapImage( new ImageIdentifier( "maps-1/town-small-1/shayol-ghul-2" ) );
-           tileMap.setMusicName("tar-valon.mid");
-           tileMap.selectGroupOfGraphics( GroupOfGraphics.ROGUE_SET );
+        tileMap.setTileMapID(0);
+        tileMap.setAreaName("");
+        tileMap.setFullName("Mishra");
+        tileMap.setShortName("mishra");
+        tileMap.setInsertionPoint( new ScreenPoint(10,10) );
+        tileMap.setSmallTileMapImage( new ImageIdentifier( "maps-1/town-small-1/shayol-ghul-2" ) );
+        tileMap.setMusicName("tar-valon.mid");
+        tileMap.selectGraphicSet( EnvironmentManager.GRAPHICS_SET_ROGUE );
+
+        TileManagerFlat manager = new TileManagerFlat(  tileMap );
+        manager.setMap( 20, 20, TileMap.PIXEL_32, (byte)6, (byte)44 );
+        manager.setMapPoint(3,2,2,79,TileMap.TILE_NOT_FREE);
+        manager.setMapPoint(4,2,2,78,TileMap.TILE_NOT_FREE);
+        manager.setMapPoint(5,2,2,78,TileMap.TILE_NOT_FREE);
+        manager.setMapPoint(6,2,2,79,TileMap.TILE_NOT_FREE);
+        manager.setMapPoint(5,3,2,79,TileMap.TILE_NOT_FREE);
+        manager.setMapPoint(6,3,2,79,TileMap.TILE_NOT_FREE);
+        tileMap.setManager( (TileMapManager)manager );
+
+        MapExit mapExit1 = null;
+        mapExit1 = manager.addMapExit( new ScreenRectangle(0*32,1*32,1*32,2*32), "to World Map" );
+        mapExit1.setType( MapExit.TILEMAP_EXIT );
+        mapExit1.setMapExitSide( MapExit.NONE );
+        mapExit1.setTargetWotlasLocation( new WotlasLocation(0) );
+        mapExit1.setTargetPosition( new ScreenPoint(745,280) );
+
+        // Rak Timin Creation   
+        tileMap = new TileMap(720,207,17,17);
+        tileMaps[1] = tileMap;
+
+        tileMap.setTileMapID(1);
+        tileMap.setAreaName("");
+        tileMap.setFullName("Rak Timin");
+        tileMap.setShortName("raktimin");
+        tileMap.setInsertionPoint( new ScreenPoint(10,10) );
+        tileMap.setSmallTileMapImage( new ImageIdentifier( "maps-1/town-small-1/shayol-ghul-2" ) );
+        tileMap.setMusicName("tar-valon.mid");
+        tileMap.selectGraphicSet( EnvironmentManager.GRAPHICS_SET_FAKEISO );
+
+        TileManagerFakeIso manager2 = new TileManagerFakeIso( tileMap );
+        manager2.setMap( 10, 10, TileMap.PIXEL_50, (byte)0, (byte)0 );
+        manager2.setMapPoint(5,2,1,0);
+        manager2.setMapPoint(6,2,1,1);
+        manager2.setMapPoint(5,3,1,11);
+        manager2.setMapPoint(6,3,1,10);
+        manager2.setMapPoint(5,1,1,12);
+        manager2.setMapPoint(6,1,1,13);
+        manager2.setMapPoint(7,4,2,14);
+        // walls
+        manager2.setFakeIsoLayers( 1 /* x */, 1 /* y */, (byte)0 /* floor/layer */, (byte)5, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
+        manager2.setFakeIsoLayers( 2 /* x */, 1 /* y */, (byte)0 /* floor/layer */, (byte)5, (byte)1, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
+        manager2.setFakeIsoLayers( 3 /* x */, 1 /* y */, (byte)0 /* floor/layer */, (byte)5, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
+        manager2.setFakeIsoLayers( 1 /* x */, 3 /* y */, (byte)0 /* floor/layer */, (byte)5, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
+        manager2.setFakeIsoLayers( 2 /* x */, 3 /* y */, (byte)0 /* floor/layer */, (byte)9, (byte)4, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
+        manager2.setFakeIsoLayers( 3 /* x */, 3 /* y */, (byte)0 /* floor/layer */, (byte)5, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
+
+        manager2.setFakeIsoLayers( 0 /* x */, 2 /* y */, (byte)0 /* floor/layer */, (byte)6, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
+        manager2.setFakeIsoLayers( 0 /* x */, 3 /* y */, (byte)0 /* floor/layer */, (byte)6, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
+        manager2.setFakeIsoLayers( 3 /* x */, 2 /* y */, (byte)0 /* floor/layer */, (byte)6, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
+        manager2.setFakeIsoLayers( 3 /* x */, 3 /* y */, (byte)0 /* floor/layer */, (byte)6, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
+
+        // another wall
+        manager2.setFakeIsoLayers( 6 /* x */, 5 /* y */, (byte)0 /* floor/layer */, (byte)7, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
+        manager2.setFakeIsoLayers( 7 /* x */, 5 /* y */, (byte)0 /* floor/layer */, (byte)7, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
            
-           TileManagerFlat manager = new TileManagerFlat(  tileMap );
-           manager.setMap( 10, 20, TileMap.PIXEL_32, (byte)0, (byte)121 );
-           manager.setMapPoint(3,2,2,79,TileMap.TILE_NOT_FREE);
-           manager.setMapPoint(4,2,2,78,TileMap.TILE_NOT_FREE);
-           manager.setMapPoint(5,2,2,78,TileMap.TILE_NOT_FREE);
-           manager.setMapPoint(6,2,2,79,TileMap.TILE_NOT_FREE);
-           manager.setMapPoint(5,3,2,79,TileMap.TILE_NOT_FREE);
-           manager.setMapPoint(6,3,2,79,TileMap.TILE_NOT_FREE);
-           tileMap.setManager( (TileMapManager)manager );
-           
-           MapExit mapExit1 = null;
-           mapExit1 = manager.addMapExit( new ScreenRectangle(0*32,1*32,1*32,2*32), "to World Map" );
-           mapExit1.setType( MapExit.TILEMAP_EXIT );
-           mapExit1.setMapExitSide( MapExit.NONE );
-           mapExit1.setTargetWotlasLocation( new WotlasLocation(0) );
-           mapExit1.setTargetPosition( new ScreenPoint(745,280) );
-
-           // Rak Timin Creation   
-           tileMap = new TileMap(720,207,17,17);
-           tileMaps[1] = tileMap;
-
-           tileMap.setTileMapID(1);
-           tileMap.setAreaName("");
-           tileMap.setFullName("Rak Timin");
-           tileMap.setShortName("raktimin");
-           tileMap.setInsertionPoint( new ScreenPoint(10,10) );
-           tileMap.setSmallTileMapImage( new ImageIdentifier( "maps-1/town-small-1/shayol-ghul-2" ) );
-           tileMap.setMusicName("tar-valon.mid");
-           tileMap.selectGroupOfGraphics( GroupOfGraphics.DEMO_SET );
-
-           TileManagerFakeIso manager2 = new TileManagerFakeIso( tileMap );
-           manager2.setMap( 10, 20, TileMap.PIXEL_50, (byte)0, (byte)0 );
-           manager2.setMapPoint(5,2,1,0);
-           manager2.setMapPoint(6,2,1,1);
-           manager2.setMapPoint(5,3,1,11);
-           manager2.setMapPoint(6,3,1,10);
-           manager2.setMapPoint(5,1,1,12);
-           manager2.setMapPoint(6,1,1,13);
-           manager2.setMapPoint(7,4,2,14);
-           // walls
-           manager2.setFakeIsoLayers( 1 /* x */, 1 /* y */, (byte)0 /* floor/layer */, (byte)5, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
-           manager2.setFakeIsoLayers( 2 /* x */, 1 /* y */, (byte)0 /* floor/layer */, (byte)5, (byte)1, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
-           manager2.setFakeIsoLayers( 3 /* x */, 1 /* y */, (byte)0 /* floor/layer */, (byte)5, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
-           manager2.setFakeIsoLayers( 1 /* x */, 3 /* y */, (byte)0 /* floor/layer */, (byte)5, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
-           manager2.setFakeIsoLayers( 2 /* x */, 3 /* y */, (byte)0 /* floor/layer */, (byte)9, (byte)4, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
-           manager2.setFakeIsoLayers( 3 /* x */, 3 /* y */, (byte)0 /* floor/layer */, (byte)5, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
-
-           manager2.setFakeIsoLayers( 0 /* x */, 2 /* y */, (byte)0 /* floor/layer */, (byte)6, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
-           manager2.setFakeIsoLayers( 0 /* x */, 3 /* y */, (byte)0 /* floor/layer */, (byte)6, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
-           manager2.setFakeIsoLayers( 3 /* x */, 2 /* y */, (byte)0 /* floor/layer */, (byte)6, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
-           manager2.setFakeIsoLayers( 3 /* x */, 3 /* y */, (byte)0 /* floor/layer */, (byte)6, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
-
-           // another wall
-           manager2.setFakeIsoLayers( 6 /* x */, 5 /* y */, (byte)0 /* floor/layer */, (byte)7, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
-           manager2.setFakeIsoLayers( 7 /* x */, 5 /* y */, (byte)0 /* floor/layer */, (byte)7, (byte)0, FakeIsoLayers.PRIMARY_WALL_ANGLE_DIR);
-           
-           // floor
+        // floor
 //           manager2.setFakeIsoLayers( 1 /* x */, 1 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
-           manager2.setFakeIsoLayers( 1 /* x */, 2 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
-           manager2.setFakeIsoLayers( 1 /* x */, 3 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
+        manager2.setFakeIsoLayers( 1 /* x */, 2 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
+        manager2.setFakeIsoLayers( 1 /* x */, 3 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
 //           manager2.setFakeIsoLayers( 2 /* x */, 1 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
-           manager2.setFakeIsoLayers( 2 /* x */, 2 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
-           manager2.setFakeIsoLayers( 2 /* x */, 3 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
+        manager2.setFakeIsoLayers( 2 /* x */, 2 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
+        manager2.setFakeIsoLayers( 2 /* x */, 3 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
 //           manager2.setFakeIsoLayers( 3 /* x */, 1 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
-           manager2.setFakeIsoLayers( 3 /* x */, 2 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
-           manager2.setFakeIsoLayers( 3 /* x */, 3 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
-           tileMap.setManager( (TileMapManager)manager2 );
+        manager2.setFakeIsoLayers( 3 /* x */, 2 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
+        manager2.setFakeIsoLayers( 3 /* x */, 3 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
+        tileMap.setManager( (TileMapManager)manager2 );
 
-           mapExit1 = manager2.addMapExit( new ScreenRectangle(0*32,1*32,1*32,2*32), "to World Map" );
-           mapExit1.setType( MapExit.TILEMAP_EXIT );
-           mapExit1.setMapExitSide( MapExit.NONE );
-           mapExit1.setTargetWotlasLocation( new WotlasLocation(0) );
-           mapExit1.setTargetPosition( new ScreenPoint(745,280) );
+        mapExit1 = manager2.addMapExit( new ScreenRectangle(0*32,1*32,1*32,2*32), "to World Map" );
+        mapExit1.setType( MapExit.TILEMAP_EXIT );
+        mapExit1.setMapExitSide( MapExit.NONE );
+        mapExit1.setTargetWotlasLocation( new WotlasLocation(0) );
+        mapExit1.setTargetPosition( new ScreenPoint(745,280) );
 
            // STEP 3b - TOWNS
            TownMap townMaps[] = new TownMap[5];

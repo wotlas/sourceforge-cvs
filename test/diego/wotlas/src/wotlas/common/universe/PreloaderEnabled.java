@@ -44,7 +44,7 @@ public abstract class PreloaderEnabled extends ScreenRectangle implements Backup
 
     final static public byte LOAD_MINIMUM_DATA = 1; // wotlocation,id,name,full name, exits(?).
     final static public byte LOAD_CLIENT_DATA = 2;  // no encounterSchedule nor npc, nor items
-    final static public byte LOAD_SERVER_DATA = 3;  // no graphics[][] or groupOfGraphics
+    final static public byte LOAD_SERVER_DATA = 3;  // no graphics[][] 
     final static public byte LOAD_ALL = 4; // all loaded
 
     transient protected byte loadStatus;

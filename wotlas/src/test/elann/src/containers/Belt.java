@@ -17,35 +17,43 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
  
-package wotlas.common.objects.usefuls;
+package wotlas.common.objects.containers;
 
 import wotlas.common.objects.interfaces.*;
+import wotlas.common.objects.BaseObject;
+
 
 /** 
- * The class of books.
+ * The belt. Special Container that is also a piece of Armor.
  * 
  * @author Elann
- * @see wotlas.common.objects.usefuls.Document
- * @see wotlas.common.objects.interfaces.BookInterface
+ * @see wotlas.common.objects.containers.ContainerObject
+ * @see wotlas.common.objects.interfaces.ArmorInterface
+ * @see wotlas.common.objects.interfaces.TransportableInterface
  */
 
-public class Book extends Document implements BookInterface
+public class Belt extends ContainerObject implements TransportableInterface, ArmorInterface
 {
 
  /*------------------------------------------------------------------------------------*/
 
+  private BaseObject content;
  
  /*------------------------------------------------------------------------------------*/
 
-  /** The default constructor.
-   */			
-    public Book()
-	{
-	 this.className="Book";
-	 this.objectName="default book";
-	}															
- 
+ /** The only constructor. Calls ContainerObject's constructor.
+  * @param capacity the number of objects that can be contained
+  */
+  public Belt(short capacity)
+  {
+   super(capacity);  
+   this.className="Belt";
+   this.objectName="standard belt";	  // to modify
+  }
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+	
+ /*------------------------------------------------------------------------------------*/
+	
  
 }
 

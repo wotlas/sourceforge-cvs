@@ -38,7 +38,13 @@ public class Key extends UsefulObject implements TransportableInterface
 	  
  /*------------------------------------------------------------------------------------*/
  
-
+  /** The default constructor.
+   */			
+    public Key()
+	{
+	 this.className="Key";
+	 this.objectName="default key";
+	}															
 	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

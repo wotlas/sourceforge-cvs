@@ -37,6 +37,19 @@ public class HeadArmor extends Armor implements ArmorInterface
  
  /*------------------------------------------------------------------------------------*/
 
+  /** The only constructor.
+  	* Invoques Armor's constructor.
+	* @param defense the defense of the armor - may be zero
+	* @param state the current state of the armor  	
+   */			
+    public HeadArmor(short defense,short state)
+	{
+	 super(defense,state);
+	 
+	 this.className="HeadArmor";
+	 this.objectName="default head armor";
+	}															
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
 }

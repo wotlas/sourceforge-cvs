@@ -37,6 +37,19 @@ public class FootArmor extends Armor implements ArmorInterface
  
  /*------------------------------------------------------------------------------------*/
 
+  /** The only constructor.
+  	* Invoques Armor's constructor.
+	* @param defense the defense of the armor - may be zero
+	* @param state the current state of the armor  	
+   */			
+    public FootArmor(short defense,short state)
+	{
+	 super(defense,state);
+	 
+	 this.className="FootArmor";
+	 this.objectName="default foot armor";
+	}															
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
 }

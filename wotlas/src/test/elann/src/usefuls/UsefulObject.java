@@ -37,6 +37,14 @@ public class UsefulObject extends BaseObject implements UsefulInterface
 
   
  /*------------------------------------------------------------------------------------*/
+
+  /** The default constructor.
+   */			
+    public UsefulObject()
+	{
+	 this.className="UsefulObject";
+	 this.objectName="default useful object";
+	}															
 	
 	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

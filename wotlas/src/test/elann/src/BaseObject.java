@@ -27,7 +27,7 @@ package wotlas.common.objects;
 import wotlas.common.Character;	// the class used to give or sell. Is it implemented as I need ?
 import wotlas.common.Levels;	// not implemented
 import wotlas.common.Knowledge; // not implemented
-import wotlas.common.Location;	// not implemented - no need for it - just have to merge with wotlas universe
+import wotlas.common.universe.WotlasLocation;	
 
 /** 
  * The base class for all game objects that may be encountered in wotlas.
@@ -48,10 +48,14 @@ public class BaseObject
    */
    	 private String objectName;
    
-  /** Object position. Used to render the object. THE CLASS LOCATION IS A PLACE-HOLDER - has to be adapted to wotlas.
+  /** Object position in the world.
    */
-  	 private Location objectLocation; 
+  	 private WotlasLocation objectLocation; 
    
+  /** Object position in the room.
+   */
+   	 private int x,y;
+  
   /** Object's weight - used for endurance and max load. Perhaps negative weight should mean unmovable.
    */
      private short objectWeight;
@@ -101,15 +105,37 @@ public class BaseObject
 	public void setObjectName(String objectName) { this.objectName=objectName; }
 		
 
-  /** Returns the location of the object. 
+  /** Returns the location of the object in the world. 
   	  @return objectLocation
    */
-	public Location getObjectLocation() { return this.objectLocation; }
+	public WotlasLocation getObjectLocation() { return this.objectLocation; }
 
-  /** Sets the location of the object.
+  /** Sets the location of the object in the world.
   	  @param objectLocation the new location
    */
-	public void setObjectLocation(String objectLocation) { this.objectLocation=objectLocation; }
+	public void setObjectLocation(WotlasLocation objectLocation) { this.objectLocation=objectLocation; }
+
+
+  /** Returns the x location of the object in the map. 
+  	  @return x
+   */
+	public int getX() { return this.x; }
+
+  /** Sets the x location of the object in the map.
+  	  @param x the new x location
+   */
+	public void setX(int x) { this.x=x; }
+
+	
+  /** Returns the y location of the object in the map. 
+  	  @return y
+   */
+	public int getY() { return this.y; }
+
+  /** Sets the y location of the object in the map.
+  	  @param y the new y location
+   */
+	public void setY(int y) { this.y=y; }
 
 	
   /** Returns the weight of the object.

@@ -36,6 +36,14 @@ public class Parchment extends Document
  
  /*------------------------------------------------------------------------------------*/
 
+  /** The default constructor.
+   */			
+    public Parchment()
+	{
+	 this.className="Parchment";
+	 this.objectName="default parchment";
+	}															
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
 }

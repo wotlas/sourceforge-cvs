@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-
 package wotlas.common.movement;
 
 import wotlas.common.message.movement.*;
@@ -148,6 +147,13 @@ public interface MovementComposer extends Tickable {
   /** To set a player's movement : movement from current position to the given point.
    */
      public void moveTo( Point endPosition, WorldManager wManager );
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To rotate the player on itself.
+   *  @param finalOrientation final orientation to reach
+   */
+     public void rotateTo( double finalOrientation );
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

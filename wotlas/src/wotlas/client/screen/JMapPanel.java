@@ -34,90 +34,147 @@ import java.awt.event.*;
  * @author Petrus
  */
 
-public class JMapPanel extends JPanel implements MouseListener
-{
+public class JMapPanel extends JPanel implements MouseListener, MouseMotionListener {
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Different mouse movement steps...
+   */
+    public static final byte INIT_MOUSE_MOVEMENT = 0;
+    public static final byte MOUSE_MOVEMENT      = 1;
+    public static final byte END_MOUSE_MOVEMENT  = 2;
 
  /*------------------------------------------------------------------------------------*/
 
   /** Our Graphics Director
    */
-  private GraphicsDirector gDirector;
+    private GraphicsDirector gDirector;
 
   /** Our DataManager
    */
-  private DataManager dataManager;
+    private DataManager dataManager;
+
+  /** Left mouse button pressed
+   */
+    private boolean isLeftMouseButtonPressed;
+
+  /** Mouse Position
+   */
+    private int x, y;
 
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor
    * @param gDirector Graphics Director
    */
-  public JMapPanel(GraphicsDirector gDirector, DataManager dataManager) {
-    //super(new FlowLayout(FlowLayout.LEFT,0,0));
-    super(new GridLayout(1,1,0,0));
+    public JMapPanel(GraphicsDirector gDirector, DataManager dataManager) {
+       super(new GridLayout(1,1,0,0));
 
-    this.gDirector = gDirector;
-    this.dataManager = dataManager;
+       this.gDirector = gDirector;
+       this.dataManager = dataManager;
+       isLeftMouseButtonPressed = false;
 
-    add(gDirector);
+       add(gDirector);
 
     // Listen to Mouse clics
-    addMouseListener(this);
-  }
+       addMouseListener( this );
+
+    // ... and mouse motion
+       addMouseMotionListener( this );
+   }
 
  /*------------------------------------------------------------------------------------*/
 
   /** To update the Graphics Director used.
    */
-   public void updateGraphicsDirector(GraphicsDirector gDirector) {
+    public void updateGraphicsDirector(GraphicsDirector gDirector) {
        remove(this.gDirector);
        this.gDirector = gDirector;
 
        add(gDirector);
        validate();
-   }
+    }
 
  /*------------------------------------------------------------------------------------*/
 
   /**
    * Invoked when the mouse button is clicked
    */
-  public void mouseClicked(MouseEvent e) {}
+    public void mouseClicked(MouseEvent e) {}
+
+ /*------------------------------------------------------------------------------------*/
+
   /**
    * Invoked when the mouse enters a component
    */
-  public void mouseEntered(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {}
+
+ /*------------------------------------------------------------------------------------*/
+
   /**
    * Invoked when the mouse exits a component
    */
-  public void mouseExited(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {}
+
+ /*------------------------------------------------------------------------------------*/
+
   /**
    * Invoked when a mouse button has been pressed on a component
    */
-  public void mousePressed(MouseEvent e) {}
+    public void mousePressed(MouseEvent e) {
+       if (SwingUtilities.isRightMouseButton(e)) {
+       }
+       else {
+           isLeftMouseButtonPressed = true;
+           x=e.getX();
+           y=e.getY();
+           dataManager.onLeftButtonMoved(e,0,0,INIT_MOUSE_MOVEMENT);
+       }
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
   /**
    * Invoked when a mouse button has been released on a component
    */
-  public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(MouseEvent e) {
     
-    if (DataManager.SHOW_DEBUG)
-      System.out.println("[JMapPanel] : clic sur (" + e.getX() + "," + e.getY() + ")");
+       if(DataManager.SHOW_DEBUG)
+          System.out.println("[JMapPanel] : clic sur (" + e.getX() + "," + e.getY() + ")");
 
-    if (SwingUtilities.isRightMouseButton(e)) {
-       if (DataManager.SHOW_DEBUG)
-          System.out.println("\tright clic");
+       if(SwingUtilities.isRightMouseButton(e)) {
+          if (DataManager.SHOW_DEBUG)
+             System.out.println("\tright clic");
 
-       dataManager.onRightClicJMapPanel(e);
-//      dataManager.tick();
+          dataManager.onRightClicJMapPanel(e);
+       }
+       else {
+          isLeftMouseButtonPressed = false;
+          dataManager.onLeftButtonMoved(e,e.getX()-x,e.getY()-y,END_MOUSE_MOVEMENT);
+
+          if (DataManager.SHOW_DEBUG)
+             System.out.println("\tleft clic");
+
+          if( Math.abs(e.getX()-x)<5 && Math.abs(e.getY()-y)<5 )
+              dataManager.onLeftClicJMapPanel(e);
+       }
     }
-    else {
-       if (DataManager.SHOW_DEBUG)
-          System.out.println("\tleft clic");
 
-       dataManager.onLeftClicJMapPanel(e);
-//      dataManager.tick();
-    }
-  }
+ /*------------------------------------------------------------------------------------*/
+
+   /** Called when the mouse is dragged.
+    */
+     public void mouseDragged(MouseEvent e) {
+        if(!isLeftMouseButtonPressed)
+           return;
+
+        dataManager.onLeftButtonMoved( e, e.getX()-x, e.getY()-y, MOUSE_MOVEMENT );
+     }
+
+   /** Called when the mouse is moved.
+    */
+     public void mouseMoved(MouseEvent e) {
+     }
 
  /*------------------------------------------------------------------------------------*/
 

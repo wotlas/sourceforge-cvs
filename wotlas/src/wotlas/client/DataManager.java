@@ -161,6 +161,14 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
     private boolean isResuming = false;
 
+  /** Ghost orientation (to limit the update massages sent)
+   */
+    private double ghostOrientation;
+
+  /** Reference orientation
+   */
+    private double refOrientation;
+
  /*------------------------------------------------------------------------------------*/
 
   /*** SELECTION CIRCLE ***/
@@ -844,6 +852,41 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    public void onRightClicJMapPanel(MouseEvent e) {
       if (SHOW_DEBUG)
         System.out.println("DataManager::onRightClicJMapPanel");
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Called when the mouse cursor is moved.
+   * @param e mouse event
+   * @param dx delta x since mouse pressed
+   * @param dy delta y since mouse pressed
+   * @param finalMov movement type as describe in JMapPanel, INIT_MOUSE_MOVEMENT, etc...
+   */
+   public void onLeftButtonMoved( MouseEvent e, int dx, int dy, byte movementType ) {
+
+     // if the player is moving we return
+       if(myPlayer.getMovementComposer().isMoving())
+          return;
+
+       double orientation = myPlayer.getMovementComposer().getOrientationAngle();
+
+     // init the rotation ?
+       if(movementType==JMapPanel.INIT_MOUSE_MOVEMENT) {
+          refOrientation = orientation;
+          ghostOrientation = orientation;
+          return;
+       }
+
+       myPlayer.getMovementComposer().setOrientationAngle(refOrientation-(double)dx/50);
+       orientation = myPlayer.getMovementComposer().getOrientationAngle();
+
+     // send an update message ?
+       if( Math.abs(orientation-ghostOrientation) > 1.0
+           || (movementType==JMapPanel.INIT_MOUSE_MOVEMENT
+               && Math.abs(orientation-ghostOrientation) >= 0.1) ) {
+          myPlayer.getMovementComposer().rotateTo( orientation );
+          ghostOrientation = orientation;
+       }
    }
 
  /*------------------------------------------------------------------------------------*/

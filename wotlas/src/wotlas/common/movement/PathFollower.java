@@ -516,6 +516,26 @@ public class PathFollower implements MovementComposer {
                         }
                     }
                 }
+                else if( !msg.isMoving && (int)xPosition==msg.srcPoint.x
+                         && (int)yPosition==msg.srcPoint.y ) {
+                    // we turn on ourself
+                       turningAlongPath = true;
+                       useEndingOrientationValue = true;
+                       nextAngle = msg.orientationAngle;
+                       angularDirection = 1;
+
+                       while( nextAngle-orientationAngle > Math.PI )
+                              nextAngle = (float)(nextAngle-2*Math.PI);
+
+                       while( nextAngle-orientationAngle < -Math.PI )
+                              nextAngle = (float)(nextAngle+2*Math.PI);
+
+                       if( orientationAngle > nextAngle )
+                           angularDirection = -1;
+
+                       pathIndex=0;
+                       path=new List();
+                }
                 else
                     takeUpdate = true;
 
@@ -540,7 +560,7 @@ public class PathFollower implements MovementComposer {
 
   /** To update speed & rotations
    */
-      private void updateMovementAspect() {
+    private void updateMovementAspect() {
          realisticRotations = false; // default
          speed = 1.0f;             // default : very slow speed
 
@@ -551,7 +571,7 @@ public class PathFollower implements MovementComposer {
               realisticRotations = true;
 
          speed = player.getWotCharacter().getSpeed( player.getLocation() );
-      }
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -709,6 +729,18 @@ public class PathFollower implements MovementComposer {
                player.sendMessage( new PathUpdateMovementMessage( this, player.getPrimaryKey(), player.getSyncID() ) );
      }
 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To rotate the player on itself.
+   *  @param finalOrientation final orientation to reach
+   */
+     public void rotateTo( double finalOrientation ) {
+
+         orientationAngle = finalOrientation;
+
+         if( player.isMaster() )
+            player.sendMessage( new PathUpdateMovementMessage( this, player.getPrimaryKey(), player.getSyncID() ) );
+     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -878,6 +910,8 @@ public class PathFollower implements MovementComposer {
     * @return distance between the two points.
     */
     public static float distance( Point a, Point b ) {
+    	 if(a==null || b==null) return 0f;
+    	
          return (float) Math.sqrt( (b.y-a.y)*(b.y-a.y)+(b.x-a.x)*(b.x-a.x) );
     }
 

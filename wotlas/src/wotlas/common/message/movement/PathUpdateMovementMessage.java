@@ -128,7 +128,7 @@ public class PathUpdateMovementMessage extends MovementUpdateMessage
 
          ostream.writeFloat( orientationAngle );
          ostream.writeBoolean( isMoving );
-         
+
          if( isMoving ) {
              ostream.writeInt( dstPoint.x );
              ostream.writeInt( dstPoint.y );

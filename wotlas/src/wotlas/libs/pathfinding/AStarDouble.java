@@ -75,6 +75,10 @@ public class AStarDouble
    */
   //private Vector nodes = new Vector();
   private List nodes;
+  
+  /** size of the sprite (in CELL units)
+   */
+  public int SPRITE_SIZE = 4;
    
  /*------------------------------------------------------------------------------------*/
   
@@ -274,19 +278,98 @@ double ot = ((NodeDouble) nodes.elementAt(cur)).f;
   }
   
   /**
-   * test if a point is valid for the path
+   * test if a point is valid for the path (test SPRITE_SIZE)
    * 
    * @param x the x coordinate
    * @param y the y coordinate
    * @return true if point is valid (not blocked) in the {@link #mask mask}
    */
   public boolean isNotBlock(int x, int y)
-  {
-    if ( (x<0) || (x==mapWidth) || (y<0) || (y==mapHeight))
-      return false;
-    return map[x][y];
+  {    
+    if ( (x<0) || (x+SPRITE_SIZE==mapWidth) || (y<0) || (y+SPRITE_SIZE==mapHeight))
+      return false;    
+      
+    return (map[x][y] && map[x][y+SPRITE_SIZE] && map[x+SPRITE_SIZE][y] && map[x+SPRITE_SIZE][y+SPRITE_SIZE]);
   }
   
+  /**
+   * test if a point is a valid goal, and correct the position
+   * regarding the sprite size
+   *
+   * @param x the x coordinate
+   * @param y the y coordinate
+   * @return true if point is valid (not blocked) in the {@link #mask mask}
+   */
+  public boolean isValidGoal(Point pointGoal) {
+    int x = pointGoal.x;
+    int y = pointGoal.y;    
+    if (isNotBlock(x,y)) {      
+      return true;
+    }
+    if (x+SPRITE_SIZE<mapWidth) {
+      if (isNotBlock(x+SPRITE_SIZE,y)) {
+        System.out.print("change");
+        pointGoal.x += SPRITE_SIZE; 
+        return true;
+      }    
+    }
+    if ((x+SPRITE_SIZE<mapWidth) && (y+SPRITE_SIZE<mapHeight)) {
+      if (isNotBlock(x+SPRITE_SIZE,y+SPRITE_SIZE)) {
+        System.out.print("change");
+        pointGoal.x += SPRITE_SIZE; 
+        pointGoal.y += SPRITE_SIZE; 
+        return true;
+      }
+    }
+    if (y+SPRITE_SIZE<mapHeight) {
+      if (isNotBlock(x,y+SPRITE_SIZE)) {
+        System.out.print("change");
+        pointGoal.y += SPRITE_SIZE; 
+        return true;
+      }
+    }
+    if ((x>SPRITE_SIZE) && (y+SPRITE_SIZE<mapHeight)) {
+      if (isNotBlock(x-SPRITE_SIZE,y+SPRITE_SIZE)) {
+        System.out.print("change");
+        pointGoal.x -= SPRITE_SIZE;
+        pointGoal.y += SPRITE_SIZE; 
+        return true;
+      }
+    }
+    if (x>SPRITE_SIZE) {
+      if (isNotBlock(x-SPRITE_SIZE,y)) {
+        System.out.print("change");
+        pointGoal.x -= SPRITE_SIZE; 
+        return true;
+      }
+    }
+    if ((x>SPRITE_SIZE) && (y>SPRITE_SIZE)) {
+      if (isNotBlock(x-SPRITE_SIZE,y-SPRITE_SIZE)) {
+        System.out.print("change");
+        pointGoal.x -= SPRITE_SIZE;
+        pointGoal.y -= SPRITE_SIZE; 
+        return true;
+      }
+    }   
+    if (y>SPRITE_SIZE) { 
+      if (isNotBlock(x,y-SPRITE_SIZE)) {
+        System.out.print("change");
+        pointGoal.y -= SPRITE_SIZE; 
+        return true;
+      }
+    }
+    if ((x+SPRITE_SIZE<mapWidth) && (y>SPRITE_SIZE)) {
+      if (isNotBlock(x+SPRITE_SIZE,y-SPRITE_SIZE)) {
+        System.out.print("change");
+        pointGoal.x += SPRITE_SIZE; 
+        pointGoal.y -= SPRITE_SIZE; 
+        return true;
+      }
+    }
+        
+    return false;        
+  }  
+   
   /**
    * Generates all the not blocked children of a Node
    *
@@ -317,7 +400,7 @@ double ot = ((NodeDouble) nodes.elementAt(cur)).f;
    */
   //public Vector findPath(Point pStart, Point pGoal)
   public List findPath(Point pointStart, Point pointGoal)
-  {
+  {    
     nodes = new List();
     open = new Hashtable(500);
     closed = new Hashtable(500);
@@ -330,10 +413,13 @@ double ot = ((NodeDouble) nodes.elementAt(cur)).f;
     //pointStart = pStart;
     //pointGoal = pGoal;
     
-    if ( (!isNotBlock(pointStart.x, pointStart.y)) || (!isNotBlock(pointGoal.x, pointGoal.y)) ) {
+    //if ( (!isNotBlock(pointStart.x, pointStart.y)) || (!isNotBlock(pointGoal.x, pointGoal.y)) ) {
+      System.out.print(pointGoal);
+    if ( (!isValidGoal(pointGoal)) ) {
       System.err.println("error : invalid point");
       return null;
     }
+    System.out.println(" -> " + pointGoal);
     
     //System.out.println("Creation of first node");
     firstNode.point = pointStart;

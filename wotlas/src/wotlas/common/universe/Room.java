@@ -19,6 +19,8 @@
 
 package wotlas.common.universe;
 
+import wotlas.common.Player;
+
 import java.awt.Point;
 
  /** Room class
@@ -61,7 +63,7 @@ public class Room
   
   /** List of players in the Room
    */
-   private transient PlayerImpl[] playerImpls;
+   private transient Player[] players;
   
   /** List of items in the Room
    */
@@ -121,11 +123,11 @@ public class Room
   public MapExit[] getMapExits() {
     return mapExits;
   }
-  public void setPlayerImpls(PlayerImpl[] myPlayerImpls) {
-    this.playerImpls = myPlayerImpls;
+  public void setPlayers(Player[] myPlayers) {
+    this.players = myPlayers;
   }
-  public PlayerImpl[] getPlayerImpls() {
-    return playerImpls;
+  public Player[] getPlayers() {
+    return players;
   }
   public void setWotlasObjects(WotlasObject myWotlasObject) {
   }

@@ -18,6 +18,9 @@
  */
  
 package wotlas.common.universe;
+
+import wotlas.common.Player;
+
  
  /** TownMap class
   *
@@ -60,7 +63,7 @@ public class TownMap
   
   /** List of players in the Town
    */
-   private transient PlayerImpl[] playerImpls;
+   private transient Player[] players;
 
   /** List of buildings to enter the town
    * first  element : BuildingID
@@ -109,11 +112,11 @@ public class TownMap
   public Building[] getBuildings() {
     return buildings;
   }
-  public void setPlayerImpls(PlayerImpl[] myPlayerImpls) {
-    this.playerImpls = myPlayerImpls;
+  public void setPlayerImpls(Player[] myPlayers) {
+    this.players = myPlayers;
   }
-  public PlayerImpl[] getPlayerImpls() {
-    return playerImpls;
+  public Player[] getPlayers() {
+    return players;
   }
   public void setBuildingsEnter(int[][] myBuildingsEnter) {
     this.buildingsEnter = myBuildingsEnter;

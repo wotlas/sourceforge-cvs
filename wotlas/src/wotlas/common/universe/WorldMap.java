@@ -18,6 +18,8 @@
  */
  
 package wotlas.common.universe;
+
+import wotlas.common.Player;
  
  /** WorldMap class
   *
@@ -46,10 +48,10 @@ public class WorldMap
    */
    private transient TownMap[] townMaps;
   
-  /** List of players in the WorldMap
+  /** List of players in the WorldMap   // CHANGE TO HASHMAP !!! AND manage hashmap size !!
    */
-   private transient PlayerImpl[] playerImpl;
-  
+   private transient Player[] players;
+
  /*------------------------------------------------------------------------------------*/
   
   /**
@@ -86,11 +88,11 @@ public class WorldMap
   public TownMap[] getTownMaps() {
     return townMaps;
   }
-  public void setPlayerImpls(PlayerImpl[] myPlayerImpls) {
-    this.playerImpls = myPlayerImpls;
+  public void setPlayers(Player[] myPlayers) {
+    this.players = myPlayers;
   }
-  public PlayerImpl[] getPlayerImpl() {
-    return playerImpl;
+  public Player[] getPlayers() {
+    return players;
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -100,17 +102,21 @@ public class WorldMap
    *
    * @param player player to add
    */
-   public void addPlayer( PlayerImpl player )
+   public void addPlayer( Player player )
    {
+/* To change or suppress PlayerImpl is server/client specific and cannot be used here
+ * directly, replace with interface player.
+ * 
      if (playerImpl == null) {
-        playerImpl = new PlayerImpl[1];   /** TO DO : use a field player_length to avoid **/
-        playerImpl[0] = player;           /** array realloc each time **/
+        playerImpl = new PlayerImpl[1];
+        playerImpl[0] = player;
      } else {
     	PlayerImpl[] myPlayerImpl = new PlayerImpl[playerImpl.length+1];
     	System.arraycopy( playerImpl, 0, myPlayerImpl, 0, playerImpl.length );
     	myPlayerImpl[playerImpl.length] = player;
     	playerImpl = myPlayerImpl;
      }
+ */
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

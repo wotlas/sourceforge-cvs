@@ -153,7 +153,7 @@ public class ImageLibrary {
        File cats[] = homeDir.listFiles();
 
        if(cats==null) {
-          Debug.signal( Debug.ERROR, this, "No Categories found in Image Database !");
+          Debug.signal( Debug.WARNING, this, "No Categories found in Image Database !");
           return;
        }
 
@@ -174,7 +174,7 @@ public class ImageLibrary {
             File sets[] = cats[c].listFiles();
 
             if(sets==null) {
-               Debug.signal( Debug.ERROR, this, "No Sets found in category "+cats[c].getName());
+               Debug.signal( Debug.WARNING, this, "No Sets found in category "+cats[c].getName());
                continue;
             }
 
@@ -195,7 +195,7 @@ public class ImageLibrary {
                 File actions[] = sets[s].listFiles();
 
                 if(actions==null) {
-                   Debug.signal( Debug.ERROR, this, "No Actions found in set "+sets[s].getName());
+                   Debug.signal( Debug.WARNING, this, "No Actions found in set "+sets[s].getName());
                    continue;
                 }
 
@@ -216,7 +216,7 @@ public class ImageLibrary {
                     File index[] = actions[a].listFiles();
 
                     if(index==null) {
-                       Debug.signal( Debug.ERROR, this, "No images found in action "+actions[a].getName());
+                       Debug.signal( Debug.WARNING, this, "No images found in action "+actions[a].getName());
                        continue;
                     }
 
@@ -225,7 +225,7 @@ public class ImageLibrary {
                         images[catID][setID][actID] = loadBufferedImages( actions[a].getPath() );
 
                         if( images[catID][setID][actID] == null)
-                          Debug.signal( Debug.ERROR, this, "No images loaded from "+actions[a].getPath());
+                          Debug.signal( Debug.WARNING, this, "No images loaded from "+actions[a].getPath());
                     }
                 }
             }
@@ -373,7 +373,7 @@ public class ImageLibrary {
            images[imID.imageCategory][imID.imageSet][actID] = loadBufferedImages( actions[a].getPath() );
 
            if( images[imID.imageCategory][imID.imageSet][imID.imageAction] == null )
-               Debug.signal( Debug.ERROR, this, "No images loaded from "+actions[a].getPath());
+               Debug.signal( Debug.WARNING, this, "No images loaded from "+actions[a].getPath());
        }
 
     // 3 - We print some stats...

@@ -51,6 +51,14 @@ public class JWizardStepFactory {
 
  /*------------------------------------------------------------------------------------*/
 
+  /** To clear the factory's buffer.
+   */
+   public void clear() {
+   	staticSteps.clear();
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
   /** To get an instance of a static JWizardStep. This is a simple & fast method to get a
    *  JWizardStep that only contains well-defined data fields. If you need to get
    *  a JWizardStep that contains dynamic data use the other getJWizardStep method.<br>
@@ -128,6 +136,24 @@ public class JWizardStepFactory {
             ex.printStackTrace();
             return null;
         }
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To get an instance of a JWizardStep according to its parameters. The parameters
+   *  are taken from a file which is given as parameter. We load the file using the
+   *  JWizardStepParameters.loadFromFile() method. We then try to create the JWizardStep
+   *  using these parameters. The returned JWizardStep is fully initialized.
+   *
+   *  @param parametersFile the JWizardStepParameters file to load.
+   *  @return the wanted JWizardStep instance, null if we failed to retrieve/build it.
+   */
+   public JWizardStep getJWizardStepFromFile( String parametersFile ) {
+       JWizardStepParameters parameters = JWizardStepParameters.loadFromFile( parametersFile );
+
+       if(parameters==null) return null; // load failed
+
+       return getJWizardStep(parameters);
    }
 
  /*------------------------------------------------------------------------------------*/

@@ -21,6 +21,9 @@ package wotlas.libs.wizard;
 
 import java.io.*;
 
+import wotlas.libs.persistence.*;   // these two imports are only needed for the two
+import wotlas.utils.Debug;          // loadFromFile() saveToFile() methods
+
 /** Represents all the parameters needed to initialize a JWizardStep.
  *  This class can be sent/retrieve from a stream ( see encode/decode methods)
  *  and can also be stored on disk using the persistence library.
@@ -352,6 +355,41 @@ public class JWizardStepParameters {
 
  /*------------------------------------------------------------------------------------*/
 
-  // TO DO :  loadFromFile, SaveToFile
+   /** To load JWizardStepParameters from a file. This method uses the Wotlas
+    *  Persistent Library and the Wotlas Debug utility.
+    *
+    * @param path full path to the file containing the JWizardStepParameters.
+    * @return null if the file could not be loaded.
+    */
+    public static JWizardStepParameters loadFromFile( String path ) {
+      try{
+          return (JWizardStepParameters) PropertiesConverter.load( path );
+      }
+      catch( Exception pe ) {
+          Debug.signal( Debug.ERROR, null, "Failed to load file: "+pe.getMessage() );
+          return null;
+      }
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To save this JWizardStepParameters to a file. This method uses the Wotlas
+    *  Persistent Library and the Wotlas Debug utility.
+    *
+    * @param path full path to the file where to store the JWizardStepParameters.
+    * @return true if the save succeeded, false otherwise
+    */
+    public boolean saveToFile( String path ) {
+      try{
+          PropertiesConverter.save( this, path );
+          return true;
+      }
+      catch( Exception pe ) {
+          Debug.signal( Debug.ERROR, this, "Failed to load file: "+pe.getMessage() );
+          return false;
+      }
+   }
+
+ /*------------------------------------------------------------------------------------*/
 
 }

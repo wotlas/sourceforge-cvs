@@ -129,7 +129,7 @@ public abstract class JWizard extends JFrame {
       setBackground(Color.white);
       setIconImage(Toolkit.getDefaultToolkit().getImage( GUI_IMAGES_PATH+"icon.gif" ));
 
-      titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+      titlePanel = new JPanel(new GridLayout(1,1,5,5));
       titlePanel.setBackground(Color.white);
       t_title = new ALabel(title);
       t_title.setFont(new Font("Serif",Font.PLAIN,18) );
@@ -209,6 +209,7 @@ public abstract class JWizard extends JFrame {
                      onFinished(getContext());  // End of Wizard
                      setVisible(false);
                      mainPanel.removeAll();
+                     stepFactory.clear();
                      dispose();
                      currentStep=null;
                  }
@@ -237,6 +238,7 @@ public abstract class JWizard extends JFrame {
               onCanceled(getContext());
               setVisible(false);
               mainPanel.removeAll();
+              stepFactory.clear();
               dispose();
               currentStep=null;
               nextStep=null;
@@ -253,6 +255,15 @@ public abstract class JWizard extends JFrame {
       southPanel.setBackground(Color.white);
       southPanel.add(buttonsPanel);
       getContentPane().add(southPanel, BorderLayout.SOUTH);
+
+    // *** Window listener
+      addWindowListener( new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                b_cancel.doClick();
+            }
+      });
+
+      setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE); // close is close ! not hide !
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -272,6 +283,21 @@ public abstract class JWizard extends JFrame {
 
  /*------------------------------------------------------------------------------------*/
 
+  /** Initialize this JWizard with its first JWizarStep. Displays the JWizard.
+   *  It is your responsablity to call this method. 
+   *
+   * @param parametersFile file containing the JWizardStepParameters for the first step
+   * @exception thrown if the given parameters are wrong...
+   */
+   protected void init( String parametersFile ) throws WizardException {
+        if( !setNextStep(parametersFile) )
+            throw new WizardException("failed to create first step.");
+
+        showNextStep();
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
   /** To set the current JWizardStep. Given its parameters we create the step using
    *  our JWizardStepFactory.
    *
@@ -282,6 +308,25 @@ public abstract class JWizard extends JFrame {
 
        nextStep = stepFactory.getJWizardStep( parameters );
        
+       if(nextStep==null)
+          return false;
+
+       return true;
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To set the current JWizardStep. Given a file containing the JWizardStepParameters
+   *  we try to create the step using our JWizardStepFactory.
+   *
+   * @param parametersFile file containing the JWizardStepParameters to use for the step's
+   *        creation.
+   * @return true the current step was changed successfully, false otherwise.
+   */
+   public boolean setNextStep( String parametersFile ) {
+
+       nextStep = stepFactory.getJWizardStepFromFile( parametersFile );
+
        if(nextStep==null)
           return false;
 

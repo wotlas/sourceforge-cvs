@@ -553,6 +553,7 @@ public class PathFollower implements MovementComposer {
        lastUpdateTime = now;
 
        if(deltaT>=0.8f) return; // SECURITY if a slow is encountered
+       if(deltaT<0) return; // Date has been advanced
 
     // 2 - Orientation update
        if (turningAlongPath) {
@@ -602,13 +603,19 @@ public class PathFollower implements MovementComposer {
 
   /** To set a player's movement : movement from current position to the given point.
    */
-     public void moveTo( Point endPosition ) {
+     public void moveTo( Point endPosition ) {                       
+            if (DataManager.SHOW_DEBUG)
+              System.out.println("PathFollower::moveTo");
             // Test if xPosition,yPosition is a valid point
             Point startPt = new Point( (int)xPosition, (int)yPosition );            
             if ( !AStarDouble.isValidStart(startPt) ) {
               if (DataManager.SHOW_DEBUG)
                 System.out.println("PathFollower : invalid start point");
+              return;
               // Faire un reset de la position
+            } else {
+              if (DataManager.SHOW_DEBUG)
+                System.out.println("PathFollower : valid start point");
             }
             
             path = findPath( startPt, new Point( endPosition.x, endPosition.y ) );

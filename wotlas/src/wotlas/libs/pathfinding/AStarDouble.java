@@ -19,6 +19,7 @@
 
 package wotlas.libs.pathfinding;
 
+import wotlas.utils.Debug;
 import wotlas.utils.List;
 
 import java.awt.image.BufferedImage;
@@ -55,7 +56,7 @@ public class AStarDouble
   /** Our AStarDouble object.
    */
   private static AStarDouble aStar=null;
-  
+
   /** mask of the image : mask[i][j] is true if pixel(i,j) is not blocked
    */
   static private boolean[][] map;
@@ -107,14 +108,14 @@ public class AStarDouble
   static public int getTileSize() {
     return tileSize;
   }
- 
+
  /*------------------------------------------------------------------------------------*/
 
   /** Empty constructor.
    */
   public AStarDouble() {
   }
-  
+
  /*------------------------------------------------------------------------------------*/
 
   /** To get AStarDouble object
@@ -122,9 +123,9 @@ public class AStarDouble
   static public AStarDouble getAStar() {
     return aStar;
   }
-  
+
   /** Test to know if pathFollower is used by client (initialized) or server (not initialized)
-   * 
+   *
    * @returns true if AStarDouble have been initialized
    */
   static public boolean isInitialized() {
@@ -132,14 +133,14 @@ public class AStarDouble
   }
 
  /*------------------------------------------------------------------------------------*/
-   
+
   /**
    * Estimates the distance between 2 points
    *
    * @param poinFrom first point
    * @param pointTo second point
    * @return the distance between the 2 points
-   */  
+   */
   private double estimate(Point pointFrom, Point pointTo) {
     //return (int) pointFrom.distanceSq(pointTo);
     return pointFrom.distance(pointTo);
@@ -289,7 +290,7 @@ public class AStarDouble
     }
     if (SHOW_DEBUG)
       System.out.println("no path found");
-      
+
     nodes.removeAllElements();
     open.clear();
     closed.clear();
@@ -343,85 +344,93 @@ public class AStarDouble
     }
   }
 
+ /*------------------------------------------------------------------------------------*/
+
   /**
    * test if a point is valid for the path
    * regarding the sprite size
    *
-   * @param x the x coordinate
-   * @param y the y coordinate
+   * @param x the x coordinate (in CELL units)
+   * @param y the y coordinate (in CELL units)
    * @return true if point is valid (not blocked) in the {@link #mask mask}
    */
   public boolean isNotBlock(int x, int y) {
     /*if ( (x+SPRITE_SIZE==mapWidth) && (y+SPRITE_SIZE<mapHeight) )
       return (map[x][y] && map[x][y+SPRITE_SIZE]);
-    
+
     if ( (x+SPRITE_SIZE<mapWidth) && (y+SPRITE_SIZE==mapHeight) )
       return (map[x][y] && map[x+SPRITE_SIZE][y]);
-    
+
     if ( (x+SPRITE_SIZE==mapWidth) && (y+SPRITE_SIZE==mapHeight) )
       return map[x][y];*/
-          
+
     if ( (x<0) || (x+SPRITE_SIZE>=mapWidth) || (y<0) || (y+SPRITE_SIZE>=mapHeight) )
       return false;
 
     return (map[x][y] && map[x][y+SPRITE_SIZE] && map[x+SPRITE_SIZE][y] && map[x+SPRITE_SIZE][y+SPRITE_SIZE]);
   }
 
-  /**
-   * test if a point is a valid goal, and correct the position
+  /** test if a point is valid for the path
    * regarding the sprite size
    *
-   * @param x the x coordinate
-   * @param y the y coordinate
+   * @param pt the point (in CELL units)
+   * @return true if point is valid (not blocked) in the {@link #mask mask}
+   */
+  public boolean isNotBlock(Point pt) {
+    return isNotBlock(pt.x, pt.y);
+  }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /**
+   * test if a point (in CELL units) is a valid goal,
+   * and correct the position regarding the sprite size
+   *
+   * @param pointGoal the point (in CELL units)
    * @return true if point is valid (not blocked) in the {@link #mask mask}
    */
   public boolean isValidGoal(Point pointGoal) {
     int x = pointGoal.x;
     int y = pointGoal.y;
-    
+
     if (isNotBlock(x,y)) {
-      if (SHOW_DEBUG)
-        System.out.println("valid point");
+      //if (SHOW_DEBUG)
+      //  System.out.println("valid point");
       return true;
     } else {
-      if (SHOW_DEBUG)
-        System.out.println("not a valid point -> search a valid point"); 
+      //if (SHOW_DEBUG)
+      //  System.out.println("not a valid point -> search a valid point");
+      Debug.signal( Debug.NOTICE, null, "not a valid goal point -> search a valid point");  
+      //Debug.signal( Debug.NOTICE, null, "  x = " + x + " ,  y = " + y);
     }
-    
-    if (SHOW_DEBUG) {
-      System.out.println("x = " + x);
-      System.out.println("y = " + y);
-      System.out.println("mapHeight = " + mapHeight);
-      System.out.println("mapWidth = " + mapWidth);
-    }
-    
+
     // test if player is near border
-    if (x+SPRITE_SIZE>mapWidth) {      
+    if (x+SPRITE_SIZE>mapWidth) {
       if (SHOW_DEBUG)
-        System.out.println("test x near border");      
-      if (map[x-SPRITE_SIZE-1][y]) {      
+        System.out.println("test x near border");
+      if (map[x-SPRITE_SIZE-1][y]) {
         if (SHOW_DEBUG)
-          System.out.print("player near border -> change x=mapWidth-SPRITE_SIZE-1");        
+          System.out.print("player near border -> change x=mapWidth-SPRITE_SIZE-1");
         pointGoal.x = mapWidth-SPRITE_SIZE-1;
         return true;
-      }      
+      }
     }
     if (y+SPRITE_SIZE>mapHeight) {
       if (SHOW_DEBUG)
-        System.out.println("test y near border");      
-      if (map[x][mapHeight-SPRITE_SIZE-1]) {      
+        System.out.println("test y near border");
+      if (map[x][mapHeight-SPRITE_SIZE-1]) {
         if (SHOW_DEBUG)
-          System.out.print("player near border -> change y=mapHeight-SPRITE_SIZE-1");        
+          System.out.print("player near border -> change y=mapHeight-SPRITE_SIZE-1");
         pointGoal.y = mapHeight-SPRITE_SIZE-1;
         return true;
-      }      
-    }    
-    
+      }
+    }
+
     // Correct the position
     if (x+SPRITE_SIZE<mapWidth) {
       if (isNotBlock(x+SPRITE_SIZE,y)) {
         if (SHOW_DEBUG)
-          System.out.print("change x+");        
+          System.out.print("change x+");
         pointGoal.x += SPRITE_SIZE;
         return true;
       }
@@ -490,106 +499,127 @@ public class AStarDouble
     return false;
   }
 
+ /*------------------------------------------------------------------------------------*/
+
+  /**
+   * test if a point (in CELL units) is a valid start,
+   * and correct the position regarding the sprite size
+   *
+   * @param pointGoal the point (in CELL units)
+   * @return true if point is valid (not blocked) in the {@link #mask mask}
+   */
   static public boolean isValidStart(Point pointGoal) {
     return aStar.isValid(pointGoal);
   }
-  
+
   /**
-   * test if a point is a valid start. If it's an invalid point,
-   * search a valid point near it, and correct the position
-   * regarding the sprite size
+   * test if a point (in pixels coordinate) is a valid start.
+   * If it's an invalid point, search a valid point near it,
+   * and correct the position regarding the sprite size
    *
-   * @param x the x coordinate
-   * @param y the y coordinate
+   * @param pointGoal the point
    * @return true if point is valid or has been corrected, false otherwise
    */
   private boolean isValid(Point pointGoal) {
     // We search up to 3 pixels around the original point
     int radius = 3;
-    
-    int x = pointGoal.x;
-    int y = pointGoal.y;
-    
+
+    int x = pointGoal.x/tileSize;
+    int y = pointGoal.y/tileSize;
+
     if (isNotBlock(x,y)) {
-      if (SHOW_DEBUG)
-        System.out.println("valid point");
+      //if (SHOW_DEBUG)
+      //  System.out.println("valid point");
       return true;
     } else {
-      if (SHOW_DEBUG)
-        System.out.println("not a valid point -> search a valid point"); 
+      //if (SHOW_DEBUG)
+      //  System.out.println("not a valid point -> search a valid point");
+      Debug.signal( Debug.NOTICE, null, "not a valid start point -> search a valid point");  
+      //Debug.signal( Debug.NOTICE, null, "  x = " + x + " ,  y = " + y);
     }
-    
-    if (SHOW_DEBUG) {
-      System.out.println("x = " + x);
-      System.out.println("y = " + y);
-      System.out.println("mapHeight = " + mapHeight);
-      System.out.println("mapWidth = " + mapWidth);
-    }
-    
+
     // test if player is near border
-    if (x+SPRITE_SIZE>mapWidth) {      
+    if (x+SPRITE_SIZE>mapWidth) {
       if (SHOW_DEBUG)
-        System.out.println("test x near border");      
-      if (map[x-SPRITE_SIZE-1][y]) {      
+        System.out.println("test x near border");
+      if (map[x-SPRITE_SIZE-1][y]) {
         if (SHOW_DEBUG)
-          System.out.print("player near border -> change x=mapWidth-SPRITE_SIZE-1");        
+          System.out.print("player near border -> change x=mapWidth-SPRITE_SIZE-1");
         pointGoal.x = mapWidth-SPRITE_SIZE-1;
         return true;
-      }      
+      }
     }
     if (y+SPRITE_SIZE>mapHeight) {
       if (SHOW_DEBUG)
-        System.out.println("test y near border");      
-      if (map[x][mapHeight-SPRITE_SIZE-1]) {      
+        System.out.println("test y near border");
+      if (map[x][mapHeight-SPRITE_SIZE-1]) {
         if (SHOW_DEBUG)
-          System.out.print("player near border -> change y=mapHeight-SPRITE_SIZE-1");        
+          System.out.print("player near border -> change y=mapHeight-SPRITE_SIZE-1");
         pointGoal.y = mapHeight-SPRITE_SIZE-1;
         return true;
-      }      
-    }    
-    
+      }
+    }
+
     // We search a valid point around the original point
-    Point correctedPoint = new Point(x,y);
-    
-    if (isValidGoal(pointGoal)) return true;
-      
-    pointGoal.y = y-1;
-    if (isValidGoal(pointGoal)) return true;
-    pointGoal.y = y+1;
-    if (isValidGoal(pointGoal)) return true;    
-    
-    pointGoal.x = x-1;    
-    pointGoal.y = y-1;
-    if (isValidGoal(pointGoal)) return true;
-    pointGoal.y = y+1;
-    if (isValidGoal(pointGoal)) return true;    
-    
-    pointGoal.x = x+1;
-    pointGoal.y = y-1;
-    if (isValidGoal(pointGoal)) return true;
-    pointGoal.y = y+1;
-    if (isValidGoal(pointGoal)) return true;
-    
-    pointGoal.x = x-2;
-    for (pointGoal.y=y-2;pointGoal.y<y+3;y++) {
-      if (isValidGoal(pointGoal)) return true;
+
+    //pointGoal.y = y-1;
+    if (isNotBlock(x,y-1)) {pointGoal.y-=tileSize;return true;}
+    //pointGoal.y = y+1;
+    if (isNotBlock(x,y+1)) {pointGoal.y+=tileSize;return true;}
+
+    //pointGoal.x = x-1;
+    //pointGoal.y = y-1;
+    if (isNotBlock(x-1,y-1)) {pointGoal.x-=tileSize;pointGoal.y-=tileSize;return true;}
+    //pointGoal.y = y+1;
+    if (isNotBlock(x-1,y+1)) {pointGoal.x-=tileSize;pointGoal.y+=tileSize;return true;}
+
+    //pointGoal.x = x+1;
+    //pointGoal.y = y-1;
+    if (isNotBlock(x+1,y-1)) {pointGoal.x+=tileSize;pointGoal.y-=tileSize;return true;}
+    //pointGoal.y = y+1;
+    if (isNotBlock(x+1,y+1)) {pointGoal.x+=tileSize;pointGoal.y+=tileSize;return true;}
+
+    //pointGoal.x = x-2;
+    //for (pointGoal.y=y-2;pointGoal.y<y+3;y++) {
+    for (int step=-2;step<3;step++) {
+      if (isNotBlock(x-2,y+step)) {
+        pointGoal.x-=2*tileSize;
+        pointGoal.y+=step*tileSize;
+        return true;
+      }
     }
-    
-    for (pointGoal.x=x-1;pointGoal.x<x+2;x++) {
-      pointGoal.y=y-2;
-      if (isValidGoal(pointGoal)) return true;
-      pointGoal.y=y+2;
-      if (isValidGoal(pointGoal)) return true;
+
+    //for (pointGoal.x=x-1;pointGoal.x<x+2;x++) {
+    for (int step=-1;step<2;step++) {
+      //pointGoal.y=y-2;
+      if (isNotBlock(x+step,y-2)) {
+        pointGoal.x+=step*tileSize;
+        pointGoal.y-=2*tileSize;
+        return true;
+      }
+      //pointGoal.y=y+2;
+      if (isNotBlock(x+step,y+2)) {
+        pointGoal.x+=step*tileSize;
+        pointGoal.y+=2*tileSize;
+        return true;
+      }
     }
-    
-    pointGoal.x = x+2;
-    for (pointGoal.y=y-2;pointGoal.y<y+3;y++) {
-      if (isValidGoal(pointGoal)) return true;
+
+    //pointGoal.x = x+2;
+    //for (pointGoal.y=y-2;pointGoal.y<y+3;y++) {
+    for (int step=-2;step<3;step++) {
+      if (isNotBlock(x+2,y+step)) {
+        pointGoal.x+=2*tileSize;
+        pointGoal.y+=step*tileSize;
+        return true;
+      }
     }
-    
+
     return false;
   }
-  
+
+ /*------------------------------------------------------------------------------------*/
+
   /**
    * Generates all the not blocked children of a Node
    *
@@ -611,16 +641,21 @@ public class AStarDouble
     return listChildren;
   }
 
+ /*------------------------------------------------------------------------------------*/
+
   /**
    * Finds the optimal path between 2 points.
    *
-   * @param pointStart baginning of the path
-   * @param pointGoal end of the path
+   * @param pointStart baginning of the path (in CELL units)
+   * @param pointGoal end of the path (in CELL units)
    */
   static public List findPath(Point pointStart, Point pointGoal) {
+    if (SHOW_DEBUG)
+      System.out.println("AStarDouble::findPath");
+
     if (aStar==null)
       aStar=new AStarDouble();
-      
+
     //if ( (!isNotBlock(pointStart.x, pointStart.y)) || (!isNotBlock(pointGoal.x, pointGoal.y)) )
 
     if (SHOW_DEBUG)
@@ -635,7 +670,7 @@ public class AStarDouble
 
     NodeDouble solution = aStar.searchNode(pointStart, pointGoal);
     return aStar.getPath(solution);
-    
+
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -656,7 +691,7 @@ public class AStarDouble
 
   /**
    * prints the AStar path
-   */  
+   */
   public String toString(List path) {
     Point pathPoint;
     String result = "";
@@ -702,7 +737,7 @@ public class AStarDouble
   static public List smoothPath(List path) {
     return aStar.smoothPath1(path);
   }
-  
+
  /** SMOOTH PATH ALGO FROM GAMASUTRA **/
 
   /** To smooth a path.
@@ -779,7 +814,13 @@ public class AStarDouble
   }
 
  /*------------------------------------------------------------------------------------*/
- 
+
+  /** To dynamically modify the mask setting all pixels of a rectangle to a boolean value
+   *
+   * @param r the rectangle to fill (in screen pixels coordinate)
+   * @param maskTileSize the CELL size (in pixel units)
+   * @param value new value of the pixels
+   */
   private synchronized void changeRectangle(Rectangle r, int maskTileSize, boolean value) {
     int cx = (int) (r.x/maskTileSize);
     int cy = (int) (r.y/maskTileSize);
@@ -799,15 +840,8 @@ public class AStarDouble
            map[cx+i][cy+j] = value;
   }
 
-  /** To dynamically modify the mask setting all pixels of a rectangle to true
-   *
-   * @param r the rectangle to clean (in screen pixels coordinate)
-   */
-  static public void cleanRectangle(Rectangle r) {
-    aStar.changeRectangle(r, tileSize, true);
-  }
-  
-  /** To dynamically modify the mask setting all pixels of a rectangle to false
+  /** To dynamically modify the mask setting all pixels
+   * of a rectangle to false
    *
    * @param r the rectangle to fill (in screen pixels coordinate)
    */
@@ -815,6 +849,15 @@ public class AStarDouble
     aStar.changeRectangle(r, tileSize, false);
   }
   
+  /** To dynamically modify the mask setting all pixels
+   * of a rectangle to true
+   *
+   * @param r the rectangle to clean (in screen pixels coordinate)
+   */
+  static public void cleanRectangle(Rectangle r) {
+    aStar.changeRectangle(r, tileSize, true);
+  }
+
  /*------------------------------------------------------------------------------------*/
-   
+
 }

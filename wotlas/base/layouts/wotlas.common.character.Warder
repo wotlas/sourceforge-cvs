@@ -1,0 +1,8 @@
+#WotLas 1.0 Saved Object
+#Fri May 24 00:37:37 CEST 2002
+bodySlot.class=wotlas.utils.ScreenRectangle
+bodySlot.height=30
+bodySlot.width=20
+bodySlot.x=10
+bodySlot.y=10
+class=wotlas.common.objects.inventories.InventoryLayout

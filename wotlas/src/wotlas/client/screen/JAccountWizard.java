@@ -342,8 +342,8 @@ public class JAccountWizard extends JWizard
    */
   class Step4 extends JWizardStep
   {
-    private JTextArea ta_infos;
-    private JTextArea ta_past;
+    private ATextArea ta_infos;
+    private ATextArea ta_past;
     private JPanel mainPanel, formPanel;
 
     /** called when the step is to be shown
@@ -374,24 +374,35 @@ public class JAccountWizard extends JWizard
       setBackground(Color.white);
 
       setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+      setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
-      ta_infos = new JTextArea("    Please take some time to invent a past for your"+
+      ta_infos = new ATextArea("    Please take some time to invent a past for your"+
                              " character. This short text will be seen by other"+
                              " players (any racist, sexual or crude text will result"+
-                             " in the close of your account).\n");
+                             " in the close of your account).\n"+
+                             " Enter your text below:");
       ta_infos.setLineWrap(true);
       ta_infos.setWrapStyleWord(true);
-      ta_infos.setEditable(false);
+      ta_infos.setEditable(false);    
       add(ta_infos);
-
+      
+      add(Box.createRigidArea(new Dimension(0,10)));
+      
 //      mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 //      mainPanel.setBackground(Color.white);
 //      formPanel = new JPanel(new GridLayout(3,2,10,2));
 //      formPanel.setBackground(Color.white);
-        ta_past = new JTextArea("Enter your text here...");
+        ta_past = new ATextArea("...");
+        //loweredbevel = ;
+
+        //ta_past.setBorder(BorderFactory.createLoweredBevelBorder());//BorderFactory.createLineBorder(Color.black));
+        ta_past.setBorder(BorderFactory.createLineBorder(Color.black));
+
         ta_past.setLineWrap(true);
         ta_past.setWrapStyleWord(true);
         ta_past.setEditable(true);
+        //ta_past.setBackground(Color.lightGray);
+        ta_past.setPreferredSize(new Dimension(0,300));
 //        formPanel.add(ta_past);
         add(ta_past);
 
@@ -400,7 +411,7 @@ public class JAccountWizard extends JWizard
 //      mainPanel.setAlignmentX(LEFT_ALIGNMENT);
 //      add(mainPanel);
 
-      add(Box.createVerticalGlue());
+      //add(Box.createVerticalGlue());
     }
   }
 

@@ -555,8 +555,8 @@ public class ClientManager
               Debug.signal( Debug.NOTICE, null, "ClientManager connected to GameServer");
               start(100);
             } else {
-              Debug.signal( Debug.ERROR, this, "ClientManager ejected from GameServer");
-              
+              Debug.signal( Debug.ERROR, this, "ClientManager ejected from GameServer");              
+              start(0);
             }
           }
         }

@@ -72,8 +72,12 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
           if( sender==null )
               Debug.signal( Debug.WARNING, this, "Couldnot find the sender of this message : "+senderPrimaryKey);
 
-       // We add sender name
-          message = "["+senderFullName+"] " + message;          
+          if (message.startsWith("/me")) {
+            message = "<font color='blue'><i>" + senderFullName + " " + message.substring(3) + "</i></font>";
+          } else {
+            // We add sender name
+            message = "["+senderFullName+"] " + message;          
+          }
            
        // We display the message
           if( voiceSoundLevel!=ChatRoom.SHOUTING_VOICE_LEVEL ) {

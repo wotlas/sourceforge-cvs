@@ -62,8 +62,8 @@ public class JClientScreen extends JFrame
   private final static int northHeight = 0;
   public final static int leftWidth = 600;
 
-  private final static int gameHeight = 350; // JMapPanel
-  public final static int mapHeight = 350;  // Same as above
+  private final static int gameHeight = 300; // JMapPanel
+  public final static int mapHeight = 300;  // Same as above
   private final static int gameMinHeight = 200; // JMapPanel
 
   private final static int thumbHeight = 100;
@@ -105,6 +105,7 @@ public class JClientScreen extends JFrame
         //System.out.println("See you soon!");
         //DataManager.getDefaultDataManager().closeConnection();
         //Debug.exit();
+        hide();
         DataManager.getDefaultDataManager().closeConnection();
         ClientManager.getDefaultClientManager().start(0);
       }

@@ -19,6 +19,9 @@
 
 package wotlas.client.gui;
 
+import wotlas.client.ClientManager;
+import wotlas.client.DataManager;
+
 import wotlas.utils.SwingTools;
 
 import javax.swing.*;
@@ -53,6 +56,15 @@ public class JIntroWizard extends JFrame
   public JIntroWizard() {
     super("Wotlas client");
     setDefaultCloseOperation(EXIT_ON_CLOSE);
+    /*addWindowListener( new WindowAdapter() {
+      public void windowClosing(WindowEvent e) {
+        //System.out.println("See you soon!");
+        //DataManager.getDefaultDataManager().exit();
+        hide();
+        DataManager.getDefaultDataManager().closeConnection();
+        ClientManager.getDefaultClientManager().start(0);
+      }
+    });*/
     setBackground(Color.white);
     setSize(width, height);
     SwingTools.centerComponent(this);

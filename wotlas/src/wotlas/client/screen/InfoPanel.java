@@ -33,7 +33,7 @@ import wotlas.common.*;
 public class InfoPanel extends JPanel
 {
   ALabel infoPlayerLabel = new ALabel();
-  JTextArea playerTextArea;
+  ATextArea playerTextArea;
   
   
   
@@ -45,7 +45,7 @@ public class InfoPanel extends JPanel
     super();
     this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
     infoPlayerLabel.setAlignmentX(0.5f);
-    playerTextArea = new JTextArea(10,25);
+    playerTextArea = new ATextArea(10,25);
     playerTextArea.setLineWrap(true);
     playerTextArea.setWrapStyleWord(true);    
     playerTextArea.setEditable(false);

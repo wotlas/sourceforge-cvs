@@ -166,8 +166,10 @@ public class JChatRoom extends JPanel
             ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
             ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-    playersJList.setPreferredSize(new Dimension(40,0));
-
+    playersJList.setPreferredSize(new Dimension(100,0));
+    playersJList.setMinimumSize(new Dimension(100,0));
+    playersJList.setMaximumSize(new Dimension(100,0));
+    
     add("Center", displayScroller);
     add("East", listScroller);
 
@@ -297,6 +299,10 @@ public class JChatRoom extends JPanel
         System.out.println("Chat Error:"+e.getMessage());*/
       }
 
+      // Search for commands
+
+      
+      
       // Search for smileys
       
       text = Tools.subString(text, ":,(", "<img width=15 height=15 src='file:../base/gui/chat/cry.gif'>");

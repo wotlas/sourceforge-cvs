@@ -31,23 +31,48 @@ public class EncounterSchedule implements BackupReady {
     private static final long serialVersionUID = 556565L;
     
     private String name;
-    private int id;
     private boolean disabled;
     private ScheduleTime timeOfActivity;
-    private boolean isRunning;
+
+    transient private int id;
+    transient private boolean isRunning;
+    transient private long lastSpawn;
+    transient private int marker;
+    transient private short resetEveryMinutes;
+    
     /*
     String name;
-    beginTime;
-    endTime;
     disabled;
     monsters[number of types][number of one type];
-    every : singlye, every 1,2,3,4 hours 10,20,40 minutes.
     reset every
     transient counter of last reset
     transient marker for this schedule to put on mob 
     */
-    public EncounterSchedule(){
+    
+    public int getId(){
+        return id;
+    }
         
+    public void setId(int id){
+        this.id = id; 
+    }
+    
+    public boolean isDisabled(){
+        return disabled;
+    }
+        
+    public void setDisabled(boolean value){
+        this.disabled = value; 
+    }
+    
+    public EncounterSchedule(String name, ScheduleTime timeOfActivity){
+        this.name = name;
+        this.timeOfActivity = timeOfActivity;
+        disabled = false;
+    }
+
+    public EncounterSchedule(){
+        disabled = false;
     }
 
     public boolean isTime(){
@@ -63,6 +88,9 @@ public class EncounterSchedule implements BackupReady {
     public void writeExternal(java.io.ObjectOutput objectOutput)
     throws java.io.IOException {
         objectOutput.writeInt( ExternalizeGetVersion() );
+        objectOutput.writeUTF( name );
+        objectOutput.writeBoolean( disabled );
+        objectOutput.writeObject( timeOfActivity );
     }
     
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -73,6 +101,9 @@ public class EncounterSchedule implements BackupReady {
     throws java.io.IOException, java.lang.ClassNotFoundException {
         int IdTmp = objectInput.readInt();
         if( IdTmp == ExternalizeGetVersion() ){
+            name = objectInput.readUTF();
+            disabled = objectInput.readBoolean();
+            timeOfActivity = (ScheduleTime) objectInput.readObject();
         } else {
             // to do.... when new version
         }

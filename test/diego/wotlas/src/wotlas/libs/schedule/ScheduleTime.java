@@ -67,6 +67,9 @@ public class ScheduleTime implements BackupReady {
     public void writeExternal(java.io.ObjectOutput objectOutput)
     throws java.io.IOException {
         objectOutput.writeInt( ExternalizeGetVersion() );
+        objectOutput.writeBoolean( isEnvironmentTime );
+        objectOutput.writeShort( minutesTimeBegin );
+        objectOutput.writeShort( minutesTimeDuration );
     }
     
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -77,6 +80,9 @@ public class ScheduleTime implements BackupReady {
     throws java.io.IOException, java.lang.ClassNotFoundException {
         int IdTmp = objectInput.readInt();
         if( IdTmp == ExternalizeGetVersion() ){
+            isEnvironmentTime = objectInput.readBoolean();
+            minutesTimeBegin = objectInput.readShort();
+            minutesTimeDuration = objectInput.readShort();
         } else {
             // to do.... when new version
         }

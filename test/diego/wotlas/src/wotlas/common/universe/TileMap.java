@@ -25,6 +25,7 @@ import wotlas.utils.*;
 import wotlas.libs.persistence.*;
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
+import wotlas.libs.schedule.*;
 
 import java.awt.Rectangle;
 import java.awt.Point;
@@ -61,6 +62,8 @@ public class TileMap extends ScreenRectangle implements WotlasMap,BackupReady {
  /*------------------------------------------------------------------------------------*/
     
     private TileMapManager manager;
+    
+    private EncounterSchedule[] encounterSchedules;
     
     public Dimension mapTileDim;
     
@@ -303,6 +306,7 @@ public class TileMap extends ScreenRectangle implements WotlasMap,BackupReady {
         objectOutput.writeObject( mapSize );
         objectOutput.writeByte( manager.getMapType() );
         objectOutput.writeObject( manager );
+        objectOutput.writeObject( encounterSchedules ); 
     }
     
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -327,6 +331,7 @@ public class TileMap extends ScreenRectangle implements WotlasMap,BackupReady {
             mapType = objectInput.readByte();
             manager = ( TileMapManager ) objectInput.readObject();
             manager.setTileMap(this);
+            encounterSchedules = ( EncounterSchedule[] ) objectInput.readObject();
         } if( IdTmp == 2 ){
             System.out.println("old data");
         } if( IdTmp == 1 ){
@@ -396,5 +401,26 @@ public class TileMap extends ScreenRectangle implements WotlasMap,BackupReady {
 
     public MapExit[] getMapExits(){
         return manager.getMapExits();
+    }
+    
+    public EncounterSchedule[] getEncounterSchedule(){
+        return encounterSchedules;
+    }   
+
+    public EncounterSchedule addEncounterSchedule() {
+        EncounterSchedule my = new EncounterSchedule();
+
+        if (encounterSchedules == null) {
+            encounterSchedules = new EncounterSchedule[1];
+            my.setId(0);
+            encounterSchedules[0] = my;
+        } else {
+            EncounterSchedule[] myEncounterSchedules = new EncounterSchedule[encounterSchedules.length+1];
+            my.setId(encounterSchedules.length);
+            System.arraycopy(encounterSchedules, 0, myEncounterSchedules, 0, encounterSchedules.length);
+            myEncounterSchedules[encounterSchedules.length] = my;
+            encounterSchedules = myEncounterSchedules;
+        }
+        return my;
     }
 }

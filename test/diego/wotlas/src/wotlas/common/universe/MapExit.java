@@ -269,12 +269,6 @@ public class MapExit extends ScreenRectangle
         objectOutput.writeObject( targetWotlasLocation );
         objectOutput.writeByte( type );
         objectOutput.writeUTF( name );
-/*
-rooms.0.mapExits.0.height=50
-rooms.0.mapExits.0.width=30
-rooms.0.mapExits.0.x=375
-rooms.0.mapExits.0.y=130
-*/
     }
     
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -309,5 +303,16 @@ rooms.0.mapExits.0.y=130
         if( name.length()==0 )
             return "No Name"+tmpLoc;
         return name+tmpLoc;
+    }
+    
+    public ScreenPoint getScreenPointFromExitLocation(){
+        ScreenPoint p = new ScreenPoint();
+        p.x = x;
+        p.y = y;
+        return p;
+    }
+    
+    public void setName(String name){
+        this.name = name;
     }
 }

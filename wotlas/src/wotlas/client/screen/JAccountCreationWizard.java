@@ -20,6 +20,7 @@
 package wotlas.client.screen;
 
 import wotlas.client.ClientManager;
+import wotlas.client.*;
 
 import wotlas.common.ServerConfig;
 import wotlas.common.ServerConfigList;
@@ -63,6 +64,16 @@ public class JAccountCreationWizard extends wotlas.libs.wizard.JWizard
    */
   public JAccountCreationWizard() {
     super("Account creation wizard",420,410);
+    
+    setLocation(200,100);
+
+    // We display first step
+    try {
+      init( wotlas.client.screen.JAccountCreationWizard$ServerSelectionStep.getStaticParameters() );
+    } catch( WizardException we ) {
+      we.printStackTrace();
+      Debug.signal( Debug.ERROR, this, "Wizard initialisation failed");
+    }
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -73,13 +84,24 @@ public class JAccountCreationWizard extends wotlas.libs.wizard.JWizard
   */
   public static class ServerSelectionStep extends JWizardStep {
     
+    /** Our ServerConfigList file.
+     */
+    private ServerConfigList serverConfigList;
+  
+    /** Current serverConfig
+     */
+    private ServerConfig currentServerConfig;
+    
+
+    /*------------------------------------------------------------------------------------*/
+
     /** This is a static JWizardStep, to build it more simply this method
      *  returns the JWizardStepParameters needed for the JWizard.
      */
     public static JWizardStepParameters getStaticParameters() {
       JWizardStepParameters param = new JWizardStepParameters(
-                            "wotlas.client.screen.JAccountWizard2$ServerSelectionStep",
-                            "Step 1 - Server selection" );
+                            "wotlas.client.screen.JAccountCreationWizard$ServerSelectionStep",
+                            "Step 1 - Server selection (1/1)" );
       param.setIsPrevButtonEnabled(false);
       param.setIsDynamic(false); // we want the step to be buffered
       return param;
@@ -92,10 +114,18 @@ public class JAccountCreationWizard extends wotlas.libs.wizard.JWizard
       
       ClientManager clientManager = ClientManager.getDefaultClientManager();
       
+      final ProfileConfig currentProfileConfig = clientManager.getCurrentProfileConfig();
+  
+      
+      
+  
       // JPanel inits
       JPanel stepPanel = new JPanel();
+      stepPanel.setLayout(new BoxLayout(stepPanel,BoxLayout.Y_AXIS));
+      
       stepPanel.setAlignmentX(LEFT_ALIGNMENT);
       stepPanel.setBackground(Color.white);
+      stepPanel.setBorder(BorderFactory.createEmptyBorder(2,20,10,20));      
       stepPanel.setPreferredSize( new Dimension(430,630) );
       
       setAlignmentX(LEFT_ALIGNMENT);
@@ -104,8 +134,24 @@ public class JAccountCreationWizard extends wotlas.libs.wizard.JWizard
       scroll.setPreferredSize( new Dimension(450,430) );
       add(scroll);
       
-      // List of servers
-      ServerConfigListTableModel serverConfigListTabModel = new ServerConfigListTableModel(clientManager.getServerConfigList());
+      // Info on this Step
+      JPanel group0 = new JPanel(new GridLayout(1,1,0,0));
+      group0.setAlignmentX(LEFT_ALIGNMENT);
+      group0.setBackground(Color.white);
+      ATextArea text0 = new ATextArea("\n    Welcome to the Account Creation Wizard.\n"
+                                          +"    First, choose the server to create your new account");
+      text0.setLineWrap(true);
+      text0.setWrapStyleWord(true);
+      text0.setEditable(false);    
+      text0.setAlignmentX(LEFT_ALIGNMENT);
+      group0.add( text0 );
+      stepPanel.add(group0);
+
+      // Loading Server Configs
+      serverConfigList = clientManager.getServerConfigList();
+      serverConfigList.getLatestConfigFiles(this);
+
+      ServerConfigListTableModel serverConfigListTabModel = new ServerConfigListTableModel(serverConfigList);
       JTable serversTable = new JTable(serverConfigListTabModel);
       serversTable.setDefaultRenderer(Object.class, new ATableCellRenderer());
       serversTable.setBackground(Color.white);
@@ -123,7 +169,7 @@ public class JAccountCreationWizard extends wotlas.libs.wizard.JWizard
 
         public void valueChanged(ListSelectionEvent e)
         {
-           /*ListSelectionModel lsm = (ListSelectionModel) e.getSource();
+           ListSelectionModel lsm = (ListSelectionModel) e.getSource();
            if (lsm.isSelectionEmpty())
                return; //no rows were selected
 
@@ -132,31 +178,47 @@ public class JAccountCreationWizard extends wotlas.libs.wizard.JWizard
           //selectedRow is selected
             currentServerConfig = serverConfigList.ServerConfigAt(selectedRow);
 
-            if(htmlDescr==null)
+            /*if(htmlDescr==null)
                htmlDescr = new JHTMLWindow( screenIntro, "Wotlas Server", "text:"+currentServerConfig.toHTML(), 350, 250, false );
             else {
                htmlDescr.setText( currentServerConfig.toHTML() );
                if( !htmlDescr.isShowing() ) htmlDescr.show();
-            }
+            }*/
+            
           //Ignore extra messages.
-            if (e.getValueIsAdjusting())
+           if (e.getValueIsAdjusting())
               return;
 
             //selectedRow is selected
             currentServerConfig = serverConfigList.ServerConfigAt(selectedRow);
-            //serversTable.setToolTipText(currentServerConfig.getDescription());
             currentProfileConfig.setOriginalServerID(currentServerConfig.getServerID());
             currentProfileConfig.setServerID(currentServerConfig.getServerID());
-            b_ok.setEnabled(true);
-            */
+// b_ok.setEnables(true);
+            
         }
       });
       // show table
       JScrollPane scrollPane = new JScrollPane(serversTable);
-      serversTable.setPreferredScrollableViewportSize(new Dimension(0, 100));
+      serversTable.setAlignmentX(LEFT_ALIGNMENT);
+      //serversTable.setPreferredScrollableViewportSize(new Dimension(0, 200));
       scrollPane.getViewport().setBackground(Color.white);
+      //scrollPane.setPreferredSize(new Dimension(100,220));
+      scrollPane.setAlignmentX(LEFT_ALIGNMENT);
       stepPanel.add(scrollPane);
-      
+     
+      // Info on the server selected
+      /*JPanel group1 = new JPanel(new GridLayout(1,1,0,0));
+      group1.setAlignmentX(LEFT_ALIGNMENT);
+      group1.setBackground(Color.white);
+      ATextArea text1 = new ATextArea(".\n.\n");
+      text1.setLineWrap(true);
+      text1.setWrapStyleWord(true);
+      text1.setEditable(false);
+      text1.setAlignmentX(LEFT_ALIGNMENT);
+      group1.add( text1 );
+      stepPanel.add(group1);
+      */
+      //stepPanel.add(Box.createVerticalGlue());
       
     }
     
@@ -170,6 +232,8 @@ public class JAccountCreationWizard extends wotlas.libs.wizard.JWizard
      *  @return return true to validate the "Next" button action, false to cancel it...
      */
     protected boolean onNext(Object context, JWizard wizard) {
+      //sendMessage(new AccountCreationMessage());
+      //await();
       return true;      
     }
     

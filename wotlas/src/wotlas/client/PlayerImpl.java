@@ -128,7 +128,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     Debug.signal( Debug.NOTICE, null, "PlayerImpl::init");
     animation = new Animation(wotCharacter.getImage(location));
     sprite = (Sprite) wotCharacter.getDrawable(this);    
-    
+    movementComposer.init( this );
   }
 
   /** Called after graphicsDirector's init to add some visual effects to the master player

@@ -63,6 +63,9 @@ public class JWizardStep1TextFieldNet extends JWizardStep1TextField {
    *  @return return true to validate the "Next" button action, false to cancel it...
    */
    protected boolean onNext(Object context, JWizard wizard) {
+    if( !super.onNext(context, wizard) )
+      return false;
+      
     JWizardStepParameters parameters = new JWizardStepParameters();
     //parameters.setStepClass(this.getClass().getName());
 

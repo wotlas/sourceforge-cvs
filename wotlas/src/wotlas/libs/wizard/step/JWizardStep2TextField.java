@@ -139,6 +139,10 @@ public class JWizardStep2TextField extends JWizardStep {
    *  @return return true to validate the "Next" button action, false to cancel it...
    */
    protected boolean onNext(Object context, JWizard wizard) {
+    if ( (tfield0.getText().length()==0) || (tfield1.getText().length()==0) ) {
+      JOptionPane.showMessageDialog( null, "Please, fill the fields", "Error", JOptionPane.ERROR_MESSAGE);
+      return false;
+    }
    	return true;
    }
 

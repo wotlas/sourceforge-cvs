@@ -122,7 +122,17 @@ public class PathFollower implements MovementComposer {
     private long movementTimeStamp;
 
  /*------------------------------------------------------------------------------------*/
- 
+
+  /** Do we have to set a special orientation of the player at the end of his movement.
+   *  This field is useful when recreating a trajectory : we don't want the final
+   *  orientation of the player to differ from the original replica.
+   */
+    transient private boolean useEndingOrientationValue;
+
+  /** The ending orientation for the slave replica of the player.
+   */
+    transient private double endingOrientation;
+
   /** Asociated Player.
    */
     transient private Player player;
@@ -175,6 +185,7 @@ public class PathFollower implements MovementComposer {
         walkingAlongPath = false;
         turningAlongPath = false;
         realisticRotations = false;
+        useEndingOrientationValue = false;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -413,6 +424,7 @@ public class PathFollower implements MovementComposer {
            }
 
            PathUpdateMovementMessage msg = (PathUpdateMovementMessage) updateMessage;
+           useEndingOrientationValue=false;
 
 /* METHOD 1 : SIMPLE UPDATE : WE FORCE THE NEW POSITION
 
@@ -479,9 +491,16 @@ public class PathFollower implements MovementComposer {
                             recreateTrajectory( msg.dstPoint, 0 );
                     }
                     else {
+                      // no movement, we received the master replica's ending trajectory position
                         if( target.x!=msg.srcPoint.x || target.y!=msg.srcPoint.y
-                    	    || distance( target, getPosition() )>200 )
+                    	    || distance( target, getPosition() )>200 ) {
                     	    takeUpdate = true;
+                    	}
+                        else {
+                          // save the final orientation for later
+                            useEndingOrientationValue=true;
+                            endingOrientation = msg.orientationAngle;
+                        }
                     }
                 }
                 else
@@ -586,6 +605,12 @@ public class PathFollower implements MovementComposer {
                 xPosition = (float) nextPoint.x;
                 yPosition = (float) nextPoint.y;
                 orientationAngle = nextAngle;
+                
+                if(useEndingOrientationValue) {
+                   orientationAngle = endingOrientation;
+                   useEndingOrientationValue=false;
+                }
+
                 stopMovement();
                 return;
             }

@@ -178,8 +178,9 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
   */
   public void init() {
     //Debug.signal( Debug.NOTICE, null, "PlayerImpl::init");
-    animation = new Animation( wotCharacter.getImage(location), ImageLibrary.getDefaultImageLibrary() );
-    sprite = (Sprite) wotCharacter.getDrawable(this);              
+    animation = new Animation( wotCharacter.getImage(location),
+                               ClientDirector.getDataManager().getImageLibrary() );
+    sprite = (Sprite) wotCharacter.getDrawable(this);
     brightnessFilter = new BrightnessFilter();
     sprite.setDynamicImageFilter(brightnessFilter);
     movementComposer.init( this );

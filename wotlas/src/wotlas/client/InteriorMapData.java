@@ -219,10 +219,10 @@ public class InteriorMapData implements MapData {
        ImageIdentifier brightnessMaskID = gDirector.getImageLibrary().getImageIdentifier( backgroundImageID, "brightness" );
 
        if(brightnessMaskID!=null) {
-          File brightnessMaskFile = gDirector.getImageLibrary().getImageFile( brightnessMaskID );
+          String brightnessMaskFile = gDirector.getImageLibrary().getImageFile( brightnessMaskID );
           
           if(brightnessMaskFile!=null)
-             bufIm2 = ImageLibrary.loadBufferedImage( brightnessMaskFile.getPath(), BufferedImage.TYPE_INT_ARGB  );
+             bufIm2 = gDirector.getImageLibrary().loadBufferedImage( brightnessMaskFile, BufferedImage.TYPE_INT_ARGB  );
        }
 
        if(bufIm2==null) {

@@ -60,7 +60,7 @@ public class GrayMask
    *
    * @param path image path
    * @return the created mask
-   */
+   *
   static public byte[][] create(String path) {
     BufferedImage maskBuffImg = ImageLibrary.loadBufferedImage(path);
     return create(maskBuffImg);

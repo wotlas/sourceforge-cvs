@@ -81,11 +81,10 @@ public class PlayerConnectedToGameMsgBehaviour extends PlayerConnectedToGameMess
         // 3 - Update the Chat players list about searchedPlayer's state
            dataManager.getClientScreen().getChatPanel().updateAllChatRooms(searchedPlayer);
       	 
-           if (isConnectedToGame) {              
-              SoundLibrary.getSoundLibrary().playSound("gong.wav");
-           } else {              
-              SoundLibrary.getSoundLibrary().playSound("man-yawn.wav");
-           }
+           if(isConnectedToGame)
+              SoundLibrary.getSoundPlayer().playSound("gong.wav");
+           else
+              SoundLibrary.getSoundPlayer().playSound("man-yawn.wav");
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

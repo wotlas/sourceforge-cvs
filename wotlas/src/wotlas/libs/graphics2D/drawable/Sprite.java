@@ -22,6 +22,7 @@ package wotlas.libs.graphics2D.drawable;
 import wotlas.libs.graphics2D.*;
 
 import java.awt.*;
+import java.awt.image.*;
 import java.awt.geom.*;
 
 /** A Sprite is mainly an image displayed on the GraphicsDirector. The sprite data is 
@@ -71,6 +72,10 @@ public class Sprite extends Drawable implements DrawableOwner {
    */
      private byte anchorMode;
 
+  /** Eventual Dynamic Image Filter
+   */
+     private DynamicImageFilter imageFilter;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. The anchor mode for rotations is set to CENTER_ANCHOR_POINT.
@@ -118,6 +123,15 @@ public class Sprite extends Drawable implements DrawableOwner {
    */
     public SpriteDataSupplier getDataSupplier() {
         return dataSupplier;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To add a DynamicImageFilter to this Sprite. The filter will be called to create
+   *  a new filtered BufferedImage before rendering.
+   */
+    public void setDynamicImageFilter( DynamicImageFilter imageFilter ) {
+    	this.imageFilter = imageFilter;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -192,15 +206,16 @@ public class Sprite extends Drawable implements DrawableOwner {
 
 
       // 4 - image display
-         if( affTr==null ) {
-             gc.drawImage( ImageLibrary.getDefaultImageLibrary().getImage( image ),
-                           r.x-screen.x, r.y-screen.y, null );
-         }
+         BufferedImage bufIm = ImageLibrary.getDefaultImageLibrary().getImage( image );
+         
+         if( imageFilter!=null )
+             bufIm = imageFilter.filterImage( bufIm );
+
+         if( affTr==null )
+             gc.drawImage( bufIm, r.x-screen.x, r.y-screen.y, null );
          else {
              affTr.translate( r.x-screen.x, r.y-screen.y );
-
-             gc.drawImage( ImageLibrary.getDefaultImageLibrary().getImage( image ),
-                           affTr, null );
+             gc.drawImage( bufIm, affTr, null );
          }
 
       // 5 - alpha cleaning

@@ -144,6 +144,7 @@ public class WorldTree extends JPanel {
       // Create a tree that allows one selection at a time.
          tree = new JTree(top);
          tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+         tree.setFont(new Font("Dialog", Font.PLAIN, 10));
 
          tree.addMouseListener( new MouseAdapter() {
               public void mousePressed(MouseEvent e) {
@@ -162,8 +163,9 @@ public class WorldTree extends JPanel {
  
 
       // We add the components
-         tree.setPreferredSize(new Dimension(500,500));
-         add( new JScrollPane( tree ) );
+         JScrollPane scroller = new JScrollPane( tree );
+         scroller.setPreferredSize(new Dimension(450,280));
+         add( scroller );
     }
 
  /*------------------------------------------------------------------------------------*/

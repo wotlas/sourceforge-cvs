@@ -19,9 +19,11 @@
  
 package wotlas.server.setup;
 
+import wotlas.server.ServerDirector;
 import wotlas.common.universe.*;
 import wotlas.common.*;
 import wotlas.libs.log.*;
+import wotlas.libs.aswing.*;
 import wotlas.utils.Debug;
 
 import javax.swing.*;
@@ -35,118 +37,101 @@ import java.io.File;
   * @author Aldiss
   */
 
-public class ServerMapSetup extends WorldTree {
-
- /*------------------------------------------------------------------------------------*/
-
-  /** Our worldMaps...
-   */
-    private static WorldManager wManager;
-
- /*------------------------------------------------------------------------------------*/
-
-   /** Our JFrame
-    */
-     private JFrame frame;
+public class ServerMapSetup extends JPanel {
 
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
    * @param wManager worldManager to use to get the world data.
    */
-    public ServerMapSetup( WorldManager wManager ) {
-       super( wManager, BUILDING_LEVEL_ONLY );
+    public ServerMapSetup() {
+       super();
        
-       frame = new JFrame("Server Map Setup");
+       setLayout(new BorderLayout());
+       setBackground(Color.white);
+       setBorder(BorderFactory.createEmptyBorder(5,10,0,10));
 
-       frame.getContentPane().add(new JLabel("Double-click on a 'Building' to edit its serverID (server that owns it):"),BorderLayout.NORTH);
-       frame.getContentPane().add( this, BorderLayout.CENTER );
+       ALabel ltitle = new ALabel("Double-click on a building to change the server that owns it (serverID):");
+       ltitle.setBackground( Color.white );
+       add( ltitle, BorderLayout.NORTH);
+
+       BuildingTree buildingTree = new BuildingTree( ServerAdminGUI.getWorldManager()  );  // internal class
+       buildingTree.setBackground(Color.white);
+       add( buildingTree, BorderLayout.CENTER );
 
        JPanel buttonPanel = new JPanel();
-       frame.getContentPane().add( buttonPanel, BorderLayout.SOUTH );
+       buttonPanel.setBackground(Color.white);
+       add( buttonPanel, BorderLayout.SOUTH );
 
-         JButton bSave = new JButton("Save World Data.");
+       ImageIcon im_saveup = ServerDirector.getResourceManager().getImageIcon("save-up.gif");
+       ImageIcon im_savedo   = ServerDirector.getResourceManager().getImageIcon("save-do.gif");
+
+         JButton bSave = new JButton(im_saveup);
+         bSave.setRolloverIcon(im_savedo);
+         bSave.setPressedIcon(im_savedo);   
+         bSave.setBorderPainted(false);
+         bSave.setContentAreaFilled(false);
+         bSave.setFocusPainted(false);
 
           bSave.addActionListener(new ActionListener() {
               public void actionPerformed (ActionEvent e) {
-                  if( ServerMapSetup.wManager.saveUniverse( true ) )
-                      JOptionPane.showMessageDialog(frame, " World data saved", "Success", JOptionPane.INFORMATION_MESSAGE); 
+                  if( ServerAdminGUI.getWorldManager().getWorldMaps()==null ) {
+                      JOptionPane.showMessageDialog(null, " No world data to save.", "INFORMATION", JOptionPane.ERROR_MESSAGE);
+                      return;
+                  }
+
+                  if( ServerAdminGUI.getWorldManager().saveUniverse( true ) )
+                      JOptionPane.showMessageDialog(null, " World data saved", "Success", JOptionPane.INFORMATION_MESSAGE); 
                   else
-                      JOptionPane.showMessageDialog(frame, " Failed to save world data.", "INFORMATION", JOptionPane.ERROR_MESSAGE);
+                      JOptionPane.showMessageDialog(null, " Failed to save world data.", "INFORMATION", JOptionPane.ERROR_MESSAGE);
               }
           });
 
-         JButton bQuit = new JButton("Exit (without saving)");
-
-          bQuit.addActionListener(new ActionListener() {
-              public void actionPerformed (ActionEvent e) {
-                  Debug.exit();
-              }
-          });
-
-       buttonPanel.add( bSave, BorderLayout.WEST );
-       buttonPanel.add( bQuit, BorderLayout.EAST );
-
-       frame.pack();
-       frame.setLocation(200,200);
-       frame.show();
+       buttonPanel.add( bSave, BorderLayout.EAST );
     }
 
  /*------------------------------------------------------------------------------------*/
 
-   /** Method called when an element is clicked.
-    *  Extend this method to provide here the process you want on the selected object.
-    *  Note that the 'selected' is either a WorldMap, TownMap, Building, InteriorMap or Room.
-    *
-    *  By default here we don't do anything.
-    *
-    * @param selected object in the hierarchy.  You can cast it into a WorldMap, etc...
-    */
-    public void elementDoubleClicked( Object selectedObject ) {
-    	if( !(selectedObject instanceof Building) )
-    	    return;
-    	
-        String newID = JOptionPane.showInputDialog("Enter a new serverID for this building:"); 
-
-        if(newID==null || newID.length()==0) return;
-
-        try{
-           int nID = Integer.parseInt( newID );
-
-           Building b = (Building) selectedObject;
-           b.setServerID(nID);        
-        }
-        catch(Exception e) {
-           Debug.signal(Debug.ERROR, this,"ERROR: "+e.getMessage()+"\n  -> ServerID not saved.");
-           return;
-        }
-
-        repaint();
-    }
-
- /*------------------------------------------------------------------------------------*/
-
-  /** Main
+  /** A tree composed of the buildings of the game.
    */
-    static public void main( String argv[] ) {
-          Debug.signal(Debug.NOTICE,null,"Starting Server Map Setup...");
+   public class BuildingTree extends WorldTree {
 
-        // STEP 1 - Creation of the ResourceManager
-           ResourceManager rManager = new ResourceManager();
+     /** Constructor.
+      */
+        public BuildingTree( WorldManager wManager ) {
+               super(wManager, WorldTree.BUILDING_LEVEL_ONLY );
+        }
 
-        // STEP 2 - Log Creation
-           try {
-              Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(),
-                                    rManager.getExternalLogsDir()+"server-map-setup.log",
-                                    "log-title-dark.jpg", rManager ) );
-           } catch( java.io.FileNotFoundException e ) {
-              e.printStackTrace();
-              Debug.exit();
+     /** Method called when an element is clicked.
+      *  Extend this method to provide here the process you want on the selected object.
+      *  Note that the 'selected' is either a WorldMap, TownMap, Building, InteriorMap or Room.
+      *
+      *  By default here we don't do anything.
+      *
+      * @param selected object in the hierarchy.  You can cast it into a WorldMap, etc...
+      */
+       public void elementDoubleClicked( Object selectedObject ) {
+           if( !(selectedObject instanceof Building) )
+    	       return;
+    	
+           String newID = JOptionPane.showInputDialog("Enter a new serverID for this building:"); 
+
+           if(newID==null || newID.length()==0) return;
+
+           try{
+              int nID = Integer.parseInt( newID );
+
+              Building b = (Building) selectedObject;
+              b.setServerID(nID);
+           }
+           catch(Exception e) {
+              Debug.signal(Debug.ERROR, this,"ERROR: "+e.getMessage()+"\n  -> ServerID not saved.");
+              return;
            }
 
-           wManager = new WorldManager(rManager,true);
-           new ServerMapSetup(wManager);
-    }
+          ServerMapSetup.this.repaint();
+       }
+   }
 
  /*------------------------------------------------------------------------------------*/
 

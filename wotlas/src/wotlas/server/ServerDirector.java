@@ -19,6 +19,7 @@
 
 package wotlas.server;
 
+import wotlas.server.setup.ServerAdminGUI;
 import wotlas.utils.Debug;
 import wotlas.utils.Tools;
 import wotlas.utils.FileTools;
@@ -49,8 +50,9 @@ public class ServerDirector implements Runnable, NetServerListener {
    /** Server Command Line Help
     */
       public final static String SERVER_COMMAND_LINE_HELP =
-            "Usage: ServerDirector -[debug|erroronly|daemon|help] -[base <path>]\n\n"
+            "Usage: ServerDirector -[debug|admin|erroronly|daemon|help] -[base <path>]\n\n"
            +"Examples : \n"
+           +"  ServerDirector -admin        : will display the admin GUI only.\n"
            +"  ServerDirector -daemon       : the server will display nothing.\n"
            +"  ServerDirector -erroronly    : the server will only print errors.\n"
            +"  ServerDirector -base ../base : sets the data location.\n\n"
@@ -122,6 +124,7 @@ public class ServerDirector implements Runnable, NetServerListener {
 
         // STEP 0 - We parse the command line options
            boolean isDaemon = false;
+           boolean displayAdminGUI = false;
            String basePath = ResourceManager.DEFAULT_BASE_PATH;
            Debug.displayExceptionStack( false );
 
@@ -150,6 +153,15 @@ public class ServerDirector implements Runnable, NetServerListener {
 
                    Debug.displayExceptionStack( false );
                    Debug.setLevel(Debug.ERROR);
+              }
+              else if (argv[i].equals("-admin")) {  // -- TO ONLY DISPLAY THE ADMIN GUI --
+                  if(isDaemon) {
+                     System.out.println("Incompatible options.");
+                     System.out.println(SERVER_COMMAND_LINE_HELP);
+                     return;
+                   }
+
+                   displayAdminGUI = true;
               }
               else if (argv[i].equals("-daemon")) {   // -- DAEMON MODE --
                    if(SHOW_DEBUG) {
@@ -193,7 +205,12 @@ public class ServerDirector implements Runnable, NetServerListener {
                   Debug.setPrintStream( new DaemonLogStream( resourceManager.getExternalLogsDir()
                            +SERVER_LOG_PREFIX+System.currentTimeMillis()+SERVER_LOG_SUFFIX ) );
                }
-               else {
+               else if(displayAdminGUI) {
+                  Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(),
+                                    resourceManager.getExternalLogsDir()+"server-setup.log",
+                                    "log-title-dark.jpg", resourceManager ) );
+               }
+               else{
                	// We also print the Debug messages on System.err
                   Debug.setPrintStream( new ServerLogStream( resourceManager.getExternalLogsDir()
                            +SERVER_LOG_PREFIX+System.currentTimeMillis()+SERVER_LOG_SUFFIX ) );
@@ -222,6 +239,11 @@ public class ServerDirector implements Runnable, NetServerListener {
 
            serverProperties = new ServerPropertiesFile(resourceManager);
            remoteServersProperties = new RemoteServersPropertiesFile(resourceManager);
+
+           if(displayAdminGUI) {
+              ServerAdminGUI.create();
+              return; // we just display the admin GUI, we don't start the server.
+           }
 
         // STEP 4 - We ask the ServerManager to get ready
            serverManager = new ServerManager(resourceManager);
@@ -419,6 +441,15 @@ public class ServerDirector implements Runnable, NetServerListener {
    */
    public static Properties getServerProperties() {
       return (Properties)serverProperties;
+   }
+
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get remote servers properties.
+   * @return remote servers properties
+   */
+   public static Properties getRemoteServersProperties() {
+      return (Properties)remoteServersProperties;
    }
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

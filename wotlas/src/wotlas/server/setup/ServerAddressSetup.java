@@ -46,37 +46,9 @@ public class ServerAddressSetup extends JWizard {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Setup Command Line Help
-   */
-    public final static String SETUP_COMMAND_LINE_HELP =
-            "Usage: ServerAddressSetup -[help|base <path>]\n\n"
-           +"Examples : \n"
-           +"  ServerAddressSetup -base ../base : sets the data location.\n\n"
-           +"If the -base option is not set we search for data in "
-           +ResourceManager.DEFAULT_BASE_PATH
-           +"\n\n";
-
- /*------------------------------------------------------------------------------------*/
-
-   /** Our resource Manager
-    */
-     private static ResourceManager rManager;
-
-   /** Our base path.
-    */
-     private static String basePath;
-
    /** Our serverID
     */
      private static int serverID;
-
-   /** Remote server config properties
-    */
-     private static ServerPropertiesFile serverProperties;
-
-   /** Remote server config properties
-    */
-     private static RemoteServersPropertiesFile remoteServersProperties;
 
    /** Server Config Address file path.
     */
@@ -92,11 +64,17 @@ public class ServerAddressSetup extends JWizard {
    */
     public ServerAddressSetup() {
          super("Server Address Setup",
-               rManager,
+               ServerDirector.getResourceManager(),
                FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter").deriveFont(18f),
                470,550);
 
          setLocation(200,100);
+         serverID = ServerDirector.getServerID();
+
+         serverAddressFile = ServerDirector.getResourceManager().getExternalServerConfigsDir()
+                               +ServerConfigManager.SERVERS_PREFIX
+                               +serverID+ServerConfigManager.SERVERS_SUFFIX
+                               +ServerConfigManager.SERVERS_ADDRESS_SUFFIX;
 
          if(serverID==0)
             JOptionPane.showMessageDialog( null, "Your server ID is 0 ('localhost'). This setup program is only"
@@ -109,7 +87,7 @@ public class ServerAddressSetup extends JWizard {
           }
           catch( WizardException we ) {
                we.printStackTrace();
-               Debug.exit(); // init failed !
+               dispose(); // init failed !
           }
     }
 
@@ -118,7 +96,7 @@ public class ServerAddressSetup extends JWizard {
   /** Called when wizard is finished (after last step's end).
    */
    protected void onFinished(Object context) {
-           Debug.exit();
+           dispose();
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -126,7 +104,7 @@ public class ServerAddressSetup extends JWizard {
   /** Called when wizard is canceled ('cancel' button pressed).
    */
    protected void onCanceled(Object context) {
-         Debug.exit();
+         dispose();
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -205,7 +183,7 @@ public class ServerAddressSetup extends JWizard {
            JLabel label1 = new JLabel("Select/Enter your Internet address or DNS name (do not enter both) :");
            label1.setAlignmentX(LEFT_ALIGNMENT);
 
-           String lastIP = rManager.loadText( serverAddressFile );
+           String lastIP = ServerDirector.getResourceManager().loadText( serverAddressFile );
 
            if(lastIP==null) lastIP="0.0.0.0";
 
@@ -223,7 +201,7 @@ public class ServerAddressSetup extends JWizard {
         // File Transfer Info
            JTextArea text2 = new JTextArea("\n      We need to know how to transfer your server's IP"
                                           +" address to the wotlas central web server : "
-                                          +remoteServersProperties.getProperty("info.remoteServerHomeURL") );
+                                          +ServerDirector.getRemoteServersProperties().getProperty("info.remoteServerHomeURL") );
 
            text2.setAlignmentX(LEFT_ALIGNMENT);
            text2.setLineWrap(true);
@@ -238,7 +216,7 @@ public class ServerAddressSetup extends JWizard {
 
            JLabel label2 = new JLabel("Enter your login :");
            label2.setAlignmentX(LEFT_ALIGNMENT);
-           t_login = new JTextField(remoteServersProperties.getProperty("transfer.serverHomeLogin",""));
+           t_login = new JTextField(ServerDirector.getRemoteServersProperties().getProperty("transfer.serverHomeLogin",""));
            t_login.setAlignmentX(LEFT_ALIGNMENT);
 
            group2.add( label2 );
@@ -269,7 +247,7 @@ public class ServerAddressSetup extends JWizard {
            label4.setAlignmentX(LEFT_ALIGNMENT);
 
            String cmdProgList[] = {
-           	   remoteServersProperties.getProperty("transfer.fileTransferProgram",""),
+           	   ServerDirector.getRemoteServersProperties().getProperty("transfer.fileTransferProgram",""),
            	   "../bin/win32/pscp.exe",
            	   "\"../bin/win32/pscp.exe\"   (for win2000 & XP, don't remove the \" \" )",
            	   "scp",
@@ -299,7 +277,7 @@ public class ServerAddressSetup extends JWizard {
            text5.setEditable(false);
 
            String cmdOptList[] = {
-           	   remoteServersProperties.getProperty("tranfer.fileTransferOptions",""),
+           	   ServerDirector.getRemoteServersProperties().getProperty("tranfer.fileTransferOptions",""),
            	   "-pw $PASSW$ $FILE$ $LOGIN$@shell.sf.net:/home/groups/w/wo/wotlas/htdocs/game",
            	   };
 
@@ -319,7 +297,7 @@ public class ServerAddressSetup extends JWizard {
            text6.setAlignmentX(LEFT_ALIGNMENT);
 
            String cmdWorkDirList[] = {
-           	   remoteServersProperties.getProperty("transfer.fileTransferWorkingDir",""),
+           	   ServerDirector.getRemoteServersProperties().getProperty("transfer.fileTransferWorkingDir",""),
            	   "../bin/win32",
            	   "../bin/unix"
            	   };
@@ -357,12 +335,12 @@ public class ServerAddressSetup extends JWizard {
        	      password = new String(t_passw.getPassword());
 
        	   // 1 - we retrieve the data and save it to disk.
-       	      remoteServersProperties.setProperty( "transfer.serverHomeLogin", t_login.getText() );
-       	      remoteServersProperties.setProperty( "transfer.fileTransferProgram", c_prog.getSelectedItem().toString() );
-       	      remoteServersProperties.setProperty( "tranfer.fileTransferOptions", c_options.getSelectedItem().toString() );
-       	      remoteServersProperties.setProperty( "transfer.fileTransferWorkingDir", c_workdir.getSelectedItem().toString() );
+       	      ServerDirector.getRemoteServersProperties().setProperty( "transfer.serverHomeLogin", t_login.getText() );
+       	      ServerDirector.getRemoteServersProperties().setProperty( "transfer.fileTransferProgram", c_prog.getSelectedItem().toString() );
+       	      ServerDirector.getRemoteServersProperties().setProperty( "tranfer.fileTransferOptions", c_options.getSelectedItem().toString() );
+       	      ServerDirector.getRemoteServersProperties().setProperty( "transfer.fileTransferWorkingDir", c_workdir.getSelectedItem().toString() );
 
-              if( !rManager.saveText( serverAddressFile, t_ipAddress.getText() ) ) {
+              if( !ServerDirector.getResourceManager().saveText( serverAddressFile, t_ipAddress.getText() ) ) {
                   JOptionPane.showMessageDialog( null, "Failed to save IP address to\n"+serverAddressFile,
                                                         "Error", JOptionPane.ERROR_MESSAGE);
                   return false;
@@ -423,7 +401,7 @@ public class ServerAddressSetup extends JWizard {
            JTextArea taInfo = new JTextArea("\n\n\n      We will now run the command line you entered in the previous step. "
                                     +"It will send your 'server-"+serverID+".cfg.adr' file to the "
                                     +"web server hosting the following URL : "
-                                    +remoteServersProperties.getProperty("info.remoteServerHomeURL")
+                                    +ServerDirector.getRemoteServersProperties().getProperty("info.remoteServerHomeURL")
                                     +"\n\n      Your '.adr' file will be available at this URL. "
                                     +"This way other servers/client will be able to discover your server and connect to it.\n\n"
                                     +"If the transfer doesn't work take a look at server-side questions in our FAQ.\n\n");
@@ -448,7 +426,7 @@ public class ServerAddressSetup extends JWizard {
                     StringBuffer fullCmd = new StringBuffer("");
                     boolean wrapFilePath = false; // need to wrap file path between " " ? (winXP needs it)
 
-                    String prog = remoteServersProperties.getProperty("transfer.fileTransferProgram","");
+                    String prog = ServerDirector.getRemoteServersProperties().getProperty("transfer.fileTransferProgram","");
 
                     if( prog.startsWith("\"") && prog.endsWith("\"") ) {
                         wrapFilePath = true;
@@ -469,7 +447,7 @@ public class ServerAddressSetup extends JWizard {
                         fullCmd.append(" "); // separator between program name & options
 
                  // We check the options command
-                    String cmd = remoteServersProperties.getProperty("tranfer.fileTransferOptions","");
+                    String cmd = ServerDirector.getRemoteServersProperties().getProperty("tranfer.fileTransferOptions","");
                     cmd += " "; // makes our job easier
                  
                     if( cmd.indexOf("$FILE$")<0 ) {
@@ -515,7 +493,7 @@ public class ServerAddressSetup extends JWizard {
                     ind1 = cmd.indexOf("$LOGIN$");
 
                     fullCmd.append( cmd.substring(0,ind1) );
-                    fullCmd.append( remoteServersProperties.getProperty("transfer.serverHomeLogin","") );
+                    fullCmd.append( ServerDirector.getRemoteServersProperties().getProperty("transfer.serverHomeLogin","") );
                     fullCmd.append( cmd.substring(ind1+7,cmd.length() ) );
                     cmd = fullCmd.toString();
                     fullCmd = new StringBuffer("");
@@ -528,7 +506,7 @@ public class ServerAddressSetup extends JWizard {
 
                  // Runtime... we execute the transfert command
                     int result=1;
-                    String workingDir = remoteServersProperties.getProperty("transfer.fileTransferWorkingDir");
+                    String workingDir = ServerDirector.getRemoteServersProperties().getProperty("transfer.fileTransferWorkingDir");
                     File workingDirPath = null;
                     
                     if(workingDir.length()!=0)
@@ -595,76 +573,6 @@ public class ServerAddressSetup extends JWizard {
 
      /* -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  */
 
-    }
-
- /*------------------------------------------------------------------------------------*/
-
-  /** Main. Starts the setup utility.
-   * @param argv enter -help to get some help info.
-   */
-    static public void main( String argv[] ) {
-
-        // STEP 0 - We parse the command line options
-           basePath = ResourceManager.DEFAULT_BASE_PATH;
-           Debug.displayExceptionStack( true );
-
-           for( int i=0; i<argv.length; i++ ) {
-
-              if( !argv[i].startsWith("-") )
-                  continue;
-
-              if(argv[i].equals("-base")) {   // -- TO SET THE CONFIG FILES LOCATION --
-
-                   if(i==argv.length-1) {
-                      System.out.println("Location missing.");
-                      System.out.println(SETUP_COMMAND_LINE_HELP);
-                      return;
-                   }
-
-                   basePath = argv[i+1];
-              }
-              else if(argv[i].equals("-help")) {   // -- TO DISPLAY THE HELP --
-
-                   System.out.println(SETUP_COMMAND_LINE_HELP);
-                   return;
-              }
-           }
-
-        // STEP 1 - Creation of the ResourceManager
-           rManager = new ResourceManager();
-
-           if( !rManager.inJar() )
-               rManager.setBasePath(basePath);
-
-        // STEP 2 - Log Creation
-           try {
-              Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(),
-                                    rManager.getExternalLogsDir()+"server-setup.log",
-                                    "log-title-dark.jpg", rManager ) );
-           } catch( java.io.FileNotFoundException e ) {
-              e.printStackTrace();
-              Debug.exit();
-           }
-
-           Debug.signal(Debug.NOTICE,null,"Starting Server Address Setup...");
-
-           serverProperties = new ServerPropertiesFile(rManager);
-           remoteServersProperties = new RemoteServersPropertiesFile(rManager);
-
-           serverID = serverProperties.getIntegerProperty("init.serverID");
-           Debug.signal( Debug.NOTICE, null, "Current Default Server ID is : "+serverID );
-
-           serverAddressFile = rManager.getExternalServerConfigsDir()
-                               +ServerConfigManager.SERVERS_PREFIX
-                               +serverID+ServerConfigManager.SERVERS_SUFFIX
-                               +ServerConfigManager.SERVERS_ADDRESS_SUFFIX;
-
-         // STEP 3 - Creation of our Font Factory
-           FontFactory.createDefaultFontFactory( rManager );
-           Debug.signal( Debug.NOTICE, null, "Font factory created..." );
-
-         // STEP 4 - Start the wizard
-           new ServerAddressSetup();
     }
 
  /*------------------------------------------------------------------------------------*/

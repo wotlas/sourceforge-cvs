@@ -89,29 +89,9 @@ public class ServerSetup extends JWizard {
 
  /*------------------------------------------------------------------------------------*/
 
-   /** Our base path.
-    */
-     private static String basePath;
-
-   /** ResourceManager
-    */
-     private static ResourceManager rManager;
-
-   /** Our serverID
+   /** Our current serverID
     */
      private static int serverID;
-
-   /** Remote server config properties
-    */
-     private static ServerPropertiesFile serverProperties;
-
-   /** Remote server config properties
-    */
-     private static RemoteServersPropertiesFile remoteServersProperties;
-
-   /** Server Config file path.
-    */
-     private static String serverConfigPrefixPath;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -119,11 +99,11 @@ public class ServerSetup extends JWizard {
    */
     public ServerSetup() {
          super("Server Config",
-               rManager,
+               ServerDirector.getResourceManager(),
                FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter").deriveFont(18f),
                470,450);
          setLocation(200,100);
-         setGUI();
+         serverID = ServerDirector.getServerID(); // we get the current server ID
 
        // We display first step
           try{
@@ -140,7 +120,7 @@ public class ServerSetup extends JWizard {
   /** Called when wizard is finished (after last step's end).
    */
    protected void onFinished(Object context) {
-           Debug.exit();
+           dispose();
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -148,7 +128,7 @@ public class ServerSetup extends JWizard {
   /** Called when wizard is canceled ('cancel' button pressed).
    */
    protected void onCanceled(Object context) {
-         Debug.exit();
+         dispose();
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -289,11 +269,11 @@ public class ServerSetup extends JWizard {
                    break;
 
             	case 2:
+            	   serverID=0;
                    wizard.setNextStep(  ServerInterfaceWizardStep.getStaticParameters()  );
                    break;
 
             	case 3:
-            	   serverID=0;
                    wizard.setNextStep(  ServerInterfaceWizardStep.getStaticParameters()  );
                    break;
             }
@@ -339,7 +319,7 @@ public class ServerSetup extends JWizard {
           param.setProperty("init.label0", "Enter your server ID :");
 
           param.setProperty("init.info0", "\n      To obtain a valid server Id you should contact this address : "
-                                         +""+remoteServersProperties.getProperty("info.remoteServerAdminEmail","")
+                                         +""+ServerDirector.getRemoteServersProperties().getProperty("info.remoteServerAdminEmail","")
                                          +". Just send a mail to that address and ask for an Id."
                                          +" Once you have your Id enter it here and click on 'next'.");
           return param;
@@ -417,10 +397,10 @@ public class ServerSetup extends JWizard {
           param.setIsDynamic(true);
 
           param.setProperty("init.label0", "Wotlas web server's URL:");
-          param.setProperty("init.text0", remoteServersProperties.getProperty("info.remoteServerHomeURL","") );
+          param.setProperty("init.text0", ServerDirector.getRemoteServersProperties().getProperty("info.remoteServerHomeURL","") );
 
           param.setProperty("init.label1", "Wotlas manager's email:");
-          param.setProperty("init.text1", remoteServersProperties.getProperty("info.remoteServerAdminEmail","") );
+          param.setProperty("init.text1", ServerDirector.getRemoteServersProperties().getProperty("info.remoteServerAdminEmail","") );
 
           param.setProperty("init.info0", "\n      We need this information to know how to contact a specified"
                                          +" wotlas network. If you don't know them please refer to the"
@@ -456,8 +436,8 @@ public class ServerSetup extends JWizard {
           int value = JOptionPane.showConfirmDialog(null, "Save this information ? (required for next step)", "Save", JOptionPane.YES_NO_OPTION);
           if( value != JOptionPane.YES_OPTION ) return false;
 
-          remoteServersProperties.setProperty( "info.remoteServerHomeURL", getText0() );
-          remoteServersProperties.setProperty( "info.remoteServerAdminEmail", getText1() );
+          ServerDirector.getRemoteServersProperties().setProperty( "info.remoteServerHomeURL", getText0() );
+          ServerDirector.getRemoteServersProperties().setProperty( "info.remoteServerAdminEmail", getText1() );
 
           wizard.setNextStep( ServerIdWizardStep.getStaticParameters()  );
           return true;
@@ -509,8 +489,9 @@ public class ServerSetup extends JWizard {
        private JPanel autoPanel, fixedPanel;
 
        private JComboBox c_itfName,c_ipName;
-       private ARadioButton r_automatic, r_fixed, r_publishSelect, r_publishFixed;
-       private ButtonGroup btGroupItf, btGroupPublish;
+       private ARadioButton r_automatic, r_fixed, r_publishSelect, r_publishFixed,
+                            r_automaticUpdate, r_manualUpdate;
+       private ButtonGroup btGroupItf, btGroupPublish, btGroupUpdate;
 
      /* -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  */
 
@@ -605,13 +586,14 @@ public class ServerSetup extends JWizard {
             netPanel2.setBackground(Color.white);
             netPanel2.add(r_fixed);
             netPanel2.add(fixedPanel);
+            netPanel2.setBorder(BorderFactory.createEmptyBorder(0,0,1,0));
             
             netPanel.add( netPanel1, BorderLayout.NORTH);
             netPanel.add( netPanel2, BorderLayout.SOUTH);
             mainPanel.add( netPanel, BorderLayout.NORTH );
 
          // Creation of the publish panel
-            r_publishSelect = new ARadioButton("Publish the IP of the interface selected above.");
+            r_publishSelect = new ARadioButton("Publish the IP of the interface that was selected above.");
             r_publishSelect.setActionCommand("publishItf");
             r_publishSelect.addActionListener(this);
 
@@ -630,18 +612,39 @@ public class ServerSetup extends JWizard {
             otherPanel.setBackground(Color.white);
             otherPanel.add(r_publishFixed);
             otherPanel.add(t_itfPublish);
+            otherPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,10));
             
-            JPanel publishPanel = new JPanel(new GridLayout(3,1,5,10));
+            JPanel publishPanel = new JPanel(new GridLayout(3,1,5,5));
             publishPanel.setBackground(Color.white);
 
-            ALabel l5 = new ALabel("Published Network Address");
+            ALabel l5 = new ALabel("IP Address to Publish on the Internet");
             l5.setBackground(Color.white);
             publishPanel.add(l5);
 
             publishPanel.add(r_publishSelect);
             publishPanel.add(otherPanel);
             publishPanel.setBorder(BorderFactory.createLineBorder(Color.gray));
-            mainPanel.add( publishPanel, BorderLayout.SOUTH );
+            mainPanel.add( publishPanel, BorderLayout.CENTER );
+
+         // Third Radio section
+            r_automaticUpdate = new ARadioButton("Automatically when the IP changes (please edit the transfer script).");
+            r_manualUpdate = new ARadioButton("Never. I will do it manually via the Server Address Wizard.");
+
+            btGroupItf = new ButtonGroup();
+            btGroupItf.add(r_automaticUpdate);
+            btGroupItf.add(r_manualUpdate);
+
+            JPanel updatePanel = new JPanel(new GridLayout(3,1,5,5));
+            updatePanel.setBackground(Color.white);
+            updatePanel.setBorder(BorderFactory.createLineBorder(Color.gray));
+
+            ALabel l6 = new ALabel("When do we have to do the IP File Transfer ?");
+            l6.setBackground(Color.white);
+            updatePanel.add(l6);
+            updatePanel.add(r_automaticUpdate);
+            updatePanel.add(r_manualUpdate);
+            mainPanel.add( updatePanel, BorderLayout.SOUTH );
+
 
          // Selection init
             r_automatic.setSelected(true);
@@ -649,6 +652,7 @@ public class ServerSetup extends JWizard {
             l4.setEnabled(false);
             r_publishSelect.setSelected(true);
             t_itfPublish.setEnabled(false);
+            r_automaticUpdate.setSelected(true);
        }
 
      /* -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  */
@@ -768,8 +772,10 @@ public class ServerSetup extends JWizard {
                                                        "Server Interface Update", JOptionPane.YES_NO_OPTION);
 
             if( value == JOptionPane.YES_OPTION ) {
-                serverProperties.setProperty( "init.serverItf", itf );
-                serverProperties.setProperty( "init.publishAddress", publish );
+                ServerDirector.getServerProperties().setProperty( "init.serverItf", itf );
+                ServerDirector.getServerProperties().setProperty( "init.publishAddress", publish );
+                ServerDirector.getServerProperties().setProperty( "init.automaticUpdate",
+                                                           ""+r_automaticUpdate.isSelected() );
             }
             else
                 return false;
@@ -841,7 +847,7 @@ public class ServerSetup extends JWizard {
            super();
 
         // II - we load the default server config.
-           serverConfigManager = new ServerConfigManager( rManager );
+           serverConfigManager = new ServerConfigManager( ServerDirector.getResourceManager() );
            config = serverConfigManager.loadServerConfig( serverID );
 
            if( config == null )
@@ -1006,7 +1012,7 @@ public class ServerSetup extends JWizard {
             int value = JOptionPane.showConfirmDialog(null, "Set this server as default ?", "Update Startup Config", JOptionPane.YES_NO_OPTION);
 
             if( value == JOptionPane.YES_OPTION )
-                serverProperties.setProperty( "init.serverID", ""+serverID );
+                ServerDirector.getServerProperties().setProperty( "init.serverID", ""+serverID );
 
             wizard.setNextStep(  FinalWizardStep.getStaticParameters() );
             return true;
@@ -1052,14 +1058,15 @@ public class ServerSetup extends JWizard {
                                            +" You can now start your server. Because your server is"
                                            +" local you don't need to use the setup program.");
 
-             rManager.saveText( rManager.getExternalServerConfigsDir()+"server-0.cfg.adr", "localhost" );
+             ServerDirector.getResourceManager().saveText(
+                 ServerDirector.getResourceManager().getExternalServerConfigsDir()+"server-0.cfg.adr", "localhost" );
           } else {
              param.setProperty("init.info0", "\n      Your server config has been successfully saved.\n\n"
                                            +"      You must now send it to the wotlas manager : just"
-                                           +" attach the \""+rManager.getExternalServerConfigsDir()
+                                           +" attach the \""+ServerDirector.getResourceManager().getExternalServerConfigsDir()
                                            +"server-"+serverID+".cfg\" file"
                                            +" to a mail and send it to the address "
-                                           +serverProperties.getProperty("info.remoteServerAdminEmail","")
+                                           +ServerDirector.getServerProperties().getProperty("info.remoteServerAdminEmail","")
                                            +". You will then receive the up- to-date universe data and be"
                                            +" able to start your server." );
           }
@@ -1108,117 +1115,6 @@ public class ServerSetup extends JWizard {
     }
 
  /*------------------------------------------------------------------------------------*/
-
-  /** Main. Starts the setup utility.
-   * @param argv enter -help to get some help info.
-   */
-    static public void main( String argv[] ) {
-
-        // STEP 0 - We parse the command line options
-           basePath = ResourceManager.DEFAULT_BASE_PATH;
-           Debug.displayExceptionStack( true );
-
-           for( int i=0; i<argv.length; i++ ) {
-
-              if( !argv[i].startsWith("-") )
-                  continue;
-
-              if(argv[i].equals("-base")) {   // -- TO SET THE CONFIG FILES LOCATION --
-
-                   if(i==argv.length-1) {
-                      System.out.println("Location missing.");
-                      System.out.println(SETUP_COMMAND_LINE_HELP);
-                      return;
-                   }
-
-                   basePath = argv[i+1];
-              }
-              else if(argv[i].equals("-help")) {   // -- TO DISPLAY THE HELP --
-
-                   System.out.println(SETUP_COMMAND_LINE_HELP);
-                   return;
-              }
-           }
-
-        // STEP 1 - Creation of the ResourceManager
-           rManager = new ResourceManager();
-
-           if( !rManager.inJar() )
-               rManager.setBasePath(basePath);
-
-        // STEP 2 - Log Creation
-           try {
-              Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(),
-                                    rManager.getExternalLogsDir()+"register-setup.log",
-                                    "log-title-dark.jpg", rManager ) );
-           } catch( java.io.FileNotFoundException e ) {
-              e.printStackTrace();
-              Debug.exit();
-           }
-
-           System.setOut( Debug.getPrintStream() );
-           System.setErr( Debug.getPrintStream() );
-
-           Debug.signal(Debug.NOTICE,null,"Starting Register Setup...");
-
-           serverProperties = new ServerPropertiesFile(rManager);
-           remoteServersProperties = new RemoteServersPropertiesFile(rManager);
-
-           serverID = serverProperties.getIntegerProperty("init.serverID");
-           Debug.signal( Debug.NOTICE, null, "Current Default Server ID is : "+serverID );
-
-           serverConfigPrefixPath = rManager.getExternalServerConfigsDir()
-                               +ServerConfigManager.SERVERS_PREFIX;
-
-         // STEP 3 - Creation of our Font Factory
-           FontFactory.createDefaultFontFactory( rManager );
-           Debug.signal( Debug.NOTICE, null, "Font factory created..." );
-
-         // STEP 4 - Start the wizard
-           new ServerSetup();
-    }
-
- /*------------------------------------------------------------------------------------*/
-
-  /** Set the colors and fonts
-   */
-  static public void setGUI() {
-    Font f;
-    
-    f = new Font("Monospaced", Font.PLAIN, 10);
-    UIManager.put("Button.font", f);
-
-    f = FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter");
-
-    UIManager.put("ComboBox.font", f.deriveFont(14f));
-    UIManager.put("ComboBox.foreground", Color.black);
-
-    UIManager.put("Label.font", f.deriveFont(14f));
-    UIManager.put("Label.foreground", Color.black);
-    
-    UIManager.put("PasswordField.font", f.deriveFont(14f));
-    UIManager.put("PasswordField.foreground", Color.black);
-    
-    UIManager.put("RadioButton.font", f.deriveFont(14f));
-    UIManager.put("RadioButton.foreground", Color.black);
-            
-    UIManager.put("Table.font", f.deriveFont(14f));
-    UIManager.put("Table.foreground", Color.black);    
-    
-    UIManager.put("TableHeader.font", f.deriveFont(16f));
-    UIManager.put("TableHeader.foreground", Color.black);
-    
-    UIManager.put("TextArea.font", f.deriveFont(14f));
-    UIManager.put("TextArea.foreground", Color.black);
-    
-    UIManager.put("TextField.font", f.deriveFont(14f));
-    UIManager.put("TextField.foreground", Color.black);    
-    
-    UIManager.put("CheckBox.font", f.deriveFont(14f));
-    UIManager.put("CheckBox.foreground", Color.black);
-  }
-  
- /*--------------------------------------------------------------------------*/
 
 }
 

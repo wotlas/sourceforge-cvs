@@ -56,6 +56,11 @@ public class ServerPropertiesFile extends PropertiesConfigFile {
             Debug.exit();
         }
 
+        if( !isValidBoolean("init.automaticUpdate") ) {
+            Debug.signal( Debug.FAILURE, this, "init.automaticUpdate boolean property not set in "+SERVER_CONFIG+" !" );
+            Debug.exit();
+        }
+
         if( !isValidInteger("init.serverID") ) {
             Debug.signal( Debug.FAILURE, this, "The given serverID is not a valid integer ! (in "+SERVER_CONFIG+")" );
             Debug.exit();

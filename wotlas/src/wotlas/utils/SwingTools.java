@@ -64,6 +64,24 @@ public class SwingTools
       return f;
     }
   }
+  
+  /** Load a font
+   *
+   * @param filename path of the font
+   * @param size font size
+   */
+  static public Font loadFont(String filename) {
+    try {
+      File file = new File(filename);
+      FileInputStream fis = new FileInputStream(file);
+      Font f = Font.createFont(Font.TRUETYPE_FONT, fis);            
+      return f;
+    } catch (Exception e) {
+      e.printStackTrace();
+      Font f = new Font("Dialog", Font.PLAIN, 10);
+      return f;
+    }
+  }
 
  /*------------------------------------------------------------------------------------*/ 
 

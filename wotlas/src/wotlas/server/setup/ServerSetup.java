@@ -264,12 +264,12 @@ public class ServerSetup extends JFrame
                        JOptionPane.showMessageDialog( ServerSetup.this, "Failed to save server config in database",
                                                       "Error", JOptionPane.ERROR_MESSAGE);
                    else {
-                       new JHTMLWindow( ServerSetup.this, "<b>Your server configuration has been successfully saved."
-                                        +"If you want to make available your server on the Internet, you should"
-                                        +" mail the config below to <i>"+remoteServerAdminEmail+" .</i><br>"
-                                        +"<br>We will then send you a valid serverID and add your server config "
-                                        +"to our server's list. This way clients will be able to see your server."
-                                        +"panel.<br></b><pre>", "Success",
+                       new JHTMLWindow( ServerSetup.this, "<b>Your server configuration has been successfully saved.</b>"
+                                        +"<p>If you want to make available your server on the Internet, you should"
+                                        +" mail the config below to <i>"+remoteServerAdminEmail+" .</i></p>"
+                                        +"<p>We will then send you a valid serverID and add your server config "
+                                        +"to our server's list. This way clients will be able to see your server from "
+                                        +"the account panel.</p><br><pre>", "Success",
                                         databasePath+File.separator+PersistenceManager.SERVERS_HOME
                                         +File.separator+PersistenceManager.SERVERS_PREFIX
                                         +config.getServerID()+PersistenceManager.SERVERS_SUFFIX,
@@ -355,6 +355,7 @@ public class ServerSetup extends JFrame
          getContentPane().add( buttonPanel, BorderLayout.SOUTH );
 
          pack();
+         SwingTools.centerComponent( this );
          show();
    }
 

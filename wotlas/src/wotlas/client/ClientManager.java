@@ -52,8 +52,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import javax.swing.*;
 
-public class ClientManager
-{
+public class ClientManager implements ActionListener {
 
  /*------------------------------------------------------------------------------------*/
   
@@ -98,6 +97,10 @@ public class ClientManager
   /** Path to the local server database.
    */
   private String databasePath;
+
+  /** Number of tries to reach wotlas web server
+   */
+  private short nbTry;
 
   /** pictures of buttons
    */
@@ -285,16 +288,30 @@ public class ClientManager
 
     indexScreen = state;
 
-    switch(state)
-    {
+    switch(state) {
 
       // ********************
       // *** First Screen ***
       // ********************
 
       case -1:
-        new JHTMLWindow( screenIntro, "Wotlas News", ClientDirector.getRemoteServerConfigHomeURL()+"news.html", 320, 400, false );
-      
+         // We try to contact the wotlas web server...
+        nbTry=1;
+        Timer timer = new Timer(5000,this);
+        timer.start();
+
+        serverConfigList.getLatestConfigFiles(screenIntro);
+        timer.stop();
+
+        if( serverConfigList.getRemoteServerTable()==null )
+            JOptionPane.showMessageDialog( screenIntro, "We failed to contact the wotlas web server (see help). So we could not update\n"+
+                                                 "our servers addresses. If this is not the first time you start wotlas on\n"+
+                                                 "your computer, you can try to connect with the previous server config files.\n"+
+                                                 "Otherwise please restart wotlas later.",
+                                                 "Warning", JOptionPane.WARNING_MESSAGE);
+        else  // Wotlas News
+            new JHTMLWindow( screenIntro, "Wotlas News", ClientDirector.getRemoteServerConfigHomeURL()+"news.html", 320, 400, false );
+
          // Load images of buttons
       im_cancelup    = new ImageIcon("../base/gui/cancel-up.gif");
       im_canceldo    = new ImageIcon("../base/gui/cancel-do.gif");
@@ -1317,5 +1334,15 @@ public class ClientManager
    }
 
  /*------------------------------------------------------------------------------------*/
+
+ /** Timer Event interception
+  * @param e supposed timer event
+  */
+   public void actionPerformed( ActionEvent e) {
+     Debug.signal(Debug.WARNING,null,"Wotlas Web Server unreachable... Trying again... ("+nbTry+")");
+     nbTry++;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

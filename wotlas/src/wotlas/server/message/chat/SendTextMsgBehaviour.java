@@ -137,7 +137,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
                         while ( it.hasNext() ) {
                             p = (PlayerImpl)it.next();
                             if (p!=player && ( p.isChatMember() || isDefaultChat ) )
-                                p.sendChatMessage( this , senderPrimaryKey);
+                                p.sendChatMessage( this , player);
                         }
                      }
 
@@ -170,7 +170,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
                         while ( it.hasNext() ) {
                             p = (PlayerImpl)it.next();
                             if (p!=player)
-                                p.sendChatMessage( this, senderPrimaryKey );
+                                p.sendChatMessage( this, player );
                         }
                      }
 
@@ -194,7 +194,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
                         while ( it.hasNext() ) {
                             p = (PlayerImpl)it.next();
                             if (p!=player)
-                                p.sendChatMessage( this , senderPrimaryKey );
+                                p.sendChatMessage( this , player );
                         }
                      }
 
@@ -215,7 +215,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
                  
                             while( it.hasNext() ) {
                                PlayerImpl p = (PlayerImpl)it.next();
-                               p.sendChatMessage( this , senderPrimaryKey );
+                               p.sendChatMessage( this , player );
                             }
                          }
                      }
@@ -271,7 +271,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
             while ( it.hasNext() ) {
                p = (PlayerImpl)it.next();
                if (p!=player)
-                   p.sendChatMessage( this , senderPrimaryKey );
+                   p.sendChatMessage( this , player );
             }
        }
   }

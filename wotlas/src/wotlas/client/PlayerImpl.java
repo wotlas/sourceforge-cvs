@@ -245,7 +245,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
    *  @param the key of player who requested player's full name
    *  @return player full name ( should contain the player name )
    */
-  public String getFullPlayerName(String otherPlayerKey) {
+  public String getFullPlayerName(Player otherPlayer) {
     return fullPlayerName;
   }
 

@@ -50,9 +50,9 @@ public class AddPlayerToRoomMessage extends PlayerDataMessage
    * @param otherPlayerKey key of player this message is sent to
    * @param player Player object to send.
    */
-     public AddPlayerToRoomMessage( String otherPlayerKey, Player player ) {
+     public AddPlayerToRoomMessage( Player otherPlayer, Player player ) {
          this();
-         this.otherPlayerKey = otherPlayerKey;
+         this.otherPlayer = otherPlayer;
          this.player = player;
          this.publicInfoOnly = true;
      }

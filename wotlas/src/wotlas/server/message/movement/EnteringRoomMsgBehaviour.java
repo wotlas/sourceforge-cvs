@@ -156,7 +156,8 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
           player.setLocation( location );
           player.setOrientation( orientation );
 
-          AddPlayerToRoomMessage aMsg = new AddPlayerToRoomMessage( player.getPrimaryKey(), player );
+          // in fact, first argument is otherPlayer
+          AddPlayerToRoomMessage aMsg = new AddPlayerToRoomMessage( null, player );
           LocationChangeMessage lMsg = new LocationChangeMessage( player.getPrimaryKey(),
                                            player.getLocation(), 0, 0, 0.0f );
 
@@ -168,7 +169,7 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
                      PlayerImpl p = (PlayerImpl)it.next();
                      if(p!=player) {
                         if(mapEnter) {
-                           aMsg.setOtherPlayerKey(p.getPrimaryKey());
+                           aMsg.setOtherPlayer(p);
                            p.sendMessage( aMsg );
                         } else {
                            p.sendMessage( lMsg );
@@ -205,8 +206,10 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
                      while( it.hasNext() ) {
               	          PlayerImpl p = (PlayerImpl)it.next();
 
-                          if(otherRoom!=currentRoom)
+                          if(otherRoom!=currentRoom) {
+                             aMsg.setOtherPlayer(p);
                              p.sendMessage( aMsg ); // new room seen, AddPlayer...
+                          }
                           else
                              p.sendMessage( lMsg ); // if it's our old current room we send an changeLocMsg
               	     }

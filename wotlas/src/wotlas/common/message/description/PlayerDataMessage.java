@@ -48,7 +48,7 @@ public class PlayerDataMessage extends NetMessage
   
   /** key of destinated player.
    */
-      protected String otherPlayerKey;
+      protected Player otherPlayer;
 
   /** Do we have to write/read public info or all the player's data ?
    */
@@ -103,8 +103,8 @@ public class PlayerDataMessage extends NetMessage
     *
     * @param otherPlayerKey key of player this message is sent to
     */
-     public void setOtherPlayerKey(String otherPlayerKey) {
-         this.otherPlayerKey = otherPlayerKey;
+     public void setOtherPlayer(Player otherPlayer) {
+         this.otherPlayer = otherPlayer;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -127,7 +127,7 @@ public class PlayerDataMessage extends NetMessage
 
       // Player Data
          ostream.writeUTF( player.getPlayerName() );
-         ostream.writeUTF( player.getFullPlayerName(otherPlayerKey) );
+         ostream.writeUTF( player.getFullPlayerName(otherPlayer) );
          ostream.writeUTF( player.getPrimaryKey() );
 
          if(!publicInfoOnly) {

@@ -75,7 +75,7 @@ public class RoomPlayerDataMessage extends PlayerDataMessage
                                    Hashtable players ) {
          super();
          this.myPlayer = myPlayer;
-         this.otherPlayerKey = myPlayer.getPrimaryKey();
+         this.otherPlayer = myPlayer;
          this.location = location;
          this.players = players;
          this.publicInfoOnly = true;

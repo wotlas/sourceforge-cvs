@@ -20,9 +20,11 @@
 package wotlas.server;
 
 import wotlas.utils.Debug;
-import wotlas.utils.FileTools;
-import wotlas.common.message.account.WarningMessage;
 import wotlas.utils.Tools;
+import wotlas.utils.FileTools;
+
+import wotlas.libs.log.*;
+import wotlas.common.message.account.WarningMessage;
 
 import java.util.Properties;
 import java.util.Iterator;
@@ -42,6 +44,10 @@ class ServerDirector
    /** Static Link to Server Config File.
     */
     public final static String SERVER_CONFIG = "../src/config/server.cfg";
+
+   /** Static Link to Server Log File.
+    */
+    public final static String SERVER_LOG = "../log/wot-server.log";
 
    /** Persistence period in ms.
     */
@@ -85,9 +91,16 @@ class ServerDirector
    */
      public static void main( String argv[] )
      {
-           Debug.displayExceptionStack( false );
+           Debug.displayExceptionStack( true );
 
-        // STEP 0 - Print some info...
+        // STEP 0 - Start a ServerLogStream to save our Debug messages           
+           try{
+               Debug.setPrintStream( new ServerLogStream( SERVER_LOG ) );
+           }catch( java.io.FileNotFoundException e ) {
+               e.printStackTrace();
+               return;
+           }
+
            Debug.signal( Debug.NOTICE, null, "*-----------------------------------*" );
            Debug.signal( Debug.NOTICE, null, "|   Wheel Of Time - Light & Shadow  |" );
            Debug.signal( Debug.NOTICE, null, "|  Copyright (C) 2001 - WOTLAS Team |" );

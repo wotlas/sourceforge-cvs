@@ -424,7 +424,8 @@ public class Room
    */
     public void init( InteriorMap myInteriorMap ){
        this.myInteriorMap = myInteriorMap;
-       
+
+    // 2 - We reconstruct MapExit links...       
        if( mapExits == null )
            return;
        
@@ -437,6 +438,45 @@ public class Room
        
        for( int i=0; i<mapExits.length; i++ )
             mapExits[i].setMapExitLocation(thisLocation);
+    
+    // 2 - We reconstruct RoomLinks links...
+       if(roomLinks==null)
+          return;
+    
+       for( int i=0; i<roomLinks.length; i++ ) {
+       	
+       	    if(roomLinks[i].getRoom1()!=null)
+       	       continue; // already done
+
+       	    Room other = null;
+       	    
+       	    if( roomLinks[i].getRoom1ID()==roomID ) {
+       	       roomLinks[i].setRoom1( this );
+               other = myInteriorMap.getRoomFromID( roomLinks[i].getRoom2ID() );
+       	       roomLinks[i].setRoom2( other );
+       	    }
+       	    else if( roomLinks[i].getRoom2ID()==roomID ) {
+       	       roomLinks[i].setRoom2( this );
+               other = myInteriorMap.getRoomFromID( roomLinks[i].getRoom1ID() );
+       	       roomLinks[i].setRoom1( other );
+            }
+       	    else
+               Debug.signal( Debug.ERROR, this, "BAD ROOMLINK DETECTED : "+thisLocation );
+
+         // RoomLink - double detection
+            RoomLink otherLinks[] = other.getRoomLinks();
+               
+            if(otherLinks==null) {
+               Debug.signal( Debug.ERROR, this, "BAD ROOMLINK DETECTED : "+thisLocation );
+               continue;
+            }
+               
+            for( int j=0; j<otherLinks.length; j++ )
+               if( roomLinks[i].equals(otherLinks[j]) && otherLinks[j].getRoom1()==null ) {
+                   otherLinks[j] = roomLinks[i];
+                   break;
+               }
+       }
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -51,12 +51,13 @@ public class RoomLink extends ScreenRectangle
 
  /*------------------------------------------------------------------------------------*/
 
-  /** If true, it means that that someone is currently entering this RoomLink (from one
-   *  side ot the other ). false means we are leaving the RoomLink.
-   *  THIS field is only relevant when you know that your player is intersecting this
-   *  RoomLink.
-   *
-   transient private boolean isEnteringRoomLink;
+  /** first Room of this link ( the one on the west or north )
+   */
+   transient private Room room1;
+
+  /** second Room of this link ( the one on the west or north )
+   */
+   transient private Room room2;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -108,30 +109,32 @@ public class RoomLink extends ScreenRectangle
 
  /*------------------------------------------------------------------------------------*/
 
-   /** To test if the current player (client side) is intersecting this RoomLink.
-    *
-    *  If true means that that someone is currently entering this RoomLink (from one
-    *  side ot the other ). false means we are leaving the RoomLink.
-    *  THIS field is only relevant when you know that your player is intersecting this
-    *  RoomLink.
-    *
-    * @return true (entering), false (leaving)
-    *
-     public boolean isEnteringRoomLink() {
-          return isEnteringRoomLink;
-     }
-  
+  // transient fields getters & setters
+
+  public void setRoom1( Room room1) {
+    this.room1 = room1;
+  }
+
+  public Room getRoom1() {
+    return room1;
+  }
+
+  public void setRoom2( Room room2) {
+    this.room1 = room2;
+  }
+
+  public Room getRoom2() {
+    return room2;
+  }
+
  /*------------------------------------------------------------------------------------*/
 
-   /** To set the isEnteringRoomLink field. See the isEnteringRoomLink() method for
-    *  more details.
-    *
-    * @param isEnteringRoomLink true (entering), false (leaving)
-    *
-     public void setIsEnteringRoomLink( boolean isEnteringRoomLink ) {
-          this.isEnteringRoomLink = isEnteringRoomLink;
-     }
-  
- /*------------------------------------------------------------------------------------*/
+   /** Are the two RoomLinks equal ?
+    *  Important : the two RoomLinks must belong to the same InteriorMap.
+    */
+    public boolean equals( RoomLink other ) {
+        return toRectangle().equals( other.toRectangle() );
+    }
 
+ /*------------------------------------------------------------------------------------*/
 }

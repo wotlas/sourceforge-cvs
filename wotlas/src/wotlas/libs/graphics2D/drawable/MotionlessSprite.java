@@ -89,6 +89,7 @@ public class MotionlessSprite extends Drawable implements DrawableOwner {
     	
     	this.image = image;    	
         this.priority = priority;
+        this.hasAnimation = hasAnimation;
 
         if(hasAnimation)
            sprAnim = new Animation( image );

@@ -20,6 +20,7 @@
 package wotlas.libs.graphics2D.drawable;
 
 import wotlas.libs.graphics2D.*;
+import wotlas.libs.graphics2D.filter.*;
 
 import java.awt.*;
 import java.awt.image.*;
@@ -73,9 +74,9 @@ public class Sprite extends Drawable implements DrawableOwner {
    */
      private byte anchorMode;
 
-  /** Eventual Dynamic Image Filter
+  /** Eventual Dynamic Image Filters
    */
-     private DynamicImageFilter imageFilter;
+     private DynamicImageFilter[] imageFilters;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -143,7 +144,29 @@ public class Sprite extends Drawable implements DrawableOwner {
    *  @param imageFilter a DynamicImageFilter.
    */
     public void setDynamicImageFilter( DynamicImageFilter imageFilter ) {
-    	this.imageFilter = imageFilter;
+        if (imageFilters==null) {
+            imageFilters = new DynamicImageFilter[1];
+            System.out.println("Adding a first new ImageFilter");
+            imageFilters[0] = imageFilter;            
+            return;
+        }
+        
+        // Search for an existing filter of same class        
+        Class filterClass = imageFilter.getClass();
+        for (int i=0; i<imageFilters.length; i++) {
+            if ( filterClass.isInstance(imageFilters[i]) ) {
+                System.out.println("Updating an existing ImageFilter");
+                imageFilters[i] = imageFilter;
+                return;
+            }
+        }
+        
+        // No existing similar filter found : create a new one
+        System.out.println("Adding a new ImageFilter");
+        DynamicImageFilter[] myImageFilters = new DynamicImageFilter[imageFilters.length+1];
+        System.arraycopy(imageFilters, 0, myImageFilters, 0, imageFilters.length);
+        myImageFilters[imageFilters.length] = imageFilter;
+        imageFilters = myImageFilters;    		
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -220,8 +243,18 @@ public class Sprite extends Drawable implements DrawableOwner {
       // 4 - image display
          BufferedImage bufIm = imageLib.getImage( image );
          
-         if( imageFilter!=null )
+         /*if( imageFilter!=null )
              bufIm = imageFilter.filterImage( bufIm );
+         
+         BrightnessFilter brightnessFilter = new BrightnessFilter();
+         brightnessFilter.setBrightness((short) 230);
+         bufIm = brightnessFilter.filterImage( bufIm );*/
+         
+         if (imageFilters!=null) {
+             for (int i=0; i<imageFilters.length; i++) {
+                bufIm = imageFilters[i].filterImage( bufIm );
+             }
+         }
 
          if( affTr==null )
              gc.drawImage( bufIm, r.x-screen.x, r.y-screen.y, null );

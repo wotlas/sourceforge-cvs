@@ -30,6 +30,7 @@ import wotlas.common.message.description.PlayerAwayMessage;
 
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
+import wotlas.libs.graphics2D.filter.*;
 import wotlas.libs.sound.*;
 
 import wotlas.libs.net.NetMessage;
@@ -107,6 +108,10 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
    */
   private Animation animation;
 
+  /** Our brightness filter.
+   */
+  private BrightnessFilter brightnessFilter;
+  
   /** Our sprite.
    */
   private Sprite sprite;
@@ -171,6 +176,8 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
     //Debug.signal( Debug.NOTICE, null, "PlayerImpl::init");
     animation = new Animation( wotCharacter.getImage(location), ImageLibrary.getDefaultImageLibrary() );
     sprite = (Sprite) wotCharacter.getDrawable(this);              
+    brightnessFilter = new BrightnessFilter();
+    sprite.setDynamicImageFilter(brightnessFilter);
     movementComposer.init( this );
   }
 
@@ -560,7 +567,12 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
            movementComposer.tick();
       }
 
-   // 2 - Animation Update
+   // 2 - Dynamic Filter Update
+      if (brightnessFilter!=null)
+        if (myRoom!=null)
+            brightnessFilter.setBrightness(movementComposer.getXPosition(), movementComposer.getYPosition());
+   
+   // 3 - Animation Update
       if(animation==null)
          return;
 

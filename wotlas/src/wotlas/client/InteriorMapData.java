@@ -29,6 +29,7 @@ import wotlas.common.*;
 
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
+import wotlas.libs.graphics2D.filter.BrightnessFilter;
 
 import wotlas.libs.pathfinding.AStarDouble;
 
@@ -82,8 +83,8 @@ public class InteriorMapData implements MapData {
 
   /** Associated InteriorMap of this InteriorMapData.
    */
-  private InteriorMap imap;
-
+  private InteriorMap imap;  
+  
   /** true if we must reset the room
    */
   private boolean resetRoom = false;
@@ -107,7 +108,7 @@ public class InteriorMapData implements MapData {
    */
   public void setIsNotMovingToAnotherMap(boolean value) {
     isNotMovingToAnotherMap = value;
-  }
+  }  
 
  /*------------------------------------------------------------------------------------*/
 
@@ -209,6 +210,31 @@ public class InteriorMapData implements MapData {
     catch( ImageLibraryException e ) {
       Debug.signal( Debug.CRITICAL, this, "Image Library Corrupted: "+e );
       Debug.exit();
+    }
+    
+    // 4.1 - We load the mask brightness
+    BufferedImage bufIm2 = null;
+    
+    try {
+       ImageIdentifier brightnessMaskID = gDirector.getImageLibrary().getImageIdentifier( backgroundImageID, "brightness" );
+
+       if(brightnessMaskID!=null) {
+          File brightnessMaskFile = gDirector.getImageLibrary().getImageFile( brightnessMaskID );
+          
+          if(brightnessMaskFile!=null)
+             bufIm2 = ImageLibrary.loadBufferedImage( brightnessMaskFile.getPath(), BufferedImage.TYPE_USHORT_GRAY );
+       }
+
+       if(bufIm2==null) {
+          Debug.signal( Debug.CRITICAL, this, "Brightness mask not found" );
+          BrightnessFilter.setBrightnessMask(null, 5);                    
+       } else {          
+          BrightnessFilter.setBrightnessMask(GrayMask.create( bufIm2 ), 5);                              
+       }
+    }
+    catch( ImageLibraryException e ) {
+      Debug.signal( Debug.CRITICAL, this, "Brightness mask not found: "+e );
+      BrightnessFilter.setBrightnessMask(null, 5);          
     }
 
     // 5 - We initialize the AStar algo

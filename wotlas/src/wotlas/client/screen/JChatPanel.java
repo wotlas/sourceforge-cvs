@@ -24,6 +24,7 @@ import wotlas.client.PlayerImpl;
 
 import wotlas.common.chat.*;
 import wotlas.common.message.chat.*;
+import wotlas.common.Player;
 import wotlas.common.universe.WotlasLocation;
 
 import wotlas.utils.Debug;
@@ -72,6 +73,14 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
   /** TextField where player writes messages
    */
   JTextField inputBox;
+  
+  /** Primary key of current ChatRoom
+   */
+  String currentPrimaryKey;
+  
+  /** List of player's JChatRoom
+   */
+  Hashtable chatRooms = new Hashtable(2);
  
  /*------------------------------------------------------------------------------------*/  
  
@@ -149,6 +158,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     addChatRoom(chat3);
     
     removeChatRoom("chat-2");
+    
   }
 
  /*------------------------------------------------------------------------------------*/  
@@ -173,16 +183,6 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
   
  /*------------------------------------------------------------------------------------*/  
 
-  /** Add a new ChatRoom to the interface.<br>
-   * called by wotlas.client.message.chat.ChatRoomCreatedMessage
-   */
-  public void addChatRoom(ChatRoom chatRoom) {
-    Component chatTab = initChatRoom(chatRoom);
-    tabbedPane.addTab("#" + chatRoom.getName(), iconUp, chatTab, chatRoom.getName() + " channel");    
-  }
-  
- /*------------------------------------------------------------------------------------*/  
-
   /** To remove a chatRoom.   
    *
    * @param chatRoom ChatRoom to remove
@@ -191,26 +191,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
   public boolean removeChatRoom(ChatRoom chatRoom) {
     return removeChatRoom(chatRoom.getPrimaryKey());
   }
-  
-  /** To remove a chatRoom.
-   *
-   * @param primaryKey the primary key of the ChatRoom to remove
-   * @return false if the chatRoom doesn't exists, true otherwise
-   */
-  public boolean removeChatRoom(String primaryKey) {
-    // We can't remove the first ChatRoom
-    for (int i=1; i<tabbedPane.getTabCount();i++) {
-      if ( tabbedPane.getComponentAt(i).getName().equals(primaryKey) ) {
-        System.out.println("removeChatRoom");
-        tabbedPane.remove(i);
-        return true;
-      }
-    }
-    
-    System.out.println("ERROR : Couldn't removeChatRoom");
-    return false;
-  }
-  
+
   /** To remove currentChatRoom
    */
   public void removeCurrentChatRoom() {
@@ -225,31 +206,104 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
   
   /** To create a new ChatRoom.
    */
-  private Component initChatRoom(ChatRoom chatRoom) {
-    JPanel chatTab = new JPanel(false);
-    chatTab.setName(chatRoom.getPrimaryKey());
-    chatTab.setLayout(new BorderLayout());
-    
-    // CENTER (JPanel where messages appear)
-    JTextPane displayPane = new JTextPane();
-    displayPane.setEditable(false);
-    JScrollPane displayScroller = new JScrollPane(displayPane);
-    
-    // EAST (List of ChatRoom players)
-    //String[] chatPlayers = new String[chatRoom.getPlayers().size()];
-    String[] chatPlayers = {"bernie","petrus","thierry","valere"};
-    JList playersList = new JList(chatPlayers);
-    playersList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    JScrollPane listScroller = new JScrollPane(playersList, 
-            ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    
-    chatTab.add("Center", displayScroller); 
-    chatTab.add("East", listScroller);
-    
-    return chatTab; 
-  }
+  /*private Component initChatRoom(ChatRoom chatRoom) {
+    JChatRoom jchatRoom = new JChatRoom(chatRoom);
+    return jchatRoom.getComponent(); 
+  }*/
 
+ /*------------------------------------------------------------------------------------*/  
+
+/** ChatList Implementation **/
+
+  /** To add a ChatRoom.<br>
+   * called by wotlas.client.message.chat.ChatRoomCreatedMessage
+   */
+  public boolean addChatRoom(ChatRoom chatRoom) {
+    if ( chatRooms.containsKey(chatRoom.getPrimaryKey()) ) {
+      Debug.signal( Debug.CRITICAL, this, "addChatRoom failed: key " + chatRoom.getPrimaryKey()
+                      + " already in " + this );
+      return false;
+    }
+    chatRooms.put(chatRoom.getPrimaryKey(), chatRoom);
+    
+    JChatRoom jchatRoom = new JChatRoom(chatRoom);
+    Component chatTab = (Component) jchatRoom;
+    tabbedPane.addTab("#" + chatRoom.getName(), iconUp, chatTab, chatRoom.getName() + " channel");    
+    return true;
+  }
+  
+  /** To remove a ChatRoom.
+   *
+   * @param primaryKey ChatRoom primary key
+   */
+  public boolean removeChatRoom(String primaryKey) {
+    // We can't remove the first ChatRoom
+    for (int i=1; i<tabbedPane.getTabCount();i++) {
+      if ( tabbedPane.getComponentAt(i).getName().equals(primaryKey) ) {
+        System.out.println("removeChatRoom");
+        tabbedPane.remove(i);
+        chatRooms.remove(primaryKey);
+        return true;
+      }
+    }
+    System.out.println("ERROR : Couldn't removeChatRoom");
+    return false;
+  }
+  
+  /** To get a ChatRoom.
+   *
+   * @param primaryKey primary key of ChatRoom we want to get
+   */
+  public ChatRoom getChatRoom(String primaryKey) {
+    return null;
+  }
+  
+  /** To get current ChatRoom.
+   */
+  public ChatRoom getCurrentChatRoom() {
+    return null;
+  }
+  
+  /** To set the current active window.
+   *
+   * @param primaryKey primary key of current ChatRoom
+   */
+  public boolean setCurrentChatRoom(String primaryKey) {
+    if (!chatRooms.containsKey(primaryKey) ) {
+      Debug.signal( Debug.CRITICAL, this, "removeChatRoom failed: key " + primaryKey
+                      + " not found in " + this );
+      return false;
+    }
+    this.currentPrimaryKey = primaryKey;
+    return true;
+  }
+  
+  /** To add a player to a ChatRoom.
+   *
+   * @param primaryKey primary key of ChatRoom to modify
+   * @param playerPrimaryKey primary key of Player to add
+   */
+  public boolean addPlayer(String primaryKey, String playerPrimaryKey) {
+    return true;
+  }
+  
+  /** To remove a player from a ChatRoom.
+   *
+   * @param primaryKey primary key of ChatRoom to modify
+   * @param playerPrimaryKey primary key of Player to remove
+   */
+  public boolean removePlayer(String primaryKey, String playerPrimaryKey) {
+    return true;
+  }
+  
+  /** To get the list of players of a ChatRoom
+   *
+   * @param primaryKey primary key of the ChatRoom
+   */
+  public Player[] getPlayers(String primaryKey) {
+    return null;
+  }
+   
  /*------------------------------------------------------------------------------------*/ 
 
   /** action when the user wants to send a message
@@ -267,6 +321,8 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
   }
 
  /*------------------------------------------------------------------------------------*/ 
+
+/** ActionListener Implementation **/
 
   /** Called when an action is performed.
    */
@@ -311,7 +367,9 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
   }
 
  /*------------------------------------------------------------------------------------*/ 
- 
+
+/** MouseListener Implementation **/
+
   /**
    * Invoked when the mouse button is clicked
    */

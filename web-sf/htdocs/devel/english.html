@@ -1,0 +1,543 @@
+<html>
+<head>
+<title>Wotlas Devel</title>
+</head>
+
+<style type="text/css">
+p	{text-align:justify}
+h1	{color:navy}
+</style>
+
+<body bgcolor="#FFFFFF" text="#000000">
+<p><img src="../images/motif-vigne.gif" width="620" height="40"></p>
+<p><font size="4"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Light And Shadow<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copyright (C) 2001 - 2002. WOTLAS Team.<br>
+  <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TO DO LIST...<br>
+  </font><br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Here are devel proposals for wotlas. Explanations are short so feel free to ask for more details.<br>
+</p>
+<p>Project status : 
+  <font color="#0033CC"><i>non developped</i></font>, 
+  <font color="#FF6600"><i>assigned</i></font>, 
+  <font color="#CC3300"><i>under development</i></font>, 
+  <font color="#00CC00"><i>developped</i></font>
+  </p>
+<p align="center">&nbsp;</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+  
+  
+
+<p>
+<h1>2 - Change appearance</h1>
+</p>
+<p>
+<b>Status :</b> <font color="#0033CC"><i>non developped</i></font><br>
+<b>Draft reference :</b> none<br>
+<b>Pre-requisite :</b> knowledge system, RPG features<br>
+</p>
+<p>
+<b>Description :</b>
+Some players (Forsaken, some powerful Aes Sedai) will be able to change completely their appearance ... to turn back later into their normal look. With this changing, one could also change name as for "Lie", but here the other players won't recognize the changed player.
+</p>
+<p>
+<b>Development :</b>
+We need to memorize visual attributes of character (hair, eyes color, class, status) plus its name and nickname. We will then enable a JDialog "Appearance" for players having the adequate knowledge. This JDialog will allow him to select his new appearance. Once validated, it will be changed client side and saved server side. Once one has changed appearance, the JDialog "Appearance" only allows to switch back to normal appearance.
+</p>
+<p>
+It is only a starting point ... everything is possible.<br>
+See package wotlas.common.character and class wotlas.server.PlayerImpl.
+</p>
+
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<h1>3 - Map Editor</h1>
+</p>
+<p>
+<b>Status :</b> <font color="#0033CC"><i>non developped</i></font><br>
+<b>Draft reference :</b> none<br>
+<b>Pre-requisite :</b> none<br>
+</p>
+<p>
+<b>Description :</b>
+The point is to enable editing and creating new maps for wotlas. The picture of a new map (World, Town, Building) is made with Photoshop with its associated mask and imported into the editor. Depending on the kind of map, one will then be able to place MapExit, RoomLink, ... etc. One should also be able to open an already made map for editing.<br>
+<br>
+Later when object management system will be done, one could also be able to add objects on maps.
+</p>
+<p>
+<b>Development :</b>
+It is quite a big development work which should be well analysed/split to avoid chaos. Map editing could be done by steps (editing RoomLinks, creating Rooms, ...) The editor will use the GFX engine developped for wotlas.
+</p>
+
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<h1>4 - "One Power" Graphical effects</h1>
+</p>
+<p>
+<b>Status :</b> <font color="#CC3300"><i>under development</i></font><br>
+<b>Draft reference :</b> none<br>
+<b>Pre-requisite :</b> none<br>
+</p>
+<p>
+<b>Description :</b>
+The point is to create GFX effects for One Power in game usage. The first effect is a channeling person (sort of aura with fast random rotation). This effect is visible while the character channels. We can re-use what has been done with wotlas.libs.graphics2D.drawable.AuraEffect. Other effects are made between two players : the "One Power" effects are split into different color threads which oscillate and link the user with its target.
+<br>
+We could think of more GFX effects : explosions, birds crossing the screen, clouds, ... etc
+</p>
+<p>
+<b>Development :</b>
+To represent the thread's GFX effect, we could use Java2D vectorial drawing capacities (see Sun's demo in jdk1.3) and add a blur or any other effect. This way we could create a generic 2D effect which is initialized given number of threads and color.
+</p>
+
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<h1>5 - 3D-engine Plug-in</h1>
+</p>
+<p>
+<b>Status :</b> <font color="#FF6600"><i>assigned</i></font><br>
+<b>Draft reference :</b> none<br>
+<b>Pre-requisite :</b> some adaptations to enable the add of the 3D engine. Now, each map possesses a link with its 2D representation. We'll have to add a link to its 3D representation.<br>
+</p>
+<p>
+<b>Description :</b>
+The wotlas user will have the possibility to install a 3D plug-in enabling to see some places in the game in 3D. Once this step done, we could see to direct integration of the plug-in inside wotlas (with Java3D API) et the increase of the number of 3D scenes. We'll have to define game characters in 3D and re-make backgrounds corresponding to those already made in 2D.
+</p>
+<p>
+<b>Development :</b>
+Fabien. Aldiss will make a bridge server side between 3D and 2D moving system for both movement to be seen both ways.
+</p>
+
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<h1>7 - Photoshop Level creation tutorial</h1>
+</p>
+<p>
+<b>Status :</b> <font color="#0033CC"><i>non developped</i></font><br>
+<b>Draft reference :</b> none, cf mini-tutorial on the same subject<br>
+<b>Pre-requisite :</b> none<br>
+</p>
+<p>
+<b>Description :</b>
+This tutorial would add itself to the level editor to explain how to create a level for wotlas from scratch.
+</p>
+<p>
+<b>Development :</b>
+Nothing.
+</p>
+
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<h1>8 - Object Management System</h1>
+</p>
+<p>
+<b>Status :</b> <font color="#CC3300"><i>under development</i></font><br>
+<b>Draft reference :</b> part 2.4.2 page 17<br>
+<b>Pre-requisite :</b> none, but this may be linked to objects editor (#16)<br>
+</p>
+<p>
+<b>Description :</b>
+The aim is to add various objects to wotlas' universe. Addition of generic objects formats : breakable objects, unbreakable objects, different magical objects, etc. We should also add the possibility to create an object library in text format (via the persistence engine).
+</p>
+<p>
+<b>Development :</b>
+Before starting this development, we should well prepare the structure of it. The aim is to be able to add new objects to wotlas by creating them in text format from persistence manager (for precisions on this subject : Aldiss, Harry, Petrus). We would probably have to add methods to wotlas.common.PersistenceManager to enable loading/saving objects in the base. Another point : some objects will have GUI associated (a book will show an interface when used).
+</p>
+<p>
+Starting idea for the devel :<br>Create a new package for object management, an ObjectManager which concern itself with loading the library and a standard objects database : keys, books, magical objects ... These objects instances (key c234, book "On the art of writing", ...) will be saved in text format via the persistence engine and will only be loaded when needed. We could consider that the loading/unloading of the game's objects will be done by ObjectManager.
+</p>
+
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<h1>9 - Knowledge Management System</h1>
+</p>
+<p>
+<b>Status :</b> <font color="#CC3300"><i>under development</i></font><br>
+<b>Draft reference :</b> part 2.4.3 p19<br>
+<b>Pre-requisite :</b> none<br>
+</p>
+<p>
+<b>Description :</b>
+The knowledge management is central in wotlas. ALL game actions will be conditionned by a knowledge use and learning. It is a subject well developped in draft which is to be consulted for further informations.
+</p>
+<p>
+<b>Development :</b>
+We find again the same pattern as in OMS : generic knowledge objects, knowledge library saved on disk in text format, and a knowledge manager to load them in memory on demand. The aim is again to be able to add new knowledges without recompiling any line of code.
+</p>
+
+<p>
+An idea on the development sequence :<br>
+<li>Create 'knowledge' objects described in the draft
+<li>Create the knowledge manager
+<li>Create some generic knowledges
+</p>
+
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<h1>10 - Reading/Writing in books</h1>
+</p>
+<p>
+<b>Status :</b> <font color="#CC3300"><i>under development</i></font><br>
+<b>Draft reference :</b> part 2.3.8 p12<br>
+<b>Pre-requisite :</b> OMS<br>
+</p>
+<p>
+<b>Description :</b>
+To allow the players to read/write in 'book' objects they could pick up. We could go further with WritableObject/ReadableObject interfaces declaring object types on which you can read or write ... In short, any idea would be welcome and the more because the study in the draft wasn't totally finished.
+</p>
+<p>
+<b>Development :</b>
+To be studished. Books would be saved server side (text or html ? via persistence engine ?). A GUI is to be done client side.
+</p>
+
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<h1>11 - Adding the log book</h1>
+</p>
+<p>
+<b>Status :</b> <font color="#0033CC"><i>non developped</i></font><br>
+<b>Draft reference :</b> part 2.3.8 p13<br>
+<b>Pre-requisite :</b> none, but may be linked to books (#10)<br>
+</p>
+<p>
+<b>Description :</b>
+The possibility for players to own a personal note book. Possibility to put in meeting one have done in the game (name + key), which would enable to send them mail (see #41).<br>
+<br>
+Another possibility would be to create a contact list : to keep players infos and to find them again in the world.
+</p>
+<p>
+<b>Development :</b>
+The data from this log book would be saved client side ... which means no network messages. Since, the idea is to create a simple dialog window (JDialog) which could be accessed via an icon above chat window et which would load/save text from/to a file myPersonalNotes.txt. For those who would do more, any idea of interface is welcome.
+</p>
+
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<h1>12 - Rearranging the account creation. Adding quizzs.</h1>
+</p>
+<p>
+<b>Status :</b> <font color="#00CC00"><i>developped</i></font> (cf wotlas.libs.wizard) - only the quizzs parts left to do<br>
+<b>Draft reference :</b> part 2.6 p29<br>
+<b>Pre-requisite :</b> none<br>
+</p>
+<p>
+<b>Description :</b>
+To enable game enlarging with new types of chars, we must be able to do it fast. Rather than developping 1500 different screens for account creation, we could use generic steps :<br>
+<li>a step with label, text input, label, text input, info text
+<li>a step with label, text input, info text
+<li>a step with label, JList (to allow a single selection among multiple choices)
+<li>a step with label, JList with Timer (to allow a single selection among multiple choices in limited time for quizzs)
+<li>a step with info text (to display an information)
+</p>
+<p>
+<b>Development :</b>
+Once these steps created, account creation could be described by a set of text files. Each text file references a set {step type,texts to display,previous,next}. The JAccountWizard does link the different steps.
+</p>
+
+<p>
+An important problem should be resolved : how do we store retrieved data for account creation. Data will have to be sent to server and be used for account creation (generic network messages ?). Furthermore, roll back ability should be studied.
+</p>
+
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<h1>13 - Account creation editor</h1>
+</p>
+<p>
+<b>Status :</b> <font color="#0033CC"><i>non developped</i></font> - would it really be useful ?<br>
+<b>Draft reference :</b> none<br>
+<b>Pre-requisite :</b> Rearranging account creation<br>
+</p>
+<p>
+<b>Description :</b>
+To allow easy maintenance of the account creation system.
+</p>
+<p>
+<b>Development :</b>
+To be studied.
+</p>
+
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<h1>14 - Adding RPG features (Role Playing Game)</h1>
+</p>
+<p>
+<b>Status :</b> <font color="#0033CC"><i>non developped</i></font><br>
+<b>Draft reference :</b> part 2.4.1 p14<br>
+<b>Pre-requisite :</b> none<br>
+</p>
+<p>
+<b>Description :</b>
+Adding all characteristics : Force, Dexterity, Health, ... in wotlas.common.character.Human.
+</p>
+<p>
+<b>Development :</b>
+Adding getters/setters. (I know it is heavy coding, put the least javadoc possible). But also getMinForce()/setMinForce() & getMaxForce()/setMaxForce() giving min and max for each characteristic for the character class.
+</p>
+
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<h1>15 - Adding character classes.</h1>
+</p>
+<p>
+<b>Status :</b> <font color="#00CC00"><i>developped</i></font> - has to be completed with more classes but main work done<br>
+<b>Draft reference :</b> wotlas-team<br>
+<b>Pre-requisite :</b> RPG features, rearranging account editor, knowledge system<br>
+</p>
+<p>
+<b>Description :</b>
+Adding new char classes to wotlas.
+</p>
+<p>
+<b>Development :</b>
+If all has been well done, nothing to add, just text files and pictures.
+</p>
+
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<h1>16 - Object editor. Adding generic objects.</h1>
+</p>
+<p>
+<b>Status :</b> <font color="#0033CC"><i>non developped</i></font><br>
+<b>Draft reference :</b> none<br>
+<b>Pre-requisite :</b> OMS (may be done in the same time)<br>
+</p>
+<p>
+<b>Description :</b>
+To make adding/editing objects in the game easier, we could create a simple editor allowing to create/edit/save an object.
+</p>
+<p>
+<b>Development :</b>
+We can also think on an integration of this tool in the map editor (for objects layout in the game).
+</p>
+
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<h1>17 - Character Inventory.</h1>
+</p>
+<p>
+<b>Status :</b> <font color="#CC3300"><i>under developpment</i></font><br>
+<b>Draft reference :</b> part 2.4.2 p17<br>
+<b>Pre-requisite :</b> OMS<br>
+</p>
+<p>
+<b>Description :</b>
+Adding management of the objects owned by a player : from their picking up (clic on the object or nearby), to their use and drop on the ground of a map or gift to another player.
+</p>
+<p>
+<b>Development :</b>
+cf draft
+</p>
+
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<h1>18 - Knowledge System Interface.</h1>
+</p>
+<p>
+<b>Status :</b> <font color="#0033CC"><i>non developped</i></font><br>
+<b>Draft reference :</b> part 2.4.3 p19<br>
+<b>Pre-requisite :</b> KMS<br>
+</p>
+<p>
+<b>Description :</b>
+Follows project #9. The point is to develop the Swing interface for handling the knowledges of the client as described in draft.
+</p>
+<p>
+<b>Development :</b>
+The classes are to be added to wotlas.client.gui.
+</p>
+
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<h1>20 - Adding basic knowledges</h1>
+</p>
+<p>
+<b>Status :</b> <font color="#0033CC"><i>non developped</i></font><br>
+<b>Draft reference :</b> some ideas in part 2.4.3 p19<br>
+<b>Pre-requisite :</b> KMS<br>
+</p>
+<p>
+<b>Description :</b>
+Depending on the char classes we'll add, we shall add a whole lot of linked knowledges (stealing, fighting exercise, ...)
+</p>
+<p>
+<b>Development :</b>
+Nothing if well done before ... just text files to add. We could even let this job to the char classes specialists.
+</p>
+
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<h1>21 - Managing characters animations</h1>
+</p>
+<p>
+<b>Status :</b> <font color="#0033CC"><i>non developped</i></font><br>
+<b>Draft reference :</b> none<br>
+<b>Pre-requisite :</b> none<br>
+</p>
+<p>
+<b>Description :</b>
+For the moment, wotlas' characters just walk around and the current system is based on only one kind of animation. We should see to new animations/states for characters. (in class PlayerImpl & interface Player) :
+</p>
+<p>
+<li>lying on the ground (wounded, sleeping, etc)
+<li>walking armed with a sword (or another big weapon)
+<li>hitting with a sword
+<li>hitting with a dagger (the dagger is invisible when the char walks)
+<li>walking with a bow
+<li>firing a bow
+<li>running
+<br>
+...
+</p>
+<p>
+<b>Development :</b>
+Add getters/setters to change player's state (byte playerState with macros WotCharacter.WALKING_WITH_SWORD, ...), apply this state change to the wotlas.character.WotCharacter to be able to require the new image lib to use for anim. It is the WotCharacter which stores persistence for the char's state.<br>
+We shall also see to creating new pictures for anims (remind Aldiss). We shall also see how client side the user will make his char run/crouch/lay ... (keyboard ? mouse's right button ?)
+</p>
+
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<h1>22 - Automatic response. Fighting in wotlas.</h1>
+</p>
+<p>
+<b>Status :</b> <font color="#0033CC"><i>non developped</i></font><br>
+<b>Draft reference :</b> see part 2.4.4 p26<br>
+<b>Pre-requisite :</b> anims<br>
+</p>
+<p>
+<b>Description :</b>
+Adding the possibility to attack somebody and to do a sequence of fight movement (knowledges) during fights. Allowing to any player to specify what his char shall do when attacked (reddition, attack, flight, ...)
+</p>
+<p>
+<b>Development :</b>
+To study. Lots of things to do in this topic !
+</p>
+
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<h1>24 - Rumors</h1>
+</p>
+<p>
+<b>Status :</b> <font color="#0033CC"><i>non developped</i></font><br>
+<b>Draft reference :</b> part 2.4.5 p27<br>
+<b>Pre-requisite :</b> none<br>
+</p>
+<p>
+<b>Description :</b>
+Adding a rumor system to wotlas. See draft for more details.
+</p>
+<p>
+<b>Development :</b>
+cf draft.
+</p>
+
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<h1>25 - Displaying the player's health</h1>
+</p>
+<p>
+<b>Status :</b> <font color="#0033CC"><i>non developped</i></font><br>
+<b>Draft reference :</b> none<br>
+<b>Pre-requisite :</b> RPG feature : health<br>
+</p>
+<p>
+<b>Description :</b>
+Adding a GFX effect showing the player's health, possibly his breathing too (the more someone is out of breath the less he can move and the more he needs a rest)
+</p>
+<p>
+<b>Development :</b>
+Create a LifeDrawable linked to main char (DataManager.getMyPlayer()) and add to GraphicsDirector on connect.
+</p>
+
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<h1>26 - Adding GFX effects linked to maps</h1>
+</p>
+<p>
+<b>Status :</b> <font color="#0033CC"><i>non developped</i></font><br>
+<b>Draft reference :</b> none<br>
+<b>Pre-requisite :</b> none<br>
+</p>
+<p>
+<b>Description :</b>
+A map could possess a GFX effects list : bird flying over at random, clouds, rain, ...
+</p>
+<p>
+<b>Development :</b>
+An InteriorMap could possess a list of XXXDrawable to use. These XXXDrawable would be added to GFX engine on map load. The BirdDrawable would show an animation of a bird flying over the map for instance.
+</p>
+
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<h1>27 - Adding SFX linked to maps</h1>
+</p>
+<p>
+<b>Status :</b> <font color="#0033CC"><i>non developped</i></font><br>
+<b>Draft reference :</b> none<br>
+<b>Pre-requisite :</b> none, linked to musics<br>
+</p>
+<p>
+<b>Description :</b>
+Like with GFX effects, we could set a list of SFX to loop on certain maps (seashore background for instance in Tear or Illian or Tanchico ...)
+</p>
+<p>
+<b>Development :</b>
+Edit wotlas.common.universe.InteriorMap and wotlas.client.InteriorMapData. Add an option to the sound library to enable looping a sound.
+</p>
+
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<h1>29 - In-game Money management</h1>
+</p>
+<p>
+<b>Status :</b> <font color="#CC3300"><i>under development</i></font><br>
+<b>Draft reference :</b> none<br>
+<b>Pre-requisite :</b> OMS<br>
+</p>
+<p>
+<b>Description :</b>
+Adding money to the game as objects (coins, purses). Study possible use : selling advice, buyings, placements, wages, ... etc. Knowledges linked to money (merchant, ...)
+</p>
+<p>
+<b>Development :</b>
+Depending on what has been decided.
+</p>
+
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<h1>30 - Moving on the world map. Means of transport.</h1>
+</p>
+<p>
+<b>Status :</b> <font color="#0033CC"><i>non developped</i></font><br>
+<b>Draft reference :</b> none<br>
+<b>Pre-requisite :</b> OMS, money<br>
+</p>
+<p>
+<b>Description :</b>
+Study et modify the current system of moving on the world map. Study makability. We started thinking travels would be very slow on the world map (as in reality) and this to reinforce the space and travel notions. When a player disconnect himself, the started journey is stored since 1.0 on server. This implies when the player reconnect later, his journey has continued. What we must see is the possibility to choose a travel method : by foor, on horse, on carriage, on a wagon train, ... We could then make the by foot travel very slow (2 days to cross the map) but much faster on horse. 
+</p>
+<p>
+<b>Development :</b>
+Display the remaining time to destination on world map, find a way to propose a choice of mean of transport to the player (add a special map Transports on the town map ? choice when starting travel ?). In short, all ideas are welcome ...
+</p>
+
+</body>
+</html>
+
+<!--
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<h1>X - Title</h1>
+</p>
+<p>
+<b>Status :</b> <font color="#0033CC"><i>non developped</i></font><br>
+<b>Draft reference :</b> none<br>
+<b>Pre-requisite :</b> none<br>
+</p>
+<p>
+<b>Description :</b>
+
+</p>
+<p>
+<b>Development :</b>
+
+</p>
+
+-->

@@ -34,17 +34,12 @@ import wotlas.utils.Debug;
   *  all its data in one huge file.
   *
   * @author Petrus, Aldiss
+  * @see wotlas.common.universe.WorlManager
   * @see wotlas.common.universe.WorldMap
   */
  
-public class WorldManager
+public class WorldManager extends wotlas.common.WorldManager
 {
- /*------------------------------------------------------------------------------------*/
- 
-  /** array of WorldMap
-   */
-   private WorldMap[] worldMaps;
-
  /*------------------------------------------------------------------------------------*/
   
   /** Constructor. Attemps to load the local universe data. Any error at this
@@ -52,6 +47,7 @@ public class WorldManager
    */
 
    public WorldManager() {
+          super();
 
        // we use the PersistenceManager to load the worlds.
           if( !loadLocalUniverse() ) {
@@ -61,22 +57,6 @@ public class WorldManager
 
        // We rebuild shortcuts
 
-   }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To Get a World by its ID.
-   *
-   * @param id worldMapID
-   * @return corresponding worldMap, null if ID does not exist.
-   */
-   public WorldMap getWorldMapByID( int id ) {
-   	if(id>=worldMaps.length || id<0) {
-           Debug.signal( Debug.ERROR, this, "getWorldMapByID : Bad world ID "+id );
-   	   return null;
-   	}
-   	
-        return worldMaps[id];
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -105,127 +85,6 @@ public class WorldManager
        // Call to the PersistenceManager to save the worlds to the dataBase.
           PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
           return pm.saveLocalUniverse( worldMaps, false );
-   }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** Add a new WorldMap object to the array {@link #worldMaps worldMaps}
-   *
-   * IMPORTANT: WorldManager methods are not synchronized. Handle this method
-   * with care ( Server locked and no connected clients ).
-   *
-   * @return a new WorldMap object
-   */
-   public WorldMap addWorldMap()
-   {
-     WorldMap myWorldMap = new WorldMap();
-    
-     if (worldMaps == null) {
-       worldMaps = new WorldMap[1];      
-       myWorldMap.setWorldMapID(0);
-       worldMaps[0] = myWorldMap;
-     } else {
-       WorldMap[] myWorldMaps = new WorldMap[worldMaps.length+1];
-       myWorldMap.setWorldMapID(worldMaps.length);
-       System.arraycopy(worldMaps, 0, myWorldMaps, 0, worldMaps.length);
-       myWorldMaps[worldMaps.length] = myWorldMap; 
-       worldMaps = myWorldMaps;      
-     }    
-     return myWorldMap;
-   }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** Add a player to this universe. This method is called for inits and should NOT
-   *  be used in any other cases. Use movePlayer instead.
-   *
-   * @param player player to add to this world.
-   */
-   public void addNewPlayer( Player player ) {
-       editPlayer( player, true ); // no control on server location, we assume locality
-   }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Add a player to this universe (addButNotRemove=true) or removes a player from
-   *  this universe (addButNotRemove=false). The player must have been previously initialized.
-   *  IMPORTANT: if the location points out a room we assume that the room is LOCAL, i.e.
-   *             local to this server.
-   *
-   * @param player player to add/remove
-   * @param addButNotRemove set to true if tou want to add this player, set to false
-   *        if you want to remove the player.
-   */
-   protected void editPlayer( Player player, boolean addButNotRemove )
-   {
-      // Get Location & location type
-         WotlasLocation location = player.getLocation();
-
-      // does this world exists ?
-         WorldMap world = getWorldMapByID( location.getWorldMapID() );
-      
-         if( world==null ) {
-             Debug.signal( Debug.ERROR, this, "Player "+player.toString()+" has bad location.");
-             return;
-         }
-
-      // add/remove player
-         if( location.isWorld() ) {
-             if(addButNotRemove)
-                world.addPlayer( player );
-             else
-                world.removePlayer( player );
-         }
-         else{
-          // does this town exists ?
-             TownMap town = world.getTownMapByID( location.getTownMapID() );
-
-             if(town==null)  {
-                Debug.signal( Debug.ERROR, this, "Player "+player.toString()+" has bad location." );
-                return;
-             }
-         
-             if( location.isTown() ) {
-                 if(addButNotRemove)
-                    town.addPlayer( player );
-                 else
-                    town.removePlayer( player );
-             }
-             else if( location.isRoom() )
-             {
-                // does this building exists ?
-                   Building building = town.getBuildingByID( location.getBuildingID() );
-
-                   if(building==null)  {
-                      Debug.signal( Debug.ERROR, this, "Player "+player.toString()+" has bad location." );
-                      return;
-                   }
-
-                // does this interiorMap exists ?
-                   InteriorMap map = building.getInteriorMapByID( location.getInteriorMapID() );
-
-                   if(map==null)  {
-                      Debug.signal( Debug.ERROR, this, "Player "+player.toString()+" has bad location." );
-                      return;
-                   }
-         
-                // does this room exists ?
-                   Room room = map.getRoomByID( location.getRoomID() );
-
-                   if(room==null)  {
-                      Debug.signal( Debug.ERROR, this, "Player "+player.toString()+" has bad location." );
-                      return;
-                   }
-
-                // pheewww... ok, we add/remove this player...
-                   if(addButNotRemove)
-                      room.addPlayer( player );
-                   else
-                      room.removePlayer( player );                   
-             }
-             else
-                Debug.signal( Debug.ERROR, this, "Player "+player.toString()+" has strange location." );        
-        }
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -275,23 +134,6 @@ public class WorldManager
      
         return false;
      }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To Get a valid WorldID ( for player inits ).
-   *
-   * @return a valid worldMap ID, -1 if there are none
-   */
-   public int getAValidWorldID() {
-   	if(worldMaps==null)
-   	   return -1;
-   	   
-   	for(  int i=0; i<worldMaps.length; i++ )
-   	      if( worldMaps[i]!=null )
-   	          return i;
-   	
-        return -1;
-   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

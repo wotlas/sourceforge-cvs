@@ -19,7 +19,7 @@
  
 package wotlas.server;
 
-
+import wotlas.common.*;
 import wotlas.utils.Debug;
 
  /** A Server Manager manages three servers : A GameServer, a AccountServer and

@@ -316,7 +316,7 @@ public class NetServer extends Thread
        // We close the server connection
           try{
                 server.close();
-                Debug.signal( Debug.NOTICE, this, "Server Stopped" );
+                Debug.signal( Debug.NOTICE, this, "Server Stopped ("+server_local_ID+")." );
           }
           catch(IOException e) {
                 Debug.signal( Debug.WARNING, this, e );

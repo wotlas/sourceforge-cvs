@@ -123,7 +123,7 @@ public class LieChatCommand implements ChatCommand
                   memories.resetIterator();
                   while ( memories.hasNext() ) {
                     memory = memories.next();
-                    message += "k=" + k + " otherPlayerKey=" + memory.otherPlayerKey + " meetsNumber=" + memory.meetsNumber +  " otherPlayerFakeNameIndex=" + memory.otherPlayerFakeNameIndex + "<br>";
+                    message += "k=" + k + " otherPlayerKey=" + memory.otherPlayerKey + " meetsNumber=" + memory.meetsNumber +  " otherPlayerFakeNameIndex=" + memory.otherPlayerFakeNameIndex + " lastMeetTime=" + memory.lastMeetTime + "<br>";
                     k++;
                   }
                 }

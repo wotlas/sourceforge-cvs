@@ -453,7 +453,7 @@ System.out.println("SENDING MESSAGE "+message);
 
   /** To get a valid ChatRoom primaryKey
    */
-  synchronized public String getNewChatRoomID() {
+  synchronized static public String getNewChatRoomID() {
     chatCounter++;
     return "chat-"+chatCounter;
   }

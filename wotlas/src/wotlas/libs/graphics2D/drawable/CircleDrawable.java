@@ -107,6 +107,7 @@ public class CircleDrawable extends Drawable {
         r.width = 2*radius;
         r.height = 2*radius;
 
+        useAntialiasing(true);
         tick();
     }
 
@@ -152,15 +153,7 @@ public class CircleDrawable extends Drawable {
             gc.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha ) );
 
       // 3 - circle display
-         RenderingHints saveRenderHints = gc.getRenderingHints(); // save
-    
-         RenderingHints renderHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING,
-                                                         RenderingHints.VALUE_ANTIALIAS_ON);
-         renderHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-    
-         gc.setRenderingHints( renderHints );
          gc.drawOval( r.x-screen.x, r.y-screen.y, r.width, r.height );
-         gc.setRenderingHints( saveRenderHints ); // restore
 
       // 4 - alpha cleaning
          if(alpha!=1.0)

@@ -157,9 +157,9 @@ public class AStarDouble
    */
   private NodeDouble searchNode(Point pointStart, Point pointGoal) {
     /* list of not visited Nodes */
-    Hashtable open = new Hashtable(500);
+    Hashtable open = new Hashtable(300);
     /* list of visited Nodes */
-    Hashtable closed = new Hashtable(500);
+    Hashtable closed = new Hashtable(300);
     /* sorted open Nodes */
     List nodes = new List();
 
@@ -289,6 +289,7 @@ public class AStarDouble
     }
     if (SHOW_DEBUG)
       System.out.println("no path found");
+      
     nodes.removeAllElements();
     open.clear();
     closed.clear();
@@ -489,6 +490,106 @@ public class AStarDouble
     return false;
   }
 
+  static public boolean isValidStart(Point pointGoal) {
+    return aStar.isValid(pointGoal);
+  }
+  
+  /**
+   * test if a point is a valid start. If it's an invalid point,
+   * search a valid point near it, and correct the position
+   * regarding the sprite size
+   *
+   * @param x the x coordinate
+   * @param y the y coordinate
+   * @return true if point is valid or has been corrected, false otherwise
+   */
+  private boolean isValid(Point pointGoal) {
+    // We search up to 3 pixels around the original point
+    int radius = 3;
+    
+    int x = pointGoal.x;
+    int y = pointGoal.y;
+    
+    if (isNotBlock(x,y)) {
+      if (SHOW_DEBUG)
+        System.out.println("valid point");
+      return true;
+    } else {
+      if (SHOW_DEBUG)
+        System.out.println("not a valid point -> search a valid point"); 
+    }
+    
+    if (SHOW_DEBUG) {
+      System.out.println("x = " + x);
+      System.out.println("y = " + y);
+      System.out.println("mapHeight = " + mapHeight);
+      System.out.println("mapWidth = " + mapWidth);
+    }
+    
+    // test if player is near border
+    if (x+SPRITE_SIZE>mapWidth) {      
+      if (SHOW_DEBUG)
+        System.out.println("test x near border");      
+      if (map[x-SPRITE_SIZE-1][y]) {      
+        if (SHOW_DEBUG)
+          System.out.print("player near border -> change x=mapWidth-SPRITE_SIZE-1");        
+        pointGoal.x = mapWidth-SPRITE_SIZE-1;
+        return true;
+      }      
+    }
+    if (y+SPRITE_SIZE>mapHeight) {
+      if (SHOW_DEBUG)
+        System.out.println("test y near border");      
+      if (map[x][mapHeight-SPRITE_SIZE-1]) {      
+        if (SHOW_DEBUG)
+          System.out.print("player near border -> change y=mapHeight-SPRITE_SIZE-1");        
+        pointGoal.y = mapHeight-SPRITE_SIZE-1;
+        return true;
+      }      
+    }    
+    
+    // We search a valid point around the original point
+    Point correctedPoint = new Point(x,y);
+    
+    if (isValidGoal(pointGoal)) return true;
+      
+    pointGoal.y = y-1;
+    if (isValidGoal(pointGoal)) return true;
+    pointGoal.y = y+1;
+    if (isValidGoal(pointGoal)) return true;    
+    
+    pointGoal.x = x-1;    
+    pointGoal.y = y-1;
+    if (isValidGoal(pointGoal)) return true;
+    pointGoal.y = y+1;
+    if (isValidGoal(pointGoal)) return true;    
+    
+    pointGoal.x = x+1;
+    pointGoal.y = y-1;
+    if (isValidGoal(pointGoal)) return true;
+    pointGoal.y = y+1;
+    if (isValidGoal(pointGoal)) return true;
+    
+    pointGoal.x = x-2;
+    for (pointGoal.y=y-2;pointGoal.y<y+3;y++) {
+      if (isValidGoal(pointGoal)) return true;
+    }
+    
+    for (pointGoal.x=x-1;pointGoal.x<x+2;x++) {
+      pointGoal.y=y-2;
+      if (isValidGoal(pointGoal)) return true;
+      pointGoal.y=y+2;
+      if (isValidGoal(pointGoal)) return true;
+    }
+    
+    pointGoal.x = x+2;
+    for (pointGoal.y=y-2;pointGoal.y<y+3;y++) {
+      if (isValidGoal(pointGoal)) return true;
+    }
+    
+    return false;
+  }
+  
   /**
    * Generates all the not blocked children of a Node
    *

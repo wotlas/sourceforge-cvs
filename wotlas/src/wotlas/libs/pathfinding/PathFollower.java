@@ -19,6 +19,7 @@
  
 package wotlas.libs.pathfinding;
 
+import wotlas.client.DataManager;
 import wotlas.common.*;
 import wotlas.common.message.movement.*;
 import wotlas.utils.*;
@@ -602,8 +603,15 @@ public class PathFollower implements MovementComposer {
   /** To set a player's movement : movement from current position to the given point.
    */
      public void moveTo( Point endPosition ) {
-            path = findPath( new Point( (int)xPosition, (int)yPosition ),
-                             new Point( endPosition.x, endPosition.y ) );
+            // Test if xPosition,yPosition is a valid point
+            Point startPt = new Point( (int)xPosition, (int)yPosition );            
+            if ( !AStarDouble.isValidStart(startPt) ) {
+              if (DataManager.SHOW_DEBUG)
+                System.out.println("PathFollower : invalid start point");
+              // Faire un reset de la position
+            }
+            
+            path = findPath( startPt, new Point( endPosition.x, endPosition.y ) );
 
             if( path==null ) {
             	if( walkingAlongPath )

@@ -702,7 +702,7 @@ System.out.println("Frame show");
                 if( doorPoint!=null ) {
                     myPlayer.moveTo( doorPoint );
                     if( myMapData instanceof InteriorMapData )
-                        ( (InteriorMapData) myMapData ).setAutomaticDoorOpen();
+                        ( (InteriorMapData) myMapData ).setAutomaticDoorOpen(); // does not work yet
                 }
            }
 

@@ -356,7 +356,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     if( isConnectedToGame )
         return 1.0f;
     else
-        return 0.25f;
+        return 0.5f;
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

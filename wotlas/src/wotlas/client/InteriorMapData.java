@@ -318,15 +318,18 @@ public class InteriorMapData implements MapData
                && !rl.getDoor().canMove(myPlayer.getCurrentRectangle(),
                                         myPlayer.getEndPosition() ) ) {
                myPlayer.stopMovement();
-
-               if(automaticDoorOpen) {
-System.out.println("Automatic door open");
-                  WotlasLocation location = new WotlasLocation(myPlayer.getLocation());
- //                 dataManager.sendMessage(
- //                    new DoorStateMessage(location, rl.getRoomLinkID(), !rl.getDoor().isOpened()) );
-               	  automaticDoorOpen=false;
-               }
            }
+/* DOESN'T WORK... the player stops before intersecting the roomlink and the code
+   below is never reached... to fix in release 2...
+
+           if(automaticDoorOpen) {
+              WotlasLocation location = new WotlasLocation(myPlayer.getLocation());
+              dataManager.sendMessage(
+                  new DoorStateMessage(location, rl.getRoomLinkID(), !rl.getDoor().isOpened()) );
+              automaticDoorOpen=false;
+           }
+*/
+
       }
 
     // Moving to another Room ?

@@ -33,11 +33,28 @@ public class ValuedObject extends BaseObject
 
  /*------------------------------------------------------------------------------------*/
 
+ /** The value of the object. It is expressed in MK. 
+  * Perhaps there should be another field for integer value (expressed in CP).
+  *
+  * 10 CP = 1 SP  (Copper Penny - Silver Penny)
+  * 10 SP = 1 MK  (Silver Penny - silver MarK)
+  * 10 MK = 1 GC  (silver MarK  - Gold Coin)
+  */
+  	protected float value;
 
   /** The quantity owned.
    */
-      private short quantity;
+    protected short quantity;
   
+ /*------------------------------------------------------------------------------------*/
+	
+ /** Default constructor
+  */ 
+   public ValuedObject()
+   {
+   	super();
+   }
+	
  /*------------------------------------------------------------------------------------*/
 	
  /** Gets the quantity.

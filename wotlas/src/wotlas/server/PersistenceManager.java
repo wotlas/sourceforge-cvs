@@ -34,7 +34,7 @@ import java.io.File;
   * @see wotlas.libs.persistence.PropertiesConverter
   */
  
-class PersistenceManager
+public class PersistenceManager
 {
  /*------------------------------------------------------------------------------------*/
 

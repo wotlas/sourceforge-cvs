@@ -424,6 +424,19 @@ public class Room
    */
     public void init( InteriorMap myInteriorMap ){
        this.myInteriorMap = myInteriorMap;
+       
+       if( mapExits == null )
+           return;
+       
+       WotlasLocation thisLocation = new WotlasLocation();
+       thisLocation.setRoomID( roomID );
+       thisLocation.setInteriorMapID( myInteriorMap.getInteriorMapID() );
+       thisLocation.setBuildingID( myInteriorMap.getMyBuilding().getBuildingID() );
+       thisLocation.setTownMapID( myInteriorMap.getMyBuilding().getMyTownMap().getTownMapID() );
+       thisLocation.setWorldMapID( myInteriorMap.getMyBuilding().getMyTownMap().getMyWorldMap().getWorldMapID() );
+       
+       for( int i=0; i<mapExits.length; i++ )
+            mapExits[i].setMapExitLocation(thisLocation);
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

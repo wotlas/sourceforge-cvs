@@ -72,6 +72,12 @@ public class MapExit extends ScreenRectangle
 
  /*------------------------------------------------------------------------------------*/
 
+  /** MapExit Location : the Map
+   */
+   transient private WotlasLocation mapExitLocation;
+
+ /*------------------------------------------------------------------------------------*/
+
   /** Constructor
    */
    public MapExit() {}
@@ -137,5 +143,23 @@ public class MapExit extends ScreenRectangle
   }
 
  /*------------------------------------------------------------------------------------*/
+
+  /** To set this MapExit's location : the Map this MapExit belongs to.
+   * @param mapExitLocation WotlasLocation of this MapExit.
+   */
+   public void setMapExitLocation(WotlasLocation mapExitLocation) {
+     this.mapExitLocation = mapExitLocation;
+   }
+
+  /** To get the WotlasLocation of this MapExit (i.e. the Map possessing this
+   *  MapExit ). To get the location where this MapExit sends to use the
+   *  getTargetWotlasLocation method.
+   *
+   *  @return WotlasLocation of this MapExit.
+   */
+   public WotlasLocation getMapExitLocation() {
+     return new WotlasLocation( mapExitLocation );
+   }
   
+ /*------------------------------------------------------------------------------------*/
 }

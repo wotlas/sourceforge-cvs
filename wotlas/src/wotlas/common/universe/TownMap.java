@@ -347,6 +347,21 @@ public class TownMap extends ScreenRectangle
        for( int i=0; i<buildings.length; i++ )
             if( buildings[i]!=null )
                 buildings[i].init( this );
+
+    // 3 - MapExit inits
+       if( mapExits == null )
+           return;
+       
+       WotlasLocation thisLocation = new WotlasLocation();
+       thisLocation.setRoomID( -1 );
+       thisLocation.setInteriorMapID( -1 );
+       thisLocation.setBuildingID( -1 );
+       thisLocation.setTownMapID( townMapID );
+       thisLocation.setWorldMapID( myWorldMap.getWorldMapID() );
+       
+       for( int i=0; i<mapExits.length; i++ )
+            mapExits[i].setMapExitLocation(thisLocation);
+
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -30,8 +30,14 @@ import wotlas.utils.List;
  *
  * usage:
  * - create a AStar object
- * - initialize the mask with a buffered image
- *   AStar.initMask(BufferedImage maskBuffImg, int imgWidth, int imgHeight)
+ *   AStar astar;
+ * - initialize the mask with:
+ *    a buffered image
+ *   astar.initMask(BufferedImage maskBuffImg, int imgWidth, int imgHeight)
+ *    or a boolean array 
+ *   aStar.setMask( boolean mask[][] )
+ * - set the sprite size
+ *   astar.setSpriteSize(int size)
  * - start the search
  *   AStarObject.findPath(startPoint, goalPoint);
  *
@@ -78,8 +84,22 @@ public class AStarDouble
   
   /** size of the sprite (in CELL units)
    */
-  public int SPRITE_SIZE = 4;
+  private int SPRITE_SIZE = 4;
    
+ /*------------------------------------------------------------------------------------*/
+  
+  /** To set sprite size
+   */
+  public void setSpriteSize(int size) {
+    SPRITE_SIZE = size;
+  }
+  
+  /** To get sprite size
+   */
+  public int getSpriteSize() {
+    return SPRITE_SIZE;
+  }
+  
  /*------------------------------------------------------------------------------------*/
   
   /**

@@ -414,7 +414,30 @@ public class ServerConfigList
      }
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
+
+    /** To get the followin server ID.
+     * @param previousServerID the previous ID we tried
+     * @return the immediately following server ID, -1 if there is none
+     */
+     public int getNextServerID(int previousServerID) {
+
+          if(configs==null || configs.length==0) return -1;
+
+          int min=-1;
+
+       // Search the minimum
+          for( int i=0; i<configs.length; i++ ) {
+             int id = configs[i].getServerID();
+
+             if( id>previousServerID && (id<min || min==-1) )
+                 min=id;
+          }
+          
+          return min;
+     }
+
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** To get the number of servers.
    */  
    public int size() {

@@ -242,7 +242,7 @@ public class Tools
    static public String keyGenerator( int nbChars, int seed ) {
    	StringBuffer buf = new StringBuffer("");
         
-        Random r = new Random(System.currentTimeMillis()/seed);
+        Random r = new Random(System.currentTimeMillis()*seed);
         
         for( int i=0; i<nbChars; i++ ) {
              if(r.nextInt(2)==1)

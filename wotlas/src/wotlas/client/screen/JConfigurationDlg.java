@@ -45,137 +45,147 @@ import javax.swing.event.*;
 
 public class JConfigurationDlg extends JDialog {
 
+ /*------------------------------------------------------------------------------------*/
+
   protected JSlider soundVolLevel, musicVolLevel;
   protected JCheckBox cButton;
   protected JCheckBox savePassButton;
 
+ /*------------------------------------------------------------------------------------*/
+
   /** To get the music volume.
    */
-  public short getMusicVolume() {
-    return SoundLibrary.getSoundLibrary().getMusicVolume();
-  }
+    public short getMusicVolume() {
+        return SoundLibrary.getSoundLibrary().getMusicVolume();
+    }
   
   /** To set the music volume.
    */
-  public void setMusicVolume(short musicVolume) {
-    if ((musicVolume>-1) && (musicVolume<SoundLibrary.MAX_MUSIC_VOLUME)) {
-      musicVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_MUSIC_VOLUME, musicVolume);
-    } else {
-      musicVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_MUSIC_VOLUME, SoundLibrary.MAX_MUSIC_VOLUME/2);
+    public void setMusicVolume(short musicVolume) {
+       if ((musicVolume>-1) && (musicVolume<SoundLibrary.MAX_MUSIC_VOLUME))
+           musicVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_MUSIC_VOLUME, musicVolume);
+       else
+           musicVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_MUSIC_VOLUME, SoundLibrary.MAX_MUSIC_VOLUME/2);
     }
-  }
   
   /** To get the sound volume.
    */
-  public short getSoundVolume() {
-    return SoundLibrary.getSoundLibrary().getSoundVolume();
-  }
+    public short getSoundVolume() {
+       return SoundLibrary.getSoundLibrary().getSoundVolume();
+    }
   
   /** To set the sound volume.
    */
-  public void setSoundVolume(short soundVolume) {    
-    if ((soundVolume>-1) && (soundVolume<SoundLibrary.MAX_SOUND_VOLUME)) {
-      soundVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_SOUND_VOLUME, soundVolume);
-    } else {
-      soundVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_SOUND_VOLUME, SoundLibrary.MAX_SOUND_VOLUME/2);
+    public void setSoundVolume(short soundVolume) {    
+      if ((soundVolume>-1) && (soundVolume<=SoundLibrary.MAX_SOUND_VOLUME))
+         soundVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_SOUND_VOLUME, soundVolume);
+      else
+         soundVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_SOUND_VOLUME, SoundLibrary.MAX_SOUND_VOLUME/2);
     }
-  } 
-  
     
  /*------------------------------------------------------------------------------------*/
 
-
   /** Constructor.
    */
-  public JConfigurationDlg(JFrame frame) {
-    super(frame, "Options", true);
-    setSize(400,300);
-    //setResizable(false);
-    
-    ClientConfiguration clientConfiguration;
-    try {      
-      clientConfiguration = (ClientConfiguration) PropertiesConverter.load(ClientDirector.CLIENT_OPTIONS);
-    } catch (PersistenceException pe) {
-      Debug.signal( Debug.ERROR, this, "Failed to save sound & music configuration : " + pe.getMessage() );
-      clientConfiguration = new ClientConfiguration();
-    }
-    
-    musicVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_MUSIC_VOLUME,
-                                (short)clientConfiguration.getMusicVolume());
+    public JConfigurationDlg(JFrame frame) {
+      super(frame, "Options", true);
+      setSize(400,300);
 
-    soundVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_SOUND_VOLUME,
-                                (short)clientConfiguration.getSoundVolume());
-    cButton = new JCheckBox("High details for text details.");
-    cButton.setSelected(clientConfiguration.getHighDetails());
-    TextDrawable.setHighQualityTextDisplay(clientConfiguration.getHighDetails());
-    
-    savePassButton = new JCheckBox("Remember passwords.");
-    savePassButton.setSelected( clientConfiguration.getRememberPasswords() );
-    ClientManager.setRememberPasswords( clientConfiguration.getRememberPasswords() );
+      ClientConfiguration clientConfiguration;
 
-    JPanel pane = (JPanel) getContentPane();
+      try {
+           if(new File(ClientDirector.CLIENT_OPTIONS).exists())
+              clientConfiguration = (ClientConfiguration) PropertiesConverter.load(ClientDirector.CLIENT_OPTIONS);
+           else {
+              Debug.signal( Debug.ERROR, this, "Failed to load sound & music configuration. Creating a new one." );
+              clientConfiguration = new ClientConfiguration();
+           }
+      }
+      catch (PersistenceException pe) {
+         Debug.signal( Debug.ERROR, this, "Failed to load sound & music configuration : " + pe.getMessage()+". Creating a new one." );
+         clientConfiguration = new ClientConfiguration();
+      }
     
-// JDialog properties
-    pane.setLayout(new BorderLayout());
-    pane.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
-    
-    getContentPane().setBackground(Color.white);
-         
-// We load the images
-    ImageIcon im_okup = new ImageIcon("../base/gui/ok-up.gif");
-    ImageIcon im_okdo = new ImageIcon("../base/gui/ok-do.gif");
+      musicVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_MUSIC_VOLUME,
+                                  (short)clientConfiguration.getMusicVolume());
 
-// JPanel Tabs
-    JGeneralTab generalTab = new JGeneralTab();
-    JVolumeTab volumeTab = new JVolumeTab();
+      soundVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_SOUND_VOLUME,
+                                  (short)clientConfiguration.getSoundVolume());
+
+      cButton = new JCheckBox("High details for text details.");
+      cButton.setSelected(clientConfiguration.getHighDetails());
+      TextDrawable.setHighQualityTextDisplay(clientConfiguration.getHighDetails());
+
+      savePassButton = new JCheckBox("Remember passwords.");
+      savePassButton.setSelected( clientConfiguration.getRememberPasswords() );
+      ClientManager.setRememberPasswords( clientConfiguration.getRememberPasswords() );
+
+      JPanel pane = (JPanel) getContentPane();
     
-    JTabbedPane tabbedPane = new JTabbedPane();
-    tabbedPane.addTab( "General configuration",
+   // JDialog properties
+      pane.setLayout(new BorderLayout());
+      pane.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
+
+      getContentPane().setBackground(Color.white);
+
+   // We load the images
+      ImageIcon im_okup = new ImageIcon("../base/gui/ok-up.gif");
+      ImageIcon im_okdo = new ImageIcon("../base/gui/ok-do.gif");
+
+   // JPanel Tabs
+      JGeneralTab generalTab = new JGeneralTab();
+      JVolumeTab volumeTab = new JVolumeTab();
+    
+      JTabbedPane tabbedPane = new JTabbedPane();
+      tabbedPane.addTab( "General configuration",
                        null, 
                        generalTab,   
                        "" ); //tooltip text
-    tabbedPane.addTab( "Volume configuration",
+      tabbedPane.addTab( "Volume configuration",
                        null, 
                        volumeTab,   
                        "" ); //tooltip text
-    getContentPane().add(tabbedPane, BorderLayout.CENTER);
-    
-// OK Button
-    JButton b_ok = new JButton(im_okup);
-    b_ok.setRolloverIcon(im_okdo);
-    b_ok.setPressedIcon(im_okdo);
-    b_ok.setBorderPainted(false);
-    b_ok.setContentAreaFilled(false);
-    b_ok.setFocusPainted(false);
-    // Save the configuration
-    b_ok.addActionListener(new ActionListener() {
-      public void actionPerformed (ActionEvent e) {
+      getContentPane().add(tabbedPane, BorderLayout.CENTER);
+
+   // OK Button
+      JButton b_ok = new JButton(im_okup);
+      b_ok.setRolloverIcon(im_okdo);
+      b_ok.setPressedIcon(im_okdo);
+      b_ok.setBorderPainted(false);
+      b_ok.setContentAreaFilled(false);
+      b_ok.setFocusPainted(false);
+
+   // Save the configuration
+     b_ok.addActionListener(new ActionListener() {
+       public void actionPerformed (ActionEvent e) {
         ClientConfiguration clientConfiguration = new ClientConfiguration();
-        
+
         clientConfiguration.setMusicVolume((short) musicVolLevel.getValue());
         clientConfiguration.setSoundVolume((short) soundVolLevel.getValue());
         SoundLibrary.getSoundLibrary().setSoundVolume((short) soundVolLevel.getValue());
-        
+
         clientConfiguration.setNoMusic((musicVolLevel.getValue()==0));
         SoundLibrary.getSoundLibrary().setNoMusic(clientConfiguration.getNoMusic());
-        
+
         clientConfiguration.setNoSound((soundVolLevel.getValue()==0));
         SoundLibrary.getSoundLibrary().setNoSound(clientConfiguration.getNoSound());
-        
+
         clientConfiguration.setHighDetails(cButton.isSelected());
         clientConfiguration.setRememberPasswords(savePassButton.isSelected());
-        
+
         try {
-          PropertiesConverter.save(clientConfiguration, ClientDirector.CLIENT_OPTIONS);
+           PropertiesConverter.save(clientConfiguration, ClientDirector.CLIENT_OPTIONS);
         } catch (PersistenceException pe) {
-          Debug.signal( Debug.ERROR, this, "Failed to save sound & music configuration : " + pe.getMessage() );
+           Debug.signal( Debug.ERROR, this, "Failed to save sound & music configuration : " + pe.getMessage() );
         }
+
         dispose();
       }
     });
+
     getContentPane().add(b_ok, BorderLayout.SOUTH);
 
-// Display
+   // Display
     SwingTools.centerComponent(this);
     show();
   }
@@ -295,22 +305,17 @@ public class JConfigurationDlg extends JDialog {
         musicPanel.add(musicVolLevel);
         
         musicPanel.add(new JLabel(maxVolIcon));
-      innerPanel.add(musicPanel);
-        
-        
-
+        innerPanel.add(musicPanel);
     }
   
     /** Invoked when volume is changed.
      */
     public void stateChanged(ChangeEvent e) {
-      SoundLibrary.getSoundLibrary().changeMusicVolume((short) musicVolLevel.getValue());       
+      SoundLibrary.getSoundLibrary().setMusicVolume((short) musicVolLevel.getValue());
     }
-    
   }
 
  /*------------------------------------------------------------------------------------*/
 
-    
 }
   

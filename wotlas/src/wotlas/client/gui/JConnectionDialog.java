@@ -27,6 +27,7 @@ import wotlas.utils.Tools;
 
 import wotlas.common.ErrorCodeList;
 import wotlas.common.ServerConfigList;
+import wotlas.common.ServerConfig;
 
 import wotlas.client.ClientManager;
 
@@ -149,31 +150,61 @@ public abstract class JConnectionDialog extends JDialog implements Runnable
 
      // 1 - Wait the display of the window
         do{
-             Tools.waitTime( 750 );
+             Tools.waitTime( 500 );
         }
         while( !isShowing() );
 
-     // 2 - We try a connection with the provided parameters...
-        tryConnection();
+        boolean retry;
+        int searchingOnServerID = 0;
 
-     // 3 - Connection failed ?
-        if( !connectCanceled && !hasSucceeded ) {
-            // We analyze the error returned
-               if( errorCode==ErrorCodeList.ERR_CONNECT_FAILED ) {
-                  // we report the deadlink and try the eventualy new address
-                     l_info.setText( "Connection failed. Trying to update server address..." );
-                     ServerConfigList configList = ClientManager.getDefaultClientManager().getServerConfigList();
-                     server = configList.reportDeadServer(serverID);
+        do{
+             retry=false;
 
-                     if(server!=null)
-                        tryConnection(); // we retry a connection
+          // 2 - We try a connection with the provided parameters...
+             tryConnection();
 
-                     if(!hasSucceeded)
-                        displayError( ""+errorMessage );
-               }
-               else
-                   displayError( ""+errorMessage );
-        }
+          // 3 - Connection failed ?
+             if( !connectCanceled && !hasSucceeded ) {
+               // We analyze the error returned
+                  if( errorCode==ErrorCodeList.ERR_CONNECT_FAILED ) {
+                     // we report the deadlink and try the eventualy new address
+                        l_info.setText( "Connection failed. Trying to update server address..." );
+                        ServerConfigList configList = ClientManager.getDefaultClientManager().getServerConfigList();
+
+                        if(searchingOnServerID<=0)
+                           server = configList.reportDeadServer(serverID);
+                        else
+                           server = configList.reportDeadServer(searchingOnServerID);
+
+                        if(server!=null)
+                           retry=true; // we retry a connection
+                  }
+
+                // If the account was not found we try another server (happens only for the GameServer)
+                  if( errorCode==ErrorCodeList.ERR_UNKNOWN_ACCOUNT || (!retry && searchingOnServerID!=0)) {
+                        l_info.setText( "Account not found on this server. Trying next server..." );
+                        ServerConfigList configList = ClientManager.getDefaultClientManager().getServerConfigList();
+
+                        do{
+                              searchingOnServerID = configList.getNextServerID(searchingOnServerID);
+                        }
+                        while(searchingOnServerID!=serverID);
+
+                        if(searchingOnServerID>0) {
+                           // we update our server address & port
+                              ServerConfig nextServer = configList.getServerConfig(searchingOnServerID);
+                              server = nextServer.getServerName();
+                              port = nextServer.getGameServerPort();
+                              retry=true;
+                        }
+                        else
+                           displayError( "Account not found on running servers. Please retry later." );
+                  }
+                  else if(!retry)
+                       displayError( ""+errorMessage );
+             }
+
+        }while(retry);
 
      // 4 - Prepare to close the dialog the right way (we are not in the AWT thread)
         final JConnectionDialog cDialog = this;

@@ -472,10 +472,12 @@ public class ServerDirector implements Runnable, NetServerErrorListener
             properties.setProperty( "key.shaitan", Tools.keyGenerator(23, serverID+1) );
             properties.setProperty( "key.amyrlin", Tools.keyGenerator(23, serverID+2) );
             properties.setProperty( "key.chronicles", Tools.keyGenerator(23, serverID+3) );
+            properties.setProperty( "key.mhael", Tools.keyGenerator(23, serverID+4) );
 
             oldConfig = FileTools.updateProperty( "key.shaitan", properties.getProperty( "key.shaitan"), oldConfig);
             oldConfig = FileTools.updateProperty( "key.amyrlin", properties.getProperty( "key.amyrlin"), oldConfig);
             oldConfig = FileTools.updateProperty( "key.chronicles", properties.getProperty( "key.chronicles"), oldConfig);
+            oldConfig = FileTools.updateProperty( "key.mhael", properties.getProperty( "key.mhael"), oldConfig);
 
             if( !FileTools.saveTextToFile( SERVER_CONFIG, oldConfig ) )
                 Debug.signal(Debug.ERROR,null,"Failed to save characters keys in "+SERVER_CONFIG);

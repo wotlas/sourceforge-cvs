@@ -307,7 +307,8 @@ public class ClientManager implements ActionListener {
             JOptionPane.showMessageDialog( screenIntro, "We failed to contact the wotlas web server (see help). So we could not update\n"+
                                                  "our servers addresses. If this is not the first time you start wotlas on\n"+
                                                  "your computer, you can try to connect with the previous server config files.\n"+
-                                                 "Otherwise please restart wotlas later.",
+                                                 "Otherwise please restart wotlas later.\n\n"+
+                                                 "Note also that wotlas is not firewall/proxy friendly.",
                                                  "Warning", JOptionPane.WARNING_MESSAGE);
         else  // Wotlas News
             new JHTMLWindow( screenIntro, "Wotlas News", ClientDirector.getRemoteServerConfigHomeURL()+"news.html", 320, 400, false );

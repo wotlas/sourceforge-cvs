@@ -95,6 +95,10 @@ public class NetServer extends Thread
    */
      private String host;
 
+  /** An eventual error listener.
+   */
+     private NetServerErrorListener errorListener;
+
  /*------------------------------------------------------------------------------------*/
 
      /**  Constructs a NetServer but does not starts it. Call the start()
@@ -302,9 +306,13 @@ public class NetServer extends Thread
                      if( e instanceof BindException ) {
                          Debug.signal( Debug.CRITICAL, this, e );
 
-                      // We'll retry our connection in 50s
-                         Debug.signal(Debug.WARNING, null,"Server #"+server_local_ID+" will be restarted in 50s.");
-                         Tools.waitTime(50000);
+                      // We'll retry our connection in 3 minutes
+                         Debug.signal(Debug.WARNING, null,"Server #"+server_local_ID+" will be restarted in 3m.");
+
+                         if(errorListener!=null)
+                            errorListener.errorOccured(e);
+
+                         Tools.waitTime(1000*60*3); // we wait 3 minutes
                          Debug.signal(Debug.WARNING, null,"Attempt to restart server #"+server_local_ID+"...");
                          server = getServerSocket();
                          continue;
@@ -393,6 +401,15 @@ public class NetServer extends Thread
     */
       protected void setMaximumOpenedSockets( int max_opened_sockets ) {
           this.max_opened_sockets = max_opened_sockets;
+      }
+  
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set an ErrorListener for this server.
+    *  @param nsl listener
+    */
+      public void setErrorListener( NetServerErrorListener nsl ) {
+      	 errorListener = nsl;
       }
   
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

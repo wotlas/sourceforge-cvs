@@ -24,10 +24,12 @@ import wotlas.utils.Tools;
 import wotlas.utils.FileTools;
 
 import wotlas.libs.log.*;
+import wotlas.libs.net.*;
 import wotlas.common.message.account.WarningMessage;
 
 import java.util.Properties;
 import java.util.Iterator;
+import java.net.BindException;
 
 /** The MAIN server class. It starts the PersistenceManager, the ServerManager
  *  and the DataManager. So got it ? yeah, it's the boss on the server side...
@@ -37,7 +39,7 @@ import java.util.Iterator;
  * @see wotlas.server.PersistenceManager
  */
 
-class ServerDirector implements Runnable
+class ServerDirector implements Runnable, NetServerErrorListener
 {
  /*------------------------------------------------------------------------------------*/
 
@@ -52,7 +54,7 @@ class ServerDirector implements Runnable
 
    /** Persistence period in ms.
     */
-    public final static int PERSISTENCE_PERIOD = 1000*3600*6; // 8h
+    public final static long PERSISTENCE_PERIOD = 1000*3600*6; // 6h
 
  /*------------------------------------------------------------------------------------*/
 
@@ -193,6 +195,8 @@ class ServerDirector implements Runnable
            Debug.signal( Debug.NOTICE, null, "Everything is Ok. Creating persistence thread..." );
 
            serverDirector = new ServerDirector();
+           serverManager.getGameServer().setErrorListener( serverDirector );
+           
            Thread persistenceThread = new Thread( serverDirector );
            persistenceThread.start();
 
@@ -277,6 +281,9 @@ class ServerDirector implements Runnable
            // maintenance mode for 2-3 minutes, in 2 minutes.
            // If we are not in maintenance mode ( maintenance=false )
            // the message is a "server shuting down" message.
+              serverManager.getGameServer().setServerLock( true );
+              serverManager.getAccountServer().setServerLock( true );
+              /* serverManager.getGatewayServer().setServerLock( true ); */
 
               if( maintenance )
                   Debug.signal( Debug.NOTICE, null, "Server will enter maintenance mode in 2 minutes...");
@@ -303,19 +310,15 @@ class ServerDirector implements Runnable
            // 2 - We wait two more minutes ( or 30s if maintenance=false )
               if( maintenance ) {
                   Tools.waitTime( 1000*120 ); // 2mn
-                  Debug.signal( Debug.WARNING, null, "Server enters maintenance mode now...");
+                  Debug.signal( Debug.WARNING, null, "Server enters maintenance mode now... ("+Tools.getLexicalTime()+")");
               }
               else {
                   Tools.waitTime( 1000*30 );  // 30s
-                  Debug.signal( Debug.NOTICE, null, "Saving world & player data...");
+                  Debug.signal( Debug.NOTICE, null, "Saving world & player data... ("+Tools.getLexicalTime()+")");
               }
-
 
            // 3 - We close all remaining connections on the GameServer
            //     and enter maintenance mode
-              serverManager.getGameServer().setServerLock( true );
-              serverManager.getAccountServer().setServerLock( true );
-              /* serverManager.getGatewayServer().setServerLock( true ); */
 
               synchronized( dataManager.getAccountManager() ) {
                  Iterator it = dataManager.getAccountManager().getIterator();
@@ -344,11 +347,11 @@ class ServerDirector implements Runnable
 
            // 5 - Leaving Maintenance Mode
               if( maintenance ) {
-                  serverManager.getGameServer().setServerLock( true );
-                  serverManager.getAccountServer().setServerLock( true );
-               /* serverManager.getGatewayServer().setServerLock( true ); */
+                  serverManager.getGameServer().setServerLock( false );
+                  serverManager.getAccountServer().setServerLock( false );
+               /* serverManager.getGatewayServer().setServerLock( false ); */
 
-                  Debug.signal( Debug.NOTICE, null, "Leaving maintenance mode..." );
+                  Debug.signal( Debug.NOTICE, null, "Leaving maintenance mode... ("+Tools.getLexicalTime()+")" );
               }
      }
 
@@ -378,5 +381,19 @@ class ServerDirector implements Runnable
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** This method is called when an error occurs in one of the NetServer.
+   *
+   * @param e the exception that occured.
+   */
+     public void errorOccured( Exception e ) {
+     	if(e instanceof BindException) {
+     	   Debug.signal( Debug.NOTICE, this, "Trying to awake Persistence Thread..." );
+     	   awakePersistenceThread(); // returns immediately
+     	}
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }
 

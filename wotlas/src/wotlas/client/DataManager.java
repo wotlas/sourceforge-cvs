@@ -467,6 +467,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     // 1 - Create Image Library
        try {
           imageLib = new ImageLibrary( ClientDirector.getResourceManager() );
+          //imageLib.setLoadAllJITDirectoryImages(true); // images from JIT directories are loaded together.
        }
        catch( Exception ex ) {
           Debug.signal(Debug.FAILURE, this, ex );

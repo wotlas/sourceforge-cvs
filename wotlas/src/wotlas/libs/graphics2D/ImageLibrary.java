@@ -143,6 +143,12 @@ public class ImageLibrary {
    */
      protected ImageResourceLocator resourceLocator;
 
+  /** JIT Behaviour : If true we load all the images from the JIT directory when asked to load
+   *  one image from that directory. If false we only load the images one by one when they are needed.
+   *  Default Value is false.
+   */
+     protected boolean loadAllJITDirectoryImages = false;
+
  /*------------------------------------------------------------------------------------*/
   
   /** Do we have to display db entries with bad format ?
@@ -255,9 +261,29 @@ public class ImageLibrary {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To set the JIT Behaviour : If true we load all the images from the JIT directory when asked to
+   *  load one image from that directory. If false we only load the images one by one when they are needed.
+   *  Default Value is false.
+   */
+     public void setLoadAllJITDirectoryImages( boolean loadAllJITDirectoryImages ) {
+        this.loadAllJITDirectoryImages = loadAllJITDirectoryImages;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the JIT Behaviour : If true we load all the images from the JIT directory when asked to
+   *  load one image from that directory. If false we only load the images one by one when they are needed.
+   *  Default Value is false.
+   */
+     public boolean getLoadAllJITDirectoryImages() {
+        return loadAllJITDirectoryImages;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** To get an image from the database. If we have to load the given image we check that
-   *  it is in a "JIT" directory. If it's the case we load the image and return the one
-   *  wanted, if not we return null and an error is declared.
+   *  it is in a "JIT" or "EXC" directory. If it's the case we load/unload images as expected
+   *  by the option and return the image wanted. We return null if an error occurs.
    *
    * @param imId complete image identifier
    * @return image found in the library.
@@ -278,19 +304,13 @@ public class ImageLibrary {
 
            if(bufIm!=null)
               return bufIm; // success !
+
+        // We try to load the image.
+           return loadImage( imId );
         }
         catch( Exception e ) {
        	   throw new ImageLibraryException(""+e+" in "+imId);
         }
-
-     // We try to load the image ( must be a JIT image ).
-        if( dir.dirOption!=ImageLibDir.OPT_JIT ) {
-            if(DEBUG_MODE)
-               System.out.println("ERROR: Trying to load an image which is not in a JIT directory : "+imId);
-            return null; // directory has no "Just in Time" option we return null;
-        }
-
-        return dir.loadImage( imId.imageId );
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -328,13 +348,19 @@ public class ImageLibrary {
 
            if(bufIm!=null)
               return bufIm; // success !
+
+        // We try to load the image ( must be a JIT image ).
+           if( dir.dirOption==ImageLibDir.OPT_JIT && loadAllJITDirectoryImages ) {
+               dir.loadAllImages( false ); // we load all the images of that directory
+               return dir.images[imId.imageId];
+           }
+
+        // We try to load the image...
+           return dir.loadImage( imId.imageId );
        }
        catch( Exception e ) {
          throw new ImageLibraryException(""+e);
        }
-
-    // We try to load the image...
-       return dir.loadImage( imId.imageId );
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

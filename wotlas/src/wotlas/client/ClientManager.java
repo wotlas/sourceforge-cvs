@@ -30,6 +30,8 @@ import wotlas.common.ServerConfigListTableModel;
 import wotlas.libs.net.*;
 import wotlas.libs.net.personality.*;
 
+import wotlas.libs.sound.SoundLibrary;
+
 import wotlas.utils.*;
 import wotlas.utils.aswing.*;
 
@@ -258,6 +260,9 @@ public class ClientManager
 
       case 0:
       screenIntro.setTitle("Wotlas - Account selection...");
+
+      if( SoundLibrary.getSoundLibrary()!=null )
+          SoundLibrary.getSoundLibrary().stopMusic();
 
       // Test if an account exists
       if (profileConfigList==null) {

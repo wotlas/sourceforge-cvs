@@ -20,6 +20,7 @@
 package wotlas.libs.sound;
 
 import wotlas.utils.Debug;
+import wotlas.utils.Tools;
 
 import javax.sound.midi.*;
 import javax.sound.sampled.*;
@@ -90,6 +91,10 @@ public class SoundLibrary implements MetaEventListener, ControllerEventListener
   /** Current Sound Volume
    */
   private short soundVolume;
+
+  /** Current Music playing. Null if none...
+   */
+  private String currentMusicName;
   
  /*------------------------------------------------------------------------------------*/
 
@@ -182,7 +187,7 @@ public class SoundLibrary implements MetaEventListener, ControllerEventListener
   /** To init the sound library
    * @param dataBasePath database location
    */
-  public void init(String dataBasePath ) {
+  public void init( String dataBasePath ) {
     this.dataBasePath = dataBasePath;
     noSoundDevice = false;
     
@@ -261,6 +266,11 @@ public class SoundLibrary implements MetaEventListener, ControllerEventListener
     if (noSoundDevice)
       return;
 
+    if(currentMusicName!=null && currentMusicName.equals(musicName) )
+       return; // the music is already playing.
+    else
+       currentMusicName=musicName;
+
     if (currentMusic!=null)
       sequencer.stop();
 
@@ -274,8 +284,12 @@ public class SoundLibrary implements MetaEventListener, ControllerEventListener
     for (int i = 0; i < channels.length; i++)
       channels[i].controlChange(7, value );
 
-    if (!noMusic)
+    if (!noMusic) {
       sequencer.start();
+      sequencer.stop();
+      Tools.waitTime(100);
+      sequencer.start();
+    }
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -359,7 +373,7 @@ public class SoundLibrary implements MetaEventListener, ControllerEventListener
     } catch (Exception ex) { 
       Debug.signal( Debug.ERROR, this, "Failed to read music "+musicPath+": "+ex);
       return false;
-	  }
+    }
 
     return true;
   }
@@ -372,6 +386,7 @@ public class SoundLibrary implements MetaEventListener, ControllerEventListener
   public void setNoMusic( boolean noMusic ) {
     this.noMusic = noMusic;
     if (noMusic) {
+      currentMusicName=null;
       this.stopMusic();
     } else {
       if (currentMusic!=null)
@@ -415,6 +430,7 @@ public class SoundLibrary implements MetaEventListener, ControllerEventListener
       return;
  
     sequencer.stop();
+    currentMusicName=null;
     //currentMusic=null;
   }
   

@@ -1469,7 +1469,7 @@ public class WorldGenerator {
                mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
                mapExit.setMapExitSide( MapExit.NONE );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,1,0,2,0) );
-               mapExit.setTargetPosition( new ScreenPoint(500,260) );
+               mapExit.setTargetPosition( new ScreenPoint(480,260) );
                mapExit.setTargetOrientation( (float)(Math.PI) );
 
            rooms[1] = new Room();
@@ -1541,7 +1541,7 @@ public class WorldGenerator {
            rooms[0].setShortName("refuge-mainhall");
            rooms[0].setInsertionPoint( new ScreenPoint(450,230) );
 
-               mapExit = rooms[0].addMapExit( new ScreenRectangle(500,230,25,70) );
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(500,230,30,70) );
                mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
                mapExit.setMapExitSide( MapExit.NONE );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,1,0,1,0) );
@@ -1788,13 +1788,13 @@ public class WorldGenerator {
              roomLink.setRoom1ID(2);
              roomLink.setRoom2ID(3);
              roomLink.setDoor( new Door( 1512, 40, halfPI, DoorDrawable.VERTICAL_BOTTOM_PIVOT,
-                               new ImageIdentifier( "objects-2/doors-0/stone-30len-5th-3/vert-bottom-pivot-1.gif" ) ) );
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-5th-0/vert-bottom-pivot-1.gif" ) ) );
 
              roomLink = rooms[2].addRoomLink( new ScreenRectangle(1740, 40, 10, 30) );
              roomLink.setRoom1ID(3);
              roomLink.setRoom2ID(2);
              roomLink.setDoor( new Door( 1742, 40, -halfPI, DoorDrawable.VERTICAL_BOTTOM_PIVOT,
-                               new ImageIdentifier( "objects-2/doors-0/stone-30len-5th-3/vert-bottom-pivot-1.gif" ) ) );
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-5th-0/vert-bottom-pivot-1.gif" ) ) );
 
              rooms[2].addRoomLink( rooms[1].getRoomLinks()[0] );
 

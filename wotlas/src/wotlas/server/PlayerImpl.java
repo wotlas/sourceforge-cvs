@@ -87,6 +87,10 @@ public class PlayerImpl implements Player, NetConnectionListener
    /** Movement Composer
     */
        private MovementComposer movementComposer = (MovementComposer) new PathFollower();
+   
+   /** Lie Manager
+    */
+       private LieManager lieManager = new LieManager();
 
  /*------------------------------------------------------------------------------------*/
 
@@ -395,6 +399,20 @@ public class PlayerImpl implements Player, NetConnectionListener
           this.movementComposer = movementComposer;
       }
 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the Lie Manager.
+    */
+      public LieManager getLieManager() {
+        return lieManager;
+      }
+   
+   /** To set the Lie Manager.
+    */
+      public void setLieManager(LieManager lieManager) {
+        this.lieManager = lieManager;
+      }
+      
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To get the player's current Room ( if we are in a Room ).

@@ -119,14 +119,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
   private WorldManager worldManager;
 
-  /** tells if the player could be moving to another room
-   */
-  private boolean couldBeMovingToAnotherRoom = false;
-
-  /** current RoomLink considered for intersection
-   */
-  private RoomLink latestRoomLink;
-
  /*------------------------------------------------------------------------------------*/
 
   /** Personality Lock
@@ -175,6 +167,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
   private GraphicsDirector gDirector;
 
+  private MapData myMapData;
+  
   /** Our AStar object.
    */
   public AStarDouble aStar;
@@ -231,11 +225,44 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   }
 
  /*------------------------------------------------------------------------------------*/
+  
+  /** To get the graphicsDirector
+   */
+  public GraphicsDirector getGraphicsDirector() {
+    return gDirector;
+  }
+  
+ /*------------------------------------------------------------------------------------*/
 
   /** To get startGameLock
    */
   public Object getStartGameLock() {
     return startGameLock;
+  }
+
+  
+  public JInfosPanel getInfosPanel() {
+    return infosPanel;
+  }
+  
+  public JMapPanel getMapPanel() {
+    return mapPanel;
+  }
+  
+  public JChatPanel getChatPanel() {
+    return chatPanel;
+  }
+    
+  public JPreviewPanel getPreviewPanel() {
+    return previewPanel;
+  }
+  
+  public JPlayerPanel getPlayerPanel() {
+    return playerPanel;
+  }
+  
+  public JLogPanel getLogPanel() {
+    return logPanel;
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -254,6 +281,22 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   }
 
  /*------------------------------------------------------------------------------------*/
+  
+  public String getDatabasePath() {
+    return databasePath;
+  }
+  
+  public String getImageDBHome() {
+    return imageDBHome;
+  }
+
+ /*------------------------------------------------------------------------------------*/
+  
+  public AStarDouble getAStar() {
+    return aStar;
+  }
+ 
+ /*------------------------------------------------------------------------------------*/ 
 
   /** This method is called when a new network connection is created
    *
@@ -411,12 +454,14 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     logPanel = new JLogPanel();
 
     // 6 - Init map display
-    if (location.isWorld())
+    changeMapData();
+    /*if (location.isWorld())
       initWorldMapDisplay(location);
     else if (location.isTown())
       initTownMapDisplay(location);
     else if (location.isRoom())
       initInteriorMapDisplay(location);
+    */
 
     // 8 - Create main Frame
     mFrame = new JClientScreen(infosPanel, mapPanel, chatPanel, previewPanel, playerPanel, logPanel);
@@ -475,7 +520,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   public void tick() {
 
     myPlayer.tick();
-    locationUpdate();
+    myMapData.locationUpdate(myPlayer);
 
     if (circle != null) {
       if (circleLife < CIRCLE_LIFETIME) {
@@ -646,7 +691,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
   /** To update player's location
    */
-  public void locationUpdate() {
+  /*public void locationUpdate() {
     // we call the right method whether the player is on
     // a TownMap, a WorldMap or in a Room.
     if ( myPlayer.getLocation().isRoom() )
@@ -655,127 +700,27 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       townLocationUpdate();
     else if ( myPlayer.getLocation().isWorld() )
       worldLocationUpdate();
-  }
+  }*/
 
+  public void changeMapData() {
+    if ( myPlayer.getLocation().isRoom() ) {
+      myMapData = new InteriorMapData();
+    }
+    else if ( myPlayer.getLocation().isTown() ) {
+      myMapData = new TownMapData();      
+    }
+    else if ( myPlayer.getLocation().isWorld() ) {
+      myMapData = new WorldMapData();
+    }
+    myMapData.initDisplay(myPlayer);
+  }
+  
  /*------------------------------------------------------------------------------------*/
 
   /** Update player's location if he is in a room map
    */
   public void roomLocationUpdate() {
-    Room myRoom = worldManager.getRoom( myPlayer.getLocation() );
-
-    // I - ROOMLINK INTERSECTION UPDATE ( is the player moving to another room ? )
-    RoomLink rl = myRoom.isIntersectingRoomLink( myPlayer.getCurrentRectangle() );
-
-    if ( rl!=null && !couldBeMovingToAnotherRoom ) {
-      // Player is intersecting a RoomLink
-      if (SHOW_DEBUG)
-        System.out.println("Insersecting a RoomLink");
-      latestRoomLink = rl;
-      couldBeMovingToAnotherRoom = true;
-
-      // is there a Door ?
-      if ( rl.getDoor()!=null ) {
-        // nothing for now
-      }
-    } else if ( rl==null && couldBeMovingToAnotherRoom ) {
-      // ok, no intersection now, are we in an another room ?
-      if (SHOW_DEBUG)
-        System.out.println("ok, no intersection now, are we in an another room ?");
-      couldBeMovingToAnotherRoom = false;
-
-      int newRoomID = myRoom.isInOtherRoom( latestRoomLink, myPlayer.getCurrentRectangle() );
-
-      if ( newRoomID>=0 ) {
-        // Ok, we move to this new Room
-        if (SHOW_DEBUG)
-          System.out.println("Removing an existing player : " + myPlayer + "to room : " + myRoom);
-        myRoom.removePlayer( myPlayer );
-        myPlayer.getLocation().setRoomID( newRoomID );
-        Room room = worldManager.getRoom(myPlayer.getLocation());
-        if (SHOW_DEBUG)
-          System.out.println("Adding a new player : " + myPlayer + "to room : " + room);
-        room.addPlayer( myPlayer );
-        infosPanel.setLocation(room.getFullName());
-        if (SHOW_DEBUG)
-          System.out.print("Move to another room : " + newRoomID + " -> " + room.getFullName());
-
-        if (SHOW_DEBUG) {
-          RoomLink[] roomLinks = room.getRoomLinks();
-          if (roomLinks != null) {
-            System.out.println("\tRoomLink");
-            for (int i=0; i<roomLinks.length; i++) {
-              System.out.println("\t\troomLinks["+i+"] = " + roomLinks[i]);
-              drawScreenRectangle(roomLinks[i].toRectangle(), Color.green);
-            }
-            roomLinks = null;
-          }
-        }
-
-        if (SHOW_DEBUG) {
-          MapExit[] mapExits = room.getMapExits();
-          if (mapExits!= null) {
-            System.out.println("\tMapExit");
-            for (int i=0; i<mapExits.length; i++) {
-              System.out.println("\t\tmapExits["+i+"] = " + mapExits[i]);
-              drawScreenRectangle(mapExits[i].toRectangle(), Color.yellow);
-            }
-            mapExits = null;
-          }
-        }
-
-      } else {
-        if (SHOW_DEBUG)
-          System.out.println("We are still in the same room" + newRoomID);
-      }
-    } // End of part I
-
-    // II - MAPEXIT INTERSECTION UPDATE ( is the player moving to another map ? )
-    if ( myPlayer.isMoving() ) {
-      Point destination = myPlayer.getEndPosition();
-      MapExit mapExit = myRoom.isIntersectingMapExit( destination.x,
-                                                      destination.y,
-                                                      myPlayer.getCurrentRectangle()
-                                                     );
-      if ( mapExit!=null ) {
-        // Ok, we are going to a new map...
-        if (SHOW_DEBUG)
-          System.out.println("We are going to a new map...");
-
-        myPlayer.stopMoving();
-        myRoom.removePlayer( myPlayer );
-        myPlayer.setLocation( mapExit.getTargetWotlasLocation() );
-        cleanInteriorMapData(); // suppress drawables, shadows, data
-
-        ScreenPoint targetPoint = mapExit.getTargetPosition();
-        myPlayer.setX(targetPoint.x);
-        myPlayer.setY(targetPoint.y);
-        myPlayer.setPosition(targetPoint);
-
-        switch( mapExit.getType() ) {
-          case MapExit.INTERIOR_MAP_EXIT :
-            if (SHOW_DEBUG)
-              System.out.println("Move to another InteriorMap");
-            initInteriorMapDisplay(myPlayer.getLocation()); // init new map
-            break;
-
-          case MapExit.TOWN_EXIT :
-            if (SHOW_DEBUG)
-              System.out.println("Move to TownMap");
-            initTownMapDisplay(myPlayer.getLocation()); // init new map
-            break;
-
-          case MapExit.BUILDING_EXIT :
-            if (SHOW_DEBUG)
-              System.out.println("Move to Building");
-            initTownMapDisplay(myPlayer.getLocation()); // init new map
-            break;
-
-          default:
-            Debug.signal( Debug.CRITICAL, this, "Unknown mapExit : " + mapExit.getType() );
-        }
-      }
-    } // End of part II
+    ;
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -783,80 +728,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** Update player's location if he is in a town map
    */
   public void townLocationUpdate() {
-    TownMap townMap = worldManager.getTownMap( myPlayer.getLocation() );
-
-    // I - MAPEXIT INTERSECTION UPDATE ( is the player moving to a world map ? )
-    Point destination = myPlayer.getEndPosition();
-    MapExit mapExit = townMap.isIntersectingMapExit( destination.x,
-                                                     destination.y,
-                                                     myPlayer.getCurrentRectangle()
-                                                    );
-
-    if ( mapExit!=null ) {
-      // Ok, we are going to a world map...
-      if (SHOW_DEBUG)
-        System.out.println("We are going to a world map...");
-
-      myPlayer.stopMoving();
-      myPlayer.setLocation( mapExit.getTargetWotlasLocation() );
-      cleanInteriorMapData(); // suppress drawables, shadows, data
-
-      ScreenPoint targetPoint = mapExit.getTargetPosition();
-      myPlayer.setX(targetPoint.x);
-      myPlayer.setY(targetPoint.y);
-      myPlayer.setPosition(targetPoint);
-
-      if (mapExit.getType() == MapExit.TOWN_EXIT) {
-        if (SHOW_DEBUG)
-          System.out.println("Move to a WorldMap");
-        initWorldMapDisplay(myPlayer.getLocation());
-      } else {
-        Debug.signal( Debug.CRITICAL, this, "Unknown mapExit : " + mapExit.getType() );
-      }
-    }
-
-    // II - BUILDING INTERSECTION UPDATE ( is the player entering a building ? )
-    /*Building buildingMap = townMap.isEnteringBuilding( destination.x,
-                                                       destination.y,
-                                                       myPlayer.getCurrentRectangle() );*/
-    Building buildingMap = townMap.isEnteringBuilding( myPlayer.getX(),
-                                                       myPlayer.getY(),
-                                                       myPlayer.getCurrentRectangle()
-                                                      );
-
-    if ( buildingMap != null ) {
-      // intersection with a Building, which MapExit are we using ?
-      if (SHOW_DEBUG)
-        System.out.println("We are entering a building...");
-
-      myPlayer.stopMoving();
-
-      if (SHOW_DEBUG) {
-        System.out.println("\t\tbuildingMap.getFullName() = " + buildingMap.getFullName());
-        System.out.println("\t\tbuildingMap.getShortName() = " + buildingMap.getShortName());
-        System.out.print("\t\tmyPlayer.getAngle() = ");
-        System.out.println(myPlayer.getAngle()*Math.PI/180);
-      }
-
-      mapExit = buildingMap.findTownMapExit( myPlayer.getAngle() );
-
-      if (SHOW_DEBUG) {
-        System.out.println("Which MapExit are we using ?");
-        System.out.println("\t\tmapExit.getType() = " + mapExit.getType());
-        System.out.println("\t\tmapExit.getMapExitSide() = " + mapExit.getMapExitSide());
-        System.out.println("\t\tmapExit.getTargetWotlasLocation() = " + mapExit.getTargetWotlasLocation());
-        System.out.println("\t\tmapExit.getMapExitLocation() = " + mapExit.getMapExitLocation());
-      }
-
-      myPlayer.setLocation(mapExit.getMapExitLocation());
-      cleanInteriorMapData();
-
-      myPlayer.setX( mapExit.getX() + mapExit.getWidth()/2 );
-      myPlayer.setY( mapExit.getY() + mapExit.getHeight()/2 );
-      myPlayer.setPosition( new ScreenPoint(myPlayer.getX(), myPlayer.getY()) );
-
-      initInteriorMapDisplay(myPlayer.getLocation()); // init new map
-    }
+    ;
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -864,33 +736,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** To update player's location if he is in a world map
    */
   public void worldLocationUpdate() {
-    WorldMap worldMap = worldManager.getWorldMap( myPlayer.getLocation() );
-
-    // I - TOWN INTERSECTION UPDATE ( is the player entering a town ? )
-    Point destination = myPlayer.getEndPosition();
-    TownMap townMap = worldMap.isEnteringTown( destination.x,
-                                               destination.y,
-                                               myPlayer.getCurrentRectangle() );
-
-    if( townMap != null ) {
-      // intersection with a TownMap, which MapExit are we using ?
-      if (SHOW_DEBUG)
-        System.out.println("We are entering a town...");
-
-      myPlayer.stopMoving();
-
-      MapExit mapExit = townMap.findTownMapExit( myPlayer.getCurrentRectangle() );
-
-      myPlayer.setLocation( mapExit.getMapExitLocation() );
-      cleanInteriorMapData(); // suppress drawables, shadows, data
-
-      // We set our player on the middle of the MapExit
-      myPlayer.setX( mapExit.getX() + mapExit.getWidth()/2 );
-      myPlayer.setY( mapExit.getY() + mapExit.getHeight()/2 );
-      myPlayer.setPosition( new ScreenPoint(myPlayer.getX(), myPlayer.getY()) );
-
-      initTownMapDisplay(myPlayer.getLocation()); // init new map
-    }
+    ;
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -898,123 +744,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** To init InteriorMap
    */
   public void initInteriorMapDisplay(WotlasLocation location) {
-    myPlayer.init();
-
-    ImageIdentifier backgroundImageID = null;   // background image identifier
-    Drawable background = null;                 // background image
-
-    // 1 - We load the InteriorMap
-    InteriorMap imap = worldManager.getInteriorMap(location);
-    if (SHOW_DEBUG) {
-      System.out.println("InteriorMap");
-      System.out.println("\tfullName = "  + imap.getFullName());
-      System.out.println("\tshortName = " + imap.getShortName());
-    }
-
-    //   - We load the room
-    Room room = worldManager.getRoom(location);
-    if (SHOW_DEBUG) {
-      System.out.println("Room");
-      System.out.println("\tfullName = "       + room.getFullName());
-      System.out.println("\tshortName = "      + room.getShortName());
-    }
-    infosPanel.setLocation(room.getFullName());
-
-    if (SHOW_DEBUG)
-      System.out.println("Adding a new player : " + myPlayer + "to room : " + room);
-    room.addPlayer(myPlayer);
-
-    // 2 - We set player's position if his position is incorrect
-    if (myPlayer.getX() == -1) {
-      ScreenPoint insertionPoint = room.getInsertionPoint();
-      if (SHOW_DEBUG)
-        System.out.println("\tinsertionPoint = " + insertionPoint);
-      myPlayer.setX(insertionPoint.x);
-      myPlayer.setY(insertionPoint.y);
-      myPlayer.setPosition(insertionPoint);
-    }
-
-    // 3 - We load the image
-    backgroundImageID = imap.getInteriorMapImage();
-    if (SHOW_DEBUG)
-      System.out.println("\tbackgroundImageID = " + backgroundImageID);
-    background = (Drawable) new MultiRegionImage( myPlayer.getDrawable(),              // our reference for image loading
-                                                  650,                                 // perception radius
-                                                  imap.getImageRegionWidth(),          // grid deltax
-                                                  imap.getImageRegionHeight(),         // grid deltay
-                                                  imap.getImageWidth(),                // image's total width
-                                                  imap.getImageHeight(),               // image's total height
-                                                  imap.getInteriorMapImage()           // base image identifier
-                                                );
-
-    // 4 - We load the mask
-    ImageIdentifier mapMaskID = null;
-    try {
-      mapMaskID = ImageLibrary.getImageIdentifier( backgroundImageID, imageDBHome, "mask" );
-    } catch( IOException e ) {
-      Debug.signal( Debug.CRITICAL, this, "Image Library Corrupted" );
-      Debug.exit();
-    }
-    if (mapMaskID==null) {
-      Debug.signal( Debug.CRITICAL, this, "Mask not found" );
-      Debug.exit();
-    }
-    BufferedImage bufIm = null;
-    try {
-      bufIm = ImageLibrary.loadBufferedImage(new ImageIdentifier( mapMaskID ), imageDBHome, BufferedImage.TYPE_INT_ARGB );
-    } catch( IOException e ) {
-      e.printStackTrace();
-      return;
-    }
-    if (SHOW_DEBUG) {
-      System.out.println("\tbufIm.width = " + bufIm.getWidth());
-      System.out.println("\tbufIm.height = " + bufIm.getHeight());
-      System.out.println("\tbackground.width = " + background.getWidth());
-      System.out.println("\tbackground.height = " + background.getHeight());
-    }
-
-    // 5 - We initialize the AStar algo
-    aStar.setMask( BinaryMask.create( bufIm ) );
-    aStar.setSpriteSize(4);
-    bufIm.flush(); // free image resource
-
-    // 6 - We init the GraphicsDirector
-    gDirector.init( background,               // background drawable
-                    myPlayer.getDrawable(),   // reference for screen movements
-                    new Dimension( JClientScreen.leftWidth, JClientScreen.mapHeight )   // screen default dimension
-                   );
-
-    //   - We show the roomLinks
-    if (SHOW_DEBUG) {
-      RoomLink[] roomLinks = room.getRoomLinks();
-      if (roomLinks != null) {
-        System.out.println("\tRoomLink");
-        for (int i=0; i<roomLinks.length; i++) {
-          System.out.println("\t\troomLinks["+i+"] = " + roomLinks[i]);
-          drawScreenRectangle(roomLinks[i].toRectangle(), Color.green);
-        }
-        roomLinks = null;
-      }
-    }
-
-    //   - We show the mapExits
-    if (SHOW_DEBUG) {
-      MapExit[] mapExits = room.getMapExits();
-      if (mapExits!= null) {
-        System.out.println("\tMapExit");
-        for (int i=0; i<mapExits.length; i++) {
-          System.out.println("\t\tmapExits["+i+"] = " + mapExits[i]);
-          drawScreenRectangle(mapExits[i].toRectangle(), Color.yellow);
-        }
-        mapExits = null;
-      }
-    }
-
-    //   - We add visual properties to the player (shadows...)
-    myPlayer.initVisualProperties(gDirector);
-
-    //   - We play music
-    SoundLibrary.getSoundLibrary().playMusic( "tar-valon-01.mid" );
+    ;
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -1022,197 +752,15 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** To init TownMap
    */
   public void initTownMapDisplay(WotlasLocation location) {
-    myPlayer.init();
-
-    ImageIdentifier backgroundImageID = null;   // background image identifier
-    Drawable background = null;                 // background image
-
-    // 1 - We load the TownMap
-    TownMap townMap = worldManager.getTownMap(location);
-    if (SHOW_DEBUG) {
-      System.out.println("TownMap");
-      System.out.println("\tfullName = "  + townMap.getFullName());
-      System.out.println("\tshortName = " + townMap.getShortName());
-    }
-    infosPanel.setLocation(townMap.getFullName());
-
-    // 2 - We set player's position if his position is incorrect
-
-    // 3 - We load the image
-    backgroundImageID = townMap.getTownImage();
-    if (SHOW_DEBUG)
-      System.out.println("\tbackgroundImageID = " + backgroundImageID);
-    background = (Drawable) new MotionlessSprite( 0,                        // ground x=0
-                                                  0,                        // ground y=0
-                                                  backgroundImageID,        // image
-                                                  ImageLibRef.MAP_PRIORITY, // priority
-                                                  false                     // no animation
-                                                 );
-
-    // 4 - We load the mask
-    ImageIdentifier mapMaskID = null;
-    try {
-      mapMaskID = ImageLibrary.getImageIdentifier( backgroundImageID, imageDBHome, "mask" );
-    } catch( IOException e ) {
-      Debug.signal( Debug.CRITICAL, this, "Image Library Corrupted" );
-      Debug.exit();
-    }
-    if (mapMaskID==null) {
-      Debug.signal( Debug.CRITICAL, this, "Mask not found" );
-      Debug.exit();
-    }
-    BufferedImage bufIm = null;
-    try {
-      bufIm = ImageLibrary.loadBufferedImage(new ImageIdentifier( mapMaskID ), imageDBHome, BufferedImage.TYPE_INT_ARGB );
-    } catch( IOException e ) {
-      e.printStackTrace();
-      return;
-    }
-    if (SHOW_DEBUG) {
-      System.out.println("\tbufIm.width = " + bufIm.getWidth());
-      System.out.println("\tbufIm.height = " + bufIm.getHeight());
-      System.out.println("\tbackground.width = " + background.getWidth());
-      System.out.println("\tbackground.height = " + background.getHeight());
-    }
-
-    // 5 - We initialize the AStar algo
-    aStar.setMask( BinaryMask.create( bufIm ) );
-    aStar.setSpriteSize(1);
-    bufIm.flush(); // free image resource
-
-    // 6 - Init the GraphicsDirector
-    gDirector.init( background,               // background drawable
-                    myPlayer.getDrawable(),   // reference for screen movements
-                    new Dimension( JClientScreen.leftWidth, JClientScreen.mapHeight )   // screen default dimension
-                   );
-
-    //   - We add buildings' images
-    Building buildings[] = townMap.getBuildings();
-    if (buildings!=null) {
-      if (SHOW_DEBUG)
-        System.out.println("\tBuildings");
-      ImageIdentifier buildingImageID = null;   // building image identifier
-      Drawable buildingImage = null;            // building image
-      for (int i=0; i<buildings.length; i++) {
-        if (SHOW_DEBUG)
-          System.out.println("\t\tbuildings["+i+"] = " + buildings[i]);
-        buildingImageID = buildings[i].getSmallBuildingImage();
-        Rectangle position = buildings[i].toRectangle();
-        buildingImage = (Drawable) new MotionlessSprite( position.x,
-                                                         position.y,
-                                                         buildingImageID,          // image
-                                                         ImageLibRef.MAP_PRIORITY, // priority
-                                                         false                     // no animation
-                                                        );
-        gDirector.addDrawable(buildingImage);
-      }
-    }
-
-    //   - We add MapExits' images
-    if (SHOW_DEBUG) {
-      MapExit[] mapExits = townMap.getMapExits();
-      if (mapExits!= null) {
-        System.out.println("\tMapExit");
-        for (int i=0; i<mapExits.length; i++) {
-          System.out.println("\t\tmapExits["+i+"] = " + mapExits[i]);
-          drawScreenRectangle(mapExits[i].toRectangle(), Color.yellow);
-        }
-      }
-    }
-
+    ;
   }
 
  /*------------------------------------------------------------------------------------*/
 
   /** To init WorldMap
    */
-  public void initWorldMapDisplay(WotlasLocation location) {
-    myPlayer.init();
-
-    ImageIdentifier backgroundImageID = null;   // background image identifier
-    Drawable background = null;                 // background image
-
-    // 1 - We load the WorldMap
-    WorldMap worldMap = worldManager.getWorldMap(location);
-    if (SHOW_DEBUG) {
-      System.out.println("WorldMap");
-      System.out.println("\tfullName = "  + worldMap.getFullName());
-      System.out.println("\tshortName = " + worldMap.getShortName());
-    }
-    infosPanel.setLocation(worldMap.getFullName());
-
-    // 2 - We set player's position if his position is incorrect
-
-    // 3 - We load the image
-    backgroundImageID = worldMap.getWorldImage();
-    if (SHOW_DEBUG)
-      System.out.println("\tImageIdentifier = " + backgroundImageID);
-    background = (Drawable) new MotionlessSprite( 0,                        // ground x=0
-                                                  0,                        // ground y=0
-                                                  backgroundImageID,        // image
-                                                  ImageLibRef.MAP_PRIORITY, // priority
-                                                  false                     // no animation
-                                                 );
-
-    // 4 - We load the mask
-    ImageIdentifier mapMaskID = null;
-    try {
-      mapMaskID = ImageLibrary.getImageIdentifier( backgroundImageID, imageDBHome, "mask" );
-    } catch( IOException e ) {
-      Debug.signal( Debug.CRITICAL, this, "Image Library Corrupted" );
-      Debug.exit();
-    }
-    if (mapMaskID==null) {
-      Debug.signal( Debug.CRITICAL, this, "Mask not found" );
-      Debug.exit();
-    }
-    BufferedImage bufIm = null;
-    try {
-      bufIm = ImageLibrary.loadBufferedImage(new ImageIdentifier( mapMaskID ), imageDBHome, BufferedImage.TYPE_INT_ARGB );
-    } catch( IOException e ) {
-      e.printStackTrace();
-      return;
-    }
-    if (SHOW_DEBUG) {
-      System.out.println("\tbufIm.width = " + bufIm.getWidth());
-      System.out.println("\tbufIm.height = " + bufIm.getHeight());
-      System.out.println("\tbackground.width = " + background.getWidth());
-      System.out.println("\tbackground.height = " + background.getHeight());
-    }
-
-    // 5 - We initialize the AStar algo
-    aStar.setMask( BinaryMask.create( bufIm ) );
-    aStar.setSpriteSize(1);
-    bufIm.flush(); // free image resource
-
-    // 6 - We init the GraphicsDirector
-    gDirector.init( background,               // background drawable
-                    myPlayer.getDrawable(),   // reference for screen movements
-                    new Dimension( JClientScreen.leftWidth, JClientScreen.mapHeight )   // screen default dimension
-                   );
-
-    //   - We add towns' images
-    TownMap towns[] = worldMap.getTownMaps();
-    if (towns!=null) {
-      if (SHOW_DEBUG)
-        System.out.println("\tTowns");
-      ImageIdentifier townImageID = null;   // town image identifier
-      Drawable townImage = null;            // town image
-      for (int i=0; i<towns.length; i++) {
-        if (SHOW_DEBUG)
-          System.out.println("\t\ttowns["+i+"] = " + towns[i]);
-        townImageID = towns[i].getSmallTownImage();
-        Rectangle position = towns[i].toRectangle();
-        townImage = (Drawable) new MotionlessSprite( position.x,
-                                                     position.y,
-                                                     townImageID,              // image
-                                                     ImageLibRef.MAP_PRIORITY, // priority
-                                                     false                     // no animation
-                                                    );
-        gDirector.addDrawable(townImage);
-      }
-    }
-
+  public void initWorldMapDisplay(WotlasLocation location) {    
+    ;
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -1229,7 +777,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    *
    * @param rect the rectangle to display
    */
-  private void drawScreenRectangle(Rectangle rect, Color color) {
+  public void drawScreenRectangle(Rectangle rect, Color color) {
     Point p[] = new Point[5];
     int x = (int) rect.getX();
     int y = (int) rect.getY();

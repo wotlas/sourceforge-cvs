@@ -39,8 +39,8 @@ SERVER_PACKAGES = wotlas/server \
 
 CLIENT_PACKAGES = wotlas/client \
                   wotlas/client/screen \
-                  wotlas/client/message/account
-
+                  wotlas/client/message/account \
+                  wotlas/client/gui
 
 ##########################################################################
 

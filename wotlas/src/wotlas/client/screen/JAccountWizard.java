@@ -109,7 +109,7 @@ public class JAccountWizard extends JWizard
     /** called when Next button is clicked
      */
     public void onNext(Object context) {
-      personality.queueMessage( new WotCharacterClassMessage(btGroup.getSelection().getActionCommand(), wotlas.common.character.AesSedai.AES_BLUE_AJAH) );
+      personality.queueMessage( new WotCharacterClassMessage(btGroup.getSelection().getActionCommand(), wotCharacterStatus) );
     }
 
     /** called when Previous button is clicked
@@ -132,7 +132,7 @@ public class JAccountWizard extends JWizard
       mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
       mainPanel.setBackground(Color.white);
 
-      formPanel = new JPanel(new GridLayout(2,1,10,2));
+      formPanel = new JPanel(new GridLayout(9,1,10,2));
       formPanel.setBackground(Color.white);
         bt_char0 = new ARadioButton("Aes Sedai, Novice");
         bt_char0.setActionCommand("wotlas.common.character.AesSedai");

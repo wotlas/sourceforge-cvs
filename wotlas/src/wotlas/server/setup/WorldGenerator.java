@@ -101,7 +101,7 @@ public class WorldGenerator {
         // STEP 3 - TOWNS
 
         // Tar Valon Creation
-           TownMap townMaps[] = new TownMap[2];
+           TownMap townMaps[] = new TownMap[3];
            worldMap.setTownMaps( townMaps );
 
            TownMap townMap = new TownMap(758,280,12,11);
@@ -212,6 +212,20 @@ public class WorldGenerator {
            townMap.setTownImage( new ImageIdentifier() ); // no town image
            townMap.setMusicName("blight-refuge.mid");
 
+        // Shayol Ghul 'Town'
+           townMap = new TownMap(800,70,12,11);
+           townMaps[2] = townMap;
+
+           townMap.setTownMapID(2);
+           townMap.setFullName("Shayol Ghul");
+           townMap.setShortName("shayolghul");
+           townMap.setInsertionPoint( new ScreenPoint(0,0) );
+
+           townMap.setSmallTownImage( new ImageIdentifier( "maps-1/town-small-1/shayol-ghul-small-2" ) );
+
+           townMap.setTownImage( new ImageIdentifier() ); // no town image
+           townMap.setMusicName("blight-refuge.mid");
+
 
         // STEP 4 - Tar Valon West Gate Building
            Building buildings[] = new Building[5];
@@ -219,7 +233,7 @@ public class WorldGenerator {
 
            buildings[0] = new Building(208,493,10,18);
            buildings[0].setBuildingID(0);
-           buildings[0].setFullName("Tar Valon West Gate");
+           buildings[0].setFullName("Tar Valon - West Gate");
            buildings[0].setShortName("tarvalWeGate");
            buildings[0].setServerID(0);
            buildings[0].setHasTownExits(false);
@@ -239,7 +253,7 @@ public class WorldGenerator {
         // Tar Valon - North-West Gate (Building)
            buildings[2] = new Building(210,400,13,21);
            buildings[2].setBuildingID(2);
-           buildings[2].setFullName("Tar Valon North-West Gate");
+           buildings[2].setFullName("Tar Valon - North West Gate");
            buildings[2].setShortName("tarvalNWGate");
            buildings[2].setServerID(0);
            buildings[2].setHasTownExits(false);
@@ -274,7 +288,7 @@ public class WorldGenerator {
            buildings[0].setInteriorMaps( maps );
 
            map.setInteriorMapID(0);
-           map.setFullName("Tar Valon West Gate - First Level");
+           map.setFullName("Tar Valon - West Gate - First Level");
            map.setShortName("firstlevel");
            map.setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/tar-valon-wegate-3" ) );
            map.setImageWidth(1050);
@@ -549,7 +563,7 @@ public class WorldGenerator {
            maps[0] = new InteriorMap();
 
            maps[0].setInteriorMapID(0);
-           maps[0].setFullName("Tar Valon - Forest - North West Clearing");
+           maps[0].setFullName("Tar Valon - North West Clearing");
            maps[0].setShortName("nw-clearing");
            maps[0].setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/tv-nw-clearing-4" ) );
            maps[0].setImageWidth(550);
@@ -568,7 +582,7 @@ public class WorldGenerator {
            rooms[0].setRoomID(0);
            rooms[0].setMaxPlayers(30);
 
-           rooms[0].setFullName("Tar Valon - Forest - North West Clearing");
+           rooms[0].setFullName("Tar Valon - North West Clearing");
            rooms[0].setShortName("nw-clearing");
            rooms[0].setInsertionPoint( new ScreenPoint(270,200) );
 
@@ -660,7 +674,7 @@ public class WorldGenerator {
 
            maps[1] = new InteriorMap();
            maps[1].setInteriorMapID(1);
-           maps[1].setFullName("Tar Valon - North West Gate - Terrace");
+           maps[1].setFullName("Tar Valon - North West Terrace");
            maps[1].setShortName("nw-gate-lv1");
            maps[1].setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/tv-nw-gate-lv1-6" ) );
            maps[1].setImageWidth(600);
@@ -721,8 +735,8 @@ public class WorldGenerator {
            rooms[0].setRoomID(0);
            rooms[0].setMaxPlayers(30);
 
-           rooms[0].setFullName("Tar Valon - North West Gate - Terrace");
-           rooms[0].setShortName("nw-gate-terrace");
+           rooms[0].setFullName("Tar Valon - North West Terrace");
+           rooms[0].setShortName("nw-terrace");
            rooms[0].setInsertionPoint( new ScreenPoint(400,300) );
 
                mapExit = rooms[0].addMapExit( new ScreenRectangle(400,25,25,40) );
@@ -741,7 +755,7 @@ public class WorldGenerator {
            buildings[4].setInteriorMaps( maps );
 
            map.setInteriorMapID(0);
-           map.setFullName("Tar Valon - White Tower South Gate");
+           map.setFullName("Tar Valon - White Tower - South Gate");
            map.setShortName("tvwtsg");
            map.setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/tv-s-whitetower-gate-2" ) );
            map.setImageWidth(600);
@@ -755,7 +769,7 @@ public class WorldGenerator {
            maps[1] = map;
 
            map.setInteriorMapID(1);
-           map.setFullName("Tar Valon - White Tower Front");
+           map.setFullName("Tar Valon - White Tower - Front");
            map.setShortName("whtow-front");
            map.setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/whitetower-entrance-11" ) );
            map.setImageWidth(760);
@@ -826,6 +840,7 @@ public class WorldGenerator {
                mapExit.setMapExitSide( MapExit.NORTH );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,4,1,0) );
                mapExit.setTargetPosition( new ScreenPoint(280,750) );
+               mapExit.setTargetOrientation( (float)(-Math.PI/2) );
 
            rooms[1].setFullName("White Tower - South Gate - Back");
            rooms[1].setShortName("south-gate-back");
@@ -1028,7 +1043,7 @@ public class WorldGenerator {
            maps[0] = map;
 
            map.setInteriorMapID(0);
-           map.setFullName("Blight Refuge Outside");
+           map.setFullName("Blight Refuge - Outside");
            map.setShortName("blightrefugeouside");
            map.setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/blight-refuge-ext-7" ) );
            map.setImageWidth(720);
@@ -1096,8 +1111,8 @@ public class WorldGenerator {
            maps[1] = map;
 
            map.setInteriorMapID(1);
-           map.setFullName("Blight Refuge Interior1");
-           map.setShortName("blightrefugeInterior1");
+           map.setFullName("Blight Refuge - Entrance");
+           map.setShortName("blightrefuge-entrance");
            map.setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/blight-refuge-int0-8" ) );
            map.setImageWidth(400);
            map.setImageHeight(500);
@@ -1190,8 +1205,8 @@ public class WorldGenerator {
            maps[2] = map;
 
            map.setInteriorMapID(2);
-           map.setFullName("Blight Refuge Interior2");
-           map.setShortName("blightrefugeInterior2");
+           map.setFullName("Blight Refuge - Hall");
+           map.setShortName("blightrefuge-hall");
            map.setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/blight-refuge-int1-9" ) );
            map.setImageWidth(525);
            map.setImageHeight(530);
@@ -1217,6 +1232,171 @@ public class WorldGenerator {
                mapExit.setMapExitSide( MapExit.NONE );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,1,0,1,0) );
                mapExit.setTargetPosition( new ScreenPoint(10,140) );
+
+
+        // STEP 19 - Shayol Ghul Building
+           buildings = new Building[1];
+           townMaps[2].setBuildings( buildings );
+
+           buildings[0] = new Building(0,0,10,10);
+           buildings[0].setBuildingID(0);
+           buildings[0].setFullName("Shayol Ghul");
+           buildings[0].setShortName("shayolghul");
+           buildings[0].setServerID(0);
+           buildings[0].setHasTownExits(true);
+           buildings[0].setHasBuildingExits(true);
+           buildings[0].setSmallBuildingImage( new ImageIdentifier() ); // no image
+
+
+        // STEP 20 - Shayol Ghul Entrance InteriorMap
+           maps = new InteriorMap[2];
+           buildings[0].setInteriorMaps( maps );
+
+           map = new InteriorMap();
+           maps[0] = map;
+
+           map.setInteriorMapID(0);
+           map.setFullName("Shayol Ghul - Entrance");
+           map.setShortName("shayol-entrance");
+           map.setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/shayol-ghul-entrance-13" ) );
+           map.setImageWidth(600);
+           map.setImageHeight(350);
+           map.setImageRegionWidth(600);
+           map.setImageRegionHeight(350);
+
+           map.setMusicName("blight-refuge.mid");
+
+
+        // STEP 21 - Rooms of Shayol Ghul Entrance InteriorMap
+           rooms = new Room[2];
+           map.setRooms( rooms );
+
+           rooms[0] = new Room();
+           rooms[0].setRoomID(0);
+           rooms[0].setMaxPlayers(30);
+
+           rooms[0].setFullName("Shayol Ghul - Entrance");
+           rooms[0].setShortName("shayol-ghul");
+           rooms[0].setInsertionPoint( new ScreenPoint(500,240) );
+
+             roomLink = rooms[0].addRoomLink( new ScreenRectangle(380,270,20,40) );
+             roomLink.setRoom1ID(1);
+             roomLink.setRoom2ID(0);
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(410,0,170,20) );
+               mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,2,0,1,3) );
+               mapExit.setTargetPosition( new ScreenPoint(1300,300) );
+               mapExit.setTargetOrientation( (float)(-Math.PI/2) );
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(570,200,30,130) );
+               mapExit.setType( MapExit.BUILDING_EXIT );
+               mapExit.setMapExitSide( MapExit.EAST );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0) );
+               mapExit.setTargetPosition( new ScreenPoint(806, 84) );
+
+           rooms[1] = new Room();
+           rooms[1].setRoomID(1);
+           rooms[1].setMaxPlayers(30);
+
+           rooms[1].setFullName("Shayol Ghul - Cavern");
+           rooms[1].setShortName("shayol-ghul");
+           rooms[1].setInsertionPoint( new ScreenPoint(200,90) );
+
+             rooms[1].addRoomLink( rooms[0].getRoomLinks()[0] );
+
+               mapExit = rooms[1].addMapExit( new ScreenRectangle(140,0,170,20) );
+               mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,2,0,1,2) );
+               mapExit.setTargetPosition( new ScreenPoint(1020,300) );
+               mapExit.setTargetOrientation( (float)(-Math.PI/2) );
+
+
+        // STEP 22 - Shayol Ghul Center InteriorMap
+           map = new InteriorMap();
+           maps[1] = map;
+
+           map.setInteriorMapID(1);
+           map.setFullName("Shayol Ghul - Heart");
+           map.setShortName("shayol-heart");
+           map.setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/shayol-ghul-dark-lord-12" ) );
+           map.setImageWidth(1400);
+           map.setImageHeight(350);
+           map.setImageRegionWidth(200);
+           map.setImageRegionHeight(350);
+
+           map.setMusicName("blight-refuge.mid");
+
+
+        // STEP 23 - Rooms of Shayol Ghul Center InteriorMap
+           rooms = new Room[4];
+           map.setRooms( rooms );
+
+           rooms[0] = new Room();
+           rooms[0].setRoomID(0);
+           rooms[0].setMaxPlayers(30);
+
+           rooms[0].setFullName("Shayol Ghul - Prison");
+           rooms[0].setShortName("shayol-ghul");
+           rooms[0].setInsertionPoint( new ScreenPoint(150,150) );
+
+             roomLink = rooms[0].addRoomLink( new ScreenRectangle(540,170,20,25) );
+             roomLink.setRoom1ID(1);
+             roomLink.setRoom2ID(0);
+
+           rooms[1] = new Room();
+           rooms[1].setRoomID(1);
+           rooms[1].setMaxPlayers(30);
+
+           rooms[1].setFullName("Shayol Ghul - Heart");
+           rooms[1].setShortName("shayol-heart");
+           rooms[1].setInsertionPoint( new ScreenPoint(450,150) );
+
+             roomLink = rooms[1].addRoomLink( new ScreenRectangle(900,160,25,125) );
+             roomLink.setRoom1ID(1);
+             roomLink.setRoom2ID(2);
+
+             rooms[1].addRoomLink( rooms[0].getRoomLinks()[0] );
+
+           rooms[2] = new Room();
+           rooms[2].setRoomID(2);
+           rooms[2].setMaxPlayers(30);
+
+           rooms[2].setFullName("Shayol Ghul - Tunnels");
+           rooms[2].setShortName("shayol-tunnels");
+           rooms[2].setInsertionPoint( new ScreenPoint(1020,220) );
+
+             roomLink = rooms[2].addRoomLink( new ScreenRectangle(1160, 10, 25, 130) );
+             roomLink.setRoom1ID(2);
+             roomLink.setRoom2ID(3);
+
+             rooms[2].addRoomLink( rooms[1].getRoomLinks()[0] );
+
+               mapExit = rooms[2].addMapExit( new ScreenRectangle(935, 325, 220, 25) );
+               mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,2,0,0,1) );
+               mapExit.setTargetPosition( new ScreenPoint(210,25) );
+               mapExit.setTargetOrientation( (float)(Math.PI/2) );
+
+           rooms[3] = new Room();
+           rooms[3].setRoomID(3);
+           rooms[3].setMaxPlayers(30);
+
+           rooms[3].setFullName("Shayol Ghul - Tunnel");
+           rooms[3].setShortName("shayol-ghul");
+           rooms[3].setInsertionPoint( new ScreenPoint(1300,275) );
+
+             rooms[3].addRoomLink( rooms[2].getRoomLinks()[0] );
+
+               mapExit = rooms[3].addMapExit( new ScreenRectangle(1200,325,200,25) );
+               mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,2,0,0,0) );
+               mapExit.setTargetPosition( new ScreenPoint(480,25) );
+               mapExit.setTargetOrientation( (float)(Math.PI/2) );
 
 
         // STEP XX - We save this simple universe.

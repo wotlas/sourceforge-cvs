@@ -177,21 +177,44 @@ public class JClientScreen extends JFrame
       
       // *** Ping Panel ***
       JPanel fillPanel = new JPanel( );
-      fillPanel.setLayout(new GridLayout(1,1,0,0));
-      fillPanel.setBackground(Color.yellow);
+//      fillPanel.setLayout(new GridLayout(2,1,0,0));
+      fillPanel.setLayout(new BoxLayout(fillPanel,BoxLayout.X_AXIS)); // MasterBob revision
+
+      //fillPanel.setBackground(Color.yellow);
       //fillPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
       
       /*fillPanel.setPreferredSize( new Dimension(mainWidth-leftWidth-4,40) );      
       fillPanel.setMinimumSize( new Dimension(mainWidth-leftWidth-4,40) );
       fillPanel.setMaximumSize( new Dimension(mainWidth-leftWidth-4,40) );     
       */
-      
-      fillPanel.setPreferredSize( new Dimension(160,40) );      
-      fillPanel.setMinimumSize( new Dimension(160,40) );
-      fillPanel.setMaximumSize( new Dimension(160,40) );     
-      
-      fillPanel.setAlignmentX(Component.CENTER_ALIGNMENT);            
+            
+//      fillPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
       fillPanel.add(pingPanel);
+
+      ImageIcon im_quitup    = new ImageIcon("../base/gui/quit-up.jpg");
+      ImageIcon im_quitdo    = new ImageIcon("../base/gui/quit-do.jpg");
+
+      JButton b_quit = new JButton(im_quitup);
+      b_quit.setRolloverIcon(im_quitdo);
+      b_quit.setPressedIcon(im_quitdo);
+      b_quit.setBorderPainted(false);
+      b_quit.setContentAreaFilled(false);
+      b_quit.setFocusPainted(false);
+
+      b_quit.addActionListener(new ActionListener() {
+          public void actionPerformed (ActionEvent e) {
+            hide();
+            DataManager.getDefaultDataManager().closeConnection();
+            ClientManager.getDefaultClientManager().start(0);
+          }
+        }
+      );
+
+      b_quit.setPreferredSize( new Dimension(36,40) );      
+      b_quit.setMinimumSize( new Dimension(36,40) );
+      b_quit.setMaximumSize( new Dimension(36,40) );
+
+      fillPanel.add(b_quit);
       rightPanel.add(fillPanel);
 
       //rightPanel.add(innerRightPanel);

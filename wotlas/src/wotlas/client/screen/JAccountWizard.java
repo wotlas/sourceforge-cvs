@@ -371,7 +371,7 @@ public class JAccountWizard extends JWizard
       mainPanel.setBackground(Color.white);
       formPanel = new JPanel(new GridLayout(6,1,10,2));
       formPanel.setBackground(Color.white);
-        bt_color1 = new ARadioButton("GOLDEN");
+        bt_color1 = new ARadioButton("Golden");
         bt_color1.setActionCommand("1");
         bt_color1.setSelected(true);
         bt_color1.addActionListener(new ActionListener() {
@@ -382,7 +382,7 @@ public class JAccountWizard extends JWizard
         formPanel.add(bt_color1);
         bt_color1.setSelected(true);
 
-        bt_color2 = new ARadioButton("BROWN");
+        bt_color2 = new ARadioButton("Brown");
         bt_color2.setActionCommand("2");
         bt_color2.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
@@ -391,7 +391,7 @@ public class JAccountWizard extends JWizard
         });
         formPanel.add(bt_color2);        
 
-        bt_color3 = new ARadioButton("BLACK");
+        bt_color3 = new ARadioButton("Black");
         bt_color3.setActionCommand("3");
         bt_color3.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
@@ -400,7 +400,7 @@ public class JAccountWizard extends JWizard
         });
         formPanel.add(bt_color3);        
 
-        bt_color4 = new ARadioButton("GREY");
+        bt_color4 = new ARadioButton("Grey");
         bt_color4.setActionCommand("4");
         bt_color4.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
@@ -409,7 +409,7 @@ public class JAccountWizard extends JWizard
         });
         formPanel.add(bt_color4);        
 
-        bt_color5 = new ARadioButton("WHITE");
+        bt_color5 = new ARadioButton("White");
         bt_color5.setActionCommand("5");
         bt_color5.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
@@ -418,7 +418,7 @@ public class JAccountWizard extends JWizard
         });
         formPanel.add(bt_color5);        
 
-        bt_color6 = new ARadioButton("REDDISH");
+        bt_color6 = new ARadioButton("Reddish");
         bt_color6.setActionCommand("6");
         bt_color6.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {

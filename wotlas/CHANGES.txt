@@ -1,3 +1,12 @@
+*
+* Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
+* Copyright (C) 2001 - WOTLAS Team
+*
+* CHANGES BETWEEN VERSIONS
+* ( File Best Viewed in 1024x768 or above)
+*
+
+
 CHANGES BETWEEN V1.2.1 AND V1.2.2 (3 April 2002)
 ------------------------------------------------
 
@@ -35,6 +44,7 @@ CHANGES BETWEEN V1.2.1 AND V1.2.2 (3 April 2002)
  - Added a HTML Macro plug-in (thanks to fred for the idea). Macros can be used in the chat, Away Plug-in.
  - Added pure rotation movements to enable players to turn on themselves. You have to maintain the left mouse
    button pressed and move the cursor to the left or right...
+ - Added "Iconified" state detection for game window. This way we reduce the tick rate and so reduce the CPU use.
 
 
 CHANGES BETWEEN V1.2 AND V1.2.1 (19 March 2002)

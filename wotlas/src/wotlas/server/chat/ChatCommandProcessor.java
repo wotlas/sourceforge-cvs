@@ -27,6 +27,7 @@ import wotlas.utils.Debug;
 
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.io.*;
 
 /** This class processes the available chat commands. In wotlas there is only one
  * instance of this class held by the default server DataManager.
@@ -34,8 +35,8 @@ import java.util.Iterator;
  * @author Aldiss
  */
 
-public class ChatCommandProcessor
-{
+public class ChatCommandProcessor {
+
  /*------------------------------------------------------------------------------------*/
 
   /** Our chat commands table where we store commands by their prefix name.
@@ -52,36 +53,55 @@ public class ChatCommandProcessor
 
  /*------------------------------------------------------------------------------------*/
 
-  /** To init the processor with available commands.
+  /** To init the processor with the available commands.
    */
     public void init() {
 
-       /**
-        **  DECLARE HERE YOUR COMMANDS.
-        **
-        **  Note : this manual load is temporary, when I'll have time I'll implement
-        **  a simple dynamic class download method and suppress manual declaration.
-        **/
-           addChatCommand( new WhoChatCommand() );
-           addChatCommand( new BlackAjahChatCommand() );
-           addChatCommand( new MsgChatCommand() );
-           addChatCommand( new FindChatCommand() );
-           addChatCommand( new ServerChatCommand() );
-           addChatCommand( new LieChatCommand() );
-           addChatCommand( new LogChatCommand() );
-           addChatCommand( new InfoChatCommand() );
-           addChatCommand( new HelpChatCommand() );
-           addChatCommand( new BellChatCommand() );
-           addChatCommand( new FanfareChatCommand() );
-           addChatCommand( new KnockChatCommand() );
-           addChatCommand( new KillChatCommand() );
+       /** We load the available commands
+        * WE ASSUME THAT WE ARE NOT IN A JAR FILE
+        */
+          File commandsFiles[] = new File( "wotlas/server/chat" ).listFiles();
+
+          if( commandsFiles==null || commandsFiles.length==0 ) {
+              Debug.signal( Debug.WARNING, this, "No chat commands found in wotlas/server/chat !" );
+              return;
+          }
+
+          for( int i=0; i<commandsFiles.length; i++ ) {
+
+              if( !commandsFiles[i].isFile() || !commandsFiles[i].getName().endsWith(".class") )
+                  continue;
+
+           // We load the class file
+              try{
+                  String name = commandsFiles[i].getName();
+                  Class cl = Class.forName( "wotlas.server.chat."
+                                            + name.substring( 0, name.lastIndexOf(".class") ) );
+
+                  if(cl==null || cl.isInterface())
+                     continue;
+
+                  Object o = cl.newInstance();
+
+                  if( o==null || !(o instanceof ChatCommand) )
+                      continue;
+
+               // Ok, we have a valid chat command Class.
+                  addChatCommand( (ChatCommand) o );
+              }
+              catch( Exception e ) {
+                  Debug.signal( Debug.WARNING, this, e );
+              }
+          }
+
+        Debug.signal(Debug.NOTICE,null,"Loaded "+commands.size()+" chat commands...");
     }
 
  /*------------------------------------------------------------------------------------*/
 
    /** Adds a new chat command to our table.
     */
-    private void addChatCommand( ChatCommand newCommand ) {
+    protected void addChatCommand( ChatCommand newCommand ) {
 
           if( commands.containsKey( newCommand.getChatCommandPrefix() ) ) {
               Debug.signal( Debug.ERROR, this, "Command already exists ! "+newCommand );

@@ -1,10 +1,19 @@
 *
 * Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
-* Copyright (C) 2001 - WOTLAS Team
+* Copyright (C) 2001-2002 WOTLAS Team
 *
 * CHANGES BETWEEN VERSIONS
 * ( File Best Viewed in 1024x768 or above)
 *
+
+CHANGES BETWEEN V1.2.3 AND V1.2.4 (23 April 2002)
+------------------------------------------------
+
+ - Added bots definitions and a link to a remote AliceBot server.
+ - Improved the server architecture : lots of tasks done before by the ServerDirector are now
+   done by the DataManager & ServerManager.
+ - Added a new method for dynamic code loading.
+
 
 CHANGES BETWEEN V1.2.2 AND V1.2.3 (11 April 2002)
 ------------------------------------------------

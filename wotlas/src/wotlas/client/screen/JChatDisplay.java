@@ -88,7 +88,9 @@ public class JChatDisplay extends LogStream {
         {  ":agree:",    "15",   "15",   "agree.gif"     },
         {  ":disagree:", "15",   "15",   "disagree.gif"  },
         {  ":warning:",  "15",   "15",   "warning.gif"   },
-        {  ":idea:",     "22",   "15",   "idea.gif"      },
+        {  ":idea:",     "60",   "60",   "idea.gif"      },
+        {  ":music:",    "18",   "22",   "note.gif"      },
+        {  ":phone:",    "25",   "22",   "phone.gif"      },
      };
 
 

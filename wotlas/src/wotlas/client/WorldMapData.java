@@ -111,7 +111,7 @@ public class WorldMapData implements MapData
       System.out.println("\tshortName = " + worldMap.getShortName());
     }
     dataManager.getChatPanel().changeMainJChatRoom(worldMap.getShortName());
-    dataManager.getInfosPanel().setLocation(worldMap.getFullName());
+    //dataManager.getInfosPanel().setLocation(worldMap.getFullName());
 
     dataManager.addPlayer(myPlayer);
     
@@ -188,6 +188,15 @@ public class WorldMapData implements MapData
         gDirector.addDrawable(townImage);
       }
     }
+
+    //   - We show some informations on the screen
+    String[] strTemp = { myPlayer.getFullPlayerName(), myPlayer.getPlayerName() };
+    MultiLineText mltPlayerName = new MultiLineText(strTemp, 10, 10, Color.black, 15.0f, "Lblack.ttf", ImageLibRef.TEXT_PRIORITY, MultiLineText.LEFT_ALIGNMENT);
+    gDirector.addDrawable(mltPlayerName);
+    
+    String[] strTemp2 = { worldMap.getFullName(), worldMap.getShortName() };
+    MultiLineText mltLocationName = new MultiLineText(strTemp2, gDirector.getWidth()-10, 10, Color.black, 15.0f, "Lblack.ttf", ImageLibRef.TEXT_PRIORITY, MultiLineText.RIGHT_ALIGNMENT);
+    gDirector.addDrawable(mltLocationName);
 
     //   - We play music
     String midiFile = worldMap.getMusicName();

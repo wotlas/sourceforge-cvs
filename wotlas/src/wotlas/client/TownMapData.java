@@ -111,7 +111,7 @@ public class TownMapData implements MapData
       System.out.println("\tshortName = " + townMap.getShortName());
     }
     dataManager.getChatPanel().changeMainJChatRoom(townMap.getShortName());
-    dataManager.getInfosPanel().setLocation(townMap.getFullName());
+    //dataManager.getInfosPanel().setLocation(townMap.getFullName());
 
     dataManager.addPlayer(myPlayer);
     
@@ -200,6 +200,15 @@ public class TownMapData implements MapData
       }
     }
     
+    //   - We show some informations on the screen
+    String[] strTemp = { myPlayer.getFullPlayerName(), myPlayer.getPlayerName() };
+    MultiLineText mltPlayerName = new MultiLineText(strTemp, 10, 10, Color.black, 15.0f, "Lblack.ttf", ImageLibRef.TEXT_PRIORITY, MultiLineText.LEFT_ALIGNMENT);
+    gDirector.addDrawable(mltPlayerName);
+    
+    String[] strTemp2 = { townMap.getFullName(), townMap.getShortName() };
+    MultiLineText mltLocationName = new MultiLineText(strTemp2, gDirector.getWidth()-10, 10, Color.black, 15.0f, "Lblack.ttf", ImageLibRef.TEXT_PRIORITY, MultiLineText.RIGHT_ALIGNMENT);
+    gDirector.addDrawable(mltLocationName);
+
     //   - We play music
     String midiFile = townMap.getMusicName();
     if (midiFile != null)

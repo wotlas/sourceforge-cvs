@@ -78,6 +78,10 @@ public class InteriorMapData implements MapData
   /** current RoomLink considered for intersection
    */
   private RoomLink latestRoomLink;
+  
+  /** Display current location name
+   */
+  private MultiLineText mltLocationName;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -129,7 +133,8 @@ public class InteriorMapData implements MapData
       System.out.println("\tshortName = "      + room.getShortName());
     }
     dataManager.getChatPanel().changeMainJChatRoom(room.getShortName());
-    dataManager.getInfosPanel().setLocation(room.getFullName());
+
+    //dataManager.getInfosPanel().setLocation(room.getFullName());
 
 /* NETMESSAGE */
     if (SHOW_DEBUG)
@@ -234,6 +239,15 @@ public class InteriorMapData implements MapData
 System.out.println("Player init visual properties");
     myPlayer.initVisualProperties(gDirector);
 
+    //   - We show some informations on the screen
+    String[] strTemp = { myPlayer.getFullPlayerName(), myPlayer.getPlayerName() };
+    MultiLineText mltPlayerName = new MultiLineText(strTemp, 10, 10, Color.black, 15.0f, "Lblack.ttf", ImageLibRef.TEXT_PRIORITY, MultiLineText.LEFT_ALIGNMENT);
+    gDirector.addDrawable(mltPlayerName);
+    
+    String[] strTemp2 = { room.getFullName(), room.getShortName() };
+    mltLocationName = new MultiLineText(strTemp2, gDirector.getWidth()-10, 10, Color.black, 15.0f, "Lblack.ttf", ImageLibRef.TEXT_PRIORITY, MultiLineText.RIGHT_ALIGNMENT);
+    gDirector.addDrawable(mltLocationName);
+    
     //   - We play music
     String midiFile = imap.getMusicName();
     if (midiFile != null)
@@ -313,7 +327,9 @@ System.out.println("NOTIFYING");
         if (SHOW_DEBUG)
           System.out.println("Adding a new player : " + myPlayer + "to room : " + room);
 //        room.addPlayer( myPlayer );
-        dataManager.getInfosPanel().setLocation(room.getFullName());
+        //dataManager.getInfosPanel().setLocation(room.getFullName());
+        String[] strTemp = {room.getFullName(), room.getShortName()};
+        mltLocationName.setText(strTemp);
         if (SHOW_DEBUG)
           System.out.print("Move to another room : " + newRoomID + " -> " + room.getFullName());
 

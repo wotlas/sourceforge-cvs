@@ -211,6 +211,27 @@ public class WorldMap
     return myTownMap;
   }
 
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To init this world ( it rebuilds shortcuts ). This method calls the init() method
+   *  of the TownMaps. You must only call this method when ALL the world data has been
+   *  loaded.
+   */
+   public void init(){
+
+    // 1 - any data ?
+       if(townMaps==null) {
+          Debug.signal(Debug.WARNING, this, "WorldMap init failed: No Towns.");
+          return;
+       }
+
+    // 2 - we transmit the init() call
+       for( int i=0; i<townMaps.length; i++ )
+            if( townMaps[i]!=null )
+                townMaps[i].init();
+   }
+
  /*------------------------------------------------------------------------------------*/
 
 }

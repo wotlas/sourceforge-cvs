@@ -42,7 +42,7 @@ public class InteriorMap
   /** Short name of the InteriorMap
    */
    private String shortName;
-   
+
   /** ID of WorldMap the InteriorMap belongs to
    */
    private int fromWorldMapID;
@@ -154,6 +154,29 @@ public class InteriorMap
     }
     return myRoom;
   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To init this interiorMap ( it rebuilds shortcuts ). DON'T CALL this method directly,
+   *  use the init() method of the associated world.
+   */
+   public void init(){
+
+    // 1 - any data ?
+       if(rooms==null) {
+          Debug.signal(Debug.WARNING, this, "InteriorMap has no rooms, world:"+fromWorldMapID
+                                            +" town:"+fromTownMapID+" building:"+fromBuildingID
+                                            +" interiorMap:"+interiorMapID);
+          return;
+       }
+
+    // 2 - we transmit the init() call
+       for( int i=0; i<rooms.length; i++ )
+            if( rooms[i]!=null )
+                rooms[i].init();
+   }
+
+ /*------------------------------------------------------------------------------------*/
 
 } 
   

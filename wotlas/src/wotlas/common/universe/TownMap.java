@@ -51,7 +51,7 @@ public class TownMap
    */
    private int fromWorldMapID;
   
-  /** Position and Dimension of the WorldMap
+  /** Position and Dimension on the WorldMap
    * to enter the town
    */
    private int worldMapEnter_X;
@@ -69,9 +69,8 @@ public class TownMap
 
   /** List of buildings to enter the town
    * first  element : BuildingID
-   * second element : KnowledgeID
    */
-   private int[][] buildingsEnter;
+   private int[] buildingsEnter;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -114,10 +113,10 @@ public class TownMap
   public Building[] getBuildings() {
     return buildings;
   }
-  public void setBuildingsEnter(int[][] myBuildingsEnter) {
+  public void setBuildingsEnter(int[] myBuildingsEnter) {
     this.buildingsEnter = myBuildingsEnter;
   }
-  public int[][] getBuildingsEnter() {
+  public int[] getBuildingsEnter() {
     return buildingsEnter;
   }
   
@@ -236,6 +235,41 @@ public class TownMap
     }    
     return myBuilding;
   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To init this town ( it rebuilds shortcuts ). DON'T CALL this method directly, use
+   *  the init() method of the associated world.
+   */
+   public void init(){
+
+    // 1 - any data ?
+       if(buildings==null) {
+          Debug.signal(Debug.WARNING, this, "Town has no buildings, world:"+fromWorldMapID
+                                            +" town:"+townMapID);
+          return;
+       }
+
+    // 2 - we transmit the init() call
+       for( int i=0; i<buildings.length; i++ )
+            if( buildings[i]!=null )
+                buildings[i].init();
+
+    // 3 - we reconstruct the shortcuts... (here, buildings to enter the town)
+       for( int i=0; i<buildings.length; i++ )
+            if( buildings[i]!=null && buildings[i].getHasTownExits() )
+            {
+                if ( buildingsEnter == null )
+                     buildingsEnter = new int[1];
+                else {
+                     int tmp[] = new int[buildingsEnter.length+1];
+                     System.arraycopy( buildingsEnter, 0, tmp, 0, buildingsEnter.length );
+                     buildingsEnter = tmp;
+                }
+
+                buildingsEnter[buildingsEnter.length-1] = buildings[i].getBuildingID();        
+            }
+   }
 
  /*------------------------------------------------------------------------------------*/
 

@@ -42,7 +42,7 @@ public class WotlasLocation
   /** townMapID
    */
     private int townMapID;
-   
+
   /** buildingID
    */
     private int buildingID;

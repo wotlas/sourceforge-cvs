@@ -27,13 +27,29 @@ package wotlas.common.universe;
   * @see wotlas.common.universe.MapExit
   */
   
-public class FrontierZone extends wotlas.common.universe.ScreenZone
+public class FrontierZone extends ScreenZone
 {
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor
    */
    public FrontierZone() {}
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Is the given entity entering this frontier ?
+   */
+   public boolean enteringFrontier( ScreenZone entity ) {
+      return false;
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Is the given entity entering this frontier ?
+   */
+   public boolean exitingFrontier( ScreenZone entity ) {
+      return false;
+   }
 
  /*------------------------------------------------------------------------------------*/
 

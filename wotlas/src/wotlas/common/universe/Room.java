@@ -42,23 +42,23 @@ public class Room
   /** Full name of the World
    */
    private String fullName;
-  
+
   /** Short name of the World
    */
    private String shortName;
-   
+
   /** Point of insertion (teleportation, arrival)
    */
    private Point insertionPoint;
-   
+
   /** Number maximum of players
    */
    private int maxPlayers;
-   
+
   /**
    */
    private RoomLink[] roomLinks;
-  
+
   /**
    */
    private MapExit[] mapExits;
@@ -66,7 +66,7 @@ public class Room
   /** List of players in the Room
    */
    private transient Hashtable players;
-  
+
   /** List of items in the Room
    */
    private WotlasObject[] wotlasObjects;
@@ -211,6 +211,8 @@ public class Room
     }
     return myRoomLink;
   }
+
+ /*------------------------------------------------------------------------------------*/
   
   /** Add a new MapExit object to the array {@link #mapExits mapExits}
    *
@@ -233,5 +235,15 @@ public class Room
     }
     return myMapExit;
   }
-  
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To init this room ( it rebuilds shortcuts ). DON'T CALL this method directly,
+   *  use the init() method of the associated world.
+   */
+   public void init(){
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
 }

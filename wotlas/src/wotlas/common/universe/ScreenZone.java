@@ -35,4 +35,16 @@ public class ScreenZone extends java.awt.Rectangle
 
  /*------------------------------------------------------------------------------------*/
 
+  /** Constructor
+   *
+   *  @param x
+   *  @param y
+   *  @param width
+   *  @param height
+   */
+   public ScreenZone( int x, int y, int width, int height ) {
+      super(x,y,width,height);
+   }
+
+ /*------------------------------------------------------------------------------------*/
 }

@@ -59,7 +59,7 @@ public class Building
   /** ID of TownMap the Building belongs to
    */
    private int fromTownMapID;
-  
+
   /** is true if the Building has some TownExit
    */
    private boolean hasTownExits;
@@ -77,29 +77,26 @@ public class Building
    * properties only in the server the Building belongs to
    */
    
-  /**
+  /** Our interior maps.
    */
-   private transient InteriorMap[] interiorMaps;
+    private transient InteriorMap[] interiorMaps;
    
-  /**
-   * 1 element : InteriorMapID
-   * 2 element : Room
-   * 3 element : MapExit
+  /** Map exits that are building exits...
    */
-   //private transient ?? buildingExits;
+    private transient MapExit[] buildingExits;
    
-   /**
-    * 1 element : InteriorMapID
-    * 2 element : Room
-    * 3 element : MapExit
+   /** Map exits that are town exits.
     */
-   //private transient ?? townExits;
+    private transient MapExit[] townExits;
    
  /*------------------------------------------------------------------------------------*/
   
   /** Constructor
    */
-   public Building() {}
+   public Building() {
+       hasBuildingExits = false; // default
+       hasTownExits = false;     // default
+   }
     
  /*------------------------------------------------------------------------------------*/
   /*
@@ -213,6 +210,76 @@ public class Building
       }
 
       interiorMaps[map.getInteriorMapID()] = map;        
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To init this building ( it rebuilds shortcuts ). DON'T CALL this method directly, use
+   *  the init() method of the associated world.
+   */
+   public void init(){
+
+    // 1 - any data ?
+       if(interiorMaps==null) {
+          Debug.signal(Debug.NOTICE, this, "Building w:"+fromWorldMapID
+                                            +" t:"+fromTownMapID+" b:"+buildingID
+                                            +" is on another server" );
+          return;
+       }
+
+    // 2 - we transmit the init() call
+       for( int i=0; i<interiorMaps.length; i++ )
+            if( interiorMaps[i]!=null )
+                interiorMaps[i].init();
+
+    // 3 - we reconstruct the shortcuts (now that interiorMaps shortcuts have been rebuild)
+       for( int i=0; i<interiorMaps.length; i++ )
+            if( interiorMaps[i]!=null )
+            {
+               Room rooms[] = interiorMaps[i].getRooms();
+               
+               if(rooms==null)
+                  continue;
+               
+               for( int j=0; j<rooms.length; j++ )
+                    if( rooms[i]!=null )
+                    {
+                       MapExit exits[] = rooms[i].getMapExits();
+                    
+                       if(exits==null)
+                          continue;
+                    
+                       for( int k=0; k<exits.length; k++ )
+                           if( exits[k]!=null && exits[k].getType()==MapExit.BUILDING_EXIT )
+                           {
+                               if ( buildingExits == null ){
+                                    buildingExits = new MapExit[1];
+                                    hasBuildingExits = true;
+                               }
+                               else {
+                                    MapExit tmp[] = new MapExit[buildingExits.length+1];
+                                    System.arraycopy( buildingExits, 0, tmp, 0, buildingExits.length );
+                                    buildingExits = tmp;
+                               }
+
+                               buildingExits[buildingExits.length-1] = exits[k];        
+                           }
+                           else if( exits[k]!=null && exits[k].getType()==MapExit.TOWN_EXIT )
+                           {
+                               if ( townExits == null ) {
+                                    townExits = new MapExit[1];
+                                    hasTownExits = true;
+                               }
+                               else {
+                                    MapExit tmp[] = new MapExit[townExits.length+1];
+                                    System.arraycopy( townExits, 0, tmp, 0, townExits.length );
+                                    townExits = tmp;
+                               }
+
+                               townExits[townExits.length-1] = exits[k];        
+                           }                    
+                    }
+            }
    }
 
  /*------------------------------------------------------------------------------------*/

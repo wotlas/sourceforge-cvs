@@ -46,34 +46,31 @@ public class ChatRoomCreatedMsgBehaviour extends ChatRoomCreatedMessage implemen
   public ChatRoomCreatedMsgBehaviour() {
     super();
   }
-  
+
   /** Associated code to this Message...
    *
    * @param context an object giving specific access to other objects needed to process
    *        this message.
    */
   public void doBehaviour( Object context ) {
+    System.out.println("ChatRoomCreatedMsgBehaviour::doBehaviour");
+
     // The context is here a DataManager.
     DataManager dataManager = (DataManager) context;
     PlayerImpl player = dataManager.getMyPlayer();
-    
-    System.out.println("ChatRoomCreatedMsgBehaviour");
-    
+
     ChatRoom chatRoom = new ChatRoom();
     chatRoom.setPrimaryKey(primaryKey);
     chatRoom.setName(name);
     chatRoom.setCreatorPrimaryKey(creatorPrimaryKey);
     chatRoom.addPlayer(creatorPrimaryKey);
-    
+
     player.getChatList().addChatRoom(chatRoom);
     dataManager.getChatPanel().addJChatRoom(chatRoom);
-    
-    String[] chatPlayers = {"tic","tac","toc"};
-    //player.getChatList().getCurrentJChatRoom().setPlayers(chatPlayers);
 
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
+
 }
-  
+

@@ -57,19 +57,21 @@ public class ChatRoomCreationMsgBehaviour extends ChatRoomCreationMessage implem
    *        this message.
    */
   public void doBehaviour( Object context ) {
+    System.out.println("ChatRoomCreationMsgBehaviour::doBehaviour");
+    
     // The context is here a PlayerImpl.
     PlayerImpl player = (PlayerImpl) context;
 
-    System.out.println("public ChatRoomCreationMsgBehaviour()");
     ChatRoom chatRoom = new ChatRoom();
     chatRoom.setPrimaryKey(player.getNewChatRoomID());
     chatRoom.setName(name);
     chatRoom.setCreatorPrimaryKey(creatorPrimaryKey);
     chatRoom.addPlayer(player.getPrimaryKey());
     
-    System.out.println( "primaryKey = " + chatRoom.getPrimaryKey() );
-    System.out.println( "name = " + chatRoom.getName() );
-    System.out.println( "creatorPrimaryKey = " + chatRoom.getCreatorPrimaryKey() );
+    System.out.println( "\tprimaryKey = " + chatRoom.getPrimaryKey() );
+    System.out.println( "\tname = " + chatRoom.getName() );
+    System.out.println( "\tcreatorPrimaryKey = " + chatRoom.getCreatorPrimaryKey() );
+    
     ChatRoomCreatedMessage crcMsg = new ChatRoomCreatedMessage( chatRoom.getPrimaryKey(),
                                                                 name,
                                                                 creatorPrimaryKey

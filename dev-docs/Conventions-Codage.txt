@@ -76,17 +76,17 @@ class MyPrivateClass {
 
 
 3 - Les Commentaires sont OBLIGATOIRES, cela dit ne tombez pas dans l'excès.
-    Pas de français... ils doivent être en english.
+    Pas de français... ils doivent être en ***english***.
 
 
 4 - L'indentation est laissée à votre discretion, pourvu que cela soit LISIBLE.
 
     Pas de :                                     mais :
 
-    int fonction(int var,float bob){             void fonction( int var, float bob )
-      if(var+bob==5.0f) {                        {
-       for(byte j=0;j<100;j++)                        if( (var+float)==5.0f )
-        if((++var+j)>100)                             { 
+    int fonction(int var,float bob){             void fonction( int var, float bob ) {
+      if(var+bob==5.0f) {                        
+       for(byte j=0;j<100;j++)                        if( (var+float)==5.0f ) {
+        if((++var+j)>100)                             
            return 5;                                     for( byte j=0; j<100; j++ ) {
        return 6;                                             var++;
       }                                                      if( (var+j)>100 )
@@ -101,30 +101,8 @@ class MyPrivateClass {
 
  Vous l'avez compris il ne faut pas hésiter à sauter des lignes, et à rajouter des espaces.
 
-
-5 - Une fois le codage des classes terminées, n'hésitez pas à créer une petite doc contenant
-    qq cas d'utilisation de votre travail. Par exemple après avoir écrit la partie API réseau
-    du projet, je pourrais créer une petite doc dans /cvsroot/wotlas/dev-docs du style:
-
-    LECON N°1: Comment envoyer un message au serveur ?
-
-    Pour envoyer un message, il y a quatre étapes :
-
-        // 1 - Récupération d'un lien vers la classe qui gère les envois de données
-               NetSender net_sender = ...récupération
-
-        // 2 - Récupération d'un handle sur le message que l'on veut envoyer
-        //     Les messages sont classés par "catégorie"/"type du message dans la catégorie"
-               MessageHelloWorld msg_hello = new MessageHelloWorld( "Bonjour Tout le Monde" );
-
-        // 3 - demande d'envoi...
-               net_sender.send( msg_hello );
-
-        // 4 - nettoyage éventuel
-               msg_hello = null;
-
-6 - Pour chacun de vos packages vous devrez aussi créer un fichier package.html qui contiendra un petit descriptif de votre package. Jettez un coup d'oeil à /CVSROOT/wotlas/wotlassrc/wotlas/libs/net/package.html pour un exemple.
+5 - Pour chacun de vos packages vous devrez aussi créer un fichier package.html qui contiendra un petit descriptif de votre package. Jettez un coup d'oeil à /CVSROOT/wotlas/wotlassrc/wotlas/libs/net/package.html pour un exemple.
 
 
-7 - Bon codage !
+6 - Bon codage !
 

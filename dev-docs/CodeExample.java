@@ -38,15 +38,14 @@ import wotlas.utils.Tools;
  * @see java.net.Socket
  */
 
-public class CodeExample extends AnotherClass implements MyInterface1, MyInterface2
-{
+public class CodeExample extends AnotherClass implements MyInterface1, MyInterface2 {
 
  /*------------------------------------------------------------------------------------*/
 
 
   /** A short description.
    */
-      private short my_var;
+      private short myShortVar;
 
 
  /*------------------------------------------------------------------------------------*/
@@ -58,7 +57,7 @@ public class CodeExample extends AnotherClass implements MyInterface1, MyInterfa
    */
      public CodeExample( int var1, int var2 ) {
         // A simple init.
-           my_var = 13;
+           myShortVar = 13;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -69,13 +68,12 @@ public class CodeExample extends AnotherClass implements MyInterface1, MyInterfa
    * @return the object ID
    * @exception StrangeException something went wrong with this call
    */
-    public int getAnID( String name ) throws StrangeException
-    {
+    public int getAnID( String name ) throws StrangeException {
        // Empty String ?
           if( name.length()>0 )
-              return name.length() + my_var;
+              return name.length() + myShortVar;
 
-        return my_var;
+        return myShortVar;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

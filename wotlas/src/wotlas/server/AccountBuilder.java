@@ -68,31 +68,32 @@ public class AccountBuilder implements NetConnectionListener
        static final public byte ACCOUNT_EMPTY_STATE = 0;
 
     /** ADD HERE OTHER ACCOUNT STATE (player quizz, quizz done ... )
+     *  But BEWARE : the state numbers must follow : 1, 2, 3, etc...
      */
 
     /** Account awaiting login & password to be set.
      */
-       static final public byte ACCOUNT_LOGIN_PASSWD_STATE = 10;
+       static final public byte ACCOUNT_LOGIN_PASSWD_STATE = 1;
 
     /** Account awaiting player's visual properties to be set
      */
-       static final public byte ACCOUNT_WOTCHARACTER_CLASS_STATE = 20;
+       static final public byte ACCOUNT_WOTCHARACTER_CLASS_STATE = 2;
 
     /** Account awaiting player's visual properties to be set
      */
-       static final public byte ACCOUNT_VISUAL_PROPERTIES_STATE = 30;
+       static final public byte ACCOUNT_VISUAL_PROPERTIES_STATE = 3;
 
     /** Account awaiting player name & full player name to be set.
      */
-       static final public byte ACCOUNT_PLAYER_NAMES_STATE = 40;
+       static final public byte ACCOUNT_PLAYER_NAMES_STATE = 4;
 
     /** Account Ready State (account ready to be created)
      */
-       static final public byte ACCOUNT_READY_STATE = 124;
+       static final public byte ACCOUNT_READY_STATE = 5;
 
     /** Account Created State (account has been created)
      */
-       static final public byte ACCOUNT_CREATED_STATE = 125;
+       static final public byte ACCOUNT_CREATED_STATE = 6;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -114,10 +115,13 @@ public class AccountBuilder implements NetConnectionListener
     */
      private NetPersonality personality;
  
-
    /** Our Account Server
     */
      private AccountServer accountServer;
+ 
+   /** Can we go to the previous state ?
+    */
+     private boolean canGoToPreviousState;
  
  /*------------------------------------------------------------------------------------*/
 
@@ -129,7 +133,8 @@ public class AccountBuilder implements NetConnectionListener
       	// the account is empty for now...
            account = new GameAccount();
            player = new PlayerImpl();
-           player.setPlayerLocationToWorld();
+           player.setDefaultPlayerLocation();
+           canGoToPreviousState = false;
 
            state = ACCOUNT_LOGIN_PASSWD_STATE;   // first state...
       }
@@ -156,6 +161,20 @@ public class AccountBuilder implements NetConnectionListener
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To revert to the previous state.
+    */
+     public void revertToPreviousState() {
+     	if( canGoToPreviousState ) {
+     	    state--;
+            if(state==ACCOUNT_LOGIN_PASSWD_STATE)
+               canGoToPreviousState = false;
+        }
+     	else
+     	    stateError();
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
    /** Method called by NetMessages to set login and password.
     */
@@ -167,6 +186,7 @@ public class AccountBuilder implements NetConnectionListener
 
      	account.setLogin(login);
      	account.setPassword(password);
+     	canGoToPreviousState = true;
         state = ACCOUNT_WOTCHARACTER_CLASS_STATE;
      }
 
@@ -201,6 +221,7 @@ public class AccountBuilder implements NetConnectionListener
 
         ( (AesSedai) wotCharacter ).setAesSedaiStatus( wotCharacterStatus );
      	player.setWotCharacter( wotCharacter );
+     	canGoToPreviousState = true;
         state = ACCOUNT_VISUAL_PROPERTIES_STATE;
      }
 
@@ -229,6 +250,7 @@ public class AccountBuilder implements NetConnectionListener
         }
 
         h.setHairColor( hairColor );
+     	canGoToPreviousState = true;
         state = ACCOUNT_PLAYER_NAMES_STATE;
      }
 
@@ -236,7 +258,7 @@ public class AccountBuilder implements NetConnectionListener
 
    /** Method called by NetMessages to set player names.
     */
-     public void setPlayerNames( String playerName, String fullPlayerName ) {
+     public void setPlayerNames( String playerName, String fullPlayerName, String playerEmail ) {
      	if(state!=ACCOUNT_PLAYER_NAMES_STATE) {
            stateError();
            return;
@@ -244,6 +266,8 @@ public class AccountBuilder implements NetConnectionListener
 
      	player.setPlayerName(playerName);
      	player.setFullPlayerName(fullPlayerName);                
+     	account.setEmail(playerEmail);
+     	canGoToPreviousState = true;
         state = ACCOUNT_READY_STATE;
      }
 
@@ -284,7 +308,7 @@ public class AccountBuilder implements NetConnectionListener
 
            // we send a Success Message
               personality.queueMessage( new AccountCreatedMessage(account.getLocalClientID(),
-                                                account.getOriginalServerID(), player.getPlayerName() ) );
+                                                                  account.getOriginalServerID() ) );
 
            // And close the connection
               personality.closeConnection();
@@ -306,6 +330,16 @@ public class AccountBuilder implements NetConnectionListener
         state=ACCOUNT_EMPTY_STATE;
         personality.queueMessage( new AccountCreationFailedMessage( "bad state detected ! please retry." ) );
         Debug.signal( Debug.ERROR, this, "Bad State Detected During Account Creation: state "+state );
+        personality.closeConnection();
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** A small to cancel the account's creation.
+    */
+     public void cancelCreation() {
+        state=ACCOUNT_EMPTY_STATE;
+        Debug.signal( Debug.NOTICE, this, "Account Creation cancelled" );
         personality.closeConnection();
      }
 

@@ -241,6 +241,7 @@ class ServerDirector implements Runnable
 
            Tools.waitTime( 1000*10 ); // 10s
            Debug.signal( Debug.NOTICE, null, "Leaving Persistence Thread..." );
+           Debug.exit();
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

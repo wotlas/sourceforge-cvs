@@ -44,6 +44,13 @@ public class PathFollower implements MovementComposer {
 
  /*------------------------------------------------------------------------------------*/
 
+  /** Distance in pixels before we consider the slave replica too far from its
+   *  master replica : we then make slave replica jump to its final position.
+   */
+    public final static int MAX_DISTANCE_DELAY = 200;
+
+ /*------------------------------------------------------------------------------------*/
+
   /** To tell that we must reconstruct a trajectory that was not possible
    *  to construct before, due to a AStar not initialized...
    */
@@ -170,7 +177,7 @@ public class PathFollower implements MovementComposer {
            if(path!=null)
               for (int i=0; i<path.size(); i++) {
                    Point p = (Point) path.elementAt(i);
-                   if(pathInRoom) {
+                   if(pathInRoom && i!=path.size()-1) {
                       p.x = p.x*tileSize-5;
                       p.y = p.y*tileSize-5;
                    }
@@ -490,7 +497,7 @@ public class PathFollower implements MovementComposer {
                     Point target = getTargetPosition();
 
                     if( msg.isMoving ) {
-                        if( distance( msg.srcPoint, getPosition() )>200 ||
+                        if( distance( msg.srcPoint, getPosition() )>MAX_DISTANCE_DELAY ||
                             findPath( getPosition(), msg.dstPoint, player.getLocation().isRoom() )==null )
                             takeUpdate = true;
                         else
@@ -499,7 +506,7 @@ public class PathFollower implements MovementComposer {
                     else {
                       // no movement, we received the master replica's ending trajectory position
                         if( target.x!=msg.srcPoint.x || target.y!=msg.srcPoint.y
-                    	    || distance( target, getPosition() )>200 ) {
+                    	    || distance( target, getPosition() )>MAX_DISTANCE_DELAY ) {
                     	    takeUpdate = true;
                     	}
                         else {
@@ -589,6 +596,11 @@ public class PathFollower implements MovementComposer {
            double deltaA = (nextAngle-orientationAngle)*angularDirection;
 
            if( deltaA<=0 ) {
+                if(useEndingOrientationValue && pathIndex >= path.size()) {
+                   stopMovement(); // recreated trajectory ending by a rotation...
+                   return;
+                }
+
                 turningAlongPath = false;
                 orientationAngle = angle( getPosition(), nextPoint );
            }
@@ -611,12 +623,16 @@ public class PathFollower implements MovementComposer {
                 xPosition = (float) nextPoint.x;
                 yPosition = (float) nextPoint.y;
                 orientationAngle = nextAngle;
-                
-                if(useEndingOrientationValue) {
-                   orientationAngle = endingOrientation;
-                   useEndingOrientationValue=false;
+
+              // if this is a recreated trajectory do we have to turn to get the right
+              // final orientation ?
+                if(useEndingOrientationValue && realisticRotations) {
+                   nextAngle = (float) endingOrientation;
+                   turningAlongPath = true;
+                   return;
                 }
 
+                useEndingOrientationValue=false;
                 stopMovement();
                 return;
             }
@@ -716,7 +732,11 @@ public class PathFollower implements MovementComposer {
             }
 
             updateMovementAspect();
-            initMovement( path, movementDeltaTime );
+            
+            if(movementDeltaTime>500)
+               initMovement( path, movementDeltaTime );
+            else
+               initMovement( path );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

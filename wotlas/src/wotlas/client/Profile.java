@@ -40,10 +40,17 @@ public class Profile
   private String serverName;
    
   /** client's serial number : #s-cc where :<br>
-   * <li>s is the serverID of the server where the client was created<br>
+   * <li>s is 
    * <li>cc is the clientID
    */
-  private String serial;
+  
+  /** serverID of the server where the client was first created
+   */
+  private int originalServerID;  
+  
+  /** local clientID in the server where the client was first created
+   */
+  private int localClientID;  
 
  /*------------------------------------------------------------------------------------*/
 
@@ -54,7 +61,8 @@ public class Profile
     login = new String("nobody");
     password = new String("toto");
     serverName = new String("nope");
-    serial = new String("0-0");
+    originalServerID = -1;
+    localClientID = -1;
   }
   
   /** To get the client's Login
@@ -93,16 +101,34 @@ public class Profile
     this.serverName = serverName;
   }
   
+  /** To get the serverID of the server where the client was created
+   */
+  public int getOriginalServerID() {
+    return originalServerID;
+  }
+  
+  /** To set the serverID of the server where the client was created
+   */
+  public void setOriginalServerID(int originalServerID) {
+    this.originalServerID = originalServerID;
+  }
+  
+  /** To get the localClientID
+   */
+  public int getLocalClientID() {
+    return localClientID;
+  }
+  
+  /** To set the localClientID
+   */
+  public void setLocalClientID(int localClientID) {
+    this.localClientID = localClientID;
+  }  
+  
   /** To get the client's serial number
    */
   public String getSerial() {
-    return serial;
-  }
-  
-  /** To set the client's serial number
-   */
-  public void setSerial(String clientSerial) {
-    this.serial = clientSerial;
-  }
+    return ""+originalServerID+"-"+localClientID;
+  }  
   
 }

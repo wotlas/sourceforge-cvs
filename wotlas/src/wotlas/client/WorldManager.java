@@ -19,8 +19,28 @@
 
 package wotlas.client;
 
-public class WorldManager {
+ /** A WorldManager provides all the methods needed to handle & manage the game world
+  *  from its root.<p><br>
+  *
+  *  This class IS NOT directly persistent. The WorldMap instances are made persistent
+  *  by calling the PersistenceManager BUT the PersistenceManager save them in separated
+  *  files. This is why a WorldManager is not directly persistent : we don't want to save
+  *  all its data in one huge file.
+  *
+  * @author Petrus, Aldiss
+  * @see wotlas.common.WorlManager
+  * @see wotlas.common.universe.WorldMap
+  */
+
+public class WorldManager extends wotlas.common.WorldManager
+{
+
+ /*------------------------------------------------------------------------------------*/
+  
+  /** Constructor. Attemps to load the local universe data. Any error at this
+   * step will stop the program.
+   */
   WorldManager() {
-    ;
+    super();
   }
 }

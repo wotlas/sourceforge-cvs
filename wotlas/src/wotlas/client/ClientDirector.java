@@ -78,14 +78,32 @@ class ClientDirector
    */
   private static DataManager dataManager;
   
+  /** True if we show debug informations
+   */
+  public static boolean SHOW_DEBUG = false;
+  
  /*------------------------------------------------------------------------------------*/
 
-  /** Main Class. Starts the WHOLE Client
+  /** Main Class. Starts the WHOLE Client<br>
+   * Use flag -debug to display debug informations.
    */
   public static void main(String argv[])
   {
+    // Parse command line arguments
+    int i=0;
+    String arg;
+    while (i<argv.length && argv[i].startsWith("-")) {
+      arg = argv[i];
+      i++;
+      if (arg.equals("-debug")) {
+        System.out.println("mode DEBUG on");
+        SHOW_DEBUG = true;
+      }
+    }
     
-    System.out.println("Log started");
+    if (SHOW_DEBUG)
+      System.out.println("Log started");
+      
     // STEP 0 - Start a JLogStream to display our Debug messages
     try {
       Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(), CLIENT_LOG, "../base/gui/log-title.jpg" ) );
@@ -93,7 +111,8 @@ class ClientDirector
       e.printStackTrace();
       return;
     }    
-    System.out.println("Log created");
+    if (SHOW_DEBUG)
+      System.out.println("Log created");
     
     Debug.signal( Debug.NOTICE, null, "*-----------------------------------*" );
     Debug.signal( Debug.NOTICE, null, "|   Wheel Of Time - Light & Shadow  |" );
@@ -146,6 +165,7 @@ class ClientDirector
 
     // STEP 5 - We ask the DataManager to get ready
     dataManager = DataManager.createDataManager(databasePath);
+    dataManager.showDebug(SHOW_DEBUG);
     Debug.signal( Debug.NOTICE, null, "DataManager created..." );
     
     // STEP 6 - Start the ClientManager

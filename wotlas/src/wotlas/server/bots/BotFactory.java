@@ -94,6 +94,7 @@ public class BotFactory {
 
          botPlayer.getMessageRouter().addPlayer( botPlayer );
          botPlayer.init(); // finalize the init...
+         botPlayer.setIsConnectedToGame( botPlayer.isConnectedToGame() ); // finalize the init...
          return true;
     }
 

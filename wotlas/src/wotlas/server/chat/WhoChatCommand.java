@@ -98,18 +98,25 @@ public class WhoChatCommand implements ChatCommand
           HashMap onlinePlayers = ServerDirector.getDataManager().getAccountManager().getOnlinePlayers();
 
           Iterator it = onlinePlayers.values().iterator();
-          StringBuffer result = new StringBuffer("/cmd:There are <b>"+onlinePlayers.size() + "</b> online players on this server :");
-          result.append("<table border='0' bgcolor='#EDE4FF'>");
+          StringBuffer result = new StringBuffer("/cmd:There are <b>"
+                       +onlinePlayers.size() + "</b> online players on this server :");
 
           boolean keys = message.equals("/who keys");
+          boolean simple = false;
+
+          if( onlinePlayers.size()> 20 )
+             simple = true;
+          else
+             result.append("<table border='0' bgcolor='#EDE4FF'>");
 
           PlayerImpl onlinePlayer;
 
           while ( it.hasNext() ) {
              onlinePlayer = (PlayerImpl) it.next();
-             if(keys)
-                result.append("<tr><td>&nbsp;&nbsp;&nbsp;&nbsp; - " + onlinePlayer.getPlayerName() + " &nbsp; <i> ( " + onlinePlayer.getPrimaryKey() + " )</i></td></tr>" );
-             else {
+             if(keys && !simple)
+                result.append("<tr><td>&nbsp;&nbsp;&nbsp;&nbsp; - " + onlinePlayer.getPlayerName() + " &nbsp; <i> ( "
+                               + onlinePlayer.getPrimaryKey() + " )</i></td></tr>" );
+             else if(!keys && !simple){
                 String slocation = null;
                 WotlasLocation flocation = onlinePlayer.getLocation();
 
@@ -129,11 +136,19 @@ public class WhoChatCommand implements ChatCommand
                 else
               	  slocation = "bad location";
 
-                result.append("<tr><td>&nbsp;&nbsp;&nbsp;&nbsp; - " + onlinePlayer.getPlayerName() + " &nbsp; <i> ( in " +slocation+ " )</i></td></tr>" );
+                result.append("<tr><td>&nbsp;&nbsp;&nbsp;&nbsp; - ");
+                result.append(onlinePlayer.getPlayerName());
+                result.append(" &nbsp; <i> ( in "+slocation+ " )</i></td></tr>" );
              }
+             else if(!keys)
+                result.append(onlinePlayer.getPlayerName()+", " );
+             else
+                result.append(onlinePlayer.getPlayerName()+"("+onlinePlayer.getPrimaryKey()+"), " );
           }
 
-          result.append("</tr></table>");
+          if(!simple)
+             result.append("</tr></table>");
+
           response.setMessage( result.toString() );
           player.sendMessage( response );
           return true;

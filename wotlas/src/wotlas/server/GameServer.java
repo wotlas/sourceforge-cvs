@@ -87,14 +87,14 @@ public class GameServer extends NetServer implements ErrorCodeList {
                refuseClient( personality, ERR_UNKNOWN_ACCOUNT, "This account does not exist on this server" );
                return;
           }
-
+/*
           if( account.getPlayer() instanceof BotPlayer ) {
                Debug.signal( Debug.ERROR, this, accountName+" tried to connect on a bot's account.");
                refuseClient( personality, ERR_BOT_ACCOUNT, "This account is owned by a bot.\nYou can't connect to it !" );
                return;
           }
-
-          if( account.getPlayer().isConnectedToGame() ) {
+*/
+          if( account.getPlayer().isConnectedToGame() && !(account.getPlayer() instanceof BotPlayer) ) {
                Debug.signal( Debug.ERROR, this, accountName+" tried to connect twice to the game server.");
                refuseClient( personality, ERR_ALREADY_CONNECTED, "Someone is already connected on this account !" );
                return;

@@ -112,6 +112,10 @@ public class BotPlayerImpl extends PlayerImpl implements BotPlayer {
     * @return true if the player is in the game, false if the client is not connected.
     */
       public boolean isConnectedToGame() {
+
+         if( super.isConnectedToGame() )
+             return true;
+
          BotChatService chatService = ServerDirector.getDataManager().getBotManager().getBotChatService();
          
          if( chatService!=null && chatService.isAvailable() )
@@ -131,6 +135,9 @@ public class BotPlayerImpl extends PlayerImpl implements BotPlayer {
     *        BotChatService.isAvailable method...
     */
       public void setIsConnectedToGame( boolean isConnected ) {
+
+            if( super.isConnectedToGame() )
+                return;
 
          // We check our real state (we had to stay compatible with the method signature)
             if( isConnected!=isConnectedToGame() ) {
@@ -172,7 +179,7 @@ public class BotPlayerImpl extends PlayerImpl implements BotPlayer {
                                                           MessageRouter.EXTENDED_GROUP );
                  }
 
-              // 4 - We create our delete local chat room
+              // 4 - We create or delete local chat room
                  if(isConnected) {
 
                      if( defaultChatRoomName==null ) {
@@ -210,9 +217,7 @@ public class BotPlayerImpl extends PlayerImpl implements BotPlayer {
   /** This method does nothing here. It only produces an error message.
    */
      public void connectionCreated( NetPersonality personality ) {
-          // SHOULD NEVER HAPPEN !!!
-             closeConnection();
-             Debug.signal( Debug.WARNING, this, "Attempt to connect on bot "+primaryKey+"! Connection closed." );
+            super.connectionCreated(personality);
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -220,8 +225,8 @@ public class BotPlayerImpl extends PlayerImpl implements BotPlayer {
   /** This method does nothing here. It only produces an error message.
    */
      public void connectionClosed( NetPersonality personality ) {
-          // SHOULD NEVER HAPPEN !!!
-             Debug.signal( Debug.WARNING, this, "Attempt to close a connection on bot "+primaryKey+"! Bots have no net-connection !" );
+            super.connectionClosed( personality );
+            setIsConnectedToGame(isConnectedToGame());
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -234,6 +239,7 @@ public class BotPlayerImpl extends PlayerImpl implements BotPlayer {
    * @param message message to send to the bot.
    */
      public void sendMessage( NetMessage message ) {
+           super.sendMessage(message);
 
         // 1 - need to react ?
            if( !isConnectedToGame() )
@@ -301,6 +307,7 @@ public class BotPlayerImpl extends PlayerImpl implements BotPlayer {
    * @param otherPlayerKey key of player who sent the message
    */
      public void sendChatMessage( SendTextMessage message, PlayerImpl otherPlayer) {
+               super.sendMessage( message );
 
             // 1 - We don't talk to other bots & chat groups... (security)
                if(otherPlayer instanceof BotPlayer) {
@@ -331,10 +338,12 @@ public class BotPlayerImpl extends PlayerImpl implements BotPlayer {
     *  @param message chat message to send.
     */
      public void sendChatAnswer( String message ) {
-            getMessageRouter().sendMessage( new SendTextMessage( primaryKey, playerName,
+
+            SendTextMessage tMsg = new SendTextMessage( primaryKey, playerName,
                                                        currentChatPrimaryKey, message,
-                                                       ChatRoom.NORMAL_VOICE_LEVEL ),
-                                                this );
+                                                       ChatRoom.NORMAL_VOICE_LEVEL );
+            getMessageRouter().sendMessage( tMsg, this );
+            super.sendMessage( tMsg );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -22,6 +22,7 @@ package wotlas.client.screen;
 import wotlas.client.*;
 import wotlas.common.chat.ChatRoom;
 import wotlas.libs.log.*;
+import wotlas.libs.sound.*;
 
 import wotlas.utils.MyHTMLEditorKit;
 import wotlas.utils.Tools;
@@ -45,7 +46,7 @@ public class JChatDisplay extends LogStream {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Chat Log NAme Format
+  /** Chat Log Name Format
    */
     public final static String CHAT_LOG_SUFFIX = ".html";
 
@@ -56,30 +57,48 @@ public class JChatDisplay extends LogStream {
   /** The smileys we recognize :
    */
     public final static String SMILEYS[][] = {
-     /**   smiley   width   height  file name         **/
-        {  "0:)",   "16",   "20",   "angel.gif"     },
-        {  ":,(",   "15",   "15",   "cry.gif"       },
-        {  ":o",    "15",   "15",   "eek.gif"       },
-        {  ":D",    "15",   "15",   "laugh.gif"     },
-        {  ":(",    "15",   "15",   "mad.gif"       },
-        {  ">0",    "15",   "15",   "rant.gif"      },
-        {  "|I",    "15",   "24",   "sleep.gif"     },
-        {  ":)",    "15",   "15",   "smile.gif"     },
-        {  ":-)",   "15",   "15",   "smile.gif"     },
-        {  ":|",    "15",   "15",   "squint.gif"    },
-        {  ";)",    "15",   "15",   "wink.gif"      },
-        {  "<|",    "15",   "15",   "rolleyes.gif"  },
-        {  ":/",    "15",   "22",   "confused.gif"  },
-        {  ">|",    "15",   "15",   "shake.gif"     },
-        {  ">)",    "15",   "15",   "devil.gif"     },
-        {  ">D ",   "15",   "15",   "evilgrin.gif"  },
-        {  ">(",    "16",   "16",   "madfire.gif"   },
-        {  ";P",    "15",   "15",   "flirt.gif"     },
-        {  "8D",    "15",   "15",   "horny.gif"     },
-        {  ">#",    "15",   "15",   "nono.gif"      },
-        {  "|O",    "15",   "15",   "yawn.gif"      },
+     /**   smiley        width   height  file name         **/
+        {  "0:)",        "16",   "20",   "angel.gif"     },
+        {  ":,(",        "15",   "15",   "cry.gif"       },
+        {  ":o",         "15",   "15",   "eek.gif"       },
+        {  ":D",         "15",   "15",   "laugh.gif"     },
+        {  ":(",         "15",   "15",   "mad.gif"       },
+        {  ">o",         "15",   "15",   "rant.gif"      },
+        {  ":)",         "15",   "15",   "smile.gif"     },
+        {  ":-)",        "15",   "15",   "smile.gif"     },
+        {  ":|",         "15",   "15",   "squint.gif"    },
+        {  ";)",         "15",   "15",   "wink.gif"      },
+        {  "<|",         "15",   "15",   "rolleyes.gif"  },
+        {  ":/",         "15",   "22",   "confused.gif"  },
+        {  ">)",         "15",   "15",   "devil.gif"     },
+        {  ">D",         "15",   "15",   "evilgrin.gif"  },
+        {  ">(",         "16",   "16",   "madfire.gif"   },
+        {  ">|",         "15",   "15",   "hum.gif"       },
+        {  ";P",         "15",   "15",   "flirt.gif"     },
+        {  ">#",         "15",   "15",   "nono.gif"      },
+        {  "|o",         "15",   "15",   "yawn.gif"      },
+        {  "8D",         "15",   "15",   "horny.gif"     },
+        {  "8)",         "15",   "15",   "cool.gif"      },
+        {  "8(",         "15",   "15",   "argh.gif"      },
+        {  ";D",        "120",   "15",   "roll.gif"      },
+        {  ":yes:",      "15",   "15",   "yes.gif"       },
+        {  ":no:",       "15",   "15",   "shake.gif"     },
+        {  ":sleep:",    "15",   "24",   "sleep.gif"     },
+        {  ":storm:",    "31",   "34",   "storm.gif"     },
+        {  ":agree:",    "15",   "15",   "agree.gif"     },
+        {  ":disagree:", "15",   "15",   "disagree.gif"  },
+        {  ":warning:",  "15",   "15",   "warning.gif"   },
+        {  ":idea:",     "22",   "15",   "idea.gif"      },
      };
 
+
+  /** The sounds we recognize :
+   */
+    public final static String SOUNDS[][] = {
+     /**   smiley        file name      **/
+        {  "*doh*",      "doh.wav"   },
+        {  "*toh*",      "toh.wav"   },
+    };
 
   /** max number of messages to display on screen at the same time
    */
@@ -177,6 +196,12 @@ public class JChatDisplay extends LogStream {
           buf.append( text.substring( posD, text.length() ) );
           text = buf.toString();
        }
+
+       for( int i=0; i<SOUNDS.length; i++ )
+          if( text.indexOf(SOUNDS[i][0])>=0 ) {
+              SoundLibrary.getSoundLibrary().playSound(SOUNDS[i][1]);
+              break;
+          }
 
     text += "<br>";
     println(text);

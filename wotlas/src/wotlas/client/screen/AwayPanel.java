@@ -80,14 +80,15 @@ public class AwayPanel extends JPanel
 
                 String awayMessage = playerTextArea.getText();
                 
-                if( player.getPlayerAwayMessage().equals(awayMessage) )
+                if( player.getPlayerAwayMessage()!=null &&
+                    player.getPlayerAwayMessage().equals(awayMessage) )
                    return;
 
-                if(awayMessage.length()>300) {
-                   awayMessage = awayMessage.substring( 0, 299 );
+                if(awayMessage.length()>400) {
+                   awayMessage = awayMessage.substring( 0,399 );
                    playerTextArea.setText(awayMessage);
                 }
-                
+
                 player.setPlayerAwayMessage( awayMessage );
                 player.sendMessage( new PlayerAwayMessage( player.getPrimaryKey(), awayMessage ) );
             }

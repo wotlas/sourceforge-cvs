@@ -84,12 +84,29 @@ public class WorldManager {
    *                    current one ?
    */
     public WorldManager( ResourceManager rManager, boolean loadDefault ) {
+         this(rManager,loadDefault,true);
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Constructor with resource manager. We attempt to load the local universe data.
+   * Any error at this step will stop the program if failureIfNoData==true.
+   *
+   * @param rManager resource manager to get the data from.
+   * @param loadDefault do we have to load the default universe data (true) or the
+   *                    current one ?
+   * @param failureIfNoData if true we'll produce a Debug.FAILURE+Debug.exit if no universe
+   *        data is found, if false we'll just print a FAILURE message.
+   */
+    public WorldManager( ResourceManager rManager, boolean loadDefault, boolean failureIfNoData ) {
          this.rManager = rManager;
          loadUniverse(loadDefault);
 
          if(worldMaps==null) {
             Debug.signal( Debug.FAILURE, this, "No universe data available !" );
-            Debug.exit();
+
+            if(failureIfNoData)
+               Debug.exit();
          }
     }
 

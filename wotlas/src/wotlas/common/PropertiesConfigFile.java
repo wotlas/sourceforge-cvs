@@ -170,6 +170,25 @@ public class PropertiesConfigFile extends Properties {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** Returns an boolean value from a property that is supposed to be a
+    *  boolean (if not the we return 'false'). You should check that it's a valid
+    *  boolean with isValidBoolean()
+    *
+    *  @param key property key
+    *  @return the boolean value
+    */
+    public boolean getBooleanProperty( String key ) {
+    	String val = getProperty(key);
+
+    	if(val==null || val.length()==0)
+    	   return false;
+
+        val = val.toString();
+        return val.equals("true");
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** Tests if the given key points out a valid property ( non null or empty ).
    * @return true if the property exists and is not empty. False otherwise.
    */
@@ -188,6 +207,24 @@ public class PropertiesConfigFile extends Properties {
    */
    public boolean isValidInteger(String key) {
     	return getIntegerProperty(key)!=-1;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Tests if the given key points out a valid boolean property ( non null or empty ).
+   * @return true if the property exists and is a boolean. False otherwise.
+   */
+   public boolean isValidBoolean(String key) {
+    	String val = getProperty(key);
+
+    	if(val==null || val.length()==0 )
+    	   return false;
+
+        val = val.toLowerCase();
+
+        if( val.equals("true") || val.equals("false") )
+            return true;
+    	return false;
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

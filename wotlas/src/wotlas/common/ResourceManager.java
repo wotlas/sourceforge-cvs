@@ -68,6 +68,11 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
    */
      public static final String DEFAULT_HELP_DOCS_PATH = "../docs/help";
 
+  /** Default location for binaries and OS dependent scripts
+   *  This is always an external directory.
+   */
+     public static final String DEFAULT_BIN_PATH = "../bin";
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** A part of the Wotlas client JAR file name.
@@ -148,6 +153,18 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
    /** Wizard Steps Directory Name
     */
      public static final String WIZARD_STEPS_DIR = "wizard";
+
+   /** Windows Binary Directory Name
+    */
+     public static final String WIN_BINARY_DIR = "win32";
+
+   /** Unix Binary Directory Name
+    */
+     public static final String UNIX_BINARY_DIR = "unix";
+
+   /** Transfer script name (without the file extension)
+    */
+     public static final String TRANSFER_SCRIPT_NAME = "transferScript";
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -895,6 +912,23 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
         else
             return Toolkit.getDefaultToolkit().getImage( imagePath );
     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the path to the OS dependent tranfer script. This script will be used to
+    *  transfer the server-X.cfg.adr file to the central wotlas web server.
+    *  @return full path to the script to use for file transfer. This method uses the system
+    *    property "os.name" to return a path to the right script.
+    */
+     public String getExternalTransferScript() {
+     	 if( inClientJar )
+     	     return null; // this method is for the server side only
+
+         if( Tools.isWindowsOS() )
+             return DEFAULT_BIN_PATH+File.separator+WIN_BINARY_DIR+File.separator+TRANSFER_SCRIPT_NAME+".bat";
+         else
+             return DEFAULT_BIN_PATH+File.separator+UNIX_BINARY_DIR+File.separator+TRANSFER_SCRIPT_NAME+".sh";
+     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

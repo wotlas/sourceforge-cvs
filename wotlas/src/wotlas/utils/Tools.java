@@ -214,6 +214,20 @@ public class Tools {
 
  /*------------------------------------------------------------------------------------*/ 
 
+  /** To tell if we are on a Windows or Unix System. This can be used if shell scripts are
+   *  needed.
+   */
+     public static boolean isWindowsOS() {
+          String os  = System.getProperty( "os.name" ).toLowerCase();
+          
+          if( os.indexOf("windows")<0 )
+              return false;
+          else
+              return true;
+     }
+
+ /*------------------------------------------------------------------------------------*/ 
+
   /**
    * Returns a new string where the 'newStr' string has replaced all 'find' patterns.
    * @param in String to edit

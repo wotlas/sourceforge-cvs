@@ -22,6 +22,7 @@ package wotlas.server.chat;
 import wotlas.server.*;
 import wotlas.common.message.chat.SendTextMessage;
 import wotlas.common.chat.ChatRoom;
+import wotlas.common.universe.*;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -98,14 +99,41 @@ public class WhoChatCommand implements ChatCommand
 
           Iterator it = onlinePlayers.values().iterator();
           StringBuffer result = new StringBuffer("/cmd:There are <b>"+onlinePlayers.size() + "</b> online players on this server :");
+          result.append("<table border='0' bgcolor='#EDE4FF'>");
+
+          boolean keys = message.equals("/who keys");
 
           PlayerImpl onlinePlayer;
 
           while ( it.hasNext() ) {
              onlinePlayer = (PlayerImpl) it.next();
-             result.append("<br> &nbsp;&nbsp;&nbsp; " + onlinePlayer.getPlayerName() + " &nbsp; <i> ( " + onlinePlayer.getPrimaryKey() + " )</i>" );
+             if(keys)
+                result.append("<tr><td>&nbsp;&nbsp;&nbsp;&nbsp; - " + onlinePlayer.getPlayerName() + " &nbsp; <i> ( " + onlinePlayer.getPrimaryKey() + " )</i></td></tr>" );
+             else {
+                String slocation = null;
+                WotlasLocation flocation = player.getLocation();
+
+                if( flocation.isRoom() )
+                    flocation.setBuildingID(-1);
+
+                if( flocation.isTown() ) {
+                    TownMap t = DataManager.getDefaultDataManager().getWorldManager().getTownMap(flocation);
+                    if(t!=null)
+                       slocation = t.getFullName();
+                }
+                else if( flocation.isWorld() ) {
+                    WorldMap w = DataManager.getDefaultDataManager().getWorldManager().getWorldMap(flocation);
+                    if(w!=null)
+                       slocation = w.getFullName();
+                }
+                else
+              	  slocation = "bad location";
+
+                result.append("<tr><td>&nbsp;&nbsp;&nbsp;&nbsp; - " + onlinePlayer.getPlayerName() + " &nbsp; <i> ( in " +slocation+ " )</i></td></tr>" );
+             }
           }
 
+          result.append("</tr></table>");
           response.setMessage( result.toString() );
           player.sendMessage( response );
           return true;

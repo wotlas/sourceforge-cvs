@@ -250,8 +250,10 @@ public class Sprite extends Drawable implements DrawableOwner {
 
         image = dataSupplier.getImageIdentifier();
 
-        r.width = imageLib.getWidth( image );
-        r.height = imageLib.getHeight( image );
+        BufferedImage bufIm = imageLib.getImage( image );
+
+        r.width = bufIm.getWidth( null );
+        r.height = bufIm.getHeight( null );
 
         return true; // no update needed and a sprite is always "live" by default.
      }

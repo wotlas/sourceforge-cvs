@@ -23,6 +23,7 @@ import wotlas.libs.graphics2D.*;
 
 import java.awt.*;
 import java.awt.geom.*;
+import java.awt.image.BufferedImage;
 
 /** Represents the shadow of a Sprite. This is an animated shadow. It must have the
  *  SAME number of images in its animation as its associated Sprite. The shadow transparency
@@ -171,8 +172,10 @@ public class ShadowSprite extends Drawable {
           r.x = dataSupplier.getX()+deltaX;
           r.y = dataSupplier.getY()+deltaY;
 
-          r.width = getImageLibrary().getWidth( shadowImage );
-          r.height = getImageLibrary().getHeight( shadowImage );
+          BufferedImage bufIm = imageLib.getImage( shadowImage );
+
+          r.width = bufIm.getWidth( null );
+          r.height = bufIm.getHeight( null );
 
          return true; // no update needed, a sprite is always "live" by default.
      }

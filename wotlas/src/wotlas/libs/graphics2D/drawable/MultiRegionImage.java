@@ -165,7 +165,7 @@ public class MultiRegionImage extends Drawable {
         for( int i=0; i<nbRegionX; i++ )
            for( int j=0; j<nbRegionY; j++ )
               if( image[i][j]!=null )
-                  gc.drawImage( getImageLibrary().getImage( image[i][j] ),
+                  gc.drawImage( imageLib.getImage( image[i][j] ),
                                 i*deltaX-screen.x, j*deltaY-screen.y, null );
     }
 

@@ -736,3 +736,5 @@ class NoFocusJTextField extends JTextField {
     return true;
   }
 }
+
+ /*------------------------------------------------------------------------------------*/

@@ -93,6 +93,7 @@ public class WorldGenerator {
            worldMap.setWorldMapID(0);     
            worldMap.setFullName("RandLand");
            worldMap.setShortName("randland");
+           worldMap.setInsertionPoint( new ScreenPoint(680,455) );
            worldMap.setWorldImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
                                                         ImageLibRef.UNIVERSE_SET,
                                                         ImageLibRef.RANDLAND_MAP_ACTION ) );
@@ -108,6 +109,7 @@ public class WorldGenerator {
            townMap.setTownMapID(0);
            townMap.setFullName("Tar Valon");
            townMap.setShortName("tarvalon");
+           townMap.setInsertionPoint( new ScreenPoint(70,340) );
 
            townMap.setSmallTownImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
                                                            ImageLibRef.TOWN_SMALL_SET,
@@ -217,7 +219,7 @@ public class WorldGenerator {
                rooms[i].setMaxPlayers(30);
            }
 
-           rooms[0].setFullName("West Bridge");
+           rooms[0].setFullName("West Bridge Middle");
            rooms[0].setShortName("bridge1");
            rooms[0].setInsertionPoint( new ScreenPoint(70,640) );
 

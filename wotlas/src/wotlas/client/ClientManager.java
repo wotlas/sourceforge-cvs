@@ -30,13 +30,7 @@ import wotlas.common.ServerConfigListTableModel;
 import wotlas.libs.net.*;
 import wotlas.libs.net.personality.*;
 
-import wotlas.utils.ALabel;
-import wotlas.utils.APasswordField;
-import wotlas.utils.ATableCellRenderer;
-import wotlas.utils.ATextField;
-import wotlas.utils.Debug;
-import wotlas.utils.SwingTools;
-import wotlas.utils.Tools;
+import wotlas.utils.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -102,6 +96,10 @@ public class ClientManager
    */
   private Font f;
 
+  /** First Display of screen 0 ?
+   */
+  private boolean firstDisplay = true;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. Attemps to load the config/client-profiles.cfg file...
@@ -126,6 +124,7 @@ public class ClientManager
       Debug.exit();
     } else {
       Debug.signal( Debug.NOTICE, null, "Server Configs loaded with success !" );
+      serverConfigList.setRemoteServerConfigHomeURL( ClientDirector.getRemoteServerConfigHomeURL() );
     }
 
     // 3 - We create the wizard to connect Wotlas
@@ -211,7 +210,10 @@ public class ClientManager
       // ********************
 
       case 0:
-      new JHTMLWindow( screenIntro, "Wotlas News", "http://wotlas.sf.net/game/news.html", 320, 400, false );
+      if(firstDisplay) {
+         new JHTMLWindow( screenIntro, "Wotlas News", ClientDirector.getRemoteServerConfigHomeURL()+"news.html", 320, 400, false );
+         firstDisplay=false;
+      }
 
       screenIntro.setTitle("Wotlas - Account selection...");
 

@@ -49,10 +49,18 @@ class ClientDirector
   /** Static Link to Log File.
    */
   public final static String CLIENT_LOG = "../log/wot-client.log";
+
+  /** Static Link to Remote Servers Config File.
+   */
+  public final static String REMOTE_SERVER_CONFIG = "../src/config/remote-servers.cfg";
   
   /** Complete Path to the database where are stored the client's profiles
    */
   private static String databasePath;
+
+  /** Remote server home URL : where the server list is stored on the internet.
+   */
+  private static String remoteServerConfigHomeURL;
   
   /** Other eventual properties.
    */
@@ -100,28 +108,47 @@ class ClientDirector
       Debug.exit();
     }
     
-    databasePath = properties.getProperty( "DATABASE_PATH" );
+    databasePath = properties.getProperty( "DATABASE_PATH","" );
 
-    if (databasePath==null) {
+    if (databasePath.length()==0) {
       Debug.signal( Debug.FAILURE, null, "No Database Path specified in config file !" );
       Debug.exit();
     }
     
     Debug.signal( Debug.NOTICE, null, "DataBase Path Found : "+databasePath );
 
-    // STEP 2 - Creation of the PersistenceManager
+    // STEP 2 - We load the remote servers config file to get the admin email.
+    Properties remoteProps = FileTools.loadPropertiesFile( REMOTE_SERVER_CONFIG );
+
+    if( remoteProps==null ) {
+        Debug.signal( Debug.CRITICAL, null, "No valid remote-servers.cfg file found !" );
+        Debug.exit();
+    }
+    else {
+        remoteServerConfigHomeURL = remoteProps.getProperty( "REMOTE_SERVER_CONFIG_HOME_URL","" );
+
+        if( remoteServerConfigHomeURL.length()==0 ) {
+            Debug.signal( Debug.CRITICAL, null, "No URL for remote server config home !" );
+            Debug.exit();
+        }
+        
+        if( !remoteServerConfigHomeURL.endsWith("/") )
+             remoteServerConfigHomeURL += "/";
+    }
+
+    // STEP 3 - Creation of the PersistenceManager
     persistenceManager = PersistenceManager.createPersistenceManager(databasePath);
     Debug.signal( Debug.NOTICE, null, "Persistence Manager Created..." );
                 
-    // STEP 3 - We ask the ClientManager to get ready
+    // STEP 4 - We ask the ClientManager to get ready
     clientManager = ClientManager.createClientManager(databasePath);
     Debug.signal( Debug.NOTICE, null, "Client Created (but not started)..." );
 
-    // STEP 4 - We ask the DataManager to get ready
+    // STEP 5 - We ask the DataManager to get ready
     dataManager = DataManager.createDataManager(databasePath);
     Debug.signal( Debug.NOTICE, null, "DataManager created..." );
     
-    // STEP 5 - Start the ClientManager
+    // STEP 6 - Start the ClientManager
     clientManager.start(0);
     Debug.signal( Debug.NOTICE, null, "WOTLAS Client started with success..." );
         
@@ -137,6 +164,20 @@ class ClientDirector
   public static String getDatabasePath() {
     return databasePath;
   }
+
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the URL where are stored the remote server configs. This URL can also contain
+   *  a news.html file to display some news.
+   *
+   * @return remoteServerConfigHomeURL
+   */
+   public static String getRemoteServerConfigHomeURL() {
+      return remoteServerConfigHomeURL;
+   }
+
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 
 }
 

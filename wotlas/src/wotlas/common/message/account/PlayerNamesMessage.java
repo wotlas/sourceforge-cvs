@@ -83,6 +83,7 @@ public class PlayerNamesMessage extends NetMessage
      public void encode( DataOutputStream ostream ) throws IOException {
          writeString( playerName, ostream );
          writeString( fullPlayerName, ostream );
+         writeString( playerEmail, ostream );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -96,6 +97,7 @@ public class PlayerNamesMessage extends NetMessage
      public void decode( DataInputStream istream ) throws IOException {
           playerName = readString( istream );
           fullPlayerName = readString( istream );
+          playerEmail = readString( istream );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

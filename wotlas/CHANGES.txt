@@ -1,0 +1,22 @@
+
+CHANGES BETWEEN V1.1 AND V1.0
+-----------------------------
+
+ - new maps : blight refuge, tar valon gates, white tower gates, ruins
+ - bugs found in v1.0 have been fixed.
+ - wotlas v1.1 server & client code has been updated to better handle network congestion.
+ - you now have the possibility to become a member of the black ajah... (you'll have to find a member of it)
+ - new smileys and shortcuts for the chat engine.
+ - new sounds when new players arrive, connect, or disconnect.
+ - a panel shows your network connection quality in real time.
+ - your options are saved to disk : you can suppress music or sound.
+ - you can save your player's past later.
+ - you can leave a message that will be displayed when your player is not connected to the game.
+ - you can erase an account.
+ - a "-debug" option is now available for both client and server.
+
+   KNOWN CONFLICTS IN V1.1 & V1.0
+   - Divx3.1alpha drivers cause Wotlas to crash... install the Divx4.0 or better ! 
+   - If you experience any problems WHEN you enter the game after your account creation,
+     please turn off the sound in the option panel (available on the main screen).
+

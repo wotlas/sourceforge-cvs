@@ -1,0 +1,50 @@
+#WotLas 1.0 Saved Object
+#Sat Dec 23 21:36:16 CET 2000
+class=wotlas.libs.wizard.JWizardStepParameters
+isDynamic=false
+isLastStep=false
+isNextButtonEnabled=true
+isPrevButtonEnabled=true
+
+stepClass=wotlas.libs.wizard.step.JWizardStepListNet
+stepTitle=Asha'man\ Hair\ Color
+
+stepPropertiesKey=11
+stepPropertiesValue=11
+
+stepPropertiesKey.0=init.label0
+stepPropertiesValue.0=Select\ your\ hair\ color\ :
+
+stepPropertiesKey.1=init.nbChoices
+stepPropertiesValue.1=6
+
+stepPropertiesKey.2=init.choice0
+stepPropertiesValue.2=golden
+
+stepPropertiesKey.3=init.choice1
+stepPropertiesValue.3=brown
+
+stepPropertiesKey.4=init.choice2
+stepPropertiesValue.4=black
+
+stepPropertiesKey.5=init.choice3
+stepPropertiesValue.5=gray
+
+stepPropertiesKey.6=init.choice4
+stepPropertiesValue.6=white
+
+stepPropertiesKey.7=init.choice5
+stepPropertiesValue.7=reddish
+
+# SERVER SIDE INCLUDES
+
+# Method to call to proceed data
+stepPropertiesKey.8=server.method
+stepPropertiesValue.8=setHairColor
+
+# Links
+stepPropertiesKey.9=server.next
+stepPropertiesValue.9=player-name.wiz
+
+stepPropertiesKey.10=server.previous
+stepPropertiesValue.10=ashaman-rank.wiz

@@ -13,22 +13,22 @@ stepPropertiesKey=6
 stepPropertiesValue=6
 
 stepPropertiesKey.0=init.label0
-stepPropertiesValue.0=Enter\ your\ player's\ nickname\ :
+stepPropertiesValue.0=Enter\ your\ player's\ full\ name\ :
 
 stepPropertiesKey.1=init.label1
-stepPropertiesValue.1=Enter\ your\ player's\ full\ name\ :
+stepPropertiesValue.1=Enter\ your\ player's\ nickname\ :
 
 stepPropertiesKey.2=init.info0
-stepPropertiesValue.2=\nThese\ fields\ will\ help\ identify\ your\ player\ in\ the\ game.\ Your\ full\ player\ name\ should\ have\ more\ than\ five\ letters.
+stepPropertiesValue.2=\nThese\ fields\ will\ help\ identify\ your\ player\ in\ the\ game.\ Your\ player's\ full\ name\ should\ have\ more\ than\ five\ letters\ and\ your\ nickname\ should\ be\ different\ from\ your\ player's\ real\ name\ (\in\ the\ game\ you\ can\ lie\ on\ your\ name\ but\ not\ on\ your\ nickname).
 
 # SERVER SIDE INCLUDES
 
 # Method to call to proceed data
 stepPropertiesKey.3=server.text0.method
-stepPropertiesValue.3=setPlayerName
+stepPropertiesValue.3=setFullPlayerName
 
 stepPropertiesKey.4=server.text1.method
-stepPropertiesValue.4=setFullPlayerName
+stepPropertiesValue.4=setPlayerName
 
 # Links
 stepPropertiesKey.5=server.next

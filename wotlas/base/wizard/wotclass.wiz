@@ -9,14 +9,14 @@ isPrevButtonEnabled=true
 stepClass=wotlas.libs.wizard.step.JWizardStepRadioNet
 stepTitle=Character\ Class
 
-stepPropertiesKey=19
-stepPropertiesValue=19
+stepPropertiesKey=28
+stepPropertiesValue=28
 
 stepPropertiesKey.0=init.label0
 stepPropertiesValue.0=Please\ select\ your\ character class:
 
 stepPropertiesKey.1=init.nbChoices
-stepPropertiesValue.1=5
+stepPropertiesValue.1=8
 
 stepPropertiesKey.2=init.choice0
 stepPropertiesValue.2=Aes\ Sedai
@@ -43,32 +43,59 @@ stepPropertiesKey.9=init.info3
 stepPropertiesValue.9=\ \ \ \ \ \ \ \ People\ who\ can\ talk\ to\ wolves\ and\ often\ live\ in\ the\ wild\ with\ them.\ They\ have\ yellow\ eyes\ and\ a\ keen\ sense\ of\ smell\ and\ sight.\ Because\ of\ that,\ wolf\ brothers\ are\ feared\ and\ usually\ taken\ for\ darkfriends.\n\n\n
 
 stepPropertiesKey.10=init.choice4
-stepPropertiesValue.10=Special\ Characters
+stepPropertiesValue.10=Asha'man
 
 stepPropertiesKey.11=init.info4
-stepPropertiesValue.11=\ \ \ \ \ \ \ \ These\ are\ characters\ that\ can\ only\ appear\ once\ in\ the\ game.\ You'll\ have\ to\ mail\ us\ to\ ask\ for\ the\ ones\ that\ are\ not\ already\ taken.\ Click\ on\ 'next'\ to\ see\ the\ full\ list\ of\ special\ characters.\n\n\n
+stepPropertiesValue.11=\ \ \ \ \ \ \ \ Men\ who\ have\ come\ to\ the\ Black\ Tower,\ near\ Caemlyn\ in\ Andor,\ in\ order\ to\ learn\ to\ channel.\ Their\ training\ concentrates\ on\ the\ ways\ in\ which\ the\ One\ Power\ can\ be\ used\ as\ a\ weapon,\ and\ in\ another\ departure\ from\ the\ usages\ of\ the\ White\ Tower,\ once\ they\ learn\ to\ seize\ saidin,\ the\ male\ half\ of\ the\ Power,\ they\ are\ required\ to\ perform\ all\ chores\ and\ labors\ with\ the\ Power.\n
+
+stepPropertiesKey.12=init.choice5
+stepPropertiesValue.12=Aiel
+
+stepPropertiesKey.13=init.info5
+stepPropertiesValue.13=\ \ \ \ \ \ \ \ The\ people\ of\ the\ Aiel\ Waste.\ Fierce\ and\ hardy.\ Also\ called\ Aielmen.\ They\ veil\ their\ faces\ before\ they\ kill,\ giving\ rise\ to\ the\ saying\ ''acting\ like\ a\ black-veiled\ Aiel''\ to\ describe\ someone\ who\ is\ being\ violent.\ Deadly\ warriors\ with\ weapons\ or\ with\ nothing\ but\ their\ bare\ hands,\ they\ will\ not\ touch\ a\ sword.\ Their\ pipers\ play\ them\ into\ battle\ with\ the\ music\ of\ dances,\ and\ Aielmen\ call\ battle\ 'the\ Dance'.
+
+stepPropertiesKey.14=init.choice6
+stepPropertiesValue.14=Darkfriend
+
+stepPropertiesKey.15=init.info6
+stepPropertiesValue.15=\ \ \ \ \ \ \ \ Those\ who\ follow\ the\ Dark\ One\ and\ believe\ they\ will\ gain\ great\ power\ and\ rewards,\ and\ even\ immortality,\ when\ he\ is\ freed\ from\ his\ prison.\n\n\n\n
+
+stepPropertiesKey.16=init.choice7
+stepPropertiesValue.16=Special\ Characters
+
+stepPropertiesKey.17=init.info7
+stepPropertiesValue.17=\ \ \ \ \ \ \ \ These\ are\ characters\ that\ can\ only\ appear\ once\ in\ the\ game.\ You'll\ have\ to\ mail\ us\ to\ ask\ for\ the\ ones\ that\ are\ not\ already\ taken.\ Click\ on\ 'next'\ to\ see\ the\ full\ list\ of\ special\ characters.\n\n\n
 
 # SERVER SIDE INCLUDES
 
 # Method to call to proceed data
-stepPropertiesKey.12=server.method
-stepPropertiesValue.12=setWotCharacterClass
+stepPropertiesKey.18=server.method
+stepPropertiesValue.18=setWotCharacterClass
 
 # Links
-stepPropertiesKey.13=server.previous
-stepPropertiesValue.13=index.wiz
+stepPropertiesKey.19=server.previous
+stepPropertiesValue.19=index.wiz
 
-stepPropertiesKey.14=server.choice0.next
-stepPropertiesValue.14=aes-sedai-rank.wiz
+stepPropertiesKey.20=server.choice0.next
+stepPropertiesValue.20=aes-sedai-rank.wiz
 
-stepPropertiesKey.15=server.choice1.next
-stepPropertiesValue.15=warder-rank.wiz
+stepPropertiesKey.21=server.choice1.next
+stepPropertiesValue.21=warder-rank.wiz
 
-stepPropertiesKey.16=server.choice2.next
-stepPropertiesValue.16=children-rank.wiz
+stepPropertiesKey.22=server.choice2.next
+stepPropertiesValue.22=children-rank.wiz
 
-stepPropertiesKey.17=server.choice3.next
-stepPropertiesValue.17=wolf-rank.wiz
+stepPropertiesKey.23=server.choice3.next
+stepPropertiesValue.23=wolf-rank.wiz
 
-stepPropertiesKey.18=server.choice4.next
-stepPropertiesValue.18=special-chars.wiz
+stepPropertiesKey.24=server.choice4.next
+stepPropertiesValue.24=ashaman-rank.wiz
+
+stepPropertiesKey.25=server.choice5.next
+stepPropertiesValue.25=aiel-rank.wiz
+
+stepPropertiesKey.26=server.choice6.next
+stepPropertiesValue.26=darkfriends.wiz
+
+stepPropertiesKey.27=server.choice7.next
+stepPropertiesValue.27=special-chars.wiz

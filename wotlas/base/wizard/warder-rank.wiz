@@ -9,8 +9,8 @@ isPrevButtonEnabled=true
 stepClass=wotlas.libs.wizard.step.JWizardStepRadioNet
 stepTitle=Warder\ Character\ Rank
 
-stepPropertiesKey=13
-stepPropertiesValue=13
+stepPropertiesKey=15
+stepPropertiesValue=15
 
 stepPropertiesKey.0=init.label0
 stepPropertiesValue.0=Here\ are\ the\ ranks\ available\ to\ you\ :
@@ -56,3 +56,9 @@ stepPropertiesValue.11=warder-hair.wiz
 
 stepPropertiesKey.12=server.previous
 stepPropertiesValue.12=wotclass.wiz
+
+stepPropertiesKey.13=server.choice2.next
+stepPropertiesValue.13=warder-cloak.wiz
+
+stepPropertiesKey.14=server.choice3.next
+stepPropertiesValue.14=warder-cloak.wiz

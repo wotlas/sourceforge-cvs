@@ -674,10 +674,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        }
 
        if( circle!=null )
-          circle.tick();
-          
+           circle.tick();
+
     // III - Graphics Director update & redraw
-       gDirector.tick();
+       if( clientScreen.getState()==Frame.ICONIFIED )
+          Tools.waitTime(400); // we reduce our tick rate... and don't refresh the screen
+       else
+          gDirector.tick(); // game screen update
 
     // IV - Sync Messages Execution
        NetMessageBehaviour syncMessages[] = syncMessageQueue.pullMessages();

@@ -29,7 +29,7 @@ import javax.swing.*;
  *  the only synchronized methods in GraphicsDirector are paint() and tick()
  *  so if you happen to handle events or change parameters do it with care !
  *
- * @author MasterBob, Aldiss
+ * @author MasterBob, Aldiss, Petrus
  * @see wotlas.libs.graphics2D.ImageLibrary
  * @see wotlas.libs.graphics2D.Drawable
  * @see wotlas.libs.graphics2D.DrawableIterator
@@ -139,31 +139,33 @@ public class GraphicsDirector extends JPanel {
   
   /** Our customized repaint method
    */
-    public void repaint() {
+    public void repaint() {      
        if(lockPaint==null) return;
-
-       Thread paintThread =new Thread() {
-            public void run() {
-                try{
-                   synchronized( lockPaint ) {
-                     GraphicsDirector.this.paint( GraphicsDirector.this.getGraphics() );
-                   }
+       
+       Thread paintThread;
+       synchronized( lockPaint ) {
+          paintThread =new Thread() {
+             public void run() {
+                try{                  
+                   //synchronized( lockPaint ) {                   
+                   GraphicsDirector.this.paint( GraphicsDirector.this.getGraphics() );
+                   //}
                 }catch( Exception e ) {
                    System.out.println("Exception in repaint() : "+e);
                 }
             }
-       };
-
-       synchronized( lockPaint ) {
-           paintThread.start();
+          };
        }
-}
+
+       paintThread.start();       
+   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To avoid flickering.
    */
     public void update( Graphics g ) {
+      System.err.println("\tupdate");
        paint( g );
     }
 
@@ -174,11 +176,16 @@ public class GraphicsDirector extends JPanel {
    * @param gc graphics object.
    */
     public void paint(Graphics gc) {
+      System.err.println("\tpaint");
          if(gc==null) return;
 
        // double-buffer init
-         if (backBufferImage == null || getWidth() != backBufferImage.getWidth(this) || getHeight() != backBufferImage.getHeight(this))
+         if (backBufferImage == null)
              backBufferImage = createImage(getWidth(),getHeight());
+                  
+         if (getWidth() != backBufferImage.getWidth(this) || getHeight() != backBufferImage.getHeight(this)) {            
+            return;         
+         }
 
          Graphics backBufferGraphics = backBufferImage.getGraphics();
 
@@ -286,8 +293,16 @@ public class GraphicsDirector extends JPanel {
   /** The tick method updates our screen position, drawables and repaint the whole thing.
    *  Never call repaint on the graphics director, call tick() !
    */
-    public void tick() {
+    public void tick() {            
 
+      if (backBufferImage==null)
+        return;
+      
+      synchronized(backBufferImage) {
+        if (getWidth() != backBufferImage.getWidth(this) || getHeight() != backBufferImage.getHeight(this))
+          backBufferImage = createImage(getWidth(),getHeight());
+      }
+      
       // 1 - We update our screen dimension.
          synchronized( drawables ) {
              screen.width = getWidth();

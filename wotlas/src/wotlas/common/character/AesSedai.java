@@ -245,8 +245,10 @@ public class AesSedai extends Female {
             aesSedaiAuraEffect.setAmplitudeLimit( 0.6f );
          else if(characterRank.equals("Stilled"))
             aesSedaiAuraEffect.setAmplitudeLimit( 3.1f );
-         else if(characterRank.equals("Keeper Of Chronicles"))
-            aesSedaiAuraEffect.setAuraMaxAlpha(0.7f);
+         else if(characterRank.equals("Keeper of the Chronicles")) {
+            aesSedaiAuraEffect.setAuraMaxAlpha(0.75f);
+            aesSedaiAuraEffect.setAmplitudeLimit(0.0f);
+         }
 
          return aesSedaiAuraEffect;
      }

@@ -125,9 +125,10 @@ public class AccountBuilder implements NetConnectionListener
 
      	 currentParameters = accountServer.getStepFactory().getStep( AccountStepFactory.FIRST_STEP );
 
-         personalizeParameters(currentParameters);
-         personality.queueMessage( new AccountStepMessage(
-                                           currentParameters.getCopyWithNoServerProps() ) );
+         JWizardStepParameters clientParams = currentParameters.getCopyWithNoServerProps();
+         personalizeParameters( clientParams,  currentParameters );
+
+         personality.queueMessage( new AccountStepMessage( clientParams ) );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -157,9 +158,10 @@ public class AccountBuilder implements NetConnectionListener
               return;
            }
 
-           personalizeParameters(currentParameters);
-           personality.queueMessage( new AccountStepMessage(
-                                          currentParameters.getCopyWithNoServerProps() ) );
+           JWizardStepParameters clientParams = currentParameters.getCopyWithNoServerProps();
+           personalizeParameters( clientParams, currentParameters );
+
+           personality.queueMessage( new AccountStepMessage( clientParams ) );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -251,9 +253,10 @@ public class AccountBuilder implements NetConnectionListener
               return;
            }
 
-           personalizeParameters(currentParameters);
-           personality.queueMessage( new AccountStepMessage(
-                                          currentParameters.getCopyWithNoServerProps() ) );
+           JWizardStepParameters clientParams = currentParameters.getCopyWithNoServerProps();
+           personalizeParameters( clientParams, currentParameters );
+
+           personality.queueMessage( new AccountStepMessage( clientParams ) );
         }
         catch( Exception ex2 ) {
            Debug.signal(Debug.ERROR,this,ex2);
@@ -324,13 +327,15 @@ public class AccountBuilder implements NetConnectionListener
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To personalize eventual init properties ( we replace $PATTERN$ if there are any
-    *  declared).
-    *  @param parameters to personalize
+    *  declared) of parameters that are going to be sent to a client.
+    *  @param clientParameters params to personalize
+    *  @param serverParameters server params to use to personalize client params.
     */
-     void personalizeParameters( JWizardStepParameters parameters ) {
+     void personalizeParameters( JWizardStepParameters clientParameters,
+                                 JWizardStepParameters serverParameters ) {
 
        // A - we retrieve the keys
-          String propsKey[] = parameters.getStepPropertiesKey();
+          String propsKey[] = serverParameters.getStepPropertiesKey();
           if(propsKey==null)
              return; // none
 
@@ -346,9 +351,9 @@ public class AccountBuilder implements NetConnectionListener
                	                                  propsKey[i].length() );
 
                   // 2 - we get the methodName & text to analyze
-               	     String methodName = parameters.getStepPropertiesValue()[i];
+               	     String methodName = serverParameters.getStepPropertiesValue()[i];
 
-                     String text = parameters.getProperty("init."+suffix);
+                     String text = clientParameters.getProperty("init."+suffix);
 
                   // 3 - Check what we have
                      if(pattern.length()==0 || text==null || methodName.length()==0)
@@ -368,7 +373,7 @@ public class AccountBuilder implements NetConnectionListener
                      buf.append( text.substring(ind+pattern.length(),text.length()) );
 
                   // 5 - Save our modif
-                     parameters.setProperty( "init."+suffix, buf.toString() );
+                     clientParameters.setProperty( "init."+suffix, buf.toString() );
                }
      }
 
@@ -475,6 +480,12 @@ public class AccountBuilder implements NetConnectionListener
            className += "ChildrenOfTheLight";
         else if(data.equals("Wolf Brother"))
            className += "WolfBrother";
+        else if(data.equals("Asha'man"))
+           className += "Ashaman";
+        else if(data.equals("Aiel"))
+           className += "AielWarrior";
+        else if(data.equals("Darkfriend"))
+           return;
         else if(data.equals("Special Characters"))
            return;
         else
@@ -613,10 +624,37 @@ public class AccountBuilder implements NetConnectionListener
              player.setWotCharacter(new AesSedai());
              player.getWotCharacter().setCharacterRank("Keeper of the Chronicles");
         }
+        else if(data.equals( props.getProperty("key.mhael","mhael") )) {
+          // We create a M'Hael...
+             player.setWotCharacter(new Ashaman());
+             player.getWotCharacter().setCharacterRank("M'Hael");
+        }
         else
            throw new AccountException("Wrong Special Character Key !");
      }
 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Method called to set a warder's cloak color. (for warders and blade masters only).
+    */
+     public void setCloakColor( String data ) throws AccountException {
+     
+       // 1 - Get Human character
+        WotCharacter wotCharacter = (WotCharacter) player.getWotCharacter(); 
+
+        if(wotCharacter==null)
+           throw new AccountException("No character created !");
+
+        if( ! (wotCharacter instanceof Warder)  )
+           throw new AccountException("Your character is not a Warder !");
+
+        Warder warder = (Warder) wotCharacter;
+        warder.setCloakColor(data);
+
+      // 2 - check that it was set
+        if( warder.getCloakColor()==null )
+            throw new AccountException("Failed to set cloak color : "+data);
+     }
 
  /*------------------------------------------------------------------------------------*/
  /*------------------------------------------------------------------------------------*/

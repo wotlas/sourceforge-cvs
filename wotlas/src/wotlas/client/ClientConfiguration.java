@@ -27,18 +27,17 @@ import wotlas.libs.sound.*;
  * @see wotlas.client.PersistenceManager
  */
 
-public class ClientConfiguration
-{
+public class ClientConfiguration {
 
  /*------------------------------------------------------------------------------------*/
 
   /** music volume.
    */
-  private short musicVolume = SoundLibrary.MAX_MUSIC_VOLUME/3;
+  private short musicVolume = SoundLibrary.MAX_MUSIC_VOLUME/2;
 
   /** sound volume.
    */
-  private short soundVolume = SoundLibrary.MAX_SOUND_VOLUME*2/3;
+  private short soundVolume = SoundLibrary.MAX_SOUND_VOLUME;
 
   /** true if no music.
    */

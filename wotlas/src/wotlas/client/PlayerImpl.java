@@ -545,6 +545,9 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
       }
 
    // 2 - Animation Update
+      if(animation==null)
+         return;
+
       if(!movementComposer.isMoving())
          animation.reset();
       else

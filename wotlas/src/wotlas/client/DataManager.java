@@ -544,11 +544,16 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         startGameLock.wait(CONNECTION_TIMEOUT);
       }
     } catch (InterruptedException ie) {
-      showWarningMessage("Cannot retreive your informations from the Game Server !");
-      Debug.exit();
+    }
+
+    if(myPlayer.getPlayerName()==null) {
+      showWarningMessage("Failed to retrieve your player data from the Game Server !\nPlease retry later...");
+      closeConnection();
+      return;
     }
 
     myPlayer.setIsMaster( true );   // this player is controlled by the user.
+    myPlayer.tick();
 
     // 3 - Retreive player's location
     WotlasLocation location = myPlayer.getLocation();
@@ -630,17 +635,24 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     mFrame.show();
 
     // Retrieve player's informations
+    myPlayer = new PlayerImpl();
+    
     try {
       synchronized(startGameLock) {
         personality.queueMessage(new MyPlayerDataPleaseMessage());
         startGameLock.wait(CONNECTION_TIMEOUT);
       }
     } catch (InterruptedException ie) {
-      showWarningMessage("Cannot retreive your informations from the Game Server !");
-      Debug.exit();
+    }
+
+    if(myPlayer.getPlayerName()==null) {
+      showWarningMessage("Failed to retrieve your player data from the Game Server !\nPlease retry later...");
+      closeConnection();
+      return;
     }
 
     myPlayer.setIsMaster( true );   // this player is controlled by the user.
+    myPlayer.tick();
 
     // Retreive player's location
     WotlasLocation location = myPlayer.getLocation();

@@ -390,13 +390,13 @@ public class JWizardStepParameters {
  /*------------------------------------------------------------------------------------*/
 
   /** Returns a copy of this JWizardStepParameters that has no "init.*" properties.
-   *  Other fields are copied EXCEPT the step's title.
+   *  Other fields are copied EXCEPT the step's title and step's class.
    *  The original JWizardStepParameters remains unchanged.
    */
     public JWizardStepParameters getCopyWithNoInitProps() {
       // 1 - Some cloning...
     	JWizardStepParameters noInitParam = new JWizardStepParameters();
-        noInitParam.stepClass = stepClass;
+        noInitParam.stepClass = "";
         noInitParam.stepTitle = "";
         noInitParam.isDynamic = isDynamic;
         noInitParam.isPrevButtonEnabled = isPrevButtonEnabled;

@@ -93,7 +93,8 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
 
           if( sender==null )
               Debug.signal( Debug.WARNING, this, "Couldnot find the sender of this message : "+senderPrimaryKey);
-
+          else
+              dataManager.addWaveDrawable(sender);
 
        // Is there a modifier in this message ?
           if(message.equals("/BLACKAJAH") && voiceSoundLevel==ChatRoom.SHOUTING_VOICE_LEVEL) {

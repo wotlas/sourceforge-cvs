@@ -70,7 +70,7 @@ public class JAbout extends JCroppedWindow implements ActionListener
   	" Wheel of Time",
   	"---",
   	" Light and Shadow",
-  	"v1.2 - February 2002",
+  	"v1.2 - March 2002",
   	" ",
   	" ",
   	" Project Management",
@@ -97,15 +97,20 @@ public class JAbout extends JCroppedWindow implements ActionListener
         "Great Lord of the Dark",
         "Logain",
         "Felherid",
+        "Knut Hamson",
         " ",
         " 2D Graphics",
         "Aldiss",
         " ",
+        " Linux & Java 1.4 Testing",
+        "Petrus",
+        "Knut Hamson",
+        " ",
         " Thanks To...",
         "Families & friends",
+        "Foreign Wotlas Fans",
         "PouceOne & Anza",
         "Tibob",
-        "Foreign Wotlas Fans",
         " ",
         "The French WoT mailing list",
         "roue-du-temps@yahoogroups.com",
@@ -118,13 +123,18 @@ public class JAbout extends JCroppedWindow implements ActionListener
         " ",
         "SourceForge.net",
         " ",
+        "The world of Robert Jordan's",
+        "The Wheel Of Time",
+        "from Robert Jordan & Teresa Patterson",
+        " ",
         "www.vgmusic.com",
         " ",
         " ",
         " ",
         " ",
         " ",
-        "No sprites were hurt during the game.",
+        "No sprites were hurt during",
+        "game development...",
         " ",
         " ",
         " ",
@@ -144,7 +154,6 @@ public class JAbout extends JCroppedWindow implements ActionListener
         " ",
         " ",
         "Thank you for playing wotlas !",
-        " ",
         " ",
     };
 
@@ -360,7 +369,7 @@ public class JAbout extends JCroppedWindow implements ActionListener
              SoundLibrary.getSoundLibrary().playMusic("credits.mid");
 
       // Timer init
-         timer = new javax.swing.Timer(30,this);
+         timer = new javax.swing.Timer(20,this);
          timer.start();
   }
 
@@ -417,6 +426,9 @@ public class JAbout extends JCroppedWindow implements ActionListener
      else t = new TextLayout(text[i],f_text,frc);
 
      textWidth[i] = ((int)t.getBounds().getWidth());
+     
+     if(text[i].equals("Robert Jordan's")) // correct bad width reckon from java
+        textWidth[i] -= 17;
     }
   }
 

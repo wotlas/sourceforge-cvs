@@ -252,7 +252,7 @@ class ServerDirector implements Runnable, NetServerErrorListener
              // 2 - Start persistence action
                 persistenceAction(true);
            }
-           while( mustStopThread() );
+           while( !mustStopThread() );
 
         // We save data before closing
            persistenceAction(false);

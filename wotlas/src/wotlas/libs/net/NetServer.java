@@ -21,6 +21,8 @@ package wotlas.libs.net;
 
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 
@@ -78,7 +80,7 @@ abstract public class NetServer extends Thread
       *   method to start the server. You have to give the name of the packages
       *   where we'll be able to find the NetMessageBehaviour classes.
       *
-      *   By default we accept a maximum of 200 opened socket connections.
+      *   By default we accept a maximum of 200 opened socket connections (by JVM).
       *
       *  @param server_port port on which the server listens to clients.
       *  @param msg_packages a list of packages where we can find NetMsgBehaviour Classes.
@@ -98,6 +100,52 @@ abstract public class NetServer extends Thread
            // ServerSocket inits
               try{
                   server = new ServerSocket(server_port); 
+                  server.setSoTimeout(5000);
+               }
+               catch (IOException e){
+                  Debug.signal( Debug.FAILURE, this, e );
+                  System.exit(1);
+               }
+        }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+     /**  Constructs a NetServer on the specified host, but does not starts it.
+      *   Call the start() method to start the server. You have to give the name of
+      *   the packages where we'll be able to find the NetMessageBehaviour classes.
+      *
+      *   By default we accept a maximum of 200 opened socket connections (by JVM).
+      *
+      *  @param host the host interface to bind to. Example: wotlas.tower.org
+      *  @param server_port port on which the server listens to clients.
+      *  @param msg_packages a list of packages where we can find NetMsgBehaviour Classes.
+      */
+        public NetServer( String host, int server_port, String msg_packages[] )
+        {
+              super("Server");
+              stop_server = false;
+              server_lock = false;
+
+           // default maximum number of opened sockets
+              max_opened_sockets = 200;
+
+           // we create a message factory
+              NetMessageFactory.createMessageFactory( msg_packages );
+
+           // We get the ip address of the specified host
+              InetAddress host_ip = null;
+           
+               try{
+                    host_ip = InetAddress.getByName( host );
+               }
+               catch(UnknownHostException ue) {
+                  Debug.signal( Debug.FAILURE, this, ue );
+                  System.exit(1);
+               }
+
+           // ServerSocket inits
+               try{
+                  server = new ServerSocket(server_port, 50, host_ip ); 
                   server.setSoTimeout(5000);
                }
                catch (IOException e){

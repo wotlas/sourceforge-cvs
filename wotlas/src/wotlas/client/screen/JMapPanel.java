@@ -19,6 +19,10 @@
 
 package wotlas.client.screen;
 
+import wotlas.client.DataManager;
+
+import wotlas.libs.graphics2D.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -28,12 +32,63 @@ import java.awt.event.*;
  * @author Petrus
  */
 
-public class JMapPanel extends JPanel
+public class JMapPanel extends JPanel implements MouseListener
 {
-  public JMapPanel() {
-    super();
-    JLabel label1 = new JLabel("Map panel...");
-    add(label1);
-    setBackground(Color.white);
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Our Graphics Director
+   */
+  private GraphicsDirector gDirector;
+  
+  /** Our DataManager
+   */
+  private DataManager dataManager;
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Constructor
+   * @param gDirector Graphics Director
+   */
+  public JMapPanel(GraphicsDirector gDirector, DataManager dataManager) {
+    super(new FlowLayout(FlowLayout.LEFT,0,0));    
+    
+    this.gDirector = gDirector;
+    this.dataManager = dataManager;
+    
+    add(gDirector, BorderLayout.NORTH);
+    
+    // Listen to Mouse clics
+    addMouseListener(this);    
   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /**
+   * Invoked when the mouse button is clicked
+   */
+  public void mouseClicked(MouseEvent e) {    
+    if (e.getID() == java.awt.event.MouseEvent.MOUSE_CLICKED) {
+      System.out.println("[JMapPanel] : clic sur (" + e.getX() + "," + e.getY() + ")");
+      dataManager.onClicJMapPanel(e);
+      dataManager.tick();
+    }
+  }
+  /**
+   * Invoked when the mouse enters a component
+   */
+  public void mouseEntered(MouseEvent e) {}
+  /**
+   * Invoked when the mouse exits a component
+   */
+  public void mouseExited(MouseEvent e) {}
+  /**
+   * Invoked when a mouse button has been pressed on a component
+   */
+  public void mousePressed(MouseEvent e) {}
+  /**
+   * Invoked when a mouse button has been released on a component
+   */
+  public void mouseReleased(MouseEvent e) {}
+
 }

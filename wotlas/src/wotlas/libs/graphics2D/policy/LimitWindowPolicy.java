@@ -46,7 +46,7 @@ public class LimitWindowPolicy implements WindowPolicy{
     * the correction will continue unless we are twice of the pourcentage of LIMIT farther from the edge of the screen
     */
     private boolean needCorrection = false;
-    private final int LIMIT = 15;
+    private final int LIMIT = 25;
 
 
    /**
@@ -77,38 +77,41 @@ public class LimitWindowPolicy implements WindowPolicy{
         Rectangle screen = gDirector.getScreenRectangle();
         Dimension background = gDirector.getBackgroundDimension();
         Rectangle refDrawable = gDirector.getRefDrawable().getRectangle();
-        
+
+
         //System.out.println("screen.x = " + screen.x);
         //System.out.println("screen.width = " + screen.width);
-        //System.out.println("background.width = " + background.width);          
+        //System.out.println("background.width = " + background.width);
         //System.out.println("refDrawable.x = " + refDrawable.x);
-        //System.out.println("refDrawable.width = " + refDrawable.width);                
+        //System.out.println("refDrawable.width = " + refDrawable.width);
+
+
 
        //calculate the pourcentage to the edge on the 4 directions
-	 //the top left corner of the refDrawable is taken for references for limitHaut and limitGauche	
+       //the top left corner of the refDrawable is taken for references for limitHaut and limitGauche
        //the bottom right corner of the refDrawable is taken for references for limitBas and limitDroit
-	 int limitHaut   = (refDrawable.y-screen.y)*100/screen.height;
+       int limitHaut   = (refDrawable.y-screen.y)*100/screen.height;
        int limitBas    = 100-((refDrawable.y+refDrawable.height)-screen.y)*100/screen.height;
        int limitGauche = (refDrawable.x-screen.x)*100/screen.width;
        int limitDroit  = 100-((refDrawable.x+refDrawable.width)-screen.x)*100/screen.width;
 
 	 //this test is needed at the begening to center the screen if the refDrawable is out
 	 //of the screen widht and hight
-	 //and if there are any pb (negative pourcent !!!) we center the view. 
-	 //usefull if there are teleportation !!	
-	 //furthermore the screen must have a sufficient size compare to the refDrawable 	 		
+	 //and if there are any pb (negative pourcent !!!) we center the view.
+	 //usefull if there are teleportation !!
+	 //furthermore the screen must have a sufficient size compare to the refDrawable
 	 if(     limitHaut   < 0
             || limitBas    < 0
             || limitGauche < 0
-            || limitDroit  < 0 
-		|| refDrawable.width*3  > screen.width 
-		|| refDrawable.height*3 > screen.height )
+            || limitDroit  < 0
+		|| refDrawable.width*4  > screen.width
+		|| refDrawable.height*4 > screen.height )
           {
            screen.x = refDrawable.x - ( screen.width - refDrawable.width )/2;
-	     screen.y = refDrawable.y - ( screen.height - refDrawable.height )/2;	
-	    }		
-	 else	
-	  {	
+	     screen.y = refDrawable.y - ( screen.height - refDrawable.height )/2;
+	    }
+	 else
+	  {
         //test if we need a correction and calcul the speed
         if(    limitHaut   < LIMIT
             || limitBas    < LIMIT
@@ -123,9 +126,13 @@ public class LimitWindowPolicy implements WindowPolicy{
           }
 
         //test if we don't need any more correction
-        if( limitHaut   > 2*LIMIT && limitBas    > 2*LIMIT) speedY = 0;
-        if( limitGauche > 2*LIMIT && limitDroit  > 2*LIMIT ) speedX = 0;
-            
+	  //The correction will end if we have returned to the center of the screen
+        if( limitHaut   > 50 && speedY<0 ) speedY = 0;
+	if( limitBas    > 50 && speedY>0 ) speedY = 0;
+        if( limitGauche > 50 && speedX<0 ) speedX = 0;
+        if( limitDroit  > 50 && speedX>0 ) speedX = 0;
+
+
         if(speedY==0 && speedX==0) needCorrection = false ;
 
         // do the correction if necessary
@@ -134,23 +141,21 @@ public class LimitWindowPolicy implements WindowPolicy{
           screen.x += speedX;
           screen.y += speedY;
          }
-	  }	
+	  }
 
       // we correct the center if it's out of the backround dimension.
-	    if (screen.x<0) screen.x = 0;
-      if (screen.y<0) screen.y = 0;
-            
-      if (background.width < screen.width)
+	if(screen.x<0) screen.x = 0;
+        if(screen.y<0) screen.y = 0;
+
+        if (background.width < screen.width)
         screen.x = -(screen.width-background.width)/2;
       else if( (screen.x+screen.width)>=background.width )
-        screen.x = background.width-screen.width-1;                 
-      
+        screen.x = background.width-screen.width-1;
+
       if (background.height < screen.height)
         screen.y = -(screen.height-background.height)/2;
       else if ( (screen.y+screen.height)>=background.height )
-        screen.y = background.height-screen.height-1;
-      
-     }
+        screen.y = background.height-screen.height-1;     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<!-- JNLP File Wotlas Client Application --> 
+<jnlp
+  spec="1.0+" 
+  codebase="http://wotlas.sourceforge.net/jws/" 
+  href="wotlas-client.jnlp">
+
+  <information>
+    <title>Wheel Of Time - Light & Shadow</title>
+    <vendor>Wotlas Team</vendor>
+    <homepage href="http://wotlas.sourceforge.net"/> 
+    <description>Wotlas Client</description> 
+    <description kind="tooltip">Wotlas Client</description>
+
+    <description kind="short">
+        Client program of the Wheel of Time - Light & Shadow universe.
+    </description>
+
+    <icon href="icon.jpg"/> 
+    <offline-allowed/> 
+  </information> 
+
+  <security> 
+      <all-permissions/> 
+  </security>
+
+  <resources> 
+    <j2se version="1.3+"/> 
+    <j2se version="1.4"/>
+    <jar href="http://west.dl.sourceforge.net/sourceforge/wotlas/wotlas-client.jar" main="true"/> 
+  </resources>
+
+  <application-desc main-class="wotlas.client.ClientDirector"/> 
+
+</jnlp> 
+

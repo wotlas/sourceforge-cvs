@@ -68,6 +68,9 @@ public abstract class Weapon extends BaseObject
 	 this.damagemax=damageMax;
 	 this.state=state;
 	 this.equipped=false;
+	 
+	 this.className="Weapon";
+	 this.objectName="default weapon";
 	}															
 
 

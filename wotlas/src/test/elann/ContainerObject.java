@@ -23,8 +23,8 @@ package wotlas.common.object;
  * The base class for container objects.
  * 
  * @author Elann
- * @see wotlas.common.Object.BaseObject
- * @see wotlas.common.Object.ContainerInterface
+ * @see wotlas.common.object.BaseObject
+ * @see wotlas.common.object.ContainerInterface
  */
 
 public class ContainerObject extends BaseObject implements ContainerInterface
@@ -56,6 +56,9 @@ public class ContainerObject extends BaseObject implements ContainerInterface
 	   this.capacity=capacity;
 	   this.quantity=0;
 	   content=new BaseObject[capacity];
+	   
+	   this.className="ContainerObject";
+	   this.objectName="default container";
 	  }
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

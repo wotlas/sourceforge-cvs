@@ -53,7 +53,10 @@ public abstract class MagicalObject extends BaseObject
    {
    	super();
 	this.magicEffect=magicEffect;
-	this.powesrInvolved=powersInvolved;
+	this.powersInvolved=powersInvolved;
+	
+	this.className="MagicalObject";
+	this.objectName="default magical object";
    }
  
   /** Get the magical effect caused by the object when used.

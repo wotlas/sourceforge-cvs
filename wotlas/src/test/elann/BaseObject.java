@@ -27,7 +27,7 @@ package wotlas.common.object;
 import wotlas.common.Character;	// the class used to give or sell. Is it implemented as I need ?
 import wotlas.common.Levels;	// not implemented
 import wotlas.common.Knowledge; // not implemented
-
+import wotlas.common.Location;	// not implemented - no need for it - just have to merge with wotlas universe
 
 /** 
  * The base class for all game objects that may be encountered in wotlas.
@@ -48,6 +48,10 @@ public class BaseObject
    */
    	 private String objectName;
    
+  /** Object position. Used to render the object. THE CLASS LOCATION IS A PLACE-HOLDER - has to be adapted to wotlas.
+   */
+  	 private Location objectLocation; 
+   
   /** Object's weight - used for endurance and max load. Perhaps negative weight should mean unmovable.
    */
      private short weight;
@@ -66,22 +70,9 @@ public class BaseObject
   	 
 	 
  /*------------------------------------------------------------------------------------*/
-
-  /** Gets rid of the object. The object is dropped on the ground.
-   */
-    public void discard();
-	
-  /** Sells the object to somebody.
-  	  @param buyer The Character who buy the object. 
-  	  @return the prize paid.
-   */
-    public ValuedObject sellTo(Character buyer);
-
-  /** Gives the object to somebody.
-  	  @param receiver The Character who receive the object.
-   */
-    public void giveTo(Character receiver);
-	
+		
+  /* ------- Constructor - TO DO ----- */		
+		
   /* ------- Getters / Setters --------- */
 	
   /** Return the name of the class of the object (like Sword, Axe, ...)
@@ -98,13 +89,24 @@ public class BaseObject
   /** Returns the name of the object (like Callandor, Tar Valon Gold Mark, ...)
   	  @return objectName
    */
-	public String getObjectName() { return this.className; }
+	public String getObjectName() { return this.objectName; }
 
   /** Sets the name of the object (like Callandor, Tar Valon Gold Mark, ...)
   	  @param objectName the new name
    */
 	public void setObjectName(String objectName) { this.objectName=objectName; }
 		
+
+  /** Returns the location of the object. 
+  	  @return objectLocation
+   */
+	public Location getObjectLocation() { return this.objectLocation; }
+
+  /** Sets the location of the object.
+  	  @param objectLocation the new location
+   */
+	public void setObjectLocation(String objectLocation) { this.objectLocation=objectLocation; }
+
 	
   /** Returns the weight of the object.
   	  @return the object's weight

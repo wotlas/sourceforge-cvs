@@ -54,7 +54,8 @@ public class CleanGhostsMsgBehaviour extends CleanGhostsMessage implements NetMe
    *        this message.
    */
      public void doBehaviour( Object context ) {
-System.out.println("CLEAN GHOSTS MESSAGE");
+           if (DataManager.SHOW_DEBUG)      
+             System.out.println("CLEAN GHOSTS MESSAGE");
 
         // The context is here a DataManager.
            DataManager dataManager = (DataManager) context;
@@ -122,6 +123,7 @@ System.out.println("CLEAN GHOSTS MESSAGE");
                  
                      if( !isInList ) {
                          it.remove(); // GHOST !!
+if (DataManager.SHOW_DEBUG)                         
 System.out.println("REMOVING GHOSTS !!!!"+playerImpl.getPrimaryKey()+" rID"+playerImpl.getLocation().getRoomID());
                          playerImpl.cleanVisualProperties(dataManager.getGraphicsDirector());
                      }

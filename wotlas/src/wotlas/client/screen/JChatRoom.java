@@ -148,7 +148,8 @@ public class JChatRoom extends JPanel
   synchronized public void addPlayer(String primaryKey, String senderFullName) {
     if( players.containsKey( primaryKey ) )
         return; // already in this chat
-    System.out.println("ADDING PLAYER "+primaryKey);
+    if (DataManager.SHOW_DEBUG)
+      System.out.println("ADDING PLAYER "+primaryKey);
 
     final String strNewName = senderFullName;
     players.put( primaryKey, senderFullName );
@@ -169,7 +170,8 @@ public class JChatRoom extends JPanel
   synchronized public void removePlayer(String primaryKey) {
     if( !players.containsKey( primaryKey ) )
         return; // not in this chat
-    System.out.println("REMOVING PLAYER "+primaryKey);
+    if (DataManager.SHOW_DEBUG)
+      System.out.println("REMOVING PLAYER "+primaryKey);
 
     final String strOldName = (String) players.get(primaryKey);
     players.remove(primaryKey);
@@ -220,8 +222,8 @@ public class JChatRoom extends JPanel
     System.out.println("buffer after = " + buffer);
     messagesPane.setText(buffer);*/
 
-
-    System.out.println("msg_number = " + msg_number);
+    if (DataManager.SHOW_DEBUG)
+      System.out.println("msg_number = " + msg_number);
     /*try {
       System.out.println("dochat = " + doc_chat.getText(0,doc_chat.getLength()));
       System.out.println("messagesPane.getText() = " + messagesPane.getText());
@@ -256,7 +258,8 @@ public class JChatRoom extends JPanel
 
 
     //try {
-      System.out.println("insertString");
+      if (DataManager.SHOW_DEBUG)
+        System.out.println("insertString");
       //doc_chat.insertString (doc_chat.getLength(), text+"<br>\n", attribut );
 
       strBuffer += text + "<br>\n";

@@ -39,12 +39,6 @@ public class JMapPanel extends JPanel implements MouseListener
 
  /*------------------------------------------------------------------------------------*/
 
-  /** True if we show debug informations
-   */
-  public static boolean SHOW_DEBUG = false;
-
- /*------------------------------------------------------------------------------------*/
-
   /** Our Graphics Director
    */
   private GraphicsDirector gDirector;
@@ -93,15 +87,15 @@ public class JMapPanel extends JPanel implements MouseListener
    * Invoked when a mouse button has been released on a component
    */
   public void mouseReleased(MouseEvent e) {
-    if (SHOW_DEBUG)
+    
         System.out.println("[JMapPanel] : clic sur (" + e.getX() + "," + e.getY() + ")");
     if (SwingUtilities.isRightMouseButton(e)) {
-      if (SHOW_DEBUG)
+      if (DataManager.SHOW_DEBUG)
         System.out.println("\tright clic");
       dataManager.onRightClicJMapPanel(e);
       dataManager.tick();
     } else {
-      if (SHOW_DEBUG)
+      if (DataManager.SHOW_DEBUG)
         System.out.println("\tleft clic");
       dataManager.onLeftClicJMapPanel(e);
       dataManager.tick();

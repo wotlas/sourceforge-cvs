@@ -61,15 +61,15 @@ public class JClientScreen extends JFrame
   private final static int northHeight = 0;
   public final static int leftWidth = 600;
 
-  private final static int gameHeight = 400;
-  public final static int mapHeight = 400;
-  private final static int gameMinHeight = 200;
+  private final static int gameHeight = 350; // JMapPanel
+  public final static int mapHeight = 350;  // Same as above
+  private final static int gameMinHeight = 200; // JMapPanel
 
   private final static int thumbHeight = 100;
 
   private final static int playerHeight = 300;
 
-  private final static int chatMinHeight = 80;
+  private final static int chatMinHeight = 150;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -175,6 +175,8 @@ public class JClientScreen extends JFrame
       JSplitPane leftPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mapPanel, myChatPanel);
       //JSplitPane leftPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, gDirector, myChatPanel);
       */
+      
+      chatPanel.setMinimumSize(new Dimension(leftWidth, chatMinHeight));
       
       JSplitPane leftPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mapPanel, chatPanel);
       

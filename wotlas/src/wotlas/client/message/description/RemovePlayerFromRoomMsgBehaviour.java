@@ -54,7 +54,8 @@ public class RemovePlayerFromRoomMsgBehaviour extends RemovePlayerFromRoomMessag
    *        this message.
    */
      public void doBehaviour( Object context ) {
-System.out.println("REMOVE PLAYER MESSAGE p:"+primaryKey);
+           if (DataManager.SHOW_DEBUG)
+             System.out.println("REMOVE PLAYER MESSAGE p:"+primaryKey);  
 
         // The context is here a DataManager.
            DataManager dataManager = (DataManager) context;
@@ -81,11 +82,13 @@ System.out.println("REMOVE PLAYER MESSAGE p:"+primaryKey);
 
               if(playerImpl==null)
                  return;
+if (DataManager.SHOW_DEBUG)                 
 System.out.println("REMOVING PLAYER "+primaryKey);
               players.remove( primaryKey );
            }
 
            playerImpl.cleanVisualProperties(dataManager.getGraphicsDirector());
+if (DataManager.SHOW_DEBUG)           
 System.out.println("SUCCESFUL END OF REMOVE MESSAGE");
      }
 

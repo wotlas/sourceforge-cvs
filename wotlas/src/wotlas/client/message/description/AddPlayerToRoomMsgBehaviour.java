@@ -54,7 +54,8 @@ public class AddPlayerToRoomMsgBehaviour extends AddPlayerToRoomMessage implemen
    *        this message.
    */
      public void doBehaviour( Object context ) {
-System.out.println("ADD PLAYER TO ROOM MESSAGE player: "+player.getPrimaryKey());
+           if (DataManager.SHOW_DEBUG)
+             System.out.println("ADD PLAYER TO ROOM MESSAGE player: "+player.getPrimaryKey());
 
         // The context is here a DataManager.
            DataManager dataManager = (DataManager) context;

@@ -85,7 +85,8 @@ public class JAccountWizard extends JWizard
   /** Called when the wizard is finished
    */
   protected void onFinished(Object context) {
-    System.out.println("finished");
+    if (DataManager.SHOW_DEBUG)
+      System.out.println("JAccountWizard::onFinished");
     personality.queueMessage( new AccountCreationMessage() );
   }
 

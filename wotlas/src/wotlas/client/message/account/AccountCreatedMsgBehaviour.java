@@ -51,7 +51,8 @@ public class AccountCreatedMsgBehaviour extends AccountCreatedMessage implements
    *        this message.
    */
   public void doBehaviour( Object context ) {
-    System.out.println("Account Created - clientID:"+clientID+" serverID:"+serverID);
+    if (DataManager.SHOW_DEBUG)
+      System.out.println("Account Created - clientID:"+clientID+" serverID:"+serverID);
     DataManager dataManager = (DataManager) context;
     dataManager.setCurrentProfileConfigID(clientID, serverID);
   }

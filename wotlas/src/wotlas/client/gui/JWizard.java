@@ -282,7 +282,8 @@ public abstract class JWizard extends JFrame
    * @param indexPanel index of the panel to be shown
    */
   public void showStep(int indexStep) {
-    System.out.println("showStep(" + indexStep + ")");
+    if (DataManager.SHOW_DEBUG)
+      System.out.println("showStep(" + indexStep + ")");
     JWizardStep step = (JWizardStep)vPanels.elementAt(indexStep);
     //step.setPreferredSize(new Dimension(200,200));
     mainPanel.removeAll();

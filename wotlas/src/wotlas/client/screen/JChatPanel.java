@@ -141,7 +141,6 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     JChatRoom jchatRoom = addJChatRoom(mainChat);
     currentPrimaryKey = ChatRoom.DEFAULT_CHAT;
     
-    System.out.println("DataManager.getDefaultDataManager().getMyPlayer().getPrimaryKey() = " + DataManager.getDefaultDataManager().getMyPlayer().getPrimaryKey());
     jchatRoom.addPlayer(DataManager.getDefaultDataManager().getMyPlayer().getPrimaryKey(), DataManager.getDefaultDataManager().getMyPlayer().getFullPlayerName());
   }
 
@@ -179,17 +178,20 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
        currentPrimaryKey = ChatRoom.DEFAULT_CHAT;
        b_createChatRoom.setEnabled(true);
 
+if (DataManager.SHOW_DEBUG)
 System.out.println("TAB number:"+tabbedPane.getTabCount());
        for (int i=tabbedPane.getTabCount()-1; i>=0;i--) {
-
-              System.out.println(""+tabbedPane.getComponentAt(i).getName());
+if (DataManager.SHOW_DEBUG)
+System.out.println(""+tabbedPane.getComponentAt(i).getName());
 
             if( !tabbedPane.getComponentAt(i).getName().equals(ChatRoom.DEFAULT_CHAT)  ) {
                 tabbedPane.remove(i);
+if (DataManager.SHOW_DEBUG)                
 System.out.println("tab removed");
             }
             else {
                 ( (JChatRoom) tabbedPane.getComponentAt(i) ).removeAllPlayers();
+if (DataManager.SHOW_DEBUG)
 System.out.println("DEFAULT CHAT player list reseted");
             }
         }
@@ -229,9 +231,10 @@ System.out.println("DEFAULT CHAT player list reseted");
    */
   public JChatRoom addJChatRoom(ChatRoom chatRoom) {
     JChatRoom jchatRoom = new JChatRoom(chatRoom);
-    System.out.println("JChatRoom::addJChatRoom "+jchatRoom.getName()+" !!!!!!!!");
-
-    System.out.println("\tcreatorPrimaryKey = " + chatRoom.getCreatorPrimaryKey());
+    if (DataManager.SHOW_DEBUG)
+      System.out.println("JChatRoom::addJChatRoom "+jchatRoom.getName()+" !!!!!!!!");
+    if (DataManager.SHOW_DEBUG)
+      System.out.println("\tcreatorPrimaryKey = " + chatRoom.getCreatorPrimaryKey());
     tabbedPane.addTab(chatRoom.getName(), iconUp, jchatRoom, chatRoom.getName() + " channel");
 
       if (tabbedPane.getTabCount()>=ChatRoom.MAXIMUM_CHATROOMS_PER_ROOM)
@@ -250,7 +253,8 @@ System.out.println("DEFAULT CHAT player list reseted");
     // We can't remove the first ChatRoom
     for (int i=1; i<tabbedPane.getTabCount();i++) {
       if ( tabbedPane.getComponentAt(i).getName().equals(primaryKey) ) {
-        System.out.println("removeChatRoom");
+        if (DataManager.SHOW_DEBUG)
+          System.out.println("removeChatRoom");
         tabbedPane.remove(i);
 
         if(primaryKey.equals(currentPrimaryKey))
@@ -264,7 +268,8 @@ System.out.println("DEFAULT CHAT player list reseted");
         return true;
       }
     }
-    System.out.println("ERROR : Couldn't removeJChatRoom");
+    if (DataManager.SHOW_DEBUG)
+      System.out.println("ERROR : Couldn't removeJChatRoom");
     return false;
   }
   
@@ -299,11 +304,13 @@ System.out.println("DEFAULT CHAT player list reseted");
   public JChatRoom getJChatRoom(String primaryKey) {
     for (int i=0; i<tabbedPane.getTabCount();i++) {
       if ( tabbedPane.getComponentAt(i).getName().equals(primaryKey) ) {
-        System.out.println("getJChatRoom");
+        if (DataManager.SHOW_DEBUG)
+          System.out.println("getJChatRoom");
         return (JChatRoom) tabbedPane.getComponentAt(i);
       }
     }
-    System.out.println("ERROR : Couldn't getJChatRoom");
+    if (DataManager.SHOW_DEBUG)
+      System.out.println("ERROR : Couldn't getJChatRoom");
     return null;
   }
   
@@ -345,7 +352,8 @@ System.out.println("DEFAULT CHAT player list reseted");
         return true;
       }
     }
-    System.out.println("ERROR : Couldn't addPlayer");
+    if (DataManager.SHOW_DEBUG)
+      System.out.println("ERROR : Couldn't addPlayer");
     return false;
   }
   
@@ -362,7 +370,8 @@ System.out.println("DEFAULT CHAT player list reseted");
         return true;
       }
     }
-    System.out.println("ERROR : Couldn't removePlayer");
+    if (DataManager.SHOW_DEBUG)
+      System.out.println("ERROR : Couldn't removePlayer");
     return false;
   }
   
@@ -378,8 +387,8 @@ System.out.println("DEFAULT CHAT player list reseted");
         return jchatRoom.getPlayers();
       }
     }
-
-    System.out.println("ERROR : Couldn't get players");
+    if (DataManager.SHOW_DEBUG)
+      System.out.println("ERROR : Couldn't get players");
     return null;
   }
    
@@ -422,7 +431,8 @@ System.out.println("DEFAULT CHAT player list reseted");
       if (actionCommand == null)
           return;
 
-      System.out.println("Action command : " + actionCommand);
+      if (DataManager.SHOW_DEBUG)
+        System.out.println("Action command : " + actionCommand);
       DataManager dataManager = DataManager.getDefaultDataManager();
       PlayerImpl myPlayer = dataManager.getMyPlayer();
 
@@ -459,8 +469,10 @@ System.out.println("DEFAULT CHAT player list reseted");
                                                                      currentPrimaryKey) );
       }
       else {
-        System.out.println("Err : unknown actionCommand");      
-        System.out.println("No action command found!");
+        if (DataManager.SHOW_DEBUG) {
+          System.out.println("Err : unknown actionCommand");      
+          System.out.println("No action command found!");
+        }
       }    
   }
 

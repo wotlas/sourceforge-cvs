@@ -56,7 +56,6 @@ public class AccountRecoverMsgBehaviour extends AccountRecoverMessage implements
            
         // We send player's profile
            player.sendMessage( new YourAccountDataMessage( primaryKey, player.getPlayerName(), GameServer.getServerID() ) );
-
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -40,8 +40,12 @@ import wotlas.utils.Debug;
  * @author Aldiss
  */
 
-public class SetCurrentChatRoomMsgBehaviour extends SetCurrentChatRoomMessage implements NetMessageBehaviour
-{
+public class SetCurrentChatRoomMsgBehaviour extends SetCurrentChatRoomMessage implements NetMessageBehaviour {
+ /*------------------------------------------------------------------------------------*/
+
+   /** To tell if this message is to be invoked later or not.
+    */
+     private boolean invokeLater = true;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -66,16 +70,23 @@ public class SetCurrentChatRoomMsgBehaviour extends SetCurrentChatRoomMessage im
        DataManager dataManager = (DataManager) sessionContext;
        PlayerImpl player = dataManager.getMyPlayer();
 
-    // We set the current chat for our player
-       if( dataManager.getChatPanel().setCurrentJChatRoom( chatRoomPrimaryKey ) )
-            dataManager.getChatPanel().addPlayer(chatRoomPrimaryKey, player );
-       else {
-            Debug.signal( Debug.ERROR, this, "Failed to set current chat for player... "+chatRoomPrimaryKey);
+       if( invokeLater ) {
+         // We set the current chat for our player
+            if( dataManager.getChatPanel().setCurrentJChatRoom( chatRoomPrimaryKey ) ) {
+                dataManager.getChatPanel().addPlayer(chatRoomPrimaryKey, player );
+            }
+            else {
+                Debug.signal( Debug.ERROR, this, "Failed to set current chat for player... "+chatRoomPrimaryKey);
+                return;
+            }
+
+            if(!player.getLocation().isRoom())
+               return;
+            
+            invokeLater = false;
+            dataManager.invokeLater( this );
             return;
        }
-
-       if(!player.getLocation().isRoom())
-          return;
 
     // We seek the players to add
        JChatRoom chatRoom = dataManager.getChatPanel().getJChatRoom( chatRoomPrimaryKey );
@@ -88,15 +99,18 @@ public class SetCurrentChatRoomMsgBehaviour extends SetCurrentChatRoomMessage im
        Hashtable players = dataManager.getPlayers();
        PlayerImpl sender = null;
 
-       for( int i=0; i<playersPrimaryKey.length; i++ ) {          
+       for( int i=0; i<playersPrimaryKey.length; i++ ) {
           if(players!=null)
              sender = (PlayerImpl) players.get( playersPrimaryKey[i] );
 
           if( sender==null )
               Debug.signal( Debug.WARNING, this, "Could not find the player for chat... "+playersPrimaryKey[i]);
+          else
+              fullPlayerNames[i] = sender.getFullPlayerName();
 
        // We add the player
-          chatRoom.addPlayer(playersPrimaryKey[i], fullPlayerNames[i]);
+          if( !playersPrimaryKey[i].equals(player.getPrimaryKey()) )
+              chatRoom.addPlayer(playersPrimaryKey[i], fullPlayerNames[i]);
        }
   }
   

@@ -626,10 +626,10 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
 
        if (isConnectedToGame) {
         textDrawable = new TextDrawable( fullPlayerName, getDrawable(), wotCharacter.getColor(),
-                                        13.0f, "Lblack.ttf", ImageLibRef.TEXT_PRIORITY, 5000 );
+                                        13.0f, "Lucida Blackletter", ImageLibRef.TEXT_PRIORITY, 5000 );
        } else {
         textDrawable = new TextDrawable( fullPlayerName + " (away)", getDrawable(), wotCharacter.getColor(),
-                                        13.0f, "Lblack.ttf", ImageLibRef.TEXT_PRIORITY, 5000 );
+                                        13.0f, "Lucida Blackletter", ImageLibRef.TEXT_PRIORITY, 5000 );
        }                                        
        return textDrawable;
    }

@@ -25,13 +25,15 @@ import java.util.*;
 import wotlas.utils.*;
 
 import wotlas.libs.net.NetMessageBehaviour;
+
 import wotlas.common.message.description.*;
+import wotlas.common.message.movement.*;
 import wotlas.common.message.chat.*;
 import wotlas.common.universe.*;
 import wotlas.common.chat.*;
 import wotlas.common.Player;
-import wotlas.server.PlayerImpl;
-import wotlas.common.message.description.*;
+
+import wotlas.server.*;
 
 /**
  * Associated behaviour to the DoorStateMessage...
@@ -68,6 +70,7 @@ public class DoorStateMsgBehaviour extends DoorStateMessage implements NetMessag
                location.getInteriorMapID()!=player.getLocation().getInteriorMapID() ||
                location.getRoomID()!=player.getLocation().getRoomID() ) {
                Debug.signal( Debug.ERROR, this, "Specified door location is not in our room !! "+location );
+               sendError(player, "Door not found. A location error might have occured.\n We are going to reset your location.");
                return;
            }
 
@@ -84,6 +87,7 @@ public class DoorStateMsgBehaviour extends DoorStateMessage implements NetMessag
 
           if( door==null ) {
                Debug.signal( Debug.ERROR, this, "Specified door was not found !" );
+               sendError(player, "Door not found. A location error might have occured.\n We are going to reset your location.");
                return;
           }
           
@@ -100,6 +104,47 @@ public class DoorStateMsgBehaviour extends DoorStateMessage implements NetMessag
 
           player.sendMessageToNearRooms( currentRoom, this, false );
           player.sendMessageToNearRooms( targetRoom, this, false );
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To send an error message to the client.
+    */
+     public void sendError( PlayerImpl player, String message ) {
+         Debug.signal( Debug.ERROR, this, message );
+
+      // We search for a valid insertion point
+         ScreenPoint pReset = null;
+         player.updateSyncID();
+
+         if( player.getLocation().isRoom() )
+             pReset = player.getMyRoom().getInsertionPoint();
+         else {
+           // We get the world manager
+             WorldManager wManager = DataManager.getDefaultDataManager().getWorldManager();
+
+             if( player.getLocation().isTown() ) {
+                 TownMap myTown = wManager.getTownMap( location );
+                 if(myTown!=null) 
+                    pReset = myTown.getInsertionPoint();
+             }
+             else if( player.getLocation().isWorld() ) {
+                 WorldMap myWorld = wManager.getWorldMap( location );
+                 if(myWorld!=null) 
+                    pReset = myWorld.getInsertionPoint();
+             }
+         }
+
+      // Have we found a valid insertion point ?
+         if(pReset==null) {
+            Debug.signal(Debug.CRITICAL,this,"NO VALID LOCATION FOR PLAYER: "+player.getLocation());
+            pReset = new ScreenPoint(0, 0);
+         }
+
+      // We send the message...
+         player.sendMessage( new ResetPositionMessage( player.getPrimaryKey(), player.getLocation(),
+                                                       pReset.x, pReset.y, player.getOrientation(),
+                                                       player.getSyncID() ) );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

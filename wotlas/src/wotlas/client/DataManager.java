@@ -694,10 +694,10 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
     Debug.signal( Debug.NOTICE, this, "OS INFO :\n\nOS NAME : <"+os+">\nOS ARCH: <"+arch+">\nOS VERSION: <"+vers+">\n" );
 
-    delay = 20;
+    delay = 50;
 
-    if ( os.equals("Windows 2000") || os.equals("Windows XP") )
-      delay = 35;
+    //if ( os.equals("Windows 2000") || os.equals("Windows XP") )
+    //  delay = 40;
 
     pauseTickThread = false;
 
@@ -1026,8 +1026,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       }
     }
     
-    if (gDirector!=null)
-      gDirector.removeAllDrawables();
     Debug.exit();
   }
 

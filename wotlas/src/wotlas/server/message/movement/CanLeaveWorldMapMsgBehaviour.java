@@ -288,7 +288,7 @@ public class CanLeaveWorldMapMsgBehaviour extends CanLeaveWorldMapMessage implem
          }
 
       // We send the message...
-         player.sendMessage( new ResetPositionMessage( primaryKey, player.getLocation(),
+         player.sendMessage( new ResetPositionMessage( player.getPrimaryKey(), player.getLocation(),
                                                        pReset.x, pReset.y,
                                                        player.getOrientation(), player.getSyncID() ) );
      }

@@ -76,23 +76,7 @@ public class JMapPanel extends JPanel implements MouseListener
   /**
    * Invoked when the mouse button is clicked
    */
-  public void mouseClicked(MouseEvent e) {
-    //if (e.getID() == java.awt.event.MouseEvent.MOUSE_CLICKED) {
-      if (SHOW_DEBUG)
-        System.out.println("[JMapPanel] : clic sur (" + e.getX() + "," + e.getY() + ")");
-      if (SwingUtilities.isRightMouseButton(e)) {
-        if (SHOW_DEBUG)
-          System.out.println("\tright clic");
-        dataManager.onRightClicJMapPanel(e);
-        dataManager.tick();
-      } else {
-        if (SHOW_DEBUG)
-          System.out.println("\tleft clic");
-        dataManager.onLeftClicJMapPanel(e);
-        dataManager.tick();
-      }
-    //}
-  }
+  public void mouseClicked(MouseEvent e) {}
   /**
    * Invoked when the mouse enters a component
    */
@@ -108,7 +92,21 @@ public class JMapPanel extends JPanel implements MouseListener
   /**
    * Invoked when a mouse button has been released on a component
    */
-  public void mouseReleased(MouseEvent e) {}
+  public void mouseReleased(MouseEvent e) {
+    if (SHOW_DEBUG)
+        System.out.println("[JMapPanel] : clic sur (" + e.getX() + "," + e.getY() + ")");
+    if (SwingUtilities.isRightMouseButton(e)) {
+      if (SHOW_DEBUG)
+        System.out.println("\tright clic");
+      dataManager.onRightClicJMapPanel(e);
+      dataManager.tick();
+    } else {
+      if (SHOW_DEBUG)
+        System.out.println("\tleft clic");
+      dataManager.onLeftClicJMapPanel(e);
+      dataManager.tick();
+    }
+  }
 
  /*------------------------------------------------------------------------------------*/
 

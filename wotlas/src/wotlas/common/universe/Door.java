@@ -48,12 +48,6 @@ public class Door
     */
      private byte doorType;
 
-   /** Initial door angle ( in radians ). If the door is horizontal on screen
-    *  this initial angle will be 0. If the door is vertical on screen the door angle
-    *  will be PI/2.
-    */
-     private float initialDoorAngle;
-
    /** Points out which Door image to use.
     */
      private ImageIdentifier doorImage;
@@ -70,6 +64,18 @@ public class Door
    */
    public Door() {
          hasLock = false;
+   }
+
+ /*------------------------------------------------------------------------------------*/  
+
+  /** To construct a Door with no lock.
+   */
+   public Door(int x, int y, byte doorType, ImageIdentifier doorImage ) {
+         hasLock = false;
+         this.x =x;
+         this.y =y;
+         this.doorType =doorType;
+         this.doorImage = doorImage;
    }
 
  /*------------------------------------------------------------------------------------*/  
@@ -106,14 +112,6 @@ public class Door
 
      public void setDoorType( byte doorType ) {
      	this.doorType = doorType;
-     }
-
-     public float getInitialDoorAngle() {
-     	return initialDoorAngle;
-     }
-
-     public void setInitialDoorAngle( float initialDoorAngle ) {
-     	this.initialDoorAngle = initialDoorAngle;
      }
 
      public ImageIdentifier getDoorImage() {

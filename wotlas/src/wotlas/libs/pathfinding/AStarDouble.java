@@ -49,7 +49,10 @@ public class AStarDouble
 {
  /*------------------------------------------------------------------------------------*/
 
-  private static AStarDouble aStar;
+  /** Our AStarDouble object.
+   */
+  private static AStarDouble aStar=null;
+  
   /** mask of the image : mask[i][j] is true if pixel(i,j) is not blocked
    */
   static private boolean[][] map;
@@ -84,6 +87,8 @@ public class AStarDouble
     return (SPRITE_SIZE+1);
   }
 
+ /*------------------------------------------------------------------------------------*/
+ 
   /** Empty constructor.
    */
   public AStarDouble() {
@@ -92,20 +97,29 @@ public class AStarDouble
   
  /*------------------------------------------------------------------------------------*/
 
-  /**
+  /** To get AStarDouble object
    */
   static public AStarDouble getAStar() {
     return aStar;
   }
   
+  /** Test to know if pathFollower is used by client (initialized) or server (not initialized)
+   * 
+   * @returns true if AStarDouble have been initialized
+   */
+  static public boolean isInitialized() {
+    return !(aStar==null);
+  }
+
+ /*------------------------------------------------------------------------------------*/
+   
   /**
    * Estimates the distance between 2 points
    *
    * @param poinFrom first point
    * @param pointTo second point
    * @return the distance between the 2 points
-   */
-  //private int estimate(Point pointFrom, Point pointTo)
+   */  
   private double estimate(Point pointFrom, Point pointTo) {
     //return (int) pointFrom.distanceSq(pointTo);
     return pointFrom.distance(pointTo);
@@ -115,6 +129,8 @@ public class AStarDouble
      * return (pointFrom.x-pointTo.x)*(pointFrom.x-pointTo.x)+(pointFrom.y-pointTo.y)*(pointFrom.y-pointTo.y);
      */
   }
+
+ /*------------------------------------------------------------------------------------*/
 
   /**
    * begins optimal path search

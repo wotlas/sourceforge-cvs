@@ -11,9 +11,7 @@ This directory contains:
     |
     |-- build: to build wotlas
     |
-    |-- base: default database for universe data, images, fonts, players...
-    |
-    |-- log: where log files are placed.
+    |-- base: default database for universe data, images, fonts, logs, configs, players...
 
 
 Source Packages
@@ -44,11 +42,6 @@ Source Packages
      |      |
      |      |
      |      |--- utils : various tools
-     |
-     |
-     |---test : use examples of our library packages.
-     |
-     |--config : client & server config.
      |
 
 

@@ -156,30 +156,38 @@ public class WorldGenerator {
 
 
         // STEP 4 - Tar Valon West Gate Building
-           Building buildings[] = new Building[1];
-           Building building = new Building(208,493,10,18);
-           buildings[0] = building;
-
+           Building buildings[] = new Building[2];
            townMap.setBuildings( buildings );
 
-           building.setBuildingID(0);
-
-           building.setFullName("Tar Valon West Gate");
-           building.setShortName("tarvalWeGate");
-           building.setServerID(0);
-           building.setHasTownExits(false);
-           building.setHasBuildingExits(true);
-
-           building.setSmallBuildingImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
+           buildings[0] = new Building(208,493,10,18);
+           buildings[0].setBuildingID(0);
+           buildings[0].setFullName("Tar Valon West Gate");
+           buildings[0].setShortName("tarvalWeGate");
+           buildings[0].setServerID(0);
+           buildings[0].setHasTownExits(false);
+           buildings[0].setHasBuildingExits(true);
+           buildings[0].setSmallBuildingImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
                                                                 ImageLibRef.BUILDING_SMALL_SET,
                                                                 ImageLibRef.TARVALON_WEGATE_SMALL_IM_ACTION ) );
+
+        // Tar Valon - North-West Clearing (Building)
+           buildings[1] = new Building(55,232,18,18);
+           buildings[1].setBuildingID(1);
+           buildings[1].setFullName("Tar Valon - Forest - North West Clearing");
+           buildings[1].setShortName("TvNWClearing");
+           buildings[1].setServerID(0);
+           buildings[1].setHasTownExits(false);
+           buildings[1].setHasBuildingExits(true);
+           buildings[1].setSmallBuildingImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
+                                                                ImageLibRef.BUILDING_SMALL_SET,
+                                                                ImageLibRef.TARVALON_NWCLNG_SMALL_IM_ACTION ) );           
 
         // STEP 5 - Tar Valon West Gate InteriorMap
            InteriorMap maps[] = new InteriorMap[1];
            InteriorMap map = new InteriorMap();
            maps[0] = map;
 
-           building.setInteriorMaps( maps );
+           buildings[0].setInteriorMaps( maps );
 
            map.setInteriorMapID(0);
            map.setFullName("Tar Valon West Gate - First Level");
@@ -433,7 +441,62 @@ public class WorldGenerator {
              rooms[17].addRoomLink( rooms[15].getRoomLink(0) );
              rooms[17].addRoomLink( rooms[16].getRoomLink(0) );
 
-        // STEP 3 - We save this simple universe.
+
+        // STEP 7 - Tar Valon NW Clearing InteriorMap
+           maps = new InteriorMap[1];
+           maps[0] = new InteriorMap();
+
+           maps[0].setInteriorMapID(0);
+           maps[0].setFullName("Tar Valon - Forest - North West Clearing");
+           maps[0].setShortName("nw-clearing");
+           maps[0].setInteriorMapImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
+                                                         ImageLibRef.UNIVERSE_SET ,
+                                                         ImageLibRef.TARVALON_NW_CLEARING_ACTION ) );
+           maps[0].setImageWidth(550);
+           maps[0].setImageHeight(350);
+           maps[0].setImageRegionWidth(550);
+           maps[0].setImageRegionHeight(350);
+
+           maps[0].setMusicName("tar-valon-01.mid");
+
+           buildings[1].setInteriorMaps( maps );
+
+        // STEP 6 - Rooms of TarValon WestGate InteriorMap
+           rooms = new Room[1];
+           maps[0].setRooms( rooms );
+           rooms[0] = new Room();
+           rooms[0].setRoomID(0);
+           rooms[0].setMaxPlayers(30);
+
+           rooms[0].setFullName("Tar Valon - Forest - North West Clearing");
+           rooms[0].setShortName("nw-clearing");
+           rooms[0].setInsertionPoint( new ScreenPoint(270,200) );
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(0,260,20,90) );
+               mapExit.setType( MapExit.BUILDING_EXIT );
+               mapExit.setMapExitSide( MapExit.WEST );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
+               mapExit.setTargetPosition( new ScreenPoint(60,250) );
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(30,330,380,20) );
+               mapExit.setType( MapExit.BUILDING_EXIT );
+               mapExit.setMapExitSide( MapExit.SOUTH );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
+               mapExit.setTargetPosition( new ScreenPoint(60,250) );
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(430,0,120,20) );
+               mapExit.setType( MapExit.BUILDING_EXIT );
+               mapExit.setMapExitSide( MapExit.NORTH );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
+               mapExit.setTargetPosition( new ScreenPoint(65,225) );
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(530,20,20,240) );
+               mapExit.setType( MapExit.BUILDING_EXIT );
+               mapExit.setMapExitSide( MapExit.EAST );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
+               mapExit.setTargetPosition( new ScreenPoint(65,225) );
+
+        // STEP 8 - We save this simple universe.
            persistenceManager = wotlas.server.PersistenceManager.createPersistenceManager( databasePath );
            Debug.signal( Debug.NOTICE, null, "Persistence Manager Created..." );
 

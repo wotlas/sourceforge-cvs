@@ -32,7 +32,7 @@ import java.awt.font.*;
  *
  *  A MotionlessSprite is especially useful for background images.
  *
- * @author MasterBob, Aldiss
+ * @author MasterBob, Aldiss, Petrus
  */
 
 public class MultiLineText extends Drawable {
@@ -64,6 +64,25 @@ public class MultiLineText extends Drawable {
     */
      private float size = 20.0f;
 
+    /** True if we must recalculate text width & height
+     */
+     private boolean recalculate;
+
+    /** Text width
+     */
+     int widthText=0;
+
+    /** Text height
+     */
+     //int heightText=0;
+
+    /** Space between lines
+     */
+     int gap;
+
+    /** y coordinate of each line
+     */
+     int heightsText[];
 
  /*------------------------------------------------------------------------------------*/
 
@@ -76,9 +95,9 @@ public class MultiLineText extends Drawable {
     public MultiLineText( String[] text, int xs, int ys, short priority) {
     	super();
         this.text = text;
+        recalculate = true;
         this.xs = xs;
         this.ys = ys;
-
         setFont("Lblack.ttf");
         this.priority = priority;
         useAntialiasing(true);
@@ -99,6 +118,7 @@ public class MultiLineText extends Drawable {
     public MultiLineText( String[] text, int xs, int ys, Color color, float size, String font, short priority) {
     	super();
         this.text = text;
+        recalculate = true;
         this.xs = xs;
         this.ys = ys;
         setFont(font);
@@ -118,6 +138,7 @@ public class MultiLineText extends Drawable {
  public void setText(String[] text)
   {
    this.text = text;
+   recalculate = true;
   }
 
 
@@ -141,6 +162,7 @@ public class MultiLineText extends Drawable {
     this.size = size;
     font = font.deriveFont(Font.PLAIN, size);
     Map fontAttributes = font.getAttributes();
+    recalculate = true;
     //System.out.println("Attrihbutes=" + fontAttributes);
    }
 
@@ -154,12 +176,13 @@ public class MultiLineText extends Drawable {
   public void setFont(String fontName){
    try {
       String fontPath = ImageLibrary.getDefaultImageLibrary().getDataBasePath()+File.separator+"fonts";
-   
+
       FileInputStream fis = new FileInputStream(fontPath+File.separator+fontName);
       font = Font.createFont(Font.TRUETYPE_FONT, fis);
       //System.out.println("Font=" + font);
       font = font.deriveFont(Font.PLAIN, size);
       Map fontAttributes = font.getAttributes();
+      recalculate = true;
       //System.out.println("Attrihbutes=" + fontAttributes);
     } catch (Exception e) {
       font = new Font("Dialog", Font.PLAIN, (int)size);
@@ -183,37 +206,52 @@ public class MultiLineText extends Drawable {
         if (font != null)
           gc.setFont(font);
 
-       gc.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f ) );
-
-
-       int widthText = 0;
-       int heightText = 0;
+        //gc.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f ) );
 
         if(text != null)
          {
-          FontRenderContext frc = gc.getFontRenderContext();
-          TextLayout t = new TextLayout(text[0],gc.getFont(),frc);
-          int gap = ((int) t.getBounds().getHeight())/2; //spaces between lines (same height of the text)
-          for(int i=0; i<text.length; i++)
-           {
-            frc = gc.getFontRenderContext();
-            t = new TextLayout(text[i],gc.getFont(),frc);
+           if (recalculate) {
+              heightsText = null;
+              heightsText = new int[text.length];
 
-            if(  ((int) t.getBounds().getWidth())  > widthText  ) widthText  = ((int) t.getBounds().getWidth()) ;
-            if(i!=0) heightText += ((int) t.getBounds().getHeight() +gap);
-            else heightText += ((int) t.getBounds().getHeight());
+              FontRenderContext frc = gc.getFontRenderContext();
 
-            gc.drawString(this.text[i], xs, ys+heightText);
-           }
-          r.x = xs;
-          r.y = ys;
-          r.width = widthText;
-          r.height = heightText;
+              TextLayout t = new TextLayout(text[0],gc.getFont(),frc);
+              heightsText[0] = (int) t.getBounds().getHeight();
+              widthText      = (int) t.getBounds().getWidth();
+              gc.drawString(this.text[0], xs, ys+heightsText[0]);
+
+              gap = (int) heightsText[0]/2; //spaces between lines (half height of the text)
+
+              for(int i=1; i<text.length; i++)
+              {
+                t = new TextLayout(text[i],gc.getFont(),frc);
+
+                if ( ((int) t.getBounds().getWidth()) > widthText)
+                  widthText = ((int) t.getBounds().getWidth());
+
+                heightsText[i] = heightsText[i-1] + (int) t.getBounds().getHeight() + gap;
+
+                gc.drawString(this.text[i], xs, ys+heightsText[i]);
+              }
+              
+              r.width = widthText;
+              r.height = heightsText[text.length-1];
+              r.x = xs;
+              r.y = ys;
+
+              recalculate = false;
+            } else {
+              for(int i=0; i<text.length; i++)
+              {
+                gc.drawString(this.text[i], xs, ys+heightsText[i]);
+              }
+            }      
          }
 
-        gc.draw3DRect(xs,ys,widthText,heightText,true);
+        gc.draw3DRect(xs,ys,r.width,r.height,true);
 
-        gc.setComposite( AlphaComposite.SrcOver ); // restore
+        //gc.setComposite( AlphaComposite.SrcOver ); // restore
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -25,16 +25,16 @@ stepPropertiesKey.3=init.info0
 stepPropertiesValue.3=\ \ \ \ \ \ \ \ Most\ common\ name,\ used\ in\ every\ land,\ for\ Shai'tan.\ The\ source\ of\ evil,\ antithesis\ of\ the\ Creator.\ Imprisoned\ by\ the\ Creator\ in\ Shayol\ Ghul\ at\ the\ moment\ of\ Creation.\ The\ attempt\ to\ free\ him\ from\ that\ prison\ brought\ about\ the\ War\ of\ the\ shadow,\ the\ Breaking\ of\ the\ World,\ and\ the\ end\ of\ the\ Age\ of\ Legends.
 
 stepPropertiesKey.4=init.choice1
-stepPropertiesValue.4=Amyrlin Seat
+stepPropertiesValue.4=Keeper\ of\ the\ Chronicles
 
 stepPropertiesKey.5=init.info1
-stepPropertiesValue.5=\ \ \ \ \ \ \ \ Leader\ of\ the\ Aes\ Sedai.\ Elected\ for\ life\ by\ the\ Hall\ of\ the\ Tower,\ the\ highest\ council\ of\ the\ Aes\ Sedai,\ which\ consists\ of\ three\ representatives\ from\ each\ of\ the\ seven\ Ajahs.\ The\ Amyrlin\ Seat\ has,\ theorically\ at\ least,\ almost\ supreme\ authority\ among\ the\ Aes Sedai,\ and\ ranks\ socially\ as\ the\ equal\ of\ a\ king\ or\ queen.\n
+stepPropertiesValue.5=\ \ \ \ \ \ \ \ Second\ in\ authority\ to\ the\ Amyrlin\ Seat\ among\ the\ Aes\ Sedai,\ she\ also\ acts\ as\ secretary\ to\ the\ Amyrlin.\ Chosen\ for\ life\ by\ the\ Hall\ of\ the\ Tower,\ and\ usually\ of\ the\ same\ Ajah\ as\ the\ Amyrlin.\n\n
 
 stepPropertiesKey.6=init.choice2
-stepPropertiesValue.6=Keeper\ of\ the\ Chronicles
+stepPropertiesValue.6=Amyrlin Seat
 
 stepPropertiesKey.7=init.info2
-stepPropertiesValue.7=\ \ \ \ \ \ \ \ Second\ in\ authority\ to\ the\ Amyrlin\ Seat\ among\ the\ Aes\ Sedai,\ she\ also\ acts\ as\ secretary\ to\ the\ Amyrlin.\ Chosen\ for\ life\ by\ the\ Hall\ of\ the\ Tower,\ and\ usually\ of\ the\ same\ Ajah\ as\ the\ Amyrlin.\n\n
+stepPropertiesValue.7=\ \ \ \ \ \ \ \ Leader\ of\ the\ Aes\ Sedai.\ Elected\ for\ life\ by\ the\ Hall\ of\ the\ Tower,\ the\ highest\ council\ of\ the\ Aes\ Sedai,\ which\ consists\ of\ three\ representatives\ from\ each\ of\ the\ seven\ Ajahs.\ The\ Amyrlin\ Seat\ has,\ theorically\ at\ least,\ almost\ supreme\ authority\ among\ the\ Aes Sedai,\ and\ ranks\ socially\ as\ the\ equal\ of\ a\ king\ or\ queen.\n
 
 stepPropertiesKey.8=init.choice3
 stepPropertiesValue.8=M'Hael
@@ -49,10 +49,10 @@ stepPropertiesKey.10=server.choice0.next
 stepPropertiesValue.10=dark-one-key.wiz
 
 stepPropertiesKey.11=server.choice1.next
-stepPropertiesValue.11=amyrlin-key.wiz
+stepPropertiesValue.11=keeper-key.wiz
 
 stepPropertiesKey.12=server.choice2.next
-stepPropertiesValue.12=keeper-key.wiz
+stepPropertiesValue.12=amyrlin-key.wiz
 
 stepPropertiesKey.13=server.choice3.next
 stepPropertiesValue.13=mhael-key.wiz

@@ -34,7 +34,7 @@ stepPropertiesKey.6=init.choice2
 stepPropertiesValue.6=White\ Ajah
 
 stepPropertiesKey.7=init.info2
-stepPropertiesValue.7=The\ White\ Ajah\ devotes\ itself\ to\ questions\ of\ philosophy\ and\ truth.
+stepPropertiesValue.7=The\ White\ Ajah\ devotes\ itself\ to\ questions\ of\ philosophy\ and\ truth.\n
 
 stepPropertiesKey.8=init.choice3
 stepPropertiesValue.8=Blue\ Ajah
@@ -64,7 +64,7 @@ stepPropertiesKey.16=init.choice7
 stepPropertiesValue.16=Gray\ Ajah
 
 stepPropertiesKey.17=init.info7
-stepPropertiesValue.17=Gray\ Ajah\ sisters\ are\ mediators,\ seeking\ harmony\ and\ consensus.
+stepPropertiesValue.17=Gray\ Ajah\ sisters\ are\ mediators,\ seeking\ harmony\ and\ consensus.\n
 
 stepPropertiesKey.18=init.choice8
 stepPropertiesValue.18=Brown\ Ajah

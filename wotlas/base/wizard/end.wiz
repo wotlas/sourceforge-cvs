@@ -13,7 +13,7 @@ stepPropertiesKey=3
 stepPropertiesValue=3
 
 stepPropertiesKey.0=init.info0
-stepPropertiesValue.0=\n \ \ \ \ \ \ We\ have\ gathered\ all\ the\ information\ we\ needed.\ Your\ character\ is\ :\n\n$ACCOUNT_SUMMARY$\n\n\n\ \ \ \ \ \ \ When\ you'll\ click\ on\ the\ 'ok'\ button\ your\ account\ will\ be\ created\ and\ added\ to\ the\ game.\ A\ new\ connection\ with\ the\ game\ server\ will\ then\ be\ established.
+stepPropertiesValue.0=\nWe\ have\ gathered\ all\ the\ information\ we\ needed.\ Your\ character\ is\ :\n\n$ACCOUNT_SUMMARY$\n\n\n\ \ \ \ \ \ \ When\ you'll\ click\ on\ 'Ok'\ your\ account\ will\ be\ created\ and\ added\ to\ the\ game.\ A\ new\ connection\ with\ the\ game\ server\ will\ then\ be\ established.
 
 # SERVER SIDE INCLUDES
 

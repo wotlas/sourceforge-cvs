@@ -24,6 +24,9 @@ import wotlas.common.message.chat.SendTextMessage;
 import wotlas.common.chat.ChatRoom;
 import wotlas.common.ServerConfig;
 
+import wotlas.utils.Debug;
+import wotlas.libs.sound.SoundLibrary;
+
 /** "/server" chat command. To get the name of the server on which we are connected.
  *
  * @author Aldiss
@@ -94,10 +97,18 @@ public class ServerChatCommand implements ChatCommand
 
           ServerConfig ourConfig = ServerManager.getDefaultServerManager().getServerConfig();
 
-          response.setMessage( "/cmd:You are on server "+ourConfig.getServerSymbolicName()
-                               +" ("+ourConfig.getServerID()
-                               +") located in "+ourConfig.getLocation()
-                               +"<br> <b>Admin e-mail:</b>"+ourConfig.getAdminEmail() );
+          if(message.equals("/server:bell")) {
+               SoundLibrary.createSoundLibrary("../base").playSound("server.wav");
+               Debug.signal(Debug.NOTICE,null,""+player.getFullPlayerName()+" is ringing this server...");
+
+               response.setMessage( "/cmd:You are ringing server <b> "+ourConfig.getServerSymbolicName()
+                                 +" </b> ("+ourConfig.getServerID()+") ..." );
+          } else {
+             response.setMessage( "/cmd:You are on server "+ourConfig.getServerSymbolicName()
+                                 +" ("+ourConfig.getServerID()
+                                 +") located in "+ourConfig.getLocation()
+                                 +"<br> <b>Admin e-mail:</b>"+ourConfig.getAdminEmail() );
+          }
 
           player.sendMessage( response );
           return true;

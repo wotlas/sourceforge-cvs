@@ -44,9 +44,9 @@ import wotlas.libs.graphics2D.policy.*;
 
 import wotlas.libs.net.NetConnectionListener;
 import wotlas.libs.net.NetMessage;
+import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.libs.net.NetPersonality;
-
-import wotlas.libs.pathfinding.AStarDouble;
+import wotlas.libs.net.utils.NetQueue;
 
 import wotlas.libs.sound.SoundLibrary;
 
@@ -58,9 +58,7 @@ import wotlas.utils.Tools;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.awt.MediaTracker;
 
 import java.io.File;
 import java.io.IOException;
@@ -177,9 +175,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
   private MapData myMapData;
 
-  /** Our AStar object.
-   */
-  public AStarDouble aStar;
 
   /** Our client interface frame.
    */
@@ -190,6 +185,14 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   private JOptionsPanel optionsPanel;
   private JPlayerPanel playerPanel;
   private JLogPanel logPanel;
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** NetQueue for synchronous messages. Messages that want to be run after the current
+    *  tick should call a queueMessage() on this NetQueue.
+    *  NetMessageBehaviours should use the invokeLater() method to queue a message.
+    */
+      private NetQueue syncMessageQueue = new NetQueue(1,3);
 
  /*------------------------------------------------------------------------------------*/
 
@@ -337,10 +340,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
  /*------------------------------------------------------------------------------------*/
 
-  public AStarDouble getAStar() {
-    return aStar;
-  }
-
   /** To test if player was diconnected
    *
    * @return true if player was disconnected
@@ -376,13 +375,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       personality.queueMessage( new PasswordAndLoginMessage( currentProfileConfig.getLogin(),
               currentProfileConfig.getPassword() ) );
 
-      /*
-      try {
-        wait( 1000 );
-      } catch(Exception e){
-        ; // Do nothing
-      }
-      */
 
       JAccountWizard host = new JAccountWizard(personality);
       wotlas.utils.SwingTools.centerComponent(host);
@@ -395,15 +387,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       }
 
       Debug.signal( Debug.NOTICE, null, "New account created !" );
-
-      /*
-      try {
-        wait( 1000 );
-      } catch(Exception e){
-        ; // Do nothing
-      }
-      */
-
       return;
 
     } else {
@@ -519,8 +502,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
     players = new Hashtable();
     
-    // 4 - Create AStar
-    //aStar = new AStarDouble();
 
     // 5 - Create the panels
     infosPanel = new JInfosPanel(myPlayer);
@@ -562,7 +543,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     if (SHOW_DEBUG)
         System.out.println("Frame show");
 
-    // 9 - Retreive other players informations    
+    // 9 - Retrieve other players informations    
     //personality.queueMessage(new AllDataLeftPleaseMessage());    
       addPlayer(myPlayer);
 
@@ -591,8 +572,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       showWarningMessage("Cannot retreive your informations from the Game Server !");
       Debug.exit();
     }
-  
-  // RAJOUTER UNE ERREUR CRITIQUE SI PAS DE DONNEES
 
     myPlayer.setIsMaster( true );   // this player is controlled by the user.
 
@@ -653,20 +632,38 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
   public void tick() {
 
-    // Update myPlayer's location
-    myMapData.locationUpdate(myPlayer);
-    
-    // Update players drawings    
-    synchronized(players) {
-      Iterator it = players.values().iterator();
-      while( it.hasNext() ) {
-        ( (PlayerImpl) it.next() ).tick();
-      }
-    }
+    // I - Update myPlayer's location
+       myMapData.locationUpdate(myPlayer);
+   
+     
+    // II - Update players drawings    
+       synchronized(players) {
+          Iterator it = players.values().iterator();
 
-    gDirector.tick();
+          while( it.hasNext() )
+              ( (PlayerImpl) it.next() ).tick();
+       }
 
+
+    // III - Graphics Director update & redraw
+       gDirector.tick();
+
+
+    // IV - Sync Messages Execution
+       NetMessageBehaviour syncMessages[] = syncMessageQueue.pullMessages();
+       
+       for( int i=0; i<syncMessages.length; i++)
+            syncMessages[i].doBehaviour( this );
   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To invoke the code of the specified message just after the current tick.
+   *  This method can be called multiple times and is synchronized.
+   */
+   public void invokeLater( NetMessageBehaviour msg ) {
+      syncMessageQueue.queueMessage( msg );
+   }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -709,8 +706,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         // We open/close the door IF the player is near enough...
            Door door = (Door) object;
            
-        if (SHOW_DEBUG)
-          System.out.println("DOOOORRR CLICKED");
+           if (SHOW_DEBUG)
+              System.out.println("A door has been clicked...");
 
         // player near enough the door ?
            if( door.isPlayerNear( myPlayer.getCurrentRectangle() ) ) {
@@ -748,44 +745,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
  /** Called when user right-clic on JMapPanel
    */
   public void onRightClicJMapPanel(MouseEvent e) {
-    
-    /*
-    NetMessage toto = new TotoMessage();
-       
-    if ( myPlayer.getLocation().isRoom() ) {
-      // Current Room    
-      Room room = player.getMyRoom();                    
-      if ( room==null ) return;     
-      Hashtable players = room.getPlayers();            
-      synchronized( players ) {
-        Iterator it = players.values().iterator();               
-        PlayerImpl p;
-        while ( it.hasNext() ) {
-          p = (PlayerImpl) it.next();
-          p.sendMessage( toto );          
-        }
-      }
-
-      // Other rooms      
-      if ( room.getRoomLinks()==null ) return;
-      Room otherRoom;
-      for( int i=0; i<room.getRoomLinks().length; i++ ) {
-        otherRoom = room.getRoomLinks()[i].getRoom1();
-        if ( otherRoom==room )
-          otherRoom = room.getRoomLinks()[i].getRoom2();
-          
-        players = otherRoom.getPlayers();
-        synchronized( players ) {
-          Iterator it = players.values().iterator();
-          PlayerImpl p;
-          while ( it.hasNext() ) {
-            p = (PlayerImpl)it.next();
-            p.sendMessage( toto );
-          }
-        }
-      }
-    }
-    */
   }
 
  /*------------------------------------------------------------------------------------*/

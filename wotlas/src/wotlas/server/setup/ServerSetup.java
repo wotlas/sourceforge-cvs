@@ -119,7 +119,14 @@ public class ServerSetup extends JFrame
          pm = PersistenceManager.createPersistenceManager( databasePath );
 
       // load default server config.
+         Debug.setLevel( Debug.CRITICAL );
+         Debug.displayExceptionStack( false );
+
          config = pm.loadServerConfig( serverID );
+
+         Debug.setLevel( Debug.NOTICE );
+         Debug.displayExceptionStack( true );
+
 
          if( config == null )
              config = new ServerConfig();

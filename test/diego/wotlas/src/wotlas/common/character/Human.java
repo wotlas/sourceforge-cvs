@@ -33,6 +33,10 @@ import java.io.*;
 
 public abstract class Human extends WotCharacter {
 
+    /** id used in Serialized interface.
+     */
+    private static final long serialVersionUID = 556565L;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Hair color

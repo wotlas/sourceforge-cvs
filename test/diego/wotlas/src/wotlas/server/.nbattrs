@@ -6,6 +6,7 @@
         <attr name="class_dependency_wotlas.common.Player" stringvalue="PlayerImpl"/>
     </fileobject>
     <fileobject name="ServerDirector.java">
+        <attr name="class_dependency_wotlas.libs.net.NetServerListener" stringvalue="ServerDirector"/>
         <attr name="class_dependency_java.lang.Runnable" stringvalue="ServerDirector"/>
     </fileobject>
     <fileobject name="AccountBuilder.java">
@@ -13,5 +14,8 @@
     </fileobject>
     <fileobject name="LieManager.java">
         <attr name="class_dependency_wotlas.libs.persistence.BackupReady" stringvalue="LieManager"/>
+    </fileobject>
+    <fileobject name="ServerPropertiesFile.java">
+        <attr name="class_dependency_wotlas.common.PropertiesConfigFile" stringvalue="ServerPropertiesFile"/>
     </fileobject>
 </attributes>

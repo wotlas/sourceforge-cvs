@@ -39,7 +39,11 @@ import wotlas.utils.*;
 
 public class AesSedai extends Female {
 
- /*------------------------------------------------------------------------------------*/
+    /** id used in Serialized interface.
+     */
+    private static final long serialVersionUID = 556565L;
+
+  /*------------------------------------------------------------------------------------*/
 
   /** Ajah & Aes Sedai rank
    */

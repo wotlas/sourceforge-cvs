@@ -37,6 +37,10 @@ import java.awt.Color;
 
 public class DarkOne extends WotCharacter {
 
+    /** id used in Serialized interface.
+     */
+    private static final long serialVersionUID = 556565L;
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Current Sprite.

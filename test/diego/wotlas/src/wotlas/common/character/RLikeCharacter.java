@@ -28,6 +28,7 @@ import wotlas.utils.*;
 
 import java.io.*;
 import java.awt.Color;
+import wotlas.common.environment.*;
 
 /** basic Interface for a rogue like Character
  *
@@ -37,12 +38,16 @@ import java.awt.Color;
  */
 
 public abstract class RLikeCharacter extends BasicChar {
+
+    /** id used in Serialized interface.
+     */
+    private static final long serialVersionUID = 556565L;
      
      /** return enviroment type : Actually are RogueLike or Wheel of Time
       *
       */
      public byte getEnvironment() {
-         return ENVIRONMENT_ROGUE_LIKE;
+         return EnvironmentManager.ENVIRONMENT_ROGUE_LIKE;
      }
      
           /**

@@ -25,6 +25,7 @@ import wotlas.common.objects.inventories.Inventory;
 import wotlas.libs.graphics2D.*;
 import wotlas.utils.*;
 import wotlas.utils.*;
+import wotlas.common.environment.*;
 
 import java.io.*;
 import java.awt.Color;
@@ -54,7 +55,7 @@ public abstract class WotCharacter extends BasicChar {
      *
      */
     public byte getEnvironment() {
-        return ENVIRONMENT_WOT;
+        return EnvironmentManager.ENVIRONMENT_WOT;
     }
 
     public void InitWotData(){

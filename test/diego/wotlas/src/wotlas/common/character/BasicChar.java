@@ -37,10 +37,11 @@ import java.awt.Color;
  */
 
 public abstract class BasicChar extends CharData {
-
-    public static final byte ENVIRONMENT_WOT        = 1;
-    public static final byte ENVIRONMENT_ROGUE_LIKE = 2;
     
+    /** id used in Serialized interface.
+     */
+    private static final long serialVersionUID = 556565L;
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To get a Drawable for this character. This should not be used on the

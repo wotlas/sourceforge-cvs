@@ -29,6 +29,10 @@ import java.io.*;
 
 public abstract class Female extends Human {
 
+    /** id used in Serialized interface.
+     */
+    private static final long serialVersionUID = 556565L;
+
 // TO ADD: one power use
 
 }

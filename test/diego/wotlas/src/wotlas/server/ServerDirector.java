@@ -32,8 +32,10 @@ import wotlas.common.*;
 import wotlas.common.RemoteServersPropertiesFile;
 
 import wotlas.libs.aswing.ALoginDialog;
-import java.awt.Frame;
 
+import wotlas.common.environment.*;
+
+import java.awt.Frame;
 import java.io.File;
 import java.util.Properties;
 import java.net.*;
@@ -309,6 +311,10 @@ public class ServerDirector implements Runnable, NetServerListener {
            Thread persistenceThread = new Thread( serverDirector );
            persistenceThread.start();
 
+           // showing environment type
+           Debug.signal( Debug.NOTICE, null, "Server environment name : "+EnvironmentManager.getEnvironmentName()+" ." );
+           EnvironmentManager.getEnvironmentHour();
+           
         // If we are in "daemon" mode the only way to stop the server is via signals.
         // Otherwise we wait 2s and wait for a key to be pressed to shutdown...
            if( !isDaemon ) {
@@ -664,4 +670,3 @@ public class ServerDirector implements Runnable, NetServerListener {
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

@@ -38,6 +38,10 @@ import wotlas.libs.graphics2D.filter.*;
 
 public class AielWarrior extends Male {
 
+    /** id used in Serialized interface.
+     */
+    private static final long serialVersionUID = 556565L;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Aiel rank

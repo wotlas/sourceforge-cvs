@@ -65,6 +65,10 @@ public class PlayerImpl implements Player, NetConnectionListener
     */
        private int y;
 
+   /** WotCharacter Class
+    */
+       WotCharacter wotCharacter;
+
  /*------------------------------------------------------------------------------------*/
 
    /** Personality Lock
@@ -220,7 +224,17 @@ public class PlayerImpl implements Player, NetConnectionListener
     *  @return player character
     */
       public WotCharacter getWotCharacter() {
-        return null; // for now
+        return wotCharacter; 
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the player's character.
+    *
+    *  @param wotCharacter new player character
+    */
+      public void setWotCharacter( WotCharacter wotCharacter ) {
+         this.wotCharacter = wotCharacter;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

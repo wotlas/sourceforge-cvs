@@ -11,7 +11,7 @@
 # On Unix gnu make should find your sh automatically. 
 #
 
-SHELL = d:\\winnt\cmd.exe
+SHELL=c:\\command.com
 
 
 # PACKAGES
@@ -20,7 +20,8 @@ SHELL = d:\\winnt\cmd.exe
 # to wrestle with Grosoft Windows buffer limitations...
 #
 
-UTILS_PACKAGES = wotlas/utils
+UTILS_PACKAGES = wotlas/utils \
+                 wotlas/utils/aswing
 
 LIBS_PACKAGES  = wotlas/libs/net \
                  wotlas/libs/net/message \

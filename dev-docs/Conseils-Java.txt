@@ -1,0 +1,203 @@
+Quelques règles de programmation Java
+-------------------------------------
+
+Contributeurs: Aldiss, Hari
+
+
+Pour wotlas, il s'agit de faire un système stable et performant,
+voici quelques recommandations importantes :
+
+
+LA VISIBILITE
+-------------
+
+Quelques règles de visibilité/accès aux variables/méthodes de classes :
+
+   a - les membres d'une classe doivent être "private" (s'il y a besoin de
+       les accéder en R[/W] de l'extérieur, il faut implémenter un getter[/setter]).
+
+       Pour les méthodes, il faut mettre l'accès le plus restrictif:
+
+          - On choisit d'abord "private".
+
+          - Si la méthode doit être accessible par d'autres classes du package on
+            choisit default (rien), voir "protected" si la classe est faite pour être
+            étendue.
+
+          - Si vraiment la méthode doit être visible en-dehors du package, on met
+            "public" mais dans ce cas le commentaire "javadoc" doit être suffisamment
+            complet pour permettre son utilisation.
+            => Pour la mise au point/maintenance cela se révèle fort utile !
+
+   b - Pour les getter/setter, il faut de plus préciser qu'une méthode publique
+       qui s'appelle "getXXX" doit en principe renvoyer la valeur de la propriété "XXX"
+       en évitant au maximum les effets de bords (tout autre code peut être fondé à
+       l'appeler sans se méfier).
+
+       Exemple :
+
+          Pas de :
+
+             Bob my_bob = new Bob( ... );            
+
+              ....
+
+              String s = null;
+
+               try{
+                    s = my_bob.getTabElement( i );   // je récupère le string à la position i
+
+                    if( s.equals("null") )   // je corrige si c'est pas bon
+                        s = "";
+               }
+               catch( OutOfBoudException e )
+                  s = "";                       // si je me suis planté dans la taille du tableau
+               }
+
+              ...
+
+             class Bob
+             {
+
+                 Object tab[] = new Object[10];
+
+                 // Retourne la version "String" de l'élément du tableau
+                    int getTabElement( int i ) {
+                         return ""+tab[i];
+                    }
+
+                    
+             }
+
+
+          Mais :
+
+             Bob my_bob = new Bob( ... );            
+
+             ....
+
+             String s = my_bob.getTabElement( i );
+
+             ...
+
+             class Bob
+             {
+
+                 Object tab[] = new Object[10];
+
+               // Retourne la version "String" de l'élément du tableau
+                  int getTabElement( int i ) {
+                       if( i>= tab.length ) {
+                           Debug.declareError( Debug.WARNING, new OutOfBoundsException("getElement") );
+                           return "";
+                       }
+
+                       if( tab[i]==null )
+                           return "";
+
+                     return ""+tab[i];
+                  }
+            }
+
+        Le "if( i>= tab.length)" est facultatif. On pourrait laisser Java lancer l'exception
+        tout seul. Ce n'est qu'un exemple, il faut voir au cas par cas. Ici on a considéré que
+        se planter sur la taille du tableau n'étais pas très grave.... ( c'est pour l'exemple ).
+
+
+LES EXCEPTIONS
+--------------
+
+* Le code suivant est interdit :
+
+    catch(Exception e)
+    {}
+
+  Il faut toujours traiter les exceptions ou alors les laisser se propager ( via throws ).
+  De plus évitez autant que possible de capturer tous les types d'exceptions. Raffinez, raffinez...
+
+  Pour le projet wotlas nous allons rajouter une classe wotlas.common.Debug qui contiendra
+  des appels statiques du genre "declareError".
+
+  Voici un exemple de code :
+
+    catch( UnknownHostException e ) {
+        Debug.declareError( Debug.FATAL, e );
+    }
+
+
+LES TABLEAUX
+------------
+
+* PAS DE VECTOR ! Sauf éventuellement côté client pour des classes peu importantes.
+  Un Vector c'est 40 FOIS plus lent qu'un simple tableau.
+
+  A la place il y a :
+
+     - pour gérer un grand nombre d'éléments : les java.util.HashMap 
+       Ce sont des tables à accès direct (via une clé et méthode de hachage)
+       Les accès sont non "synchronised".
+
+    - les java.util.HashTable. Pareil que les HashMap mais les accès sont "synchronized"
+      donc plus lent.
+
+    - les tableaux tous simples... pour un nombre d'éléments bornés et peu important.
+
+    - les tableaux avec recopie... pour un nombre d'éléments non borné mais peu important.
+
+      Exemple d'implémentation :
+
+      Objet pile[] = new Objet[10];
+      int dernier_element;
+
+       void rajouter( Objet element )
+       {
+          if( dernier_element+1 == pile.length ) {
+              Objet pile_tmp[] = new Objet[ pile.length + 5 ];
+
+              System.arraycopy( pile, 0, pile_tmp, 0, pile.length );
+              pile = pile_tmp;
+          }
+
+         dernier_element++;
+         pile[dernier_element] = element;
+       }
+
+      Notez l'utilisation de la fonction système de recopie de tableaux d'objets. Il n'y a
+      pas plus rapide pour faire des recopies !
+
+    - il y a aussi les java.util.ArrayList. Ce sont comme des Vector mais non synchronisés.
+      Ils sont encore 10 fois plus lents que les tableaux.
+
+
+SYNCHRONISATION
+---------------
+
+* Attention aux synchronized ! plus de détails dans une prochaine version de ce document !
+  Bien utilisé c'est très puissant... mal utilisé c'est une catastrophe pour les performances !
+
+  Bientôt quelques Design Patterns...
+
+
+
+REFERENCES FANTOMES
+-------------------
+
+Ce sont des références à des objets qui ne sont plus utilisés mais qui existent encore en mémoire.
+En effet le garbage collector compte le nombre de références sur un objet, et attend que ce nombre passe à 0 pour déclarer l'objet "Mort" et récupérer plus tard la mémoire. Donc dans le cas suivant :
+
+    void fonction()
+    {
+      MonObjet obj = new MonObjet();
+
+      ... du code ...
+
+       obj = null;       <= signale que la place mémoire prise par obj peut être libérée !
+
+      ... du code ...
+    }
+
+Ca c'est un cas simple car on peut aussi attendre la fin de la fonction pour que la variable
+locale soit effacée... là où ça se complique c'est si on utilise des HashTable ou des tableaux.
+
+Dans ces cas on peut oublier d'effacer des anciennes références, les objets ne sont pas effacés et au bout d'un moment c'est le "Exit: Out Of Memory"... donc attention aux références d'objets ! n'hésitez pas à faire des obj=null , ça n'a rien de ridicule.
+

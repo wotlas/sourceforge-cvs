@@ -1,0 +1,129 @@
+Quelques remarques sur les conventions de codage.
+-------------------------------------------------
+
+Auteur : Aldiss
+Date :  27/04/2001
+
+
+1 - Un fichier Java de Wotlas DOIT se décomposer comme suit 
+    (utilisez la référence ExampleCode.java):
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+/**
+ * entête GPL
+ * à ne pas modifier
+ */
+
+package wotlas.server;    <- nom du package 
+
+
+import java.io.File;
+import java.rmi.Remote;              <- import des API Java de Sun.
+import java.rmi.RemoteException;        ( essayez de ne pas utiliser de java.qqchose.* )
+import java.util.Vector;
+
+
+import wotlas.common.net.Message;
+import wotlas.common.io.MapLoader;   <- import des API propriétaires wotlas.
+import wotlas.utils.Tools;
+
+
+/** 
+ * Some comments IN ENGLISH about what this class does.
+ *
+ * @author Bertrand Le Nistour          <- champs OBLIGATOIRE, qui a créé ce fichier ?
+ * @see wotlas.common.io.MapLoader      <- optionnel : qq références utiles liéés à ce fichier
+ * @see java.net.Socket
+ */
+
+
+public class CodeExample extends AnotherClass implements MyInterface1, MyInterface2
+{
+   LES CONSTANTES  ( final static )
+
+   LES VARIABLES MEMBRES
+
+   LES CONSTRUCTEURS
+
+   LES METHODES
+}
+
+
+/** Quelques commentaires sur d'éventuelles classes privées
+ *  qui seraient dans le même fichier.
+ */
+
+class MyPrivateClass {
+
+}
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+2 - Conventions de nommage A RESPECTER:
+
+    Les constantes :  TOUT_EN_MAJUSCULE
+
+    Les variables  :  tout_en_minuscule  ou  toutenminuscule ou minusculePuisDebutMajuscule
+
+    Les méthodes   :  minusculePuisDebutMajuscule()
+
+    Les classes    :  TousLesDebutsEnMajuscule
+
+   Contrairement aux exemples que je viens de donner les noms de variables
+   doivent être en anglais.
+
+
+3 - Les Commentaires sont OBLIGATOIRES, cela dit ne tombez pas dans l'excès.
+    Pas de français... ils doivent être en english.
+
+
+4 - L'indentation est laissée à votre discretion, pourvu que cela soit LISIBLE.
+
+    Pas de :                                     mais :
+
+    int fonction(int var,float bob){             void fonction( int var, float bob )
+      if(var+bob==5.0f) {                        {
+       for(byte j=0;j<100;j++)                        if( (var+float)==5.0f )
+        if((++var+j)>100)                             { 
+           return 5;                                     for( byte j=0; j<100; j++ ) {
+       return 6;                                             var++;
+      }                                                      if( (var+j)>100 )
+      return 3;                                                  return 5;
+    }                                                     }     
+
+                                                         return 6;
+                                                      }
+
+                                                   return 3;
+                                                 }
+
+ Vous l'avez compris il ne faut pas hésiter à sauter des lignes, et à rajouter des espaces.
+
+
+5 - Une fois le codage des classes terminées, n'hésitez pas à créer une petite doc contenant
+    qq cas d'utilisation de votre travail. Par exemple après avoir écrit la partie API réseau
+    du projet, je pourrais créer une petite doc dans /cvsroot/wotlas/dev-docs du style:
+
+    LECON N°1: Comment envoyer un message au serveur ?
+
+    Pour envoyer un message, il y a quatre étapes :
+
+        // 1 - Récupération d'un lien vers la classe qui gère les envois de données
+               NetSender net_sender = ...récupération
+
+        // 2 - Récupération d'un handle sur le message que l'on veut envoyer
+        //     Les messages sont classés par "catégorie"/"type du message dans la catégorie"
+               MessageHelloWorld msg_hello = new MessageHelloWorld( "Bonjour Tout le Monde" );
+
+        // 3 - demande d'envoi...
+               net_sender.send( msg_hello );
+
+        // 4 - nettoyage éventuel
+               msg_hello = null;
+
+
+
+6 - Bon codage !
+

@@ -93,9 +93,9 @@ public class JChatRoom extends JPanel implements MouseListener
 
     playersJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     
-//    PlayersListRenderer playersListRenderer = new PlayersListRenderer();
+    PlayersListRenderer playersListRenderer = new PlayersListRenderer();
 //    if( selectedPlayer.getPlayerAwayMessage()!=null && !selectedPlayer.isConnectedToGame() ) {
-//    playersJList.setRenderer(playersListRenderer);
+    playersJList.setCellRenderer(playersListRenderer);
     
     JScrollPane listScroller = new JScrollPane(playersJList,
             ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
@@ -243,6 +243,35 @@ public class JChatRoom extends JPanel implements MouseListener
       
     }
   }
+
+  class PlayersListRenderer extends JLabel implements ListCellRenderer {
+     // This is the only method defined by ListCellRenderer.
+     // We just reconfigure the JLabel each time we're called.
+
+     public Component getListCellRendererComponent(
+       JList list,
+       Object value,            // value to display
+       int index,               // cell index
+       boolean isSelected,      // is the cell selected
+       boolean cellHasFocus)    // the list and the cell have the focus
+     {
+         String s = value.toString();
+         setText(s);
+         
+   	   if (isSelected) {
+             setBackground(list.getSelectionBackground());
+	       setForeground(list.getSelectionForeground());
+	   }
+         else {
+	       setBackground(list.getBackground());
+	       setForeground(list.getForeground());
+	   }
+	   setEnabled(list.isEnabled());
+	   setFont(list.getFont());
+         return this;
+     }
+ }
+
 }
 
   

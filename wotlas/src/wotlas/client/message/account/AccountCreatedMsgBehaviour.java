@@ -16,45 +16,47 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.client.message.account;
 
 import java.io.IOException;
 
-
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.common.message.account.*;
 
+import wotlas.client.DataManager;
 
 /**
  * Associated behaviour to the AccountCreatedMessage...
  *
- * @author Aldiss
+ * @author Aldiss, Petrus
  */
 
 public class AccountCreatedMsgBehaviour extends AccountCreatedMessage implements NetMessageBehaviour
 {
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
    */
-     public AccountCreatedMsgBehaviour() {
-          super();
-     }
+  public AccountCreatedMsgBehaviour() {
+    super();
+  }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ /*------------------------------------------------------------------------------------*/
 
   /** Associated code to this Message...
    *
    * @param context an object giving specific access to other objects needed to process
    *        this message.
    */
-     public void doBehaviour( Object context ) {
+  public void doBehaviour( Object context ) {
+    System.out.println("Account Created - clientID:"+clientID+" serverID:"+serverID);
+    DataManager dataManager = (DataManager) context;
+    dataManager.setCurrentProfileConfigID(clientID, serverID);
+  }
 
-        // the context is here a ...
-           System.out.println("Account Created - clientID:"+clientID+" serverID:"+serverID);
-     }
+ /*------------------------------------------------------------------------------------*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
 

@@ -38,7 +38,6 @@ LIBS_PACKAGES2 = wotlas/libs/graphics2D \
 COMMON_PACKAGES = wotlas/common \
                   wotlas/common/universe \
                   wotlas/common/character \
-                  wotlas/common/message \
                   wotlas/common/message/account
 
 COMMON_PACKAGES2 = wotlas/common/message/description \

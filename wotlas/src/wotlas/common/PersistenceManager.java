@@ -281,7 +281,7 @@ public class PersistenceManager
                         buildingCount++;
 
                      // we save all this building's maps
-                        InteriorMap interiorMaps[] = buildings[t].getInteriorMaps();
+                        InteriorMap interiorMaps[] = buildings[b].getInteriorMaps();
 
                         if( interiorMaps==null )
                             continue;

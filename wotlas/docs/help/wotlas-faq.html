@@ -48,7 +48,8 @@
     I have to do something special to configure my server ?<br>
     <a href="#q118"><b>1.18</b></a> - I'm tring to use the <i>Setup</i> utility 
     but the file tranfer with <i>pscp</i> doesn't seem to be working... what's 
-    happening ?</font></p>
+    happening ?<br>
+    <b><a href="#q119">1.19</a></b> - How do I create a bot ? </font></p>
 </blockquote>
 <p><font size="3" color="#006699"><b>II - FAQ - Wotlas Client - Technical Problems</b></font> 
 </p>
@@ -460,6 +461,25 @@
       mode you won't see the warnings at all, the command will just fail.<br>
       <i><br>
       Thanks to Fred McMaster for his help on this entry.</i><br>
+      <a href="#top">back to the top</a></font></p>
+  </blockquote>
+  <p><b>1.19</b> - How do I create a bot ?<font size="2"><a name="q119"></a></font></p>
+  <blockquote> 
+    <p><font size="2">First you'll need to install our <i>wotlas-alice-server</i> 
+      package and follow the instructions to run the alice server ( see www.alicebot.org 
+      for more information on AliceBot). Once you have your wotlas server running 
+      as well as the AliceServer, just :</font></p>
+    <blockquote> 
+      <p><font size="2">- create a new account for the player that will become 
+        a bot.<br>
+        - in the game move your player where you want your bot to appear<br>
+        - whisper the chat <i>/makebot</i> <i>[password]</i> command. The password 
+        is defined in your <i>base/configs/server.cfg</i> config file ( property 
+        <i>bots.controlKey</i>, it's a server generated key ).</font></p>
+    </blockquote>
+    <p><font size="2">Once you enter the <i>/makebot</i> command you'll get disconnected 
+      and your player's control will be handled to a bot. You can still reconnect 
+      on your bot account to move the bot.<br>
       <a href="#top">back to the top</a></font></p>
   </blockquote>
   <p>&nbsp;</p>
@@ -893,6 +913,8 @@
       ways to communicate and interact. We've not reach our goal yet but we are 
       getting closer each day.<br>
       <br>
+      For more information on wotlas read our <i>Wotlas Overview</i> paper on 
+      http://wotlas.sf.net. <br>
       <a href="#top">back to the top</a></font></p>
   </blockquote>
   <p><b>5.2</b> - Do you intend to continue this project ?<a name="q52"></a></p>
@@ -966,11 +988,10 @@
 <blockquote>
   <p><b>5.8</b> - Can you give me some numbers on the wotlas project ?<a name="q58"></a></p>
   <blockquote> 
-    <p><font size="2">Wotlas</font><font size="2"> represents 345 Java files spread 
-      among 40 different packages. The Java files have a total of 66000 lines 
-      of text including 28600 of code ( if you remove comments and empty lines 
-      ). We were active developers on wotlas. Other developers (2nd team) are 
-      working on plug-ins for the game.<br>
+    <p><font size="2">Wotlas</font><font size="2"> represents 370 Java files spread 
+      among 40 different packages. The Java files have a total of 72000 lines 
+      of text including 30000 of code ( if you remove comments and empty lines 
+      ). <br>
       <br>
       <a href="#top">back to the top</a></font></p>
   </blockquote>

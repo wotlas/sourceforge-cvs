@@ -8,7 +8,7 @@
 <div align="center"> 
   <hr width="50%">
   <p><font size="5">HOW TO BUILD WOTLAS</font><font size="4"><br>
-    <i><font size="2">Last Modified : 23th of April</font></i></font></p>
+    <i><font size="2">Last Modified : 1th of May</font></i></font></p>
   <p align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This <i>How-To</i> 
     will explain you how to compile the wotlas client, server, build JAR files 
     and build the alicebot part of wotlas. To build wotlas you have 2 solutions 
@@ -94,6 +94,13 @@
   </table>
 </div>
 <p align="center">&nbsp; </p>
+<p><font color="#FF0000"><b><font color="#CC0000">IMPORTANT : </font></b></font>If 
+  you've downloaded the wotlas project from our CVS repository, you'll need to 
+  generate the wotlas universe via the <i><b>server-world-generator.bat</b></i> 
+  script. This is needed if you want to be able to start the <i>wotlas client</i> 
+  or <i>server</i> properly.<br>
+</p>
+<p>&nbsp; </p>
 <p><font size="4">III - Compile Wotlas with Ant &amp; Jikes</font><b><a name="III"></a><br>
   </b></p>
 <p>If you use <i>Javac</i> to compile wotlas it'll take you around 3 minutes on 
@@ -105,7 +112,8 @@
 <p>So to install Jikes and compile wotlas with it just :</p>
 <blockquote> 
   <p> - download jikes from <a href="http://oss.software.ibm.com/developerworks/opensource/jikes/" target="_blank">here</a>. 
-    Jikes is available forWindows, Linux, etc...</p>
+    Jikes is available forWindows, Linux, etc... You'll also find jikes 1.15 for 
+    windows on our web site <a href="http://wotlas.sf.net/pub" target="_blank">here</a>.</p>
   <p> - copy the <i>jikes.exe</i> file ( <i>jikes</i> under Unix ) to your c:\windows 
     ( or to /usr/bin if you are under Unix )</p>
   <p> - edit wotlas's<i> build.xml</i> and change the value :<br>
@@ -132,21 +140,17 @@
   </p>
   <p><b>2</b> - Install it near your wotlas home. The ideal directory structure 
     would be :</p>
-  <pre>     projects
-
+<pre>
+     projects
         |-----alice
         |       |-----ProgramD
-
         |                |-------lib
-
         |                |------- ...
         |-----wotlas
-
         |       |-----base
-
         |       |-----build
-	    |       |-----...
-	</pre>
+        |       |-----...
+</pre>
   <blockquote> 
     <p> If this is not the alice directory structure you want to have, just open 
       the <i>wotlas/build/build.xml</i> file and edit the line :<br>

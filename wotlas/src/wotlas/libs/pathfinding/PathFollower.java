@@ -43,6 +43,15 @@ public class PathFollower implements MovementComposer {
    */
     transient private static int tileSize = -1;
 
+  /** To tell that we must reconstruct a trajectory that was not possible
+   *  to construct before, due to a AStar not initialized...
+   */
+    transient private boolean reconstructTrajectory = false;
+
+  /** Saved DeltaTime for trajectory reconstruction.
+   */
+    transient private int movementDeltaTime;
+
  /*------------------------------------------------------------------------------------*/
 
   // PATH FIELDS
@@ -160,6 +169,7 @@ public class PathFollower implements MovementComposer {
   /** Empty Constructor.
    */
     public PathFollower() {
+System.out.println("0-walking=false");
         walkingAlongPath = false;
         turningAlongPath = false;
         realisticRotations = false;
@@ -262,6 +272,7 @@ public class PathFollower implements MovementComposer {
   /** To set if the player is walking along the path
    */
     public void setWalkingAlongPath(boolean walkingAlongPath) {
+System.out.println("1-set to walking="+walkingAlongPath);
       this.walkingAlongPath = walkingAlongPath;
     }
 
@@ -309,8 +320,12 @@ public class PathFollower implements MovementComposer {
     * @return returns the target position, can be the current position if we are not moving...
     */
      public Point getTargetPosition() {
-     	if(path!=null)
+     	if(path!=null && path.size()>0)
            return (Point)path.elementAt( path.size()-1 );
+
+        if(endPoint!=null)
+           return endPoint.toPoint();
+
      	return new Point( -100, -100 ); // out of screen point
      }
 
@@ -324,16 +339,29 @@ public class PathFollower implements MovementComposer {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To stop our movement along the path.
+  /** To reset our movement along the path.
    */
-    public void stopMovement() {
+    public void resetMovement() {
+System.out.println("2-reset to walking="+walkingAlongPath);
       walkingAlongPath = false;
       turningAlongPath = false;
       path = null;
       nextPoint = null;
       prevPoint = null;
+      endPoint = null;
+    }
 
- // player.send( new PathUpdateMovementMessage( this, player.getPrimaryKey() ) );
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To stop our movement along the path.
+   */
+    public void stopMovement() {
+      resetMovement();
+      
+      if(player.isMaster()) {
+System.out.println("SENDING MESSAGE"); // ALDISS
+         player.sendMessage( new PathUpdateMovementMessage( this, player.getPrimaryKey() ) );
+}
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -369,7 +397,10 @@ public class PathFollower implements MovementComposer {
    * @return a MovementUpdateMessage 
    */
      public MovementUpdateMessage getUpdate() {
-         return (MovementUpdateMessage) new PathUpdateMovementMessage( this, null );
+     	 if(AStarDouble.isInitialized())
+            return (MovementUpdateMessage) new PathUpdateMovementMessage( this, null );
+         else
+            return (MovementUpdateMessage) new PathUpdateMovementMessage( this, player.getPrimaryKey() );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -388,44 +419,32 @@ public class PathFollower implements MovementComposer {
            xPosition = (float)msg.srcPoint.x;
            yPosition = (float)msg.srcPoint.y;
            orientationAngle = msg.orientationAngle;
+           System.out.println("PATH FOLLOWER UPDATE: Setting position to x:"+xPosition+" y:"+yPosition);
 
-           boolean walkingAlongPath = msg.isMoving;
+           walkingAlongPath = msg.isMoving;
 
            if( walkingAlongPath ) {
                Point pDst = new Point( msg.dstPoint.x, msg.dstPoint.y );
-                              
+
                if (AStarDouble.isInitialized()) {
                	  // Astar initialized, re-creating path
-               	     path = findPath( new Point( (int)xPosition, (int)yPosition ),
-               	                      new Point( pDst.x, pDst.y ) );
-                     
-                     if( path==null ) {
-                         walkingAlongPath = false;
-                         turningAlongPath = false;
-                         path = null;
-                         nextPoint = null;
-                         prevPoint = null;
-                         return; // no movement
-                     }
-
-                     updateMovementAspect();
-                     initMovement( path, msg.movementDeltaTime );
+                     recreateTrajectory( pDst, msg.movementDeltaTime );
                }
                else {
                	  // Astar not initialized, just saving data
+                     System.out.println("Saving movement to :"+pDst);
                	     endPoint = new ScreenPoint( pDst );
                	     movementTimeStamp = System.currentTimeMillis();
+               	     reconstructTrajectory = true;
+               	     movementDeltaTime = msg.movementDeltaTime;
                }
            }
            else {
              // No movement
-               walkingAlongPath = false;
-               turningAlongPath = false;
-               path = null;
-               nextPoint = null;
-               prevPoint = null;
-               endPoint = null;
+               resetMovement();
+               System.out.println("Stopping movement");
            }
+
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -454,7 +473,18 @@ public class PathFollower implements MovementComposer {
   /** Our Tick method. Call this method regularly to update the position along the path.
    */
     public void tick() {
-       updatePathMovement();
+//System.out.println("Position x:"+xPosition+" y:"+yPosition+" walk:"+walkingAlongPath );
+
+       if (AStarDouble.isInitialized()) {
+
+          if(reconstructTrajectory) {
+              if(endPoint!=null) 
+                 recreateTrajectory( endPoint.toPoint(), movementDeltaTime );
+              reconstructTrajectory = false;
+          }
+          else
+              updatePathMovement();
+       }
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -525,6 +555,7 @@ public class PathFollower implements MovementComposer {
                              new Point( endPosition.x, endPosition.y ) );
 
             if( path==null ) {
+System.out.println("NO PATHH !!!!"); // ALDISS
                 stopMovement();
                 return; // no movement
             }
@@ -532,7 +563,34 @@ public class PathFollower implements MovementComposer {
             updateMovementAspect();
             initMovement( path );
 
- // player.send( new PathUpdateMovementMessage( this, player.getPrimaryKey() ) );
+            if(player.isMaster()) {
+System.out.println("SENDING MESSAGE walking="+isMoving()); // ALDISS
+               player.sendMessage( new PathUpdateMovementMessage( this, player.getPrimaryKey() ) );
+            }
+     }
+
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To recreate a trajectory from a dest. point & a DeltaTime.
+   */
+     public void recreateTrajectory( Point pDst, int movementDeltaTime ) {
+            path = findPath( new Point( (int)xPosition, (int)yPosition ),
+                             new Point( pDst.x, pDst.y ) );
+                     
+            if( path==null ) {
+                Debug.signal( Debug.ERROR, this, "Failed to re-create path !" );
+                
+                if(player.isMaster())
+                   stopMovement();
+                else
+                   resetMovement();
+                return;
+            }
+
+            updateMovementAspect();
+ System.out.println("Recreating path with:"+path);
+            initMovement( path, movementDeltaTime );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -582,12 +640,15 @@ public class PathFollower implements MovementComposer {
 
      // 1 - Control
    	if(path==null || path.size()<1 ) {
+   	   resetMovement();
            Debug.signal(Debug.ERROR, this, "Invalid Path !!!! "+path);
            return;
          }
 
-        if(path.size()==1)
+        if(path.size()==1) {
+           resetMovement();
            return; // no movement
+        }
 
         this.path = path;
 
@@ -597,7 +658,7 @@ public class PathFollower implements MovementComposer {
    	Point a0 = null;
    	Point a1 = (Point)path.elementAt(0);
    	
-        for( int i=0; i<path.size(); i++ ) {
+        for( int i=0; i<path.size()-1; i++ ) {
             a0 = a1;
             a1 = (Point)path.elementAt(i+1);            
             d += distance( a0, a1 );
@@ -621,6 +682,7 @@ public class PathFollower implements MovementComposer {
 
               // We validate the movement
                  walkingAlongPath = true;
+System.out.println("VALID TRAJ RECONSTRUCTED !!!");
                  return;
             }
         }
@@ -633,11 +695,12 @@ public class PathFollower implements MovementComposer {
         orientationAngle = angle( a0, a1 );
         xPosition = (float)a1.x;
         yPosition = (float)a1.y;
-        walkingAlongPath = false;
-        turningAlongPath = false;
-        path = null;
-        nextPoint = null;
-        prevPoint = null;
+
+        if(player.isMaster())
+           stopMovement();     
+        else
+           resetMovement();
+System.out.println("GOING DIRECTLY TO END OF TRAJ !");
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

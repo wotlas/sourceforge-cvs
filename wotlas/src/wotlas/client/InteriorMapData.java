@@ -133,12 +133,10 @@ public class InteriorMapData implements MapData
 /* NETMESSAGE */
     if (SHOW_DEBUG)
       System.out.println("dataManager.sendMessage( new EnteringRoomMessage(...) )");
-    if (SEND_NETMESSAGE)
-      dataManager.sendMessage( new EnteringRoomMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation(), myPlayer.getX(), myPlayer.getY()) );                
 
     if (SHOW_DEBUG)
       System.out.println("Adding a new player : " + myPlayer + "to room : " + room);
-    room.addPlayer(myPlayer);
+    dataManager.addPlayer(myPlayer);
 
     // 2 - We set player's position if his position is incorrect
     if (myPlayer.getX() == -1) {
@@ -149,6 +147,9 @@ public class InteriorMapData implements MapData
       myPlayer.setY(insertionPoint.y);
       myPlayer.setPosition(insertionPoint);
     }
+
+    if (SEND_NETMESSAGE)
+      dataManager.sendMessage( new EnteringRoomMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation(), myPlayer.getX(), myPlayer.getY()) );
 
     // 3 - We load the image
     backgroundImageID = imap.getInteriorMapImage();
@@ -247,6 +248,7 @@ public class InteriorMapData implements MapData
    */
   public void canChangeMapLocation( boolean canChangeMap ) {
     synchronized( changeMapLock ) {
+System.out.println("NOTIFYING");
       this.canChangeMap = canChangeMap;
       changeMapLock.notify();
     }
@@ -302,7 +304,7 @@ public class InteriorMapData implements MapData
 
         if (SHOW_DEBUG)
           System.out.println("Adding a new player : " + myPlayer + "to room : " + room);
-        room.addPlayer( myPlayer );
+//        room.addPlayer( myPlayer );
         dataManager.getInfosPanel().setLocation(room.getFullName());
         if (SHOW_DEBUG)
           System.out.print("Move to another room : " + newRoomID + " -> " + room.getFullName());
@@ -349,7 +351,7 @@ public class InteriorMapData implements MapData
         if (SHOW_DEBUG)
           System.out.println("We are going to a new map...");
 
-        myPlayer.stopMovement();        
+        myPlayer.getMovementComposer().resetMovement();
         
         //myPlayer.setLocation( mapExit.getTargetWotlasLocation() );
 
@@ -358,12 +360,13 @@ public class InteriorMapData implements MapData
           try {
             synchronized(changeMapLock) {
               canChangeMap = false;
-              myPlayer.sendMessage( new CanLeaveIntMapMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation(), myPlayer.getX(), myPlayer.getY()) );
+              myPlayer.sendMessage( new CanLeaveIntMapMessage( myPlayer.getPrimaryKey(),
+                                        mapExit.getTargetWotlasLocation(),
+                                        mapExit.getTargetPosition().x, mapExit.getTargetPosition().y ) );
               changeMapLock.wait(CONNECTION_TIMEOUT);
             }
           } catch (InterruptedException ie) {
-            dataManager.showWarningMessage("Cannot change the map !");
-            Debug.exit();
+            dataManager.showWarningMessage("ChangeMap interrupted !");
           }      
         } else {
           // player doesn't receive NetMessage => he can always change its MapData
@@ -372,7 +375,7 @@ public class InteriorMapData implements MapData
       
         if (canChangeMap) {
           // Player can change its MapData
-          myRoom.removePlayer( myPlayer );
+          dataManager.getPlayers().clear();
           myPlayer.setLocation( mapExit.getTargetWotlasLocation() );
           
           dataManager.cleanInteriorMapData(); // suppress drawables, shadows, data
@@ -409,7 +412,7 @@ public class InteriorMapData implements MapData
           }
         } else {
           // Player cannot change its MapData
-          dataManager.showWarningMessage("Cannot change the MapData !");
+          dataManager.showWarningMessage("Cannot change the MapData !???");
         }
       }
     } // End of part II
@@ -421,13 +424,13 @@ public class InteriorMapData implements MapData
    *
    * @param myPlayer the master player
    */
-  public Hashtable getPlayers(PlayerImpl myPlayer) {
-    Room myRoom = myPlayer.getMyRoom();
-    if (myRoom != null)    
-      return myRoom.getPlayers();
-    else
-      return null;
-  }
+//  public Hashtable getPlayers(PlayerImpl myPlayer) {
+//    Room myRoom = myPlayer.getMyRoom();
+//    if (myRoom != null)    
+//      return myRoom.getPlayers();
+//    else
+//      return null;
+//  }
   
  /*------------------------------------------------------------------------------------*/
 

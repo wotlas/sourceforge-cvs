@@ -28,8 +28,11 @@ import wotlas.libs.net.NetMessage;
 import wotlas.libs.pathfinding.*;
 
 import wotlas.common.*;
+import wotlas.common.message.movement.MovementUpdateMessage;
 import wotlas.common.universe.*;
 import wotlas.utils.*;
+
+import java.util.*;
 
 /** Class of a Wotlas Player. It is the class that, in certain way, a client gets connected to.
  *  All the client messages have a server PlayerImpl context.
@@ -96,7 +99,7 @@ public class PlayerImpl implements Player, NetConnectionListener
     * @return true if this is a Master player, false otherwise.
     */
       public boolean isMaster() {
-      	return false; // Server PlayerImpl is only a slave player implementation
+        return false; // Server PlayerImpl is only a slave player implementation
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -106,7 +109,7 @@ public class PlayerImpl implements Player, NetConnectionListener
    *  @return x
    */
       public int getX() {
-      	  return (int)movementComposer.getXPosition();
+          return (int)movementComposer.getXPosition();
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -116,7 +119,7 @@ public class PlayerImpl implements Player, NetConnectionListener
    *  @return y
    */
       public int getY() {
-      	  return (int)movementComposer.getYPosition();
+          return (int)movementComposer.getYPosition();
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -126,7 +129,7 @@ public class PlayerImpl implements Player, NetConnectionListener
    *  @param x
    */
       public void setX( int x ) {
-      	  movementComposer.setXPosition( (float)x );
+          movementComposer.setXPosition( (float)x );
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -136,7 +139,7 @@ public class PlayerImpl implements Player, NetConnectionListener
    *  @return y
    */
       public void setY( int y ) {
-      	  movementComposer.setXPosition( (float)y );
+          movementComposer.setYPosition( (float)y );
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -177,6 +180,8 @@ public class PlayerImpl implements Player, NetConnectionListener
 
              setX( mExits[0].x+mExits[0].width/2 );
              setY( mExits[0].y+mExits[0].height/2 );
+
+System.out.println("POSITION set to x:"+getX()+" y:"+getY()+" location is "+location);
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -185,7 +190,7 @@ public class PlayerImpl implements Player, NetConnectionListener
     *  the game data has been loaded.
     */
       public void init() {
-         // nothing to do here for now...
+         movementComposer.init( this );
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -300,7 +305,7 @@ public class PlayerImpl implements Player, NetConnectionListener
     *  @return player MovementComposer
     */
       public MovementComposer getMovementComposer() {
-      	  return movementComposer;
+          return movementComposer;
       }
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -309,7 +314,7 @@ public class PlayerImpl implements Player, NetConnectionListener
     *  @param movement MovementComposer.
     */
       public void setMovementComposer( MovementComposer movementComposer ) {
-      	  this.movementComposer = movementComposer;
+          this.movementComposer = movementComposer;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -317,7 +322,7 @@ public class PlayerImpl implements Player, NetConnectionListener
    /** To get the player's current Room ( if we are in a Room ).
     */
       public Room getMyRoom() {
-      	return myRoom;
+        return myRoom;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -333,7 +338,8 @@ public class PlayerImpl implements Player, NetConnectionListener
              }
 
           // great we do nothing
-             System.out.println("Connection opened on this player");
+             System.out.println("Connection opened for player "+playerName);
+        System.out.println( "OPEN isMoving:"+movementComposer.isMoving()+", ref:"+this);
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -351,6 +357,7 @@ public class PlayerImpl implements Player, NetConnectionListener
 
           // great we do nothing
              Debug.signal(Debug.NOTICE, this, "Connection closed on player: "+playerName);
+System.out.println( "CLOSE isMoving:"+movementComposer.isMoving()+", ref:"+this);
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -363,9 +370,12 @@ public class PlayerImpl implements Player, NetConnectionListener
    */
      public void sendMessage( NetMessage message ) {
              synchronized( personalityLock ) {
-             	if( personality!=null ) {
+                if( personality!=null ) {
+System.out.println("SENDING MESSAGE "+message);
                     personality.queueMessage( message );
                 }
+                else
+                    System.out.println("NULL personality...");
              }
      }
 
@@ -375,8 +385,48 @@ public class PlayerImpl implements Player, NetConnectionListener
    */
      public void closeConnection() {
              synchronized( personalityLock ) {
-             	if( personality!=null )
+                if( personality!=null )
                     personality.closeConnection();
+             }
+
+             if(location.isRoom())
+             {
+              // no movement saved on rooms...
+                 movementComposer.resetMovement();
+
+              // We send an update to players near us...
+                 MovementUpdateMessage uMsg = movementComposer.getUpdate();
+
+                 Hashtable players = myRoom.getPlayers();
+
+                 synchronized( players ) {
+                    Iterator it = players.values().iterator();
+                 
+                    while( it.hasNext() ) {
+                        PlayerImpl p = (PlayerImpl)it.next();
+                        if(p!=this)
+                           p.sendMessage( uMsg );
+                    }
+                 }
+
+                 if(myRoom.getRoomLinks()!=null)
+                    for( int j=0; j<myRoom.getRoomLinks().length; j++ ) {
+                         Room otherRoom = myRoom.getRoomLinks()[j].getRoom1();
+  
+                         if( otherRoom==myRoom )
+                             otherRoom = myRoom.getRoomLinks()[j].getRoom2();
+
+                         players = otherRoom.getPlayers();
+
+                         synchronized( players ) {
+                            Iterator it = players.values().iterator();
+                 
+                            while( it.hasNext() ) {
+                               PlayerImpl p = (PlayerImpl)it.next();
+                               p.sendMessage( uMsg );
+                            }
+                         }
+                    }
              }
      }
 

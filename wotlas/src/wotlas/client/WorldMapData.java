@@ -67,7 +67,7 @@ public class WorldMapData implements MapData
     
   /** Our default dataManager
    */
-  DataManager dataManager;
+  private DataManager dataManager;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -112,7 +112,7 @@ public class WorldMapData implements MapData
     }
     dataManager.getInfosPanel().setLocation(worldMap.getFullName());
 
-    worldMap.addPlayer(myPlayer);
+    dataManager.addPlayer(myPlayer);
     
     // 2 - We set player's position if his position is incorrect
 
@@ -233,7 +233,7 @@ public class WorldMapData implements MapData
       if (SHOW_DEBUG)
         System.out.println("Removing player from the map...");      
       
-      myPlayer.stopMovement();
+      myPlayer.getMovementComposer().resetMovement();
 
       MapExit mapExit = townMap.findTownMapExit( myPlayer.getCurrentRectangle() );
 
@@ -244,7 +244,10 @@ public class WorldMapData implements MapData
         try {
           synchronized(changeMapLock) {
             canChangeMap = false;
-            myPlayer.sendMessage( new CanLeaveWorldMapMessage(myPlayer.getPrimaryKey(), mapExit.getMapExitLocation(), myPlayer.getX(), myPlayer.getY()) );
+            myPlayer.sendMessage( new CanLeaveWorldMapMessage(myPlayer.getPrimaryKey(),
+                                  mapExit.getMapExitLocation(),
+                                  mapExit.getX() + mapExit.getWidth()/2,
+                                  mapExit.getY() + mapExit.getHeight()/2 ) );
             changeMapLock.wait(CONNECTION_TIMEOUT);
           }
         } catch (InterruptedException ie) {
@@ -256,12 +259,12 @@ public class WorldMapData implements MapData
         canChangeMap = true;
       }
       
-      if (canChangeMap) {        
+      if (canChangeMap) {
         // Player can change its MapData
-        worldMap.removePlayer(myPlayer);
+        dataManager.getPlayers().clear();
         myPlayer.setLocation( mapExit.getMapExitLocation() );
         
-        dataManager.cleanInteriorMapData(); // suppress drawables, shadows, data        
+        dataManager.cleanInteriorMapData(); // suppress drawables, shadows, data
         
         // We set our player on the middle of the MapExit
         myPlayer.setX( mapExit.getX() + mapExit.getWidth()/2 );
@@ -285,10 +288,10 @@ public class WorldMapData implements MapData
    *
    * @param myPlayer the master player
    */
-  public Hashtable getPlayers(PlayerImpl myPlayer) {
-    WorldMap worldMap = dataManager.getWorldManager().getWorldMap( myPlayer.getLocation() );
-    return worldMap.getPlayers();
-  }
+//  public Hashtable getPlayers(PlayerImpl myPlayer) {
+//    WorldMap worldMap = dataManager.getWorldManager().getWorldMap( myPlayer.getLocation() );
+//    return worldMap.getPlayers();
+//  }
 
  /*------------------------------------------------------------------------------------*/
 

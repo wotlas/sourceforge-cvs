@@ -67,6 +67,10 @@ public class AesSedai extends Female {
    */
     transient private ShadowSprite aesSedaiShadowSprite;
 
+  /** Current Aura.
+   */
+    transient private AuraEffect aesSedaiAuraEffect;
+
   /** ColorImageFilter for InteriorMap Sprites.
    */
     transient private ColorImageFilter filter;
@@ -199,7 +203,60 @@ public class AesSedai extends Female {
    *  @return character's Aura Drawable.
    */     
      public Drawable getAura(){
-     	return null;
+      	 if( ImageLibrary.getDefaultImageLibrary() == null )
+      	     return null;
+
+         if(aesSedaiAuraEffect!=null) {
+             aesSedaiAuraEffect.setAlpha( 0.0f );
+             return (Drawable) aesSedaiAuraEffect; 
+         }
+
+      // symbol selection
+         short imageIndex = 0;
+
+          switch( aesSedaiStatus ) {
+              case AES_NOVICE :
+                      imageIndex = ImageLibRef.AES_NOVICE_SYMBOL_INDEX;
+                      break;
+              case AES_ACCEPTED :
+                      imageIndex = ImageLibRef.AES_ACCEPTED_SYMBOL_INDEX;
+                      break;
+              case AES_BROWN_AJAH :
+                      imageIndex = ImageLibRef.AES_BROWN_SYMBOL_INDEX;
+                      break;
+              case AES_WHITE_AJAH:
+                      imageIndex = ImageLibRef.AES_WHITE_SYMBOL_INDEX;
+                      break;
+              case AES_BLUE_AJAH :
+                      imageIndex = ImageLibRef.AES_BLUE_SYMBOL_INDEX;
+                      break;
+              case AES_GREEN_AJAH :
+                      imageIndex = ImageLibRef.AES_GREEN_SYMBOL_INDEX;
+                      break;
+              case AES_RED_AJAH :
+                      imageIndex = ImageLibRef.AES_RED_SYMBOL_INDEX;
+                      break;
+              case AES_GRAY_AJAH :
+                      imageIndex = ImageLibRef.AES_GREY_SYMBOL_INDEX;
+                      break;
+              case AES_YELLOW_AJAH :
+                      imageIndex = ImageLibRef.AES_YELLOW_SYMBOL_INDEX;
+                      break;
+              case AES_AMYRLIN :
+                      imageIndex = ImageLibRef.AES_AMYRLIN_SYMBOL_INDEX;
+                      break;
+          }
+
+      // Aura Creation
+         ImageIdentifier auraImage = new ImageIdentifier( ImageLibRef.PLAYERS_CATEGORY,
+                                                          ImageLibRef.PLAYER_SYMBOL_IMAGES_SET,
+                                                          ImageLibRef.AES_SEDAI_SYMBOL_ACTION,
+                                                          imageIndex );
+
+         aesSedaiAuraEffect = new AuraEffect( aesSedaiSprite.getDataSupplier(), auraImage,
+                                              ImageLibRef.AURA_PRIORITY, false, 5000 );
+         aesSedaiAuraEffect.useAntialiasing(true);
+         return aesSedaiAuraEffect;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

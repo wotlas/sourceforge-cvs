@@ -79,8 +79,10 @@ public class JGameConnectionDialog extends JConnectionDialog
     */
     protected String[] getPackages() {
     	//String list[] = null; // no packages for now
-      String list[] = {"wotlas.client.message.account", "wotlas.client.message.description"};
-      
+      String list[] = {"wotlas.client.message.account",
+                       "wotlas.client.message.description",
+                       "wotlas.client.message.movement" };
+
     	return list;
     }
 

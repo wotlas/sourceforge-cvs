@@ -54,6 +54,7 @@ public class RoomPlayerDataMsgBehaviour extends RoomPlayerDataMessage implements
    *        this message.
    */
      public void doBehaviour( Object context ) {
+System.out.println("ROOM PLAYER DATA MESSAGE "+location);
 
         // The context is here a DataManager.
            DataManager dataManager = (DataManager) context;
@@ -72,7 +73,7 @@ public class RoomPlayerDataMsgBehaviour extends RoomPlayerDataMessage implements
               if( myRoom==null ) return;
 
            // is this Room on the same map as ours ?
-              WotlasLocation myLocation = player.getLocation();
+              WotlasLocation myLocation = myPlayer.getLocation();
               
               if( myLocation.getWorldMapID()!=location.getWorldMapID() ||
                   myLocation.getTownMapID()!=location.getTownMapID() ||
@@ -106,6 +107,7 @@ public class RoomPlayerDataMsgBehaviour extends RoomPlayerDataMessage implements
 
              return; // the room was not found near us...
           }
+
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -114,10 +116,10 @@ public class RoomPlayerDataMsgBehaviour extends RoomPlayerDataMessage implements
    */
     private void merge( DataManager dataManager ) {
     	Hashtable dest = dataManager.getPlayers();
-    	
+
     	synchronized( dest ) {
             Iterator it = players.values().iterator();
-            
+
             while( it.hasNext() ) {
                 PlayerImpl playerImpl = (PlayerImpl) it.next();
             	

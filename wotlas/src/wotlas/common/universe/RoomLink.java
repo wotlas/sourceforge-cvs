@@ -120,7 +120,7 @@ public class RoomLink extends ScreenRectangle
   }
 
   public void setRoom2( Room room2) {
-    this.room1 = room2;
+    this.room2 = room2;
   }
 
   public Room getRoom2() {
@@ -134,6 +134,14 @@ public class RoomLink extends ScreenRectangle
     */
     public boolean equals( RoomLink other ) {
         return toRectangle().equals( other.toRectangle() );
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To print this roomLink
+    */
+    public String toString() {
+        return "RoomLink between room "+room1ID+" <-> "+room2ID;
     }
 
  /*------------------------------------------------------------------------------------*/

@@ -54,6 +54,7 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
    *        this message.
    */
      public void doBehaviour( Object context ) {
+System.out.println("RECEVIED BEHAVIOUR for "+primaryKey);
 
         // The context is here a PlayerImpl.
            PlayerImpl player = (PlayerImpl) context;
@@ -70,6 +71,7 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
 
        // We update our player
           player.getMovementComposer().setUpdate( (MovementUpdateMessage)this );
+System.out.println("propagation des updates....");
        
        // We send the update to other players
           if( player.getLocation().isRoom() ) {

@@ -157,6 +157,13 @@ public interface MovementComposer extends Tickable {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To reset the current player's movement. It behaves like stopMovement() but
+   *  stopMovement is supposed to publish messages on the network.
+   */
+     public void resetMovement();
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** To stop the current player's movement.
    */
      public void stopMovement();

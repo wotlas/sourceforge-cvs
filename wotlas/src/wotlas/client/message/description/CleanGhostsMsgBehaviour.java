@@ -54,6 +54,7 @@ public class CleanGhostsMsgBehaviour extends CleanGhostsMessage implements NetMe
    *        this message.
    */
      public void doBehaviour( Object context ) {
+System.out.println("CLEAN GHOSTS MESSAGE");
 
         // The context is here a DataManager.
            DataManager dataManager = (DataManager) context;

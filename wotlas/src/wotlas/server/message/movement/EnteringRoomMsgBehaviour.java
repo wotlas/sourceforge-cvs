@@ -143,6 +143,7 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
               	 
                         while( it.hasNext() ) {
                             PlayerImpl p = (PlayerImpl)it.next();
+                       	System.out.println("To player "+p+":");
                             p.sendMessage( rMsg );
               	        }
                   }
@@ -172,8 +173,10 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
               	 
                  while( it.hasNext() ) {
                        PlayerImpl p = (PlayerImpl)it.next();
-                       if(p!=player)
+                       if(p!=player) {
+                       	System.out.println("To player "+p+":");
                           p.sendMessage( aMsg );
+                       }
               	 }
               }
           }
@@ -199,6 +202,7 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
               	 
                      while( it.hasNext() ) {
               	          PlayerImpl p = (PlayerImpl)it.next();
+                       	System.out.println("To player "+p+":");
                           p.sendMessage( aMsg );
               	     }
                }

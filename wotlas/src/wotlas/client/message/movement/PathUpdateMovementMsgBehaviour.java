@@ -54,6 +54,7 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
    *        this message.
    */
      public void doBehaviour( Object context ) {
+System.out.println("PATH UPDATE MESSAGE FOR PLAYER "+primaryKey);
 
         // The context is here a DataManager.
            DataManager dataManager = (DataManager) context;

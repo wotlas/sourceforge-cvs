@@ -185,6 +185,7 @@ public interface ImageLibRef extends ImageLibraryReference
     public final static short ONEPOWER_PRIORITY = 30;     // one power effects
     public final static short PLAYER_PRIORITY   = 50;     // players
     public final static short DOOR_PRIORITY     = 100;    // doors
+    public final static short TEXT_PRIORITY     = 150;    // doors
 
  /*------------------------------------------------------------------------------------*/
 

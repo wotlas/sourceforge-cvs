@@ -76,6 +76,7 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
            }
 
        // Is the movement possible ?
+          WorldManager wManager = DataManager.getDefaultDataManager().getWorldManager();
           Room currentRoom = player.getMyRoom();
 
        // which of them is the right mapExit ?
@@ -101,7 +102,6 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
                    players.remove( primaryKey );
                }
 
-               WorldManager wManager = DataManager.getDefaultDataManager().getWorldManager();
                boolean error = false;
 
                if( location.isRoom() ) {
@@ -139,7 +139,7 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
             // 3  - LOCATION UPDATE
                WotlasLocation oldLocation = player.getLocation();
                player.setLocation( location );
-               player.getMovementComposer().stopMovement();
+               player.getMovementComposer().resetMovement();
                player.setX( x );
                player.setY( y );
 
@@ -149,7 +149,6 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
 
             // 4 - SEND MESSAGE TO PLAYER
                player.sendMessage( new YouCanLeaveMapMessage( primaryKey, location, x, y ) );
-
 
             // 5 - SENDING REMOVE_PLAYER_MSG TO OTHER PLAYERS
                RemovePlayerFromRoomMessage rMsg = new RemovePlayerFromRoomMessage(primaryKey, oldLocation );
@@ -164,6 +163,8 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
                         p.sendMessage( rMsg );
               	   }
                 }
+
+               if(currentRoom.getRoomLinks()==null) return;
 
                for( int j=0; j<currentRoom.getRoomLinks().length; j++ ) {
                   Room otherRoom = currentRoom.getRoomLinks()[j].getRoom1();

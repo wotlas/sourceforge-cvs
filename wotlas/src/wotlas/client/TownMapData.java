@@ -112,7 +112,7 @@ public class TownMapData implements MapData
     }
     dataManager.getInfosPanel().setLocation(townMap.getFullName());
 
-    townMap.addPlayer(myPlayer);
+    dataManager.addPlayer(myPlayer);
     
     // 2 - We set player's position if his position is incorrect
 
@@ -242,10 +242,7 @@ public class TownMapData implements MapData
       if (SHOW_DEBUG)
         System.out.println("We are going to a world map...");
 
-      if (SHOW_DEBUG)
-        System.out.println("Removing player from the map...");      
-
-      myPlayer.stopMovement();
+      myPlayer.getMovementComposer().resetMovement();
 
       //myPlayer.setLocation( mapExit.getTargetWotlasLocation() );
 
@@ -254,7 +251,9 @@ public class TownMapData implements MapData
         try {
           synchronized(changeMapLock) {
             canChangeMap = false;
-            myPlayer.sendMessage( new CanLeaveTownMapMessage(myPlayer.getPrimaryKey(), mapExit.getTargetWotlasLocation(), myPlayer.getX(), myPlayer.getY()) );
+            myPlayer.sendMessage( new CanLeaveTownMapMessage(myPlayer.getPrimaryKey(),
+                                  mapExit.getTargetWotlasLocation(),
+                                  mapExit.getTargetPosition().x, mapExit.getTargetPosition().y ) );
             changeMapLock.wait(CONNECTION_TIMEOUT);
           }
         } catch (InterruptedException ie) {
@@ -268,7 +267,7 @@ public class TownMapData implements MapData
         
       if (canChangeMap) {
         // Player can change its MapData
-        townMap.removePlayer(myPlayer);
+        dataManager.getPlayers().clear();
         myPlayer.setLocation( mapExit.getTargetWotlasLocation() );
         
         dataManager.cleanInteriorMapData(); // suppress drawables, shadows, data
@@ -311,7 +310,7 @@ public class TownMapData implements MapData
       
       
 ///////////////////////////// ALDISS : avant stopMoving()
-      myPlayer.stopMovement();
+      myPlayer.getMovementComposer().resetMovement();
 ///////////////////////////// FIN ALDISS
 
       if (SHOW_DEBUG) {
@@ -383,7 +382,7 @@ public class TownMapData implements MapData
       
       if (canChangeMap) {
         // Player can change its MapData
-        townMap.removePlayer(myPlayer);
+        dataManager.getPlayers().clear();
         dataManager.cleanInteriorMapData();
       
         myPlayer.setPosition( new ScreenPoint(myPlayer.getX(), myPlayer.getY()) );
@@ -403,10 +402,10 @@ public class TownMapData implements MapData
    *
    * @param myPlayer the master player
    */
-  public Hashtable getPlayers(PlayerImpl myPlayer) {
-    TownMap townMap = dataManager.getWorldManager().getTownMap( myPlayer.getLocation() );
-    return townMap.getPlayers();
-  }
+//  public Hashtable getPlayers(PlayerImpl myPlayer) {
+//    TownMap townMap = dataManager.getWorldManager().getTownMap( myPlayer.getLocation() );
+//    return townMap.getPlayers();
+//  }
   
  /*------------------------------------------------------------------------------------*/
 

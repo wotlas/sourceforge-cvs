@@ -451,11 +451,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     // 2 - Retrieve player's informations
     myPlayer = new PlayerImpl();
 
-
-///////////////////////////// ALDISS : added isMaster
-    myPlayer.setIsMaster( true );   // this player is controlled by the user.
-////////////////////////////// FIN ALDISS
-
     try {
       synchronized(startGameLock) {
         personality.queueMessage(new MyPlayerDataPleaseMessage());
@@ -466,13 +461,17 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       Debug.exit();
     }
 
+// RAJOUTER UNE ERREUR CRITIQUE SI PAS DE DONNEES
+
+    myPlayer.setIsMaster( true );   // this player is controlled by the user.
+
     // Retreive player's location
     WotlasLocation location = myPlayer.getLocation();
-    if (SHOW_DEBUG)
-      System.out.println("\tmyPlayer.location = "   + location);
-
+//    if (SHOW_DEBUG)
+        System.out.println("POSITION set to x:"+myPlayer.getX()+" y:"+myPlayer.getY()+" location is "+location);
+// ALDISS
     // 3 - Create the drawable reference
-    location.setWorldMapID(0);
+/*    location.setWorldMapID(0);
     location.setTownMapID(0);
     location.setInteriorMapID(-1);
     location.setBuildingID(-1);
@@ -483,7 +482,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     myPlayer.setY(759);
     //myPlayer.setPosition(new ScreenPoint(70,640));
     myPlayer.setPosition(new ScreenPoint(31,759));
-
+*/
     players = new Hashtable();
     
     // 4 - Create AStar
@@ -513,10 +512,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     // 9 - Retreive other players informations    
     //personality.queueMessage(new AllDataLeftPleaseMessage());    
     
-    if (!MapData.SEND_NETMESSAGE) {      
       addPlayer(myPlayer);
-    }
-
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -608,14 +604,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     if (object == null) {
       int newX = e.getX() + (int)screen.getX();
       int newY = e.getY() + (int)screen.getY();
-
       myPlayer.moveTo( new Point(newX,newY) );
     } else {
       if (SHOW_DEBUG)
         System.out.println("object.getClass().getName() = " + object.getClass().getName());
 
       if ( object.getClass().getName().equals("wotlas.client.PlayerImpl") ) {
-        myPlayer = (PlayerImpl) object;
+        PlayerImpl selectedPlayer = (PlayerImpl) object;
         //if (circle!=null) {
           //gDirector.removeDrawable(circle);
           //circle = null;
@@ -623,11 +618,17 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         //circle = new CircleDrawable(myPlayer.getDrawable(), 20, Color.yellow, (short) ImageLibRef.AURA_PRIORITY);
         //gDirector.addDrawable(circle);
 
-        TextDrawable textDrawable = new TextDrawable( myPlayer.getFullPlayerName(), myPlayer.getDrawable(), Color.black, 12.0f, "Lblack.ttf", ImageLibRef.AURA_PRIORITY, 5000 );
-        gDirector.addDrawable(textDrawable);
+           TextDrawable textDrawable = new TextDrawable( selectedPlayer.getFullPlayerName(),
+                                                         selectedPlayer.getDrawable(), Color.black,
+                                                         12.0f, "Lblack.ttf",
+                                                         ImageLibRef.TEXT_PRIORITY, 5000 );
+           gDirector.addDrawable(textDrawable);
+
+        // Aura
+           gDirector.addDrawable( selectedPlayer.getWotCharacter().getAura() );
       }
     }
-
+System.out.println("END JCLICK");
   }
 
  /*------------------------------------------------------------------------------------*/

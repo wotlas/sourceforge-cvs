@@ -36,7 +36,7 @@ public interface MapData
   
  /** True if we send netMessage
    */
-  public static boolean SEND_NETMESSAGE = false;
+  public static boolean SEND_NETMESSAGE = true;
   
   /** Connection timeout
    */
@@ -89,7 +89,7 @@ public interface MapData
    *
    * @param myPlayer the master player
    */
-  public Hashtable getPlayers(PlayerImpl myPlayer);
+  //public Hashtable getPlayers(PlayerImpl myPlayer);
  
  /*------------------------------------------------------------------------------------*/
  

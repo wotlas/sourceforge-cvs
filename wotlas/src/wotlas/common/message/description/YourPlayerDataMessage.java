@@ -66,6 +66,7 @@ public class YourPlayerDataMessage extends PlayerDataMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void encode( DataOutputStream ostream ) throws IOException {
+System.out.println("YOURPLAYERDATA walking="+player.getMovementComposer().isMoving() );
      	super.encode( ostream );
      }
 

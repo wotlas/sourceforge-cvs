@@ -77,11 +77,11 @@ public class CanLeaveWorldMapMsgBehaviour extends CanLeaveWorldMapMessage implem
 
        // Is the movement possible ?
           WorldManager wManager = DataManager.getDefaultDataManager().getWorldManager();
-          WorldMap currentWorld = wManager.getWorldMap(location);
+          WorldMap currentWorld = wManager.getWorldMap( player.getLocation() );
 
        // which of them is the right mapExit ?
           if( currentWorld==null ) {
-             sendError( player, "Failed to get world !! "+location );
+             sendError( player, "Failed to get world !! "+player.getLocation() );
              return;
           }
 
@@ -124,7 +124,7 @@ public class CanLeaveWorldMapMsgBehaviour extends CanLeaveWorldMapMessage implem
 
                 // 3  - LOCATION UPDATE
                    player.setLocation( location );
-                   player.getMovementComposer().stopMovement();
+                   player.getMovementComposer().resetMovement();
                    player.setX( x );
                    player.setY( y );
 

@@ -77,11 +77,11 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
 
        // Is the movement possible ?
           WorldManager wManager = DataManager.getDefaultDataManager().getWorldManager();
-          TownMap currentTown = wManager.getTownMap(location);
+          TownMap currentTown = wManager.getTownMap( player.getLocation() );
 
        // which of them is the right mapExit ?
           if( currentTown==null ) {
-             sendError( player, "Failed to get town !! " +location );
+             sendError( player, "Failed to get town !! " +player.getLocation() );
              return;
           }
 
@@ -118,7 +118,7 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
 
               // 3  - LOCATION UPDATE
                  player.setLocation( location );
-                 player.getMovementComposer().stopMovement();
+                 player.getMovementComposer().resetMovement();
                  player.setX( x );
                  player.setY( y );
 
@@ -170,7 +170,7 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
 
                 // 3  - LOCATION UPDATE
                    player.setLocation( location );
-                   player.getMovementComposer().stopMovement();
+                   player.getMovementComposer().resetMovement();
                    player.setX( x );
                    player.setY( y );
 

@@ -101,10 +101,13 @@ public class RoomPlayerDataMessage extends PlayerDataMessage
 
       // Players
          synchronized( players ) {
-            ostream.writeInt( players.size() );
-            
+            if( players.containsKey( myPlayer.getPrimaryKey() ) )
+                ostream.writeInt( players.size()-1 );
+            else
+                ostream.writeInt( players.size() );
+
             Iterator it = players.values().iterator();
-            
+
             while( it.hasNext() ) {
             	player = (Player) it.next();
 
@@ -135,7 +138,13 @@ public class RoomPlayerDataMessage extends PlayerDataMessage
 
          // Players
             int nbPlayers = istream.readInt();
-            players = new Hashtable(nbPlayers*2);
+            
+            if(nbPlayers>0)
+               players = new Hashtable((int)(nbPlayers*1.6));
+            else {
+               players = new Hashtable();
+               return;
+            }
 
             for( int i=0; i<nbPlayers; i++ ) {
                  super.decode( istream );

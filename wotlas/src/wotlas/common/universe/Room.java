@@ -423,23 +423,22 @@ public class Room
    * @param myInteriorMap our father InteriorMap
    */
     public void init( InteriorMap myInteriorMap ){
+    // 1 - inits
        this.myInteriorMap = myInteriorMap;
 
-    // 2 - We reconstruct MapExit links...       
-       if( mapExits == null )
-           return;
-       
        WotlasLocation thisLocation = new WotlasLocation();
        thisLocation.setRoomID( roomID );
        thisLocation.setInteriorMapID( myInteriorMap.getInteriorMapID() );
        thisLocation.setBuildingID( myInteriorMap.getMyBuilding().getBuildingID() );
        thisLocation.setTownMapID( myInteriorMap.getMyBuilding().getMyTownMap().getTownMapID() );
        thisLocation.setWorldMapID( myInteriorMap.getMyBuilding().getMyTownMap().getMyWorldMap().getWorldMapID() );
-       
-       for( int i=0; i<mapExits.length; i++ )
-            mapExits[i].setMapExitLocation(thisLocation);
+
+    // 2 - We reconstruct MapExit links...       
+       if( mapExits != null )
+           for( int i=0; i<mapExits.length; i++ )
+                mapExits[i].setMapExitLocation(thisLocation);
     
-    // 2 - We reconstruct RoomLinks links...
+    // 3 - We reconstruct RoomLinks links...
        if(roomLinks==null)
           return;
     
@@ -476,6 +475,12 @@ public class Room
                    otherLinks[j] = roomLinks[i];
                    break;
                }
+       }
+
+    // Verif TEEEEMMMMPPPPPP
+       for( int i=0; i<roomLinks.length; i++ ) {
+          if(roomLinks[i].getRoom1()==null || roomLinks[i].getRoom2()==null)
+             System.out.println("BAD ROOM "+roomID+" : "+roomLinks[i]);
        }
     }
 

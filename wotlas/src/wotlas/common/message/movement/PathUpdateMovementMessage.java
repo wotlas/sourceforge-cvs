@@ -87,19 +87,22 @@ public class PathUpdateMovementMessage extends MovementUpdateMessage
    */
      public PathUpdateMovementMessage( PathFollower pFollower, String primaryKey ) {
          this();
+         this.primaryKey = primaryKey;
+
          srcPoint = new Point();
          srcPoint.x = (int)pFollower.getXPosition();
          srcPoint.y = (int)pFollower.getYPosition();
 
          orientationAngle = (float)pFollower.getOrientationAngle();
          isMoving = pFollower.isMoving();
-         
+
+         if( pFollower.getTargetPosition()==null )
+             isMoving = false;
+
          if( isMoving ) {
-             dstPoint = pFollower.getTargetPosition();
+             dstPoint = new Point( pFollower.getTargetPosition() );
              movementDeltaTime = (int)(System.currentTimeMillis()-pFollower.getMovementTimeStamp());
          }
-
-         this.primaryKey = primaryKey;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -115,16 +118,12 @@ public class PathUpdateMovementMessage extends MovementUpdateMessage
          ostream.writeInt( srcPoint.y );
 
          ostream.writeFloat( orientationAngle );
+         ostream.writeBoolean( isMoving );
          
-         if( isMoving && dstPoint!=null ) {
-             ostream.writeBoolean( isMoving );
+         if( isMoving ) {
              ostream.writeInt( dstPoint.x );
              ostream.writeInt( dstPoint.y );
              ostream.writeInt( movementDeltaTime );
-         }
-         else {
-             isMoving = false;
-             ostream.writeBoolean( isMoving );
          }
 
          if(primaryKey!=null) {

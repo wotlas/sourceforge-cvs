@@ -45,8 +45,9 @@ public class JBackground extends JPanel
   public JBackground (ImageIcon imageIcon)
   {    
     setLayout(new BorderLayout(0,0));
-    grayImage = GrayFilter.createDisabledImage(imageIcon.getImage());
-    setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
+    //grayImage = GrayFilter.createDisabledImage(imageIcon.getImage());
+    grayImage = imageIcon.getImage();
+    setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());    
   }
 
  /*------------------------------------------------------------------------------------*/

@@ -153,7 +153,7 @@ public class JIntroWizard extends JFrame
     bgPanel = null;
     dispose();
   }
-      
+
  /*--------------------------------------------------------------------------*/ 
   
 }  

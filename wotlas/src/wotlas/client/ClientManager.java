@@ -220,6 +220,7 @@ public class ClientManager
       // *** Adding the panels ***
       screenIntro.setLeftPanel(leftPanel);
       screenIntro.setRightPanel(rightPanel);
+      //screenIntro.showBackground();
       screenIntro.showScreen();
       break;
       

@@ -99,6 +99,10 @@ class ClientDirector
         System.out.println("mode DEBUG on");
         SHOW_DEBUG = true;
       }
+      /*if (arg.equals("-nosound")) {
+        System.out.println("sound off");
+        wotlas.libs.sound.SoundLibrary.setNoSoundDevice();
+      }*/
     }
     
     if (SHOW_DEBUG)

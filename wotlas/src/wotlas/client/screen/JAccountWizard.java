@@ -96,7 +96,8 @@ public class JAccountWizard extends JWizard
   class Step1 extends JWizardStep
   {
     private ALabel lbl_infos;
-    private ARadioButton bt_char0, bt_char1, bt_char2, bt_char3, bt_char4, bt_char5, bt_char6, bt_char7, bt_char8, bt_char9;
+    private ARadioButton bt_char0, bt_char1, bt_char2, bt_char3, bt_char4;
+    private ARadioButton bt_char5, bt_char6, bt_char7, bt_char8, bt_char9;
     private ButtonGroup btGroup;
     private JPanel mainPanel, formPanel;
     private String className;
@@ -132,7 +133,7 @@ public class JAccountWizard extends JWizard
       mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
       mainPanel.setBackground(Color.white);
 
-      formPanel = new JPanel(new GridLayout(9,1,10,2));
+      formPanel = new JPanel(new GridLayout(5,2,10,2));
       formPanel.setBackground(Color.white);
         bt_char0 = new ARadioButton("Aes Sedai, Novice");
         bt_char0.setActionCommand("wotlas.common.character.AesSedai");

@@ -564,13 +564,10 @@ public class ClientManager
       b_ok.addActionListener(new ActionListener() {
         public void actionPerformed (ActionEvent e) {
           char charPasswd[] = pfield1.getPassword();
-          String passwd = "";
           if (charPasswd.length < 4) {
             JOptionPane.showMessageDialog( screenIntro, "Password must have at least 5 characters !", "New Password", JOptionPane.ERROR_MESSAGE);
           } else {
-            for (int i=0; i<charPasswd.length; i++) {
-              passwd += charPasswd[i];
-            }
+            String passwd = new String(charPasswd);
 
             DataManager.getDefaultDataManager().setCurrentProfileConfig(currentProfileConfig);
 

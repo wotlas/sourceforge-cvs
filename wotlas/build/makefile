@@ -30,7 +30,8 @@ LIBS_PACKAGES  = wotlas/libs/net \
 
 LIBS_PACKAGES2 = wotlas/libs/graphics2D \
                  wotlas/libs/graphics2D/policy \
-                 wotlas/libs/graphics2D/drawable
+                 wotlas/libs/graphics2D/drawable \
+                 wotlas/libs/graphics2D/filter
 
 COMMON_PACKAGES = wotlas/common \
                   wotlas/common/universe \
@@ -51,7 +52,7 @@ CLIENT_PACKAGES = wotlas/client \
                   wotlas/client/message/description \
                   wotlas/client/gui
 
-GRAPHICS_DEMO_PACKAGE = test/graphics/ants
+GRAPHICS_DEMO_PACKAGE = test/graphics/color
 
 ##########################################################################
 

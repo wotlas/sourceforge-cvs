@@ -209,6 +209,7 @@ public class Tools
 
   /** To get all the available IP address on this machine.
    *  @return null if none
+   *  @deprecated doesn't work in java 1.3.1
    */
   public static String[] getAllInetAddresses() {
         try{

@@ -67,6 +67,18 @@ public class JMapPanel extends JPanel implements MouseListener
 
  /*------------------------------------------------------------------------------------*/
 
+  /** To update the Graphics Director used.
+   */
+   public void updateGraphicsDirector(GraphicsDirector gDirector) {
+       remove(this.gDirector);
+       this.gDirector = gDirector;
+
+       add(gDirector);
+       validate();
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
   /**
    * Invoked when the mouse button is clicked
    */
@@ -90,16 +102,20 @@ public class JMapPanel extends JPanel implements MouseListener
     
     if (DataManager.SHOW_DEBUG)
       System.out.println("[JMapPanel] : clic sur (" + e.getX() + "," + e.getY() + ")");
+
     if (SwingUtilities.isRightMouseButton(e)) {
-      if (DataManager.SHOW_DEBUG)
-        System.out.println("\tright clic");
-      dataManager.onRightClicJMapPanel(e);
-      dataManager.tick();
-    } else {
-      if (DataManager.SHOW_DEBUG)
-        System.out.println("\tleft clic");
-      dataManager.onLeftClicJMapPanel(e);
-      dataManager.tick();
+       if (DataManager.SHOW_DEBUG)
+          System.out.println("\tright clic");
+
+       dataManager.onRightClicJMapPanel(e);
+//      dataManager.tick();
+    }
+    else {
+       if (DataManager.SHOW_DEBUG)
+          System.out.println("\tleft clic");
+
+       dataManager.onLeftClicJMapPanel(e);
+//      dataManager.tick();
     }
   }
 

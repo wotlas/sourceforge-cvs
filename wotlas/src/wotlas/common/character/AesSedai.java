@@ -89,7 +89,8 @@ public class AesSedai extends Female {
          if(aesSedaiSprite!=null)
              return (Drawable) aesSedaiSprite; 
 
-         return new Sprite( (SpriteDataSupplier) player, ImageLibRef.PLAYER_PRIORITY );
+         aesSedaiSprite = new Sprite( (SpriteDataSupplier) player, ImageLibRef.PLAYER_PRIORITY );
+         return aesSedaiSprite;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -16,45 +16,47 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.client.message.account;
 
 import java.io.IOException;
 
+import wotlas.client.DataManager;
 
-import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.common.message.account.*;
-
+import wotlas.libs.net.NetMessageBehaviour;
 
 /**
  * Associated behaviour to the WarningMessage...
  *
- * @author Aldiss
+ * @author Aldiss, Petrus
+ * @see wotlas.client.DataManager
  */
 
 public class WarningMsgBehaviour extends WarningMessage implements NetMessageBehaviour
 {
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
    */
-     public WarningMsgBehaviour() {
-          super();
-     }
+  public WarningMsgBehaviour() {
+    super();
+  }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ /*------------------------------------------------------------------------------------*/
 
   /** Associated code to this Message...
    *
    * @param context an object giving specific access to other objects needed to process
    *        this message.
    */
-     public void doBehaviour( Object context ) {
+  public void doBehaviour( Object context ) {
+    DataManager dataManager = (DataManager) context;
+    dataManager.showWarningMessage(info);
+  }
 
-        // the context is here a ...
-           System.out.println("Warning Information :"+info);
-     }
+ /*------------------------------------------------------------------------------------*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
 

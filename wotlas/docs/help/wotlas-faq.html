@@ -50,7 +50,13 @@
     <a href="#q118"><b>1.18</b></a> - I'm tring to use the <i>Setup</i> utility 
     but the file tranfer with <i>pscp</i> doesn't seem to be working... what's 
     happening ?<br>
-    <b><a href="#q119">1.19</a></b> - How do I create a bot ? </font></p>
+    <b><a href="#q119">1.19</a></b> - How do I create a bot ?<br>
+    <b><a href="#q120">1.20</a></b> - How do I get rid of the password I have 
+    to enter for SCP ?<br>
+    <b><a href="#q121">1.21</a></b> - How do I configure my transfer script for 
+    Unix ?<br>
+    <br>
+    </font></p>
 </blockquote>
 <p><font size="3" color="#006699"><b>II - FAQ - Wotlas Client - Technical Problems</b></font> 
 </p>
@@ -475,6 +481,76 @@
       and your player's control will be handled to a bot. You can still reconnect 
       on your bot account to move the bot.<br>
       <a href="#top">back to the top</a></font></p>
+  </blockquote>
+  <p><b>1.20</b> - How do I configure my transfer script for Unix ?<font size="2"><a name="q120"></a></font></p>
+  <blockquote> 
+    <p><font size="2">1 - Generate a public key with NO passphrase ( needed for 
+      SCP ) :<br>
+      </font></p>
+    <blockquote> 
+      <p><font size="2">cd /home/myapps/wotlas &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+        &nbsp;&nbsp;&nbsp;# where you installed wotlas,<br>
+        ssh-keygen -q -f identity.wotlas -t rsa1</font></p>
+    </blockquote>
+    <p><font size="2">2 - Add your public key <i>identity.wotlas.pub</i> in your 
+      <i>authorized keys</i> on SourceForge<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;( go to your account page, click on 
+      <i>Account Maintenance</i> then <i>Edit</i> keys )</font></p>
+    <p><font size="2">3 - Create a ssh config file named <i>config.wotlas</i> 
+      in <i>/home/myapps/wotlas/</i> ( where you installed wotlas). Here is the 
+      content of the file :<br>
+      </font></p>
+    <blockquote> 
+      <p><font size="2">Host wotlas.sourceforge.net<br>
+        User identity<br>
+        IdentityFile /home/myapps/wotlas/identity.wotlas<br>
+        ForwardAgent no<br>
+        ForwardX11 no<br>
+        Compression yes</font></p>
+    </blockquote>
+    <p><font size="2">Edit the path in the <i>IdentityFile</i> property to make 
+      it point on your <i>identity.wotlas</i> file.<br>
+      <br>
+      4 - If your server's IP <b>is</b> the IP you use on the Internet (server 
+      directly connected to the net) then do the following : (1) Launch the <i>Administration 
+      Setup</i> and then start the <i>Setup Wizard</i>, (2) Select <i>Edit your 
+      Config</i>, (3) At the <i>Network Address Setup</i> step select <i>Automatic 
+      Updates</i>, (4) click on '<i>Next</i>' until you quit the wizard, (5) Edit 
+      the <i>Transfer Script</i> in the <i>Administration Setup</i>, make sure 
+      the WEB_NAME, WOTLAS_HOME and SERVER_ID are correct. Your wotlas home is 
+      where you installed wotlas ( <i>/home/myapps/wotlas</i> in the previous 
+      examples ). You can now start your server.</font></p>
+    <p><font size="2">5 - If your server is on a local LAN and has a private IP 
+      ( 192.168.0.1 for example ) you'll need to use NAT to redirect the a part 
+      of the incoming traffic of your Internet gateway ( or ADSL modem ) on your 
+      server. Read the beginning of question <a href="#q16">1.6</a> to learn more 
+      on NAT. Once you've created the NAT entries do the following :<br>
+      <br>
+      If your Internet gateway doesn't have a fixed IP :<br>
+      </font></p>
+    <blockquote> 
+      <p><font size="2">(1) Edit the <i>wotlas/bin/unix/update-server-ip.sh </i>script<i>, 
+        </i>make sure the WEB_NAME, WOTLAS_HOME and SERVER_ID are correct, (2) 
+        Configure your crontab service to run the script every two hours ( set 
+        to more if your IP is not changed very often by your ISP ), (3) Launch 
+        the <i>Administration Setup</i> and then start the <i>Setup Wizard</i>, 
+        (4) Select <i>Edit your Config</i>, (5) At the <i>Network Address Setup</i> 
+        step select <i>Never. Manual Updates, </i>don't bother about the <i>Publish</i> 
+        options, (6) click on '<i>Next</i>' until you quit the wizard, quit the 
+        admin setup and start your server.</font></p>
+    </blockquote>
+    <p><font size="2">If your Internet gateway has a fixe IP :</font></p>
+    <blockquote> 
+      <p><font size="2">(1) Launch the <i>Administration Setup</i> and then start 
+        the <i>Setup Wizard</i>, (2) Select <i>Edit your Config</i>, (3) At the 
+        <i>Network Address Setup</i> step select <i>Never. Manual Updates, </i>and 
+        select<i> Publish</i> <i>Another IP/DNS address, </i>enter the IP of your 
+        Internet gateway, (4) click on '<i>Next</i>' until you quit the wizard, 
+        (5) Edit the <i>Transfer Script</i> in the <i>Administration Setup</i>, 
+        make sure the WEB_NAME, WOTLAS_HOME and SERVER_ID are correct, (6) quit 
+        the <i>Admin Setup</i>, go to the <i>wotlas/bin/unix/</i> directory and 
+        launch the <i>transferScript.sh</i> once. You can now start your server.</font></p>
+    </blockquote>
   </blockquote>
   <p>&nbsp;</p>
 </blockquote>

@@ -1,27 +1,19 @@
 #!/bin/sh
 
-echo A - Creating Environment 
-
 # ------------------------------------------------------------------------
 
 # Edit for your config here (We are using scp for secure file transfer):
+#
+#      We are using SCP for secure file transfer. Please read our wotlas-faq.html
+#      question 1.20 to learn how to use this script.
+#
 
-SET WEB_NAME=sourceforge.net
-SET WEB_SHELL=shell.sf.net
+SET WEB_NAME=mylogin@sourceforge.net
 SET SHELL_PATH=/home/groups/w/wo/wotlas/htdocs/game
 
-SET WEB_LOGIN=You will be prompted for your login.
-SET WEB_PASSWORD=You will be prompted for your passsword.
-
+SET WOTLAS_HOME=/home/myapps/wotlas
 SET SERVER_ID=0
-SET BASE_PATH=../../base
 
-# ------------------------------------------------------------------------
+# Send the .cfg.adr file to wotlas.sourceforge.net
+scp -F $WOTLAS_HOME/config.wotlas $WOTLAS_HOME/base/servers/server-$SERVER_ID.cfg.adr $WEB_NAME:$SHELL_PATH
 
-echo B - Sending server-$SERVER_ID.cfg.adr to $WEB_NAME@$WEB_SHELL
-
-scp -batch -pw $WEB_PASSWORD $BASE_PATH/servers/server-$SERVER_ID.cfg.adr $WEB_LOGIN@$WEB_SHELL:$SHELL_PATH
-
-# ------------------------------------------------------------------------
-
-echo Done.

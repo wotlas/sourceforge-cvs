@@ -40,9 +40,11 @@ public class JWizardStepParameters {
    private String stepClass;
 
   /** Properties for step's creation and operation
-   *  First column is the property key, second column is the property value.
+   *  We use two separate array here because our Persistence library only supports 1dim
+   *  arrays.
    */
-   private String stepProperties[][];
+   private String stepPropertiesKey[];
+   private String stepPropertiesValue[];
 
   /** JWizardStep's title
    */
@@ -116,7 +118,16 @@ public class JWizardStepParameters {
       this.stepTitle = stepTitle;
 
       this.isDynamic = isDynamic;
-      this.stepProperties = stepProperties;
+      
+      if(stepProperties!=null) {
+         stepPropertiesKey = new String[stepProperties.length];
+         stepPropertiesValue = new String[stepProperties.length];
+
+         for( int i=0; i<stepProperties.length; i++ ) {
+              stepPropertiesKey[i] = stepProperties[i][0];
+              stepPropertiesValue[i] = stepProperties[i][1];
+         }
+      }
       
       isPrevButtonEnabled = true;
       isNextButtonEnabled = true;
@@ -141,20 +152,34 @@ public class JWizardStepParameters {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Properties for step's creation and operation
-   *  First column is the property key, second column is the property value.
+  /** Key of the properties for step's creation and operation.
    */
-   public String[][] getStepProperties(){
-   	return stepProperties;
+   public String[] getStepPropertiesKey(){
+   	return stepPropertiesKey;
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Properties for step's creation and operation
-   *  First column is the property key, second column is the property value.
+  /** Key Properties for step's creation and operation
    */
-   public void setStepProperties(String[][] stepProperties){
-   	this.stepProperties = stepProperties;
+   public void setStepPropertiesKey(String[] stepPropertiesKey){
+   	this.stepPropertiesKey = stepPropertiesKey;
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Value of the properties for step's creation and operation.
+   */
+   public String[] getStepPropertiesValue(){
+   	return stepPropertiesValue;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Value Properties for step's creation and operation.
+   */
+   public void setStepPropertiesValue(String[] stepPropertiesValue){
+   	this.stepPropertiesValue = stepPropertiesValue;
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -254,14 +279,14 @@ public class JWizardStepParameters {
 
       ostream.writeBoolean(isDynamic);
 
-      if(stepProperties==null)
+      if(stepPropertiesKey==null)
          ostream.writeShort(0);
       else {
-         ostream.writeShort((short)stepProperties.length);
+         ostream.writeShort((short)stepPropertiesKey.length);
 
-         for( short i=0; i<stepProperties.length; i++ ) {
-              ostream.writeUTF(stepProperties[i][0]);
-              ostream.writeUTF(stepProperties[i][1]);
+         for( short i=0; i<stepPropertiesKey.length; i++ ) {
+              ostream.writeUTF(stepPropertiesKey[i]);
+              ostream.writeUTF(stepPropertiesValue[i]);
          }
       }
       
@@ -285,14 +310,17 @@ public class JWizardStepParameters {
 
       short len = istream.readShort();
 
-      if(len==0)
-         stepProperties=null;
+      if(len==0) {
+         stepPropertiesKey=null;
+         stepPropertiesValue=null;
+      }
       else {
-         stepProperties = new String[len][2];
+         stepPropertiesKey = new String[len];
+         stepPropertiesValue = new String[len];
 
          for( short i=0; i<len; i++ ) {
-              stepProperties[i][0] = istream.readUTF();
-              stepProperties[i][1] = istream.readUTF();
+              stepPropertiesKey[i] = istream.readUTF();
+              stepPropertiesValue[i] = istream.readUTF();
          }
       }
       
@@ -307,12 +335,12 @@ public class JWizardStepParameters {
     * @return null if not found
     */
    public String getProperty(String key) {
-        if(stepProperties==null)
+        if(stepPropertiesKey==null)
            return null;
 
-        for( int i=0; i<stepProperties.length; i++ )
-             if(stepProperties[i][0].equals(key))
-                return stepProperties[i][1]; // found
+        for( int i=0; i<stepPropertiesKey.length; i++ )
+             if(stepPropertiesKey[i].equals(key))
+                return stepPropertiesValue[i]; // found
         
         return null; // not found
    }
@@ -325,32 +353,36 @@ public class JWizardStepParameters {
     *  @return the eventual previous value that was replaced, null if none.
     */
    public String setProperty(String key,String value) {
-        if(stepProperties==null) {
-           stepProperties = new String[1][2];
-           stepProperties[0][0] = key;
-           stepProperties[0][1] = value;
+        if(stepPropertiesKey==null) {
+           stepPropertiesKey = new String[1];
+           stepPropertiesValue = new String[1];
+           stepPropertiesKey[0] = key;
+           stepPropertiesValue[0] = value;
            return null;
         }
 
      // does the key exists ?
-        for( int i=0; i<stepProperties.length; i++ )
-             if(stepProperties[i][0].equals(key)) {
-                String previous = stepProperties[i][1];
-                stepProperties[i][1] = value;
+        for( int i=0; i<stepPropertiesKey.length; i++ )
+             if(stepPropertiesKey[i].equals(key)) {
+                String previous = stepPropertiesValue[i];
+                stepPropertiesValue[i] = value;
                 return previous;
              }
 
      // We create a new entry...
-        String newProperties[][] = new String[stepProperties.length+1][2];
-        
-        for( int i=0; i<stepProperties.length; i++ ) {
-             newProperties[i][0] = stepProperties[i][0];
-             newProperties[i][1] = stepProperties[i][1];
+        String newPropertiesKey[] = new String[stepPropertiesKey.length+1];
+        String newPropertiesValue[] = new String[stepPropertiesValue.length+1];
+
+        for( int i=0; i<stepPropertiesKey.length; i++ ) {
+             newPropertiesKey[i] = stepPropertiesKey[i];
+             newPropertiesValue[i] = stepPropertiesValue[i];
         }
 
-        newProperties[stepProperties.length][0] = key;
-        newProperties[stepProperties.length][1] = value;
-        stepProperties = newProperties;
+        newPropertiesKey[stepPropertiesKey.length] = key;
+        newPropertiesValue[stepPropertiesValue.length] = value;
+
+        stepPropertiesKey = newPropertiesKey;
+        stepPropertiesValue = newPropertiesValue;
         return null; // new entry
    }
 
@@ -371,10 +403,10 @@ public class JWizardStepParameters {
         noInitParam.isLastStep = isPrevButtonEnabled;
 
       // 2 - Property copy
-        if(stepProperties!=null)
-           for( int i=0; i<stepProperties.length; i++ )
-                if( !stepProperties[i][0].startsWith("init.") )
-                    noInitParam.setProperty( stepProperties[i][0], stepProperties[i][1] );
+        if(stepPropertiesKey!=null)
+           for( int i=0; i<stepPropertiesKey.length; i++ )
+                if( !stepPropertiesKey[i].startsWith("init.") )
+                    noInitParam.setProperty( stepPropertiesKey[i], stepPropertiesValue[i] );
 
         return noInitParam;
     }
@@ -396,10 +428,10 @@ public class JWizardStepParameters {
         noServerParam.isLastStep = isPrevButtonEnabled;
 
       // 2 - Property copy
-        if(stepProperties!=null)
-           for( int i=0; i<stepProperties.length; i++ )
-                if( !stepProperties[i][0].startsWith("server.") )
-                    noServerParam.setProperty( stepProperties[i][0], stepProperties[i][1] );
+        if(stepPropertiesKey!=null)
+           for( int i=0; i<stepPropertiesKey.length; i++ )
+                if( !stepPropertiesKey[i].startsWith("server.") )
+                    noServerParam.setProperty( stepPropertiesKey[i], stepPropertiesValue[i] );
 
         return noServerParam;
     }

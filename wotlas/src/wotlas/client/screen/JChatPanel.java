@@ -36,6 +36,7 @@ import java.awt.event.*;
 
 import java.net.*;
 
+import java.util.Enumeration;
 import java.util.Hashtable;
 
 /** JPanel to show the chat engine
@@ -132,10 +133,26 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
       bottomChat.setLayout(new BoxLayout(bottomChat,BoxLayout.X_AXIS)); // MasterBob revision
 
 
-    inputBox = new JTextField();
+    inputBox = new JMyTextField();
     inputBox.getCaret().setVisible(true);
+    inputBox.setInputVerifier(new MyFieldVerifier());
     inputBox.addKeyListener(new KeyAdapter() {
-        public void keyReleased(KeyEvent e) {
+      
+
+        public void keyPressed(KeyEvent keyEvent) {
+          if ((keyEvent.getKeyCode() == KeyEvent.VK_TAB) || (keyEvent.getKeyChar() == '\t')) {
+            inputBox.setText( nameCompletion() );
+            keyEvent.consume();
+            return;
+          }
+          if ( keyEvent.getKeyCode() == KeyEvent.VK_ENTER ) {
+            okAction();
+            return;
+          }
+        }
+      
+
+        /*public void keyReleased(KeyEvent e) {          
           if ( e.getKeyCode()==KeyEvent.VK_UP )  {
             inputBox.setText( messageHistory.getPrevious(inputBox.getText()) );
             return;
@@ -144,11 +161,15 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
             inputBox.setText( messageHistory.getNext(inputBox.getText()) );
             return;
           }
+          if ( e.getKeyCode()==KeyEvent.VK_TAB || e.getKeyChar() == '\t') {
+            inputBox.setText( nameCompletion() );
+            return;
+          }
           if ( e.getKeyCode()==KeyEvent.VK_ENTER ) {
             okAction();
             return;
           }
-        }
+        }*/
     });
 
 //    bottomChat.add("Center", inputBox);
@@ -517,6 +538,29 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
 
  /*------------------------------------------------------------------------------------*/
 
+  /** To auto complete the name of a player
+   */
+  private String nameCompletion() {
+    String input = inputBox.getText();
+    
+    if (input.length()==0)
+      return input;
+    
+    // find the last space
+    int lastIndex = input.lastIndexOf(' ');    
+    String autoName = input.substring(lastIndex+1, input.length());        
+    for (Enumeration e = getPlayers(currentPrimaryKey).elements() ; e.hasMoreElements() ;) {
+      String playerKey = (String) e.nextElement();
+      if ( playerKey.startsWith(autoName)) {
+        input = input.substring(0, lastIndex+1) + playerKey;
+        return input;
+      }
+    }    
+    return input;
+  }
+
+ /*------------------------------------------------------------------------------------*/
+
 /** ActionListener Implementation **/
 
   /** Called when an action is performed.
@@ -655,3 +699,18 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
  /*------------------------------------------------------------------------------------*/
 
 }
+
+
+   class MyFieldVerifier extends InputVerifier {
+      public boolean verify(JComponent c) {
+         // returning prevents loss of focus
+         return false;
+      }
+   }
+
+   class JMyTextField extends JTextField {
+      // Override to inform focus manager
+      // that component is managing focus changes
+      public boolean isManagingFocus() { return true; }
+
+   }

@@ -56,15 +56,17 @@ public class JChatRoom extends JPanel implements MouseListener {
    */
   private JChatDisplay chatDisplay;
 
-  /** List of ChatRoom players.
+  /** JList of ChatRoom players.
    */
   private JList playersJList;
   private DefaultListModel playersListModel;
 
-  /** Player list
+  /** Array of players.
    */
   private Hashtable players;
   
+  /** Key of selected player.
+   */
   static public String selectedPlayerKey;
   
  /*------------------------------------------------------------------------------------*/
@@ -143,10 +145,10 @@ public class JChatRoom extends JPanel implements MouseListener {
     final String strNewName = senderFullName;
     players.put( primaryKey, senderFullName );
 
-   Hashtable playersTable = ClientDirector.getDataManager().getPlayers();
-   Player newPlayer = (Player) playersTable.get(primaryKey);
+    Hashtable playersTable = ClientDirector.getDataManager().getPlayers();
+    Player newPlayer = (Player) playersTable.get(primaryKey);
 
-   if ( (newPlayer!=null) && newPlayer.isConnectedToGame() ) {
+    if ( (newPlayer!=null) && newPlayer.isConnectedToGame() ) {
       Runnable runnable = new Runnable() {
         public void run() {
           if (!strNewName.equals(ClientDirector.getDataManager().getMyPlayer().getFullPlayerName()))
@@ -190,7 +192,6 @@ public class JChatRoom extends JPanel implements MouseListener {
       }
     };
     SwingUtilities.invokeLater( runnable );
-
   }
 
   /** To update a player' full name from the JList.
@@ -269,7 +270,7 @@ public class JChatRoom extends JPanel implements MouseListener {
     if (DataManager.SHOW_DEBUG)
       System.out.println("[JChatRoom] : clic sur (" + e.getX() + "," + e.getY() + ")");
     if (SwingUtilities.isRightMouseButton(e)) {
-
+      
     } else {
       if (DataManager.SHOW_DEBUG)
         System.out.println("\tleft clic");
@@ -289,23 +290,21 @@ public class JChatRoom extends JPanel implements MouseListener {
        boolean isSelected,      // is the cell selected
        boolean cellHasFocus)    // the list and the cell have the focus
      {
-         String s = value.toString();
-         setText(s);
+        String s = value.toString();
+        setText(s);
          
-         if (isSelected) {
-             setBackground(list.getSelectionBackground());
-	     setForeground(list.getSelectionForeground());
-	 }
-         else {
-	       setBackground(list.getBackground());
-	       setForeground(list.getForeground());
-         }
-
-         setEnabled(list.isEnabled());
-         setFont(list.getFont());
-         return this;
+        if (isSelected) {
+          setBackground(list.getSelectionBackground());
+	        setForeground(list.getSelectionForeground());
+	      } else {
+          setBackground(list.getBackground());
+	        setForeground(list.getForeground());
+        }
+        setEnabled(list.isEnabled());
+        setFont(list.getFont());
+        return this;
      }
- }
+  }
 
 }
 

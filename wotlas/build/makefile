@@ -1,5 +1,7 @@
 # MAKEFILE FOR WOTLAS.
 #
+# WARNING THIS BUILD SOLUTION IS DEPRECATED NOW. PREFER ANT.
+#
 # You can find and download GNU MAKE for Windows at
 # the following URL : http://www.tardis.ed.ac.uk/~skx/win/Free15.html#gnumake
 # or if the link is dead go to www.GNUSoftware.com .

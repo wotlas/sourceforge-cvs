@@ -1,0 +1,223 @@
+<!-- =================================================================== -->
+<!-- WOTLAS - ANT BUILD FILE                                             -->
+<!-- =================================================================== -->
+
+<project default="all" basedir=".">
+
+    <!-- =================================================================== -->
+    <!-- Initialization target - We define here our project's envornment     -->
+    <!-- =================================================================== -->
+    <target name="init">
+        <tstamp/>
+        <property name="Name" value="Wheel Of Time - Light and Shadow"/>
+        <property name="name" value="wotlas"/>
+        <property name="version" value="1.2.4"/>
+        <property name="year" value="2002"/>
+        
+        <echo message="Building ${Name} ${version}...."/>
+        
+        <property name="build.compiler" value="classic"/>
+        <property name="debug" value="off"/>
+        <property name="optimize" value="on"/>
+        <property name="deprecation" value="on"/>
+        
+        <property name="src.dir" value="../src"/>
+        <property name="lib.dir" value="../lib"/>
+        <property name="packages" value="wotlas.*"/>
+        
+        <property name="build.src" value="../src"/>
+        <property name="build.dest" value="../classes"/>
+        <property name="build.javadocs" value="../docs/api"/>
+
+        <property name="alice.dir" value="../../alice/ProgramD"/>
+        <property name="alice-classpath" value="${alice.dir}/lib/aliceserver.jar"/>
+        
+        <filter token="year" value="${year}"/>
+        <filter token="version" value="${version}"/>
+        <filter token="date" value="${TODAY}"/>
+        <filter token="log" value="true"/>
+        <filter token="verbose" value="true"/>
+        
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- Help on usage - We describe here all the targets you can use.       -->
+    <!-- =================================================================== -->
+    <target name="usage">
+        <echo message=""/>
+        <echo message=""/>
+        <echo message="Wotlas Build System"/>
+        <echo message="-------------------------------------------------------------"/>
+        <echo message=""/>
+        <echo message=" Available targets are:"/>
+        <echo message=""/>
+        <echo message="   all  --> compiles all : client, server, libs, etc... (default)"/>
+        <echo message=""/>
+        <echo message="   server --> compiles the server side only (server,common,libs)"/>
+        <echo message="   server-only --> compiles the server packages only"/>
+        <echo message=""/>
+        <echo message="   client --> compiles the client side only (client,common,libs)"/>
+        <echo message="   client-only --> compiles the client packages only"/>
+        <echo message=""/>
+        <echo message="   libs --> compiles the wotlas libs only"/>
+        <echo message="   common --> compiles the common wotlas packages only"/>
+        <echo message="   utils --> compiles the wotlas utils only"/>
+        <echo message=""/>
+        <echo message="   alice  --> compiles the alice part of wotlas (you'll need alicebot)"/>
+        <echo message=""/>
+        <echo message="   javadoc  --> generates the API documentation in the docs/api directory"/>
+        <echo message="   clean    --> cleans up the directory"/>
+        <echo message=""/>
+        <echo message=" See the comments inside the build.xml file for more details."/>
+        <echo message="-------------------------------------------------------------"/>
+        <echo message=""/>
+        <echo message=""/>
+    </target>
+    
+    <!-- =================================================================== -->
+    <!-- Prepares the build directory - Enter some pre-compilation checks    -->
+    <!-- =================================================================== -->
+    <target name="prepare" depends="init">
+        <mkdir dir="${build.dest}"/>
+    </target>
+
+    
+    <!-- =================================================================== -->
+    <!-- Compiles the source directory                                       -->
+    <!-- =================================================================== -->
+
+    <!-- COMPILE ALL -->
+
+    <target name="all" depends="prepare,utils,libs,common,server-only,client-only">
+    </target>
+
+
+    <!-- COMPILE SERVER -->
+
+    <target name="server" depends="prepare,utils,libs,common,server-only">
+    </target>
+
+
+    <!-- COMPILE CLIENT -->
+
+    <target name="client" depends="prepare,utils,libs,common,client-only">
+    </target>
+
+
+    <!-- COMPILE SERVER ONLY -->
+
+    <target name="server-only" depends="prepare">
+        <echo message="Compiling Wotlas Server..."/>
+        <javac srcdir="${build.src}"
+            destdir="${build.dest}"
+            includes="wotlas/server/**"
+            excludes="wotlas/server/bots/alice/**"
+            debug="${debug}"
+            deprecation="${deprecation}"
+            optimize="${optimize}"/>
+    </target>
+
+
+    <!-- COMPILE CLIENT ONLY -->
+
+    <target name="client-only" depends="prepare">
+        <echo message="Compiling Wotlas Client..."/>
+        <javac srcdir="${build.src}"
+            destdir="${build.dest}"
+            includes="wotlas/client/**"
+            debug="${debug}"
+            deprecation="${deprecation}"
+            optimize="${optimize}"/>
+    </target>
+
+
+    <!-- COMPILE COMMON PACKAGES -->
+
+    <target name="common" depends="prepare">
+        <echo message="Compiling Wotlas Common..."/>
+        <javac srcdir="${build.src}"
+            destdir="${build.dest}"
+            includes="wotlas/common/**"
+            debug="${debug}"
+            deprecation="${deprecation}"
+            optimize="${optimize}"/>
+    </target>
+
+
+    <!-- COMPILE WOTLAS LIBS -->
+
+    <target name="libs" depends="prepare">
+        <echo message="Compiling Wotlas Libs..."/>
+        <javac srcdir="${build.src}"
+            destdir="${build.dest}"
+            includes="wotlas/libs/**"
+            debug="${debug}"
+            deprecation="${deprecation}"
+            optimize="${optimize}"/>
+    </target>
+
+
+    <!-- COMPILE WOTLAS UTILS -->
+
+    <target name="utils" depends="prepare">
+        <echo message="Compiling Wotlas Utils..."/>
+        <javac srcdir="${build.src}"
+            destdir="${build.dest}"
+            includes="wotlas/utils/**"
+            debug="${debug}"
+            deprecation="${deprecation}"
+            optimize="${optimize}"/>
+    </target>
+
+
+    <!-- COMPILE WOTLAS's ALICEBOT LISTENER -->
+
+    <target name="alice" depends="prepare">
+        <echo message="Compiling Wotlas Alice Listener..."/>
+        <javac srcdir="${build.src}"
+            destdir="${build.dest}"
+            includes="wotlas/server/bots/alice/**"
+            debug="${debug}"
+            classpath="${alice-classpath}"
+            deprecation="${deprecation}"
+            optimize="${optimize}"/>
+    </target>
+
+
+    <!-- =================================================================== -->
+    <!-- Creates the API documentation                                       -->
+    <!-- =================================================================== -->
+    <target name="javadoc">
+        <mkdir dir="${build.javadocs}"/>
+        <javadoc packagenames="${packages}"
+            sourcepath="${build.src}"
+            destdir="${build.javadocs}"
+            author="true"
+            version="true"
+            use="true"
+            splitindex="true"
+            noindex="false"
+            windowtitle="${Name} API"
+            doctitle="${Name} API"
+            bottom="Copyright &#169; ${year} WOTLAS TEAM. All Rights Reserved."
+         >
+              <group title="Server" packages="wotlas.server*"/>
+              <group title="Client" packages="wotlas.client*"/>
+              <group title="Common" packages="wotlas.common*"/>
+              <group title="Libraries" packages="wotlas.libs*"/>
+              <group title="Utilities" packages="wotlas.utils*"/>
+         </javadoc>
+    </target>
+
+    
+    <!-- =================================================================== -->
+    <!-- Clean targets                                                       -->
+    <!-- =================================================================== -->
+    <target name="clean" depends="init">
+        <delete dir="${build.dest}/wotlas"/>
+    </target>
+
+    
+</project>
+
+<!-- End of file -->

@@ -6,7 +6,7 @@
 * ( File Best Viewed in 1024x768 or above)
 *
 
-CHANGES BETWEEN V1.2.3 AND V1.3 (10 May 2002)
+CHANGES BETWEEN V1.2.3 AND V1.3 (15 May 2002)
 ---------------------------------------------
 
  - Added bots definitions and a link to a remote AliceBot server.
@@ -20,10 +20,14 @@ CHANGES BETWEEN V1.2.3 AND V1.3 (10 May 2002)
  - Antialiased Swing is now a wotlas library.
  - /info command has been renamed to /manual and it's use is now easier : "/manual fanfare"
  - Added a /away chat command and new player states to be able to say that you are connected but away.
- - the html documentation has been updated to make our code use proper URLs.
+ - The html documentation has been updated to make our code use proper URLs.
  - Added JAR Name detection and Java Web Start support.
  - Added in-game menus on the client side.
  - Enhanced network library. Our server now use Java 1.4 NetworkInterface to monitor its net interface.
+ - New administration panel for the server.
+ - New transfer scripts enabling the wotlas server to perform automatic IP updates on the wotlas web server.
+ - Corrected a very old bug on the Warning messages.
+ - Improved ImageLibrary code : JIT resources from a directory can now be loaded together.
 
 
 CHANGES BETWEEN V1.2.2 AND V1.2.3 (11 April 2002)

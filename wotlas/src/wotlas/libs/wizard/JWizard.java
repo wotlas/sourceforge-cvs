@@ -436,7 +436,8 @@ public abstract class JWizard extends JFrame {
 
   /** To awake the current step.
    */
-   protected void awakeCurrentStep() {
+   //protected void awakeCurrentStep() {
+   public void awakeCurrentStep() {
         if(currentStep!=null)
            currentStep.awake();
    }

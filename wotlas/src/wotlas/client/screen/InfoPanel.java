@@ -125,7 +125,7 @@ public class InfoPanel extends JPanel
     setLabelText( player.getFullPlayerName(null) );
 
     setText( 
-         "Nickname: "+player.getPlayerName()+"\n"+
+         
          "Community: "+player.getWotCharacter().getCommunityName()+"\n"+
          "Rank: "+player.getWotCharacter().getCharacterRank()+"\n\n"+
          "Player Past: "+player.getPlayerPast() );

@@ -33,6 +33,9 @@ import wotlas.utils.Tools;
 /** A NetClient provides methods to initiate a connection with a server.
  *  The default NetPersonality it provides is a TormPersonality.
  *
+ *  IMPORTANT: The NetClient object is only a tool that can be erased after its use.
+ *             If must also be re-created if it fails to connect to the server.
+ *
  * @author Aldiss
  * @see wotlas.libs.net.NetPersonality
  */
@@ -58,6 +61,15 @@ public class NetClient
    /** Connection validated by server ?
     */
        private boolean validConnection;
+
+   /** Context to set (temp attribute)
+    */
+       private Object context;
+
+   /** NetPersonality created for this client
+    */
+       private NetPersonality personality;
+
 
  /*------------------------------------------------------------------------------------*/
 
@@ -89,10 +101,14 @@ public class NetClient
 
   /** We try to build a connection with a server. On success we create a
    *  default NetPersonality and return it. If an error occurs, we return null
-   *  and an error message is set ( use getCurrentErrorMessage() to get it ).
+   *  and an error message is set ( use getCurrentErrorMessage() to get it ).<p>
    *
    *  You have to give the name of the packages where we'll be able to find
-   *  the NetMessageBehaviour classes.
+   *  the NetMessageBehaviour classes.<p>
+   *
+   *  If the connection is validated the context is immediately set and, if the
+   *  given context object implements the NetConnectionListener, we sets it as the
+   *  default NetPersonality connection observer ( personality.setConnectionListener() )...
    *
    * @param server_name complete server name
    * @param server_port port to reach
@@ -106,8 +122,8 @@ public class NetClient
                                             String msg_packages[] )
      {
        Socket socket;
-       NetPersonality personality=null;
        error_message = null;
+       this.context = context;
 
        // to make sure there is one...
           NetMessageFactory.createMessageFactory( msg_packages );
@@ -123,8 +139,10 @@ public class NetClient
                     return null;
                }
 
-               if( stop() )
+               if( stop() ) {
+                   clean();
                    return null;
+               }
 
             // We create a new personality and send our key.
             // This client is the temporary context of the first
@@ -136,7 +154,7 @@ public class NetClient
                personality.pleaseSendAllMessagesNow();
 
                if( stop() ) {
-               	   personality.closeConnection();
+                   clean();
                    return null;
                }
 
@@ -168,7 +186,7 @@ public class NetClient
                }
 
                if(stop()) {
-                  personality.closeConnection();
+                  clean();
                   return null;
                }
 
@@ -176,28 +194,24 @@ public class NetClient
             // (see the messages in the wotlas.libs.net.message package)
                if( !validConnection() ) {
 
-                  if(getErrorMessage()!=null) {
+                  if(getErrorMessage()!=null)
                       Debug.signal(Debug.ERROR, this, "Server returned an Error");
-                  }
                   else {
                       setErrorMessage( "Server reached, but connection timeout" );        
                       Debug.signal(Debug.ERROR, this, "Connection Timeout");
                   }
 
-                  personality.closeConnection();
+                  clean();
                   return null;                   
                }
 
-               personality.setContext( context );
                return personality;
           }
           catch(IOException e){
            // Hum ! this server doesn't want to hear from us...
               error_message = "Error during connection: "+e.getMessage();
 
-              if(personality!=null)
-                 personality.closeConnection();
-   
+              clean();
               return null;
  	  }
        }
@@ -244,10 +258,15 @@ public class NetClient
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
     /** This method is for the ServerWelcomeMsgBehaviour only: it validates the
-     *  connection with the server.
+     *  connection with the server and sets the NetMessage Context.
      */
        public synchronized void validateConnection() {
              validConnection=true;
+             personality.setContext( context );
+
+          // NetConnectionListener
+             if(context instanceof NetConnectionListener)
+                personality.setConnectionListener( (NetConnectionListener) context );
        }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -263,6 +282,17 @@ public class NetClient
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+    /** To clean this NetClient
+     */
+       private synchronized void clean(){
+              if(personality!=null)
+                 personality.closeConnection();
+
+              personality=null;
+              context=null;
+       }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
 

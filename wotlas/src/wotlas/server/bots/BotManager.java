@@ -93,7 +93,7 @@ public class BotManager {
           if(!botChatService.init( serverProperties ) )
              return false; // init failed
 
-          botChatService.connect(); // try a first connection
+          botChatService.connect(); // we try a first connection
           return true;
      }
 
@@ -274,7 +274,7 @@ public class BotManager {
     *  to tell the bots that its state has changed.
     */
      public void refreshBotState() {
-
+System.out.println("REFRESHING BOT STATE");
           synchronized( accountManager ) {
              Iterator it = accountManager.getIterator();
 
@@ -283,7 +283,7 @@ public class BotManager {
           	 PlayerImpl pl = ac.getPlayer();
           	 
           	 if( pl instanceof BotPlayer )
-          	     pl.setIsConnectedToGame(botChatService.isAvailable() );
+          	     pl.setIsConnectedToGame( botChatService.isAvailable() );
              }
           }
      }

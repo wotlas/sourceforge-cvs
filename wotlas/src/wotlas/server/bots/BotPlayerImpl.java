@@ -60,21 +60,6 @@ public class BotPlayerImpl extends PlayerImpl implements BotPlayer {
     */
       public void init() {
           super.init();
-
-          if( defaultChatRoomName==null ) {
-              Debug.signal(Debug.ERROR, this, "Bot has no default chat !" );
-              defaultChatRoomName = playerName;
-          }
-
-       // we create our bot's default chat room
-          ChatRoomCreationMsgBehaviour roomCreation = new ChatRoomCreationMsgBehaviour(defaultChatRoomName,primaryKey,true);
-
-          try{
-              roomCreation.doBehaviour( this );
-          }
-          catch( Exception e ) {
-              Debug.signal(Debug.ERROR,this,"Failed to create default chat room for bot...");
-          }
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -128,6 +113,11 @@ public class BotPlayerImpl extends PlayerImpl implements BotPlayer {
     */
       public boolean isConnectedToGame() {
          BotChatService chatService = ServerDirector.getDataManager().getBotManager().getBotChatService();
+
+if(chatService!=null)
+System.out.println(""+primaryKey+" BOOT asked connected state : "+chatService.isAvailable() );
+else
+System.out.println(""+primaryKey+" BOOT asked connected state : NO CHAT SERVICE" );
          
          if( chatService!=null && chatService.isAvailable() )
              return true;
@@ -152,7 +142,7 @@ public class BotPlayerImpl extends PlayerImpl implements BotPlayer {
                isConnected = !isConnected;
                Debug.signal(Debug.WARNING, this, "Bad 'isConnected' value avoided...");
             }
-
+System.out.println("Updating Bot State !!!!! "+primaryKey);
          // if it's a transition from connected to not connected we
          // reset our state
             if( !isConnected ) {
@@ -175,16 +165,47 @@ public class BotPlayerImpl extends PlayerImpl implements BotPlayer {
               // 2 - We send an update to players near us...
               // ... and players in other rooms
                  if(!isConnected)
-                    myRoom.getMessageRouter().sendMessage( (NetMessage) movementComposer.getUpdate(),
+                     myRoom.getMessageRouter().sendMessage( (NetMessage) movementComposer.getUpdate(),
                                                            this, MessageRouter.EXTENDED_GROUP );
 
               // 3 - We check that we are a member of the given Message Router
                  if( myRoom.getMessageRouter().getPlayer(primaryKey)!=null ) {
                    // We send an update to players near us...
                       PlayerConnectedToGameMessage pMsg = new PlayerConnectedToGameMessage(
-                                                          primaryKey, isConnectedToGame() );
+                                                          primaryKey, isConnected );
                       myRoom.getMessageRouter().sendMessage( pMsg, this,
                                                           MessageRouter.EXTENDED_GROUP );
+                 }
+
+              // 4 - We create our delete local chat room
+                 if(isConnected) {
+
+                     if( defaultChatRoomName==null ) {
+                         Debug.signal(Debug.ERROR, this, "Bot has no default chat !" );
+                         defaultChatRoomName = playerName;
+                     }
+
+                  // we create our bot's default chat room
+                     ChatRoomCreationMsgBehaviour roomCreation = new ChatRoomCreationMsgBehaviour(defaultChatRoomName,primaryKey,true);
+ 
+                     try{
+                          roomCreation.doBehaviour( this );
+                     }
+                     catch( Exception e ) {
+                          Debug.signal(Debug.ERROR,this,"Failed to create default chat room for bot...");
+                     }
+                 }
+                 else if( !currentChatPrimaryKey.equals( ChatRoom.DEFAULT_CHAT ) ) {
+                    // we quit our current chat
+                     RemPlayerFromChatRoomMsgBehaviour remPlayerFromChat
+                            = new RemPlayerFromChatRoomMsgBehaviour( primaryKey, currentChatPrimaryKey );
+
+                     try{
+                          remPlayerFromChat.doBehaviour( this );
+                     }catch( Exception e ) {
+                          Debug.signal( Debug.ERROR, this, e );
+                          currentChatPrimaryKey = ChatRoom.DEFAULT_CHAT;
+                     }
                  }
             }
       }

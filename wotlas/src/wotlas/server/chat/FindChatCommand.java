@@ -111,7 +111,7 @@ public class FindChatCommand implements ChatCommand
                  return true;
               }
 
-              message = "/cmd:"+account.getPlayer().getFullPlayerName()+" found in ";
+              message = "/cmd:"+account.getPlayer().getFullPlayerName(player)+" found in ";
               WotlasLocation flocation = account.getPlayer().getLocation();
 
               if( flocation.isRoom() ) {

@@ -48,7 +48,7 @@ public class LoopBackBotChatService implements BotChatService {
     *  @return true if the initialization succeeded, false if it failed
     */
       public boolean init( Properties serverProperties ) {
-          Debug.signal(Debug.NOTICE, null, "Bot Chat Service is a LoopBack service.");
+          Debug.signal(Debug.NOTICE, null, "Bot Chat Service used : loopBack.");
           return true;
       }
 

@@ -126,7 +126,9 @@ public class NetServer extends Thread implements NetErrorCodeList
               maxOpenedSockets = 200;
 
            // we add the new message packages to the message factory
-              NetMessageFactory.getMessageFactory().addMessagePackages( msgPackages );
+              int nb = NetMessageFactory.getMessageFactory().addMessagePackages( msgPackages );
+
+              Debug.signal(Debug.NOTICE,null,"Loaded "+nb+" network message behaviours...");
 
            // ServerSocket inits
               server = getServerSocket();
@@ -161,7 +163,9 @@ public class NetServer extends Thread implements NetErrorCodeList
               maxOpenedSockets = 200;
 
            // we add the new message packages to the message factory
-              NetMessageFactory.getMessageFactory().addMessagePackages( msgPackages );
+              int nb = NetMessageFactory.getMessageFactory().addMessagePackages( msgPackages );
+
+              Debug.signal(Debug.NOTICE,null,"Loaded "+nb+" network message behaviours...");
 
               server = getServerSocket(); 
         }

@@ -22,7 +22,10 @@ package wotlas.libs.net;
 import java.io.File;
 import java.util.Hashtable;
 
+import wotlas.libs.net.message.*;
+
 import wotlas.utils.Debug;
+import wotlas.utils.Tools;
 
 
 /** For one NetMessage representing message data, there can be only one NetMessageBehaviour
@@ -55,7 +58,6 @@ public class NetMessageFactory {
    */
      static {
      	 msgFactory = new NetMessageFactory();
-         msgFactory.addMessagePackage( "wotlas.libs.net.message" ); // system messages
      }
 
  /*------------------------------------------------------------------------------------*/
@@ -73,6 +75,13 @@ public class NetMessageFactory {
    */
      protected NetMessageFactory() {
      	msgClasses = new Hashtable(50);
+
+       // We add system messages.
+         addMessage( ServerWelcomeMsgBehaviour.class );
+         addMessage( ServerErrorMsgBehaviour.class );
+         addMessage( ClientRegisterMsgBehaviour.class );
+         addMessage( EndOfConnectionMsgBehaviour.class );
+         addMessage( PingMsgBehaviour.class );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -88,77 +97,71 @@ public class NetMessageFactory {
    * @return the number of loaded messages.
    */
      protected int addMessagePackages( String packagesName[] ) {
-         if(packagesName==null || packagesName.length==0)
-            return 0;
+          if(packagesName==null || packagesName.length==0)
+              return 0;
 
-         int nbMsg = 0;
+       // we search NetMessageBehaviour classes
+          Class classes[] = null;
+       
+          try{
+              classes = Tools.getImplementorsOf("wotlas.libs.net.NetMessageBehaviour", packagesName );
+          }
+          catch( ClassNotFoundException e ) {
+              Debug.signal(Debug.CRITICAL, this, e );
+              return 0;
+          }
+          catch( SecurityException e ) {
+              Debug.signal(Debug.CRITICAL, this, e );
+              return 0;
+          }
+          catch( RuntimeException e ) {
+              Debug.signal(Debug.ERROR, this, e );
+              return 0;
+          }
+
+          if(classes==null || classes.length==0)
+             return 0;
+
+       // We add the found classes to our list
+          int nbMsg = 0;
             
-         for( int i=0; i<packagesName.length; i++)
-              nbMsg += addMessagePackage( packagesName[i] );
+          for( int i=0; i<classes.length; i++)
+              if( addMessage( classes[i] ) )
+                  nbMsg++;
          
-         return nbMsg;
+          return nbMsg;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Adds new messages to the NetMessageFactory. You have to give the name of the package
-   *  where the message behaviour classes can be found. They are searched on the disk from
-   *  current system directory.<br>
-   *
-   *  We don't check if the package has already been added. Old message behaviour classes
-   *  are replaced if they where already defined in the factory.
+  /** Adds a new NetMessageBehaviour class to our list.
    *
    * @param packageName a package name where we can find NetMsgBehaviour Classes.
-   * @return the number of loaded messages.
+   * @return true if the message has been accepted
    */
-     protected int addMessagePackage( String packageName ) {
+     protected boolean addMessage( Class classToAdd ) {
 
-          if(packageName==null) return 0; // no packages to add
+           if( classToAdd==null || classToAdd.isInterface() )
+              return false;
 
-     	  int nbMsg = 0;
+           try {
+              Object o = classToAdd.newInstance();
 
-       // We get & load the classes of the given package
-       // WE ASSUME THAT WE ARE NOT IN A JAR FILE
-          File packageFiles[] = new File( packageName.replace( '.', '/' ) ).listFiles();
-
-          if( packageFiles==null || packageFiles.length==0 ) {
-              Debug.signal( Debug.WARNING, this, "Empty Package : "+packageName );
-              return 0;
-          }
-
-          for( int i=0; i<packageFiles.length; i++ ) {
-
-              if( !packageFiles[i].isFile() || !packageFiles[i].getName().endsWith(".class") )
-                  continue;
-
-           // We load the class file
-              try{
-                  String name = packageFiles[i].getName();
-                  Class cl = Class.forName( packageName + '.'
-                                            + name.substring( 0, name.lastIndexOf(".class") ) );
-
-                  if(cl==null || cl.isInterface())
-                     continue;
-
-                  Object o = cl.newInstance();
-
-                  if( !(o instanceof NetMessage) || !(o instanceof NetMessageBehaviour ) )
-                      continue;
-
-               // Ok, we have a valid Message Behaviour Class.
-               // we check if this message behaviour already exists in our table.
-               //   if( msgClasses.get( cl.getSuperclass().getName() )!=null )
-               //       Debug.signal( Debug.WARNING, this, "Replacing message code :"+name );
-
-                  msgClasses.put( cl.getSuperclass().getName(), cl );
-                  nbMsg++;
+              if( !(o instanceof NetMessage) || !(o instanceof NetMessageBehaviour) ) {
+                  Debug.signal( Debug.ERROR, this, "Provided class has a bad network message format ! "+classToAdd );
+                  return false;
               }
-              catch( Exception e ) {
-                  Debug.signal( Debug.WARNING, this, e );
-              }
-          }
+           }
+           catch( Exception e ) {
+               Debug.signal( Debug.ERROR, this, e );
+               return false;
+           }
+ 
+         // Ok, we have a valid Message Behaviour Class.
+           msgClasses.put( classToAdd.getSuperclass().getName(), classToAdd );
 
-          return nbMsg;
+           // Debug.signal(Debug.NOTICE, null, "Added Msg "+classToAdd);
+           return true;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

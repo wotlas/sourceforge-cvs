@@ -1,3 +1,0 @@
-Ceci est un test de commit
-
-Ajout d'une ligne

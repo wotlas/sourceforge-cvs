@@ -19,23 +19,31 @@
 
 package wotlas.server.setup;
 
-import wotlas.server.ServerConfig;
+import wotlas.common.ServerConfig;
 import wotlas.server.PersistenceManager;
 import wotlas.utils.Debug;
+import wotlas.utils.FileTools;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+import java.util.Properties;
 
 /** A small utility to configure the server.
  *
  * @author Aldiss
- * @see wotlas.server.ServerConfig
+ * @see wotlas.common.ServerConfig
  */
 
 public class ServerSetup extends JFrame
 {
+ /*------------------------------------------------------------------------------------*/
+
+   /** Static Link to Database Config File.
+    */
+    public final static String DATABASE_CONFIG = "../src/config/server.cfg";
+
  /*------------------------------------------------------------------------------------*/
 
     private JTextField t_serverName, t_serverID, t_accountServerPort,
@@ -48,16 +56,62 @@ public class ServerSetup extends JFrame
     private ServerConfig config;
 
     private PersistenceManager pm;
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** Complete Path to the database where are stored the universe and the client
+    *  accounts.
+    */
+      private String databasePath;
+
+   /** Our Server ID
+    */
+      private int serverID;
+
+
  /*------------------------------------------------------------------------------------*/
 
    public ServerSetup() {
          super("Server Setup");
 
+        // STEP 1 - We load the database path. Where is the data ?
+           Properties properties = FileTools.loadPropertiesFile( DATABASE_CONFIG );
+
+             if( properties==null ) {
+                Debug.signal( Debug.FAILURE, null, "No valid server-database.cfg file found !" );
+                System.exit(1);
+             }
+
+           databasePath = properties.getProperty( "DATABASE_PATH" );
+
+           if( databasePath==null ) {
+               Debug.signal( Debug.FAILURE, null, "No Database Path specified in config file !" );
+               System.exit(1);
+           }
+
+           Debug.signal( Debug.NOTICE, null, "DataBase Path Found : "+databasePath );
+
+           String s_serverID = properties.getProperty( "SERVER_ID" );
+
+           if( s_serverID==null ) {
+               Debug.signal( Debug.FAILURE, null, "No ServerID specified in config file !" );
+               System.exit(1);
+           }
+
+           try{
+              serverID = Integer.parseInt( s_serverID );
+           }catch( Exception e ) {
+                Debug.signal( Debug.FAILURE, null, "Bad ServerID specified in config file !" );
+                System.exit(1);
+           }
+
+           Debug.signal( Debug.NOTICE, null, "Server ID set to : "+serverID );
+
       // persistence manager
-         pm = PersistenceManager.createPersistenceManager( null );
+         pm = PersistenceManager.createPersistenceManager( databasePath );
 
       // load default server config.
-         config = pm.loadServerConfig();
+         config = pm.loadServerConfig( serverID );
 
          if( config == null )
              config = new ServerConfig();
@@ -70,82 +124,70 @@ public class ServerSetup extends JFrame
          t_serverName = new JTextField( config.getServerName() );
          mainPanel.add( label1 );
          mainPanel.add( t_serverName );
-//         mainPanel.add( new JLabel("") );
 
 
       // Server ID ( -1 means standalone )
-         JLabel label2 = new JLabel("Server ID (-1 means standalone) :");
+         JLabel label2 = new JLabel("Server ID (0 means standalone) :");
          t_serverID = new JTextField( ""+config.getServerID() );
          mainPanel.add( label2 );
          mainPanel.add( t_serverID );
-//         mainPanel.add( new JLabel("") );
 
       // Server description
          JLabel label3 = new JLabel("Server Description :");
          t_description = new JTextField( config.getDescription() );
          mainPanel.add( label3 );
          mainPanel.add( t_description );
-//         mainPanel.add( new JLabel("") );
 
       // Location
          JLabel label4 = new JLabel("Server Location :");
          t_location = new JTextField( config.getLocation() );
          mainPanel.add( label4 );
          mainPanel.add( t_location );
-//         mainPanel.add( new JLabel("") );
 
       // Email
          JLabel label5 = new JLabel("Server Administrator Email :");
          t_adminEmail = new JTextField( config.getAdminEmail() );
          mainPanel.add( label5 );
          mainPanel.add( t_adminEmail );
-//         mainPanel.add( new JLabel("") );
 
       // Game Server Port
          JLabel label6 = new JLabel("Game Server Port :");
          t_gameServerPort = new JTextField( ""+config.getGameServerPort() );
          mainPanel.add( label6 );
          mainPanel.add( t_gameServerPort );
-//         mainPanel.add( new JLabel("") );
 
       // Account Server Port
          JLabel label7 = new JLabel("Account Server Port :");
          t_accountServerPort = new JTextField( ""+config.getAccountServerPort() );
          mainPanel.add( label7 );
          mainPanel.add( t_accountServerPort );
-//         mainPanel.add( new JLabel("") );
 
       // Gateway Server Port
          JLabel label8 = new JLabel("Gateway Server Port :");
          t_gatewayServerPort = new JTextField( ""+config.getGatewayServerPort() );
          mainPanel.add( label8 );
          mainPanel.add( t_gatewayServerPort );
-//         mainPanel.add( new JLabel("") );
 
       // maxNumberOfGameConnections
          JLabel label9 = new JLabel("Maximum Number of Connections on the Game Server:");
          t_maxNumberOfGameConnections = new JTextField( ""+config.getMaxNumberOfGameConnections() );
          mainPanel.add( label9 );
          mainPanel.add( t_maxNumberOfGameConnections );
-//         mainPanel.add( new JLabel("") );
 
       // maxNumberOfAccountConnections
          JLabel label10 = new JLabel("Maximum Number of Connections on the Account Server:");
          t_maxNumberOfAccountConnections = new JTextField( ""+config.getMaxNumberOfAccountConnections() );
          mainPanel.add( label10 );
          mainPanel.add( t_maxNumberOfAccountConnections );
-//         mainPanel.add( new JLabel("") );
 
       // maxNumberOfGatewayConnections
          JLabel label11 = new JLabel("Maximum Number of Connections on the Gateway Server:");
          t_maxNumberOfGatewayConnections = new JTextField( ""+config.getMaxNumberOfGatewayConnections() );
          mainPanel.add( label11 );
          mainPanel.add( t_maxNumberOfGatewayConnections );
-//         mainPanel.add( new JLabel("") );
 
 
       // *** Button Panel
-
          JPanel buttonPanel = new JPanel(new GridLayout(1,2,5,5));
 
          b_save = new JButton("Save Server Config");
@@ -161,7 +203,6 @@ public class ServerSetup extends JFrame
                    config.setDescription( t_description.getText() );
                    config.setLocation( t_location.getText() );
                    config.setAdminEmail( t_adminEmail.getText() );
-
 
                    try{
                       int val1 = Integer.parseInt( t_serverID.getText() );

@@ -28,12 +28,16 @@ import wotlas.utils.*;
 
 public class MapExit extends ScreenRectangle
 {
+  /** id used in Serialized interface.
+   */
+  private static final long serialVersionUID = 556565L;
+
   /** MapExit type
    */
   public final static byte INTERIOR_MAP_EXIT = 0;
   public final static byte BUILDING_EXIT     = 1;
   public final static byte TOWN_EXIT         = 2;
-  public final static byte TILEMAP_EXIT         = 3;
+  public final static byte TILEMAP_EXIT      = 3;
 
   /** MapExit Side
    */
@@ -52,6 +56,10 @@ public class MapExit extends ScreenRectangle
   /** one of INTERIOR_MAP_EXIT, BUILDING_EXIT, TOWN_EXIT,TILEMAP_EXIT
    */
    public byte type;
+
+  /** one of INTERIOR_MAP_EXIT, BUILDING_EXIT, TOWN_EXIT,TILEMAP_EXIT
+   */
+   public int z; // (z only used by fakeIso maps, it's the third point after x,y,<z>)
    
   /** location of the target
    */
@@ -210,7 +218,7 @@ public class MapExit extends ScreenRectangle
    }
 
  /*------------------------------------------------------------------------------------*/
-
+ 
   /** To get the WotlasLocation of this MapExit (i.e. the Map possessing this
    *  MapExit ). To get the location where this MapExit sends to use the
    *  getTargetWotlasLocation method.
@@ -222,4 +230,56 @@ public class MapExit extends ScreenRectangle
    }
   
  /*------------------------------------------------------------------------------------*/
+
+  /** id version of data, used in serialized persistance.
+   */
+    public int ExternalizeGetVersion(){
+        return 1;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** write object data with serialize.
+   */
+    public void writeExternal(java.io.ObjectOutput objectOutput)
+    throws java.io.IOException {
+        objectOutput.writeInt( ExternalizeGetVersion() );
+        super.writeExternal(objectOutput);
+        objectOutput.writeInt( z );
+        objectOutput.writeInt( mapExitID );
+        objectOutput.writeByte( mapExitSide );
+        objectOutput.writeInt( requiredKnowledgeID );
+        objectOutput.writeFloat( targetOrientation );
+        objectOutput.writeObject( targetPosition );
+        objectOutput.writeObject( targetWotlasLocation );
+        objectOutput.writeByte( type );
+/*
+rooms.0.mapExits.0.height=50
+rooms.0.mapExits.0.width=30
+rooms.0.mapExits.0.x=375
+rooms.0.mapExits.0.y=130
+*/
+    }
+    
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** read object data with serialize.
+   */
+    public void readExternal(java.io.ObjectInput objectInput)
+    throws java.io.IOException, java.lang.ClassNotFoundException {
+        int IdTmp = objectInput.readInt();
+        if( IdTmp == ExternalizeGetVersion() ){
+            super.readExternal(objectInput);
+            z = objectInput.readInt();
+            mapExitID = objectInput.readInt();
+            mapExitSide = objectInput.readByte();
+            requiredKnowledgeID = objectInput.readInt();
+            targetOrientation = objectInput.readFloat();
+            targetPosition = ( ScreenPoint ) objectInput.readObject();
+            targetWotlasLocation = ( WotlasLocation ) objectInput.readObject();
+            type = objectInput.readByte();
+       } else {
+            // to do.... when new version
+        }
+    }
 }

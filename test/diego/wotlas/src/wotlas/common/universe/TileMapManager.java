@@ -22,6 +22,9 @@ package wotlas.common.universe;
 import wotlas.libs.persistence.*;
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
+import wotlas.utils.*;
+
+import java.awt.*;
 
  /** Group of graphics represents an Id+ the size of the Tiles inside the image, and the name of the image
   *
@@ -47,4 +50,40 @@ public abstract class TileMapManager implements BackupReady {
     abstract public byte getBasicFloorNr();
 
     abstract public void setBasicFloorNr( byte value );
+
+  /** Add a new MapExit object to the array {@link #mapExits mapExits}
+   *
+   * @return a new MapExit object
+   */
+    abstract public MapExit addMapExit(ScreenRectangle r);
+
+  /** Add a new MapExit object to the array {@link #mapExits mapExits}
+   *
+   * @param me MapExit object
+   */
+    abstract public void addMapExit( MapExit me );
+
+  /** Returns the MapExit which is on the side given by the specified rectangle.
+   *  It's an helper for you : if your player is on a WorldMap and wants to go inside
+   *  a TileMap use this method to retrieve a valid MapExit and get an insertion point.
+   *
+   *  The MapExit is in fact a ScreenRectangle and the so called "insertion point"
+   *  should be the center of this ScreenRectangle.
+   * 
+   * @param rCurrent rectangle containing the player's current position, width & height
+   *        the rectangle position can be anything BUT it should represent in some
+   *        way the direction by which the player hits this TileMap zone.
+   * @return the appropriate MapExit, null if there are no MapExits.
+   */
+   abstract public MapExit findTileMapExit( Rectangle fromPosition );
+
+  /** Returns the eventual MapExit the given player is intersecting.
+   *
+   * @param rCurrent rectangle containing the player's current position, width & height
+   * @return the ~Building:others tilemap the player is heading to (if he has reached it, or if there
+   *         are any), null if none.
+   */
+   abstract public MapExit isIntersectingMapExit( int destX, int destY, Rectangle rCurrent );
+
+   abstract public MapExit[] getMapExits();
 }

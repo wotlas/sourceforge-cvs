@@ -86,6 +86,14 @@ public class WorldGenerator {
            manager.setMapPoint(8,2,5,0);
            manager.setMapPoint(9,2,6,0);
            tileMap.setManager( (TileMapManager)manager );
+           /*
+           MapExit mapExit1 = null;
+           mapExit1 = manager.addMapExit( new ScreenRectangle(0*32,1*32,1*32,2*32) );
+           mapExit1.setType( MapExit.TILEMAP_EXIT );
+           mapExit1.setMapExitSide( MapExit.WEST );
+           mapExit1.setTargetWotlasLocation( new WotlasLocation(0) );
+           mapExit1.setTargetPosition( new ScreenPoint(0,1) );
+           */
 
            // Rak Timin Creation   
            tileMap = new TileMap(720,207,17,17);

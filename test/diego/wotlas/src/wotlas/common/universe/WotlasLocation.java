@@ -19,6 +19,8 @@
  
 package wotlas.common.universe;
 
+import wotlas.libs.persistence.*;
+
  /** Location class. Identifies a precise location in the universe. Normally,
   *  it points out a room of an InteriorMap, building, town, world.<br>
   *  But it can points out :<p><br>
@@ -32,8 +34,11 @@ package wotlas.common.universe;
   * @author Petrus, Aldiss, Diego
   */
   
-public class WotlasLocation
+public class WotlasLocation implements BackupReady
 {
+    /** id used in Serialized interface.
+     */
+    private static final long serialVersionUID = 556565L;
 
  /*------------------------------------------------------------------------------------*/
  
@@ -65,7 +70,9 @@ public class WotlasLocation
 
   /** Constructor.
    */
-    public WotlasLocation() {}
+    public WotlasLocation() {
+        this.tileMapID = -1;
+    }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -355,5 +362,44 @@ public class WotlasLocation
     }
 
  /*------------------------------------------------------------------------------------*/
- 
+
+  /** id version of data, used in serialized persistance.
+   */
+    public int ExternalizeGetVersion(){
+        return 1;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** write object data with serialize.
+   */
+    public void writeExternal(java.io.ObjectOutput objectOutput)
+    throws java.io.IOException {
+        objectOutput.writeInt( ExternalizeGetVersion() );
+        objectOutput.writeInt( worldMapID );
+        objectOutput.writeInt( tileMapID );
+        objectOutput.writeInt( townMapID );
+        objectOutput.writeInt( roomID );
+        objectOutput.writeInt( interiorMapID  );
+        objectOutput.writeInt( buildingID );
+    }
+    
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** read object data with serialize.
+   */
+    public void readExternal(java.io.ObjectInput objectInput)
+    throws java.io.IOException, java.lang.ClassNotFoundException {
+        int IdTmp = objectInput.readInt();
+        if( IdTmp == ExternalizeGetVersion() ){
+           worldMapID  = objectInput.readInt();
+           tileMapID  = objectInput.readInt();
+           townMapID  = objectInput.readInt();
+           roomID   = objectInput.readInt();
+           interiorMapID  = objectInput.readInt();
+           buildingID  = objectInput.readInt();
+       } else {
+            // to do.... when new version
+        }
+    }
 }

@@ -38,6 +38,8 @@ import java.io.File;
 import java.util.Properties;
 import java.util.Iterator;
 
+import javax.swing.*;
+
 /** The MAIN EditTile class. 
  *
  * @author Diego
@@ -197,10 +199,32 @@ public class EditTile {
             return;
         String universeHome = EditTile.getResourceManager().getUniverseDataDir()+WorldManager.DEFAULT_UNIVERSE+"/";
         String worldHome =  universeHome + EditTile.getDataManager().getWorldManager().getWorldMapFromID(0).getShortName() + "/";
+/*        
         String areaOfTile =  worldHome + tileMaps[index].getAreaName() + WorldManager.AREA_EXT + "/";
         new File(areaOfTile).mkdir();
         if( !EditTile.getResourceManager().BackupObject( tileMaps[index], areaOfTile
         + tileMaps[index].getShortName() + WorldManager.TILEMAP_EXT  ) )
             Debug.signal(Debug.ERROR,null,"Failed to save tileMap : "+areaOfTile );
+*/
+        if( tileMaps[index].getAreaName().length() <= 0 ){
+            String tileMapHome =  worldHome + tileMaps[index].getShortName() + WorldManager.TILEMAP_DIR_EXT +"/";
+            new File(tileMapHome).mkdir();
+            if( !EditTile.getResourceManager().BackupObject( tileMaps[index], tileMapHome + WorldManager.TILEMAP_FILE ) ) {
+                Debug.signal(Debug.ERROR,null,"Failed to save tileMap : "+tileMapHome );
+                JOptionPane.showMessageDialog( getDataManager().getScreen(), "Map not Saved" 
+                ,"Error" , JOptionPane.WARNING_MESSAGE );
+            }
+        }
+        else{
+            String areaOfTile =  worldHome + tileMaps[index].getAreaName() + WorldManager.AREA_EXT + "/";
+            new File(areaOfTile).mkdir();
+            if( !EditTile.getResourceManager().BackupObject( tileMaps[index], areaOfTile
+            + tileMaps[index].getShortName() + WorldManager.TILEMAP_EXT  ) ){
+                Debug.signal(Debug.ERROR,null,"Failed to save tileMap : "+areaOfTile );
+                JOptionPane.showMessageDialog( getDataManager().getScreen(), "Map not Saved" 
+                ,"Error" , JOptionPane.WARNING_MESSAGE );
+            }
+        }
+ 	JOptionPane.showMessageDialog( getDataManager().getScreen(), "Map Saved" ); 
     }
 }

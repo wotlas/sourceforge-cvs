@@ -42,6 +42,11 @@ import wotlas.client.screen.*;
 import wotlas.libs.graphics2D.drawable.*;
 
 import javax.swing.event.*;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.tree.TreeSelectionModel;
 
 /** Plug In to add editor tools
  *
@@ -56,7 +61,10 @@ public class EditorPlugIn extends JPanelPlugIn {
     transient static public int selectedGroupImgNr = 0;
     transient static private GraphicsDirector gDirector;
     transient static private WotlasLocation location;
-    
+    transient static public DefaultMutableTreeNode treeOfTileMapNode;
+
+//    transient static public DefaultMutableTreeNode area = null;
+
   /** 'New' map button.
    */
     transient private AButton newMapButton;
@@ -73,7 +81,9 @@ public class EditorPlugIn extends JPanelPlugIn {
     /** Creates new form EditorPlugIn2 */
     public EditorPlugIn() {
         super();
+        // treeOfTileMapNode = new DefaultMutableTreeNode("World : Tile Maps");
         initComponents();
+        LoadTree();
         init();
     }
     
@@ -84,10 +94,6 @@ public class EditorPlugIn extends JPanelPlugIn {
      */
     private void initComponents() {//GEN-BEGIN:initComponents
         jLabel14 = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
-        jLabel15 = new javax.swing.JLabel();
-        Preview = new javax.swing.JLabel();
-        TileNotFree = new javax.swing.JCheckBox();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
@@ -95,7 +101,7 @@ public class EditorPlugIn extends JPanelPlugIn {
         jTabbedPane5 = new javax.swing.JTabbedPane();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTree1 = new javax.swing.JTree();
+        BigTree = new JTree( treeOfTileMapNode );
         mapData = new javax.swing.JPanel();
         jPanel28 = new javax.swing.JPanel();
         buttonNew = new javax.swing.JButton();
@@ -159,6 +165,10 @@ public class EditorPlugIn extends JPanelPlugIn {
         OneGroupList = OneGroupList();
         jScrollPane3 = new javax.swing.JScrollPane();
         HisTileList = HisTileList();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel15 = new javax.swing.JLabel();
+        Preview = new javax.swing.JLabel();
+        TileNotFree = new javax.swing.JCheckBox();
         jPanel29 = new javax.swing.JPanel();
         jPanel31 = new javax.swing.JPanel();
         jTabbedPane2 = new javax.swing.JTabbedPane();
@@ -173,25 +183,6 @@ public class EditorPlugIn extends JPanelPlugIn {
 
         setLayout(new java.awt.BorderLayout());
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel15.setText("Selected :");
-        jPanel1.add(jLabel15);
-
-        Preview.setPreferredSize(new java.awt.Dimension(50, 50));
-        jPanel1.add(Preview);
-
-        TileNotFree.setBackground(new java.awt.Color(255, 255, 255));
-        TileNotFree.setText("Not Free");
-        TileNotFree.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                TileNotFreeActionPerformed(evt);
-            }
-        });
-
-        jPanel1.add(TileNotFree);
-
-        add(jPanel1, java.awt.BorderLayout.SOUTH);
-
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Editor Tools");
         jPanel2.add(jLabel1);
@@ -201,9 +192,10 @@ public class EditorPlugIn extends JPanelPlugIn {
         jTabbedPane1.setName("");
         jPanel34.setLayout(new java.awt.BorderLayout());
 
+        jTabbedPane5.setTabPlacement(javax.swing.JTabbedPane.LEFT);
         jPanel3.setLayout(new java.awt.BorderLayout());
 
-        jScrollPane1.setViewportView(jTree1);
+        jScrollPane1.setViewportView(BigTree);
 
         jPanel3.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
@@ -401,6 +393,8 @@ public class EditorPlugIn extends JPanelPlugIn {
 
         jPanel32.setLayout(new java.awt.BorderLayout());
 
+        jTabbedPane4.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
+        jTabbedPane4.setTabPlacement(javax.swing.JTabbedPane.LEFT);
         jPanel5.setLayout(new java.awt.BorderLayout());
 
         jPanel5.setEnabled(false);
@@ -417,7 +411,7 @@ public class EditorPlugIn extends JPanelPlugIn {
 
         jPanel5.add(jPanel7, java.awt.BorderLayout.CENTER);
 
-        jTabbedPane4.addTab("Group of Graphics", jPanel5);
+        jTabbedPane4.addTab("Group", jPanel5);
 
         jPanel8.setLayout(new java.awt.BorderLayout());
 
@@ -446,9 +440,28 @@ public class EditorPlugIn extends JPanelPlugIn {
 
         jPanel8.add(jPanel10, java.awt.BorderLayout.CENTER);
 
-        jTabbedPane4.addTab("Single Group - Tile", jPanel8);
+        jTabbedPane4.addTab("Single", jPanel8);
 
         jPanel32.add(jTabbedPane4, java.awt.BorderLayout.CENTER);
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel15.setText("Selected :");
+        jPanel1.add(jLabel15);
+
+        Preview.setPreferredSize(new java.awt.Dimension(50, 50));
+        jPanel1.add(Preview);
+
+        TileNotFree.setBackground(new java.awt.Color(255, 255, 255));
+        TileNotFree.setText("Not Free");
+        TileNotFree.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TileNotFreeActionPerformed(evt);
+            }
+        });
+
+        jPanel1.add(TileNotFree);
+
+        jPanel32.add(jPanel1, java.awt.BorderLayout.SOUTH);
 
         jTabbedPane1.addTab("Graphics", jPanel32);
 
@@ -456,6 +469,8 @@ public class EditorPlugIn extends JPanelPlugIn {
 
         jPanel31.setLayout(new java.awt.BorderLayout());
 
+        jTabbedPane2.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
+        jTabbedPane2.setTabPlacement(javax.swing.JTabbedPane.LEFT);
         jTabbedPane2.addTab("Npc", jPanel25);
 
         jTabbedPane2.addTab("Item", jPanel27);
@@ -466,6 +481,8 @@ public class EditorPlugIn extends JPanelPlugIn {
 
         jPanel33.setLayout(new java.awt.BorderLayout());
 
+        jTabbedPane3.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
+        jTabbedPane3.setTabPlacement(javax.swing.JTabbedPane.LEFT);
         jTabbedPane3.addTab("Npc", jPanel24);
 
         jTabbedPane3.addTab("Item", jPanel26);
@@ -523,7 +540,6 @@ public class EditorPlugIn extends JPanelPlugIn {
             DataMusicName.setText(EditTile.workingOnThisTileMap.getMusicName());
             // DataBasicSetId.setText( "" + EditTile.workingOnThisTileMap.getManager().getBasicFloorId() );
             // DataBasicSetIdNr.setText( "" + EditTile.workingOnThisTileMap.getManager().getBasicFloorNr() );
-            
         } catch (Exception e) {
             System.out.println("not saved as");
             return;
@@ -565,8 +581,8 @@ public class EditorPlugIn extends JPanelPlugIn {
     private javax.swing.JTabbedPane jTabbedPane4;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JList DataMapSize;
-    private javax.swing.JTabbedPane jTabbedPane5;
     private javax.swing.JPanel jPanel33;
+    private javax.swing.JTabbedPane jTabbedPane5;
     private javax.swing.JPanel jPanel27;
     private javax.swing.JList OneGroupList;
     private javax.swing.JTextField DataBasicSetId;
@@ -574,6 +590,7 @@ public class EditorPlugIn extends JPanelPlugIn {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel mapData;
     private javax.swing.JPanel jPanel12;
+    private javax.swing.JTree BigTree;
     private javax.swing.JList jList1;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JTabbedPane jTabbedPane2;
@@ -581,8 +598,8 @@ public class EditorPlugIn extends JPanelPlugIn {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JTextField DataMusicName;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel34;
     private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel34;
     private javax.swing.JPanel jPanel28;
     private javax.swing.JPanel jPanel14;
     private javax.swing.JLabel jLabel6;
@@ -592,8 +609,8 @@ public class EditorPlugIn extends JPanelPlugIn {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel Preview;
-    private javax.swing.JTextField DataFullName;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JTextField DataFullName;
     private javax.swing.JPanel jPanel31;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel jPanel4;
@@ -617,11 +634,11 @@ public class EditorPlugIn extends JPanelPlugIn {
     private javax.swing.JTextField DataSmallImage;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel22;
-    private javax.swing.JButton buttonRefresh;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JButton buttonRefresh;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JPanel jPanel18;
     private javax.swing.JPanel jPanel17;
+    private javax.swing.JPanel jPanel18;
     private javax.swing.JPanel jPanel21;
     private javax.swing.JTextField DataID;
     private javax.swing.JPanel jPanel29;
@@ -634,7 +651,6 @@ public class EditorPlugIn extends JPanelPlugIn {
     private javax.swing.JPanel jPanel9;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JPanel jPanel23;
-    private javax.swing.JTree jTree1;
     private javax.swing.JLabel jLabel10;
     // End of variables declaration//GEN-END:variables
     
@@ -646,6 +662,7 @@ public class EditorPlugIn extends JPanelPlugIn {
    */
     public boolean init() {
         location = new WotlasLocation();
+        location.WotlasLocationChangeToTileMap(0);
         EditTile.workingOnThisTileMap = EditTile.getDataManager().getWorldManager().getTileMap( location );
         DataID.setText("xxx");
         DataAreaName.setText(EditTile.workingOnThisTileMap.getAreaName());
@@ -832,7 +849,6 @@ public class EditorPlugIn extends JPanelPlugIn {
         });
         return list;
     }
-
     
     static public void AddIt(int x, int y){
         TileMap tileMap = EditTile.workingOnThisTileMap;
@@ -852,5 +868,39 @@ public class EditorPlugIn extends JPanelPlugIn {
 
     static public void setFreeTileOrNot(byte value){
         selectedIsFree = value;
+    }
+
+    public void LoadTree() {
+        // createNodes(treeOfTileMapNode);
+        BigTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+
+        //Listen for when the selection changes.
+        BigTree.addTreeSelectionListener(new TreeSelectionListener() {
+            public void valueChanged(TreeSelectionEvent e) {
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode)
+                                   BigTree.getLastSelectedPathComponent();
+
+                if (node == null) return;
+
+                Object nodeInfo = node.getUserObject();
+                if (node.isLeaf()) {
+                    TreeMapInfo item = (TreeMapInfo)nodeInfo;
+                    
+                    location = new WotlasLocation();
+                    location.WotlasLocationChangeToTileMap( item.Id );
+                    gDirector.removeAllDrawables();
+                    EditTile.getDataManager().myMapData.initDisplayEditor( EditTile.getDataManager(), location );
+                } else {
+                    // .....
+                }
+            }
+        });        
+//        treeView.setMinimumSize(minimumSize);
+    }
+
+    static public DefaultMutableTreeNode createNode( TileMap value ) {
+        DefaultMutableTreeNode map = null;
+        map = new DefaultMutableTreeNode( new TreeMapInfo( value.getFullName(), value.tileMapID ) );
+        return map;
     }
 }

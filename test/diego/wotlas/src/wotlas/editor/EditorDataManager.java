@@ -155,7 +155,7 @@ public class EditorDataManager extends Thread implements Tickable, Menu2DListene
     public EditorDataManager( ResourceManager rManager ) {
 
       // 1 - We create our world Manager. It will load the universe data.
-         worldManager = new WorldManager( rManager, false );
+         worldManager = new WorldManager( true, rManager );
 
       // 2 - Misc inits
 
@@ -530,7 +530,9 @@ public class EditorDataManager extends Thread implements Tickable, Menu2DListene
         
         myMapData = new TileMapData();
         myMapData.showDebug(SHOW_DEBUG);
-        myMapData.initDisplayEditor(this, new WotlasLocation() );
+        WotlasLocation location = new WotlasLocation();
+        location.setTileMapID(0);
+        myMapData.initDisplayEditor( this, location );
 
         updatingMapData=false;
    }

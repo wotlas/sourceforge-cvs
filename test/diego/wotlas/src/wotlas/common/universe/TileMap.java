@@ -235,16 +235,19 @@ public class TileMap extends ScreenRectangle implements WotlasMap,BackupReady {
    */
     public void init( WorldMap myWorldMap ) {
 
-        this.myWorldMap = myWorldMap;
+       this.myWorldMap = myWorldMap;
 
-        // 1 - any data ?
+       // 1 - any data ?
 
-        // 2 - we transmit the init() call
+       // 2 - we transmit the init() call
 
-        // 3 - MapExit inits
+       // 3 - MapExit inits
+       if( manager.getMapExits()==null ) return;
        
-        WotlasLocation thisLocation = new WotlasLocation( myWorldMap.getWorldMapID() );
-        thisLocation.WotlasLocationChangeToTileMap(tileMapID);
+       WotlasLocation thisLocation = new WotlasLocation( myWorldMap.getWorldMapID() );
+       thisLocation.WotlasLocationChangeToTileMap(tileMapID);
+       for( int i=0; i<manager.getMapExits().length; i++ )
+            manager.getMapExits()[i].setMapExitLocation(thisLocation);
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -378,6 +381,5 @@ public class TileMap extends ScreenRectangle implements WotlasMap,BackupReady {
     
     public void initNewTileMap( WorldMap myWorldMap ) {
         this.myWorldMap = myWorldMap;
-        WotlasLocation thisLocation = new WotlasLocation( myWorldMap.getWorldMapID() );
     }        
 }

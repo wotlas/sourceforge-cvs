@@ -180,7 +180,7 @@ public class TileMapData implements MapData {
    */
     public void initDisplayEditor( EditorDataManager editorDataManager, WotlasLocation location ) {
         TileMap tileMap = editorDataManager.getWorldManager().getTileMap( location );
-
+        System.out.println( ""+location );
         GraphicsDirector gDirector = editorDataManager.getGraphicsDirector();
         EditorPlugIn.rememberTheGDirector( gDirector );
         gDirector.preTileMapInit( tileMap.getMapFullSize() );

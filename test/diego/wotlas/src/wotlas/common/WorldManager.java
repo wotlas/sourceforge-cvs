@@ -28,6 +28,10 @@ import wotlas.utils.Debug;
 
 import java.io.File;
 
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+
+import wotlas.editor.*;
 
  /** A WorldManager provides all the methods needed to handle & manage the game world
   *  from its root.<p><br>
@@ -118,6 +122,14 @@ public class WorldManager {
 
             if(failureIfNoData)
                Debug.exit();
+         }
+    }
+
+    public WorldManager( boolean loadForEditor, ResourceManager rManager ) {
+         this.rManager = rManager;
+         loadUniverse(false,loadForEditor);
+         if(worldMaps==null) {
+            Debug.signal( Debug.FAILURE, this, "No universe data available !" );
          }
     }
 
@@ -466,6 +478,14 @@ public class WorldManager {
    *  @param loadDefault do we have to load default data ?
    */
    public void loadUniverse( boolean loadDefault ) {
+        loadUniverse( loadDefault, false );
+   }
+
+  /** To load the local game universe.
+   *
+   *  @param loadDefault do we have to load default data ?
+   */
+   public void loadUniverse( boolean loadDefault, boolean pleaseLoadTreeForEditor ) {
       int worldCount=0, townCount=0, buildingCount=0, mapCount=0, tileMapCount=0;
 
       String universeHome =  rManager.getUniverseDataDir()+DEFAULT_UNIVERSE+"/";
@@ -555,6 +575,11 @@ public class WorldManager {
                   }
              }
              
+             if( pleaseLoadTreeForEditor )
+                EditorPlugIn.treeOfTileMapNode = new DefaultMutableTreeNode("World : Tile Maps");
+             DefaultMutableTreeNode area = null;
+             DefaultMutableTreeNode map = null;
+
              // managing tile maps : PART I
              // we load all the tilemap of this world that are cities on the map
              String tileMapList[] = rManager.listUniverseDirectories( worldList[w], TILEMAP_DIR_EXT );
@@ -567,12 +592,21 @@ public class WorldManager {
                   }
                   world.addTileMap( tileMap );
                   tileMapCount++;
+                  if( pleaseLoadTreeForEditor ) {
+                      map = EditorPlugIn.createNode( tileMap );
+                      EditorPlugIn.treeOfTileMapNode.add( map );
+                  }
              }
              // managing tile maps : PART II
              // we load all the tilemap of this world that saved in .area directory
              String areaMapList[] = rManager.listUniverseDirectories( worldList[w], AREA_EXT);
              for( int index=0; index<areaMapList.length; index++ ) {
                   String insideAreaTileMapList[] = rManager.listUniverseFiles( areaMapList[index], TILEMAP_EXT );
+                  if( pleaseLoadTreeForEditor ) {
+                      area = new DefaultMutableTreeNode( areaMapList[index] );
+                      // area = new DefaultMutableTreeNode( areaMapList[index].substring( 0, areaMapList[index].indexOf("." ) ) );
+                      EditorPlugIn.treeOfTileMapNode.add(area);
+                  }
                   for( int index2=0; index2<insideAreaTileMapList.length; index2++ ) {
                       TileMap tileMap = (TileMap) rManager.RestoreObject( insideAreaTileMapList[index2] );
                       if( tileMap==null ) {
@@ -581,6 +615,10 @@ public class WorldManager {
                       }
                       world.addTileMap( tileMap );
                       tileMapCount++;
+                      if( pleaseLoadTreeForEditor ) {
+                          map = EditorPlugIn.createNode( tileMap );
+                          area.add( map );
+                      }
                   }
              }
 

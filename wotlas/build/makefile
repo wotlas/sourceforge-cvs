@@ -28,6 +28,10 @@ LIBS_PACKAGES  = wotlas/libs/net \
                  wotlas/libs/pathfinding \
                  wotlas/libs/persistence
 
+LIBS_PACKAGES2 = wotlas/libs/graphics2D \
+                 wotlas/libs/graphics2D/policy \
+                 wotlas/libs/graphics2D/drawable
+
 COMMON_PACKAGES = wotlas/common \
                   wotlas/common/universe \
                   wotlas/common/message \
@@ -54,6 +58,8 @@ SRC_UTILS = $(foreach dir,$(UTILS_PACKAGES),$(SRCDIR)/$(dir)/*.java)
 
 SRC_LIBS = $(foreach dir,$(LIBS_PACKAGES),$(SRCDIR)/$(dir)/*.java)
 
+SRC_LIBS2 = $(foreach dir,$(LIBS_PACKAGES2),$(SRCDIR)/$(dir)/*.java)
+
 SRC_COMMON = $(foreach dir,$(COMMON_PACKAGES),$(SRCDIR)/$(dir)/*.java)
 
 SRC_SERVER = $(foreach dir,$(SERVER_PACKAGES),$(SRCDIR)/$(dir)/*.java)
@@ -62,13 +68,16 @@ SRC_CLIENT = $(foreach dir,$(CLIENT_PACKAGES),$(SRCDIR)/$(dir)/*.java)
 
 
 # And we compile it all
-all: utils libs common server client
+all: utils libs libs2 common server client
 
 utils:
 	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_UTILS)
 
 libs:
 	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_LIBS)
+
+libs2:
+	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_LIBS2)
 
 common:
 	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_COMMON)

@@ -234,11 +234,12 @@ public class WorldMapData implements MapData
           || (myPlayer.getLocation().getTownMapID()>-1) ) {
       Debug.signal( Debug.NOTICE, null, "LOCATION HAS CHANGED in WorldMapData");
 
-      myPlayer.setPosition( new ScreenPoint(myPlayer.getX(), myPlayer.getY()) );
-
       dataManager.getPlayers().clear();
       dataManager.cleanInteriorMapData(); // suppress drawables, shadows, data
       dataManager.getChatPanel().reset();
+      
+      //myPlayer.setPosition( new ScreenPoint(myPlayer.getX(), myPlayer.getY()) );
+      
       dataManager.changeMapData();
       return;
     }

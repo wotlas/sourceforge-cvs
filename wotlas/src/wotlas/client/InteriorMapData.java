@@ -335,12 +335,12 @@ public class InteriorMapData implements MapData
     if ( currentInteriorMapID != myPlayer.getLocation().getInteriorMapID() ) {
       Debug.signal( Debug.NOTICE, null, "LOCATION HAS CHANGED in InteriorMapData");
 
-      myPlayer.setPosition( new ScreenPoint(myPlayer.getX(), myPlayer.getY()) );
-
       dataManager.getPlayers().clear();
       dataManager.cleanInteriorMapData(); // suppress drawables, shadows, data
       dataManager.getChatPanel().reset();
 
+      //myPlayer.setPosition( new ScreenPoint(myPlayer.getX(), myPlayer.getY()) );
+      
       //  - We clean eventual doors data...
       Room rooms[] = imap.getRooms();
 

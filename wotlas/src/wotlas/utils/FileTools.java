@@ -95,27 +95,41 @@ public class FileTools
    */
    static public Properties loadPropertiesFile( String pathname )
    {
-      BufferedInputStream is;
-
       try {
-         is = new BufferedInputStream( new FileInputStream(pathname) );
+         BufferedInputStream is = new BufferedInputStream( new FileInputStream(pathname) );
+         Properties props = new Properties();
+         props.load( is );
+
+         return props;
       }
-      catch (FileNotFoundException ex) {
-         Debug.signal(Debug.ERROR, null, ex);
+      catch(Exception e) {
+         Debug.signal(Debug.WARNING, null, e);
          return null;
       }
+   }
 
-      Properties props = new Properties();
+ /*------------------------------------------------------------------------------------*/
 
+  /** To save a simple properties file... For more complex use PREFER the
+   *  use of the persistence library.
+   *
+   * @param props properties to save
+   * @param pathname file name to save the properties to.
+   * @param header header to put in the file.
+   * @return true if success, false otherwise
+   */
+   static public boolean savePropertiesFile( Properties props, String pathname, String header )
+   {
       try{
-          props.load( is );
-      }
-      catch(IOException ioe) {
-         Debug.signal(Debug.ERROR, null, ioe);
-         return null;
-      }
+         BufferedOutputStream os = new BufferedOutputStream( new FileOutputStream(pathname) );
+         props.store( os, header );
 
-      return props;
+         return true;
+      }
+      catch(Exception e) {
+         Debug.signal(Debug.WARNING, null, e);
+         return false;
+      }
    }
 
  /*------------------------------------------------------------------------------------*/

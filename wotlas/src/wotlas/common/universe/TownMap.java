@@ -416,10 +416,8 @@ public class TownMap extends ScreenRectangle
       if(mapExits==null) {
       	// Ok, this town has no MapExit, we suppose it's just a building
       	// Is there ONE building ?
-      	   if(buildings!=null && buildings.length==1 && buildings[0]!=null) {
-      	      Debug.signal( Debug.NOTICE, null, "Entering Single Building Map..." );
+      	   if(buildings!=null && buildings.length==1 && buildings[0]!=null)
       	      return buildings[0].getBuildingExits()[0];
-      	   }
 
            return null;
       }

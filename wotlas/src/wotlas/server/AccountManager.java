@@ -34,7 +34,7 @@ import java.util.Iterator;
  * @see wotlas.server.GameServer
  */
 
-class AccountManager
+public class AccountManager
 {
  /*------------------------------------------------------------------------------------*/
 

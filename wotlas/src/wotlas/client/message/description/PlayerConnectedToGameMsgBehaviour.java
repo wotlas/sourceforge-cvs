@@ -71,6 +71,11 @@ public class PlayerConnectedToGameMsgBehaviour extends PlayerConnectedToGameMess
 
         // 2 - Update of the player, and that's all !
            searchedPlayer.setIsConnectedToGame( isConnectedToGame );
+      	 
+           if(isConnectedToGame)
+              SoundLibrary.getSoundLibrary().playSound("gong.wav");
+           else
+              SoundLibrary.getSoundLibrary().playSound("man-yawn.wav");
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

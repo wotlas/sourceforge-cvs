@@ -75,7 +75,7 @@ public class PlayerAwayMsgBehaviour extends PlayerAwayMessage implements NetMess
 
         // 3 - Display of the message
            JChatRoom chatRoom = dataManager.getChatPanel().getCurrentJChatRoom();
-           chatRoom.appendText("<font color='gray'>"+searchedPlayer.getPlayerName()+"(away) says: <i>"
+           chatRoom.appendText("<font color='gray'>"+searchedPlayer.getPlayerName()+" (away) says: <i>"
                                                     +playerAwayMessage+"</i></font>");
      }
 

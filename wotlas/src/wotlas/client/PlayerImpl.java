@@ -31,8 +31,8 @@ import wotlas.common.message.description.PlayerAwayMessage;
 
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
+import wotlas.libs.sound.*;
 
-import wotlas.libs.sound.SoundLibrary;
 import wotlas.libs.net.NetMessage;
 
 import wotlas.libs.pathfinding.*;
@@ -634,11 +634,6 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     */
       public void setIsConnectedToGame( boolean isConnectedToGame ) {
       	 this.isConnectedToGame = isConnectedToGame;
-      	 
-      	 if(isConnectedToGame)
-            SoundLibrary.getSoundLibrary().playSound("gong.wav");
-         else
-            SoundLibrary.getSoundLibrary().playSound("man-yawn.wav");
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

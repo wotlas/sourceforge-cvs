@@ -31,8 +31,7 @@ import wotlas.common.universe.*;
 
 import wotlas.common.message.account.*;
 
-import wotlas.server.DataManager;
-import wotlas.server.PlayerImpl;
+import wotlas.server.*;
 
 import wotlas.utils.Debug;
 
@@ -71,45 +70,28 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
        WotlasLocation myLocation = player.getLocation(); 
 
     // 0.1 - test shortcut
-       if (message.startsWith("/msg")) {
-        message = message.substring(5);
-        int index = message.indexOf(' ');
-        String key = message.substring(0,index);
-        message = "/msg " + message.substring(index);        
+       if (message.startsWith("/msg:") && !message.endsWith(":")) {
+         message = message.substring(5);
+         int index = message.indexOf(':');
+
+         if(index<0) {
+            message = "/msg:" +message+" <font color='red'>ERROR: bad format</font>";
+            player.sendMessage(this);
+            return;
+         }
+
+         String key = message.substring(0,index);
+         message = "/msg:" + message.substring(index);
+
+         GameAccount account = DataManager.getDefaultDataManager().getAccountManager().getAccount(key);
         
-        if (myLocation.isRoom()) {          
-          InteriorMap iMap = DataManager.getDefaultDataManager().getWorldManager().getInteriorMap(myLocation);
-          Room[] rooms = iMap.getRooms();                    
-          for (int j=0; j<rooms.length; j++ ) {
-            Room room = rooms[j];                        
-            players = room.getPlayers();            
-            if (players.containsKey(key)) {
-              System.out.println("player found");
-              PlayerImpl player2 = (PlayerImpl) players.get(key);              
-              player2.sendMessage(this);
-              return;
-            }
-          }
-        } 
-        
-        TownMap town2 = DataManager.getDefaultDataManager().getWorldManager().getTownMap(myLocation);
-        players = town2.getPlayers();
-        if (players.containsKey(key)) {
-          System.out.println("player found");
-          PlayerImpl player2 = (PlayerImpl) players.get(key);
-          player2.sendMessage(this);
-          return;
-        }
-        
-        WorldMap world2 = DataManager.getDefaultDataManager().getWorldManager().getWorldMap(myLocation);
-        players = world2.getPlayers();
-        if (players.containsKey(key)) {
-          System.out.println("player found");
-          PlayerImpl player2 = (PlayerImpl) players.get(key);
-          player2.sendMessage(this);
-          return;
-        }
-                            
+         if(account==null) {
+            message = "/msg:"+message+" <font color='red'>ERROR: unknown player</font>";
+            player.sendMessage(this);
+            return;
+         }
+
+         account.getPlayer().sendMessage(this);                            
        } 
              
     // 1 - We send the message back to the user.

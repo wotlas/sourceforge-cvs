@@ -76,6 +76,10 @@ public class AesSedai extends Female {
    */
     transient private ColorImageFilter filter;
 
+  /** Black Ajah ?
+   */
+    transient private boolean blackAjah = false;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Getters & Setters for persistence
@@ -110,10 +114,22 @@ public class AesSedai extends Female {
        // 1 - Sprite Creation + Filter
           aesSedaiSprite = new Sprite( (SpriteDataSupplier) player, ImageLibRef.PLAYER_PRIORITY );
           aesSedaiSprite.useAntialiasing(true);
+          updateColorFilter();
+         return aesSedaiSprite;
+      }
 
-          filter = new ColorImageFilter();
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-          switch( aesSedaiStatus ) {
+  /** Updates the color filter that is used for the AesSedai sprite.
+   */
+      private void updateColorFilter() {
+         if(aesSedaiSprite==null)
+      	     return;
+      	
+         filter = new ColorImageFilter();
+
+         if(!blackAjah)
+            switch( aesSedaiStatus ) {
               case AES_NOVICE :
                       filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.white );
                       break;
@@ -143,10 +159,12 @@ public class AesSedai extends Female {
               case AES_AMYRLIN :
                       filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.white );
                       break;
-          }
+            }
+          else
+              filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.darkgray ); // black dress
 
       // 2 - Hair Color
-          switch( hairColor ) {
+         switch( hairColor ) {
               case BALD :
                       break;
               case GOLDEN_HAIR :
@@ -169,7 +187,6 @@ public class AesSedai extends Female {
           }
 
          aesSedaiSprite.setDynamicImageFilter( filter );
-         return aesSedaiSprite;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -366,6 +383,17 @@ public class AesSedai extends Female {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** To toggle the Black Ajah status...
+    * @return the new blackAjah state.
+    */
+    public boolean toggleBlackAjah() {
+    	blackAjah = !blackAjah;
+    	updateColorFilter();
+    	return blackAjah;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
    /** Tests if the given int is a valid aesSedaiStatus.
     *  @param aesSedaiStatus
     *  @return true if the aesSedaiStatus is valid, false otherwise.
@@ -389,6 +417,7 @@ public class AesSedai extends Female {
      public void encode( DataOutputStream ostream, boolean publicInfoOnly ) throws IOException {
      	super.encode( ostream, publicInfoOnly );
      	ostream.writeByte( aesSedaiStatus );
+     	ostream.writeBoolean( blackAjah );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -404,6 +433,7 @@ public class AesSedai extends Female {
      public void decode( DataInputStream istream, boolean publicInfoOnly ) throws IOException {
         super.decode( istream, publicInfoOnly );
      	aesSedaiStatus = istream.readByte();
+     	blackAjah = istream.readBoolean();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

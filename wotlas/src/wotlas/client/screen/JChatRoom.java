@@ -327,6 +327,12 @@ public class JChatRoom extends JPanel
       text = Tools.subString(text, ">D",  "<img width=15 height=15 src='file:../base/gui/chat/evilgrin.gif'>");
       text = Tools.subString(text, ">(",  "<img width=16 height=16 src='file:../base/gui/chat/madfire.gif'>");
 
+      text = Tools.subString(text, "0:)",  "<img width=16 height=20 src='file:../base/gui/chat/angel.gif'>");
+      text = Tools.subString(text, ";P",  "<img width=15 height=15 src='file:../base/gui/chat/flirt.gif'>");
+      text = Tools.subString(text, "8D",  "<img width=15 height=15 src='file:../base/gui/chat/horny.gif'>");
+      text = Tools.subString(text, ">#",  "<img width=15 height=15 src='file:../base/gui/chat/nono.gif'>");
+      text = Tools.subString(text, "|O",  "<img width=15 height=15 src='file:../base/gui/chat/yawn.gif'>");
+
     //try {
       if (DataManager.SHOW_DEBUG)
         System.out.println("insertString");

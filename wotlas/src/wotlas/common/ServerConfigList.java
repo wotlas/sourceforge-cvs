@@ -96,11 +96,14 @@ public class ServerConfigList
 
           if( serversRemoteHomeUnreachable ) return null;
 
+          Debug.signal(Debug.NOTICE, this,"Trying to load Server Table from network...");
        // We load the file from its URL
           remoteServerTable = FileTools.getTextFileFromURL( remoteServerConfigHomeURL+"server-table.cfg" );
           
-          if(remoteServerTable==null)
+          if(remoteServerTable==null || remoteServerTable.length()==0 ) {
+            Debug.signal(Debug.ERROR, this,"Try to load Server Table from network failed...");
             serversRemoteHomeUnreachable = true;
+          }
 
           return remoteServerTable;
     }

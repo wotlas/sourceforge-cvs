@@ -173,6 +173,10 @@ public interface ImageLibRef extends ImageLibraryReference
     */
      public final static short BLIGHT_REFUGE_INT1_MAP_ACTION = 9;
 
+   /** Tar Valon - South West Clearing
+    */
+     public final static short TARVALON_SW_CLEARING_ACTION = 10;
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /*** Towns small images set - ACTION LIST ***/
@@ -204,6 +208,10 @@ public interface ImageLibRef extends ImageLibraryReference
    /** Tar valon - North West Gate small image.
     */
      public final static short TARVALON_NWGATE_SMALL_IM_ACTION = 3;
+
+   /** Tar valon - SW Clearing Small image.
+    */
+     public final static short TARVALON_SWCLNG_SMALL_IM_ACTION = 4;
 
  /*------------------------------------------------------------------------------------*/
  /*------------------------------------------------------------------------------------*/

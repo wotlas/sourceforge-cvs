@@ -23,6 +23,7 @@ import wotlas.client.DataManager;
 import wotlas.client.PlayerImpl;
 
 import wotlas.common.chat.*;
+import wotlas.common.character.*;
 import wotlas.common.message.chat.*;
 import wotlas.common.Player;
 import wotlas.common.universe.WotlasLocation;
@@ -416,10 +417,28 @@ System.out.println("DEFAULT CHAT player list reseted");
   private void okAction() {
     String message = inputBox.getText();
 
-    if (message.length()==0)
+    if(message.length()==0)
       return;
 
     DataManager dManager = DataManager.getDefaultDataManager();
+
+    // Commands
+    if(message.equals("/blackajah")) {
+
+       WotCharacter wotC = dManager.getMyPlayer().getWotCharacter();
+       
+       if( wotC instanceof AesSedai ) {
+           if( ((AesSedai) wotC).toggleBlackAjah() ) 
+               getCurrentJChatRoom().appendText("<font color='black'><b>[DARK ONE]<i> NOW YOU ARE MINE "
+                       +dManager.getMyPlayer().getPlayerName().toUpperCase()+" !</i></b></font>");
+           else
+               getCurrentJChatRoom().appendText("<font color='black'><b>[DARK ONE]<i> YOU CAN'T HIDE FROM ME. YOUR SOUL IS MINE "
+                       +dManager.getMyPlayer().getPlayerName().toUpperCase()+".</i></b></font>");
+       }
+
+       inputBox.setText("");
+       return;
+    }
     
     // Shortcuts
     if (message.startsWith("/whisper")) {

@@ -180,7 +180,7 @@ public class WorldGenerator {
 
 
         // STEP 4 - Tar Valon West Gate Building
-           Building buildings[] = new Building[3];
+           Building buildings[] = new Building[4];
            townMaps[0].setBuildings( buildings );
 
            buildings[0] = new Building(208,493,10,18);
@@ -217,6 +217,18 @@ public class WorldGenerator {
            buildings[2].setSmallBuildingImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
                                                                 ImageLibRef.BUILDING_SMALL_SET,
                                                                 ImageLibRef.TARVALON_NWGATE_SMALL_IM_ACTION ) );
+
+        // Tar Valon - South-West Clearing (Building)
+           buildings[3] = new Building(95,795,20,20);
+           buildings[3].setBuildingID(3);
+           buildings[3].setFullName("Tar Valon - South West Ruins");
+           buildings[3].setShortName("TvSwRuins");
+           buildings[3].setServerID(0);
+           buildings[3].setHasTownExits(false);
+           buildings[3].setHasBuildingExits(true);
+           buildings[3].setSmallBuildingImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
+                                                                ImageLibRef.BUILDING_SMALL_SET,
+                                                                ImageLibRef.TARVALON_SWCLNG_SMALL_IM_ACTION ) );
 
         // STEP 5 - Tar Valon West Gate InteriorMap
            InteriorMap maps[] = new InteriorMap[1];
@@ -552,6 +564,54 @@ public class WorldGenerator {
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
                mapExit.setTargetPosition( new ScreenPoint(65,225) );
 
+        // STEP 8bis - Tar Valon SW Clearing InteriorMap
+           maps = new InteriorMap[1];
+           maps[0] = new InteriorMap();
+
+           maps[0].setInteriorMapID(0);
+           maps[0].setFullName("Tar Valon - South West Ruins");
+           maps[0].setShortName("sw-ruins");
+           maps[0].setInteriorMapImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
+                                                         ImageLibRef.UNIVERSE_SET ,
+                                                         ImageLibRef.TARVALON_SW_CLEARING_ACTION ) );
+           maps[0].setImageWidth(550);
+           maps[0].setImageHeight(350);
+           maps[0].setImageRegionWidth(550);
+           maps[0].setImageRegionHeight(350);
+
+           maps[0].setMusicName("tar-valon-01.mid");
+
+           buildings[3].setInteriorMaps( maps );
+
+        // STEP 8bis2 - Rooms of Tar Valon NW Clearing InteriorMap
+           rooms = new Room[1];
+           maps[0].setRooms( rooms );
+           rooms[0] = new Room();
+           rooms[0].setRoomID(0);
+           rooms[0].setMaxPlayers(30);
+
+           rooms[0].setFullName("Tar Valon - South West Ruins");
+           rooms[0].setShortName("sw-ruins");
+           rooms[0].setInsertionPoint( new ScreenPoint(260,160) );
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(190,325,335,25) );
+               mapExit.setType( MapExit.BUILDING_EXIT );
+               mapExit.setMapExitSide( MapExit.SOUTH );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
+               mapExit.setTargetPosition( new ScreenPoint(105,820) );
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(320,0,230,20) );
+               mapExit.setType( MapExit.BUILDING_EXIT );
+               mapExit.setMapExitSide( MapExit.NORTH );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
+               mapExit.setTargetPosition( new ScreenPoint(105,780) );
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(525,20,25,330) );
+               mapExit.setType( MapExit.BUILDING_EXIT );
+               mapExit.setMapExitSide( MapExit.EAST );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
+               mapExit.setTargetPosition( new ScreenPoint(120,800) );
+
 
         // STEP 9 - Tar Valon NW Gate InteriorMap
            maps = new InteriorMap[2];
@@ -586,7 +646,7 @@ public class WorldGenerator {
 
            buildings[2].setInteriorMaps( maps );
 
-        // STEP 10 - Rooms of Tar Valon NW Clearing InteriorMap Level 0
+        // STEP 10 - Rooms of Tar Valon NW Gate InteriorMap Level 0
            rooms = new Room[1];
            maps[0].setRooms( rooms );
            rooms[0] = new Room();

@@ -28,7 +28,7 @@ stepPropertiesKey.4=init.choice1
 stepPropertiesValue.4=Tower\ Guard
 
 stepPropertiesKey.5=init.info1
-stepPropertiesValue.5=A\ youngling\ can\ also\ become\ a\ White\ Tower\ guard\ if\ he\ doesn't\ have\ a\ Warder's\ skills.
+stepPropertiesValue.5=A\ youngling\ can\ also\ become\ a\ White\ Tower\ guard\ if\ he\ doesn't\ have\ the\ skills\ required\ to\ become\ Warder.
 
 stepPropertiesKey.6=init.choice2
 stepPropertiesValue.6=Warder

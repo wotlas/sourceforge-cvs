@@ -33,22 +33,22 @@ import java.util.Iterator;
  *
  * @author Petrus
  * @see wotlas.client.PersistenceManager;
- * @see wotlas.client.ClientManager;
- * @see wotlas.client.ProfileManager;
+ * @see wotlas.client.ClientManager; 
  */
 
 class ClientDirector
 {
+
  /*------------------------------------------------------------------------------------*/
   
   /** Static Link to Database Config File.
    */
-  public final static String DATABASE_CONFIG = "../src/config/client-database.cfg";
+  public final static String DATABASE_CONFIG = "../src/config/client.cfg";
 
   /** Complete Path to the database where are stored the client's profiles
    */
   private static String databasePath;
-
+  
   /** Other eventual properties.
    */
   private static Properties properties;
@@ -102,12 +102,11 @@ class ClientDirector
     clientManager = ClientManager.createClientManager();
     Debug.signal( Debug.NOTICE, null, "Client Created (but not started)..." );
 
-/*
-    // STEP 4 - We ask the DataManager to load the interface
-    dataManager = DataManger.createDataManager();
-    Debug.signal( Debug.NOTICE, null, "dataManager created..." );
-*/   
+    // STEP 4 - We ask the DataManager to get ready
+    dataManager = DataManager.createDataManager();
+    Debug.signal( Debug.NOTICE, null, "DataManager created..." );
     
+    // STEP 5 - Start of the ClientManager
     clientManager.start(0);
     Debug.signal( Debug.NOTICE, null, "WOTLAS Client started with success..." );    
   }

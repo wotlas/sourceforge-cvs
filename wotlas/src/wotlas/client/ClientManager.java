@@ -233,6 +233,14 @@ public class ClientManager
    public boolean getAutomaticLogin() {
       return automaticLogin;
    }
+   
+ /*------------------------------------------------------------------------------------*/
+  
+  /** To get client screen
+   */
+  public JIntroWizard getScreenIntro() {
+    return screenIntro;
+  }  
 
  /*------------------------------------------------------------------------------------*/
 
@@ -965,6 +973,7 @@ public class ClientManager
 
       // Account creation
       currentProfileConfig = new ProfileConfig();
+      DataManager.getDefaultDataManager().setCurrentProfileConfig(currentProfileConfig);
 
       JAccountCreationWizard accountCreationWz = new JAccountCreationWizard();
       break;

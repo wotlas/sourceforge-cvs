@@ -165,7 +165,7 @@ public class ScreenIntro extends JFrame
     for( int x = 0; x < d.width; x += backgroundImg.getIconWidth() )
     for( int y = 0; y < d.height; y += backgroundImg.getIconHeight() )*/
 
-    g.drawImage( backgroundImg.getImage(), 100, 100, null, null );
+    // g.drawImage( backgroundImg.getImage(), 100, 100, null, null );
     super.paint(g);
     // Now let the paint do its usual work
 

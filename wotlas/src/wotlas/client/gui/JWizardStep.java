@@ -43,7 +43,7 @@ public abstract class JWizardStep extends JPanel
   private String title;
 
  /*------------------------------------------------------------------------------------*/
-  
+
   /** called when the step is to be shown
    */
   public abstract void onShow(Object context);

@@ -99,7 +99,7 @@ public class JAbout extends JDialog implements ActionListener
         "Tibob",
         " ",
         "The French WoT mailing list",
-        "roue-du-temps@yahoogroups.fr",
+        "roue-du-temps@yahoogroups.com",
         " ",
         "Tour Grise Internet Site",
         "www.chez.com/tourgrise",

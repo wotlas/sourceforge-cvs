@@ -59,17 +59,16 @@ public class JAccountWizard extends JWizard
 
   /** Init the different steps of the wizard
    */
-  public void init()
-  {
-
+  public void init() {
     Step1 step1 = new Step1();
     Step2 step2 = new Step2();
     Step3 step3 = new Step3();
+    Step4 step4 = new Step4();
 
-    addStep(step1);
-    addStep(step2);
-    addStep(step3);
-
+    addStep(step1); // Aes Sedai Class
+    addStep(step2); // Hair
+    addStep(step3); // Name
+    addStep(step4); // Past
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -106,7 +105,11 @@ public class JAccountWizard extends JWizard
 
     /** called when the step is to be shown
      */
-    public void onShow(Object context) {}
+    public void onShow(Object context) {
+        b_next.setEnabled( true );
+        b_previous.setEnabled( false );
+        b_cancel.setEnabled( true );
+    }
 
     /** called when Next button is clicked
      */
@@ -274,7 +277,11 @@ public class JAccountWizard extends JWizard
 
     /** called when the step is to be shown
      */
-    public void onShow(Object context) {}
+    public void onShow(Object context) {
+        b_next.setEnabled( true );
+        b_previous.setEnabled( true );
+        b_cancel.setEnabled( true );
+    }
 
     /** called when Next button is clicked
      */
@@ -292,7 +299,7 @@ public class JAccountWizard extends JWizard
      */
     public Step3()
     {
-      super("Informations (last step)");
+      super("Player Information");
       setBackground(Color.white);
 
       setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -332,6 +339,74 @@ public class JAccountWizard extends JWizard
 
   /** step of wizard
    */
+  class Step4 extends JWizardStep
+  {
+    private JTextArea ta_infos;
+    private JTextArea ta_past;
+    private JPanel mainPanel, formPanel;
+
+    /** called when the step is to be shown
+     */
+    public void onShow(Object context) {
+        b_next.setEnabled( true );
+        b_previous.setEnabled( true );
+        b_cancel.setEnabled( true );
+    }
+
+    /** called when Next button is clicked
+     */
+    public void onNext(Object context) {
+      personality.queueMessage( new wotlas.common.message.account.PlayerPastMessage(ta_past.getText()));
+    }
+
+    /** called when Previous button is clicked
+     */
+    public void onPrevious(Object context) {
+      personality.queueMessage( new RevertToPreviousStateMessage() );
+    }
+
+    /** Consctructor
+     */
+    public Step4()
+    {
+      super("Player Past (last step)");
+      setBackground(Color.white);
+
+      setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
+      ta_infos = new JTextArea("    Please take some time to invent a past for your"+
+                             " character. This short text will be seen by other"+
+                             " players (any racist, sexual or crude text will result"+
+                             " in the close of your account).\n");
+      ta_infos.setLineWrap(true);
+      ta_infos.setWrapStyleWord(true);
+      ta_infos.setEditable(false);
+      add(ta_infos);
+
+//      mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+//      mainPanel.setBackground(Color.white);
+//      formPanel = new JPanel(new GridLayout(3,2,10,2));
+//      formPanel.setBackground(Color.white);
+        ta_past = new JTextArea("Enter your text here...");
+        ta_past.setLineWrap(true);
+        ta_past.setWrapStyleWord(true);
+        ta_past.setEditable(true);
+//        formPanel.add(ta_past);
+        add(ta_past);
+
+//      mainPanel.add(formPanel);
+
+//      mainPanel.setAlignmentX(LEFT_ALIGNMENT);
+//      add(mainPanel);
+
+      add(Box.createVerticalGlue());
+    }
+  }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** step of wizard
+   */
   class Step2 extends JWizardStep
   {
     private ALabel lbl_infos;
@@ -343,7 +418,11 @@ public class JAccountWizard extends JWizard
 
     /** called when the step is to be shown
      */
-    public void onShow(Object context) {}
+    public void onShow(Object context) {
+        b_next.setEnabled( true );
+        b_previous.setEnabled( true );
+        b_cancel.setEnabled( true );
+    }
 
     /** called when Next button is clicked
      */
@@ -453,17 +532,5 @@ public class JAccountWizard extends JWizard
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Main. TEST
-   *
-   * @param argv this default param is not used.
-   */
-  /*static public void main(String argv[])
-  {
-    JAccountWizard host = new JAccountWizard();
-    host.init();
-    host.start();
-  }*/
-
- /*------------------------------------------------------------------------------------*/
 
 }

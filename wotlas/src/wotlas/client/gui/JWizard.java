@@ -19,8 +19,11 @@
 
 package wotlas.client.gui;
 
-import wotlas.client.DataManager;
+import wotlas.client.*;
+import wotlas.common.message.account.*;
 import wotlas.utils.ALabel;
+
+import wotlas.libs.net.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -68,15 +71,15 @@ public abstract class JWizard extends JFrame
 
   /** previous button
    */
-  private JButton b_previous;
+  protected JButton b_previous;
 
   /** next button
    */
-  private JButton b_next;
+  protected JButton b_next;
 
   /** cancel button
    */
-  private JButton b_cancel;
+  protected JButton b_cancel;
 
   /** Contexte of the wizard
    */
@@ -109,6 +112,19 @@ public abstract class JWizard extends JFrame
     setBackground(Color.white);
 
     this.context = context;
+
+   // Close Window event
+    addWindowListener( new WindowAdapter() {
+          public void windowClosing( WindowEvent e ) {
+              dispose();
+              NetPersonality personality = (NetPersonality) context;
+          
+              personality.queueMessage( new CancelAccountCreationMessage() );
+              personality.closeConnection();
+              ClientManager.getDefaultClientManager().start(10);
+          }
+    });
+
 
     vPanels = new Vector();
 
@@ -149,18 +165,19 @@ public abstract class JWizard extends JFrame
     b_previous.setFocusPainted(false);        
     
     b_previous.setActionCommand("previous");
-    b_previous.setEnabled(false);
+    //b_previous.setEnabled(false);
     b_previous.addActionListener(
       new ActionListener()
       {
         public void actionPerformed(ActionEvent e) {
           JWizardStep step = (JWizardStep)vPanels.elementAt(currentIndex);
           currentIndex--;
-          if (currentIndex == 0) {
-            b_previous.setEnabled(false);
-          }
-          b_next.setText("Next >");
-          b_next.setEnabled(true);
+        // we restore the images of the next button
+          b_next.setIcon(im_nextup);
+          b_next.setRolloverIcon(im_nextdo);
+          b_next.setPressedIcon(im_nextdo);
+          b_next.setDisabledIcon(im_nextun);
+
           step.onPrevious(getContext());
           mainPanel.remove(step);
           showStep(currentIndex);
@@ -185,7 +202,7 @@ public abstract class JWizard extends JFrame
           if (currentIndex == (vPanels.size()-1)) {
             JWizardStep step = (JWizardStep)vPanels.elementAt(currentIndex);
             step.onNext(getContext());
-            b_next.setEnabled(false);
+            //b_next.setEnabled(false);
             setVisible(false);
             mainPanel.removeAll();
             dispose();
@@ -201,8 +218,8 @@ public abstract class JWizard extends JFrame
               b_next.setPressedIcon(im_okdo);
               b_next.setDisabledIcon(im_okun);              
             }
+
             //b_previous.setEnabled(true);
-            b_previous.setEnabled(false);
             step.onNext(getContext());
             mainPanel.remove(step);
             showStep(currentIndex);
@@ -225,6 +242,14 @@ public abstract class JWizard extends JFrame
       new ActionListener()
       {
         public void actionPerformed(ActionEvent e) {
+          dispose();
+          NetPersonality personality = (NetPersonality) context;
+          
+          personality.queueMessage( new CancelAccountCreationMessage() );
+          personality.closeConnection();
+          ClientManager.getDefaultClientManager().start(10);
+
+          /*
           mainPanel.remove((JWizardStep)vPanels.elementAt(currentIndex));
           currentIndex = 0;
           b_previous.setEnabled(false);
@@ -235,6 +260,7 @@ public abstract class JWizard extends JFrame
           b_next.setDisabledIcon(im_nextun);          
           b_next.setEnabled(true);
           showStep(currentIndex);
+          */
         }
       }
     );
@@ -286,7 +312,7 @@ public abstract class JWizard extends JFrame
     if (DataManager.SHOW_DEBUG)
       System.out.println("showStep(" + indexStep + ")");
     JWizardStep step = (JWizardStep)vPanels.elementAt(indexStep);
-    //step.setPreferredSize(new Dimension(200,200));
+
     mainPanel.removeAll();
     mainPanel.add(step, BorderLayout.SOUTH);
     int index = currentIndex + 1;

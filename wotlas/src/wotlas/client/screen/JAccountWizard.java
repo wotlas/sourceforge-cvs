@@ -293,6 +293,7 @@ public class JAccountWizard extends JWizard
     private ALabel lbl_nickname, lbl_fullname, lbl_email;
     private ATextField tf_nickname, tf_fullname, tf_email;
     private JPanel mainPanel, formPanel;
+    private JPanel mainPanel2;
 
     /** called when the step is to be shown
      */
@@ -352,7 +353,9 @@ public class JAccountWizard extends JWizard
 
       mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
       mainPanel.setBackground(Color.white);
-      formPanel = new JPanel(new GridLayout(3,2,10,2));
+      mainPanel.setAlignmentX(LEFT_ALIGNMENT);
+      
+      formPanel = new JPanel(new GridLayout(4,2,10,2));
       formPanel.setBackground(Color.white);
         lbl_nickname = new ALabel("Character Nickname: ");
         formPanel.add(lbl_nickname);
@@ -365,20 +368,19 @@ public class JAccountWizard extends JWizard
         lbl_email = new ALabel("Your Email: ");
         formPanel.add(lbl_email);
         tf_email = new ATextField(10);
-        formPanel.add(tf_email);
-    
-    
-        ATextArea ta_mailInfo = new ATextArea("Your Email address will only be used to contact you in case of account problems... The field is optional.");
+        formPanel.add(tf_email);        
+      mainPanel.add(formPanel);
+
+      add(mainPanel);
+
+      ATextArea ta_mailInfo = new ATextArea("Your Email address will only be used to contact you in case of account problems... The field is optional.");
+        ta_mailInfo.setBackground(Color.white);
         ta_mailInfo.setLineWrap(true);
         ta_mailInfo.setWrapStyleWord(true);
         ta_mailInfo.setEditable(false);
-
-      mainPanel.add(formPanel);
-      mainPanel.add(ta_mailInfo);
-
-      mainPanel.setAlignmentX(LEFT_ALIGNMENT);
-      add(mainPanel);
-
+        ta_mailInfo.setAlignmentX(LEFT_ALIGNMENT);  
+      add(ta_mailInfo);        
+      
       add(Box.createVerticalGlue());
 
     }
@@ -430,7 +432,7 @@ public class JAccountWizard extends JWizard
 
       setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
       setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-      setAlignmentX(LEFT_ALIGNMENT);
+      //setAlignmentX(LEFT_ALIGNMENT);
 
       ta_infos = new ATextArea("    Please take some time to invent a past for your"+
                              " character. This short text will be seen by other"+
@@ -460,10 +462,18 @@ public class JAccountWizard extends JWizard
         //ta_past.setBackground(Color.lightGray);
         ta_past.setPreferredSize(new Dimension(0,300));
 //        formPanel.add(ta_past);
+//ta_past.setAlignmentX(LEFT_ALIGNMENT);
         add(ta_past);
 
-        savePastLater = new ACheckBox("Save this later...",false);
+        /*JPanel mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+      mainPanel.setBackground(Color.blue);
+      mainPanel.setAlignmentX(LEFT_ALIGNMENT);*/
+        savePastLater = new ACheckBox("Saae this later...",false);
+        //savePastLater.setAlignmentX(LEFT_ALIGNMENT);
+        //mainPanel.add(savePastLater);
+        
         add(savePastLater);
+        //add(mainPanel);
 
 //      mainPanel.add(formPanel);
 

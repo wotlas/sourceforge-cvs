@@ -86,8 +86,10 @@ public class RemovePlayerFromRoomMsgBehaviour extends RemovePlayerFromRoomMessag
                   System.out.println("REMOVING PLAYER "+primaryKey);
               players.remove( primaryKey );
            }
-
+                      
            playerImpl.cleanVisualProperties(dataManager.getGraphicsDirector());
+           if (primaryKey.equals(dataManager.getSelectedPlayerKey()))
+            dataManager.removeCircle();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -147,6 +147,10 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** Our playerImpl.
    */
   private PlayerImpl myPlayer;
+  
+  /** Selected player.
+   */
+  private PlayerImpl selectedPlayer;
 
   /** List of players
    */
@@ -319,6 +323,18 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     return players;
   }
  
+  /** To get selected player
+   */
+  public String getSelectedPlayerKey() {
+    return selectedPlayer.getPrimaryKey();
+  }
+  
+  /** To remove the circle
+   */
+  public void removeCircle() {
+    gDirector.removeDrawable(circle);    
+    circle = null;
+  }
  /*------------------------------------------------------------------------------------*/
 
   /** To set the current profileConfig<br>
@@ -658,8 +674,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
               ( (PlayerImpl) it.next() ).tick();
        }
 
-       if ( (circle!=null) )
+       if ( circle!=null ) {
           circle.tick();
+       }
           
     // III - Graphics Director update & redraw
        gDirector.tick();
@@ -702,19 +719,26 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     Object object = gDirector.findOwner( e.getX(), e.getY());
 
     if ( object instanceof PlayerImpl ) {
-      	// We display text & aura
-           PlayerImpl selectedPlayer = (PlayerImpl) object;
+      	// We display text & aura                      
+           String selectedPlayerKey = "";
+           if (selectedPlayer!=null)
+             selectedPlayerKey = selectedPlayer.getPrimaryKey();    
+           
            if (circle!=null)
              gDirector.removeDrawable(circle);
-
+      
+           selectedPlayer = (PlayerImpl) object;           
+                      
        // drawables
-           circle = new CircleDrawable( selectedPlayer.getDrawable(),
+           if (!selectedPlayerKey.equals(selectedPlayer.getPrimaryKey())) {                        
+             circle = new CircleDrawable( selectedPlayer.getDrawable(),
                                         20,
                                         selectedPlayer.getWotCharacter().getColor(),
                                         true,
                                         ImageLibRef.AURA_PRIORITY);
-           gDirector.addDrawable(circle);
-           
+             gDirector.addDrawable(circle);
+           }
+          
            gDirector.addDrawable(selectedPlayer.getTextDrawable());
            gDirector.addDrawable(selectedPlayer.getWotCharacter().getAura());
 
@@ -833,6 +857,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
   public void cleanInteriorMapData() {
     gDirector.removeAllDrawables();
+    circle = null;
+    selectedPlayer = null;
   }
 
  /*------------------------------------------------------------------------------------*/

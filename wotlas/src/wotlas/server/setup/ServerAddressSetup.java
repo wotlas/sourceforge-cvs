@@ -19,6 +19,7 @@
  
 package wotlas.server.setup;
 
+import wotlas.server.ServerDirector;
 import wotlas.common.PersistenceManager;
 import wotlas.libs.wizard.*;
 import wotlas.utils.*;
@@ -68,10 +69,6 @@ public class ServerAddressSetup extends JWizard {
     */
      private static String serverAddressFile;
 
-   /** Our Application JFrame
-    */
-     private static JFrame frame;
-
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
@@ -79,57 +76,7 @@ public class ServerAddressSetup extends JWizard {
     public ServerAddressSetup() {
          super("Server Address Setup",470,550);
 
-         frame = this;
          setLocation(200,100);
-
-        // STEP 1 - We load the database path. Where is the data ?
-           Properties properties = FileTools.loadPropertiesFile( DATABASE_CONFIG );
-
-             if( properties==null ) {
-                Debug.signal( Debug.FAILURE, null, "No valid server-database.cfg file found !" );
-                System.exit(1);
-             }
-
-           String databasePath = properties.getProperty( "DATABASE_PATH","" );
-
-           if( databasePath.length()==0 ) {
-               Debug.signal( Debug.FAILURE, null, "No Database Path specified in config file !" );
-               System.exit(1);
-           }
-
-           Debug.signal( Debug.NOTICE, null, "DataBase Path Found : "+databasePath );
-
-        // STEP 2 - What is the current server ID ?
-           String s_serverID = properties.getProperty( "SERVER_ID","" );
-
-           if( s_serverID.length()==0 ) {
-               Debug.signal( Debug.FAILURE, null, "No ServerID specified in config file !" );
-               System.exit(1);
-           }
-
-           try{
-              serverID = Integer.parseInt( s_serverID );
-           }catch( Exception e ) {
-                Debug.signal( Debug.FAILURE, null, "Bad ServerID specified in config file !" );
-                System.exit(1);
-           }
-
-           Debug.signal( Debug.NOTICE, null, "Current Default Server ID is : "+serverID );
-
-
-        // STEP 3 - We get the remote server properties
-           serverProperties = FileTools.loadPropertiesFile( REMOTE_SERVER_CONFIG );
-
-             if( serverProperties==null ) {
-                Debug.signal( Debug.FAILURE, null, "No valid remote-servers.cfg file found !" );
-                System.exit(1);
-             }
-
-
-           serverAddressFile = databasePath+File.separator+PersistenceManager.SERVERS_HOME
-                               +File.separator+PersistenceManager.SERVERS_PREFIX
-                               +serverID+PersistenceManager.SERVERS_SUFFIX
-                               +PersistenceManager.SERVERS_ADDRESS_SUFFIX;
 
        // STEP 4 - Display first step
           try{
@@ -146,7 +93,7 @@ public class ServerAddressSetup extends JWizard {
   /** Called when wizard is finished (after last step's end).
    */
    protected void onFinished(Object context) {
-   	System.exit(0);
+           System.exit(0);
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -154,7 +101,7 @@ public class ServerAddressSetup extends JWizard {
   /** Called when wizard is canceled ('cancel' button pressed).
    */
    protected void onCanceled(Object context) {
-   	System.exit(0);
+         System.exit(0);
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -169,7 +116,7 @@ public class ServerAddressSetup extends JWizard {
 
      /** Swing Fields
       */
-       private JComboBox c_ipAddress;
+       private JTextField t_ipAddress;
        private JTextField t_login;
        private JPasswordField t_passw;
        private JComboBox c_prog, c_options, c_workdir;
@@ -185,8 +132,8 @@ public class ServerAddressSetup extends JWizard {
                           "Step 1/2 - Config  " );
 
           param.setIsPrevButtonEnabled(false);
-          param.setIsDynamic(true); // we don't want the step to be buffered, we want the ip
-          return param;             // addresses to be updated each time the step is displayed
+          param.setIsDynamic(true); // we don't want the step to be buffered, we want its data
+          return param;             // to be updated each time the step is displayed
        }
 
      /* -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  */
@@ -233,22 +180,18 @@ public class ServerAddressSetup extends JWizard {
            JLabel label1 = new JLabel("Select/Enter your Internet address or DNS name (do not enter both) :");
            label1.setAlignmentX(LEFT_ALIGNMENT);
 
-           String ipList[] = Tools.getAllInetAddresses();
-           
-           if(ipList==null){
-              ipList = new String[1];
-              ipList[0] = "<none found>";
-           }
+           String lastIP = FileTools.loadTextFromFile( serverAddressFile );
 
-           c_ipAddress = new JComboBox( ipList );
-           c_ipAddress.setEditable(true);
-           c_ipAddress.setAlignmentX(LEFT_ALIGNMENT);
+           if(lastIP==null) lastIP="0.0.0.0";
+
+           t_ipAddress = new JTextField( lastIP );
+           t_ipAddress.setAlignmentX(LEFT_ALIGNMENT);
 
            JLabel label1bis = new JLabel(" ");
            label1bis.setAlignmentX(LEFT_ALIGNMENT);
 
            group1.add( label1 );
-           group1.add( c_ipAddress );
+           group1.add( t_ipAddress );
            group1.add( label1bis );
            stepPanel.add(group1);
 
@@ -379,6 +322,13 @@ public class ServerAddressSetup extends JWizard {
       */
        protected boolean onNext(Object context, JWizard wizard) {
 
+              int value = JOptionPane.showConfirmDialog(null, "Save this config ?", "Server Address Config", JOptionPane.YES_NO_OPTION);
+
+              if( value != JOptionPane.YES_OPTION ) {
+                  wizard.setNextStep(  TransferWizardStep.getStaticParameters()  );
+                  return true;
+              }
+
        	   // 1 - we retrieve the data and save it to disk.
        	      serverProperties.setProperty( "SERVER_HOME_LOGIN", t_login.getText() );
        	      serverProperties.setProperty( "SERVER_HOME_PASSW", new String(t_passw.getPassword()) );
@@ -396,8 +346,8 @@ public class ServerAddressSetup extends JWizard {
                   FileTools.saveTextToFile( REMOTE_SERVER_CONFIG, oldConfig );
               }
 
-              if( !FileTools.saveTextToFile( serverAddressFile, c_ipAddress.getSelectedItem().toString() ) ) {
-                  JOptionPane.showMessageDialog( frame, "Failed to save IP address to\n"+serverAddressFile,
+              if( !FileTools.saveTextToFile( serverAddressFile, t_ipAddress.getText() ) ) {
+                  JOptionPane.showMessageDialog( null, "Failed to save IP address to\n"+serverAddressFile,
                                                         "Error", JOptionPane.ERROR_MESSAGE);
                   return false;
               }
@@ -501,19 +451,19 @@ public class ServerAddressSetup extends JWizard {
                     cmd += " "; // makes our job easier
                  
                     if( cmd.indexOf("$FILE$")<0 ) {
-                        JOptionPane.showMessageDialog( frame, "No $FILE$ tag found in command line.",
+                        JOptionPane.showMessageDialog( null, "No $FILE$ tag found in command line.",
                                                         "Error", JOptionPane.ERROR_MESSAGE);
                     	return;
                     }
 
                     if( cmd.indexOf("$LOGIN$")<0 ) {
-                        JOptionPane.showMessageDialog( frame, "No $LOGIN$ tag found in command line.",
+                        JOptionPane.showMessageDialog( null, "No $LOGIN$ tag found in command line.",
                                                         "Error", JOptionPane.ERROR_MESSAGE);
                     	return;
                     }
 
                     if( cmd.indexOf("$PASSW$")<0 ) {
-                        JOptionPane.showMessageDialog( frame, "No $PASSW$ tag found in command line.",
+                        JOptionPane.showMessageDialog( null, "No $PASSW$ tag found in command line.",
                                                         "Error", JOptionPane.ERROR_MESSAGE);
                     	return;
                     }
@@ -568,16 +518,16 @@ public class ServerAddressSetup extends JWizard {
                        result = pr.waitFor();
                     }
                     catch( Exception ex ) {
-                        JOptionPane.showMessageDialog( frame, "Command Line Failed :\n"+ex.getMessage(),
+                        JOptionPane.showMessageDialog( null, "Command Line Failed :\n"+ex.getMessage(),
                                                         "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
 
                     if(result==0)
-                        JOptionPane.showMessageDialog( frame, "Transfer done. You should check if it worked.",
+                        JOptionPane.showMessageDialog( null, "Transfer done. You should check if it worked.",
                                                        "Success", JOptionPane.INFORMATION_MESSAGE);
                     else
-                        JOptionPane.showMessageDialog( frame, "Command line seems to have failed.\nCheck transfer destination.",
+                        JOptionPane.showMessageDialog( null, "Command line seems to have failed.\nCheck transfer destination.",
                                                         "Error", JOptionPane.ERROR_MESSAGE);
               }
            });
@@ -597,7 +547,7 @@ public class ServerAddressSetup extends JWizard {
       *  @return return true to validate the "Next" button action, false to cancel it...
       */
        protected boolean onNext(Object context, JWizard wizard) {
-       	       return true;
+              return true;
        }
 
      /* -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  */
@@ -618,10 +568,62 @@ public class ServerAddressSetup extends JWizard {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Main
+  /** Main. We don't expect any parameters.
+   *  @param argv none
    */
     static public void main( String argv[] ) {
-          new ServerAddressSetup();
+
+        // STEP 1 - We load the database path. Where is the data ?
+           Properties properties = FileTools.loadPropertiesFile( DATABASE_CONFIG );
+
+             if( properties==null ) {
+                Debug.signal( Debug.FAILURE, null, "No valid server-database.cfg file found !" );
+                System.exit(1);
+             }
+
+           String databasePath = properties.getProperty( "DATABASE_PATH","" );
+
+           if( databasePath.length()==0 ) {
+               Debug.signal( Debug.FAILURE, null, "No Database Path specified in config file !" );
+               System.exit(1);
+           }
+
+           Debug.signal( Debug.NOTICE, null, "DataBase Path Found : "+databasePath );
+
+        // STEP 2 - What is the current server ID ?
+           String s_serverID = properties.getProperty( "SERVER_ID","" );
+
+           if( s_serverID.length()==0 ) {
+               Debug.signal( Debug.FAILURE, null, "No ServerID specified in config file !" );
+               System.exit(1);
+           }
+
+           try{
+              serverID = Integer.parseInt( s_serverID );
+           }catch( Exception e ) {
+                Debug.signal( Debug.FAILURE, null, "Bad ServerID specified in config file !" );
+                System.exit(1);
+           }
+
+           Debug.signal( Debug.NOTICE, null, "Current Default Server ID is : "+serverID );
+
+
+        // STEP 3 - We get the remote server properties
+           serverProperties = FileTools.loadPropertiesFile( REMOTE_SERVER_CONFIG );
+
+             if( serverProperties==null ) {
+                Debug.signal( Debug.FAILURE, null, "No valid remote-servers.cfg file found !" );
+                System.exit(1);
+             }
+
+
+           serverAddressFile = databasePath+File.separator+PersistenceManager.SERVERS_HOME
+                               +File.separator+PersistenceManager.SERVERS_PREFIX
+                               +serverID+PersistenceManager.SERVERS_SUFFIX
+                               +PersistenceManager.SERVERS_ADDRESS_SUFFIX;
+
+         // STEP 4 - Start the wizard
+           new ServerAddressSetup();
     }
 
  /*------------------------------------------------------------------------------------*/

@@ -40,8 +40,10 @@ public interface NetConnectionListener
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** This method is called when the network connection is no longer of this world.
+   *
+   * @param personality the NetPersonality object associated to this connection.
    */
-     public void connectionClosed();
+     public void connectionClosed( NetPersonality personality );
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

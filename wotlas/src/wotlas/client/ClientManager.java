@@ -515,10 +515,10 @@ public class ClientManager
               DataManager.getDefaultDataManager());
 
             if ( jgconnect.hasSucceeded() ) {
-              Debug.signal( Debug.NOTICE, null, "client connected to GameServer");
+              Debug.signal( Debug.NOTICE, null, "ClientManager connected to GameServer");
               start(100);
             } else {
-              Debug.signal( Debug.ERROR, this, "client ejected from GameServer");
+              Debug.signal( Debug.ERROR, this, "ClientManager ejected from GameServer");
             }
           }
         }     
@@ -545,9 +545,21 @@ public class ClientManager
     // ********************
     
     case 100:
-      screenIntro.setTitle("Wotlas - Welcome !");
+      //screenIntro.setTitle("Wotlas - Welcome !");      
+      //JOptionPane.showMessageDialog( screenIntro, "Wotlas client", "Welcome !", JOptionPane.INFORMATION_MESSAGE);
+      screenIntro.dispose();
       
-      JOptionPane.showMessageDialog( screenIntro, "Wotlas client", "Welcome !", JOptionPane.INFORMATION_MESSAGE);
+      JInfosPanel infosPanel = new JInfosPanel();
+      JMapPanel mapPanel = new JMapPanel();
+      JChatPanel chatPanel = new JChatPanel();
+      JPreviewPanel previewPanel = new JPreviewPanel();
+      JPlayerPanel playerPanel = new JPlayerPanel();
+      JLogPanel logPanel = new JLogPanel();
+    
+      JClientScreen mFrame = new JClientScreen(infosPanel, mapPanel, chatPanel, previewPanel, playerPanel, logPanel);    
+      mFrame.init();      
+      mFrame.show();      
+      
       break;      
       
     default:

@@ -422,6 +422,18 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     return false;
   }
 
+
+  /** To remove a player from all the ChatRooms.
+   *
+   * @param primaryKey primary key of Player to remove
+   */
+  public void removePlayerFromAllchatRooms(String primaryKey) {
+    for (int i=0; i<tabbedPane.getTabCount();i++) {
+        JChatRoom jchatRoom = (JChatRoom) tabbedPane.getComponentAt(i);
+        jchatRoom.removePlayer(primaryKey);
+    }
+  }
+
   /** To get the list of players of a ChatRoom
    *
    * @param primaryKey primary key of the ChatRoom

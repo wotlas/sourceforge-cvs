@@ -32,6 +32,7 @@ import wotlas.libs.net.*;
 import wotlas.libs.net.personality.*;
 
 import wotlas.libs.sound.SoundLibrary;
+import wotlas.libs.wizard.*;
 
 import wotlas.utils.*;
 import wotlas.utils.aswing.*;
@@ -955,14 +956,20 @@ public class ClientManager
     // ***********************************
 
     case 10:
+     
+      
       screenIntro.setTitle("Wotlas - Account creation...");
 
       // Loading Server Configs
-      serverConfigList.getLatestConfigFiles(screenIntro);
+      //serverConfigList.getLatestConfigFiles(screenIntro);
 
       // Account creation
       currentProfileConfig = new ProfileConfig();
 
+      JAccountCreationWizard accountCreationWz = new JAccountCreationWizard();
+      break;
+      
+      /*
       // Create panels
       leftPanel = new JPanel();
       leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
@@ -1174,7 +1181,8 @@ public class ClientManager
       screenIntro.setRightPanel(rightPanel);
       screenIntro.showScreen();
       break;
-
+    */
+    
     // **************************************
     // *** A new account has been created ***
     // **************************************

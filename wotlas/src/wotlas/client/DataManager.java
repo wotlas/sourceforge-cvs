@@ -403,15 +403,17 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       Debug.signal( Debug.NOTICE, null, "no valid key found => request a new account to AccountServer");
       Debug.signal( Debug.NOTICE, null, "sending login & password");
 
-      personality.queueMessage( new PasswordAndLoginMessage( currentProfileConfig.getLogin(),
+/* wiz 
+    personality.queueMessage( new PasswordAndLoginMessage( currentProfileConfig.getLogin(),
               currentProfileConfig.getPassword() ) );
+*/
 
-
-      JAccountWizard host = new JAccountWizard(personality);
+/* wiz
+     JAccountWizard host = new JAccountWizard(personality);
       wotlas.utils.SwingTools.centerComponent(host);
       host.init();
       host.start();
-
+*/
       if (personality==null) {
         Debug.signal( Debug.ERROR, this, "Connection closed by AccountServer" );
         return;

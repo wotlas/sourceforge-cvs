@@ -125,6 +125,8 @@ public class AccountBuilder implements NetConnectionListener
      	    return;  // can only call this method once
 
      	 currentParameters = accountServer.getStepFactory().getStep( AccountStepFactory.FIRST_STEP );
+
+         personalizeParameters(currentParameters);
          personality.queueMessage( new AccountStepMessage(
                                            currentParameters.getCopyWithNoServerProps() ) );
      }
@@ -156,6 +158,7 @@ public class AccountBuilder implements NetConnectionListener
               return;
            }
 
+           personalizeParameters(currentParameters);
            personality.queueMessage( new AccountStepMessage(
                                           currentParameters.getCopyWithNoServerProps() ) );
      }
@@ -249,6 +252,7 @@ public class AccountBuilder implements NetConnectionListener
               return;
            }
 
+           personalizeParameters(currentParameters);
            personality.queueMessage( new AccountStepMessage(
                                           currentParameters.getCopyWithNoServerProps() ) );
         }
@@ -289,9 +293,83 @@ public class AccountBuilder implements NetConnectionListener
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+    /** To invoke a method of the 'String XXXX()' type.
+     *  @return a String if the method call succeeded, null if it fails. In case of
+     *  errors no error message is sent.
+     */
+     private String invokeMethod( String method ) {
+        try{
+            Class cparams[] = new Class[0];
+            Method m = getClass().getMethod(method, cparams);
+
+            if(m==null)
+               return null; // method not found
+
+            Object params[] = new Object[0];
+            return (String) m.invoke(this,params);
+        }
+        catch( Exception ex ) {
+            Debug.signal(Debug.ERROR,this,ex);
+            return null;
+        }
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To personalize eventual init properties ( we replace $PATTERN$ if there are any
+    *  declared).
+    *  @param parameters to personalize
+    */
+     void personalizeParameters( JWizardStepParameters parameters ) {
+
+       // A - we retrieve the keys
+          String propsKey[] = parameters.getStepPropertiesKey();
+          if(propsKey==null)
+             return; // none
+
+       // B - we personalize the init properties
+          for( int i=0; i<propsKey.length; i++ )
+               if( propsKey[i].startsWith("server.") && propsKey[i].endsWith("$")) {
+               	  // 1 - we get the suffix & pattern
+               	     String suffix = propsKey[i].substring(
+               	                                  propsKey[i].indexOf('.')+1,
+               	                                  propsKey[i].indexOf('$')-1 );
+               	     String pattern = propsKey[i].substring(
+               	                                  propsKey[i].indexOf('$'),
+               	                                  propsKey[i].length() );
+
+                  // 2 - we get the methodName & text to analyze
+               	     String methodName = parameters.getStepPropertiesValue()[i];
+
+                     String text = parameters.getProperty("init."+suffix);
+
+                  // 3 - Check what we have
+                     if(pattern.length()==0 || text==null || methodName.length()==0)
+                        continue; // ignore this bad entry
+
+                  // 4 - Proceed...
+                     int ind = text.indexOf(pattern);
+                     
+                     if(ind<0) continue; // pattern not found
+
+                     StringBuffer buf = new StringBuffer(text.substring(0,ind));
+                     
+                     String result = invokeMethod(methodName);
+                     if(result==null) result="#ERROR#";
+
+                     buf.append(result);
+                     buf.append( text.substring(ind+pattern.length(),text.length()) );
+
+                  // 5 - Save our modif
+                     parameters.setProperty( "init."+suffix, buf.toString() );
+               }
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
    /** A small method to report a step error.
     */
-     public void sendStepError( String message ) {
+     private void sendStepError( String message ) {
         personality.queueMessage( new StepErrorMessage( message ) );
         Debug.signal( Debug.ERROR, this, "An error occured during account creation : "+message );
      }
@@ -486,4 +564,19 @@ public class AccountBuilder implements NetConnectionListener
  /*------------------------------------------------------------------------------------*/
  /*------------------------------------------------------------------------------------*/
 
+   /** To get the server Name.
+    */
+     public String getServerName() throws AccountException {
+         return ServerManager.getDefaultServerManager().getServerConfig().getServerSymbolicName();
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the admin email.
+    */
+     public String getAdminEmail() throws AccountException {
+         return ServerManager.getDefaultServerManager().getServerConfig().getAdminEmail();
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

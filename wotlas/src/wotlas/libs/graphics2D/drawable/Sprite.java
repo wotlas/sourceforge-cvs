@@ -105,11 +105,19 @@ public class Sprite extends Drawable implements DrawableOwner {
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To change the data supplier.
-   *
    * @param dataSupplier new data Supplier.
    */
     public void setDataSupplier(SpriteDataSupplier dataSupplier) {
         this.dataSupplier = dataSupplier;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the data supplier.
+   * @return the sprite's data Supplier.
+   */
+    public SpriteDataSupplier getDataSupplier() {
+        return dataSupplier;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -88,7 +88,7 @@ public class MotionlessSprite extends Drawable {
 
         if( hasAnimation ) {
             gc.drawImage( ImageLibrary.getDefaultImageLibrary().getImage( sprAnim.getCurrentImage() ),
-                          r.x, r.y, null );
+                          r.x-screen.x, r.y-screen.y, null );
         }
         else
             gc.drawImage( ImageLibrary.getDefaultImageLibrary().getImage( image ), r.x-screen.x, r.y-screen.y, null );

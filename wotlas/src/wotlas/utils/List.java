@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-//package wotlas.utils;
+package wotlas.utils;
 
 
 /** A list that implements the same methods as a java.utils.Vector
@@ -126,6 +126,7 @@ public class List
 
            if(first_element==-1)
                 first_element=0;
+                
        }
 
  /*------------------------------------------------------------------------------------*/
@@ -213,8 +214,8 @@ public class List
      *
      * @param index element index
      */
-       public Object elementAt( int index ){
-           return array[index+first_element];
+       public Object elementAt( int index ){        
+           return array[index+first_element];          
        }
 
  /*------------------------------------------------------------------------------------*/
@@ -228,6 +229,12 @@ public class List
      */
        public void insertElementAt( Object o, int index )
        {
+        // list is empty ?
+           if (last_element==-1) {
+              addElement( o );
+              return;
+           }
+        
         // simple add ?
            if( index>last_element-first_element ) {
               addElement( o );
@@ -240,14 +247,14 @@ public class List
            if( last_element-first_element+1==array.length )
                array_tmp = new Object[array.length+growth];
              else
-               array_tmp = new Object[array.length-first_element];
+               array_tmp = new Object[array.length-first_element+1];
 
        // copy & shift
           if(index>0)
               System.arraycopy( array, first_element, array_tmp, 0, index );
-
+          
           System.arraycopy( array, index+first_element, array_tmp, index+1, last_element-first_element-index+1 );
-
+          
        // insertion
           last_element = last_element-first_element+1;
           first_element = 0;
@@ -257,13 +264,26 @@ public class List
 
  /*------------------------------------------------------------------------------------*/
 
-    /** To get size of the list.
+    /** To get the size of the list.
      *
      * @return the list's size
      */
        public int size(){
+           if (last_element==-1)
+             return 0;           
            return last_element-first_element+1;
        }
+
+ /*------------------------------------------------------------------------------------*/
+
+    /** To test if the list is empty
+     *
+     * @return true if the list is empty
+     */
+       public boolean isEmpty(){
+           return (last_element == -1);           
+       }
+
 
  /*------------------------------------------------------------------------------------*/
 

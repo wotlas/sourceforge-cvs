@@ -530,40 +530,37 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     playerPanel = new JPlayerPanel();
     logPanel = new JLogPanel();    
 
-if (SHOW_DEBUG)
-System.out.println("Displaying window");
-    // 8 - Create main Frame
-    mFrame = new JClientScreen(infosPanel, mapPanel, chatPanel, optionsPanel, playerPanel, logPanel);
-if (SHOW_DEBUG)
-System.out.println("JCLient created");
-    mFrame.init();
-if (SHOW_DEBUG)
-System.out.println("End of init");    
+    if (SHOW_DEBUG)
+        System.out.println("Displaying window");
 
-if (SHOW_DEBUG)
-System.out.println("Changing map data");
-    // 6 - Init map display
+    // 6 - Create main Frame
+    mFrame = new JClientScreen(infosPanel, mapPanel, chatPanel, optionsPanel, playerPanel, logPanel);
+
+    if (SHOW_DEBUG)
+       System.out.println("JCLient created");
+
+    mFrame.init();
+
+    // 7 - Init map display
+    if (SHOW_DEBUG)
+       System.out.println("Changing map data");
+
     changeMapData();
 
-/*Object obj = new Object();
-synchronized( obj ) {
-try{
-System.out.println("Waiaintg 4s");
-  obj.wait(2000);
-System.out.println("done, tick");
-}
-catch(Exception e) {e.printStackTrace();}
-}*/
+    personality.setPingListener( new GraphicPingPanel(mFrame) );
 
-    // 7 - Start main loop tick
+
+    // 8 - Start main loop tick
     Debug.signal( Debug.NOTICE, null, "Beginning to tick Graphics Director" );
     this.start();
-if (SHOW_DEBUG)    
-System.out.println("tick thread started");
+
+    if (SHOW_DEBUG)    
+        System.out.println("tick thread started");
 
     mFrame.show();
-if (SHOW_DEBUG)
-System.out.println("Frame show");
+
+    if (SHOW_DEBUG)
+        System.out.println("Frame show");
 
     // 9 - Retreive other players informations    
     //personality.queueMessage(new AllDataLeftPleaseMessage());    
@@ -575,7 +572,9 @@ System.out.println("Frame show");
        sendMessage(new AllDataLeftPleaseMessage());
   }
 
-  /** Resume play in case of server deconnexion
+ /*------------------------------------------------------------------------------------*/
+
+  /** Resume play in case of server deconnection
    */
   public void resumeInterface() {
     Debug.signal( Debug.NOTICE, null, "DataManager::ResumeInterface");

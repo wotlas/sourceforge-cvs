@@ -136,13 +136,21 @@ public class AuraEffect extends Drawable {
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** To reset the animation.
+    */
+     public void reset() {
+        setAlpha( 0.0f );
+        this.timeLimit = System.currentTimeMillis()+lifeTime;
+        isDisappearing = false;
+     }
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
  /**
   * set alpha;
   */
-   public void setAlpha(float f ) {
+   public void setAlpha( float f ) {
      this.alpha = f;
-     this.timeLimit = System.currentTimeMillis()+lifeTime;
-     isDisappearing = false;
   }
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -257,7 +265,7 @@ public class AuraEffect extends Drawable {
    /** Returns true if the Aura is still displayed on screen
     */
    public boolean isLive() {
-        if( isDisappearing && alpha<=0.01 )
+        if( (isDisappearing && alpha<=0.01) || timeLimit+5000-System.currentTimeMillis() <0)
             return false;
         return true;   	
    }

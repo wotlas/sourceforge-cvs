@@ -141,7 +141,7 @@ public class AesSedai extends Female {
                       filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.yellow );
                       break;
               case AES_AMYRLIN :
-                      filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.lightgray );
+                      filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.white );
                       break;
           }
 
@@ -212,7 +212,7 @@ public class AesSedai extends Female {
                 return null; // aura still displayed on screen
              }
 
-             aesSedaiAuraEffect.setAlpha( 0.0f );
+             aesSedaiAuraEffect.reset();
              return (Drawable) aesSedaiAuraEffect;
          }
 

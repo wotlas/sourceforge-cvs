@@ -1,0 +1,22 @@
+<HTML>
+<HEAD>
+<TITLE>Persistence package</TITLE>
+</HEAD>
+<BODY>
+<H1>Allows to save and restore objects in "dot-properties" files</H1>
+<H2>Usage</H2>
+<H3>public static void save(Object object, String name) throws PersistenceException</H3>
+Save the <I>object</I> in the file which path is <I>name</I><P>
+<H3>public static void save(Object object, OutputStream os) throws PersistenceException</H3>
+Save the <I>object</I> in the <I>os</I> OutputStream<P>
+<H3>public static Object load(String name) throws PersistenceException</H3>
+Return the <I>Object</I> loaded from the file which path is <I>name</I><P>
+<H3>public static Object load(InputStream is) throws PersistenceException</H3>
+Return the <I>Object</I> loaded from the <I>is</I> OutputStream<P>
+<H2>Known limitations</H2>
+To be saved/loaded, a property should have a public getter and setter and should not be transient:</P>
+If the field is xxx, setXxx() and getXxx() should be public.<P>
+To be saved/loaded, a property should have a name beginning with a lowercase (xxx for setXxx and getXxx) <P>
+Array are supported either with indexed setter/getter or with a global setter/getter (taking an array as
+an argument), but only one-dimension array are supported.
+</BODY>

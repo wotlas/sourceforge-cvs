@@ -63,6 +63,7 @@ public class EditorPlugIn extends JPanelPlugIn {
     transient static private WotlasLocation location;
     transient static public DefaultMutableTreeNode treeOfTileMapNode;
 
+    transient static public EditorPlugIn itSelf;
 //    transient static public DefaultMutableTreeNode area = null;
 
   /** 'New' map button.
@@ -82,6 +83,7 @@ public class EditorPlugIn extends JPanelPlugIn {
     /** Creates new form EditorPlugIn2 */
     public EditorPlugIn() {
         super();
+        itSelf = this;
         // treeOfTileMapNode = new DefaultMutableTreeNode("World : Tile Maps");
         initComponents();
         LoadTree();
@@ -95,19 +97,20 @@ public class EditorPlugIn extends JPanelPlugIn {
      */
     private void initComponents() {//GEN-BEGIN:initComponents
         jLabel14 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
+        TitlePan = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel34 = new javax.swing.JPanel();
-        jTabbedPane5 = new javax.swing.JTabbedPane();
-        jPanel3 = new javax.swing.JPanel();
+        MainTabb = new javax.swing.JTabbedPane();
+        TileMapsPan = new javax.swing.JPanel();
+        TileMapTabb = new javax.swing.JTabbedPane();
+        LoadTileMaps = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         BigTree = new JTree( treeOfTileMapNode );
+        jPanel3 = new javax.swing.JPanel();
+        jLabel26 = new javax.swing.JLabel();
         mapData = new javax.swing.JPanel();
         jPanel28 = new javax.swing.JPanel();
         buttonNew = new javax.swing.JButton();
         buttonSave = new javax.swing.JButton();
-        buttonLoad = new javax.swing.JButton();
         buttonRefresh = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jPanel30 = new javax.swing.JPanel();
@@ -149,16 +152,15 @@ public class EditorPlugIn extends JPanelPlugIn {
         jPanel11 = new javax.swing.JPanel();
         jLabel13 = new javax.swing.JLabel();
         DataBasicSetIdNr = new javax.swing.JTextField();
-        jPanel32 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel22 = new javax.swing.JLabel();
+        GraphicsPan = new javax.swing.JPanel();
         jTabbedPane4 = new javax.swing.JTabbedPane();
         jPanel5 = new javax.swing.JPanel();
-        jPanel6 = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         jList1 = GetNewGOGList();
         jPanel8 = new javax.swing.JPanel();
-        jPanel9 = new javax.swing.JPanel();
-        jPanel23 = new javax.swing.JPanel();
         jPanel10 = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
         jSplitPane1.setDividerLocation(100);
@@ -166,46 +168,78 @@ public class EditorPlugIn extends JPanelPlugIn {
         OneGroupList = OneGroupList();
         jScrollPane3 = new javax.swing.JScrollPane();
         HisTileList = HisTileList();
-        jPanel1 = new javax.swing.JPanel();
+        SelectedBrushPan = new javax.swing.JPanel();
         jLabel15 = new javax.swing.JLabel();
         Preview = new javax.swing.JLabel();
         TileNotFree = new javax.swing.JCheckBox();
+        InfoOnBrushPan = new javax.swing.JPanel();
+        jLabel20 = new javax.swing.JLabel();
         jPanel29 = new javax.swing.JPanel();
         jPanel35 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        AddExit = new javax.swing.JButton();
+        SaveExit = new javax.swing.JButton();
+        CancelExit = new javax.swing.JButton();
+        DeleteExit = new javax.swing.JButton();
         jPanel36 = new javax.swing.JPanel();
+        jSplitPane2 = new javax.swing.JSplitPane();
         jListExits = GetExitList();
-        jPanel31 = new javax.swing.JPanel();
-        jTabbedPane2 = new javax.swing.JTabbedPane();
-        jPanel25 = new javax.swing.JPanel();
-        jPanel27 = new javax.swing.JPanel();
-        jPanel33 = new javax.swing.JPanel();
-        jTabbedPane3 = new javax.swing.JTabbedPane();
-        jPanel24 = new javax.swing.JPanel();
-        jPanel26 = new javax.swing.JPanel();
+        jPanel6 = new javax.swing.JPanel();
+        jLabel17 = new javax.swing.JLabel();
+        StartPointText = new javax.swing.JTextField();
+        jLabel18 = new javax.swing.JLabel();
+        EndPointText = new javax.swing.JTextField();
+        jLabel19 = new javax.swing.JLabel();
+        DestinationText = new javax.swing.JTextField();
+        jLabel23 = new javax.swing.JLabel();
+        ExitName = new javax.swing.JTextField();
+        jPanel34 = new javax.swing.JPanel();
+        ListOfTileMapsForExit = new javax.swing.JList();
+        ListOfMapExitsForExit = new javax.swing.JList();
+        jLabel24 = new javax.swing.JLabel();
+        jLabel25 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        HelpOnMapExit = new javax.swing.JLabel();
+        jPanel37 = new javax.swing.JPanel();
+        jPanel38 = new javax.swing.JPanel();
+        jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
+        jPanel9 = new javax.swing.JPanel();
+        jLabel21 = new javax.swing.JLabel();
+        jPanel23 = new javax.swing.JPanel();
+        jSplitPane3 = new javax.swing.JSplitPane();
+        jPanel32 = new javax.swing.JPanel();
+        jList2 = new javax.swing.JList();
 
         jLabel14.setText("jLabel14");
 
         setLayout(new java.awt.BorderLayout());
 
-        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
+        TitlePan.setBackground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Editor Tools");
-        jPanel2.add(jLabel1);
+        TitlePan.add(jLabel1);
 
-        add(jPanel2, java.awt.BorderLayout.NORTH);
+        add(TitlePan, java.awt.BorderLayout.NORTH);
 
-        jTabbedPane1.setName("");
-        jPanel34.setLayout(new java.awt.BorderLayout());
+        MainTabb.setName("");
+        TileMapsPan.setLayout(new java.awt.BorderLayout());
 
-        jTabbedPane5.setTabPlacement(javax.swing.JTabbedPane.LEFT);
-        jPanel3.setLayout(new java.awt.BorderLayout());
+        TileMapTabb.setTabPlacement(javax.swing.JTabbedPane.LEFT);
+        LoadTileMaps.setLayout(new java.awt.BorderLayout());
 
         jScrollPane1.setViewportView(BigTree);
 
-        jPanel3.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+        LoadTileMaps.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-        jTabbedPane5.addTab("Map Tree", jPanel3);
+        jLabel26.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel26.setText("<html><b>\nTo load Maps,  simply click on \n<p>\nthe name of the one you want \n<p>\nto load</b></html>\"");
+        jLabel26.setMaximumSize(new java.awt.Dimension(364, 50));
+        jLabel26.setMinimumSize(new java.awt.Dimension(364, 50));
+        jLabel26.setPreferredSize(new java.awt.Dimension(364, 50));
+        jPanel3.add(jLabel26);
+
+        LoadTileMaps.add(jPanel3, java.awt.BorderLayout.SOUTH);
+
+        TileMapTabb.addTab("Load", LoadTileMaps);
 
         mapData.setLayout(new java.awt.BorderLayout());
 
@@ -227,15 +261,6 @@ public class EditorPlugIn extends JPanelPlugIn {
 
         jPanel28.add(buttonSave);
 
-        buttonLoad.setText("Load");
-        buttonLoad.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonLoadActionPerformed(evt);
-            }
-        });
-
-        jPanel28.add(buttonLoad);
-
         buttonRefresh.setText("Refresh");
         buttonRefresh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -256,6 +281,7 @@ public class EditorPlugIn extends JPanelPlugIn {
 
         jPanel4.add(jPanel30);
 
+        jLabel2.setForeground(new java.awt.Color(0, 153, 51));
         jLabel2.setText("Id");
         jPanel12.add(jLabel2);
 
@@ -278,16 +304,17 @@ public class EditorPlugIn extends JPanelPlugIn {
         jLabel4.setText("Short Name");
         jPanel14.add(jLabel4);
 
-        DataShortName.setColumns(8);
+        DataShortName.setColumns(5);
         DataShortName.setText("jTextField3");
         jPanel14.add(DataShortName);
 
         jPanel4.add(jPanel14);
 
+        jLabel5.setForeground(new java.awt.Color(0, 153, 51));
         jLabel5.setText("Insertion Point");
         jPanel15.add(jLabel5);
 
-        DataInsertionPoint.setColumns(8);
+        DataInsertionPoint.setColumns(3);
         DataInsertionPoint.setEditable(false);
         DataInsertionPoint.setText("jTextField4");
         jPanel15.add(DataInsertionPoint);
@@ -309,10 +336,12 @@ public class EditorPlugIn extends JPanelPlugIn {
 
         jPanel4.add(jPanel21);
 
+        jPanel18.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel7.setForeground(new java.awt.Color(0, 0, 0));
         jLabel7.setText("Music Name");
         jPanel18.add(jLabel7);
 
-        DataMusicName.setColumns(8);
+        DataMusicName.setColumns(4);
         DataMusicName.setText("jTextField6");
         jPanel18.add(DataMusicName);
 
@@ -320,6 +349,7 @@ public class EditorPlugIn extends JPanelPlugIn {
 
         jPanel20.setLayout(new java.awt.GridLayout(1, 2));
 
+        jLabel8.setForeground(new java.awt.Color(0, 153, 51));
         jLabel8.setText("Group Of Graphics");
         jPanel20.add(jLabel8);
 
@@ -359,6 +389,7 @@ public class EditorPlugIn extends JPanelPlugIn {
 
         jPanel16.setLayout(new java.awt.BorderLayout());
 
+        jLabel11.setForeground(new java.awt.Color(0, 153, 51));
         jLabel11.setText("Map Tile Size");
         jPanel16.add(jLabel11, java.awt.BorderLayout.WEST);
 
@@ -369,6 +400,7 @@ public class EditorPlugIn extends JPanelPlugIn {
 
         jPanel4.add(jPanel16);
 
+        jLabel12.setForeground(new java.awt.Color(0, 153, 51));
         jLabel12.setText("Basic Tile Set Id");
         jPanel17.add(jLabel12);
 
@@ -379,6 +411,7 @@ public class EditorPlugIn extends JPanelPlugIn {
 
         jPanel4.add(jPanel17);
 
+        jLabel13.setForeground(new java.awt.Color(0, 153, 51));
         jLabel13.setText("Nr. basic image");
         jPanel11.add(jLabel13);
 
@@ -391,39 +424,40 @@ public class EditorPlugIn extends JPanelPlugIn {
 
         mapData.add(jPanel4, java.awt.BorderLayout.CENTER);
 
-        jTabbedPane5.addTab("TileMap", mapData);
+        TileMapTabb.addTab("Save/New", mapData);
 
-        jPanel34.add(jTabbedPane5, java.awt.BorderLayout.CENTER);
+        TileMapsPan.add(TileMapTabb, java.awt.BorderLayout.CENTER);
 
-        jTabbedPane1.addTab("TileMaps", jPanel34);
+        jLabel22.setForeground(new java.awt.Color(255, 51, 51));
+        jLabel22.setText("Green labels, means data cant be changed.");
+        jPanel2.add(jLabel22);
 
-        jPanel32.setLayout(new java.awt.BorderLayout());
+        TileMapsPan.add(jPanel2, java.awt.BorderLayout.NORTH);
+
+        MainTabb.addTab("Load/Save", TileMapsPan);
+
+        GraphicsPan.setLayout(new java.awt.BorderLayout());
 
         jTabbedPane4.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
         jTabbedPane4.setTabPlacement(javax.swing.JTabbedPane.LEFT);
         jPanel5.setLayout(new java.awt.BorderLayout());
 
         jPanel5.setEnabled(false);
-        jPanel5.add(jPanel6, java.awt.BorderLayout.SOUTH);
-
         jPanel7.setLayout(new java.awt.BorderLayout());
 
         jPanel7.setEnabled(false);
         jList1.setLayoutOrientation(javax.swing.JList.VERTICAL_WRAP);
         jList1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jList1.setEnabled(false);
         jScrollPane4.setViewportView(jList1);
 
         jPanel7.add(jScrollPane4, java.awt.BorderLayout.CENTER);
 
         jPanel5.add(jPanel7, java.awt.BorderLayout.CENTER);
 
-        jTabbedPane4.addTab("Group", jPanel5);
+        jTabbedPane4.addTab("Select Types", jPanel5);
 
         jPanel8.setLayout(new java.awt.BorderLayout());
-
-        jPanel9.add(jPanel23);
-
-        jPanel8.add(jPanel9, java.awt.BorderLayout.SOUTH);
 
         jPanel10.setLayout(new java.awt.BorderLayout());
 
@@ -446,16 +480,22 @@ public class EditorPlugIn extends JPanelPlugIn {
 
         jPanel8.add(jPanel10, java.awt.BorderLayout.CENTER);
 
-        jTabbedPane4.addTab("Single", jPanel8);
+        jTabbedPane4.addTab("Select Picture", jPanel8);
 
-        jPanel32.add(jTabbedPane4, java.awt.BorderLayout.CENTER);
+        GraphicsPan.add(jTabbedPane4, java.awt.BorderLayout.CENTER);
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        SelectedBrushPan.setLayout(null);
+
+        SelectedBrushPan.setBackground(new java.awt.Color(255, 255, 255));
+        SelectedBrushPan.setMinimumSize(new java.awt.Dimension(100, 50));
+        SelectedBrushPan.setName("null");
         jLabel15.setText("Selected :");
-        jPanel1.add(jLabel15);
+        SelectedBrushPan.add(jLabel15);
+        jLabel15.setBounds(105, 22, 56, 16);
 
         Preview.setPreferredSize(new java.awt.Dimension(50, 50));
-        jPanel1.add(Preview);
+        SelectedBrushPan.add(Preview);
+        Preview.setBounds(166, 5, 50, 50);
 
         TileNotFree.setBackground(new java.awt.Color(255, 255, 255));
         TileNotFree.setText("Not Free");
@@ -465,57 +505,209 @@ public class EditorPlugIn extends JPanelPlugIn {
             }
         });
 
-        jPanel1.add(TileNotFree);
+        SelectedBrushPan.add(TileNotFree);
+        TileNotFree.setBounds(221, 18, 72, 24);
 
-        jPanel32.add(jPanel1, java.awt.BorderLayout.SOUTH);
+        GraphicsPan.add(SelectedBrushPan, java.awt.BorderLayout.SOUTH);
 
-        jTabbedPane1.addTab("Graphics", jPanel32);
+        jLabel20.setForeground(new java.awt.Color(255, 51, 51));
+        jLabel20.setText("While this panel is selected you can paint selected tiles on map.");
+        InfoOnBrushPan.add(jLabel20);
+
+        GraphicsPan.add(InfoOnBrushPan, java.awt.BorderLayout.NORTH);
+
+        MainTabb.addTab("Select Brush", GraphicsPan);
 
         jPanel29.setLayout(new java.awt.BorderLayout());
 
-        jButton1.setText("Add");
-        jPanel35.add(jButton1);
+        AddExit.setText("Add");
+        AddExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AddExitActionPerformed(evt);
+            }
+        });
 
-        jButton2.setText("Delete");
-        jPanel35.add(jButton2);
+        jPanel35.add(AddExit);
+
+        SaveExit.setText("Save");
+        SaveExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SaveExitActionPerformed(evt);
+            }
+        });
+
+        jPanel35.add(SaveExit);
+
+        CancelExit.setText("Cancel");
+        CancelExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CancelExitActionPerformed(evt);
+            }
+        });
+
+        jPanel35.add(CancelExit);
+
+        DeleteExit.setText("Delete");
+        jPanel35.add(DeleteExit);
 
         jPanel29.add(jPanel35, java.awt.BorderLayout.SOUTH);
 
         jPanel36.setLayout(new java.awt.BorderLayout());
 
-        jPanel36.add(jListExits, java.awt.BorderLayout.CENTER);
+        jSplitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        jListExits.setLayoutOrientation(javax.swing.JList.VERTICAL_WRAP);
+        jListExits.setMinimumSize(new java.awt.Dimension(100, 100));
+        jListExits.setPreferredSize(new java.awt.Dimension(100, 100));
+        jListExits.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jSplitPane2.setLeftComponent(jListExits);
+
+        jPanel6.setLayout(null);
+
+        jPanel6.setPreferredSize(new java.awt.Dimension(50, 50));
+        jLabel17.setText("Start Point");
+        jPanel6.add(jLabel17);
+        jLabel17.setBounds(10, 10, 60, 16);
+
+        StartPointText.setEditable(false);
+        StartPointText.setText("jTextField1");
+        jPanel6.add(StartPointText);
+        StartPointText.setBounds(90, 10, 140, 20);
+
+        jLabel18.setText("End Point");
+        jPanel6.add(jLabel18);
+        jLabel18.setBounds(10, 40, 53, 16);
+
+        EndPointText.setEditable(false);
+        EndPointText.setText("jTextField2");
+        jPanel6.add(EndPointText);
+        EndPointText.setBounds(90, 40, 140, 20);
+
+        jLabel19.setText("Destination");
+        jPanel6.add(jLabel19);
+        jLabel19.setBounds(10, 100, 64, 16);
+
+        DestinationText.setEditable(false);
+        DestinationText.setText("jTextField3");
+        jPanel6.add(DestinationText);
+        DestinationText.setBounds(90, 100, 180, 20);
+
+        jLabel23.setText("Name");
+        jPanel6.add(jLabel23);
+        jLabel23.setBounds(10, 70, 33, 16);
+
+        ExitName.setText("jTextField1");
+        jPanel6.add(ExitName);
+        ExitName.setBounds(90, 70, 180, 20);
+
+        jPanel34.setLayout(new java.awt.GridLayout(1, 2));
+
+        jPanel34.add(ListOfTileMapsForExit);
+
+        jPanel34.add(ListOfMapExitsForExit);
+
+        jPanel6.add(jPanel34);
+        jPanel34.setBounds(10, 150, 260, 90);
+
+        jLabel24.setText("MapExits");
+        jPanel6.add(jLabel24);
+        jLabel24.setBounds(140, 130, 110, 16);
+
+        jLabel25.setText("TileMaps");
+        jPanel6.add(jLabel25);
+        jLabel25.setBounds(10, 130, 100, 16);
+
+        jSplitPane2.setRightComponent(jPanel6);
+
+        jPanel36.add(jSplitPane2, java.awt.BorderLayout.CENTER);
+
+        HelpOnMapExit.setForeground(new java.awt.Color(255, 51, 51));
+        HelpOnMapExit.setText("Click the <Add> button to start adding a Map Exit.....");
+        jPanel1.add(HelpOnMapExit);
+
+        jPanel36.add(jPanel1, java.awt.BorderLayout.NORTH);
 
         jPanel29.add(jPanel36, java.awt.BorderLayout.CENTER);
 
-        jTabbedPane1.addTab("Map Exits", jPanel29);
+        MainTabb.addTab("Map Exits", jPanel29);
 
-        jPanel31.setLayout(new java.awt.BorderLayout());
+        jPanel37.setLayout(new java.awt.BorderLayout());
 
-        jTabbedPane2.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
-        jTabbedPane2.setTabPlacement(javax.swing.JTabbedPane.LEFT);
-        jTabbedPane2.addTab("Npc", jPanel25);
+        jButton3.setText("Add");
+        jPanel38.add(jButton3);
 
-        jTabbedPane2.addTab("Item", jPanel27);
+        jButton4.setText("Delete");
+        jPanel38.add(jButton4);
 
-        jPanel31.add(jTabbedPane2, java.awt.BorderLayout.CENTER);
+        jPanel37.add(jPanel38, java.awt.BorderLayout.SOUTH);
 
-        jTabbedPane1.addTab("Create", null, jPanel31, "null");
+        jLabel21.setText(".............");
+        jPanel9.add(jLabel21);
 
-        jPanel33.setLayout(new java.awt.BorderLayout());
+        jPanel37.add(jPanel9, java.awt.BorderLayout.NORTH);
 
-        jTabbedPane3.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
-        jTabbedPane3.setTabPlacement(javax.swing.JTabbedPane.LEFT);
-        jTabbedPane3.addTab("Npc", jPanel24);
+        jPanel23.setLayout(new java.awt.BorderLayout());
 
-        jTabbedPane3.addTab("Item", jPanel26);
+        jSplitPane3.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        jPanel32.setMinimumSize(new java.awt.Dimension(100, 100));
+        jPanel32.setPreferredSize(new java.awt.Dimension(100, 100));
+        jSplitPane3.setBottomComponent(jPanel32);
 
-        jPanel33.add(jTabbedPane3, java.awt.BorderLayout.CENTER);
+        jList2.setMaximumSize(new java.awt.Dimension(32767, 32767));
+        jList2.setMinimumSize(new java.awt.Dimension(100, 100));
+        jList2.setPreferredSize(new java.awt.Dimension(100, 100));
+        jSplitPane3.setTopComponent(jList2);
 
-        jTabbedPane1.addTab("Add to Map", jPanel33);
+        jPanel23.add(jSplitPane3, java.awt.BorderLayout.CENTER);
 
-        add(jTabbedPane1, java.awt.BorderLayout.CENTER);
+        jPanel37.add(jPanel23, java.awt.BorderLayout.CENTER);
+
+        MainTabb.addTab("Schedule", jPanel37);
+
+        add(MainTabb, java.awt.BorderLayout.CENTER);
 
     }//GEN-END:initComponents
+
+    private void CancelExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CancelExitActionPerformed
+        itSelf.HelpOnMapExit.setText("Click add to start adding a Map Exit");
+        addExitStatus = 0;
+    }//GEN-LAST:event_CancelExitActionPerformed
+
+    private void SaveExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveExitActionPerformed
+        if( addExitStatus != 4 )
+            return;
+        int x=0,y=0,xx=0,yy=0;
+        x = tmp1.x;
+        y = tmp1.y;
+        if( x > tmp2.x ){
+            x = tmp2.x;
+            xx = tmp1.x+1;
+        }
+        else
+        yy = tmp2.y+1;
+        if( y > tmp2.y ){
+            y = tmp2.y;
+            yy = tmp1.y+1;
+        }
+        else
+            yy = tmp2.y+1;
+        MapExit mapExit1 = null;
+        mapExit1 = EditTile.workingOnThisTileMap.getManager().addMapExit( new ScreenRectangle(x*32,y*32,xx*32,yy*32), ExitName.getText()  );
+        mapExit1.setType( MapExit.TILEMAP_EXIT );
+        mapExit1.setMapExitSide( MapExit.NONE );
+//        mapExit1.setTargetWotlasLocation( new WotlasLocation(0) );
+//        mapExit1.setTargetPosition( new ScreenPoint(745,280) );
+
+        itSelf.HelpOnMapExit.setText("Click add to start adding a Map Exit");
+        addExitStatus = 0;
+        SetListExitMod();
+        gDirector.removeAllDrawables();
+        EditTile.getDataManager().myMapData.initDisplayEditor( EditTile.getDataManager(), location );
+    }//GEN-LAST:event_SaveExitActionPerformed
+
+    private void AddExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddExitActionPerformed
+        addExitStatus = 1;
+        manageAddExit( 0, 0 );
+    }//GEN-LAST:event_AddExitActionPerformed
 
     private void buttonNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonNewActionPerformed
         gDirector.removeAllDrawables();
@@ -539,11 +731,6 @@ public class EditorPlugIn extends JPanelPlugIn {
         EditTile.workingOnThisTileMap = destination;
         EditTile.getDataManager().myMapData.initDisplayEditor( EditTile.getDataManager(), location );
     }//GEN-LAST:event_buttonNewActionPerformed
-
-    private void buttonLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonLoadActionPerformed
-        gDirector.removeAllDrawables();
-        EditTile.getDataManager().myMapData.initDisplayEditor( EditTile.getDataManager(), location );
-    }//GEN-LAST:event_buttonLoadActionPerformed
 
     private void buttonRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRefreshActionPerformed
         gDirector.removeAllDrawables();
@@ -590,95 +777,118 @@ public class EditorPlugIn extends JPanelPlugIn {
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton2;
+    private javax.swing.JPanel jPanel37;
+    private javax.swing.JPanel LoadTileMaps;
+    private javax.swing.JTabbedPane jTabbedPane4;
+    private javax.swing.JList DataMapSize;
+    private javax.swing.JTextField StartPointText;
+    private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel HelpOnMapExit;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JTextField DataBasicSetId;
+    private javax.swing.JButton DeleteExit;
+    private javax.swing.JTree BigTree;
+    private javax.swing.JList jListExits;
+    private javax.swing.JButton buttonSave;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel34;
+    private javax.swing.JPanel jPanel28;
+    private javax.swing.JTabbedPane TileMapTabb;
+    private javax.swing.JList ListOfTileMapsForExit;
+    private javax.swing.JPanel SelectedBrushPan;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel Preview;
+    private javax.swing.JLabel jLabel26;
+    private javax.swing.JTextField DataFullName;
+    private javax.swing.JPanel TileMapsPan;
+    private javax.swing.JButton CancelExit;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JSplitPane jSplitPane2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JTextField DestinationText;
+    private javax.swing.JLabel jLabel24;
+    private javax.swing.JTextField DataShortName;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JButton SaveExit;
+    private javax.swing.JTextField DataLength;
+    private javax.swing.JLabel jLabel19;
+    private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel22;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel25;
+    private javax.swing.JPanel jPanel18;
+    private javax.swing.JPanel jPanel17;
+    private javax.swing.JPanel jPanel21;
+    private javax.swing.JTextField DataID;
+    private javax.swing.JTextField DataAreaName;
+    private javax.swing.JPanel jPanel20;
+    private javax.swing.JLabel jLabel22;
+    private javax.swing.JPanel jPanel15;
+    private javax.swing.JPanel jPanel9;
+    private javax.swing.JPanel jPanel23;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JList DataGroupOfGraphics;
     private javax.swing.JPanel jPanel32;
     private javax.swing.JPanel jPanel16;
     private javax.swing.JPanel jPanel19;
-    private javax.swing.JPanel jPanel26;
+    private javax.swing.JTextField ExitName;
     private javax.swing.JPanel jPanel13;
-    private javax.swing.JTabbedPane jTabbedPane3;
-    private javax.swing.JTextField DataBasicSetIdNr;
     private javax.swing.JTextField DataHeight;
+    private javax.swing.JTextField DataBasicSetIdNr;
     private javax.swing.JPanel jPanel10;
-    private javax.swing.JTabbedPane jTabbedPane4;
     private javax.swing.JLabel jLabel14;
-    private javax.swing.JList DataMapSize;
-    private javax.swing.JPanel jPanel33;
-    private javax.swing.JTabbedPane jTabbedPane5;
-    private javax.swing.JPanel jPanel27;
+    private javax.swing.JButton jButton3;
     private javax.swing.JList OneGroupList;
-    private javax.swing.JTextField DataBasicSetId;
     private javax.swing.JPanel jPanel30;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel mapData;
     private javax.swing.JPanel jPanel12;
-    private javax.swing.JTree BigTree;
-    private javax.swing.JList jListExits;
     private javax.swing.JList jList1;
     private javax.swing.JLabel jLabel16;
-    private javax.swing.JTabbedPane jTabbedPane2;
-    private javax.swing.JButton buttonSave;
+    private javax.swing.JSplitPane jSplitPane3;
+    private javax.swing.JLabel jLabel18;
     private javax.swing.JPanel jPanel35;
-    private javax.swing.JPanel jPanel7;
+    private javax.swing.JLabel jLabel17;
     private javax.swing.JTextField DataMusicName;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JTextField EndPointText;
     private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel34;
-    private javax.swing.JPanel jPanel28;
-    private javax.swing.JPanel jPanel14;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JPanel jPanel14;
     private javax.swing.JList HisTileList;
-    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JButton AddExit;
+    private javax.swing.JList jList2;
+    private javax.swing.JPanel GraphicsPan;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel Preview;
     private javax.swing.JLabel jLabel12;
-    private javax.swing.JTextField DataFullName;
-    private javax.swing.JPanel jPanel31;
+    private javax.swing.JPanel InfoOnBrushPan;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel25;
-    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JButton buttonNew;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JPanel TitlePan;
+    private javax.swing.JList ListOfMapExitsForExit;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JButton buttonLoad;
-    private javax.swing.JPanel jPanel24;
+    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JTextField DataShortName;
-    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel38;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextField DataLength;
     private javax.swing.JTextField DataSmallImage;
     private javax.swing.JPanel jPanel36;
-    private javax.swing.JPanel jPanel8;
-    private javax.swing.JPanel jPanel22;
+    public transient javax.swing.JTabbedPane MainTabb;
     private javax.swing.JButton buttonRefresh;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JPanel jPanel17;
-    private javax.swing.JPanel jPanel18;
-    private javax.swing.JPanel jPanel21;
-    private javax.swing.JTextField DataID;
+    private javax.swing.JButton jButton4;
     private javax.swing.JPanel jPanel29;
-    private javax.swing.JTextField DataAreaName;
     private javax.swing.JTextField DataInsertionPoint;
-    private javax.swing.JPanel jPanel20;
     private javax.swing.JCheckBox TileNotFree;
-    private javax.swing.JPanel jPanel15;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel jLabel15;
-    private javax.swing.JPanel jPanel9;
-    private javax.swing.JPanel jPanel23;
-    private javax.swing.JLabel jLabel10;
     // End of variables declaration//GEN-END:variables
     
  /*------------------------------------------------------------------------------------*/
@@ -705,7 +915,7 @@ public class EditorPlugIn extends JPanelPlugIn {
         // DataMapTileSize.setText();
         DataBasicSetId.setText( "" + EditTile.workingOnThisTileMap.getManager().getBasicFloorId() );
         DataBasicSetIdNr.setText( "" + EditTile.workingOnThisTileMap.getManager().getBasicFloorNr() );
-        SetListExitMod(0);
+        SetListExitMod();
         return true; // this plug-in always works...
     }
 
@@ -836,6 +1046,9 @@ public class EditorPlugIn extends JPanelPlugIn {
                 ListSelectionModel lsm = (ListSelectionModel)e.getSource();
                 if( !lsm.getValueIsAdjusting() ) {
                     selectedGroup = lsm.getLeadSelectionIndex();
+                    // so when changin the graphics, i will not get the 
+                    // imgNr of another graphics
+                    selectedGroupImgNr = 0;
                     SetModel3( lsm.getLeadSelectionIndex() );
                 }
             }
@@ -947,7 +1160,7 @@ public class EditorPlugIn extends JPanelPlugIn {
         return list;
     }
 
-    public void SetListExitMod(int index) {
+    public void SetListExitMod() {
         listExitMod.removeAllElements();
         MapExit[] exits = EditTile.workingOnThisTileMap.getMapExits();
         String tmp;
@@ -956,4 +1169,59 @@ public class EditorPlugIn extends JPanelPlugIn {
             listExitMod.addElement( tmp );
         }
     }
+    
+    static int addExitStatus = 0;
+    static Point tmp1,tmp2;
+
+    public static void manageAddExit( int x, int y ) {
+        switch(addExitStatus){
+            case 1:
+                itSelf.HelpOnMapExit.setText("Click the first point of the exit");
+                break;
+            case 2:
+                tmp1 = new Point(x,y);
+                itSelf.StartPointText.setText( ""+tmp1 );
+                itSelf.HelpOnMapExit.setText("Click the second point of the exit");
+                break;
+            case 3:
+                tmp2 = new Point(x,y);
+                itSelf.EndPointText.setText( ""+tmp2 );
+                itSelf.HelpOnMapExit.setText("Write the name, then select a destination and/or \n click Save to finish.\n Cancel restart the process.");
+                break;
+        }
+        addExitStatus++;
+    }
+
+    /*
+    public JList GetTileMapListForExit() {
+        getTileMapListForExit = new DefaultListModel();
+        // SetListExitMod(0);
+        
+      	JList list = new JList();
+        list = new JList(getTileMapListForExit);
+        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        list.setSelectedIndex(0);
+        // list.setCellRenderer(new RendIcon());
+        list.setVisibleRowCount(5);
+        list.getSelectionModel().addListSelectionListener( new ListSelectionListener() {
+            public void valueChanged( ListSelectionEvent e ) {
+                ListSelectionModel lsm = (ListSelectionModel)e.getSource();
+                if( !lsm.getValueIsAdjusting() ) {
+                    // xxx = lsm.getLeadSelectionIndex();
+                }
+            }
+        });
+        return list;
+    }
+
+    public void SetListExitMod() {
+        getTileMapListForExit.removeAllElements();
+        MapExit[] exits = EditTile.workingOnThisTileMap.getMapExits();
+        String tmp;
+        for(int i=0; i<getTileMapListForExit.length; i++) {
+            tmp = .FullName();
+            getTileMapListForExit.addElement( tmp );
+        }
+    }
+    */
 }

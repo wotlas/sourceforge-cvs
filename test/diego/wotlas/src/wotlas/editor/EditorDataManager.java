@@ -588,12 +588,18 @@ public class EditorDataManager extends Thread implements Tickable, Menu2DListene
  /*------------------------------------------------------------------------------------*/
 
     public void clickOnATile( int x, int y ) {
-        EditTile.workingOnThisTileMap.getManager().getMapBackGroundData(
-        )[x][y][0] = (byte) EditorPlugIn.selectedGroup;
-        EditTile.workingOnThisTileMap.getManager().getMapBackGroundData(
-        )[x][y][1] = (byte) EditorPlugIn.selectedGroupImgNr;
-        EditTile.workingOnThisTileMap.getManager().getMapMask(
-        )[x][y] = EditorPlugIn.selectedIsFree;
-        EditorPlugIn.AddIt(x,y);
+        if(EditorPlugIn.itSelf.MainTabb.getSelectedIndex() == 2){
+            EditorPlugIn.manageAddExit(x,y);
+            System.out.println("x,y per primo exit : "+x+" "+y);
+        }
+        else if(EditorPlugIn.itSelf.MainTabb.getSelectedIndex() == 1){
+            EditTile.workingOnThisTileMap.getManager().getMapBackGroundData(
+            )[x][y][0] = (byte) EditorPlugIn.selectedGroup;
+            EditTile.workingOnThisTileMap.getManager().getMapBackGroundData(
+            )[x][y][1] = (byte) EditorPlugIn.selectedGroupImgNr;
+            EditTile.workingOnThisTileMap.getManager().getMapMask(
+            )[x][y] = EditorPlugIn.selectedIsFree;
+            EditorPlugIn.AddIt(x,y);
+        }
     }
 }

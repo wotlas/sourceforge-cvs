@@ -238,13 +238,17 @@ public class TileManagerFlat extends TileMapManager{
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Add a new MapExit object to the array {@link #mapExits mapExits}
-   *
-   * @return a new MapExit object
-   */
+    /** Add a new MapExit object to the array {@link #mapExits mapExits}
+    *
+    * @param me MapExit object
+    */
     public MapExit addMapExit(ScreenRectangle r) {
-        MapExit myMapExit = new MapExit(r);
+        return addMapExit( r, "" );
+    } 
     
+    public MapExit addMapExit(ScreenRectangle r, String name) {
+        MapExit myMapExit = new MapExit(r,name);
+        
         if (mapExits == null) {
             mapExits = new MapExit[1];
             myMapExit.setMapExitID(0);
@@ -261,21 +265,22 @@ public class TileManagerFlat extends TileMapManager{
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-    /** Add a new MapExit object to the array {@link #mapExits mapExits}
-    *
-    * @param me MapExit object
-    */
+  /** Add a new MapExit object to the array {@link #mapExits mapExits}
+   *
+   * @param me MapExit object
+   */
     public void addMapExit( MapExit me ) {
-        if (mapExits == null) {
-            mapExits = new MapExit[1];
-            mapExits[0] = me;
-        } else {
-            MapExit[] myMapExits = new MapExit[mapExits.length+1];
-            System.arraycopy(mapExits, 0, myMapExits, 0, mapExits.length);
-            myMapExits[mapExits.length] = me;
-            mapExits = myMapExits;
-        }
+      if (mapExits == null) {
+         mapExits = new MapExit[1];
+         mapExits[0] = me;
+      } else {
+         MapExit[] myMapExits = new MapExit[mapExits.length+1];
+         System.arraycopy(mapExits, 0, myMapExits, 0, mapExits.length);
+         myMapExits[mapExits.length] = me;
+         mapExits = myMapExits;
+      }
     }
+    
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
     /** Returns the MapExit which is on the side given by the specified rectangle.

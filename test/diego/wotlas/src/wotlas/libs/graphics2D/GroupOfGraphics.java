@@ -94,45 +94,48 @@ public class GroupOfGraphics implements BackupReady {
 
     static public GroupOfGraphics[] ROGUE_SET = {
 //    static public GroupOfGraphics[] ROGUE_FLOOR_SET = {
-    new  GroupOfGraphics( (byte)0, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_armor32-0.png" )
-    ,new GroupOfGraphics( (byte)1, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_dragon32-2.png" )
-    ,new GroupOfGraphics( (byte)2, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_edging132-4.png" )
-    ,new GroupOfGraphics( (byte)3, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_edging232-5.png" )
-    ,new GroupOfGraphics( (byte)4, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_edging332-6.png" )
-    ,new GroupOfGraphics( (byte)5, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_extra132-8.png" )
-    ,new GroupOfGraphics( (byte)6, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_features32-9.png" )
-    ,new GroupOfGraphics( (byte)7, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_grounds32-11.png" )
-    ,new GroupOfGraphics( (byte)8, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_iso32-13.png" )
+    new GroupOfGraphics( (byte)0, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_edging132-4.png" )
+    ,new GroupOfGraphics( (byte)1, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_edging232-5.png" )
+    ,new GroupOfGraphics( (byte)2, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_edging332-6.png" )
+    ,new GroupOfGraphics( (byte)3, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_extra132-8.png" )
+    ,new GroupOfGraphics( (byte)4, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_features32-9.png" )
+    ,new GroupOfGraphics( (byte)5, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_grounds32-11.png" )
+    };
+
+    static public GroupOfGraphics[] ROGUE_SET_ISO = {
+    new GroupOfGraphics( (byte)0, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_iso32-13.png" )
     }; 
 
     static public GroupOfGraphics[] ROGUE_NPC_SET = {
-    new GroupOfGraphics( (byte)9, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_classm32-1.png" )
-    ,new GroupOfGraphics( (byte)10, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg-dungeon32-3.png" )
-    ,new GroupOfGraphics( (byte)11, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_humans32-12.png" )
-    ,new GroupOfGraphics( (byte)12, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_monster132-17.png" )
-    ,new GroupOfGraphics( (byte)13, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_monster232-18.png" )
-    ,new GroupOfGraphics( (byte)14, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_monster332-19.png" )
-    ,new GroupOfGraphics( (byte)15, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_monster432-20.png" )
-    ,new GroupOfGraphics( (byte)16, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_monster532-21.png" )
-    ,new GroupOfGraphics( (byte)17, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_monster632-22.png" )
-    ,new GroupOfGraphics( (byte)18, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_monster732-23.png" )
-    ,new GroupOfGraphics( (byte)19, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_people32-24.png" )
-    ,new GroupOfGraphics( (byte)20, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_undead32-26.png" )
-    ,new GroupOfGraphics( (byte)21, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_uniques32-27.png" )
+    new GroupOfGraphics( (byte)0, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_classm32-1.png" )
+    ,new GroupOfGraphics( (byte)1, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_dragon32-2.png" )
+    ,new GroupOfGraphics( (byte)2, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg-dungeon32-3.png" )
+    ,new GroupOfGraphics( (byte)3, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_humans32-12.png" )
+    ,new GroupOfGraphics( (byte)4, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_monster132-17.png" )
+    ,new GroupOfGraphics( (byte)5, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_monster232-18.png" )
+    ,new GroupOfGraphics( (byte)6, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_monster332-19.png" )
+    ,new GroupOfGraphics( (byte)7, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_monster432-20.png" )
+    ,new GroupOfGraphics( (byte)8, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_monster532-21.png" )
+    ,new GroupOfGraphics( (byte)9, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_monster632-22.png" )
+    ,new GroupOfGraphics( (byte)10, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_monster732-23.png" )
+    ,new GroupOfGraphics( (byte)11, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_people32-24.png" )
+    ,new GroupOfGraphics( (byte)12, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_undead32-26.png" )
+    ,new GroupOfGraphics( (byte)13, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_uniques32-27.png" )
     };
     
     static public GroupOfGraphics[] ROGUE_EFFECT_SET = {
-    new GroupOfGraphics( (byte)22, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_effects32-7.png" )
+    new GroupOfGraphics( (byte)0, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_effects32-7.png" )
     };
     
     static public GroupOfGraphics[] ROGUE_ITEM_SET = {
-    new GroupOfGraphics( (byte)23, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_jewls32-14.png" )
-    ,new GroupOfGraphics( (byte)24, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_magic32-15.png" )
-    ,new GroupOfGraphics( (byte)25, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_potions32-25.png" )
-    ,new GroupOfGraphics( (byte)26, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_wands32-28.png" )
-    ,new GroupOfGraphics( (byte)27, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_weapons32-29.png" )
-    ,new GroupOfGraphics( (byte)28, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_food32-10.png" )
-    ,new GroupOfGraphics( (byte)29, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_misc32-16.png" )
+    new  GroupOfGraphics( (byte)0, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_armor32-0.png" )
+    ,new GroupOfGraphics( (byte)1, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_jewls32-14.png" )
+    ,new GroupOfGraphics( (byte)2, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_magic32-15.png" )
+    ,new GroupOfGraphics( (byte)3, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_potions32-25.png" )
+    ,new GroupOfGraphics( (byte)4, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_wands32-28.png" )
+    ,new GroupOfGraphics( (byte)5, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_weapons32-29.png" )
+    ,new GroupOfGraphics( (byte)6, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_food32-10.png" )
+    ,new GroupOfGraphics( (byte)7, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_misc32-16.png" )
     }; 
 
     /*------------------------------------------------------------------------------------*/

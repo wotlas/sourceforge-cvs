@@ -238,10 +238,17 @@ public class ServerDirector implements Runnable, NetServerListener {
            if( !Tools.javaVersionHigherThan( "1.3.0" ) )
                Debug.exit();
 
-           Debug.signal( Debug.NOTICE, null, "*-------------------------------------*" );
-           Debug.signal( Debug.NOTICE, null, "|    Wheel Of Time - Light & Shadow   |" );
-           Debug.signal( Debug.NOTICE, null, "| Copyright (C) 2001-2003 WOTLAS Team |" );
-           Debug.signal( Debug.NOTICE, null, "*-------------------------------------*\n");
+           Debug.signal( Debug.NOTICE, null, "*----------------------------------------*" );
+           Debug.signal( Debug.NOTICE, null, "|    Wheel Of Time - Light & Shadow     |" );
+           Debug.signal( Debug.NOTICE, null, "| Copyright (C) 2001-2003 WOTLAS Team   |" );
+           Debug.signal( Debug.NOTICE, null, "*---------------------------------------*\n");
+           Debug.signal( Debug.NOTICE, null, "|     ver 2.0 is an alpha:              |" );
+           Debug.signal( Debug.NOTICE, null, "|                                       |" );
+           Debug.signal( Debug.NOTICE, null, "| Every times a new comes up u need     |" );
+           Debug.signal( Debug.NOTICE, null, "| to delete universe and home directory |" );
+           Debug.signal( Debug.NOTICE, null, "| and reload server-world-generator     |" );
+           Debug.signal( Debug.NOTICE, null, "|                            Diego      |" );
+           Debug.signal( Debug.NOTICE, null, "*---------------------------------------*" );
 
            Debug.signal( Debug.NOTICE, null, "Code version       : "+resourceManager.WOTLAS_VERSION );
 

@@ -275,25 +275,29 @@ public class TileManagerFakeIso extends TileMapManager{
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Add a new MapExit object to the array {@link #mapExits mapExits}
-   *
-   * @return a new MapExit object
-   */
+    /** Add a new MapExit object to the array {@link #mapExits mapExits}
+    *
+    * @return a new MapExit object
+    */
     public MapExit addMapExit(ScreenRectangle r) {
-      MapExit myMapExit = new MapExit(r);
+        return addMapExit( r, "" );
+    } 
     
-      if (mapExits == null) {
-         mapExits = new MapExit[1];
-         myMapExit.setMapExitID(0);
-         mapExits[0] = myMapExit;
-      } else {
-         MapExit[] myMapExits = new MapExit[mapExits.length+1];
-         myMapExit.setMapExitID(mapExits.length);
-         System.arraycopy(mapExits, 0, myMapExits, 0, mapExits.length);
-         myMapExits[mapExits.length] = myMapExit;
-         mapExits = myMapExits;
-      }
-      return myMapExit;
+    public MapExit addMapExit(ScreenRectangle r, String name) {
+        MapExit myMapExit = new MapExit(r,name);
+
+        if (mapExits == null) {
+            mapExits = new MapExit[1];
+            myMapExit.setMapExitID(0);
+            mapExits[0] = myMapExit;
+        } else {
+            MapExit[] myMapExits = new MapExit[mapExits.length+1];
+            myMapExit.setMapExitID(mapExits.length);
+            System.arraycopy(mapExits, 0, myMapExits, 0, mapExits.length);
+            myMapExits[mapExits.length] = myMapExit;
+            mapExits = myMapExits;
+        }
+        return myMapExit;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

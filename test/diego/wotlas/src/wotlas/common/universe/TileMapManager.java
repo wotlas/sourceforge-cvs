@@ -61,6 +61,12 @@ public abstract class TileMapManager implements BackupReady {
     abstract public MapExit addMapExit(ScreenRectangle r);
 
   /** Add a new MapExit object to the array {@link #mapExits mapExits}
+   * and set his name.
+   * @return a new MapExit object
+   */
+    abstract public MapExit addMapExit(ScreenRectangle r, String name);
+
+  /** Add a new MapExit object to the array {@link #mapExits mapExits}
    *
    * @param me MapExit object
    */

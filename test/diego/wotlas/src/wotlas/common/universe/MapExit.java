@@ -49,6 +49,10 @@ public class MapExit extends ScreenRectangle
   
  /*------------------------------------------------------------------------------------*/
 
+  /** used to name an exit, used by the Editor to connect mapexit each other
+   */
+   public String name;
+   
   /** ID of the MapExit (index in the array {@link Room#mapExits Room.mapExits})
    */
    public int mapExitID;
@@ -97,12 +101,22 @@ public class MapExit extends ScreenRectangle
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Constructor with ScreenRectangle.
-   */
-   public MapExit(ScreenRectangle r) {
-      super(r);
-   }
+    /** Constructor with ScreenRectangle.
+    */
+    public MapExit(ScreenRectangle r) {
+        super(r);
+        this.name = "";
+    }
 
+ /*------------------------------------------------------------------------------------*/
+
+    /** Constructor with ScreenRectangle and Name of the Exit
+    */
+    public MapExit(ScreenRectangle r, String name) {
+        super(r);
+        this.name = name;
+    }
+   
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor with ScreenRectangle & type.
@@ -110,6 +124,7 @@ public class MapExit extends ScreenRectangle
    public MapExit(ScreenRectangle r, byte type) {
       super(r);
       this.type = type;
+      this.name = "";
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -253,6 +268,7 @@ public class MapExit extends ScreenRectangle
         objectOutput.writeObject( targetPosition );
         objectOutput.writeObject( targetWotlasLocation );
         objectOutput.writeByte( type );
+        objectOutput.writeUTF( name );
 /*
 rooms.0.mapExits.0.height=50
 rooms.0.mapExits.0.width=30
@@ -278,8 +294,20 @@ rooms.0.mapExits.0.y=130
             targetPosition = ( ScreenPoint ) objectInput.readObject();
             targetWotlasLocation = ( WotlasLocation ) objectInput.readObject();
             type = objectInput.readByte();
+            name = objectInput.readUTF();
        } else {
             // to do.... when new version
         }
+    }
+    
+    public String toString(){
+        String tmpLoc="";
+        if( targetWotlasLocation == null )
+            tmpLoc = "need destination";
+        if( name == null )
+            return "No Name"+tmpLoc;
+        if( name.length()==0 )
+            return "No Name"+tmpLoc;
+        return name+tmpLoc;
     }
 }

@@ -43,8 +43,8 @@ COMMON_PACKAGES = wotlas/common \
 COMMON_PACKAGES2 = wotlas/common/message/description \
                    wotlas/common/message/movement \
                    wotlas/common/chat \
-                   wotlas/common/message/chat
-
+                   wotlas/common/message/chat \
+                   wotlas/common/movement
 
 SERVER_PACKAGES = wotlas/server \
                   wotlas/server/setup \

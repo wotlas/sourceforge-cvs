@@ -1,6 +1,7 @@
 wotlas.libs.net
 wotlas.libs.net.message
 wotlas.libs.net.personality
+wotlas.libs.net.utils
 wotlas.libs.pathfinding
 wotlas.libs.persistence
 wotlas.libs.log
@@ -13,6 +14,7 @@ wotlas.libs.sound
 wotlas.common
 wotlas.common.chat
 wotlas.common.universe
+wotlas.common.movement
 wotlas.common.message
 wotlas.common.message.account
 wotlas.common.message.description

@@ -72,8 +72,14 @@ public class LieManager
   /** List of other players current player has met
    * ascending order
    */
-  private LieMemory[] memories;
-
+  private LieMemory[] memoriesArray = new LieMemory[0];
+  
+  transient LieMemoryIterator memories = new LieMemoryIterator();
+  
+  public LieMemoryIterator getMemoriesIterator() {
+    return memories;
+  }
+  
   /** Index of current fake name
    */
   private short currentFakeNameIndex = 0;
@@ -107,39 +113,52 @@ public class LieManager
   
   /** To get memories
    */
-  public LieMemory[] getMemories() {
-    return memories;
+  public LieMemory[] getMemoriesArray() {
+//System.out.println("LieManager::getMemoriesArray() for player "+fakeNames[0]);
+    if (memories==null) {
+      return null;
+    }
+//System.out.println("memories=\n"+memories+"\nmemories.getSize()="+memories.getSize());
+    memories.resetIterator();
+    LieMemory[] myMemoriesArray = new LieMemory[memories.getSize()];
+    for (int k=0; k<memories.getSize(); k++) {
+      myMemoriesArray[k] = memories.next();        
+//System.out.println("\tk=" + k + " otherPlayerKey=" + myMemoriesArray[k].otherPlayerKey + " meetsNumber=" + myMemoriesArray[k].meetsNumber);
+    }
+    return myMemoriesArray;
   }
   
   /** To set memories
    */
-  public void setMemories(LieMemory[] memories) {
-    this.memories = memories;
+  public void setMemoriesArray(LieMemory[] memoriesArr) {
+//System.out.println("LieManager::setMemories() for player "+fakeNames[0]);    
+    if (memories==null) {
+      memories = new LieMemoryIterator();
+    } else {
+      memories.clear();
+      memories.resetIterator();
+    }
+    for (int k=0; k<memoriesArr.length; k++) {
+//System.out.println("\tk=" + k + " otherPlayerKey=" + memoriesArr[k].otherPlayerKey + " meetsNumber=" + memoriesArr[k].meetsNumber);      
+      memories.add(memoriesArr[k]);
+    }
   }
   
  /*------------------------------------------------------------------------------------*/
   
+  public String getFakeName(short index) {
+    return fakeNames[index];
+  }
+  
   /** To get player fake name
    *
-   * @param otherKey primary key of player who requested the full name
+   * @param otherPlayer player who requested the fake name
    */
-  public String getFakeName(String otherKey) {
-    if (memories==null) {
-      // Add player to our memory      
-      addMeet(otherKey);
-      return fakeNames[currentFakeNameIndex];
-    }    
-    for (int i=0; i<memories.length; i++) {      
-      if (memories[i].otherPlayerKey.equals(otherKey)) {
-        // player already met
-        memories[i].meetsNumber += MEET_SIMPLE;
-        return fakeNames[memories[i].otherPlayerFakeNameIndex];
-      }
-    }
-    // player never met
-    // Add player to our memory    
-    addMeet(otherKey);    
-    return fakeNames[currentFakeNameIndex];
+  public String getFakeName(PlayerImpl otherPlayer) {  
+    if (ServerDirector.SHOW_DEBUG)
+      System.out.println("LieManager::getFakeName(otherPlayer="+otherPlayer.getPrimaryKey()+")");
+    String otherPlayerKey = otherPlayer.getPrimaryKey();
+    return addMeet(otherPlayer, MEET_SIMPLE);
   }
   
   /** To get current fake name
@@ -150,111 +169,107 @@ public class LieManager
   
   /** To add a player to our memory
    */
-  public void addMeet(String otherKey) {
-    addMeet(otherKey, MEET_SIMPLE);
+  public String addMeet(PlayerImpl otherPlayer) {
+    return addMeet(otherPlayer, MEET_SIMPLE);
   }
   
   /** To add a player to our memory
    */
-  synchronized public void addMeet(String otherKey, int meetType) {
-    
-    if (memories == null) {
-      // Create a new memory array      
-      LieMemory myMemory = new LieMemory(otherKey, currentFakeNameIndex);
-      memories = new LieMemory[1];
-      memories[0] = myMemory;
-      return;
-    } else {
-      // memory array not null           
-      int i; // old index
-      int j; // new index
-      for (i=0; (i<memories.length) && !(memories[i].otherPlayerKey.equals(otherKey)); i++) {;}      
-      if (i>MEETS_NUMBER) {
-        // not enough place to remember player
-        return;
-      } else {
-        // there is enough place to remember player
-        if (i<memories.length) {
-          // player already met                      
-          int newMeetsNumber = memories[i].meetsNumber + meetType;
-          for (j=i+1; (j<memories.length) && (memories[j].meetsNumber<newMeetsNumber); j++) {;}          
-          if (j>MEETS_NUMBER) {
-            // not enough place to remember player
-            // free first element of memory array
-            // add new element at the end of memory array
-            LieMemory[] myMemories = new LieMemory[memories.length];
-            LieMemory myMemory = new LieMemory(otherKey, currentFakeNameIndex, newMeetsNumber);
-            System.arraycopy(memories, 1, myMemories, 0, memories.length-1);
-            myMemories[memories.length] = myMemory;
-            memories = myMemories;
-            return;
+  public String addMeet(PlayerImpl otherPlayer, int meetType) {
+    if (ServerDirector.SHOW_DEBUG)
+      System.out.println("\naddMeet(otherPlayer="+otherPlayer.getPrimaryKey()+", meetType="+meetType+")");
+    String otherPlayerKey = otherPlayer.getPrimaryKey();
+    LieMemory memory;
+    int k;
+    synchronized(memories) {
+      k=0;
+      memories.resetIterator();      
+      while ( memories.hasNext() ) {
+        k++;
+        memory = memories.next();
+        if (memory.otherPlayerKey.equals(otherPlayerKey)) {           
+          // player already met
+          if (ServerDirector.SHOW_DEBUG)
+            System.out.println("\tplayer already met");
+          if (k>MEETS_NUMBER) {            
+            // should never happen
+            return null; 
           } else {
-            if (j<memories.length) {                       
-              LieMemory[] myMemories = new LieMemory[memories.length];
-              if (i>0) {
-                // copy from 0 to i-1                      
-                System.arraycopy(memories, 0, myMemories, 0, i);
+            // 
+            int newMeetsNumber = memory.meetsNumber + meetType;            
+            short oldOtherPlayerFakeNameIndex = memory.otherPlayerFakeNameIndex;
+            if (ServerDirector.SHOW_DEBUG)
+              System.out.println("\tremoving entry");            
+            k--;
+            memories.remove();
+                                      
+            while ( memories.hasNext() ) {
+              k++;
+              memory = memories.next();              
+              if (memory.meetsNumber<newMeetsNumber) {
+                LieMemory myMemory = new LieMemory(otherPlayerKey, oldOtherPlayerFakeNameIndex, newMeetsNumber);
+                if (ServerDirector.SHOW_DEBUG)
+                  System.out.println("\tinserting new entry");
+                memories.insert(myMemory);
+                if (k>MEETS_NUMBER) {
+                  // must remove the first element
+                  memories.resetIterator();
+                  memories.remove();
+                }
+System.out.println("\tmemories=\n"+this);                
+                return otherPlayer.getLieManager().getFakeName(oldOtherPlayerFakeNameIndex);                                
               }
-              // copy from i+1 to j-1
-              if (j-i-1 > 0) {                
-                System.arraycopy(memories, i+1, myMemories, i, j-i-1);
-                // insert new element before position j
-                myMemories[j-1].otherPlayerKey = memories[i].otherPlayerKey;
-                myMemories[j-1].otherPlayerFakeNameIndex = memories[i].otherPlayerFakeNameIndex;
-                myMemories[j-1].meetsNumber = newMeetsNumber;                
-                // copy from j to tab length                    
-                System.arraycopy(memories, j, myMemories, j, memories.length-j);
-                memories = myMemories;
-                return;
-              } else {
-                // if j=i+1
-                // just swap rows at index i and j
-                String tempOtherPlayerKey = memories[i].otherPlayerKey;
-                short tempOtherPlayerFakeNameIndex = memories[i].otherPlayerFakeNameIndex;                
-                memories[i].otherPlayerKey = memories[j].otherPlayerKey;
-                memories[i].otherPlayerFakeNameIndex = memories[j].otherPlayerFakeNameIndex;
-                memories[i].meetsNumber = memories[j].meetsNumber;
-                memories[j].otherPlayerKey = tempOtherPlayerKey;
-                memories[j].otherPlayerFakeNameIndex = tempOtherPlayerFakeNameIndex;
-                memories[j].meetsNumber = newMeetsNumber;               
-                return;                 
-              }              
-            } else {                           
-              // add new element at the end of memory array              
-              LieMemory[] myMemories = new LieMemory[memories.length+1];
-              LieMemory myMemory = new LieMemory(otherKey, currentFakeNameIndex, newMeetsNumber);
-              System.arraycopy(memories, 0, myMemories, 0, memories.length);
-              myMemories[memories.length] = myMemory;
-              memories = myMemories;
-              return;                            
-            }          
+            }
+            // Add player at the end of the LieMemoryIterator
+            if (ServerDirector.SHOW_DEBUG)
+              System.out.println("\tadding new entry");            
+            LieMemory myMemory = new LieMemory(otherPlayerKey, oldOtherPlayerFakeNameIndex, newMeetsNumber);
+            memories.add(myMemory);   
+            if (k>MEETS_NUMBER) {
+              // must remove the first element
+              memories.resetIterator();
+              memories.remove();
+            }  
+System.out.println("\tmemories=\n"+this);            
+            return otherPlayer.getLieManager().getFakeName(oldOtherPlayerFakeNameIndex);                                
           }
-        } else {
-          // i >= memories.length && i<MEETS_NUMBER
-          // player never met
-          // add new element at the beginning of memory array
-          LieMemory[] myMemories = new LieMemory[memories.length+1];
-          LieMemory myMemory = new LieMemory(otherKey, currentFakeNameIndex, 0);
-          myMemories[0] = myMemory;
-          System.arraycopy(memories, 0, myMemories, 1, memories.length);
-          memories = myMemories;
-          // update player meets informations
-          addMeet(otherKey, meetType);
-          return;
         }
       }
+      
+      // Player not found in the LieMemoryIterator
+      if (ServerDirector.SHOW_DEBUG)
+        System.out.println("\tplayer never met");      
+      if (k>MEETS_NUMBER) {
+        // not enough place to remember player
+System.out.println("\tmemories=\n"+this);        
+        return otherPlayer.getLieManager().getCurrentFakeName();
+      } 
+      // Add player at the beginning of the LieMemoryIterator
+      if (ServerDirector.SHOW_DEBUG)
+        System.out.println("\tinserting player");      
+      memories.resetIterator();
+      LieMemory myMemory = new LieMemory(otherPlayerKey, otherPlayer.getLieManager().getCurrentFakeNameIndex(), 0);
+      memories.insert(myMemory);   
+System.out.println("\tmemories=\n"+this);           
+      return addMeet(otherPlayer, meetType);
     }
-  }     
-  
+  }
+    
   /** To forget players
    *
    * @param meetType number of meetsNumber to forget
    */
-  synchronized public void removeMeet(int meetType) {
+  public void removeMeet(int meetType) {
+    if (ServerDirector.SHOW_DEBUG)
+      System.out.println("LieManager::removeMeet(meetType="+meetType+")");
     if (memories==null)
       return;
-    for (int i=0; i<memories.length; i++) {
-      memories[i].meetsNumber -= meetType;
+    synchronized(memories) {
+      memories.resetIterator();
+      while ( memories.hasNext() ) {
+        LieMemory memory = memories.next();
+        memory.meetsNumber -= meetType;
+      }
     }
   }
   
@@ -262,14 +277,22 @@ public class LieManager
    *
    * @param meetType minium of meetsNumber to remember
    */
-  synchronized public void forget(int meetType) {  
+  public void forget(int meetType) {  
+    if (ServerDirector.SHOW_DEBUG)
+      System.out.println("LieManager::forget(meetType="+meetType+")");
     if (memories==null)
-      return;      
-    int i;
-    for (i=0; (i<memories.length) && (memories[i].meetsNumber<meetType); i++) {;}
-    LieMemory[] myMemories = new LieMemory[memories.length-i];
-    System.arraycopy(memories, i, myMemories, 0, memories.length-i);
-    memories = myMemories;
+      return;
+    synchronized(memories) {
+      memories.resetIterator();
+      while ( memories.hasNext() ) {
+        LieMemory memory = memories.next();
+        if (memory.meetsNumber < meetType) {
+          memories.remove();
+        } else {
+          return;
+        }
+      }
+    }    
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -320,15 +343,22 @@ public class LieManager
    */
   public String toString() {
     String result;
-    result = "LieManager::toString";
+    result = "LieManager::toString for player "+fakeNames[0]+"\n";
     if (memories==null) {
-      result += "memories null";
+      result += " \tmemories null\n";
       return result;
     }
-    for (int k=0; k<memories.length; k++) {
-      result += "\tk = " + k + " meetsNumber = " + memories[k].meetsNumber + " otherPlayerKey = " + memories[k].otherPlayerKey + " otherPlayerFakeNameIndex = " + memories[k].otherPlayerFakeNameIndex;
+    synchronized(memories) {
+      memories.resetIterator();
+      int k=0;
+      LieMemory memory;
+      while ( memories.hasNext() ) {        
+        memory = memories.next();
+        result += "\tk = " + k + " meetsNumber = " + memory.meetsNumber + " otherPlayerKey = " + memory.otherPlayerKey + " otherPlayerFakeNameIndex = " + memory.otherPlayerFakeNameIndex + "\n";
+        k++;
+      }    
+      return result;
     }
-    return result;
   }
   
  /*------------------------------------------------------------------------------------*/

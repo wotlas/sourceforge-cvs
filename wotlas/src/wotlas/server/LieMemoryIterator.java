@@ -45,6 +45,11 @@ public class LieMemoryIterator
 
   // last element of the chain
      private Element last;
+     
+     private int size;
+     public int getSize() {
+       return size;
+     }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -61,9 +66,12 @@ public class LieMemoryIterator
             if(first==null) {
                first = toAdd;
                last = first;
+               size = 1;
                return;
             }
 
+            size++;
+            
          // element just after the element we want to add
             Element justAfterAdd = null; 
 
@@ -99,11 +107,13 @@ public class LieMemoryIterator
          if(last==null){
             first = toAdd;
             last = first;
+            size = 1;
          }
          else {
             last.next = toAdd;
             toAdd.prev = last;
             last = toAdd;
+            size++;
          }
      }
 
@@ -140,6 +150,8 @@ public class LieMemoryIterator
          else
              toRemove = current.prev;
 
+         size--;
+          
          if(toRemove.prev!=null)
              toRemove.prev.next = toRemove.next;
          else
@@ -173,6 +185,7 @@ public class LieMemoryIterator
 
          first = null;
          last = null;
+         size = 0;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -35,7 +35,7 @@ public class LieChatCommand implements ChatCommand
 
    /** Returns the first part of the chat command. For example if your chat command
     *  has the following format '/msg playerId message' the prefix is '/msg'.
-    *  Other example : if your command is '/who' the prefix is '/who'. 
+    *  Other example : if your command is '/who' the prefix is '/who'.
     *
     * @return the chat command prefix that will help identify the command.
     */
@@ -47,7 +47,7 @@ public class LieChatCommand implements ChatCommand
 
    /** Voice sound level needed to exec this command. While most commands only need to be
     *  be spoken, others need to be shouted or whispered.
-    *  
+    *
     *  @return ChatRoom.WHISPERING_VOICE_LEVEL if the command is to be whispered,
     *          ChatRoom.NORMAL_VOICE_LEVEL  if the command just need to be spoken,
     *          ChatRoom.SHOUTING_VOICE_LEVEL if the command needs to be shout.
@@ -104,7 +104,7 @@ public class LieChatCommand implements ChatCommand
               }
 
               GameAccount account = DataManager.getDefaultDataManager().getAccountManager().getAccount(message);
-         
+
               if(account==null) {
                  response.setMessage("/cmd:/lie command error:<font color='red'> unknown player</font>");
                  player.sendMessage(response);
@@ -112,16 +112,23 @@ public class LieChatCommand implements ChatCommand
               }
 
               message = "/cmd:";
-              
-              LieMemory[] memories = account.getPlayer().getLieManager().getMemories();
+
+              LieMemoryIterator memories = account.getPlayer().getLieManager().getMemoriesIterator();
               if (memories==null) {
                 message += "memories null";
               } else {
-                for (int k=0; k<memories.length; k++) {
-                  message += "k = " + k + " meetsNumber = " + memories[k].meetsNumber + " otherPlayerKey = " + memories[k].otherPlayerKey + " otherPlayerFakeNameIndex = " + memories[k].otherPlayerFakeNameIndex + "<br>";
+                int k=0;
+                LieMemory memory;
+                synchronized(memories) {
+                  memories.resetIterator();
+                  while ( memories.hasNext() ) {
+                    memory = memories.next();
+                    message += "k=" + k + " otherPlayerKey=" + memory.otherPlayerKey + " meetsNumber=" + memory.meetsNumber +  " otherPlayerFakeNameIndex=" + memory.otherPlayerFakeNameIndex + "<br>";
+                    k++;
+                  }
                 }
               }
-              
+
               response.setMessage(message);
               player.sendMessage(response);
 

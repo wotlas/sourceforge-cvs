@@ -295,22 +295,34 @@ public class PlayerImpl implements Player, NetConnectionListener
   
    /** To get the player's full name
     */
-      public String getFullPlayerName() {
-        System.out.println("old method");
+      public String getFullPlayerName(String otherPlayerKey) {
+System.out.println("getFullPlayerName(String otherPlayerKey)s deprecared");
         return lieManager.getCurrentFakeName();
       }
       
-   /** To get the player's full name or fake name
-    *
-    *  @return player full name ( should contain the player name )
+   /** To get the player's full name
     */
-      public String getFullPlayerName(String otherPlayerKey) {        
-        if (otherPlayerKey.equals(primaryKey)) {
-          return lieManager.getCurrentFakeName();
-        } else {        
-          return lieManager.getFakeName(otherPlayerKey);                
-        }
+      public String getFullPlayerName() {
+System.out.println("getFullPlayerName() deprecated");
+        return lieManager.getCurrentFakeName();
       }
+    
+    /** To get the player's full name or fake name
+     *
+     * @return player full name
+     */
+       public String getFullPlayerName(PlayerImpl otherPlayer) {
+         if (otherPlayer.getPrimaryKey().equals(primaryKey)) {
+           return lieManager.getCurrentFakeName();
+         } else {
+           //return lieManager.getFakeName(otherPlayer);
+           return otherPlayer.getLieManager().getFakeName(this);
+         }
+       }
+       
+       public String getFullPlayerName(Player otherPlayer) {
+         return getFullPlayerName((PlayerImpl) otherPlayer);
+       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -682,13 +694,15 @@ public class PlayerImpl implements Player, NetConnectionListener
    * @param message message to send to the player.
    * @param otherPlayerKey key of player who sent the message
    */
-     public void sendChatMessage( SendTextMessage message, String otherPlayerKey) {
+     public void sendChatMessage( SendTextMessage message, PlayerImpl otherPlayer) {
              synchronized( personalityLock ) {
-                if( personality!=null ) {
-                    if( ServerDirector.SHOW_DEBUG )
-                        System.out.println("Player "+primaryKey+" sending msg: "+message);
-                    personality.queueMessage( message );
-                    lieManager.addMeet(otherPlayerKey, LieManager.MEET_CHATMESSAGE);
+                if( personality!=null ) {                    
+                  if( ServerDirector.SHOW_DEBUG )
+                    System.out.println("Player "+primaryKey+" sending to:"+otherPlayer.getPrimaryKey()+" msg: "+message);
+                  personality.queueMessage( message );
+                  if ( !primaryKey.equals(otherPlayer.getPrimaryKey()) ) {
+                    lieManager.addMeet(otherPlayer, LieManager.MEET_CHATMESSAGE);
+                  }                    
                 }
              }
      }    
@@ -839,7 +853,7 @@ public class PlayerImpl implements Player, NetConnectionListener
     	     return;
     	  }
     	
-          AddPlayerToRoomMessage aMsg = new AddPlayerToRoomMessage( primaryKey, this );
+          AddPlayerToRoomMessage aMsg = new AddPlayerToRoomMessage( null, this );
 
           sendMessageToRoom( myRoom, aMsg, true );
           sendMessageToNearRooms( myRoom, aMsg, true );

@@ -78,8 +78,9 @@ public class JGameConnectionDialog extends JConnectionDialog
    /** To retrieve a list of the NetMessage packages to use with this server.
     */
     protected String[] getPackages() {
-    	String list[] = null; // no packages for now
-
+    	//String list[] = null; // no packages for now
+      String list[] = {"wotlas.client.message.description"};
+      
     	return list;
     }
 

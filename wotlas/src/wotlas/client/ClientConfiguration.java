@@ -82,6 +82,10 @@ public class ClientConfiguration {
    */
   private boolean useHardwareAcceleration = false;
 
+  /** To continue to display the log window after start-up.
+   */
+  private boolean displayLogWindow = false;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Empty Constructor for persitence.
@@ -226,6 +230,20 @@ public class ClientConfiguration {
    */
   public void setUseHardwareAcceleration(boolean useHardwareAcceleration) {
     this.useHardwareAcceleration = useHardwareAcceleration;
+  }
+
+ /*------------------------------------------------------------------------------------*/ 
+
+  /** Getter of displayLogWindow.
+   */
+  public boolean getDisplayLogWindow() {
+    return displayLogWindow;
+  }
+  
+  /** Setter of displayLogWindow.
+   */
+  public void setDisplayLogWindow(boolean displayLogWindow) {
+    this.displayLogWindow = displayLogWindow;
   }
 
  /*------------------------------------------------------------------------------------*/ 

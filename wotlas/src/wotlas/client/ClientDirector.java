@@ -98,6 +98,10 @@ public class ClientDirector {
    */
     private static ClientConfiguration clientConfiguration;
 
+  /** Our JLogStream
+   */
+    private static JLogStream logStream;
+
   /** True if we show debug informations
    */
     public static boolean SHOW_DEBUG = false;
@@ -145,14 +149,18 @@ public class ClientDirector {
 
     // STEP 1 - Start a JLogStream to display our Debug messages
        try {
-         if(classicLogWindow)
-            Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(),
-                  basePath+File.separator+CLIENT_LOGS+File.separator+CLIENT_LOG_NAME,
-                  "log-title.jpg", basePath+File.separator+"gui" ) );
-         else
-            Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(),
-                  basePath+File.separator+CLIENT_LOGS+File.separator+CLIENT_LOG_NAME,
-                  "log-title-dark.jpg", basePath+File.separator+"gui" ) );
+            if(!classicLogWindow) {
+               logStream = new JLogStream( new javax.swing.JFrame(),
+                     basePath+File.separator+CLIENT_LOGS+File.separator+CLIENT_LOG_NAME,
+                     "log-title.jpg", basePath+File.separator+"gui" );
+            }
+            else {
+               logStream =  new JLogStream( new javax.swing.JFrame(),
+                     basePath+File.separator+CLIENT_LOGS+File.separator+CLIENT_LOG_NAME,
+                     "log-title-dark.jpg", basePath+File.separator+"gui" );
+            }
+
+            Debug.setPrintStream( logStream );
        }
        catch( java.io.FileNotFoundException e ) {
          e.printStackTrace();
@@ -163,10 +171,10 @@ public class ClientDirector {
           System.out.println("Log created.");
 
     // STEP 2 - We control the VM version and load our vital config files.
-       Debug.signal( Debug.NOTICE, null, "*-----------------------------------*" );
-       Debug.signal( Debug.NOTICE, null, "|   Wheel Of Time - Light & Shadow  |" );
-       Debug.signal( Debug.NOTICE, null, "|  Copyright (C) 2001 - WOTLAS Team |" );
-       Debug.signal( Debug.NOTICE, null, "*-----------------------------------*\n");
+       Debug.signal( Debug.NOTICE, null, "*-------------------------------------*" );
+       Debug.signal( Debug.NOTICE, null, "|    Wheel Of Time - Light & Shadow   |" );
+       Debug.signal( Debug.NOTICE, null, "| Copyright (C) 2001-2002 WOTLAS Team |" );
+       Debug.signal( Debug.NOTICE, null, "*-------------------------------------*\n");
 
 
        clientProperties = new ClientPropertiesFile(basePath+File.separator+CLIENT_CONFIGS);
@@ -219,7 +227,7 @@ public class ClientDirector {
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get client Configuration and get some user preferences ( window size, etc... )
+  /** To get the client Configuration and get some user preferences ( window size, etc... )
    *  @return Client Config, you can use the save() method to save it to disk...
    */
      public static ClientConfiguration getClientConfiguration() {
@@ -252,6 +260,15 @@ public class ClientDirector {
    */
      public static DataManager getDataManager() {
          return dataManager;
+     }
+
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get our log window.
+   *  @return our log window which is a printStream.
+   */
+     public static JLogStream getLogStream() {
+         return logStream;
      }
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

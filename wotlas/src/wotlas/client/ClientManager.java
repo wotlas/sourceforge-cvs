@@ -322,6 +322,10 @@ public class ClientManager extends JIntroWizard implements ActionListener {
         indexScreen = MAIN_SCREEN;
         state = MAIN_SCREEN;
 
+      // Hide the Log Window ?
+       if( !ClientDirector.getClientConfiguration().getDisplayLogWindow() )
+            ClientDirector.getLogStream().setVisible( false );
+
       // Test if an account exists
        if ( profileConfigList.size()==0 ) {
          start(ACCOUNT_CREATION_SCREEN);

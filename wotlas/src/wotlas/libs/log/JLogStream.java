@@ -36,7 +36,7 @@ public class JLogStream extends LogStream {
 
    /** Max number of messages we display...
     */
-     private static final int MAX_MSG = 20;
+     private static final int MAX_MSG = 40;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -124,7 +124,7 @@ public class JLogStream extends LogStream {
                    (int) ((screenSize.getHeight() - dialog.getHeight()) / 2) );
 
           dialog.show();
-          waitTime(1000);
+          waitTime(1500);
      }
 
  /*------------------------------------------------------------------------------------*/
@@ -199,4 +199,13 @@ public class JLogStream extends LogStream {
 
  /*------------------------------------------------------------------------------------*/
 
+  /** To show/hide the Log Window. The window is not destroyed, just hidden.
+   *
+   * @param show true to show the window, false to hide it.
+   */
+    public void setVisible( boolean show ) {
+        dialog.setVisible(show);
+    }
+
+ /*------------------------------------------------------------------------------------*/
 }

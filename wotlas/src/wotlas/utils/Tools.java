@@ -103,6 +103,35 @@ public class Tools
 
       return year+"-"+month+"-"+day;
    }
+   
+   
+  /** To get a date formated in a lexical way ( year-month-day).
+   *  Example: "2001-09-25". Note that we write "09" instead of "9".
+   *
+   * @param currentTime the date to convert
+   * @return date
+   */
+   static public String getLexicalDate(Calendar currentTime)
+   {      
+ 
+      String year = ""+currentTime.get(Calendar.YEAR);
+      String month = null;
+      String day = null;
+      
+      if( currentTime.get(Calendar.MONTH) <= 9 )
+           month = "0"+(currentTime.get(Calendar.MONTH)+1);
+      else
+           month = ""+(currentTime.get(Calendar.MONTH)+1);
+
+      if( currentTime.get(Calendar.DAY_OF_MONTH) <= 9 )
+           day = "0"+currentTime.get(Calendar.DAY_OF_MONTH);
+      else
+           day = ""+currentTime.get(Calendar.DAY_OF_MONTH);
+
+      return year+"-"+month+"-"+day;
+   }
+   
+   
 
  /*------------------------------------------------------------------------------------*/ 
 

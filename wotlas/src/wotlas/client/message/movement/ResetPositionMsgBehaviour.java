@@ -86,7 +86,9 @@ public class ResetPositionMsgBehaviour extends ResetPositionMessage implements N
            }
 
        // code to invoke after the current tick :
-          Debug.signal( Debug.WARNING, this, "Position reseted by server !" );
+          if (DataManager.SHOW_DEBUG)
+            System.out.println("Position reseted by server !");
+          Debug.signal( Debug.WARNING, this, "Position reseted by server !" );          
           myPlayer.getMovementComposer().resetMovement();
           myPlayer.setX(x);
           myPlayer.setY(y);

@@ -37,7 +37,7 @@ Click <a href="overview.html">here</a> for an overview of the Wotlas project.
 		$end=$start+9;
 		
 	$query="SELECT * FROM news ORDER BY DATE DESC,NUM DESC";
-	$result=mysql_query($query,$connect) or die("Echec de la requête : ".$query."</body></html>");
+	$result=mysql_query($query,$connect) or die("SQL Request failure : $query</body></html>");
 	
 	$nb=mysql_num_rows($result);
 

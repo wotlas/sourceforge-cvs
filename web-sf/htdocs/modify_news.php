@@ -1,22 +1,21 @@
 <html>
 <head>
-<title>Adding a news to Wotlas site</title>
+<title>News Administration Page</title>
 </head>
 
 <body>
 <center>
 <br><br>
 <?
-	if ($titre=="")
-	 die ("Error : no title found !</body></html>");
-
 	include("connect.inc");
 	$connect=Connect();
+	
+	include("date_func.inc");
 	 
-	$query="INSERT INTO news (titre,contenu,date) VALUES (\"$titre\",\"$contenu\",\"".date("Y-m-d")."\")";
+	$query="REPLACE INTO news (num,titre,contenu,date) VALUES ($num,\"$titre\",\"$contenu\",\"".Unconv_date($date)."\")";
 	mysql_query($query,$connect) or die("SQL request failure : $query</body></html>");
 		
-	echo "Your news has been added.";
+	echo "The news has been updated.";
 				
 	mysql_close($connect);
 ?>

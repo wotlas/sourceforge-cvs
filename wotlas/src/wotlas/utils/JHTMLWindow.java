@@ -17,9 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package wotlas.client.gui;
-
-import wotlas.utils.*;
+package wotlas.utils;
 
 
 import java.awt.*;
@@ -48,7 +46,7 @@ public class JHTMLWindow extends JDialog
 
  /*------------------------------------------------------------------------------------*/
 
-   /** Constructor with HTML file name/URL.
+   /** Constructor with HTML file name/URL. (no header, not modal)
     * @param frame parent frame
     * @param title JDialog title
     * @param fileName HTML filename. If the file begins with "http:" we assume it's an URL
@@ -58,9 +56,28 @@ public class JHTMLWindow extends JDialog
     * @param center tells if the JDialog must be centered on screen
     */
     public JHTMLWindow(Frame frame, String title, String fileName, int width, int height, boolean center ) {
-        super( frame, title, false );
+        this( frame, null, title, fileName, width, height, center, false );
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** Constructor with HTML file name/URL header & modal mode.
+    * @param frame parent frame
+    * @param header text to display before the html document
+    * @param title JDialog title
+    * @param fileName HTML filename. If the file begins with "http:" we assume it's an URL
+    *        otherwise we consider its a local file.
+    * @param width initial window width
+    * @param height initial window height
+    * @param center tells if the JDialog must be centered on screen
+    * @param modal modal window ?
+    */
+    public JHTMLWindow(Frame frame, String header, String title, String fileName, int width, int height, boolean center, boolean modal ) {
+        super( frame, title, modal );
         String htmlText = null;
         URL url = null;
+
+        if(header==null) header="";
 
      // We load the html file
         if( fileName.startsWith( "http:" ) ) {
@@ -77,6 +94,8 @@ public class JHTMLWindow extends JDialog
 
         if( htmlText == null && url==null)
             htmlText = "<b>ERROR</b><br>Could not open file: <i>"+fileName+"</i>";
+
+         htmlText = header+htmlText;
 
       // JDialog properties
          getContentPane().setLayout(new BorderLayout());

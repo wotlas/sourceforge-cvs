@@ -415,6 +415,13 @@ public class PersistenceManager
       String serverFile = databasePath+File.separator+SERVERS_HOME+File.separator
                             +SERVERS_PREFIX+serverID+SERVERS_SUFFIX;
 
+      File serversHomeDir = new File(databasePath+File.separator+SERVERS_HOME);
+
+      if(!serversHomeDir.exists()) {
+      	 serversHomeDir.mkdir();
+      	 Debug.signal(Debug.WARNING,this,"Server Home created...");
+      }
+
       try{
            if( !FileTools.saveTextToFile( serverFile, newConfigText ) )
                return null; // Save Failed
@@ -439,11 +446,22 @@ public class PersistenceManager
    public ServerConfig[] loadServerConfigs()
    {
       String serversHome = databasePath+File.separator+SERVERS_HOME;
-      
-      File configFileList[] = new File(serversHome).listFiles();
 
-     // how many server files ?
-        int nbFiles=0;
+      File serversHomeDir = new File(serversHome);
+
+      if(!serversHomeDir.exists()) {
+      	 serversHomeDir.mkdir();
+      	 Debug.signal(Debug.WARNING,this,"Server Home created...");
+      }
+
+      File configFileList[] = serversHomeDir.listFiles();
+
+      if(configFileList==null) {
+      	 Debug.signal(Debug.CRITICAL,this,"No server file loaded...");
+      	 return null;
+      }
+
+       int nbFiles=0;
 
         for( int i=0; i<configFileList.length; i++ )
            if(configFileList[i].isFile() && configFileList[i].getName().endsWith(SERVERS_SUFFIX) )

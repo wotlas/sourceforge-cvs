@@ -326,7 +326,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** To get selected player
    */
   public String getSelectedPlayerKey() {
-    return selectedPlayer.getPrimaryKey();
+    if (selectedPlayer!=null)
+      return selectedPlayer.getPrimaryKey();
+    return "";
   }
   
   /** To remove the circle

@@ -387,29 +387,15 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    *
    * @param personality the NetPersonality object associated to this connection.
    */
-  public void connectionCreated( NetPersonality personality )
-  {
+  public void connectionCreated( NetPersonality personality ) {
     synchronized( personalityLock ) {
       this.personality = personality;
+      personalityLock.notifyAll();
     }
+
     personality.setContext(this);
 
-    if (currentProfileConfig.getLocalClientID() == -1) {
-  
-      //Debug.signal( Debug.NOTICE, null, "no valid key found => request a new account to AccountServer");
-      //Debug.signal( Debug.NOTICE, null, "sending login & password");
-
-/* wiz 
-    personality.queueMessage( new PasswordAndLoginMessage( currentProfileConfig.getLogin(),
-              currentProfileConfig.getPassword() ) );
-*/
-
-/* wiz
-     JAccountWizard host = new JAccountWizard(personality);
-      wotlas.utils.SwingTools.centerComponent(host);
-      host.init();
-      host.start();
-*/
+    if (currentProfileConfig.getLocalClientID() == -1) {  
       if (personality==null) {
         Debug.signal( Debug.ERROR, this, "Connection closed by AccountServer" );
         return;
@@ -418,14 +404,25 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       Debug.signal( Debug.NOTICE, null, "New account created !" );
       return;
 
-  } else {
-    
-      // The key is valid, we are connected to the GameServer
     }
 
-    Debug.signal( Debug.NOTICE, null, "DataManager connected to GameServer" );
-
+    // The key is valid, we are connected to the GameServer
+     Debug.signal( Debug.NOTICE, null, "DataManager connected to GameServer" );
   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To wait (timeout max) for the connection to be established.
+   */
+   public void waitForConnection(long timeout) {
+    synchronized( personalityLock ) {
+      if(personality==null)
+         try{
+           personalityLock.wait(timeout);
+        }catch(Exception e ) {
+        }
+    }
+   }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -538,6 +535,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     // 2 - Retrieve player's informations
     myPlayer = new PlayerImpl();
 
+    waitForConnection(5000); // 5s max...
+
     try {
       synchronized(startGameLock) {
         personality.queueMessage(new MyPlayerDataPleaseMessage());
@@ -627,6 +626,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
   public void resumeInterface() {
     Debug.signal( Debug.NOTICE, null, "DataManager::ResumeInterface");
+
+    // wait for connection
+    waitForConnection(5000); // 5s max...
 
     // Reset the data
     chatPanel.reset();

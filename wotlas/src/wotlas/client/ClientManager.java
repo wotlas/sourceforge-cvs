@@ -559,7 +559,7 @@ public class ClientManager implements ActionListener {
 
       b_help.addActionListener(new ActionListener() {
           public void actionPerformed (ActionEvent e) {
-             new JHTMLWindow( screenIntro, "Help", "../docs/help/index.html", 330, 450, false );
+             new JHTMLWindow( screenIntro, "Help", "../docs/help/index.html", 640, 340, false );
           }
         }
       );

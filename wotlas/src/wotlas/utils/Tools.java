@@ -121,5 +121,22 @@ public class Tools
 
  /*------------------------------------------------------------------------------------*/ 
 
+   /** To get a System property. If the property is not found we return an empty String.
+    *
+    *  @param key property key
+    *  @return systemp property.
+    */
+     public static String getSystemProp( String key ) {
+
+         String value = System.getProperty( key );
+         
+         if( value==null )
+             return "";
+         
+         return value;
+     }
+
+ /*------------------------------------------------------------------------------------*/ 
+
 }
 

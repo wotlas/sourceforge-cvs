@@ -39,6 +39,9 @@ public class MultiLineText extends Drawable {
 
  /*------------------------------------------------------------------------------------*/
 
+    static public short LEFT_ALIGNMENT  = 0;
+    static public short RIGHT_ALIGNMENT = 1;
+    
    /**le text a ecrire
     */
      private String[] text;
@@ -70,19 +73,19 @@ public class MultiLineText extends Drawable {
 
     /** Text width
      */
-     int widthText=0;
-
-    /** Text height
-     */
-     //int heightText=0;
+     private int widthText = 0;
 
     /** Space between lines
      */
-     int gap;
+     private int gap;
 
     /** y coordinate of each line
      */
-     int heightsText[];
+     private int heightsText[];
+     
+    /** True if text is left aligned (default)
+     */
+     private boolean isLeftAligned = true;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -115,7 +118,7 @@ public class MultiLineText extends Drawable {
    * @param font MultiLineText's font
    * @param priority MultiLineText's priority
    */
-    public MultiLineText( String[] text, int xs, int ys, Color color, float size, String font, short priority) {
+    public MultiLineText( String[] text, int xs, int ys, Color color, float size, String font, short priority, short alignment) {
     	super();
         this.text = text;
         recalculate = true;
@@ -126,9 +129,8 @@ public class MultiLineText extends Drawable {
         setColor(color);
         this.priority = priority;
         useAntialiasing(true);
+        isLeftAligned = (alignment == LEFT_ALIGNMENT);
     }
-
-
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -232,7 +234,10 @@ public class MultiLineText extends Drawable {
 
                 heightsText[i] = heightsText[i-1] + (int) t.getBounds().getHeight() + gap;
 
-                gc.drawString(this.text[i], xs, ys+heightsText[i]);
+                if (isLeftAligned)
+                  gc.drawString(this.text[i], xs, ys+heightsText[i]);
+                else
+                  gc.drawString(this.text[i], xs-widthText, ys+heightsText[i]);
               }
               
               r.width = widthText;
@@ -242,14 +247,20 @@ public class MultiLineText extends Drawable {
 
               recalculate = false;
             } else {
-              for(int i=0; i<text.length; i++)
-              {
-                gc.drawString(this.text[i], xs, ys+heightsText[i]);
-              }
+              if (isLeftAligned)
+                for(int i=0; i<text.length; i++)
+                  gc.drawString(this.text[i], xs, ys+heightsText[i]);              
+                
+              else
+                for(int i=0; i<text.length; i++)
+                  gc.drawString(this.text[i], xs-widthText, ys+heightsText[i]);
             }      
          }
 
-        gc.draw3DRect(xs,ys,r.width,r.height,true);
+        if (isLeftAligned)
+          gc.draw3DRect(xs,ys,r.width,r.height,true);
+        else
+          gc.draw3DRect(xs-widthText,ys,r.width,r.height,true);
 
         //gc.setComposite( AlphaComposite.SrcOver ); // restore
     }

@@ -20,8 +20,8 @@
 package wotlas.common.objects.valueds;
 
 /** 
- * The base class of money (coins).
- * 
+ * The base class of money (coins).<br>
+ * The coins are Copper Penny (CP), Silver Penny (SP), silver MarK (MK) and Gold Coin (GC).
  * @author Elann
  * @see wotlas.common.objects.valueds.Money
  */
@@ -35,9 +35,6 @@ public class Coin extends ValuedObject
   * For instance Tar Valon marks are not welcomed everywhere.
   */
   	private String country;
-
- /** The coin class name. Could be Copper Penny (CP), Silver Penny (SP), silver MarK (MK) or Gold Coin (GC).
-  */
  
  /*------------------------------------------------------------------------------------*/
 
@@ -51,30 +48,18 @@ public class Coin extends ValuedObject
  /*------------------------------------------------------------------------------------*/
  
  
- /** Gets the origin of the coin. 
-  * Should be used to be refused by some.
-  * For instance Tar Valon marks are not welcomed everywhere.
+ /** Gets the origin of the coin. <br>
+  * Should be used to be refused by some. For instance Tar Valon marks are not welcomed everywhere.
   * @return country
   */
    public String getCountry() { return country; }
    
  /** Sets the origin of the coin.
-  * Should be provided by a country list located somewhere on a server.
+  * Should be chosen from a country list located somewhere on a server.
   * @param country the new country
   */
    public void setCountry(String country) { this.country=country; }
- 
-
- /** Gets the value of the coin. 
-  * @return value
-  */
-   public float getValue() { return value; }
-   
- /** Sets the value of the coin.
-  * @param value the new value
-  */
-   public void setValue(float value) { this.value=value; }
- 
+  
  
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  

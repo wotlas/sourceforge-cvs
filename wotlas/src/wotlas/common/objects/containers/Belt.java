@@ -118,6 +118,16 @@ public class Belt extends ContainerObject implements TransportableInterface, Arm
 	 /* no op */
 	}
 	
+  /** Trade the object to somebody.<br>
+    * Here the transaction is already accepted.
+  	* @param buyer The Player who buy the object. 
+  	* @return the object given by the other player.
+    */
+    public BaseObject tradeTo(Player buyer)
+	{
+	 /* no op */
+	 return new BaseObject();
+	}
 	
  /*------------------------------------------------------------------------------------*/
 	

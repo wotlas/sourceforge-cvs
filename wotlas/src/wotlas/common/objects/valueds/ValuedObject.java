@@ -33,12 +33,15 @@ public class ValuedObject extends BaseObject
 
  /*------------------------------------------------------------------------------------*/
 
- /** The value of the object. It is expressed in MK. 
-  * Perhaps there should be another field for integer value (expressed in CP).
-  *
-  * 10 CP = 1 SP  (Copper Penny - Silver Penny)
-  * 10 SP = 1 MK  (Silver Penny - silver MarK)
-  * 10 MK = 1 GC  (silver MarK  - Gold Coin)
+ /** The value of the object. It is expressed in MK.<br>
+  * The lowest value is 0.01. (1 CP)<br> 
+  *<br><br>
+  * <table border=1>
+  * <tr><th>Value</th><th>Equals</th><th>Names</th></tr>
+  * <tr><td>10 CP</td><td>1 SP</td><td>(Copper Penny - Silver Penny)</td></tr>
+  * <tr><td>10 SP</td><td>1 MK</td><td>(Silver Penny - silver MarK)</td></tr>
+  * <tr><td>10 MK</td><td>1 GC</td><td>(silver MarK  - Gold Coin)</td></tr>
+  * </table>
   */
   	protected float value;
 
@@ -67,6 +70,15 @@ public class ValuedObject extends BaseObject
   */
    public void setQuantity() { this.quantity=quantity; }
 	
+ /** Gets the value of the object. 
+  * @return value
+  */
+   public float getValue() { return value; }
+   
+ /** Sets the value of the object.
+  * @param value the new value
+  */
+   public void setValue(float value) { this.value=value; }
 	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

@@ -19,11 +19,13 @@
  
 package wotlas.common.objects.weapons;
 
-import wotlas.common.objects.interfaces.*;
+import wotlas.common.objects.interfaces.RepairInterface;
+import wotlas.common.objects.interfaces.TransportableInterface;
 
 import wotlas.common.objects.valueds.ValuedObject;
 import wotlas.common.Player;
 import wotlas.common.objects.valueds.Material;
+import wotlas.common.objects.BaseObject;
 
 /** 
  * The light weapon class. All the weapons within this class can be hidden in clothes.
@@ -130,6 +132,18 @@ public abstract class LightWeapon extends Weapon implements RepairInterface, Tra
 	{
 	 /* no op */
 	}
+	
+  /** Trade the object to somebody.<br>
+    * Here the transaction is already accepted.
+  	* @param buyer The Player who buy the object. 
+  	* @return the object given by the other player.
+    */
+    public BaseObject tradeTo(Player buyer)
+	{
+	 /* no op */
+	 return new BaseObject();
+	}
+	
 
  /* ----------------- Getters/Setters ----------------- */	
  

@@ -21,6 +21,7 @@ package wotlas.common.objects.interfaces;
 
 import wotlas.common.Player;
 import wotlas.common.objects.valueds.ValuedObject;
+import wotlas.common.objects.BaseObject;
 
 /** 
  * The objects that can be taken and carried.
@@ -38,19 +39,26 @@ public interface TransportableInterface
     public void discard();
 
   /** Sells the object to somebody.
-  	  @param buyer The Player who buy the object. 
-  	  @return the prize paid.
-   */
+  	*  @param buyer The Player who buy the object. 
+  	*  @return the prize paid.
+    */
     public ValuedObject sellTo(Player buyer);
 
   /** Gives the object to somebody.
-  	  @param receiver The Player who receive the object.
-   */
+    * @param receiver The Player who receive the object.
+    */
     public void giveTo(Player receiver);
 	
+  /** Trade the object to somebody.<br>
+    * Here the transaction is already accepted.
+  	* @param buyer The Player who buy the object. 
+  	* @return the object given by the other player.
+    */
+    public BaseObject tradeTo(Player buyer);
+
   /** Put the object "on".<br>
-   * Enable usage for some objects, visibility for others.
-   */
+    * Enable usage for some objects, just visibility for others.
+    */
     public void equip();
 
 		

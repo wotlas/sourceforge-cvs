@@ -134,6 +134,8 @@ public class GatewayServer extends NetServer implements ErrorCodeList
              return false;
           }
 
+          Debug.signal( Debug.NOTICE, null, ""+accountPrimaryKey+" will be sent to "+remoteServer.getServerName()+":"+remoteServer.getGatewayServerPort() );
+
        // STEP 2 - Creation of an AccountTransaction
           AccountTransaction transaction = new AccountTransaction(
                                                AccountTransaction.TRANSACTION_ACCOUNT_SENDER );
@@ -151,6 +153,7 @@ public class GatewayServer extends NetServer implements ErrorCodeList
                if( client.getErrorCode()==ErrorCodeList.ERR_CONNECT_FAILED ) {
                   // we report the deadlink and try the eventualy new address
                      String newServerName = configList.reportDeadServer(remoteServerID);
+                     Debug.signal( Debug.NOTICE, null, "Server dead link. Trying "+newServerName+":"+remoteServer.getGatewayServerPort() );
 
                      if(server!=null) {
                           client = new NetClient();
@@ -168,8 +171,9 @@ public class GatewayServer extends NetServer implements ErrorCodeList
                }
           }
 
+          Debug.signal( Debug.NOTICE, null, "Gateway server reached. Starting transaction for "+accountPrimaryKey+".");
           personality.setConnectionListener( transaction );
-       
+
        // STEP 4 - Wait for the result (10s max)
           return transaction.transfertAccount( accountPrimaryKey, 10000, ServerDirector.getServerID() );
     }

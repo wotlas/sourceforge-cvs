@@ -396,7 +396,7 @@ public class GameAccount
        player = (PlayerImpl) playerDecoder.getPlayer();
 
       // LieManager re-creation. The LieManager is associated to the player via the decode method
-       LieManager lieManager = new LieManager();
+       LieManager lieManager = player.getLieManager();
        lieManager.decode(ostream,player);
    }
 

@@ -41,7 +41,7 @@ public class ServerConfigList
     *  If a server becomes unreachable then we check if its UPDATE_PERIOD has been reached
     *  if true we check for a new address.
     */
-       public final long UPDATE_PERIOD = 1000*60*20;  // every twenty minutes
+       public final long UPDATE_PERIOD = 1000*60*10;  // every five minutes
 
 
    /** Update period for the server table... (in ms). This is a straight cache mode.

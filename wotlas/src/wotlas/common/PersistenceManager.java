@@ -333,9 +333,11 @@ public class PersistenceManager
       if(isDefault) {
       }
 
-      Debug.signal( Debug.NOTICE, this, "Saved "+worldCount+" worlds, "+townCount+" towns,"
-                      +buildingCount+" buildings, "+mapCount+" maps." );
 
+    /*** STEP 3 - Print some stats for control ***/
+      if(isDefault)
+         Debug.signal( Debug.NOTICE, this, "Saved "+worldCount+" worlds, "+townCount+" towns,"
+                       +buildingCount+" buildings, "+mapCount+" maps." );
 
       return !failed;
    }

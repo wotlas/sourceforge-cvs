@@ -1,5 +1,5 @@
 #!/bin/sh
 
 cd ..
-cd classes
-java -classpath . wotlas.client.ClientDirector -classic 2> ../base/logs/error-log-$(date).txt
+cd lib
+java -jar wotlas-client.jar 2> ../base/logs/error-log-$(date).txt

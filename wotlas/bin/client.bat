@@ -10,5 +10,5 @@ rem
 
 echo Starting Wotlas Client...
 cd ..
-cd classes
-java -classpath . wotlas.client.ClientDirector -classic
+cd lib
+java -jar wotlas-client.jar

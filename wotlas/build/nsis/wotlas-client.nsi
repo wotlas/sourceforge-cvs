@@ -38,6 +38,8 @@ Section "Wotlas Client (required)"
   ; Put file there
   File "wotlas-client.jar"
   File "wotlas.ico"
+  File "wotlas.url"
+  File /r "help"
   ; Write the installation path into the registry
   WriteRegStr HKCR "WOTLASFile\DefaultIcon" "" $INSTDIR\wotlas-client.jar,0
   WriteRegStr HKLM SOFTWARE\NSIS_WOTLAS_CLIENT "Install_Dir" "$INSTDIR"
@@ -50,13 +52,15 @@ SectionEnd
 ; optional section
 Section "Start Menu Shortcuts"
   CreateDirectory "$SMPROGRAMS\Wotlas"
-  CreateShortCut "$SMPROGRAMS\Wotlas\Uninstall-Client.lnk" "$INSTDIR\uninstall-client.exe" "" "$INSTDIR\uninstall-client.exe" 0
-  CreateShortCut "$SMPROGRAMS\Wotlas\Wotlas Client.lnk" "$INSTDIR\wotlas-client.jar" "" "$INSTDIR\wotlas-client.jar" 0
+  CreateShortCut "$SMPROGRAMS\Wotlas\Wotlas Client.lnk" "$INSTDIR\wotlas-client.jar" "" "$INSTDIR\wotlas.ico"
+  CreateShortCut "$SMPROGRAMS\Wotlas\help.lnk" "$INSTDIR\help\release-client.html" ""
+  CreateShortCut "$SMPROGRAMS\Wotlas\wotlas.lnk" "$INSTDIR\wotlas.url" ""
+  CreateShortCut "$SMPROGRAMS\Wotlas\Uninstall-Client.lnk" "$INSTDIR\uninstall-client.exe" "" "$INSTDIR\uninstall-client.exe" 0  
 SectionEnd
 
 ; optional section Desktop Shortcut
 Section "Desktop Shortcut"
-  CreateShortCut "$DESKTOP\Wotlas Client.lnk" "$INSTDIR\wotlas-client.jar" "" "$INSTDIR\wotlas-client.jar" 0
+  CreateShortCut "$DESKTOP\Wotlas Client.lnk" "$INSTDIR\wotlas-client.jar" "" "$INSTDIR\wotlas.ico"
 SectionEnd
 
 
@@ -73,18 +77,32 @@ Section "Uninstall"
 
   ; remove files
   Delete $INSTDIR\wotlas-client.jar
+  Delete $INSTDIR\wotlas.ico
+  Delete $INSTDIR\wotlas.url
+  RMDir /r $INSTDIR\help
 
   ; MUST REMOVE UNINSTALLER, too
   Delete $INSTDIR\uninstall-client.exe
 
   ; remove shortcuts, if any.
-  Delete "$SMPROGRAMS\Wotlas\Uninstall-Client.lnk"
   Delete "$SMPROGRAMS\Wotlas\Wotlas Client.lnk"
+  Delete "$SMPROGRAMS\Wotlas\help.lnk"
+  Delete "$SMPROGRAMS\Wotlas\wotlas.url"
+  Delete "$SMPROGRAMS\Wotlas\Uninstall-Client.lnk"  
   Delete "$DESKTOP\Wotlas Client.lnk"
 
   ; remove directories used.
   RMDir "$SMPROGRAMS\Wotlas"
   RMDir "$INSTDIR"
 SectionEnd
+
+Function un.onUninstSuccess
+    IfFileExists $INSTDIR\base-ext\*.* lbl_found    
+    Goto lbl_end
+    lbl_found:
+    MessageBox MB_OK "Your character data were not deleted. If you want to do so, you must manually $\ndelete the directory $INSTDIR\base-ext"
+    lbl_end:
+FunctionEnd
+
 
 ; eof

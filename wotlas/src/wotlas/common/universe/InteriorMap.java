@@ -49,6 +49,22 @@ public class InteriorMap
    */
     private ImageIdentifier interiorMapImage;
   
+  /** Image's Total Width
+   */
+    private int imageWidth;
+    
+  /** Image's Total Height
+   */
+    private int imageHeight;
+
+  /** Our image is a MultiRegionImage. This is the width of a region.
+   */
+    private int imageRegionWidth;
+
+  /** Our image is a MultiRegionImage. This is the height of a region.
+   */
+    private int imageRegionHeight;
+  
   /** List of the rooms of the Building
    * non transient (rooms in the same file of the building)
    */
@@ -79,6 +95,38 @@ public class InteriorMap
 
     public int getInteriorMapID() {
       return interiorMapID;
+    }
+
+    public void setImageWidth(int imageWidth) {
+      this.imageWidth = imageWidth;
+    }
+
+    public int getImageWidth() {
+      return imageWidth;
+    }
+
+    public void setImageHeight(int imageHeight) {
+      this.imageHeight = imageHeight;
+    }
+
+    public int getImageHeight() {
+      return imageHeight;
+    }
+
+    public void setImageRegionWidth(int imageRegionWidth) {
+      this.imageRegionWidth = imageRegionWidth;
+    }
+
+    public int getImageRegionWidth() {
+      return imageRegionWidth;
+    }
+
+    public void setImageRegionHeight(int imageRegionHeight) {
+      this.imageRegionHeight = imageRegionHeight;
+    }
+
+    public int getImageRegionHeight() {
+      return imageRegionHeight;
     }
 
     public void setFullName(String myFullName) {

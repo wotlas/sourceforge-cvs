@@ -97,10 +97,10 @@ public class NetSender extends NetThread
 
     /**  Constructor. Should be called only by the NetServer & NetClient classes.
      *   Default values :
-     *
-     *      - aggregation_timeout = 20ms
+     *<br>
+     *      - aggregation_timeout = 20ms<br>
      *      - aggregation_msg_limit = 10 messages
-     *
+     *<p>
      * @param socket a previously created & connected socket.
      * @param personality a NetPersonality linked to the specified socket.
      * @param sender_type NetSender type ( SEND_IMMEDIATELY, AGGREGATE_MESSAGES or USER_AGGREGATION )
@@ -254,7 +254,7 @@ public class NetSender extends NetThread
                 notify();
             }
 
-        // we wait until the last message is sent. The sendQueuesMessages() will notify us.
+        // we wait until the last message is sent. The sendQueuedMessages() will notify us.
         // (max 1s to avoid a deadlock if an Exception has been thrown in sendQueuedMessages)
            if(nb_messages!=0) {
               locked = true;

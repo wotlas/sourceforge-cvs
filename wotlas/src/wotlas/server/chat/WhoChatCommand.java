@@ -111,7 +111,7 @@ public class WhoChatCommand implements ChatCommand
                 result.append("<tr><td>&nbsp;&nbsp;&nbsp;&nbsp; - " + onlinePlayer.getPlayerName() + " &nbsp; <i> ( " + onlinePlayer.getPrimaryKey() + " )</i></td></tr>" );
              else {
                 String slocation = null;
-                WotlasLocation flocation = player.getLocation();
+                WotlasLocation flocation = onlinePlayer.getLocation();
 
                 if( flocation.isRoom() )
                     flocation.setBuildingID(-1);

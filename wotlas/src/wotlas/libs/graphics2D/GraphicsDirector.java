@@ -68,10 +68,6 @@ public class GraphicsDirector extends JPanel {
    */
     private boolean display;
 
-  /** Reset the background ? if true we repaint the background with a white color.
-   */
-    private boolean resetBackground;
-
   /** Lock for repaint...
    */
     private Object lockPaint = new Object();
@@ -83,6 +79,10 @@ public class GraphicsDirector extends JPanel {
   /** To repaint the screen.
    */
     private Thread paintThread;
+  
+  /** Is there already a Thread waiting to repaint the screen ?
+   */
+    private boolean isLocked;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -98,6 +98,7 @@ public class GraphicsDirector extends JPanel {
       drawables = new DrawableIterator();
       setWindowPolicy( windowPolicy );
       setBackground( Color.white );
+      isLocked=false;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -132,7 +133,6 @@ public class GraphicsDirector extends JPanel {
       // We set the new drawable reference an tick our WindowPolicy.
          this.refDrawable = refDrawable;
          windowPolicy.tick();
-         resetBackground = true;
          display = true;
    }
 
@@ -154,10 +154,16 @@ public class GraphicsDirector extends JPanel {
        
        synchronized( lockPaint ) {
 
-          if(paintThread!=null)
+          if(paintThread!=null) {
+              if(isLocked) return; // already a thread waiting
+
               try{
-                 lockPaint.wait( 100 );
+                 isLocked=true;
+                 lockPaint.wait( 200 );
               }catch( Exception e ) {}
+              
+              isLocked=false;
+          }
 
           paintThread =new Thread() {
              public void run() {
@@ -165,8 +171,7 @@ public class GraphicsDirector extends JPanel {
                     GraphicsDirector.this.paint( GraphicsDirector.this.getGraphics() );
 
                     synchronized( lockPaint ) {
-                    	paintThread = null;
-                    	lockPaint.notify();
+                    	lockPaint.notifyAll();
                     }
                 }catch( Exception e ) {
                    System.out.println("Exception in repaint() : "+e);
@@ -209,7 +214,6 @@ public class GraphicsDirector extends JPanel {
             return;
          }
 
-
          Graphics2D gc2D = (Graphics2D) backBufferGraphics;
 
        // Anti-aliasing init
@@ -221,12 +225,8 @@ public class GraphicsDirector extends JPanel {
           boolean previousHadAntiA = false;
 
           synchronized( drawables ) {
-             if( resetBackground ) {
-               // We repaint the background
-                 backBufferGraphics.setColor( Color.white );
-                 backBufferGraphics.fillRect( 0, 0, getWidth(), getHeight() );
-                 resetBackground = false;
-             }
+             backBufferGraphics.setColor( Color.white );
+             backBufferGraphics.fillRect( 0, 0, getWidth(), getHeight() );
 
              drawables.resetIterator();
         

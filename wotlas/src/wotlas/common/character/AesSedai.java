@@ -78,7 +78,7 @@ public class AesSedai extends Female {
 
   /** Black Ajah ?
    */
-    transient private boolean blackAjah = false;
+    private boolean blackAjah = false;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -385,6 +385,22 @@ public class AesSedai extends Female {
     	blackAjah = !blackAjah;
     	updateColorFilter();
     	return blackAjah;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Get Black ajah state : for persistence only. Use toggleBlackAjah().
+    */
+    public boolean getBlackAjah() {
+    	return blackAjah;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Set Black ajah state : for persistence only. Use toggleBlackAjah().
+    */
+    public void setBlackAjah(boolean blackAjah) {
+    	this.blackAjah = blackAjah;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

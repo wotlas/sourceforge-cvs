@@ -587,7 +587,7 @@ public class WorldGenerator {
                mapExit.setType( MapExit.BUILDING_EXIT );
                mapExit.setMapExitSide( MapExit.SOUTH );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
-               mapExit.setTargetPosition( new ScreenPoint(220,416) );
+               mapExit.setTargetPosition( new ScreenPoint(224,420) );
 
                mapExit = rooms[0].addMapExit( new ScreenRectangle(0,0,230,25) );
                mapExit.setType( MapExit.BUILDING_EXIT );
@@ -599,17 +599,17 @@ public class WorldGenerator {
                mapExit.setType( MapExit.BUILDING_EXIT );
                mapExit.setMapExitSide( MapExit.EAST );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
-               mapExit.setTargetPosition( new ScreenPoint(220,416) );
+               mapExit.setTargetPosition( new ScreenPoint(224,420) );
 
                mapExit = rooms[0].addMapExit( new ScreenRectangle(485,200,40,25) );
                mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
                mapExit.setMapExitSide( MapExit.NONE );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,2,1,0) );
-               mapExit.setTargetPosition( new ScreenPoint(415,42) );
+               mapExit.setTargetPosition( new ScreenPoint(400,40) );
 
         // STEP 11 - Rooms of Tar Valon NW Clearing InteriorMap Level 1
            rooms = new Room[1];
-           maps[0].setRooms( rooms );
+           maps[1].setRooms( rooms );
            rooms[0] = new Room();
            rooms[0].setRoomID(0);
            rooms[0].setMaxPlayers(30);
@@ -622,7 +622,7 @@ public class WorldGenerator {
                mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
                mapExit.setMapExitSide( MapExit.NONE );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,2,0,0) );
-               mapExit.setTargetPosition( new ScreenPoint(510,210) );
+               mapExit.setTargetPosition( new ScreenPoint(500,205) );
 
         // STEP XX - We save this simple universe.
            persistenceManager = wotlas.server.PersistenceManager.createPersistenceManager( databasePath );

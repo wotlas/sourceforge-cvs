@@ -103,4 +103,23 @@ public class Tools
 
  /*------------------------------------------------------------------------------------*/ 
 
+   /** To get an instance of an object from its class name. We assume that the
+    *  object has an empty constructor.
+    *
+    *  @param className a string representing the class name of the filter
+    *  @return an instance of the object, null if we cannot get an instance.
+    */
+      private static Object getInstance( String className ) {
+          try{
+               Class myClass = Class.forName(className);
+               return myClass.newInstance();
+          }catch(Exception ex) {
+               Debug.signal( Debug.ERROR, null, "Faied to create new instance of "+className+", "+ex );
+               return null;
+          }
+      }
+
+ /*------------------------------------------------------------------------------------*/ 
+
 }
+

@@ -21,6 +21,8 @@ package wotlas.common;
 
 import wotlas.utils.*;
 
+import java.awt.*;
+import javax.swing.*;
 
  /** Server Config List. Loaded using the provided persistence manager.
   *
@@ -105,17 +107,38 @@ public class ServerConfigList
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** Get Max Value for ProgressMonitor
+    */
+    public int getMaxValue() {
+    	if(getRemoteServerTable()==null)
+    	   return 0;
+
+         int ind=0, nb=0;
+
+         while( ( ind = remoteServerTable.indexOf( "Server-", ind ) ) >0 ) {
+             nb++;
+             ind += 7; // to skip the 'Server-'
+         }
+
+        return nb;
+    }
+
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
    /** To update a server config if there is an updated remote config.
     * @param config config to update
     */
     public void updateServerConfig( ServerConfig config ) {
+        if(config.getServerID()==0) // server config is local
+           return;
+
     	if(getRemoteServerTable()==null)
     	   return;
     	
     	int ind = remoteServerTable.indexOf( "Server-"+config.getServerID()+"-Version" );
     	
     	if(ind>=0) {
-           ind = remoteServerTable.indexOf( " = ", ind );
+           ind = remoteServerTable.indexOf( "=", ind );
 
            if(ind>=0) {
               ind++; // to avoid the '=' char
@@ -164,16 +187,30 @@ public class ServerConfigList
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To retrieve the latest server config files.
+    * @param parent parent component for the javax.swing.ProgressMonitor...
     */
-    public void getLatestConfigFiles() {
+    public void getLatestConfigFiles( Component parent) {
          if(getRemoteServerTable()==null)
     	    return;
 
-         int ind=0;
+         int value=0;
+
+       // Progress Monitor
+          ProgressMonitor pMonitor = new ProgressMonitor( parent, "Loading Server List", "", 0, getMaxValue() );
+          pMonitor.setMillisToPopup(500);
+          pMonitor.setMillisToDecideToPopup(100);
+          int ind=0;
 
          while( ( ind = remoteServerTable.indexOf( "Server-", ind ) ) >0 ) {
              ind += 7; // to skip the "Server-";
-             
+             value++;
+             pMonitor.setProgress(value);
+
+             if(pMonitor.isCanceled()) {
+                pMonitor.close();
+                return;
+             }
+
              int end = remoteServerTable.indexOf( "-", ind );             
              if(end<0) return; // premature end of table
 
@@ -195,13 +232,18 @@ public class ServerConfigList
              	 }
              	 else {
              	   // creation
-                      Debug.signal( Debug.WARNING, this, "A new server ("+serverID+") is available. Trying to load its config.");
+                      if(pMonitor.isCanceled() || remoteServerTable.indexOf("WOT",ind)<0 ) {
+                      	 pMonitor.close();
+                      	 return;
+                      }
 
+                      Debug.signal( Debug.WARNING, this, "A new server ("+serverID+") is available. Trying to load its config.");
+                      
                       String newConfig = FileTools.getTextFileFromURL( remoteServerConfigHomeURL
                                          +PersistenceManager.SERVERS_PREFIX+serverID+PersistenceManager.SERVERS_SUFFIX );
                         
                       if( newConfig ==null ) {
-                          Debug.signal( Debug.CRITICAL, this, "Failed to get new Server "+config.getServerID()+" config. Reverting to previous one.");
+                          Debug.signal( Debug.CRITICAL, this, "Failed to get new Server "+serverID+" config. Reverting to previous one.");
                           continue;
                       }
 
@@ -217,6 +259,8 @@ public class ServerConfigList
 
             // going to next line...
          }
+
+         pMonitor.close();
     }
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -278,6 +322,7 @@ public class ServerConfigList
    * @param index server index.
    */
    public ServerConfig ServerConfigAt(int index) {
+      if(configs==null) return null;
       return configs[index];
    }
 

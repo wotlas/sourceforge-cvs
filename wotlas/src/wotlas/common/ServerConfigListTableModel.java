@@ -47,7 +47,7 @@ public class ServerConfigListTableModel extends AbstractTableModel
     
   /** Names of the table columns
    */
-  private final String[] columnNames = {"Name", "Description", "Max players"};  
+  private final String[] columnNames = {"Name", "Location", "ID" };  
 
  /*------------------------------------------------------------------------------------*/
  
@@ -92,10 +92,10 @@ public class ServerConfigListTableModel extends AbstractTableModel
         return servers.ServerConfigAt(row).getServerSymbolicName();
         
       case 1:        
-        return servers.ServerConfigAt(row).getDescription();        
+        return servers.ServerConfigAt(row).getLocation();   
         
       case 2:
-        return new Integer(servers.ServerConfigAt(row).getMaxNumberOfGameConnections());
+        return new Integer(servers.ServerConfigAt(row).getServerID());
         
       default:
         return null;

@@ -92,8 +92,10 @@ public class JWizardStepRadio extends JWizardStep implements ActionListener{
       formPanel = new JPanel();
       formPanel.setAlignmentX(LEFT_ALIGNMENT);
       formPanel.setBackground(Color.white);
-      formPanel.setBorder(BorderFactory.createEmptyBorder(20,50,40,10));
-      add(formPanel, BorderLayout.CENTER);
+      JScrollPane scrollPane = new JScrollPane(formPanel);
+      scrollPane.setBorder(BorderFactory.createEmptyBorder(20,50,40,10));
+      scrollPane.setBackground(Color.white);
+      add(scrollPane, BorderLayout.CENTER);
 
       tarea = new ATextArea();
       tarea.setBackground(Color.white);

@@ -35,9 +35,11 @@ public class Building extends ScreenRectangle
 {
  /*------------------------------------------------------------------------------------*/
 
- /** True if we show debug informations
+  /** True if we show debug informations
    */
-  public static boolean SHOW_DEBUG = false;
+    public static boolean SHOW_DEBUG = false;
+
+ /*------------------------------------------------------------------------------------*/
    
   /** ID of the Building
    */
@@ -50,7 +52,7 @@ public class Building extends ScreenRectangle
   /** Short name of the Building
    */
     private String shortName;
-  
+
   /** Server ID of the server that possesses this Building
    */
     private int serverID;
@@ -416,10 +418,7 @@ public class Building extends ScreenRectangle
   /** String Info.
    */
     public String toString(){
-      if(interiorMaps==null)
-         return "Building bId:"+buildingID+" Name:"+fullName+" maxIdTownMap: no array";
-      else
-         return "Building bId:"+buildingID+" Name:"+fullName+" maxIdTownMap:"+interiorMaps.length;
+         return "Building - "+fullName;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

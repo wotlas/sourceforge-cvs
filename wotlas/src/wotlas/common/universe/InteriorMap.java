@@ -23,7 +23,8 @@ import wotlas.libs.graphics2D.ImageIdentifier;
 import wotlas.utils.Debug;
 
  /** An InteriorMap represents any maps where players can walk. It usually belongs
-  *  to buildings.
+  *  to buildings. It does not implement the WotlasMap interface because it doesn't
+  *  possess players. Players are possessed by the InteriorMap's rooms.
   *
   * @author Petrus, Aldiss
   */
@@ -251,10 +252,7 @@ public class InteriorMap
   /** String Info.
    */
     public String toString(){
-      if(rooms==null)
-         return "InteriorMap Id:"+interiorMapID+" Name:"+fullName+" maxIdRooms: no array";
-      else
-         return "InteriorMap Id:"+interiorMapID+" Name:"+fullName+" maxIdRooms:"+rooms.length;
+         return "Interior - "+fullName;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

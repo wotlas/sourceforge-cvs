@@ -34,7 +34,7 @@ import java.io.*;
  * @see wotlas.client.PlayerImpl
  */
 
-public interface Player
+public interface Player extends PreciseLocationOwner
 {
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -45,35 +45,11 @@ public interface Player
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To get the player location.
-    *
-    *  @return player WotlasLocation
-    */
-      public WotlasLocation getLocation();
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
    /** To set the player location.
     *
     *  @param wotlasLocation
     */
       public void setLocation( WotlasLocation wotlasLocation );
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To get the player's X position.
-   *
-   *  @return x
-   */
-      public int getX();
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To get the player's Y position.
-   *
-   *  @return y
-   */
-      public int getY();
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

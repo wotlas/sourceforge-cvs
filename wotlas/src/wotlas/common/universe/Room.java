@@ -31,7 +31,7 @@ import java.util.Hashtable;
   * @see wotlas.common.universe.RoomLink
   */
 
-public class Room
+public class Room implements WotlasMap
 {
  /*------------------------------------------------------------------------------------*/
 
@@ -338,6 +338,21 @@ public class Room
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To get the wotlas location associated to this Map.
+   *  @return associated Wotlas Location
+   */
+    public WotlasLocation getLocation() {
+       WotlasLocation thisLocation = new WotlasLocation();
+       thisLocation.setRoomID( roomID );
+       thisLocation.setInteriorMapID( myInteriorMap.getInteriorMapID() );
+       thisLocation.setBuildingID( myInteriorMap.getMyBuilding().getBuildingID() );
+       thisLocation.setTownMapID( myInteriorMap.getMyBuilding().getMyTownMap().getTownMapID() );
+       thisLocation.setWorldMapID( myInteriorMap.getMyBuilding().getMyTownMap().getMyWorldMap().getWorldMapID() );
+       return thisLocation;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** To init this room ( it rebuilds shortcuts ). DON'T CALL this method directly,
    *  use the init() method of the associated world.
    *
@@ -347,12 +362,7 @@ public class Room
     // 1 - inits
        this.myInteriorMap = myInteriorMap;
 
-       WotlasLocation thisLocation = new WotlasLocation();
-       thisLocation.setRoomID( roomID );
-       thisLocation.setInteriorMapID( myInteriorMap.getInteriorMapID() );
-       thisLocation.setBuildingID( myInteriorMap.getMyBuilding().getBuildingID() );
-       thisLocation.setTownMapID( myInteriorMap.getMyBuilding().getMyTownMap().getTownMapID() );
-       thisLocation.setWorldMapID( myInteriorMap.getMyBuilding().getMyTownMap().getMyWorldMap().getWorldMapID() );
+       WotlasLocation thisLocation = getLocation();
 
     // 2 - We reconstruct MapExit links...       
        if( mapExits != null )

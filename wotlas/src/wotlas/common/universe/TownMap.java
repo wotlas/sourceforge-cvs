@@ -35,7 +35,7 @@ import java.util.Hashtable;
   * @see wotlas.common.universe.Building
   */
  
-public class TownMap extends ScreenRectangle
+public class TownMap extends ScreenRectangle implements WotlasMap
 {
  /*------------------------------------------------------------------------------------*/
  
@@ -210,6 +210,15 @@ public class TownMap extends ScreenRectangle
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To get the wotlas location associated to this Map.
+   *  @return associated Wotlas Location
+   */
+    public WotlasLocation getLocation() {
+       return new WotlasLocation( myWorldMap.getWorldMapID(),townMapID );
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** To get the list of all the players on this map.
    * IMPORTANT: before ANY process on this list synchronize your code on the "players"
    * object :
@@ -289,8 +298,7 @@ public class TownMap extends ScreenRectangle
    *
    * @return a new Building object
    */
-    public Building addNewBuilding()
-    {
+    public Building addNewBuilding() {
        Building myBuilding = new Building();
     
        if (buildings == null) {
@@ -314,8 +322,7 @@ public class TownMap extends ScreenRectangle
    *
    * @return a new MapExit object
    */
-    public MapExit addMapExit(ScreenRectangle r)
-    {
+    public MapExit addMapExit(ScreenRectangle r) {
       MapExit myMapExit = new MapExit(r);
     
       if (mapExits == null) {
@@ -338,8 +345,7 @@ public class TownMap extends ScreenRectangle
    *
    * @param me MapExit object
    */
-    public void addMapExit( MapExit me )
-    {
+    public void addMapExit( MapExit me ) {
       if (mapExits == null) {
          mapExits = new MapExit[1];
          mapExits[0] = me;
@@ -374,15 +380,9 @@ public class TownMap extends ScreenRectangle
                 buildings[i].init( this );
 
     // 3 - MapExit inits
-       if( mapExits == null )
-           return;
+       if( mapExits==null ) return;
        
-       WotlasLocation thisLocation = new WotlasLocation();
-       thisLocation.setRoomID( -1 );
-       thisLocation.setInteriorMapID( -1 );
-       thisLocation.setBuildingID( -1 );
-       thisLocation.setTownMapID( townMapID );
-       thisLocation.setWorldMapID( myWorldMap.getWorldMapID() );
+       WotlasLocation thisLocation = new WotlasLocation( myWorldMap.getWorldMapID(),townMapID );
        
        for( int i=0; i<mapExits.length; i++ )
             mapExits[i].setMapExitLocation(thisLocation);
@@ -514,10 +514,7 @@ public class TownMap extends ScreenRectangle
   /** String Info.
    */
     public String toString(){
-      if(buildings==null)
-         return "TownMap tId:"+townMapID+" Name:"+fullName+" maxIdBuilding: no array";
-      else
-         return "TownMap tId:"+townMapID+" Name:"+fullName+" maxIdBuilding:"+buildings.length;
+         return "TownMap - "+fullName;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

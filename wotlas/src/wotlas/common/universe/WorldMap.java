@@ -33,7 +33,7 @@ import java.awt.Rectangle;
   * @see wotlas.common.universe.TownMap
   */
  
-public class WorldMap
+public class WorldMap implements WotlasMap
 {
  /*------------------------------------------------------------------------------------*/
  
@@ -264,6 +264,15 @@ public class WorldMap
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To get the wotlas location associated to this Map.
+   *  @return associated Wotlas Location
+   */
+    public WotlasLocation getLocation() {
+    	return new WotlasLocation( worldMapID );
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** To init this world ( it rebuilds shortcuts ). This method calls the init() method
    *  of the TownMaps. You must only call this method when ALL the world data has been
    *  loaded.
@@ -287,10 +296,7 @@ public class WorldMap
   /** String Info.
    */
     public String toString(){
-      if(townMaps==null)
-         return "WorldMap wId:"+worldMapID+" Name:"+fullName+" maxIdTowns: no array";
-      else
-         return "WorldMap wId:"+worldMapID+" Name:"+fullName+" maxIdTowns:"+townMaps.length;
+         return "World - "+fullName;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

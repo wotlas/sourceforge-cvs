@@ -57,7 +57,7 @@ public class WotlasLocation
  
  /*------------------------------------------------------------------------------------*/
 
-  /** Constructor
+  /** Constructor.
    */
     public WotlasLocation() {}
 

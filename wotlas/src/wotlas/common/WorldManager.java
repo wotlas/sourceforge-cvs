@@ -340,7 +340,7 @@ public class WorldManager
                 worldMaps[i].init();
    }
 
- /*------------------------------------------------------------------------------------*/
+ /*------------------------------------------------------------------------------------*
 
    // TODO
    
@@ -348,23 +348,63 @@ public class WorldManager
    	return null;
    }
 
- /*------------------------------------------------------------------------------------*/
+ /*------------------------------------------------------------------------------------*
 
   // TODO
   
    public String[] getWorldList() {
-   	return null;
+
+     // How many maps do we have ?
+       int worldCount = 0;
+   	
+       for( int i=0; i<worldMaps.length; i++ )
+            if( worldMaps[i]!=null )
+                worldCount++;
+
+       String worldNames[] = new String[worldCount];
+
+     // We fill the array
+       worldCount=0;
+     
+       for( int i=0; i<worldMaps.length; i++ )
+            if( worldMaps[i]!=null ){
+            	worldNames[worldCount] = worldMaps[i].getFullName();
+                worldCount++;
+            }
+
+       return worldNames;
    }
 
- /*------------------------------------------------------------------------------------*/
+ /*------------------------------------------------------------------------------------*
 
   // TODO
   
    public String[] getTownList(WotlasLocation world) {
-   	return null;
+
+     // We search for the given world
+
+     // How many maps do we have ?
+       int worldCount = 0;
+   	
+       for( int i=0; i<worldMaps.length; i++ )
+            if( worldMaps[i]!=null )
+                worldCount++;
+
+       String worldNames[] = new String[worldCount];
+
+     // We fill the array
+       worldCount=0;
+     
+       for( int i=0; i<worldMaps.length; i++ )
+            if( worldMaps[i]!=null ){
+            	worldNames[worldCount] = worldMaps[i].getFullName();
+                worldCount++;
+            }
+
+       return worldNames;
    }
 
- /*------------------------------------------------------------------------------------*/
+ /*------------------------------------------------------------------------------------*
 
   // TODO
   
@@ -372,7 +412,7 @@ public class WorldManager
    	return null;
    }
 
- /*------------------------------------------------------------------------------------*/
+ /*------------------------------------------------------------------------------------*
 
   // TODO
   
@@ -380,7 +420,7 @@ public class WorldManager
    	return null;
    }
 
- /*------------------------------------------------------------------------------------*/
+ /*------------------------------------------------------------------------------------*
 
   // TODO
   

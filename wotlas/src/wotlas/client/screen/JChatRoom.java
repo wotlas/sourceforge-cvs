@@ -247,6 +247,8 @@ public class JChatRoom extends JPanel implements MouseListener
     if (SwingUtilities.isRightMouseButton(e)) {
       if (DataManager.SHOW_DEBUG)
         System.out.println("\tright clic");
+      String selectedPlayerName = (String) playersJList.getSelectedValue();      
+      DataManager.getDefaultDataManager().getChatPanel().setInputBoxText("/msg:"+selectedPlayerName+":");      
 
     } else {
       if (DataManager.SHOW_DEBUG)

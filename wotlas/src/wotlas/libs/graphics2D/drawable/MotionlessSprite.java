@@ -22,7 +22,7 @@ package wotlas.libs.graphics2D.drawable;
 import wotlas.libs.graphics2D.*;
 import java.awt.*;
 
-/** A MotiolessSprite is a sprite that has no DataSupplier. It is used to just display
+/** A MotionlessSprite is a sprite that has no DataSupplier. It is used to just display
  *  an image on the GraphicsDirector. The image can change ( hasAnimation=true in constructor)
  *  but you can not change its (x,y) cordinates once set in the constructor.
  *
@@ -51,9 +51,14 @@ public class MotionlessSprite extends Drawable implements DrawableOwner {
    */
      private String owner;
 
+  /** Background cordinates if true, otherwise Screen Cordinates.
+   */
+     private boolean isBackgroundCordinates;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor with no Owner ( see the DrawableOwner interface ) for this sprite.
+   *  The cordinates x,y are supposed to be background cordinates.
    *
    * @param x sprite's x cordinate
    * @param y sprite's y cordinate
@@ -63,13 +68,13 @@ public class MotionlessSprite extends Drawable implements DrawableOwner {
    *        if set to false, we let the ImageIdentifier imageIndex set to 0.
    */
     public MotionlessSprite( int x, int y, ImageIdentifier image, short priority, boolean hasAnimation ) {
-        this( x, y, image, priority, hasAnimation, null );
+        this( x, y, image, priority, hasAnimation, null, true );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor with owner. The owner is just given as a string that should represent
-   *  its name.
+  /** Constructor with owner and cordinates reference. The owner is just given as
+   *  a string that should represent its name.
    *
    * @param x sprite's x cordinate
    * @param y sprite's y cordinate
@@ -78,9 +83,11 @@ public class MotionlessSprite extends Drawable implements DrawableOwner {
    * @param hasAnimation if set to true we use the given identifier as a base for an animation,
    *        if set to false, we let the ImageIdentifier imageIndex set to 0.
    * @param owner the owner's name
+   * @param isBackgroundCordinates set to true if x, y are background cordinates, to false if they are
+   *        screen cordinates.
    */
     public MotionlessSprite( int x, int y, ImageIdentifier image, short priority, boolean hasAnimation,
-                             String owner ) {
+                             String owner, boolean isBackgroundCordinates ) {
     	super();
     	r.x = x;
     	r.y = y;
@@ -90,6 +97,7 @@ public class MotionlessSprite extends Drawable implements DrawableOwner {
     	this.image = image;    	
         this.priority = priority;
         this.hasAnimation = hasAnimation;
+        this.isBackgroundCordinates = isBackgroundCordinates;
 
         if(hasAnimation)
            sprAnim = new Animation( image );
@@ -111,12 +119,19 @@ public class MotionlessSprite extends Drawable implements DrawableOwner {
         if( !r.intersects(screen) )
             return;
 
+        int myX = r.x, myY = r.y;
+
+        if(isBackgroundCordinates) {
+           myX -= screen.x;
+           myY -= screen.y;
+        }
+
         if( hasAnimation ) {
             gc.drawImage( ImageLibrary.getDefaultImageLibrary().getImage( sprAnim.getCurrentImage() ),
-                          r.x-screen.x, r.y-screen.y, null );
+                          myX, myY, null );
         }
         else
-            gc.drawImage( ImageLibrary.getDefaultImageLibrary().getImage( image ), r.x-screen.x, r.y-screen.y, null );
+            gc.drawImage( ImageLibrary.getDefaultImageLibrary().getImage( image ), myX, myY, null );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

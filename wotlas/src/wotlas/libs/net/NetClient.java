@@ -28,8 +28,10 @@ import wotlas.libs.net.message.ClientRegisterMessage;
 import wotlas.libs.net.message.ClientRegisterMsgBehaviour;
 
 import wotlas.utils.Debug;
+import wotlas.utils.Tools;
 
-/** A NetClient...
+/** A NetClient provides methods to initiate a connection with a server.
+ *  The default NetPersonality it provides is a LoparPersonality.
  *
  * @author Aldiss
  * @see wotlas.libs.net.NetPersonality
@@ -114,6 +116,8 @@ public class NetClient
                personality.waitForAMessageToArrive();
                personality.start();
                personality.pleaseReceiveAllMessagesNow();
+
+               Tools.waitTime(200); // if the NetReceiver is asynchronous
 
             // Success ?
                if(error_message!=null) {

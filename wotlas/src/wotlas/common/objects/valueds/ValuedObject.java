@@ -43,7 +43,7 @@ public class ValuedObject extends BaseObject
   * <tr><td>10 MK</td><td>1 GC</td><td>(silver MarK  - Gold Coin)</td></tr>
   * </table>
   */
-  	protected float value;
+    protected double value;
 
   /** The quantity owned.
    */
@@ -80,7 +80,7 @@ public class ValuedObject extends BaseObject
  /** Gets the value of the object. 
   * @return value
   */
-   public float getValue() { return value; }
+   public double getValue() { return value; }
    
  /** Sets the value of the object.
   * @param value the new value

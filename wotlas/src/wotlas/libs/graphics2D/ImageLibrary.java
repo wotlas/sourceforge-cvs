@@ -239,7 +239,7 @@ public class ImageLibrary {
    * @return ID
    * @exception IOException if the given name has a bad format.
    */
-   private int getIDFromName( String name ) throws IOException{
+   static private int getIDFromName( String name ) throws IOException{
 
        String s_val = null;
 
@@ -283,12 +283,12 @@ public class ImageLibrary {
   /** Given a directory of our database and a number ( format <name>-<number>-<option> )
    *  we return the immediate sub-directory name that has the specified number.
    *
-   * @param name directory name
+   * @param path directory path
    * @param idToFind <number> part of the format to find.
    * @return file name that has the given ID, null if not found
    * @exception IOException if the given path has file names with bad format.
    */
-   private String getNameFromID( String path, int idToFind ) throws IOException{
+   static private String getNameFromID( String path, int idToFind ) throws IOException{
 
       File list[] = new File(path).listFiles();
       
@@ -484,7 +484,7 @@ public class ImageLibrary {
    * @param the path to the image
    * @return the loaded image...
    */
-    static public Image loadImage( String path ) {
+    static Image loadImage( String path ) {
        Image im;
        MediaTracker tracker = new MediaTracker(new Label());
 
@@ -511,7 +511,7 @@ public class ImageLibrary {
    * @param the path to the images
    * @return the loaded images...
    */
-    static public Image[] loadImages( String path )
+    static Image[] loadImages( String path )
     {
       File list[] = new File(path).listFiles();
       
@@ -547,7 +547,7 @@ public class ImageLibrary {
    * @param the path to the image
    * @return the loaded buffered image...
    */
-    static public BufferedImage loadBufferedImage( String path )
+    static BufferedImage loadBufferedImage( String path )
     {
      // We load the image.
         Image im = loadImage( path );
@@ -576,7 +576,7 @@ public class ImageLibrary {
    * @param the path to the images
    * @return the loaded images transformed into buffered images...
    */
-    static public BufferedImage[] loadBufferedImages( String path )
+    static BufferedImage[] loadBufferedImages( String path )
     {
      // We load all the images.
         Image im[] = loadImages( path );
@@ -611,4 +611,71 @@ public class ImageLibrary {
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To load an image from its ImageId. The image is searched as follows :
+    *
+    *  - if there is an existing image library we try a getImage() call. It will eventually
+    *    load the image if it was not already in memory. If the given ImageIndentifier is
+    *    not a valid entry in the ImageLibrary an error message will be displayed on screen.
+    *
+    *  - if there is no existing image library ( or if the previous operation failed & returned
+    *    null ) we seek for the specified imageDatabasePath.
+    *
+    *  If these two tries fail we return null. If an ImageLibrary exists but the specified
+    *  ImageIndex is not a valid entry in this ImageIndex
+    *
+    * @param imID complete image identifier
+    * @param imageDatabasePath path to search for an Image databse if no Image Library is found.
+    * @return if found, a BufferedImage of the image, null otherwise.
+    * @exception IOException only if the image library has a bad format.
+    */
+    static public BufferedImage loadBufferedImage( ImageIdentifier imID, String imageDataBasePath )
+    throws IOException
+    {
+       // Step 1 - Any Image Library ?
+          if( imageLibrary!=null ) {
+              BufferedImage bufIm = imageLibrary.getImage(imID);
+
+              if( bufIm!=null )
+                  return bufIm;
+          }
+
+       // Step 2 - We seek in the specified database
+          String path = new String( imageDataBasePath );
+          String cat = getNameFromID( path, imID.imageCategory );
+          if( cat==null ) return null;
+
+          path += File.separator+cat;
+          String set = getNameFromID( path, imID.imageSet ); 
+          if( set==null ) return null;
+
+          path += File.separator+set;
+          String action = getNameFromID( path, imID.imageAction );
+          if( action==null ) return null;
+
+          path += File.separator+action;
+          File listIm[] = new File( path ).listFiles();
+          if( listIm==null ) return null;
+
+          for( int l=0; l<listIm.length; l++ ) {
+             if( listIm[l].isDirectory() || listIm[l].getName().lastIndexOf('-')<0 )
+                 continue;
+
+              String imageName = null;
+
+              if( listIm[l].getName().endsWith(".jpg") || listIm[l].getName().endsWith(".gif") )
+                  imageName = listIm[l].getName().substring( 0, listIm[l].getName().lastIndexOf('.') );
+              else
+                  continue;
+
+           // Is it the image we wanted ?
+              if(  getIDFromName( imageName ) == imID.imageIndex )
+                   return loadBufferedImage( path+File.separator+listIm[l].getName() );
+          }
+
+       return null; // not found
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }

@@ -23,7 +23,7 @@ package wotlas.libs.graphics2D;
 /** Identifies an image in the ImageLibrary.
  *
  * @author MasterBob, Aldiss
- * @see wotlas.libs.graphics2D.ImageLibrary
+ * @see wotlas.libs.graphics2D.ImageLibrary.
  */
 
 public class ImageIdentifier {
@@ -99,6 +99,24 @@ public class ImageIdentifier {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** Construction from an array. If the array size is 3 (no image index) we set the
+   *  imageIndex to zero. Otherwise the array size must be 4.
+   *
+   * @param arrayId the array must be [ imageCategory, imageSet, imageAct, imageIndex ]
+   *        with the imageIndex that can be optional (automatically set to zero if not
+   *        found ).
+   */
+   public ImageIdentifier( short arrayId[] ) {
+      imageCategory = arrayId[0];
+      imageSet = arrayId[1];
+      imageAction = arrayId[2];
+
+      if(arrayId.length==4)
+         imageIndex = arrayId[3];
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   // Getters & Setters
 
    public short getImageCategory() { return this.imageCategory; }
@@ -110,6 +128,18 @@ public class ImageIdentifier {
    public void setImageSet(short imSet) { this.imageSet = imSet; }
    public void setImageAction(short imAct) { this.imageAction = imAct; }
    public void setImageIndex(short imInd) { this.imageIndex = imInd;}
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Returns this ImageIdentifier as an array of four elements :
+   *  [ imageCategory, imageSet, imageAct, imageIndex ].
+   *
+   *  @return array as described above.
+   */
+    public short[] getArray() {
+        short array[] = { imageCategory, imageSet, imageAction, imageIndex };
+        return array;
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

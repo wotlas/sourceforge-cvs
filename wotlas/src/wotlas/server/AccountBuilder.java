@@ -22,7 +22,11 @@ package wotlas.server;
 import wotlas.common.character.*;
 import wotlas.common.message.account.*;
 import wotlas.utils.*;
+
 import wotlas.libs.net.*;
+import wotlas.libs.wizard.*;
+
+import java.lang.reflect.Method;
 
 
 /** An AccountBuilder helps the creation of a GameAccount for a client. Here is
@@ -42,17 +46,9 @@ import wotlas.libs.net.*;
  *  5 - The client connection is then closed and the AccountBuilder handled to the
  *      garbage collector. The client can now connect to the GameServer.<br><p>
  *
- * The order of the messages to send is :<br>
  *
- * - PasswordAndLoginMessage( String login, String password )
- * - WotCharacterClassMessage( String className, byte wotCharacterStatus );
- * - VisualPropertiesMessage( byte hairColor )
- * - PlayerNamesMessage( String playerName, String fullPlayerName )
- * - AccountCreationMessage() validates the account creation
- *
- * If the creation is successful, the accountServer sends a AccountCreatedMessage
- * containing the player's IDs. If any error occurs an AccountCreationFailedMessage
- * is sent AND the connection is immediately closed.
+ * If the creation is successful, the accountServer sends a AccountCreationEndedMessage
+ * containing the player's IDs.
  *
  * @author Aldiss
  * @see wotlas.server.AccountServer
@@ -62,48 +58,6 @@ import wotlas.libs.net.*;
 public class AccountBuilder implements NetConnectionListener
 {
  /*------------------------------------------------------------------------------------*/
-
-    /** Account Empty State (not initialized)
-     */
-       static final public byte ACCOUNT_EMPTY_STATE = 0;
-
-    /** ADD HERE OTHER ACCOUNT STATE (player quizz, quizz done ... )
-     *  But BEWARE : the state numbers must follow : 1, 2, 3, etc...
-     */
-
-    /** Account awaiting login & password to be set.
-     */
-       static final public byte ACCOUNT_LOGIN_PASSWD_STATE = 1;
-
-    /** Account awaiting player's visual properties to be set
-     */
-       static final public byte ACCOUNT_WOTCHARACTER_CLASS_STATE = 2;
-
-    /** Account awaiting player's visual properties to be set
-     */
-       static final public byte ACCOUNT_VISUAL_PROPERTIES_STATE = 3;
-
-    /** Account awaiting player name & full player name to be set.
-     */
-       static final public byte ACCOUNT_PLAYER_NAMES_STATE = 4;
-
-    /** Account awaiting player past.
-     */
-       static final public byte ACCOUNT_PLAYER_PAST_STATE = 5;
-
-    /** Account Ready State (account ready to be created)
-     */
-       static final public byte ACCOUNT_READY_STATE = 6;
-
-    /** Account Created State (account has been created)
-     */
-       static final public byte ACCOUNT_CREATED_STATE = 7;
-
- /*------------------------------------------------------------------------------------*/
-
-   /** Actual State of the creation process. The possible values are described above.
-    */
-     private byte state;
 
    /** The Game Account we are building
     */
@@ -123,25 +77,22 @@ public class AccountBuilder implements NetConnectionListener
     */
      private AccountServer accountServer;
  
-   /** Can we go to the previous state ?
+   /** Our current step.
     */
-     private boolean canGoToPreviousState;
- 
+     private JWizardStepParameters currentParameters;
+
  /*------------------------------------------------------------------------------------*/
 
    /** Constructor.
     */
       public AccountBuilder( AccountServer accountServer ) {
            this.accountServer = accountServer;
+           currentParameters=null;
 
       	// the account is empty for now...
            account = new GameAccount();
            player = new PlayerImpl();
            player.setDefaultPlayerLocation();
-
-           canGoToPreviousState = false;
-
-           state = ACCOUNT_LOGIN_PASSWD_STATE;   // first state...
       }
 
  /*------------------------------------------------------------------------------------*/
@@ -167,155 +118,204 @@ public class AccountBuilder implements NetConnectionListener
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To revert to the previous state.
+   /** Called to start the account build.
     */
-     public void revertToPreviousState() {
-     	if( canGoToPreviousState ) {
-     	    state--;
-            if(state==ACCOUNT_LOGIN_PASSWD_STATE)
-               canGoToPreviousState = false;
-        }
-     	else
-     	    stateError();
-     }
+     public void startFirstStep() {
+     	 if(currentParameters!=null)
+     	    return;  // can only call this method once
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-   /** Method called by NetMessages to set login and password.
-    */
-     public void setLoginAndPassword( String login, String password ) {
-     	if(state!=ACCOUNT_LOGIN_PASSWD_STATE) {
-           stateError();
-           return;
-        }
-
-     	account.setLogin(login);
-     	account.setPassword(password);
-     	canGoToPreviousState = true;
-        state = ACCOUNT_WOTCHARACTER_CLASS_STATE;
+     	 currentParameters = accountServer.getStepFactory().getStep( AccountStepFactory.FIRST_STEP );
+         personality.queueMessage( new AccountStepMessage(
+                                           currentParameters.getCopyWithNoServerProps() ) );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Method called by NetMessages to set WotCharacterClass
+   /** To return to the previous step.
     */
-     public void setWotCharacterClass( String className, byte wotCharacterStatus ) {
-     	if(state!=ACCOUNT_WOTCHARACTER_CLASS_STATE) {
-           stateError();
-           return;
-        }
+     public void returnToPreviousStep() {
 
-        Object obj = Tools.getInstance( className );
+        // A - Do we have a previous step to call ?
+           if( !currentParameters.getIsPrevButtonEnabled() ) {
+               sendStepError("Previous command is not enabled for this step !!");
+               return;
+           }
 
-        if( obj==null || !(obj instanceof WotCharacter) ) {
-           stateError();
-           return;
-        }
+           String previous = currentParameters.getProperty("server.previous");
+                 
+           if(previous==null) {
+              sendStepError("Previous step not found !");
+              return;
+           }
 
-        WotCharacter wotCharacter = (WotCharacter) obj; 
+        // B - We load the previous step and send it to the client
+           currentParameters = accountServer.getStepFactory().getStep( previous );
 
-        if( !(wotCharacter instanceof AesSedai) ) {
-           stateError();
-           return;
-        }
+           if(currentParameters==null) {
+              sendStepError("Internal Error. This server was badly configurated.\nPlease mail this server's administrator ! (code: #stpNotFnd)");
+              return;
+           }
 
-        if( !AesSedai.isValidAesSedaiStatus( wotCharacterStatus ) ) {
-           stateError();
-           return;
-        }
-
-        ( (AesSedai) wotCharacter ).setAesSedaiStatus( wotCharacterStatus );
-     	player.setWotCharacter( wotCharacter );
-     	canGoToPreviousState = true;
-        state = ACCOUNT_VISUAL_PROPERTIES_STATE;
+           personality.queueMessage( new AccountStepMessage(
+                                          currentParameters.getCopyWithNoServerProps() ) );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Method called by NetMessages to set the visual properties of the player.
-    *
-    * @param hairColor ID found in wotlas.common.character.Human
+   /** To parse the result data and move to the next step.
     */
-     public void setVisualProperties( byte hairColor ) {
-     	if(state!=ACCOUNT_VISUAL_PROPERTIES_STATE) {
-           stateError();
-           return;
-        }
+     public void setStepResultData( JWizardStepParameters resultParameters ) {
 
-        if( ! (player.getWotCharacter() instanceof Human)  ) {
-           stateError();
-           return;
-        }
+       // A - we retrieve the data properties
+          String resultPropsKey[] = resultParameters.getStepPropertiesKey();
+          if(resultPropsKey==null)
+             resultPropsKey = new String[0];
 
-        Human h = (Human) player.getWotCharacter();
+       // B - we call the associated methods of the data properties
+          String next = null;
+       
+          for( int i=0; i<resultPropsKey.length; i++ )
+               if( resultPropsKey[i].startsWith("data.") ) {
+               	  // 1 - we get the suffix
+               	     String suffix = resultPropsKey[i].substring(
+               	                                  resultPropsKey[i].indexOf('.')+1,
+               	                                  resultPropsKey[i].length() );
+                  // 2 - we get the data
+               	     String data = resultParameters.getStepPropertiesValue()[i];
+               	     
+               	     if( suffix.equals("choice") ) {
+               	         int ind = -1;
 
-        if( !Human.isValidHairColor( hairColor ) ) {
-           stateError();
-           return;
-        }
+                         try{
+                            ind = Integer.parseInt(data);
+                         }
+                         catch(Exception ex) {
+                            sendStepError("Selection not valid !");
+                            return;
+                         }
 
-        h.setHairColor( hairColor );
-     	canGoToPreviousState = true;
-        state = ACCOUNT_PLAYER_NAMES_STATE;
+                         suffix = "choice"+ind;
+                         data = currentParameters.getProperty("init."+suffix);
+                         
+                         if(data==null) {
+                            sendStepError("Selection not valid !");
+                            return;
+                         }
+                     }
+
+                  // 3 - Check for a method to call on this data
+                     String method = currentParameters.getProperty("server."+suffix+".method");
+
+                     if(method!=null && !invokeMethod(method, data) )
+                     	return;
+
+                  // 4 - Check for default method to call on this data
+                     method = currentParameters.getProperty("server.method");
+
+                     if(method!=null && !invokeMethod(method, data) )
+                     	return;
+
+                  // 5 - Check for link "next" step
+                     next = currentParameters.getProperty("server."+suffix+".next");
+               }
+
+        // C - Do we have a next step to call ?
+           if(next==null && !currentParameters.getIsLastStep()) {
+              // we search for default
+                 next = currentParameters.getProperty("server.next");
+                 
+                 if(next==null) {
+                    sendStepError("Internal Error. This server was badly configurated.\nPlease mail this server's administrator ! (code: #nexStpNon)");
+                    return;
+                 }
+           }
+           else if( currentParameters.getIsLastStep() ) {
+               // we create the account and return
+                  try{
+                     createAccount();
+                  }catch( Exception ex ) {
+                     sendStepError("Failed to create account : "+ex.getMessage());
+                  }
+                 return;
+           }
+
+        // D - We load the next step and send it to the client
+           currentParameters = accountServer.getStepFactory().getStep( next );
+
+           if(currentParameters==null) {
+              sendStepError("Internal Error. This server was badly configurated.\nPlease mail this server's administrator ! (code: #nexStpFai)");
+              return;
+           }
+
+           personality.queueMessage( new AccountStepMessage(
+                                          currentParameters.getCopyWithNoServerProps() ) );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Method called by NetMessages to set player names.
-    */
-     public void setPlayerNames( String playerName, String fullPlayerName, String playerEmail ) {
-     	if(state!=ACCOUNT_PLAYER_NAMES_STATE) {
-           stateError();
-           return;
-        }
+    /** To invoke a method of the 'void XXXX(String data)' type.
+     *  @return true if the method call succeeded, false if it failed and an error msg was
+     *  sent.
+     */
+     private boolean invokeMethod( String method, String data ) {
+        try{
+            Class cparams[] = new Class[1];
+            cparams[0] = String.class;
+            Method m = getClass().getMethod(method, cparams);
 
-     	player.setPlayerName(playerName);
-     	player.setFullPlayerName(fullPlayerName);                
-     	account.setEmail(playerEmail);
-     	canGoToPreviousState = true;
-        state = ACCOUNT_PLAYER_PAST_STATE;
+            if(m==null) {
+               sendStepError("Internal Error. This server was badly configurated.\nPlease mail this server's administrator ! (code: #metNofou)");
+               return false;
+            }
+                     	       
+            Object params[] = new Object[1];
+            params[0] = data;
+            m.invoke(this,params);
+            return true;
+        }
+        catch( Exception ex ) {
+            sendStepError("Error : "+ex.getMessage());
+            return false;
+        }
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Method called by NetMessages to set player names.
+   /** A small method to report a step error.
     */
-     public void setPlayerPast( String playerPast ) {
-     	if(state!=ACCOUNT_PLAYER_PAST_STATE) {
-           stateError();
-           return;
-        }
-
-     	player.setPlayerPast(playerPast);
-     	canGoToPreviousState = true;
-        state = ACCOUNT_READY_STATE;
+     public void sendStepError( String message ) {
+        personality.queueMessage( new StepErrorMessage( message ) );
+        Debug.signal( Debug.ERROR, this, "An error occured during step creation : "+message );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Method called by NetMessages to create the account
+   /** To cancel the account's creation.
     */
-     public void createAccount() {
-     	if(state!=ACCOUNT_READY_STATE) {
-           stateError();
-           return;
-        }
+     public void cancelCreation() {
+        Debug.signal( Debug.NOTICE, this, "Account Creation cancelled..." );
+        personality.closeConnection();
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Method called to create the account
+    *  This method sends back to the client a AccountCreationEnded message on success.
+    */
+     public void createAccount() throws AccountException {
 
         AccountManager accountManager = DataManager.getDefaultDataManager().getAccountManager();
 
-     // final inits
+     // 1 - We finalize inits
         account.setPlayer( player );
         account.setLocalClientID( accountServer.getNewLocalClientID() );
         account.setOriginalServerID( ServerManager.getDefaultServerManager().getServerConfig().getServerID() );
         account.setLastConnectionTimeNow();
-
         player.setPrimaryKey( account.getAccountName() );
 
-     // account creation
-        if( accountManager.checkAccountName( account.getAccountName() ) ) {
-              personality.queueMessage( new AccountCreationFailedMessage( "Account already exists. Please change your login." ) );
-              return;
-        }
+     // 2 - We add the account to the game server
+        if( accountManager.checkAccountName( account.getAccountName() ) )
+            throw new AccountException("Internal Error. This server was badly configurated.\nPlease mail this server's administrator ! (code: #dupAcID)");
 
         if( accountManager.createAccount( account ) ) {
            // we add the player to the world...
@@ -325,9 +325,8 @@ public class AccountBuilder implements NetConnectionListener
               Debug.signal( Debug.NOTICE, this, "Added new client account to the game." );
 
            // we send a Success Message
-              personality.queueMessage( new AccountCreatedMessage(account.getLocalClientID(),
-                                                                  account.getOriginalServerID() ) );
-
+              personality.queueMessage( new AccountCreationEndedMessage(account.getLocalClientID(),
+                                                                        account.getOriginalServerID() ) );
            // And close the connection
               personality.closeConnection();
         }
@@ -335,42 +334,145 @@ public class AccountBuilder implements NetConnectionListener
            // Account not created for some reason
            // we announce the bad news to the client
            // but we don't close the connection...
-              personality.queueMessage( new AccountCreationFailedMessage( "internal failure" ) );
+              throw new AccountException("Internal Error. This server was badly configurated.\nPlease mail this server's administrator ! (code: #creFaiDisk)");
         }
-
      }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ /*------------------------------------------------------------------------------------*/
+ /*------------------------------------------------------------------------------------*/
+
+  /***
+   ***  METHODS THAT CAN BE INVOKED DYNAMICALY
+   ***
+   ***  Their prototype must be : public void setXXXX( String data ) throws AccountException
+   ***
+   ***/
  
-   /** A small method to report a state error and cancel the account creation
+   /** Method to set the player's login.
     */
-     public void stateError() {
-        state=ACCOUNT_EMPTY_STATE;
-        personality.queueMessage( new AccountCreationFailedMessage( "bad state detected ! please retry." ) );
-        Debug.signal( Debug.ERROR, this, "Bad State Detected During Account Creation: state "+state );
-        personality.closeConnection();
+     public void setLogin( String data ) throws AccountException {
+     	account.setLogin( data );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** A small to cancel the account's creation.
+   /** Method to set the player's password.
     */
-     public void cancelCreation() {
-        state=ACCOUNT_EMPTY_STATE;
-        Debug.signal( Debug.NOTICE, this, "Account Creation cancelled" );
-        personality.closeConnection();
+     public void setPassword( String data ) throws AccountException {
+     	account.setPassword( data );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Method called by NetMessages to recover an account
+   /** Method called to set the WotCharacterClass
     */
-     public void recoverAccount(String key, String playerName) {
-        System.out.println(key);
-        System.out.println(playerName);
+     public void setWotCharacterClass( String data ) throws AccountException {
+
+      // 1 - Select Class
+        String className="wotlas.common.character.";
+
+        if(data.equals("Aes Sedai"))
+           className += "AesSedai";
+        else if(data.equals("Warder"))
+           className += "Warder";
+        else
+           throw new AccountException("Unknown character class !");
+
+      // 2 - Create Instance
+        Object obj = Tools.getInstance( className );
+
+        if( obj==null || !(obj instanceof WotCharacter) )
+           throw new AccountException("Error during character class creation !");
+
+      // 3 - Set the player's character
+        WotCharacter wotCharacter = (WotCharacter) obj;
+     	player.setWotCharacter( wotCharacter );
      }
-    
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Method called to set the WotCharacterClass rank.
+    */
+     public void setWotCharacterRank( String data ) throws AccountException {
+
+      // 1 - Set the rank
+        WotCharacter wotCharacter = (WotCharacter) player.getWotCharacter(); 
+
+        if(wotCharacter==null)
+           throw new AccountException("No character created !");
+
+        wotCharacter.setCharacterRank(data);
+
+      // 2 - check that it was set        
+        if( !data.equals( wotCharacter.getCharacterRank() ) )
+            throw new AccountException("Unknown rank for this character class !");
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Method called to set the player hair color. (for humans only).
+    */
+     public void setHairColor( String data ) throws AccountException {
+     
+       // 1 - Get Human character
+        WotCharacter wotCharacter = (WotCharacter) player.getWotCharacter(); 
+
+        if(wotCharacter==null)
+           throw new AccountException("No character created !");
+
+        if( ! (wotCharacter instanceof Human)  )
+           throw new AccountException("Your character is not Human !");
+
+        Human human = (Human) wotCharacter;
+        human.setHairColor(data);
+
+      // 2 - check that it was set        
+        if( !data.equals( human.getHairColor() ) )
+            throw new AccountException("Unknown hair color !");
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Method called to set the player's name.
+    */
+     public void setPlayerName( String data )  throws AccountException {
+     	player.setPlayerName(data);
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Method called to set the player's full name.
+    */
+     public void setFullPlayerName( String data )  throws AccountException {
+     	player.setFullPlayerName(data);                
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Method called to set the player's email.
+    */
+     public void setEmail( String data ) throws AccountException {
+     	account.setEmail(data);
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Method called to set the player's past.
+    */
+     public void setPlayerPast( String data ) throws AccountException {
+     	player.setPlayerPast(data);
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Method called to set the player's past option.
+    */
+     public void setPlayerPastOption( String data ) throws AccountException {
+     	if(data.equals("true"))
+           player.setPlayerPast(""); // past will be set later
+     }
+
+ /*------------------------------------------------------------------------------------*/
+ /*------------------------------------------------------------------------------------*/
 
 }
-

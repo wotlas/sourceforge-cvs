@@ -26,19 +26,20 @@ import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.common.message.account.*;
 import wotlas.server.AccountBuilder;
 
+
 /**
- * Associated behaviour to the AccountCreationMessage...
+ * Associated behaviour to the PreviousStepMessage...
  *
  * @author Aldiss
  */
 
-public class AccountCreationMsgBehaviour extends AccountCreationMessage implements NetMessageBehaviour
+public class PreviousStepMsgBehaviour extends PreviousStepMessage implements NetMessageBehaviour
 {
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
    */
-     public AccountCreationMsgBehaviour() {
+     public PreviousStepMsgBehaviour() {
           super();
      }
 
@@ -49,11 +50,10 @@ public class AccountCreationMsgBehaviour extends AccountCreationMessage implemen
    * @param sessionContext an object giving specific access to other objects needed to process
    *        this message.
    */
-     public void doBehaviour( Object sessionContext ) {
-
+     public void doBehaviour( Object sessionContext) {
         // the sessionContext is here an AccountBuilder
            AccountBuilder builder = (AccountBuilder) sessionContext;
-           builder.startFirstStep();
+           builder.returnToPreviousStep();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

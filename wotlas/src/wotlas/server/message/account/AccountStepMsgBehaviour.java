@@ -27,18 +27,18 @@ import wotlas.common.message.account.*;
 import wotlas.server.AccountBuilder;
 
 /**
- * Associated behaviour to the AccountCreationMessage...
+ * Associated behaviour to the AccountStepMessage...
  *
  * @author Aldiss
  */
 
-public class AccountCreationMsgBehaviour extends AccountCreationMessage implements NetMessageBehaviour
+public class AccountStepMsgBehaviour extends AccountStepMessage implements NetMessageBehaviour
 {
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
    */
-     public AccountCreationMsgBehaviour() {
+     public AccountStepMsgBehaviour() {
           super();
      }
 
@@ -53,7 +53,7 @@ public class AccountCreationMsgBehaviour extends AccountCreationMessage implemen
 
         // the sessionContext is here an AccountBuilder
            AccountBuilder builder = (AccountBuilder) sessionContext;
-           builder.startFirstStep();
+           builder.setStepResultData( parameters );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -56,6 +56,10 @@ public class AccountServer extends NetServer implements ErrorCodeList
    */
     private int clientCounter;      
 
+  /** Factory for building step parameters.
+   */
+    private AccountStepFactory stepFactory;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor (see wotlas.libs.net.NetServer for details)
@@ -68,8 +72,15 @@ public class AccountServer extends NetServer implements ErrorCodeList
     public AccountServer( String host, int port, String packages[], int nbMaxSockets ) {
        super( host, port, packages );
        setMaximumOpenedSockets( nbMaxSockets );
-     
-     
+
+     // we create our wizars step factory
+        stepFactory = new AccountStepFactory( ServerDirector.getDatabasePath() );
+
+        if(stepFactory.getStep(AccountStepFactory.FIRST_STEP)==null ) {
+           Debug.signal(Debug.FAILURE, this, "First step missing in the account wizard !");
+           Debug.exit();
+        }
+
      // we load the clientCounter from the ACCOUNT_CONFIG
         Properties props = FileTools.loadPropertiesFile( ACCOUNT_CONFIG );
 
@@ -200,6 +211,14 @@ public class AccountServer extends NetServer implements ErrorCodeList
 
       // we return the new value
          return clientCounter;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the factory for building step parameters.
+   */
+    public AccountStepFactory getStepFactory() {
+    	return stepFactory;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

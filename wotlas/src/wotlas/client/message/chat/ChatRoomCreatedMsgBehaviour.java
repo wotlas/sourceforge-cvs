@@ -69,7 +69,7 @@ public class ChatRoomCreatedMsgBehaviour extends ChatRoomCreatedMessage implemen
     dataManager.getChatPanel().addJChatRoom(chatRoom);
     
     String[] chatPlayers = {"tic","tac","toc"};
-    player.getChatList().getCurrentJChatRoom().setPlayers(chatPlayers);
+    //player.getChatList().getCurrentJChatRoom().setPlayers(chatPlayers);
 
     }
 

@@ -389,7 +389,7 @@ public class TileManagerFakeIso extends TileMapManager{
    * @return the ~Building:others tilemap the player is heading to (if he has reached it, or if there
    *         are any), null if none.
    */
-     public MapExit isIntersectingMapExit( int destX, int destY, Rectangle rCurrent ) {
+    public MapExit isIntersectingMapExit( int destX, int destY, Rectangle rCurrent ) {
         if(mapExits==null)
            return null;
 
@@ -399,9 +399,13 @@ public class TileManagerFakeIso extends TileMapManager{
                  return mapExits[i]; // mapExits reached
 
         return null;
-     }
+    }
 
-     public boolean[][] getMapMask() {
-         return mapBackgroundDataMask;
-     }
+    public boolean[][] getMapMask() {
+        return mapBackgroundDataMask;
+    }
+    
+    public void freeMapBackGroundData(){
+        mapBackgroundData = null;
+    }
 }

@@ -78,11 +78,11 @@ public class WorldGenerator {
            
            TileManagerFlat manager = new TileManagerFlat(  tileMap );
            manager.setMap( 10, 20, TileMap.PIXEL_32, (byte)0, (byte)121 );
-           manager.setMapPoint(3,2,0,0);
-           manager.setMapPoint(4,2,1,0);
-           manager.setMapPoint(5,3,2,0);
-           manager.setMapPoint(6,4,3,0);
-           manager.setMapPoint(7,2,4,0);
+           manager.setMapPoint(3,2,0,0,TileMap.TILE_FREE);
+           manager.setMapPoint(4,2,1,0,TileMap.TILE_FREE);
+           manager.setMapPoint(5,2,2,0,TileMap.TILE_FREE);
+           manager.setMapPoint(6,2,3,0,TileMap.TILE_FREE);
+           manager.setMapPoint(5,2,4,0,TileMap.TILE_FREE);
            tileMap.setManager( (TileMapManager)manager );
            
            MapExit mapExit1 = null;

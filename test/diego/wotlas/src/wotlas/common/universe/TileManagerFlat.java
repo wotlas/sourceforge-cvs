@@ -136,7 +136,7 @@ public class TileManagerFlat extends TileMapManager{
         setMap( x, y, mapTileDim, basicFloorId, basicFloorIdTileNr );
     }
  
-    public void setMap( int x, int y, Dimension mapTileDim, byte basicFloorId, byte basicFloorIdTileNr ){
+    public void setMap( int x, int y, Dimension mapTileDim, byte basicFloorId, byte basicFloorIdTileNr){
         this.basicFloorId = basicFloorId;
         this.basicFloorIdTileNr = basicFloorIdTileNr;
         this.tileMap.mapTileDim = mapTileDim;
@@ -154,7 +154,7 @@ public class TileManagerFlat extends TileMapManager{
             }
     }
     
-    public void setMapPoint(int x, int y, int map, int tileNr) {
+    public void setMapPoint(int x, int y, int map, int tileNr, boolean freeOrNot ) {
         if( x >= tileMap.getMapSize().width 
         || y >= tileMap.getMapSize().height) {
             Debug.signal( Debug.WARNING, null, "Tried to change a point inside of map, with coordinates over mapSize" );
@@ -168,7 +168,7 @@ public class TileManagerFlat extends TileMapManager{
          */
         mapBackgroundData[x][y][0] = (byte) map;
         mapBackgroundData[x][y][1] = (byte) tileNr;
-        mapBackgroundDataMask[x][y] = TileMap.TILE_FREE;
+        mapBackgroundDataMask[x][y] = freeOrNot;
     }
 
     public byte[][][] getMapBackGroundData() {
@@ -358,8 +358,6 @@ public class TileManagerFlat extends TileMapManager{
             return null;
 
         for( int i=0; i<mapExits.length; i++ ){
-//            System.out.println("got there :"+mapExits[i].toRectangle()
-//            +" "+rCurrent);
             if( mapExits[i].toRectangle().contains(destX,destY)
             && mapExits[i].toRectangle().intersects( rCurrent ) )
                 return mapExits[i]; // mapExits reached
@@ -369,5 +367,9 @@ public class TileManagerFlat extends TileMapManager{
 
     public boolean[][] getMapMask() {
         return mapBackgroundDataMask;
+    }
+    
+    public void freeMapBackGroundData(){
+        mapBackgroundData = null;
     }
 }

@@ -50,6 +50,8 @@ public class WorldManager {
 
  /*------------------------------------------------------------------------------------*/
 
+    public static byte PRELOADER_STATUS = PreloaderEnabled.LOAD_ALL;
+    
   /** Game Universe Name Format
    */
     public final static String DEFAULT_UNIVERSE = "default";
@@ -586,6 +588,8 @@ public class WorldManager {
              for( int t=0; t<tileMapList.length; t++ ) {
                // we load the tileMap objects
                   TileMap tileMap = (TileMap) rManager.RestoreObject( tileMapList[t] + TILEMAP_FILE );
+                  tileMap.SetPreloader(tileMapList[t] + TILEMAP_FILE, WorldManager.PRELOADER_STATUS);
+                  tileMap.initPreloader();
                   if( tileMap==null ) {
                       Debug.signal(Debug.WARNING, this, "Failed to load TileMap : "+tileMapList[t]);
                       continue;
@@ -602,14 +606,10 @@ public class WorldManager {
              String areaMapList[] = rManager.listUniverseDirectories( worldList[w], AREA_EXT);
              for( int index=0; index<areaMapList.length; index++ ) {
                   String insideAreaTileMapList[] = rManager.listUniverseFiles( areaMapList[index], TILEMAP_EXT );
-                  /*
-                  if( pleaseLoadTreeForEditor ) {
-                      area = new DefaultMutableTreeNode( areaMapList[index] );
-                      EditorPlugIn.treeOfTileMapNode.add(area);
-                  }
-                   */
                   for( int index2=0; index2<insideAreaTileMapList.length; index2++ ) {
                       TileMap tileMap = (TileMap) rManager.RestoreObject( insideAreaTileMapList[index2] );
+                      tileMap.SetPreloader(insideAreaTileMapList[index2], WorldManager.PRELOADER_STATUS);
+                      tileMap.initPreloader();
                       if( tileMap==null ) {
                           Debug.signal(Debug.WARNING, this, "Failed to load TileMap : "+insideAreaTileMapList[index2]);
                           continue;

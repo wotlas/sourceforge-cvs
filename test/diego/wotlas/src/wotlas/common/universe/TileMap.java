@@ -37,8 +37,7 @@ import java.awt.*;
   * @see wotlas.common.universe.WorldMap
   * @see wotlas.common.universe.Building
   */
- 
-public class TileMap extends ScreenRectangle implements WotlasMap,BackupReady {
+public class TileMap extends PreloaderEnabled implements WotlasMap,BackupReady {
     
     /** id used in Serialized interface.
      */
@@ -106,9 +105,9 @@ public class TileMap extends ScreenRectangle implements WotlasMap,BackupReady {
     private String musicName;
     
     private GroupOfGraphics[] groupOfGraphics;
-
-  /** Link to the worldMap we belong to...
-   */
+    
+    /** Link to the worldMap we belong to...
+    */
     private transient WorldMap myWorldMap;
 
   /** Our message router. Owns the list of players of this map (not in buildings).
@@ -283,7 +282,7 @@ public class TileMap extends ScreenRectangle implements WotlasMap,BackupReady {
   /** id version of data, used in serialized persistance.
    */
     public int ExternalizeGetVersion(){
-        return 3;
+        return 1;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -298,13 +297,13 @@ public class TileMap extends ScreenRectangle implements WotlasMap,BackupReady {
         objectOutput.writeObject( areaName );
         objectOutput.writeObject( fullName );
         objectOutput.writeObject( shortName );
-        objectOutput.writeObject( musicName );
-        objectOutput.writeObject( smallTileMapImage );
         objectOutput.writeObject( insertionPoint );
+        objectOutput.writeByte( manager.getMapType() );
+        objectOutput.writeObject( smallTileMapImage );
+        objectOutput.writeObject( musicName );
         objectOutput.writeObject( mapTileDim );
         objectOutput.writeObject( groupOfGraphics );
         objectOutput.writeObject( mapSize );
-        objectOutput.writeByte( manager.getMapType() );
         objectOutput.writeObject( manager );
         objectOutput.writeObject( encounterSchedules ); 
     }
@@ -322,21 +321,24 @@ public class TileMap extends ScreenRectangle implements WotlasMap,BackupReady {
             areaName = ( String ) objectInput.readObject();
             fullName = ( String ) objectInput.readObject();
             shortName = ( String ) objectInput.readObject();
-            musicName = ( String ) objectInput.readObject();
-            smallTileMapImage = ( ImageIdentifier ) objectInput.readObject();
             insertionPoint = ( ScreenPoint ) objectInput.readObject();
+            mapType = objectInput.readByte();
+            smallTileMapImage = ( ImageIdentifier ) objectInput.readObject();
+            musicName = ( String ) objectInput.readObject();
+            if( loadStatus == LOAD_MINIMUM_DATA)
+                return;
             mapTileDim = ( Dimension ) objectInput.readObject();
             groupOfGraphics = ( GroupOfGraphics[] ) objectInput.readObject();
             mapSize = ( Dimension ) objectInput.readObject();
-            mapType = objectInput.readByte();
             manager = ( TileMapManager ) objectInput.readObject();
             manager.setTileMap(this);
+            if( loadStatus == LOAD_SERVER_DATA){
+                manager.freeMapBackGroundData();
+            }
+            if( loadStatus == LOAD_CLIENT_DATA)
+                return;
             encounterSchedules = ( EncounterSchedule[] ) objectInput.readObject();
-        } if( IdTmp == 2 ){
-            System.out.println("old data");
-        } if( IdTmp == 1 ){
-            System.out.println("old data");
-        } else {
+       } else {
             // to do.... when new version
         }
     }
@@ -422,5 +424,28 @@ public class TileMap extends ScreenRectangle implements WotlasMap,BackupReady {
             encounterSchedules = myEncounterSchedules;
         }
         return my;
+    }
+    
+    
+    /* -------------------- INTERNAL LOAD/UNLOAD DATA -------------------- */
+    
+    public void InternalUnloadAll() {
+    
+    }
+    
+    public void InternalLoadMinimum() {
+    
+    }
+    
+    public void InternalLoadClient() {
+    
+    }
+    
+    public void InternalLoadServer() {
+    
+    }
+    
+    public void InternalLoadAll() {
+    
     }
 }

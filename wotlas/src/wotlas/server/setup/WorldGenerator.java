@@ -1615,7 +1615,7 @@ public class WorldGenerator {
            map.setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/ways-17" ) );
            map.setImageWidth(700);
            map.setImageHeight(400);
-           map.setImageRegionWidth(175);
+           map.setImageRegionWidth(700);
            map.setImageRegionHeight(400);
            map.setMusicName("ways.mid");
 

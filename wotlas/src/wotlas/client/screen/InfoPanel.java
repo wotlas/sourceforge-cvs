@@ -41,6 +41,8 @@ public class InfoPanel extends JPanel
   private boolean savePastButtonDisplayed  = false;
 
   private AButton savePastButton;
+ 
+  private JPanel whitePanel;
   
  /*------------------------------------------------------------------------------------*/ 
   
@@ -80,7 +82,7 @@ public class InfoPanel extends JPanel
           if(past.length()==0) {
             // No past set we display the save button
                 playerTextArea.setEditable(true);
-                this.setLabelText("Enter your player's past:");
+                this.setLabelText("Your player's past:");
                 this.setText("...");
                 savePastButtonDisplayed = true;
 
@@ -104,7 +106,10 @@ public class InfoPanel extends JPanel
                     }
                 });
 
-                add(savePastButton);
+                whitePanel = new JPanel();
+                whitePanel.setBackground( Color.white );
+                whitePanel.add(savePastButton);
+                add(whitePanel);
                 revalidate();
              
              return;
@@ -113,6 +118,7 @@ public class InfoPanel extends JPanel
              // Past Set we remove the Save Button
                 playerTextArea.setEditable(false);
                 remove(savePastButton);
+                remove(whitePanel);
                 revalidate();
           }
 

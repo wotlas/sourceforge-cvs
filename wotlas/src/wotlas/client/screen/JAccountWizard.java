@@ -366,8 +366,15 @@ public class JAccountWizard extends JWizard
         formPanel.add(lbl_email);
         tf_email = new ATextField(10);
         formPanel.add(tf_email);
+    
+    
+        ATextArea ta_mailInfo = new ATextArea("Your Email address will only be used to contact you in case of account problems... The field is optional.");
+        ta_mailInfo.setLineWrap(true);
+        ta_mailInfo.setWrapStyleWord(true);
+        ta_mailInfo.setEditable(false);
 
       mainPanel.add(formPanel);
+      mainPanel.add(ta_mailInfo);
 
       mainPanel.setAlignmentX(LEFT_ALIGNMENT);
       add(mainPanel);
@@ -423,6 +430,7 @@ public class JAccountWizard extends JWizard
 
       setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
       setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+      setAlignmentX(LEFT_ALIGNMENT);
 
       ta_infos = new ATextArea("    Please take some time to invent a past for your"+
                              " character. This short text will be seen by other"+
@@ -454,7 +462,7 @@ public class JAccountWizard extends JWizard
 //        formPanel.add(ta_past);
         add(ta_past);
 
-        savePastLater = new ACheckBox("I'll write this later...",false);
+        savePastLater = new ACheckBox("Save this later...",false);
         add(savePastLater);
 
 //      mainPanel.add(formPanel);

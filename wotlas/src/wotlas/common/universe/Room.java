@@ -318,7 +318,7 @@ public class Room
    * @return false if the player doesn't exists in this Room, true otherwise
    */
     public boolean removePlayer( Player player ) {
-       if( !players.contains( player.getPrimaryKey() ) ) {
+       if( !players.containsKey( player.getPrimaryKey() ) ) {
            Debug.signal( Debug.CRITICAL, this, "removePlayer failed: key "+player.getPrimaryKey()
                          +" not found in "+this );
            return false;

@@ -211,13 +211,11 @@ public abstract class NetPersonality
      	      return;
      	  
      	  if( listener!=null )
-              listener.connectionClosed();
+              listener.connectionClosed( this );
 
           my_netsender.stopThread();
-          my_netreceiver.stopThread();
-
-          my_netreceiver.closeSocket();
-
+          my_netsender.closeSocket();  // only lets the NetReceiver finish its work
+                                       // before closing
           my_netsender = null;
           my_netreceiver = null;
           listener=null;

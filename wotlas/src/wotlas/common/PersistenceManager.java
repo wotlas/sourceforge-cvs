@@ -207,7 +207,7 @@ public class PersistenceManager
      //                                       OBJECTS_PREFIX, OBJECTS_SUFFIX, true );
 
 
-      Debug.signal( Debug.NOTICE, null, "Persistence Manager loaded "+worldCount+" worlds, "+townCount+" towns,"
+      Debug.signal( Debug.NOTICE, null, "Persistence Manager loaded "+worldCount+" worlds, "+townCount+" towns, "
                     +buildingCount+" buildings, "+mapCount+" maps." );
 
       return worlds;

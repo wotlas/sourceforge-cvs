@@ -26,6 +26,7 @@ import wotlas.common.message.description.*;
 import wotlas.client.*;
 
 import wotlas.client.DataManager;
+import wotlas.utils.Debug;
 
 /**
  * Associated behaviour to the YourPlayerDataMessage...
@@ -52,33 +53,27 @@ public class YourPlayerDataMsgBehaviour extends YourPlayerDataMessage implements
    *        this message.
    */
   public void doBehaviour( Object context ) {
+    /** Soluce 1 : all is done in a method call.
+      DataManager dataManager = (DataManager) context;
+      dataManager.setCurrentPlayer( player );
+    **/
 
-        // The context is a DataManager
+    /** Soluce 2 : The dataManager is awaiting on a lock. We set the data and awake him.
+      the Soluce 2 seems better as we quit as soon as the data is set...
+      ( in soluce 1 we have to wait for the server to finish its process )
+      also the DataManager can be waiting on a startGameLock.wait( TIMEOUT );
+      that allows us to display an error message after some time if the
+      server doesn't respond.
+    **/
 
-/** Soluce 1 : all is done in a method call.
+    DataManager dataManager = (DataManager) context;
+    dataManager.setCurrentPlayer( player );
+    synchronized(dataManager.getStartGameLock()) {
+      dataManager.getStartGameLock().notify();      
+    }
+  }
 
-           DataManager dataManager = (DataManager) context;
+ /*------------------------------------------------------------------------------------*/
 
-           dataManager.setCurrentPlayer( player );
- **/
-
-
-/** Soluce 2 : The dataManager is awaiting on a lock. We set the data and awake him.
- **/
-            System.out.println("YourPlayerDataMsg");
-           DataManager dataManager = (DataManager) context;
-
-           dataManager.setCurrentPlayer( player );
-           
-           dataManager.getStartGameLock().notify();
-
-// My comment : the Soluce 2 seems better as we quit as soon as the data is set...
-//              ( in soluce 1 we have to wait for the server to finish its process )
-//              also the DataManager can be waiting on a startGameLock.wait( TIMEOUT );
-//              that allows us to display an error message after some time if the
-//              server doesn't respond.
-     }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
 

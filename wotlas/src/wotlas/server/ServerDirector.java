@@ -537,19 +537,34 @@ public class ServerDirector implements Runnable, NetServerListener {
 
        // Manual update ?
           if( !serverProperties.getBooleanProperty("init.automaticUpdate") ) {
-              Debug.signal( Debug.NOTICE, null, "Your server's IP has changed, you should do a manual update on the wotlas web server!"
-                            +"Your server will be unreachable until then");
+              String publishAddress = serverProperties.getProperty("init.publishAddress");
+
+              if(publishAddress==null || publishAddress.length()==0)
+                 Debug.signal( Debug.NOTICE, null, "Your server's IP has changed, you should do a manual update on the wotlas web server!"
+                            +"Your server will be unreachable until then.");
+              else
+                 Debug.signal( Debug.NOTICE, null, "Your server's local IP has changed, you should update your NAT table if you are using"
+                            +"it. Your server will be unreachable until then.");
               return;
           }
 
-       // Automatic Update via a Thread
+       // Automatic Update via a Thread (we don't want to make our server wait)
           Thread updateThread = new Thread() {
              public void run() {
               // We get the login
                  String login = remoteServersProperties.getProperty("transfer.serverHomeLogin");
 
-              // Need password ?
-                 if(password==null) {
+              // We load the script we are about to modify with login & password.
+                 String cmd = resourceManager.getExternalTransferScript();
+                 File wDir = new File(resourceManager.getExternalScriptsDir());
+                 String script = resourceManager.loadText( cmd );
+                 boolean editScript = true;
+                 
+                 if( script.indexOf("SET WEB_LOGIN")<0 || script.indexOf("SET WEB_PASSWORD")<0 )
+                     editScript = false; // the script doesn't use any login & password, no need to edit it
+
+              // Did the user already entered the password ?
+                 if(password==null && editScript) {
                     ALoginDialog dialog = new ALoginDialog( new Frame(), "File Transfer Login (asked once):", login, resourceManager );
                     
                     if( dialog.okWasClicked() ) {
@@ -565,8 +580,6 @@ public class ServerDirector implements Runnable, NetServerListener {
 
               // Runtime... we execute the transfert command
                  int result=1;
-                 String cmd = resourceManager.getExternalTransferScript();
-                 File wDir = new File(resourceManager.getExternalScriptsDir());
 
                     try{
                       cmd = new File( cmd ).getCanonicalPath();
@@ -576,20 +589,21 @@ public class ServerDirector implements Runnable, NetServerListener {
                     }
 
                  // We replace the login & password values
-                    String script = resourceManager.loadText( cmd );
                     if( script==null ) {
                         Debug.signal( Debug.ERROR, this, "Failed to load "+script+" !" );
                         return;
                     }
+                    else if( editScript ) {
+                        script = FileTools.updateProperty( "SET WEB_LOGIN", login, script );
+                        script = FileTools.updateProperty( "SET WEB_PASSWORD", password, script );
 
-                    script = FileTools.updateProperty( "SET WEB_LOGIN", login, script );
-                    script = FileTools.updateProperty( "SET WEB_PASSWORD", password, script );
-
-                    if( !resourceManager.saveText( cmd, script ) ) {
-                        Debug.signal( Debug.ERROR, this, "Failed to save "+script+" !" );
-                        return;
+                        if( !resourceManager.saveText( cmd, script ) ) {
+                            Debug.signal( Debug.ERROR, this, "Failed to save "+script+" !" );
+                            return;
+                        }
                     }
 
+                 // We run the script...
                     Debug.signal(Debug.NOTICE,null,"Launching transfer script...");
 
                     try{
@@ -601,20 +615,25 @@ public class ServerDirector implements Runnable, NetServerListener {
                        return;
                     }
 
-                 Debug.signal(Debug.NOTICE,null,"Transfer script ended with value '"+result+"'.");
+                 Debug.signal(Debug.NOTICE,null,"Transfer script ended.");
 
-                 script = FileTools.updateProperty( "SET WEB_LOGIN", "You will be prompted for your login.", script );
-                 script = FileTools.updateProperty( "SET WEB_PASSWORD", "You will be prompted for your passsword.", script );
+                 if( editScript ) {
+                   // We clean what we have modified in the script
+                     script = FileTools.updateProperty( "SET WEB_LOGIN", "You will be prompted for your login.", script );
+                     script = FileTools.updateProperty( "SET WEB_PASSWORD", "You will be prompted for your passsword.", script );
 
-                 if( !resourceManager.saveText( cmd, script ) ) {
-                     Debug.signal( Debug.ERROR, this, "Failed to save "+script+" to clean entries !" );
-                     return;
+                     if( !resourceManager.saveText( cmd, script ) ) {
+                         Debug.signal( Debug.ERROR, this, "Failed to save "+script+" to clean entries !" );
+                         return;
+                     }
                  }
              }
           };
 
+        // We start the thread that will take care of the update
           updateThread.start();
      }
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To get our resource manager.

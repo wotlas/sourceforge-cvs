@@ -27,7 +27,8 @@ LIBS_PACKAGES  = wotlas/libs/net \
                  wotlas/libs/net/message \
                  wotlas/libs/net/personality \
                  wotlas/libs/pathfinding \
-                 wotlas/libs/persistence
+                 wotlas/libs/persistence \
+                 wotlas/libs/wizard
 
 LIBS_PACKAGES2 = wotlas/libs/graphics2D \
                  wotlas/libs/graphics2D/policy \

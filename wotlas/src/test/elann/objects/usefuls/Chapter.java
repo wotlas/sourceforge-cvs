@@ -69,34 +69,54 @@ public class Chapter
   /** Get a paragraph in the chapter by index.
    * @param index the index of the paragraph
    */	
-    public Paragraph getParagraph(int index);
+    public Paragraph getParagraph(int index)
+	{
+	 return paragraphs[index];
+	}
 	
   /** Get a paragraph in the chapter by title.
    * @param title the title of the paragraph
    */	
-    public Paragraph getParagraphByTitle(String title);
+    public Paragraph getParagraphByTitle(String title)
+	{
+	 int index=0;
+	 /* implement a search */
+	 return paragraphs[index];
+	}
 	
   /** Get the current number of paragraphs in the chapter.
    * @return nbParagraphs
    */
-	public short getNbParagraphs();
+	public short getNbParagraphs()
+	{
+	 return nbParagraphs;
+	}
  
-  /** Set the current number of paragraphs in the chapter.
+  /** Set the current number of paragraphs in the chapter.<br>
    * Should not be called directly.
    * @param nbParagraphs the new number of paragraphs
    */
-	public void setNbParagraphs(short nbParagraphs);
+	public void setNbParagraphs(short nbParagraphs)
+	{
+	 this.nbParagraphs=nbParagraphs;
+	}
  
   /** Get the current paragraph in the chapter.
    * @return currentParagraph
    */
-	public short getCurrentParagraph();
+	public short getCurrentParagraph()
+	{
+	 return currentParagraph;
+	}
  
   /** Set the current paragraph in the chapter.
    * Should not be called directly.
    * @param currentParagraphs the new active paragraph
    */
-	public void setCurrentParagraph(short currentParagraph);
+	public void setCurrentParagraph(short currentParagraph)
+	{
+	 this.currentParagraph=currentParagraph;
+	}
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  

@@ -20,6 +20,7 @@
 package wotlas.common.objects.weapons;
 
 import wotlas.common.objects.interfaces.*;
+import wotlas.common.Player;
 
 /** 
  * The remote weapon class. All the weapons within this class can shoot at a distance.
@@ -30,19 +31,50 @@ import wotlas.common.objects.interfaces.*;
  * @see wotlas.common.objects.weapons.Ammo
  */
 
-public class RemoteWeapon extends Weapon implements RemoteWeaponInterface
+public abstract class RemoteWeapon extends Weapon implements RemoteWeaponInterface
 {
 
  /** The weapon status.
   */
-  private boolean armed,aimed;
+  protected boolean armed,aimed;
   
  /** The weapon's ammo. The damage inflicted depends of this.
   */
-  private Ammo ammo; 
+  protected Ammo ammo; 
+  
+ /** The weapon's target. Should have also a building as target.
+  */
+  protected Player target; 
+    
 
  /*------------------------------------------------------------------------------------*/
 
+  /** Arms the weapon. The weapon is ready to Aim()/Loose().
+   * @param ammo the ammo used 
+   */
+    public void arm(Ammo ammo)
+	{
+	 this.ammo=ammo;
+	 armed=true;
+	}
+
+  /** Aims to the specified target. Needs to be armed.<br>
+   * May be char or build - should do another method to aim at a building.
+   * @param target the target to aim at. 
+   */
+    public void aim(Player target)
+	{
+	 this.target=target;
+	 aimed=true;
+	}
+	
+  /** Looses. Launch the ammo on the target.
+   */
+    public void loose()
+	{
+	 /* no op */
+	}
+ 
 	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

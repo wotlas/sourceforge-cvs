@@ -19,8 +19,9 @@
  
 package wotlas.common.objects.interfaces;
 
-import wotlas.common.Knowledge;
-import wotlas.common.Material;
+//import wotlas.common.Knowledge;
+import wotlas.common.objects.valueds.Material;
+import wotlas.common.Player;
 
 /** 
  * The base interface for all repairable objects.
@@ -32,8 +33,18 @@ import wotlas.common.Material;
 public interface RepairInterface
 {
 
+	  public static final String[] stateList={"Newly-made","Good state","Used","Worned out","Broken"}; 
+	  		  // that's just place-holder stuff, OK ?
+			  // may be a file or a static list
+			  // but better if in a file => internationalization 
+
  /*------------------------------------------------------------------------------------*/
 
+  /** Returns the state of the object - string version
+    * @return a state string
+    */
+	public String getStateString();	
+	
   /** Get the object's state
    * @return state
    */ 				
@@ -47,17 +58,20 @@ public interface RepairInterface
   /** Get the knowledge needed to repair.
    * @return knowledge needed
    */ 																		
-    public Knowledge /*[] make javadoc crash */ getKnowledge();
+    public String[]/*Knowledge[] */ getRepairKnowledge();
 	
-  /** Get the materials needed to repair.
+  /** Get the materials needed to repair.<br>
+   * Get this from the repairer.
    * @return material list
+   * @param repairer the Player that repairs the object. May be the owner or not.
    */
-    public Material /*[] make javadoc crash */ getMaterial();
+    public Material[] getRepairMaterial(Player repairer);
+	 
  
   /** Repair the object.
-   * @param repairer the Character that repairs the object. May be the owner or not.
+   * @param repairer the Player that repairs the object. May be the owner or not.
    */
-    public void repair(Character repairer);
+    public void repair(Player repairer);
 	
 	 
 	

@@ -29,7 +29,7 @@ import wotlas.common.objects.interfaces.*;
  * @see wotlas.common.objects.interfaces.ArmorInterface
  */
 
-public class FootArmor extends Armor implements ArmorInterface
+public class FootArmor extends Armor
 {
 
  /*------------------------------------------------------------------------------------*/

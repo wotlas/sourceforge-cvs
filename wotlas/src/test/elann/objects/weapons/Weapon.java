@@ -21,6 +21,8 @@ package wotlas.common.objects.weapons;
 
 import wotlas.common.objects.BaseObject;
 
+import wotlas.common.Player;
+
 /** 
  * The base class for all weapons.
  * 
@@ -36,39 +38,43 @@ public abstract class Weapon extends BaseObject
 
   /** The minimum damage inflicted by the weapon - may be zero.
    */
-      private short damageMin;
+      protected short damageMin;
 
   /** The maximum damage inflicted by the weapon - may not be zero or it wouldn't be a weapon, eh ?
    */
-      private short damageMax;
-	  
-  /** The current state of the weapon. Goes from newly-made to broken.
-   */
-   	  private short state;  
-	  
-	  private static String[] stateList={"Newly-made","Good state","Used","Worned out","Broken"}; 
-	  		  // that's just place-holder stuff, OK ?
-			  // may be a file or a static list
-			  // but better if in a file => internationalization 
+      protected short damageMax;	    
 	  	 
   /** Is the weapon in a bag or on the char ?
    */
-	  private boolean equipped;
+	  protected boolean equipped;
 	  
 	  
 	  
  /*------------------------------------------------------------------------------------*/
  
-  /** The only constructor.
+  /** The default constructor.<br>
+	* damageMin is set to -1<br>
+    * damageMax is set to -1
+   */			
+    public Weapon()
+	{
+	 this.damageMin=-1;
+	 this.damageMax=-1;
+	 this.equipped=false;
+	 
+	 this.className="Weapon";
+	 this.objectName="default weapon";
+	}															
+ 
+ 
+  /** The parametric constructor.
 	* @param damageMin the minimum damage inflicted by the weapon - may be zero
     * @param damageMax the maximum damage inflicted by the weapon - should not be zero
-	* @param state the current state of the weapon  	
    */			
-    public Weapon(short damageMin,short damageMax,short state)
+    public Weapon(short damageMin,short damageMax)
 	{
 	 this.damageMin=damageMin;
-	 this.damagemax=damageMax;
-	 this.state=state;
+	 this.damageMax=damageMax;
 	 this.equipped=false;
 	 
 	 this.className="Weapon";
@@ -80,34 +86,24 @@ public abstract class Weapon extends BaseObject
 
   /** Puts on the weapon to enable attack.
    */
-    public void equip();
+    public abstract void equip();
 	
   /** Attacks the specified target. Abstract method.
    *
-   * @param target the Character attacked
+   * @param target the Player attacked
    * @return the damage inflicted
    */
-    public abstract short attack(Character target);
+    public abstract short attack(Player target);
 
   /** Alternative attack on the specified target. Abstract method.
    *
-   * @param target the Character attacked
+   * @param target the Player attacked
    * @return the damage inflicted
    */
-    public abstract short alternativeAttack(Character target);
+    public abstract short alternativeAttack(Player target);
 
 	
  /* ----------------- Getters/Setters ----------------- */	
-
-  /** Returns the state of the weapon - string version
-    * @return a state string
-    */
-	public String getState() { return stateList[this.state]; } // should check for size violation
-
-  /** Sets the state of the weapon - int version
-    * @param state the state value
-    */
-	public void setState(short state) { this.state=state; }
 	
 	
   /** Returns the minimum damage inflicted by the weapon

@@ -21,6 +21,8 @@ package wotlas.common.objects.weapons;
 
 import wotlas.common.objects.BaseObject;
 import wotlas.common.objects.interfaces.*;
+import wotlas.common.Player;
+import wotlas.common.objects.valueds.ValuedObject;
 
 /** 
  * The ammunition base class.
@@ -32,6 +34,57 @@ import wotlas.common.objects.interfaces.*;
 
 public class Ammo extends BaseObject implements AmmoInterface, TransportableInterface
 {
+
+ /*------------------------------------------------------------------------------------*/
+ 
+  /** Is it equipped = ready to use ?
+   */
+    protected boolean equipped;
+  																						
+ 
+ /*------------------------------------------------------------------------------------*/
+
+   /** Throw at target.
+   * @param target the target
+   */
+    public void throwAt(Player target)
+	{
+	 /* no op */
+	}
+
+  /** Put in hand. Ready to throw().
+   */
+    public void equip()
+	{
+	 equipped=true;
+	}
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ 
+   /** Gets rid of the object. The object is dropped on the ground.
+   */
+    public void discard()
+	{
+	 /* no op */
+	}
+
+  /** Sells the object to somebody.
+  	  @param buyer The Player who buy the object. 
+  	  @return the prize paid.
+   */
+    public ValuedObject sellTo(Player buyer)
+	{
+	 /* no op */
+	 return new ValuedObject();
+	}
+
+  /** Gives the object to somebody.
+  	  @param receiver The Player who receive the object.
+   */
+    public void giveTo(Player receiver)
+	{
+	 /* no op */
+	}
 
  /*------------------------------------------------------------------------------------*/
 
@@ -53,7 +106,7 @@ public class Ammo extends BaseObject implements AmmoInterface, TransportableInte
   /** Gets the damage inflicted with a bow. -1 if impossible
    * @return bowDamage
    */
-    public void getBowDamage() { return bowDamage; }
+    public short getBowDamage() { return bowDamage; }
 	
   /** Sets the damage inflicted with a bow. -1 if impossible
    * @param bowDamage the new damage inflicted with a bow
@@ -64,7 +117,7 @@ public class Ammo extends BaseObject implements AmmoInterface, TransportableInte
   /** Gets the damage inflicted throwed by hand. -1 if impossible
    * @return handThrowDamage
    */
-    public void getHandThrowDamage() { return handThrowDamage; }
+    public short getHandThrowDamage() { return handThrowDamage; }
 	
   /** Sets the damage inflicted throwed by hand. -1 if impossible
    * @param handThrowDamage the new damage inflicted with a hand-throw
@@ -75,7 +128,7 @@ public class Ammo extends BaseObject implements AmmoInterface, TransportableInte
   /** Gets the damage inflicted with a siege weapon. -1 if impossible
    * @return siegeWeaponDamage
    */
-    public void getSiegeWeaponDamage() { return siegeWeaponDamage; }
+    public short getSiegeWeaponDamage() { return siegeWeaponDamage; }
 	
   /** Sets the damage inflicted throwed by siege weapon. -1 if impossible
    * @param siegeWeaponDamage the new damage inflicted with a siege weapon

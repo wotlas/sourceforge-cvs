@@ -21,6 +21,8 @@ package wotlas.common.objects.weapons;
 
 import wotlas.common.objects.interfaces.*;
 
+import wotlas.common.Player;
+
 /** 
  * The siege weapon base class.
  * Siege weapons cannot be moved by lone Player without Power. 
@@ -31,7 +33,7 @@ import wotlas.common.objects.interfaces.*;
  * @see wotlas.common.objects.interfaces.SiegeWeaponInterface
  */
 
-public class SiegeWeapon extends RemoteWeapon implements SiegeWeaponInterface
+public class SiegeWeapon extends RemoteWeapon
 {
 
  /*------------------------------------------------------------------------------------*/
@@ -39,6 +41,38 @@ public class SiegeWeapon extends RemoteWeapon implements SiegeWeaponInterface
  
  /*------------------------------------------------------------------------------------*/
 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Puts on the weapon to enable attack.<br>
+   * Impossible on SiegeWeapons !
+   */
+    public void equip()
+	{
+	 /* no op - have you ever seen someone CARRYING a catapult ? */
+	}
+	
+  /** Attacks the specified target.
+   *
+   * @param target the Player attacked
+   * @return 0 because the damage is not instantly inflicted.
+   */
+    public short attack(Player target)
+	{
+	 loose();
+	 return 0;
+	}
+
+  /** Alternative attack on the specified target.<br>
+   * No altern attack for SiegeWeapons. Calls attack(target).
+   * @param target the Player attacked
+   * @return the damage inflicted
+   */
+    public short alternativeAttack(Player target)
+	{
+	 return attack(target);
+	}
+
+ 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
 }

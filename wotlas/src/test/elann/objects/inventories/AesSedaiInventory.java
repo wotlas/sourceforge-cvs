@@ -49,7 +49,7 @@ public class AesSedaiInventory extends Inventory
    */
     public void setBodyArmor(BodyArmor bodyArmor) throws InventoryException
     {
-	 throw InventoryException;
+	 throw new InventoryException();
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -67,7 +67,7 @@ public class AesSedaiInventory extends Inventory
    */
     public void setHeadArmor(HeadArmor headArmor) throws InventoryException
     {
-	 throw InventoryException;
+	 throw new InventoryException();
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -85,7 +85,7 @@ public class AesSedaiInventory extends Inventory
    */
     public void setHeavyWeapon(HeavyWeapon heavyWeapon) throws InventoryException
     {
- 	 throw InventoryException;
+ 	 throw new InventoryException();
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -103,7 +103,7 @@ public class AesSedaiInventory extends Inventory
    */
     public void setBow(Bow bow) throws InventoryException
     {
-	 throw InventoryException;
+	 throw new InventoryException();
     }
 	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -122,7 +122,7 @@ public class AesSedaiInventory extends Inventory
    */
     public void setRightSleeveWeapon(LightWeapon rightSleeveWeapon) throws InventoryException
     {
- 	 throw InventoryException;
+	 throw new InventoryException();
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -140,7 +140,7 @@ public class AesSedaiInventory extends Inventory
    */
     public void setLeftSleeveWeapon(LightWeapon leftSleeveWeapon) throws InventoryException
     {
- 	 throw InventoryException;
+	 throw new InventoryException();
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -158,7 +158,7 @@ public class AesSedaiInventory extends Inventory
    */
     public void setRightBootWeapon(LightWeapon rightBootWeapon) throws InventoryException
     {
-	 throw InventoryException;
+	 throw new InventoryException();
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -176,7 +176,7 @@ public class AesSedaiInventory extends Inventory
    */
     public void setLeftBootWeapon(LightWeapon leftBootWeapon) throws InventoryException
     {
-	 throw InventoryException;
+	 throw new InventoryException();
     }
 	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -184,4 +184,3 @@ public class AesSedaiInventory extends Inventory
  
  
 }
-

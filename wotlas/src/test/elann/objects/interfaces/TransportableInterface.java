@@ -19,7 +19,7 @@
  
 package wotlas.common.objects.interfaces;
 
-import wotlas.common.Character;
+import wotlas.common.Player;
 import wotlas.common.objects.valueds.ValuedObject;
 
 /** 
@@ -38,15 +38,15 @@ public interface TransportableInterface
     public void discard();
 
   /** Sells the object to somebody.
-  	  @param buyer The Character who buy the object. 
+  	  @param buyer The Player who buy the object. 
   	  @return the prize paid.
    */
-    public ValuedObject sellTo(Character buyer);
+    public ValuedObject sellTo(Player buyer);
 
   /** Gives the object to somebody.
-  	  @param receiver The Character who receive the object.
+  	  @param receiver The Player who receive the object.
    */
-    public void giveTo(Character receiver);
+    public void giveTo(Player receiver);
 	
 		
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

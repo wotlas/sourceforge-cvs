@@ -22,6 +22,9 @@ package wotlas.common.objects.usefuls;
 import wotlas.common.objects.interfaces.BookInterface;
 import wotlas.common.objects.usefuls.Chapter;
 
+import wotlas.common.objects.valueds.ValuedObject;
+import wotlas.common.Player;
+
 /** 
  * The class of books.
  * 
@@ -51,6 +54,10 @@ public class Book extends Document implements BookInterface
  /** The title of the book.
   */
   private String title;
+  
+ /** Is it on ?
+  */
+  private boolean equipped;
  
  /*------------------------------------------------------------------------------------*/
 
@@ -62,9 +69,28 @@ public class Book extends Document implements BookInterface
 	 this.objectName="default book";
 	 
 	 this.nbChapters=0;
-	 this.currChapter=-1;	 
+	 this.currentChapter=-1;	 
 	}															
  
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Use the object.<br>
+   * For a book, just calls open().  
+   */
+    public void use()
+	{
+	 open();
+	}
+
+  /** Put the object "on". Needed before action is possible.
+   */
+    public void equip()
+	{
+	 equipped=true;
+	}
+
+
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Open the book. First chapter active.
@@ -101,7 +127,7 @@ public class Book extends Document implements BookInterface
    */
     public void setCurrentChapter(short targetChapter)
 	{
-	 if (this.nbChapter<targetChapter || targetChapter<0)
+	 if (this.nbChapters<targetChapter || targetChapter<0)
 	 {
 //	  Debug.signal(Debug.WARNING,this,"Trying to go to unexistant chapter");
 	  return;	 
@@ -116,7 +142,7 @@ public class Book extends Document implements BookInterface
    */ 
    	public Chapter getChapter(int index)
 	{
-	 if (this.nbChapter<targetChapter || targetChapter<0)
+	 if (this.nbChapters<index || index<0)
 	 {
 //	  Debug.signal(Debug.WARNING,this,"Trying to get an unexistant chapter");
 	  return null;	 
@@ -172,6 +198,30 @@ public class Book extends Document implements BookInterface
 	 Paragraph currParagraph=currChapter.getParagraph(currChapter.getCurrentParagraph());
 		
 	 currParagraph.appendString(text);			
+	}
+	
+
+  /** Search the book for a chapter. If the chapter is found, it becomes the current chapter.
+   * @param chapterName the name of the chapter searched.
+   * @return found index or -1
+   */
+    public short searchChapter(String chapterName)
+	{
+	 short index=0;
+	 /* implement the search */
+	 setCurrentChapter(index);
+	 return index;
+	}
+	
+  /** Get a chapter by title.
+   * @param title the title of the chapter
+   * @return the requested Chapter if available ; null else
+   */
+    public Chapter getChapterByTitle(String title)
+	{
+	 int index=0;
+	 /* implement the search */
+	 return chapters[index];	
 	}
 	
 	

@@ -21,6 +21,11 @@ package wotlas.common.objects.weapons;
 
 import wotlas.common.objects.interfaces.*;
 
+import wotlas.common.objects.valueds.ValuedObject;
+import wotlas.common.Player;
+import wotlas.common.objects.valueds.Material;
+
+
 /** 
  * The heavy weapon class. All the weapons within this class cannot be hidden in the clothes.
  * 
@@ -38,6 +43,14 @@ public class HeavyWeapon extends Weapon implements HeavyWeaponInterface, RepairI
   */
   private boolean sheathed;
 
+ /** The current state of the weapon. Goes from newly-made to broken.
+   */
+   	  protected short state;  
+
+ /** The knowledges needed to repair this.
+   */
+	  protected String[] /* Knowledge[] */ repairKnowledge;	  	  
+	  
  /*------------------------------------------------------------------------------------*/
 
 
@@ -55,6 +68,113 @@ public class HeavyWeapon extends Weapon implements HeavyWeaponInterface, RepairI
 	 this.sheathed=false;
 	}
 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Puts on the weapon to enable attack.<br>
+   * Take at least one hand. 
+   */
+    public void equip()
+	{
+	 equipped=true;
+	 unsheathe();
+	}
+	
+  /** Attacks the specified target.
+   *
+   * @param target the Player attacked
+   * @return 0 because the damage is not instantly inflicted.
+   */
+    public short attack(Player target)
+	{
+	 short damage=0;
+	 /* no op */
+	 return damage;
+	}
+
+  /** Alternative attack on the specified target.
+   * 
+   * @param target the Player attacked
+   * @return the damage inflicted
+   */
+    public short alternativeAttack(Player target)
+	{
+	 short damage=0;
+	 /* no op */
+	 return damage;
+	}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Repair the weapon.
+   * @param repairer the Player that repairs the object. May be the owner or not.
+   */
+    public void repair(Player repairer)
+	{
+	 /* no op */
+	}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ 
+   /** Gets rid of the object. The object is dropped on the ground.
+   */
+    public void discard()
+	{
+	 /* no op */
+	}
+
+  /** Sells the object to somebody.
+  	  @param buyer The Player who buy the object. 
+  	  @return the prize paid.
+   */
+    public ValuedObject sellTo(Player buyer)
+	{
+	 /* no op */
+	 return new ValuedObject();
+	}
+
+  /** Gives the object to somebody.
+  	  @param receiver The Player who receive the object.
+   */
+    public void giveTo(Player receiver)
+	{
+	 /* no op */
+	}
+
+ /* ----------------- Getters/Setters ----------------- */	
+ 
+  /** Returns the state of the weapon - string version
+    * @return a state string
+    */
+	public String getStateString() { return stateList[this.state]; } // should check for size violation
+
+  /** Gets the state of the weapon - int version
+    * @return state
+    */
+	public short getState() {  return state; }
+	
+	
+  /** Sets the state of the weapon - int version
+    * @param state the state value
+    */
+	public void setState(short state) { this.state=state; }
+
+	
+  /** Get the knowledge needed to repair.
+   * @return knowledge needed
+   */ 																		
+    public String[]/*Knowledge[] */ getRepairKnowledge() { return repairKnowledge; }
+	
+  /** Get the materials needed to repair.<br>
+   * Get this from the repairer.
+   * @return material list
+   * @param repairer the Player that repairs the object. May be the owner or not.
+   */
+    public Material[] getRepairMaterial(Player repairer) 
+	{  
+	   /* asks the repairer what he needs */
+	   return new Material[1];	   
+	}
+ 
 	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

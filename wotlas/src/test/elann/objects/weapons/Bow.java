@@ -21,6 +21,10 @@ package wotlas.common.objects.weapons;
 
 import wotlas.common.objects.interfaces.*;
 
+import wotlas.common.objects.valueds.ValuedObject;
+import wotlas.common.Player;
+
+
 /** 
  * The bow class.
  * 
@@ -38,6 +42,64 @@ public class Bow extends RemoteWeapon implements TransportableInterface
  
  /*------------------------------------------------------------------------------------*/
 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Puts on the weapon to enable attack.<br>
+   * Take one hand. When arm is invoked, both hands are taken.
+   */
+    public void equip()
+	{
+	 equipped=true;
+	}
+	
+  /** Attacks the specified target.
+   *
+   * @param target the Player attacked
+   * @return 0 because the damage is not instantly inflicted.
+   */
+    public short attack(Player target)
+	{
+	 loose();
+	 return 0;
+	}
+
+  /** Alternative attack on the specified target.<br>
+   * No altern attack for bows. Calls attack(target).
+   * @param target the Player attacked
+   * @return the damage inflicted
+   */
+    public short alternativeAttack(Player target)
+	{
+	 return attack(target);
+	}
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ 
+   /** Gets rid of the object. The object is dropped on the ground.
+   */
+    public void discard()
+	{
+	 /* no op */
+	}
+
+  /** Sells the object to somebody.
+  	  @param buyer The Player who buy the object. 
+  	  @return the prize paid.
+   */
+    public ValuedObject sellTo(Player buyer)
+	{
+	 /* no op */
+	 return new ValuedObject();
+	}
+
+  /** Gives the object to somebody.
+  	  @param receiver The Player who receive the object.
+   */
+    public void giveTo(Player receiver)
+	{
+	 /* no op */
+	}
+ 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
 }

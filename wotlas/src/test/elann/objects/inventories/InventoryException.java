@@ -27,13 +27,22 @@ package wotlas.common.objects.inventories;
 
 public class InventoryException extends java.lang.RuntimeException 
 {
+ /** Exception Constructor without message.<br>
+  * Always starts messages by "Invalid Inventory exception ".
+  */
+   public InventoryException() 
+   {
+        super( "Invalid Inventory command exception ");
+   }
+
+
 
  /** Exception Constructor with message.<br>
   * Always starts messages by "Invalid Inventory exception ".
   */
    public InventoryException( String msg ) 
    {
-        super( "Invalid Inventory exception "+ msg );
+        super( "Invalid Inventory command exception "+ msg );
    }
 
 }

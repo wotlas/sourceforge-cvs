@@ -51,7 +51,7 @@ public class WhitecloakInventory extends Inventory
    */
     public void setBeltWeapon(LightWeapon beltWeapon) throws InventoryException
     {
-	 throw InventoryException;
+	 throw new InventoryException();
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -69,7 +69,7 @@ public class WhitecloakInventory extends Inventory
    */
     public void setRightSleeveWeapon(LightWeapon rightSleeveWeapon) throws InventoryException
     {
-	 throw InventoryException;
+	 throw new InventoryException();
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -87,7 +87,7 @@ public class WhitecloakInventory extends Inventory
    */
     public void setLeftSleeveWeapon(LightWeapon leftSleeveWeapon) throws InventoryException
     {
-	 throw InventoryException;
+	 throw new InventoryException();
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -105,7 +105,7 @@ public class WhitecloakInventory extends Inventory
    */
     public void setRightBootWeapon(LightWeapon rightBootWeapon) throws InventoryException
     {
-	 throw InventoryException;
+	 throw new InventoryException();
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -123,7 +123,7 @@ public class WhitecloakInventory extends Inventory
    */
     public void setLeftBootWeapon(LightWeapon leftBootWeapon) throws InventoryException
     {
-	 throw InventoryException;
+	 throw new InventoryException();
     }
 	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

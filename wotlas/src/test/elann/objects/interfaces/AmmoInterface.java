@@ -19,6 +19,9 @@
  
 package wotlas.common.objects.interfaces;
 
+import wotlas.common.Player;
+
+
 /** 
  * The ammunition interface. Provides methods common to all throwable objects.
  * 
@@ -30,10 +33,11 @@ public interface AmmoInterface
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Throw at target.
+  /** Throw at target.<br>
+   * Should be another version to throw at buildings.
    * @param target the target
    */
-    public void throwAt(Target target);
+    public void throwAt(Player target);
 
   /** Put in hand. Ready to throw().
    */
@@ -43,7 +47,7 @@ public interface AmmoInterface
   /** Gets the damage inflicted with a bow. -1 if impossible
    * @return bowDamage
    */
-    public void getBowDamage();
+    public short getBowDamage();
 	
   /** Sets the damage inflicted with a bow. -1 if impossible
    * @param bowDamage the new damage inflicted with a bow
@@ -54,7 +58,7 @@ public interface AmmoInterface
   /** Gets the damage inflicted throwed by hand. -1 if impossible
    * @return handThrowDamage
    */
-    public void getHandThrowDamage();
+    public short getHandThrowDamage();
 	
   /** Sets the damage inflicted throwed by hand. -1 if impossible
    * @param handThrowDamage the new damage inflicted with a hand-throw
@@ -65,7 +69,7 @@ public interface AmmoInterface
   /** Gets the damage inflicted with a siege weapon. -1 if impossible
    * @return siegeWeaponDamage
    */
-    public void getSiegeWeaponDamage();
+    public short getSiegeWeaponDamage();
 	
   /** Sets the damage inflicted throwed by siege weapon. -1 if impossible
    * @param siegeWeaponDamage the new damage inflicted with a siege weapon

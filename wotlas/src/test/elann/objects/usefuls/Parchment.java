@@ -33,6 +33,14 @@ public class Parchment extends Document
 
  /*------------------------------------------------------------------------------------*/
 
+ /** Is it on ?
+  */
+  private boolean equipped;
+  
+ /** The text of the parchment. HTML formatted. Perhaps a Chapter ?
+  */
+  private String text;
+
  
  /*------------------------------------------------------------------------------------*/
 
@@ -43,6 +51,51 @@ public class Parchment extends Document
 	 this.className="Parchment";
 	 this.objectName="default parchment";
 	}															
+ 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ 
+  /** Use the object.<br> 
+   */
+    public void use()
+	{
+	 makeReady();
+	}
+
+  /** Put the object "on". Needed before action is possible.
+   */
+    public void equip()
+	{
+	 equipped=true;
+	}
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+	
+  /** Ready the document.
+   * Unfold for a parchment, open for a book, ...  
+   */
+    public void makeReady()
+	{
+	 /* open the GUI ? */
+	}
+	
+ 
+  /** Write to the document.
+   * @param text the text to write
+   */
+    public void writeText(String text)
+	{
+	 /* append ... */
+	}
+	
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Get the document's text.
+   * @return current readable text
+   */
+    public String readText()
+	{
+	 return text;
+	}
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  

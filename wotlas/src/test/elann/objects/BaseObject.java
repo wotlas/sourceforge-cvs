@@ -19,14 +19,9 @@
  
 package wotlas.common.objects;
 
-//import java.rmi.Remote;
-//import java.rmi.RemoteException;
-
-//import wotlas.utils.Tools;
-
-import wotlas.common.Character;	// the class used to give or sell. Is it implemented as I need ?
-import wotlas.common.Levels;	// not implemented
-import wotlas.common.Knowledge; // not implemented
+import wotlas.common.Player;	// the class used to give or sell. It has to be adapted.
+//import wotlas.common.Levels;	// not implemented
+//import wotlas.common.Knowledge; // not implemented
 import wotlas.common.universe.WotlasLocation;	
 
 /** 
@@ -42,39 +37,39 @@ public class BaseObject
 
   /** Class name - generic name for all the objects of the class.  
    */
-   	 private String className;
+   	 protected String className;
 	 
   /** Object name - specific name for the object. Not static because it could change if it is broken for example.  
    */
-   	 private String objectName;
+   	 protected String objectName;
    
   /** Object position in the world.
    */
-  	 private WotlasLocation objectLocation; 
+  	 protected WotlasLocation objectLocation; 
    
   /** Object position in the room.
    */
-   	 private int x,y;
+   	 protected int x,y;
   
   /** Object's weight - used for endurance and max load. Perhaps negative weight should mean unmovable.
    */
-     private short objectWeight;
+     protected short objectWeight;
 	  
   /** Object's size - used for max load.
    */
-     private short objectSize;
+     protected short objectSize;
 
   /** The level(s) required to use this object. - THE CLASS LEVEL/LEVELLIST DOES NOT EXIST ! 
    */
-	 private LevelList requiredLevels;													
+	 protected String[] /*Level[]*/ requiredLevels;													
 
   /** The knowledge required to use this object. - THE CLASS KNOWLEDGE/KNOWLEDGELIST DOES NOT EXIST !
    */
-   	 private KnowledgeList requiredKnowledge;
+   	 protected String[] /*Knowledge[]*/ requiredKnowledge;
 
   /** The owner of this object. - THE CLASS CHARACTER HAS TO BE ADAPTED FOR OBJECTS !
    */
-   	 private Character owner;
+   	 protected Player owner;
   	 
 	 
  /*------------------------------------------------------------------------------------*/

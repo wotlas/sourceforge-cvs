@@ -79,7 +79,9 @@ public class ContainerObject extends BaseObject implements ContainerInterface
    */
    private short findFirstFree(Object[] tab)
    {
-    for(int i=0;i<tab.length && tab[i]!=null;i++);
+   	short i;
+	
+    for(i=0;i<tab.length && tab[i]!=null;i++);
 	
 	return i;
    }
@@ -128,7 +130,7 @@ public class ContainerObject extends BaseObject implements ContainerInterface
 	public BaseObject getObjectByName(String name) // dnk if useful - Code first C later
 	{
 	 int i=0;
-	 while (i<capacity && content[i]!=o)
+	 while (i<capacity && content[i].getObjectName()!=name)
 	 	   i++;
 		   
 	 if (i>=capacity)

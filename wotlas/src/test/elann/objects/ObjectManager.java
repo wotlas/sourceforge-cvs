@@ -49,14 +49,17 @@ public class ObjectManager
   /** Default constructor.
    *
    */
-   	public ObjectManager();		
+   	public ObjectManager()
+	{
+	
+	}		
 		
   /* ------- Getters / Setters --------- */
 	
   /** Get the Inventory object owned by the Manager.
   	  @return the Inventory
    */
-    public Inventory getInventory() { return Inventory; }
+    public Inventory getInventory() { return inventory; }
 
   /** Set the Inventory of the Manager.
   	  @param inventory the new Inventory

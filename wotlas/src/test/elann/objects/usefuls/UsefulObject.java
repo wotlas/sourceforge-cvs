@@ -30,7 +30,7 @@ import wotlas.common.objects.interfaces.*;
  * @see wotlas.common.objects.interfaces.UsefulInterface
  */
 
-public class UsefulObject extends BaseObject implements UsefulInterface
+public abstract class UsefulObject extends BaseObject implements UsefulInterface
 {
 
  /*------------------------------------------------------------------------------------*/
@@ -45,7 +45,17 @@ public class UsefulObject extends BaseObject implements UsefulInterface
 	 this.className="UsefulObject";
 	 this.objectName="default useful object";
 	}															
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 	
+  /** Use the object. Lots of different implementations. 
+   */
+    public abstract void use();
+
+  /** Put the object "on". Needed before action is possible.
+   */
+    public abstract void equip();
+
 	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

@@ -21,6 +21,9 @@ package wotlas.common.objects.usefuls;
 
 import wotlas.common.objects.interfaces.*;
 
+import wotlas.common.objects.valueds.ValuedObject;
+import wotlas.common.Player;
+
 /** 
  * The base class for all kinds of documents.
  * 
@@ -39,6 +42,33 @@ public abstract class Document extends UsefulObject implements ReadableInterface
 	  
  /*------------------------------------------------------------------------------------*/
  
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ 
+   /** Gets rid of the object. The object is dropped on the ground.
+   */
+    public void discard()
+	{
+	 /* no op */
+	}
+
+  /** Sells the object to somebody.
+  	  @param buyer The Player who buy the object. 
+  	  @return the prize paid.
+   */
+    public ValuedObject sellTo(Player buyer)
+	{
+	 /* no op */
+	 return new ValuedObject();
+	}
+
+  /** Gives the object to somebody.
+  	  @param receiver The Player who receive the object.
+   */
+    public void giveTo(Player receiver)
+	{
+	 /* no op */
+	}
+	
 
 	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -20,7 +20,11 @@
 package wotlas.common.objects.armors;
 
 import wotlas.common.objects.BaseObject;
+import wotlas.common.objects.valueds.ValuedObject;
+import wotlas.common.objects.valueds.Material;
 import wotlas.common.objects.interfaces.*;
+
+import wotlas.common.Player;
 
 /** 
  * The base class for all pieces of armor.
@@ -39,21 +43,25 @@ public class Armor extends BaseObject implements ArmorInterface, RepairInterface
 
   /** The defense of the armor - may be zero.
    */
-      private short defense;
+      protected short defense;
 
   /** The current state of the armor. Goes from newly-made to broken.
    */
-   	  private short state;  
+   	  protected short state;  
 	  
-	  private static String[] stateList={"Newly-made","Good state","Used","Worned out","Broken"}; 
+	  protected static String[] stateList={"Newly-made","Good state","Used","Worned out","Broken"}; 
 	  		  // that's just place-holder stuff, OK ?
 			  // may be a file or a static list
 			  // but better if in a file => internationalization / evolution 
 	  	 
   /** Is the armor in a bag or on the char ?
    */
-	  private boolean equipped;
+	  protected boolean equipped;
 	  	  
+ /** The knowledges needed to repair this.
+   */
+	  protected String[] /* Knowledge[] */ repairKnowledge;
+	  
 	  
  /*------------------------------------------------------------------------------------*/
  
@@ -71,6 +79,78 @@ public class Armor extends BaseObject implements ArmorInterface, RepairInterface
 	 this.objectName="default armor";
 	}															
 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Puts on the armor.
+   */
+    public void equip()
+	{
+	 /* no op */
+	}
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Gets rid of the object. The object is dropped on the ground.
+   */
+    public void discard()
+	{
+	 /* no op */
+	}
+
+  /** Sells the object to somebody.
+  	  @param buyer The Player who buy the object. 
+  	  @return the prize paid.
+   */
+    public ValuedObject sellTo(Player buyer)
+	{
+	 /* no op */
+	 return new ValuedObject();
+	}
+
+  /** Gives the object to somebody.
+  	  @param receiver The Player who receive the object.
+   */
+    public void giveTo(Player receiver)
+	{
+	 /* no op */
+	}
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Returns the state of the armor - string version
+    * @return a state string
+    */
+	public String getStateString() { return stateList[this.state]; } // should check for size violation
+
+	
+  /** Get the knowledge needed to repair.
+   * @return knowledge needed
+   */ 																		
+    public String[]/*Knowledge[] */ getRepairKnowledge()
+	{
+	 return repairKnowledge;
+	}
+	
+  /** Get the materials needed to repair.<br>
+   * Get this from the repairer.
+   * @return material list
+   * @param repairer the Player that repairs the object. May be the owner or not.
+   */
+    public Material[] getRepairMaterial(Player repairer) 
+	{  
+	   /* asks the repairer what he needs */
+	   return new Material[1];	   
+	}
+	
+ 
+  /** Repair the object.
+   * @param repairer the Player that repairs the object. May be the owner or not.
+   */
+    public void repair(Player repairer)
+	{
+	 /* no op */
+	}
+	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Gets the defense of the armor.

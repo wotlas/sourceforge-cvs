@@ -19,8 +19,6 @@
  
 package wotlas.common.objects.usefuls;
 
-import wotlas.common.objects.usefuls.Paragraph;
-
 /** 
  * The class of paragraphs.
  * Used in chapters in books.
@@ -62,27 +60,42 @@ public class Paragraph
  /** Get the actual text of the paragraph.
   * @return the HTML-formatted text of the paragraph
   */ 
-   public String getText();
+   public String getText()
+   {
+    return text;
+   }
 
  /** Set the actual text of the paragraph.
   * @param text the new HTML-formatted text of the paragraph
   */ 
-   public void setText(String text);
+   public void setText(String text)
+   {
+    this.text=text;
+   }
 
  /** Append a string at the end of the paragraph.
   * @param newString the new HTML-formatted string to add
   */
-   public void appendString(String newString);
+   public void appendString(String newString)
+   {
+    /* no op */
+   }
 
  /** Get the strike out style of the paragraph.
   * @return the current strike out style
   */
-   public int getStrikeOutStyle();
+   public short getStrikeOutStyle()
+   {
+   	return strikeOutStyle;
+   }
 
  /** Set the strike out style of the paragraph.
   * @param style the new strike out style
   */
-   public void setStrikeOutStyle(int style);
+   public void setStrikeOutStyle(short style)
+   {
+   	this.strikeOutStyle=strikeOutStyle;
+   }
    
  
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -21,7 +21,8 @@ package wotlas.common.objects.containers;
 
 import wotlas.common.objects.interfaces.*;
 import wotlas.common.objects.BaseObject;
-
+import wotlas.common.objects.valueds.ValuedObject;
+import wotlas.common.Player;
 
 /** 
  * The belt. Special Container that is also a piece of Armor.
@@ -38,6 +39,10 @@ public class Belt extends ContainerObject implements TransportableInterface, Arm
  /*------------------------------------------------------------------------------------*/
 
   private BaseObject content;
+  
+  private short defense;
+  
+  private boolean equipped;
  
  /*------------------------------------------------------------------------------------*/
 
@@ -51,6 +56,58 @@ public class Belt extends ContainerObject implements TransportableInterface, Arm
    this.objectName="standard belt";	  // to modify
   }
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+	
+  /** Get the armor's defense points
+   * @return defense
+   */ 				
+   	public short getDefense()
+	{
+	 return defense;
+	} 																		
+
+  /** Sets the defense of the armor.
+    * @param defense the new defense
+    */
+	public void setDefense(short defense)
+	{
+	 this.defense=defense;
+	}
+ 
+  /** Puts on the armor.
+   */
+    public void equip()
+	{
+	 equipped=true;
+	}
+
+	
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Gets rid of the object. The object is dropped on the ground.
+   */
+    public void discard()
+	{
+	 /* no op */
+	}
+
+  /** Sells the object to somebody.
+  	  @param buyer The Player who buy the object. 
+  	  @return the prize paid.
+   */
+    public ValuedObject sellTo(Player buyer)
+	{
+	 /* no op */
+	 return new ValuedObject();
+	}
+
+  /** Gives the object to somebody.
+  	  @param receiver The Player who receive the object.
+   */
+    public void giveTo(Player receiver)
+	{
+	 /* no op */
+	}
+	
 	
  /*------------------------------------------------------------------------------------*/
 	

@@ -19,39 +19,22 @@
  
 package wotlas.common.objects.valueds;
 
-import wotlas.common.objects.BaseObject;
-
 /** 
- * The base class for all valued objects.
+ * The base class of materials.
+ * This include precious materials (gold, silver ...) and basic material (wood, wool, ...)
  * 
  * @author Elann
- * @see wotlas.common.objects.BaseObject
+ * @see wotlas.common.objects.valueds.ValuedObject
  */
 
-public class ValuedObject extends BaseObject
+public class Material extends ValuedObject
 {
 
  /*------------------------------------------------------------------------------------*/
 
-
-  /** The quantity owned.
-   */
-      private short quantity;
-  
  /*------------------------------------------------------------------------------------*/
-	
- /** Gets the quantity.
-  * @return quantity
-  */ 
-   public short getQuantity() { return this.quantity; }
-   
- /** Sets the quantity.
-  * @param quantity the new quantity
-  */
-   public void setQuantity() { this.quantity=quantity; }
-	
-	
+ 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
+ 
 }
 

@@ -19,39 +19,39 @@
  
 package wotlas.common.objects.valueds;
 
-import wotlas.common.objects.BaseObject;
-
 /** 
- * The base class for all valued objects.
+ * The base class of money (coins).
  * 
  * @author Elann
- * @see wotlas.common.objects.BaseObject
+ * @see wotlas.common.objects.valueds.ValuedObject
  */
 
-public class ValuedObject extends BaseObject
+public class Money extends ValuedObject
 {
 
  /*------------------------------------------------------------------------------------*/
 
-
-  /** The quantity owned.
-   */
-      private short quantity;
-  
- /*------------------------------------------------------------------------------------*/
-	
- /** Gets the quantity.
-  * @return quantity
-  */ 
-   public short getQuantity() { return this.quantity; }
-   
- /** Sets the quantity.
-  * @param quantity the new quantity
+ /** The origin of the coin. Should be used to be refused by some.
+  * For instance Tar Valon marks are not welcomed everywhere.
   */
-   public void setQuantity() { this.quantity=quantity; }
-	
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+  	private String country;
+ 
+ /*------------------------------------------------------------------------------------*/
 
+ /** Gets the origin of the coin. 
+  * Should be used to be refused by some.
+  * For instance Tar Valon marks are not welcomed everywhere.
+  * @return country
+  */
+   public String getCountry() { return this.country; }
+   
+ /** Sets the origin of the coin.
+  * Should be provided by a country list located somewhere on a server.
+  * @param country the new country
+  */
+   public void setCountry(String country) { this.country=country; }
+ 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ 
 }
 

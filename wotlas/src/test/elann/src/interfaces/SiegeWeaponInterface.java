@@ -17,39 +17,21 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
  
-package wotlas.common.objects.valueds;
-
-import wotlas.common.objects.BaseObject;
+package wotlas.common.objects.interfaces;
 
 /** 
- * The base class for all valued objects.
- * 
+ * The siege weapon interface. Provides methods common to all siege weapons.
+ * Should create a GUI to use the siege weapon. 
+ *
  * @author Elann
- * @see wotlas.common.objects.BaseObject
+ * @see wotlas.common.objects.weapons.SiegeWeapon 
  */
 
-public class ValuedObject extends BaseObject
+public interface SiegeWeaponInterface
 {
 
  /*------------------------------------------------------------------------------------*/
 
-
-  /** The quantity owned.
-   */
-      private short quantity;
-  
- /*------------------------------------------------------------------------------------*/
-	
- /** Gets the quantity.
-  * @return quantity
-  */ 
-   public short getQuantity() { return this.quantity; }
-   
- /** Sets the quantity.
-  * @param quantity the new quantity
-  */
-   public void setQuantity() { this.quantity=quantity; }
-	
 	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

@@ -26,7 +26,7 @@ import wotlas.common.objects.weapons.Ammo;
  * The remote weapon interface. Provides methods common to all remote weapons.
  * 
  * @author Elann
- * @see wotlas.common.objects.weapons.Weapon 
+ * @see wotlas.common.objects.weapons.RemoteWeapon 
  */
 
 public interface RemoteWeaponInterface

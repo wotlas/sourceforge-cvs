@@ -19,39 +19,21 @@
  
 package wotlas.common.objects.valueds;
 
-import wotlas.common.objects.BaseObject;
-
 /** 
- * The base class for all valued objects.
+ * The base class of jewels.
  * 
  * @author Elann
- * @see wotlas.common.objects.BaseObject
+ * @see wotlas.common.objects.valueds.ValuedObject
  */
 
-public class ValuedObject extends BaseObject
+public class Jewel extends ValuedObject
 {
 
  /*------------------------------------------------------------------------------------*/
-
-
-  /** The quantity owned.
-   */
-      private short quantity;
-  
+ 
  /*------------------------------------------------------------------------------------*/
-	
- /** Gets the quantity.
-  * @return quantity
-  */ 
-   public short getQuantity() { return this.quantity; }
-   
- /** Sets the quantity.
-  * @param quantity the new quantity
-  */
-   public void setQuantity() { this.quantity=quantity; }
-	
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ 
 }
 

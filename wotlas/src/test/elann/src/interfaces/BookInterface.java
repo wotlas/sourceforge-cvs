@@ -21,7 +21,8 @@ package wotlas.common.objects.interfaces;
 
 /** 
  * The book interface. Provides method to browse thru. 
- * 
+ * Should provide a GUI to read/write. 
+ *
  * @author Elann
  */
 

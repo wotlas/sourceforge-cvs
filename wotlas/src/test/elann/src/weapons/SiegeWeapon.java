@@ -17,41 +17,29 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
  
-package wotlas.common.objects.valueds;
+package wotlas.common.objects.weapons;
 
-import wotlas.common.objects.BaseObject;
+import wotlas.common.objects.interfaces.*;
 
 /** 
- * The base class for all valued objects.
- * 
+ * The siege weapon base class.
+ * Siege weapons cannot be moved by lone Player without Power. 
+ *
  * @author Elann
- * @see wotlas.common.objects.BaseObject
+ * @see wotlas.common.objects.weapons.RemoteWeapon
+ * @see wotlas.common.objects.interfaces.RemoteWeaponInterface
+ * @see wotlas.common.objects.interfaces.SiegeWeaponInterface
  */
 
-public class ValuedObject extends BaseObject
+public class SiegeWeapon extends RemoteWeapon implements SiegeWeaponInterface
 {
 
  /*------------------------------------------------------------------------------------*/
 
-
-  /** The quantity owned.
-   */
-      private short quantity;
-  
+ 
  /*------------------------------------------------------------------------------------*/
-	
- /** Gets the quantity.
-  * @return quantity
-  */ 
-   public short getQuantity() { return this.quantity; }
-   
- /** Sets the quantity.
-  * @param quantity the new quantity
-  */
-   public void setQuantity() { this.quantity=quantity; }
-	
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ 
 }
 

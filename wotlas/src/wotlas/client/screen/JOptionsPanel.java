@@ -36,15 +36,15 @@ import javax.swing.event.*;
  * @author Petrus
  */
 
-public class JOptionsPanel extends JPanel implements MouseListener, ChangeListener, ItemListener 
+public class JOptionsPanel extends JPanel implements MouseListener//, ChangeListener, ItemListener
 {
 
  /*------------------------------------------------------------------------------------*/
-  
+
   /** Slider to change volume level.
    */
   private JSlider volumeLevel;
-  
+
   /** Consctructor.
    */
   public JOptionsPanel() {
@@ -54,53 +54,78 @@ public class JOptionsPanel extends JPanel implements MouseListener, ChangeListen
     innerPanel.setOpaque(false);
     innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
     innerPanel.setBorder(BorderFactory.createEmptyBorder(3,3,5,5)); // all 10s
-    
-    ALabel label1 = new ALabel("Configuration");
-    label1.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+// Title
+    ALabel lbl_title = new ALabel("Menu");
+    lbl_title.setAlignmentX(Component.CENTER_ALIGNMENT);
+    innerPanel.add(lbl_title);
+
+// Space
+    innerPanel.add(new JLabel(" "));
+
+// Options button
+    ImageIcon im_optionsup = new ImageIcon("../base/gui/options-up.gif");
+    ImageIcon im_optionsdo  = new ImageIcon("../base/gui/options-do.gif");
+    JButton b_options = new JButton(im_optionsup);
+    b_options.setRolloverIcon(im_optionsdo);
+    b_options.setPressedIcon(im_optionsdo);
+    b_options.setBorderPainted(false);
+    b_options.setContentAreaFilled(false);
+    b_options.setFocusPainted(false);
+    b_options.setAlignmentX(Component.CENTER_ALIGNMENT);
+    b_options.addActionListener(new ActionListener() {
+      public void actionPerformed (ActionEvent e) {
+        new JConfigurationDlg(DataManager.getDefaultDataManager().getClientScreen());
+      }
+    });
+    innerPanel.add(b_options);
 
 // Volume Panel
-    JPanel vPanel = new JPanel();
+    /*JPanel vPanel = new JPanel();
     vPanel.setOpaque(false);
     vPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
     vPanel.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));
-    
+
     ALabel volTitle = new ALabel("Volume : ");
     vPanel.add(volTitle);
 
     JLabel soundMin = new JLabel(new ImageIcon("../base/gui/volume16.gif"));
     //soundMin.setAlignmentY(Component.CENTER_ALIGNMENT);
     vPanel.add(soundMin);
-    
+
     volumeLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_MUSIC_VOLUME, 30);
     SoundLibrary.getSoundLibrary().changeMusicVolume((short) volumeLevel.getValue());
-    
+
     volumeLevel.setPaintTrack(false);
     volumeLevel.setOpaque(false);
     volumeLevel.setPreferredSize(new Dimension(50,30));
     volumeLevel.addChangeListener(this);
     volumeLevel.setAlignmentY(Component.BOTTOM_ALIGNMENT);
     vPanel.add(volumeLevel);
-    
+
     JLabel soundMax = new JLabel(new ImageIcon("../base/gui/volume24.gif"));
     //soundMax.setAlignmentY(Component.CENTER_ALIGNMENT);
     vPanel.add(soundMax);
+    */
 
 // Text Quality
+    /*
     JPanel qTextPanel = new JPanel();
     qTextPanel.setOpaque(false);
     qTextPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
     qTextPanel.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
-    
+
     ALabel qTextTitle = new ALabel("high quality text : ");
     qTextPanel.add(qTextTitle);
-    
+
     JCheckBox cButton = new JCheckBox();
     cButton.setBackground(Color.white);
     cButton.setSelected(false);
     cButton.addItemListener(this);
     qTextPanel.add(cButton);
+    */
 
-// Help button
+// Help buttons
     ImageIcon im_helpup  = new ImageIcon("../base/gui/help-up.gif");
     ImageIcon im_helpdo  = new ImageIcon("../base/gui/help-do.gif");
     JButton b_help = new JButton(im_helpup);
@@ -108,29 +133,26 @@ public class JOptionsPanel extends JPanel implements MouseListener, ChangeListen
     b_help.setPressedIcon(im_helpdo);
     b_help.setBorderPainted(false);
     b_help.setContentAreaFilled(false);
-    b_help.setFocusPainted(false);      
-    //b_help.setPreferredSize( new Dimension(90,30) );
-   
+    b_help.setFocusPainted(false);
     b_help.setAlignmentX(Component.CENTER_ALIGNMENT);
-    
-      b_help.addActionListener(new ActionListener() {
-          public void actionPerformed (ActionEvent e) {
-             new JHTMLWindow( DataManager.getDefaultDataManager().getClientScreen(), "Help", "../docs/help/index.html", 340, 450, false );
-          }
-        }
-      );
+    //b_help.setPreferredSize( new Dimension(90,30) );    
+    b_help.addActionListener(new ActionListener() {
+      public void actionPerformed (ActionEvent e) {
+        new JHTMLWindow( DataManager.getDefaultDataManager().getClientScreen(), "Help", "../docs/help/index.html", 340, 450, false );
+      }
+    });
+    innerPanel.add(b_help);
 
-    innerPanel.add(label1);
+    /*
     innerPanel.add(vPanel);
     innerPanel.add(qTextPanel);
-    innerPanel.add(new JLabel(" "));
-    innerPanel.add(b_help);
-    
+    */
+
     if (DataManager.SHOW_DEBUG) {
       JMemory memo = new JMemory();
       memo.init();
     }
-        
+
     add(innerPanel);
   }
 
@@ -161,15 +183,17 @@ public class JOptionsPanel extends JPanel implements MouseListener, ChangeListen
 
   /** Invoked when volume is changed
    */
+  /*
   public void stateChanged(ChangeEvent e) {
     SoundLibrary.getSoundLibrary().changeMusicVolume((short) volumeLevel.getValue());
-  }
-  
+  }*/
+
   /** Invoked when check box state is changed
    */
-  public void itemStateChanged(ItemEvent e) {        
-    Object source = e.getItemSelectable(); 
+  /*public void itemStateChanged(ItemEvent e) {
+    Object source = e.getItemSelectable();
     TextDrawable.setHighQualityTextDisplay( (e.getStateChange() == ItemEvent.SELECTED) );
   }
+  */
 
 }

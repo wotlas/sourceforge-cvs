@@ -503,12 +503,11 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     // 0 - Create Sound Library
     SoundLibrary.createSoundLibrary(databasePath);
 
-    try {
+    /*try {
       PropertiesConverter.save(SoundLibrary.getSoundLibrary(), "../src/config/soundmusic.cfg");
     } catch (PersistenceException pe) {
       Debug.signal( Debug.ERROR, this, "Failed to save sound & music configuration : " + pe.getMessage() );
-
-    }
+    }*/
 
     // 1 - Create Graphics Director
     gDirector = new GraphicsDirector( new LimitWindowPolicy() );

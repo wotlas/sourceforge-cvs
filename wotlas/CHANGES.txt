@@ -6,13 +6,18 @@
 * ( File Best Viewed in 1024x768 or above)
 *
 
-CHANGES BETWEEN V1.2.3 AND V1.2.4 (23 April 2002)
-------------------------------------------------
+CHANGES BETWEEN V1.2.3 AND V1.3 (5 May 2002)
+--------------------------------------------
 
  - Added bots definitions and a link to a remote AliceBot server.
  - Improved the server architecture : lots of tasks done before by the ServerDirector are now
    done by the DataManager & ServerManager.
  - Added a new method for dynamic code loading.
+ - all the resource access have been changed : the ResourceManager now handles every type of resource
+ - new SoundLibrary architecture around a SoundPlayer & MusicPlayer created dynamically at start-up
+ - brightness mask added to maps.
+ - Progress Monitor added when you enter the game.
+ - Antialiased Swing is now a wotlas library.
 
 
 CHANGES BETWEEN V1.2.2 AND V1.2.3 (11 April 2002)

@@ -118,6 +118,10 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
     */
      public static final String IMAGE_LIBRARY_DIR = "graphics/imagelib";
 
+   /** Layouts Directory Name
+    */
+    public static final String LAYOUTS_DIR = "layouts";
+    
    /** Logs Directory Name
     */
      public static final String LOGS_DIR = "logs";
@@ -524,6 +528,14 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
      	 return getResourceDir( WIZARD_STEPS_DIR );
      }
 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the Layouts Directory.
+    */
+     public String getLayoutsDir() {
+     	 return getResourceDir( LAYOUTS_DIR );
+     }
+     
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To get Help Docs Directory.

@@ -39,6 +39,7 @@ import wotlas.utils.Debug;
 import wotlas.utils.List;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 
 /** Class of a Wotlas Player.
  *
@@ -354,6 +355,12 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   
  /*------------------------------------------------------------------------------------*/
 
+  /** To get destination of trajectory
+   */
+  public Point getEndPosition() {
+    return endPosition;
+  }
+  
   /** To set endPosition of trajectory.
    */
   public void setEndPosition(int x, int y) {
@@ -391,8 +398,20 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     return wotCharacter.getDrawable(this);
   }
 
+  /** To get player's rectangle (to test intersection)
+   */
+  public Rectangle getCurrentRectangle() {
+    return wotCharacter.getDrawable(this).getRectangle();
+  }
+  
  /*------------------------------------------------------------------------------------*/
 
+  /** Returns true if player is moving
+   */
+  public boolean isMoving() {
+    return (turningAlongPath || walkingAlongPath);
+  }
+  
   /** Tick
    */
   public void tick() {    
@@ -423,11 +442,11 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
 
   /** Player speed : 40 pixel/s
    */
-  private int speed = 40;
+  private int speed = 60;
 
   /** Player default angular speed : 3 rad/s
    */
-  public float angularSpeed = 3;
+  public float angularSpeed = 2;
 
   //---------------------------------------------------------------------------//
 
@@ -470,24 +489,35 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
 
        if(!turningAlongPath && !walkingAlongPath)
           return;
-
+          
        long now = System.currentTimeMillis();
-       float deltaT = ( now-lastUpdateTime )/1000.0f;
+       float deltaT = ( now-lastUpdateTime )/500.0f;
        lastUpdateTime = now;
 
-       if(turningAlongPath) {
-        // Orientation update
-           setAngle( getAngle() + angularDirection*deltaT*angularSpeed );
+      if (turningAlongPath) {
+        // Orientation update           
+           setAngle( getAngle() + angularDirection*deltaT*angularSpeed );           
 
         // End of turn ?
-           float deltaA = (float)( (nextAngle-getAngle())*angularDirection);
+        System.out.println("Enf of turn?");
+        float deltaA = (float)( (nextAngle-getAngle())*deltaT*angularDirection);
+        System.out.print("nextAngle = ");System.out.println(nextAngle*180/Math.PI);
+        System.out.print("getAngle() = ");System.out.println(getAngle()*180/Math.PI);
+        System.out.println("deltaA = " + deltaA);
 
            if( deltaA<=0 ) {
                 turningAlongPath = false;
-                setAngle( nextAngle );
+                //setAngle( nextAngle );
+                System.out.println("deltaA<0");
+                setAngle(angle( new Point( (int)position.x, (int)position.y), nextPoint) );
+                System.out.println("\tgetAngle() = " + getAngle()*180/Math.PI);
            }
-           else if(deltaA>Math.PI/4)
+           else if(deltaA>Math.PI/4) {
+            System.out.println("no footsteps, the angle is to great, we just turn...");
                 return; // no footsteps, the angle is to great, we just turn...
+           }
+       } else {
+        setAngle( angle( new Point( position.x, position.y ), nextPoint) );
        }
 
     // 1 - Position Update
@@ -511,17 +541,20 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
                 path=null;
                 nextPoint=null;
                 prevPoint=null;
+                
+                
+               System.out.println("End of path");
                 return;
             }
          
          // 2.2 - Next Point + position correction
-            prevPoint = nextPoint;
+            prevPoint = new Point( (int)position.x, (int)position.y ); // = nextPoint
             nextPoint = (Point) path.elementAt( pathIndex );
-            setAngle( nextAngle );
+            //setAngle( nextAngle );
             updateAngularNode();
 
-            position.x = (int)( prevPoint.x + deltaD*Math.cos( getAngle() ) );
-            position.y = (int)( prevPoint.y + deltaD*Math.sin( getAngle() ) );
+            //position.x = (int)( prevPoint.x + deltaD*Math.cos( getAngle() ) );
+            //position.y = (int)( prevPoint.y + deltaD*Math.sin( getAngle() ) );
        }
 
     }
@@ -532,19 +565,20 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     * @param path a valid returned by the Astar algorithm
     */
     public void initMovement( List path ) {
-         if( path==null || path.size()<2 ) {// invalid path
+         if( path==null || path.size()<1 ) {// invalid path
              System.out.println( "Invalid Path !!!! "+path);
              return;
          }
 
          this.path = path;
-         pathIndex = 1;
+         pathIndex = 0;
          lastUpdateTime = System.currentTimeMillis();
 
          //prevPoint =  new Point( (int)position.x, (int)position.y );
          
-         prevPoint = (Point) path.elementAt(0);
-         nextPoint = (Point) path.elementAt(1);
+         //prevPoint = (Point) path.elementAt(0);
+         prevPoint =  new Point( (int)position.x, (int)position.y );         
+         nextPoint = (Point) path.elementAt(pathIndex);
 
          walkingAlongPath =true;
          updateAngularNode();
@@ -591,10 +625,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     */
     private void updateAngularNode() {
         nextAngle = angle( prevPoint, nextPoint );
-        //System.out.print("updateAngularNode::angle = ");
-        //System.out.println(getAngle()*180/Math.PI);
-        //System.out.print("updateAngularNode::nextAngle = ");
-        //System.out.println(nextAngle*180/Math.PI);
+        
         angularDirection = 1;
         turningAlongPath = true;
 
@@ -606,6 +637,16 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
 
         if( getAngle() > nextAngle )
             angularDirection = -1;
+        
+        /*System.out.print("updateAngularNode::angle = ");
+        System.out.println(getAngle()*180/Math.PI);
+        System.out.print("updateAngularNode::nextAngle = ");
+        System.out.println(nextAngle*180/Math.PI);
+        */
+            
+        //test
+        /*    if( (nextAngle-getAngle())*angularDirection<=Math.PI/8 && distance(prevPoint,nextPoint)<10 )
+             turningAlongPath = false;*/
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

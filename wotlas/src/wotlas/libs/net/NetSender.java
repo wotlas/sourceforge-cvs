@@ -255,12 +255,12 @@ public class NetSender extends NetThread
             }
 
         // we wait until the last message is sent. The sendQueuedMessages() will notify us.
-        // (max 1s to avoid a deadlock if an Exception has been thrown in sendQueuedMessages)
+        // (max 10s to avoid a deadlock if an Exception has been thrown in sendQueuedMessages)
            if(nb_messages!=0) {
               locked = true;
  
               try{
-                   wait( 1000 );
+                   wait( 10000 );
               }
               catch( InterruptedException e )
               {}

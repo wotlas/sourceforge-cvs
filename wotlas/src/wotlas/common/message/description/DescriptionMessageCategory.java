@@ -33,5 +33,8 @@ public interface DescriptionMessageCategory extends NetMessageCategory {
        public final static byte PLAYER_DATA_MSG             = 0;
        public final static byte MY_PLAYER_DATA_PLEASE_MSG   = 1;
        public final static byte YOUR_PLAYER_DATA_MSG        = 2;
+       public final static byte ROOM_PLAYER_DATA_MSG        = 3;
+       public final static byte ALL_DATA_LEFT_MSG           = 4;
+
 }
 

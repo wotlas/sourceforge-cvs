@@ -32,7 +32,7 @@ import java.io.*;
  * @author Aldiss
  */
 
-public class SoundLibrary implements MetaEventListener
+public class SoundLibrary implements MetaEventListener, ControllerEventListener
 {
  /*------------------------------------------------------------------------------------*/
 
@@ -142,6 +142,8 @@ public class SoundLibrary implements MetaEventListener
 
               sequencer.open();
               sequencer.addMetaEventListener(this);
+              int[] controllers = {7};
+              sequencer.addControllerEventListener(this, controllers);
         }
         catch (Exception ex) {
           // Failed to init Sequencer
@@ -374,10 +376,22 @@ public class SoundLibrary implements MetaEventListener
             if(noSoundDevice || sequencer==null)
                return;
 
-            if(currentMusic!=null)
+            if(currentMusic!=null) {
                sequencer.start();
-        }
+            }
+        }       
+    }
+
+ /** Control Change Events intercepted. We use it for automatic adjust volume.
+   */
+    public void controlChange( ShortMessage message ) {
+       
+          //System.out.println("ShortMessage type = " + message.getCommand());
+          
+        channels[message.getChannel()].controlChange(7, (int) ( ( ((double)volume) / 100.0) * 127.0 ) );
+        
     }
 
  /*------------------------------------------------------------------------------------*/
+ 
 }

@@ -19,6 +19,7 @@
 
 package wotlas.client.screen;
 
+import wotlas.client.DataManager;
 import wotlas.utils.*;
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.net.NetPingListener;
@@ -55,9 +56,6 @@ public class GraphicPingPanel extends JPanel implements NetPingListener
  // current ping value
   private int currentPing;
   
- // Frame to use for JDialog display
-  private Frame frame;
-
  // eventual "Please Wait" dialog
   private JPleaseWait pleaseWait;
 
@@ -65,11 +63,9 @@ public class GraphicPingPanel extends JPanel implements NetPingListener
 
  /** Constructor.
   *
-  * @param frame the frame owner of eventual JDialog produced by this panel.
   */
-    public GraphicPingPanel(Frame frame)
+    public GraphicPingPanel()
     {
-         this.frame = frame;
          setFont("Lblack.ttf");
 
          MediaTracker mediaTracker = new MediaTracker(this);
@@ -92,19 +88,6 @@ public class GraphicPingPanel extends JPanel implements NetPingListener
          setPreferredSize( new Dimension(160,40) );
          setMinimumSize( new Dimension(160,40) );
          setMaximumSize( new Dimension(160,40) );
-         
-      // TEST TEST
-
-         class TestDialog extends JDialog {
-         	public TestDialog( Frame frame ) {
-         	    super( frame,"ping" );
-         	    getContentPane().add(GraphicPingPanel.this);
-         	    pack();
-         	    show();
-         	}
-         };
-
-         new TestDialog(frame);
    }
 
 
@@ -199,8 +182,11 @@ public class GraphicPingPanel extends JPanel implements NetPingListener
      	currentPing = ping;
      	repaint();
      	
-     	if( ping==PING_FAILED && pleaseWait==null)
-            pleaseWait = new JPleaseWait( frame );
+     	if( ping==PING_FAILED && pleaseWait==null) {
+            DataManager dManager = DataManager.getDefaultDataManager();
+            dManager.getMyPlayer().getMovementComposer().resetMovement();
+            pleaseWait = new JPleaseWait( dManager.getClientScreen() );
+        }
         else if(pleaseWait!=null) {
             pleaseWait.dispose();
             pleaseWait = null;

@@ -224,13 +224,17 @@ public class SoundLibrary implements MetaEventListener, ControllerEventListener 
         if(noSoundDevice || noMusic)
           return;
 
+      synchronized( lockMeta ) {
+
         if(currentMusicName!=null && currentMusicName.equals(musicName) )
            return; // the music is already playing.
         else
            currentMusicName=musicName;
 
-        if(currentMusic!=null)
+        if(currentMusic!=null) {
            sequencer.stop();
+           Tools.waitTime(100);
+        }
 
         if ( !loadMidiMusic( dataBasePath+File.separator+"music"+File.separator+musicName ) ) {
            Debug.signal( Debug.ERROR, this, "Failed to load music "+musicName);
@@ -240,6 +244,7 @@ public class SoundLibrary implements MetaEventListener, ControllerEventListener 
       // We set the music volume
         setMusicVolume(getMusicVolume());
         sequencer.start();
+      }
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -348,22 +353,25 @@ public class SoundLibrary implements MetaEventListener, ControllerEventListener 
     public void setMusicVolume(short musicVolume) {
          this.musicVolume = musicVolume;
 
-         if(musicVolume>MAX_MUSIC_VOLUME)
-            musicVolume = MAX_MUSIC_VOLUME;
+      synchronized( lockMeta ) {
 
-      // We change the volume for the current used channels
-         if (channels==null) return;
+           if(musicVolume>MAX_MUSIC_VOLUME)
+              musicVolume = MAX_MUSIC_VOLUME;
 
-         int value = (int) ( ( ((double)musicVolume) / 100.0) * 127.0 );
+        // We change the volume for the current used channels
+           if (channels==null) return;
 
-         if(value<0)  value=0;
-         if(value>127) value=127;
+           int value = (int) ( ( ((double)musicVolume) / 100.0) * 127.0 );
 
-         for ( int i = 0; i < channels.length; i++ )
-              channels[i].controlChange( 7, value );
+           if(value<0)  value=0;
+           if(value>127) value=127;
 
-         if(value==0) noMusic=true;
-         else noMusic=false;
+           for ( int i = 0; i < channels.length; i++ )
+                channels[i].controlChange( 7, value );
+
+           if(value==0) noMusic=true;
+           else noMusic=false;
+      }
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -398,10 +406,13 @@ public class SoundLibrary implements MetaEventListener, ControllerEventListener 
     public void setNoMusic( boolean noMusic ) {
        this.noMusic = noMusic;
 
-       if(noMusic)
-          stopMusic();
-       else 
-          resumeMusic();
+       synchronized( lockMeta ) {
+
+         if(noMusic)
+            stopMusic();
+         else 
+            resumeMusic();
+       }
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -429,9 +440,11 @@ public class SoundLibrary implements MetaEventListener, ControllerEventListener 
        if (noSoundDevice || sequencer==null)
           return;
  
-       sequencer.stop();
-       currentMusicName=null;
-       currentMusic=null;
+       synchronized( lockMeta ) {
+         sequencer.stop();
+         currentMusicName=null;
+         currentMusic=null;
+       }
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -442,7 +455,9 @@ public class SoundLibrary implements MetaEventListener, ControllerEventListener 
        if(noSoundDevice || noMusic || sequencer==null || currentMusic==null)
           return;
 
-       sequencer.start();
+      synchronized( lockMeta ) {
+        sequencer.start();
+      }
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -469,18 +484,19 @@ public class SoundLibrary implements MetaEventListener, ControllerEventListener 
   /** Midi Events intercepted. We use it for automatic music loopback.
    */
     public void meta( MetaMessage message ) {
-      synchronized( lockMeta ) {
 
-        if(noSoundDevice || sequencer==null || noMusic)
+        if(noSoundDevice || sequencer==null || noMusic || currentMusic==null)
            return;
 
         if (message.getType() == 47) {  // 47 means end of track      
            if (currentMusic!=null) {
-              sequencer.stop();        
-              sequencer.start();
+              synchronized( lockMeta ) {
+                 sequencer.stop();
+                 Tools.waitTime(100);
+                 sequencer.start();
+              }
            }
         }
-      }
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -489,8 +505,12 @@ public class SoundLibrary implements MetaEventListener, ControllerEventListener 
    */
     public void controlChange( ShortMessage message ) {
       synchronized( lockMeta ) {
-       setMusicVolume(getMusicVolume());
-       //channels[message.getChannel()].controlChange(7, (int) ( ( ((double)musicVolume) / 100.0) * 127.0 ) );
+      	 if(currentMusic==null) return;
+       //setMusicVolume(getMusicVolume());
+
+         if(message.getCommand()!=176 ) return;
+
+         channels[message.getChannel()].controlChange(7, (int) ( ( ((double)musicVolume) / 100.0) * 127.0 ) );
       }
     }
 

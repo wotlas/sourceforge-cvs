@@ -31,14 +31,14 @@ import wotlas.utils.Debug;
 /**
  * Lopar has a user-dependent NetPersonality. It waits for your signal before
  * sending messages or processing received messages. It has buffers of 128k.
- *
+ *<p>
  * Methods to use with Lopar :
- *
- *   - queueMessage() to prepare the list of messages to send
- *   - pleaseSendAllMessagesNow() to send all the queued messages.
+ *<br>
+ *   - queueMessage() to prepare the list of messages to send.<p>
+ *   - pleaseSendAllMessagesNow() to send all the queued messages.<p>
  *   - pleaseReceiveAllMessagesNow() to process all the received messages within
- *     a certain limit.
- *
+ *     a certain limit.<p>
+ *<br>
  * It's typically what you want for a synchronous client.
  * This personality has only one active thread (NetSender).
  *

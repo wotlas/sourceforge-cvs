@@ -24,8 +24,8 @@ package wotlas.libs.net;
  * A NetMessageBehaviour contains the code associated to a NetMessage.
  * A MessageBehaviour must extend the class of its associated NetMessage
  * and implement the NetMessageBehaviour interface.
- *
- * Example:
+ *<br>
+ * Example: <pre>
  *
  *    class PasswordMsgBehaviour extends PasswordMsg implements NetMessageBehaviour {
  *
@@ -37,7 +37,7 @@ package wotlas.libs.net;
  *           System.out.println("My password:"+ pswd );	
  *	}
  *    }
- *
+ *</pre>
  *
  * The empty constructor is mandatory and must call the empty superclass constructor.
  * 

@@ -27,7 +27,7 @@ import wotlas.libs.net.NetMessageCategory;
  *
  * @author Aldiss
  * @see wotlas.libs.net.NetClient
- * @see wotlas.libs.net.Netserver
+ * @see wotlas.libs.net.NetServer
  */
 
 public interface SystemMessageCategory extends NetMessageCategory {

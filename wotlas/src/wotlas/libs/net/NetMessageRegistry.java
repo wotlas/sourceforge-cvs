@@ -23,19 +23,19 @@ package wotlas.libs.net;
 /** 
  * A NetMessageRegistry simply contains IDs of message categories.
  * There are some restrictions :
- *
- *  - IDs should be the size of a byte to match a message's category ID.
- *  - the message category value should begin at 1. 0 is reserved by the system.
- *  - The word CATEGORY should appear somewhere in the category's name.
+ *<br>
+ *  - IDs should be the size of a byte to match a message's category ID.<P>
+ *  - the message category value should begin at 1. 0 is reserved by the system.<P>
+ *  - The word CATEGORY should appear somewhere in the category's name.<P>
  *
  * Example:
- *
+ *<br><pre>
  *    interface MyMessageRegistry extends NetMessageRegistry {
  *
  *      public final static byte CHAT_CATEGORY      = 1;
  *      public final static byte FILE_CATEGORY      = 2;
  *    }
- *
+ *</pre>
  * Each of these message categories has its own NetMessageCategory Interface.
  * 
  * @author Aldiss

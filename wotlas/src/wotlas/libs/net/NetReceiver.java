@@ -29,12 +29,12 @@ import wotlas.utils.Tools;
 
 /** A NetReceiver waits for NetMessage to arrive on an opened socket.
  *  It decodes them and execute their associated code.
- *
- * There is two types of NetReceiver : synchronous (sync=true)
+ *<br>
+ * There is two types of NetReceiver : synchronous (sync=true),
  *                                     asynchronous (sync=false)
- *
+ *<p>
  * In the first case a thread is automatically started by the constructor.
- *
+ *<p>
  * In the second case, no thread is started. The user has to call
  * the pleaseReceiveAllMessagesNow() method regularly to allow the
  * NetReceiver to extract messages.

@@ -24,22 +24,22 @@ package wotlas.libs.net;
  * A NetMessageCategory simply contains IDs of the message types belonging 
  * to this category. To a NetMessageCategory corresponds ONE category ID
  * declared in the NetMessageRegistry.
- *
+ *<br>
  * There are some restrictions :
- *
- *  - IDs should be the size of a byte to match a message's category ID.
- *  - the message type value should begin at zero.
- *  - The word MSG should appear somewhere in the type's name.
+ *<br>
+ *  - IDs should be the size of a byte to match a message's category ID.<P>
+ *  - the message type value should begin at zero.<P>
+ *  - The word MSG should appear somewhere in the type's name.<P>
  *
  * Example:
- *
+ *<br><pre>
  *    interface ChatMessageCategory extends NetMessageCategory {
  *
  *      public final static byte CHAT_CREATE_MSG    = 0;
  *      public final static byte CHAT_STRING_MSG    = 1;
  *      public final static byte CHAT_LEAVE_MSG     = 2;
  *    }
- *
+ *</pre>
  * Each of these message types has its own NetMessage and NetMessageBehaviour Class.
  * 
  * @author Aldiss

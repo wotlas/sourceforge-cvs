@@ -32,11 +32,11 @@ import wotlas.utils.Debug;
  * Torm has a very independent NetPersonality. It sends messages (with aggregation)
  * and processes received messages without any user intervention. It has standard
  * buffers of 64k.
- *
+ *<br>
  * The only method to use with Torm is :
- *
+ *<br>
  *   - queueMessage() to queue the messages to send.
- *
+ *<p><br>
  * All the work of sending, processing messages is done automatically.
  * It's typically what you want for a server that deals with many clients.
  * This personality has two active thread (NetSender & NetReceiver).

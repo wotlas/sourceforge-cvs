@@ -27,7 +27,7 @@ import java.io.IOException;
  * A NetMessage is a simple message that you give to your NetSender so
  * it transmits it to a foreign NetReceiver.
  *
- * To create a new message simply extends the NetMessage class :
+ * To create a new message simply extends the NetMessage class : <pre>
  *
  *    class PasswordMsg extends NetMessage {
  *         protected int pswd; // my message data
@@ -49,7 +49,7 @@ import java.io.IOException;
  *              pswd = istream.readInt();
  *         }
  *    }
- *
+ * </pre>
  * The empty constructor is mandatory and must initialize the message's
  * category and type.
  *

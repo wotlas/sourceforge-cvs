@@ -28,26 +28,26 @@ import java.net.Socket;
  * NetSender and NetReceiver. You have to create your own ones by redefining
  * the generatePersonality() method. Default personalities are provided in the
  * wotlas.libs.net.personality package.
- *
+ *<br>
  * Useful methods you can invoke to send messages :
- *
+ *<br>
  *    - queueMessage( message );
  *      To queue a message you want to send. 
  *      Works with every personality type ( but with different behaviour ).
- *
+ *<br>
  *    - pleaseSendAllMessagesNow();
  *      Asks the NetSender to send all his queued messages now. It's typically the method
  *      you use in case of a USER_AGGREGATION NetSender or when you want to send all the
  *      remaining messages before closing a connection with the AGGREGATION_MESSAGES NetSender.
  *
- *
+ *<br><p>
  * Useful methods you can invoke to receive messages :
- *
+ *<br>
  *    - pleaseReceiveAllMessagesNow();
  *      Asks the NetReceiver to process all received messages now. This method
  *      does nothing if the NetReceiver is in the asynchronous mode. In the
  *      asynchronous mode you have no method to call : everything is automated.
- *
+ *<br>
  *    - waitForAMessageToArrive();
  *      Waits for a message to arrive. Useful in some cases when the NetReceiver
  *      is synchronous. This method does nothing if the NetReceiver is asynchronous.

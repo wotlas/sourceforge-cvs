@@ -73,6 +73,9 @@ public class SetCurrentChatRoomMsgBehaviour extends SetCurrentChatRoomMessage im
             return;
        }
 
+       if(!player.getLocation().isRoom())
+          return;
+
     // We seek the players to add
        JChatRoom chatRoom = dataManager.getChatPanel().getJChatRoom( chatRoomPrimaryKey );
 

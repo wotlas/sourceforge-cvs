@@ -74,10 +74,8 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
           if(players!=null)
              sender = (PlayerImpl) players.get( senderPrimaryKey );
 
-          if( sender==null ) {
-              Debug.signal( Debug.ERROR, this, "Couldnot find the sender of this message : "+senderPrimaryKey);
-              return;
-          }
+          if( sender==null )
+              Debug.signal( Debug.WARNING, this, "Couldnot find the sender of this message : "+senderPrimaryKey);
 
        // We display the message
           if( voiceSoundLevel!=ChatRoom.SHOUTING_VOICE_LEVEL ) {

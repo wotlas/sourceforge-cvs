@@ -33,7 +33,7 @@ import javax.swing.*;
  * @author Petrus
  */
 
-public class JInfosPanel extends JPanel
+public class JInfosPanel extends JPanel implements MouseListener
 {
 
   /** Player's short name
@@ -50,6 +50,8 @@ public class JInfosPanel extends JPanel
   
  /*------------------------------------------------------------------------------------*/
 
+  /** Constructor.
+   */
   public JInfosPanel(PlayerImpl player) {
     super();
     JPanel panel = new JPanel();
@@ -85,4 +87,27 @@ public class JInfosPanel extends JPanel
  
  /*------------------------------------------------------------------------------------*/
  
+   /**
+   * Invoked when the mouse button is clicked
+   */
+  public void mouseClicked(MouseEvent e) {}
+  /**
+   * Invoked when the mouse enters a component
+   */
+  public void mouseEntered(MouseEvent e) {}
+  /**
+   * Invoked when the mouse exits a component
+   */
+  public void mouseExited(MouseEvent e) {}
+  /**
+   * Invoked when a mouse button has been pressed on a component
+   */
+  public void mousePressed(MouseEvent e) {}
+  /**
+   * Invoked when a mouse button has been released on a component
+   */
+  public void mouseReleased(MouseEvent e) {}
+
+ /*------------------------------------------------------------------------------------*/
+
 }

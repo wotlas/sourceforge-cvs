@@ -461,9 +461,6 @@ public class ImageLibrary {
 
        images[imID.imageCategory][imID.imageSet][imID.imageAction][imID.imageIndex]
                                   = findImageIn( index, imID.imageIndex, BufferedImage.TYPE_INT_ARGB );
-
-    // 5 - Print Some info...
-       Debug.signal( Debug.NOTICE, this, "Added 1 image to database.");
        nbImagesLoaded=0;
    }
 
@@ -786,7 +783,7 @@ public class ImageLibrary {
    /** To load an ARGB image from its ImageIdentifier. The image is searched as follows :
     *
     *  - if there is an existing image library we try a getImage() call. It will eventually
-    *    load the image if it was not already in memory. If the given ImageIndentifier is
+    *    load the image(s) if it was not already in memory. If the given ImageIndentifier is
     *    not a valid entry in the ImageLibrary an error message will be displayed on screen.
     *
     *  - if there is no existing image library ( or if the previous operation failed & returned

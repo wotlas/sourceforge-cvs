@@ -133,7 +133,9 @@ public class MultiRegionImage extends Drawable {
         this.perceptionRadius = perceptionRadius;
         this.imBase = imBase;
 
-        priority = 0; // always first sprite
+        this.image = new ImageIdentifier[nbRegionX][nbRegionY];  // our grid
+
+        priority = 0; // always first drawable to be displayed
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

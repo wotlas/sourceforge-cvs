@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package wotlas.server.message.movement;
+package wotlas.client.message.movement;
 
 import java.io.IOException;
 import java.util.*;
@@ -28,7 +28,7 @@ import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.common.message.movement.*;
 import wotlas.common.universe.*;
 import wotlas.common.Player;
-import wotlas.server.PlayerImpl;
+import wotlas.client.*;
 
 /**
  * Associated behaviour to the PathUpdateMovementMessage...
@@ -55,42 +55,42 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
    */
      public void doBehaviour( Object context ) {
 
-        // The context is here a PlayerImpl.
-           PlayerImpl player = (PlayerImpl) context;
+        // The context is here a DataManager.
+           DataManager dataManager = (DataManager) context;
+           PlayerImpl player = dataManager.getMyPlayer();
 
            if(primaryKey==null) {
-              Debug.signal( Debug.ERROR, this, "No primary key for movement !" );
+              Debug.signal( Debug.ERROR, this, "No primary key to identify player !" );
               return;
            }
 
-           if( !player.getPrimaryKey().equals( primaryKey ) ) {
-              Debug.signal( Debug.ERROR, this, "The specified primary Key is not our player one's !" );
+           if( player.getPrimaryKey().equals( primaryKey ) ) {
+              Debug.signal( Debug.ERROR, this, "Can't set data for master player !" );
               return;
            }
 
-       // We update our player
-          player.getMovementComposer().setUpdate( (MovementUpdateMessage)this );
        
-       // We send the update to other players
-          if( player.getLocation().isRoom() ) {
-
+       // We search for the "primaryKey" owner among the players around the master player's rooms
+          if( player.getLocation().isRoom() )
+          {
+              Player playerToUpdate = null;
               Room room = player.getMyRoom();              
               if( room==null ) return;
 
-           // Current Room
+           // Search in Current Room
               Hashtable players = room.getPlayers();
      
               synchronized( players ) {
-              	 Iterator it = players.values().iterator();
-              	 
-              	 while( it.hasNext() ) {
-              	    PlayerImpl p = (PlayerImpl)it.next();
-                    p.sendMessage( this );    	    
-              	 }
+              	 playerToUpdate = (Player) players.get( primaryKey );
+
+                 if(playerToUpdate!=null) {
+                    playerToUpdate.getMovementComposer().setUpdate( (MovementUpdateMessage)this );
+                    return; // success !
+                 }
               }
 
-           // Other rooms
-              if(room.getRoomLinks()==null) return;
+           // Search in other rooms
+              if(room.getRoomLinks()==null) return; // not found
               
               for( int i=0; i<room.getRoomLinks().length; i++ ) {
                    Room otherRoom = room.getRoomLinks()[i].getRoom1();
@@ -101,16 +101,18 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
                    players = otherRoom.getPlayers();
 
                    synchronized( players ) {
-              	      Iterator it = players.values().iterator();
-              	 
-              	      while( it.hasNext() ) {
-              	          PlayerImpl p = (PlayerImpl)it.next();
-                          p.sendMessage( this );
-              	      }
+                       playerToUpdate = (Player) players.get( primaryKey );
+
+                       if(playerToUpdate!=null) {
+                          playerToUpdate.getMovementComposer().setUpdate( (MovementUpdateMessage)this );
+                          return; // success !
+                       }
                    }
               }
 
+             return; // not found
           }
+
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

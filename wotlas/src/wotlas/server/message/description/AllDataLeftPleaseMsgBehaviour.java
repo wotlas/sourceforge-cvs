@@ -17,32 +17,29 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package wotlas.server.message.movement;
+package wotlas.server.message.description;
 
 import java.io.IOException;
-import java.util.*;
-
-import wotlas.utils.Debug;
 
 import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.message.movement.*;
-import wotlas.common.universe.*;
+import wotlas.common.message.description.*;
 import wotlas.common.Player;
+import wotlas.common.universe.*;
 import wotlas.server.PlayerImpl;
 
 /**
- * Associated behaviour to the PathUpdateMovementMessage...
+ * Associated behaviour to the AllDataLeftPleaseMessage...
  *
  * @author Aldiss
  */
 
-public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage implements NetMessageBehaviour
+public class AllDataLeftPleaseMsgBehaviour extends AllDataLeftPleaseMessage implements NetMessageBehaviour
 {
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
    */
-     public PathUpdateMovementMsgBehaviour() {
+     public AllDataLeftPleaseMsgBehaviour() {
           super();
      }
 
@@ -58,36 +55,17 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
         // The context is here a PlayerImpl.
            PlayerImpl player = (PlayerImpl) context;
 
-           if(primaryKey==null) {
-              Debug.signal( Debug.ERROR, this, "No primary key for movement !" );
-              return;
-           }
+        // We send the all the data left
 
-           if( !player.getPrimaryKey().equals( primaryKey ) ) {
-              Debug.signal( Debug.ERROR, this, "The specified primary Key is not our player one's !" );
-              return;
-           }
-
-       // We update our player
-          player.getMovementComposer().setUpdate( (MovementUpdateMessage)this );
-       
-       // We send the update to other players
+        // 1 - PLAYER DATA
           if( player.getLocation().isRoom() ) {
 
               Room room = player.getMyRoom();              
               if( room==null ) return;
 
            // Current Room
-              Hashtable players = room.getPlayers();
-     
-              synchronized( players ) {
-              	 Iterator it = players.values().iterator();
-              	 
-              	 while( it.hasNext() ) {
-              	    PlayerImpl p = (PlayerImpl)it.next();
-                    p.sendMessage( this );    	    
-              	 }
-              }
+              player.sendMessage( new RoomPlayerDataMessage( player.getLocation(),
+                                  player, room.getPlayers() ) );
 
            // Other rooms
               if(room.getRoomLinks()==null) return;
@@ -98,19 +76,16 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
                    if( otherRoom==room )
                        otherRoom = room.getRoomLinks()[i].getRoom2();
 
-                   players = otherRoom.getPlayers();
+                   WotlasLocation roomLoc = new WotlasLocation( player.getLocation() );
+                   roomLoc.setRoomID( otherRoom.getRoomID() );
 
-                   synchronized( players ) {
-              	      Iterator it = players.values().iterator();
-              	 
-              	      while( it.hasNext() ) {
-              	          PlayerImpl p = (PlayerImpl)it.next();
-                          p.sendMessage( this );
-              	      }
-                   }
+                   player.sendMessage( new RoomPlayerDataMessage( player.getLocation(),
+                                       player, otherRoom.getPlayers() ) );
               }
-
           }
+
+       // 2 - OBJECT DATA (release 2)
+
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

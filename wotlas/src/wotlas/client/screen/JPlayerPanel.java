@@ -40,13 +40,14 @@ public class JPlayerPanel extends JPanel implements MouseListener
     super();
     this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
     
-    playerTabbedPane = new JTabbedPane();
-    //playerTabbedPane.setAlignmentX(0.5f);
+     playerTabbedPane = new JTabbedPane();
     
-    playerTabbedPane.addTab("Info", null, new InfoPanel() );
-    playerTabbedPane.getComponentAt(0).setName("Info");
-        
-    add(playerTabbedPane);
+  // We add an Info Panel
+     playerTabbedPane.addTab("Info", new ImageIcon("../base/gui/pin.gif"),
+                                     new InfoPanel(), "Information on Selected Player" );
+     playerTabbedPane.getComponentAt(0).setName("-info-");
+
+     add(playerTabbedPane);
   }
   
   

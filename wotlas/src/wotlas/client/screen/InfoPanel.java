@@ -23,6 +23,8 @@ import java.awt.*;
 import java.awt.event.*;
 import wotlas.utils.*;
 
+import wotlas.common.*;
+
 /** JPanel to show the informations of the player
  *
  * @author MasterBob
@@ -48,23 +50,28 @@ public class InfoPanel extends JPanel
     playerTextArea.setWrapStyleWord(true);    
     playerTextArea.setEditable(false);
     playerTextArea.setAlignmentX(0.5f);
-    this.setText("boujour je suis un petit lutin, et j'ais tres faim");
-    this.setLabelText("The Lutin");
+    this.setText("Click on a player...");
+    this.setLabelText("No Player Selected");
     
     add(infoPlayerLabel);
-    add(playerTextArea);
-    
+    add(new JScrollPane(playerTextArea));    
   }     
     
- public void setText(String text)
-  {
-   playerTextArea.setText(text);
+  public void setText(String text) {
+    playerTextArea.setText(text);
   }
 
- public void setLabelText(String text)
-  {
-   infoPlayerLabel.setText(text);
+  public void setLabelText(String text) {
+    infoPlayerLabel.setText(text);
   }
 
+  public void setPlayerInfo( Player player ) {
+    setLabelText( player.getFullPlayerName() );
+    setText( 
+      "nickname: "+player.getPlayerName()+"\n"+
+      "Community: "+player.getWotCharacter().getCommunityName()+"\n"+
+      "Rank: "+player.getWotCharacter().getCharacterRank()+"\n\n"+
+      "Player Past: "+player.getPlayerPast() );
+  }
     
  }  

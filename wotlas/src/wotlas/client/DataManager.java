@@ -487,8 +487,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       Debug.exit();
     }
 
-// RAJOUTER UNE ERREUR CRITIQUE SI PAS DE DONNEES
-
     myPlayer.setIsMaster( true );   // this player is controlled by the user.
 
     // Retreive player's location
@@ -671,6 +669,17 @@ System.out.println("Frame show");
            PlayerImpl selectedPlayer = (PlayerImpl) object;
            gDirector.addDrawable(selectedPlayer.getTextDrawable());
            gDirector.addDrawable( selectedPlayer.getWotCharacter().getAura() );
+
+           Component c_info = dataManager.getPlayerPanel().getTab("-info-");
+           
+           if( c_info==null || !(c_info instanceof InfoPanel) ) {
+               Debug.signal( Debug.ERROR, this, "InfoPanel not found !");
+               return;
+           }
+
+           InfoPanel infoPanel = (InfoPanel) c_info;
+           infoPanel.setPlayerInfo( selectedPlayer );
+           return;
     }
     else if( object instanceof Door ) {
         // We open/close the door IF the player is near enough...

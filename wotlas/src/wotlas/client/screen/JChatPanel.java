@@ -27,7 +27,7 @@ import wotlas.common.message.chat.*;
 import wotlas.common.Player;
 import wotlas.common.universe.WotlasLocation;
 
-import wotlas.utils.Debug;
+import wotlas.utils.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -115,6 +115,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
 //    bottomChat.add("Center", inputBox);
 
     chatVoiceLevel = new JSlider(JSlider.HORIZONTAL, 0, 2, ChatRoom.NORMAL_VOICE_LEVEL);
+//    chatVoiceLevel = new JSlider(JSlider.VERTICAL, 0, 2, ChatRoom.NORMAL_VOICE_LEVEL);
     chatVoiceLevel.setMajorTickSpacing(1);
     chatVoiceLevel.setMinorTickSpacing(1);
     chatVoiceLevel.setSnapToTicks(true);
@@ -125,6 +126,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
 
     /**MB**/ //bottomChat.add("West", chatLevel);
 
+    bottomChat.add( new ALabel( new ImageIcon("../base/gui/chat-sound-level.gif")) );
     bottomChat.add(chatVoiceLevel); // MasterBob revision
     bottomChat.add(inputBox); // MasterBob revision
 

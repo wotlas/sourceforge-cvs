@@ -157,14 +157,12 @@ public class JChatRoom extends JPanel
     if( players.containsKey( player.getPrimaryKey() ) )
         return; // already in this chat
     //playersListModel.addElement(player.getFullPlayerName());
-    strNewName = player.getFullPlayerName();
-    final PlayerImpl player2add = player;
+    strNewName = player.getFullPlayerName();    
+    players.put( player.getPrimaryKey(), player );    
     
     Runnable runnable = new Runnable() {
       public void run() {
         playersListModel.addElement(strNewName);
-        players.put( player2add.getPrimaryKey(), player2add );    
-
       }
     };
     SwingUtilities.invokeLater( runnable );

@@ -41,7 +41,7 @@ import wotlas.utils.List;
  * - start the search
  *   AStarObject.findPath(startPoint, goalPoint);
  *
- * @author Petrus
+ * @author Petrus, Aldiss
  * @see wotlas.libs.pathfinding.NodeDouble
  */
 
@@ -298,7 +298,8 @@ double ot = ((NodeDouble) nodes.elementAt(cur)).f;
   }
   
   /**
-   * test if a point is valid for the path (test SPRITE_SIZE)
+   * test if a point is valid for the path
+   * regarding the sprite size
    * 
    * @param x the x coordinate
    * @param y the y coordinate
@@ -519,5 +520,78 @@ double ot = ((NodeDouble) nodes.elementAt(cur)).f;
     mapWidth = mask.length;
     mapHeight = mask[0].length;
   }
+
+ /*------------------------------------------------------------------------------------*/
+
+ /** SMOOTH PATH ALGO FROM GAMASUTRA **/
+
+  /** To smooth a path.
+   * @param path a previously created path via Astar
+   * @return smoothed path...
+   */
+  public List smoothPath( List path ) {
+    if ( (path==null) || (path.size()<3) )
+      return path;
+     
+    List smoothedPath = new List( path.size() );
+
+    Point checkPoint = (Point) path.elementAt(0);
+    int index = 1;
+
+    smoothedPath.addElement( path.elementAt(0) ); // first point
+
+    while ( index+1<path.size() )
+      if ( walkable( checkPoint, (Point) path.elementAt(index+1) ) )
+        index++; // no need for this point, we check the next one
+      else {
+        checkPoint = (Point) path.elementAt(index);
+        smoothedPath.addElement( checkPoint  ); // point needed
+        index++;
+      }
+
+    smoothedPath.addElement( path.elementAt(index) ); // end point
+    return smoothedPath;
+  }
+
+  /** Returns true if we can walk directly from point A to point B.
+   */
+  private boolean walkable( Point a, Point b ) {
+    float angle = 0;
+
+    // 1 - compute angle between the two points...
+    if (b.x == a.x) {
+      if (b.y<a.y)
+        angle = (float) Math.PI/2;
+      else if (b.y>a.y)
+        angle = (float) -Math.PI/2;
+      else angle = 0.0f;
+    } else {
+      angle = (float) Math.atan( (double) (a.y-b.y)/(b.x-a.x) );
+      if (b.x<a.x) {        
+        angle = (float) ( angle+Math.PI );
+      }
+    }    
+    
+    // 2 - check points along the path every 0.25 pixels...
+    
+    float rfin = (float) Math.sqrt( (b.y-a.y)*(b.y-a.y) + (b.x-a.x)*(b.x-a.x) );
+    //int eX=0;
+    //int eY=0;
+    //try {
+      for ( float r=0.25f; r<rfin; r +=0.25f ) {
+      //  eX = (int) (a.x+r*Math.cos(angle));
+      //  eY = (int) (a.y-r*Math.sin(angle));
+      //  System.out.print("pt=(" + eX + "," + eY + ") ");
+        if ( !map[(int) (a.x+r*Math.cos(angle))][(int) (a.y-r*Math.sin(angle))] ) {
+          return false;
+        }
+      }
+    //} catch (java.lang.ArrayIndexOutOfBoundsException ex) {
+      //System.out.println("ArrayIndexOutOfBoundsException : eX,eY = " + eX + "," + eY + " a = " + a + " b = " + b);
+    //}
+    
+    return true; // success ! found valid path between these two points!
+  }
+
 
 }

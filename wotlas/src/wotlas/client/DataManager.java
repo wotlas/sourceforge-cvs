@@ -109,7 +109,14 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
   private WorldManager worldManager;
 
-
+  /** tells if the player could be moving to another room
+   */
+  private boolean couldBeMovingToAnotherRoom = false;
+  
+  /** current RoomLink considered for intersection
+   */
+  private RoomLink latestRoomLink;
+  
  /*------------------------------------------------------------------------------------*/
 
   /** Personality Lock
@@ -607,6 +614,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     if (object == null) {
       int newX = e.getX() + (int)screen.getX();
       int newY = e.getY() + (int)screen.getY();
+      System.out.println("endPosition = ("+newX+","+newY+")");
       myPlayer.setEndPosition(newX, newY);
       // Create the trajectory
       
@@ -653,6 +661,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
           Point p = (Point) smoothPath.elementAt(i);                    
           p.x *= TILE_SIZE;
           p.y *= TILE_SIZE;
+          System.out.println("smoothPath["+i+"] = ("+p.x+","+p.y+")");
         }        
       }
       myPlayer.initMovement(smoothPath);
@@ -723,4 +732,92 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
  /*------------------------------------------------------------------------------------*/
 
+  public void locationUpdate() {
+    // we call the right method whether the player is on
+    // a TownMap, a WorldMap or in a Room.
+    if ( myPlayer.getLocation().isRoom() )
+      roomLocationUpdate();
+    else if ( myPlayer.getLocation().isTown() )
+      townLocationUpdate();
+    else if ( myPlayer.getLocation().isWorld() )
+      worldLocationUpdate();
+  }
+  
+  public void roomLocationUpdate() {
+    Room myRoom = worldManager.getRoom( myPlayer.getLocation() );
+    
+    // I - ROOMLINK INTERSECTION UPDATE ( is the player moving to another room ? )
+    RoomLink rl = myRoom.isIntersectingRoomLink( myPlayer.getCurrentRectangle() );
+  
+      if ( rl!=null && !couldBeMovingToAnotherRoom ) {
+        // Player is intersecting a RoomLink
+        latestRoomLink = rl;
+        couldBeMovingToAnotherRoom = true;
+  
+        // is there a Door ?
+        if ( rl.getDoor()!=null ) {
+          // nothing for now
+        }
+      } else if ( couldBeMovingToAnotherRoom ) {
+        // ok, no intersection now, are we in an another room ?
+        couldBeMovingToAnotherRoom = false;
+  
+        int newRoomID = myRoom.isInOtherRoom( latestRoomLink, myPlayer.getCurrentRectangle() );
+               
+        if ( newRoomID>=0 ) {
+          // Ok, we move to this new Room
+          myRoom.removePlayer( myPlayer );
+          myPlayer.getLocation().setRoomID( newRoomID );
+          myRoom.addPlayer( myPlayer );
+        }
+    } // End of part I
+  
+    // II - MAPEXIT INTERSECTION UPDATE ( is the player moving to another map ? )
+    if ( myPlayer.isMoving() ) {
+      Point destination = myPlayer.getEndPosition();
+      MapExit mapExit = myRoom.isIntersectingMapExit( destination.x,
+                                                      destination.y,
+                                                      myPlayer.getCurrentRectangle() );
+      if ( mapExit!=null ) {
+        // Ok, we are going to a new map...
+        myRoom.removePlayer( myPlayer );
+        myPlayer.setLocation( mapExit.getTargetWotlasLocation() );
+        cleanInteriorMapData(); // suppress drawables, shadows, data
+        
+        switch( mapExit.getType() ) {
+          case MapExit.INTERIOR_MAP_EXIT :
+            initInteriorMapDisplay(); // init new map
+            break;
+  
+          case MapExit.TOWN_EXIT :
+            initTownMapDisplay(); // init new map
+            break;
+        }
+      }
+    } // End of part II  
+  }
+  
+  public void townLocationUpdate() {
+    ;
+  }
+
+  public void worldLocationUpdate() {
+    ;
+  }
+  
+  public void initInteriorMapDisplay(  ) {
+    // 1 - we load the images & init the graphicsDirector
+    // 2 - we init our Player, add a shadow, and start the display
+  }
+  
+  public void initTownMapDisplay(  ) {
+    // 1 - we load the images & init the graphicsDirector
+    // 2 - we init our Player (no shadow drawable) and start the display
+  }
+  
+  /** suppress drawables, shadows, data
+   */
+  public void cleanInteriorMapData() {
+    ;
+  }
 }

@@ -39,9 +39,9 @@ class ServerDirector
 {
  /*------------------------------------------------------------------------------------*/
 
-   /** Static Link to Database Config File.
+   /** Static Link to Server Config File.
     */
-    public final static String DATABASE_CONFIG = "../src/config/server.cfg";
+    public final static String SERVER_CONFIG = "../src/config/server.cfg";
 
    /** Persistence period in ms.
     */
@@ -94,10 +94,10 @@ class ServerDirector
            Debug.signal( Debug.NOTICE, null, "*-----------------------------------*\n");
 
         // STEP 1 - We load the database path. Where is the data ?
-           properties = FileTools.loadPropertiesFile( DATABASE_CONFIG );
+           properties = FileTools.loadPropertiesFile( SERVER_CONFIG );
 
              if( properties==null ) {
-                Debug.signal( Debug.FAILURE, null, "No valid server-database.cfg file found !" );
+                Debug.signal( Debug.FAILURE, null, "No valid server.cfg file found !" );
                 System.exit(1);
              }
 

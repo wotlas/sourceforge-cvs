@@ -105,7 +105,7 @@ public class ProfileConfigListTableModel extends AbstractTableModel
         return serverConfig.getServerName();
 
       case 2:
-        return profiles[row].getKey();
+        return profiles[row].getLogin()+"-"+profiles[row].getKey();
 
       default:
         return null;

@@ -112,7 +112,7 @@ public class JConfigurationDlg extends JDialog {
       soundVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_SOUND_VOLUME,
                                   (short)clientConfiguration.getSoundVolume());
 
-      cButton = new JCheckBox("High details for text details.");
+      cButton = new JCheckBox("High details for text display.");
       cButton.setSelected(clientConfiguration.getHighDetails());
       TextDrawable.setHighQualityTextDisplay(clientConfiguration.getHighDetails());
 

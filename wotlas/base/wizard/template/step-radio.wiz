@@ -1,0 +1,38 @@
+#WotLas 1.0 Saved Object
+#Sat Dec 23 21:36:28 CET 2000
+class=wotlas.libs.wizard.JWizardStepParameters
+isDynamic=false
+isLastStep=false
+isNextButtonEnabled=true
+isPrevButtonEnabled=true
+
+stepClass=wotlas.libs.wizard.step.JWizardStepRadio
+stepTitle=Information\ Choice\ Step\ (JWizardStepRadio)
+
+stepPropertiesKey=8
+stepPropertiesValue=8
+
+stepPropertiesKey.0=init.label0
+stepPropertiesValue.0=Your\ Kyzophrenic\ possibilities\ \:
+
+stepPropertiesKey.1=init.nbChoices
+stepPropertiesValue.1=3
+
+stepPropertiesKey.2=init.choice0
+stepPropertiesValue.2=Protons\ forever\ young
+
+stepPropertiesKey.3=init.choice1
+stepPropertiesValue.3=Neutrons\ incrementaly\ aging
+
+stepPropertiesKey.4=init.choice2
+stepPropertiesValue.4=Neutrinos\ shining\ every\ day
+
+stepPropertiesKey.5=init.info0
+stepPropertiesValue.5=Please\ note\ these\ fields\ are\ very\ important\ and\ should\ not\ be\ set\ without\ a\ good\ understanding\ of\ neutronic\ computing.
+
+stepPropertiesKey.6=init.info1
+stepPropertiesValue.6=Try\ important\ things\ and\ should\ not\ be\ set\ without\ a\ good\ understanding\ of\ neutronic\ computing.
+
+stepPropertiesKey.7=init.info2
+stepPropertiesValue.7=This\ really\ should\ not\ be\ set\ without\ a\ good\ understanding\ of\ this\:\ 21\=12.
+

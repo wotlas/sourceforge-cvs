@@ -91,13 +91,13 @@ public class AStarDouble
   /** To set sprite size
    */
   public void setSpriteSize(int size) {
-    SPRITE_SIZE = size;
+    SPRITE_SIZE = size-1;
   }
   
   /** To get sprite size
    */
   public int getSpriteSize() {
-    return SPRITE_SIZE;
+    return (SPRITE_SIZE+1);
   }
   
  /*------------------------------------------------------------------------------------*/

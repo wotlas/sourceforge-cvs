@@ -68,11 +68,18 @@ public class JMapPanel extends JPanel implements MouseListener
    * Invoked when the mouse button is clicked
    */
   public void mouseClicked(MouseEvent e) {    
-    if (e.getID() == java.awt.event.MouseEvent.MOUSE_CLICKED) {
+    //if (e.getID() == java.awt.event.MouseEvent.MOUSE_CLICKED) {
       System.out.println("[JMapPanel] : clic sur (" + e.getX() + "," + e.getY() + ")");
-      dataManager.onClicJMapPanel(e);
-      dataManager.tick();
-    }
+      if (SwingUtilities.isRightMouseButton(e)) {
+        System.out.println("\tclic droit");
+        dataManager.onRightClicJMapPanel(e);
+        dataManager.tick();
+      } else {
+        System.out.println("\tclic gauche");
+        dataManager.onLeftClicJMapPanel(e);
+        dataManager.tick();
+      }
+    //}
   }
   /**
    * Invoked when the mouse enters a component

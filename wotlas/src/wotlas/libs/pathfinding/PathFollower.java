@@ -41,11 +41,11 @@ public class PathFollower implements MovementComposer {
 
   /** AStar algorithm for pathfinding.
    */
-    private static AStarDouble aStar = new AStarDouble();
+    transient private static AStarDouble aStar;
 
   /** size of a mask's cell (in pixels)
    */
-    private static int tileSize = -1;
+    transient private static int tileSize = -1;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -53,32 +53,38 @@ public class PathFollower implements MovementComposer {
 
   /** Player's trajectory
    */
-    private List path;
+    transient private List path;
 
   /** Our current index in the Path ( next point we target )
    */
-    private int pathIndex;
+    transient private int pathIndex;
 
   /** Previous point in path.
    */
-    private Point prevPoint;
+    transient private Point prevPoint;
 
   /** Next point in path.
    */
-    private Point nextPoint;
+    transient private Point nextPoint;
+
+  /** End point of the path (for persistence only).
+   */
+    private ScreenPoint endPoint;
 
   /** Next Angle in the path.
    */
-    private float nextAngle;
+    transient private float nextAngle;
 
   /** what's our current movement  ? walking ? turning ? do we have to provide
    *  realistic rotations ?
    */
-    private boolean walkingAlongPath, turningAlongPath, realisticRotations;
+    private boolean walkingAlongPath;
+    transient private boolean turningAlongPath;
+    transient private boolean realisticRotations;
 
   /** Last update time.
    */
-    private long lastUpdateTime;
+    transient private long lastUpdateTime;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -94,15 +100,15 @@ public class PathFollower implements MovementComposer {
 
   /** PathFollower speed in pixel/s ( default 60 pixel/s )
    */
-    private float speed = 60;
+    transient private float speed = 60;
 
   /** PathFollower angular speed in radian/s ( default 3 rad/s )
    */
-    private float angularSpeed = 3;
+    transient private float angularSpeed = 3;
 
   /** in which angular direction are we turning ? +1 for positive direction, -1 otherwise.
    */
-    private byte angularDirection;
+    transient private byte angularDirection;
 
   /** Time when we initialized the last movement.
    */
@@ -112,7 +118,7 @@ public class PathFollower implements MovementComposer {
  
   /** Asociated Player.
    */
-    private Player player;
+    transient private Player player;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -122,6 +128,9 @@ public class PathFollower implements MovementComposer {
     * @param playerSize represents the average player size ( in maskTileSize unit )
     */
      public void setMovementMask( boolean mask[][], int maskTileSize, int playerSize ) {
+     	 if(aStar==null)
+     	    aStar = new AStarDouble();
+
          aStar.setMask( mask );
          tileSize = maskTileSize;
          aStar.setSpriteSize( playerSize );
@@ -256,6 +265,31 @@ public class PathFollower implements MovementComposer {
       return angularSpeed;
     }
 
+  /** To set if the player is walking along the path
+   */
+    public void setWalkingAlongPath(boolean walkingAlongPath) {
+      this.walkingAlongPath = walkingAlongPath;
+    }
+
+  /** is the player moving ( same as isMoving(), this method is for persistence only )
+   */
+    public boolean getWalkingAlongPath() {
+      return walkingAlongPath;
+    }
+
+  /** To set the player end position ( for persistence only )
+   */
+    public void setEndPoint(ScreenPoint endPoint) {
+      this.endPoint= endPoint;
+    }
+
+  /** To get the end position of the current movement ( for persistence only, prefer
+   *  getTargetPosition() )
+   */
+    public ScreenPoint getEndPoint() {
+      return endPoint;
+    }
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To set the position from a Point.
@@ -304,6 +338,8 @@ public class PathFollower implements MovementComposer {
       path = null;
       nextPoint = null;
       prevPoint = null;
+
+ // player.send( new PathUpdateMovementMessage( this, player.getPrimaryKey() ) );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -321,6 +357,14 @@ public class PathFollower implements MovementComposer {
    */
      public long getMovementTimeStamp() {
          return movementTimeStamp;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To set the movement's timeStamp.
+   */
+     public void setMovementTimeStamp( long movementTimeStamp ) {
+         this.movementTimeStamp = movementTimeStamp;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -356,13 +400,17 @@ public class PathFollower implements MovementComposer {
            if( walkingAlongPath ) {
                Point pDst = new Point( msg.dstPoint.x, msg.dstPoint.y );
                
-               if( tileSize>=0 ) {
+               if( aStar!=null ) {
                	  // Astar initialized, re-creating path
                	     path = findPath( new Point( (int)xPosition, (int)yPosition ),
                	                      new Point( pDst.x, pDst.y ) );
                      
                      if( path==null ) {
-                     	 stopMovement();
+                         walkingAlongPath = false;
+                         turningAlongPath = false;
+                         path = null;
+                         nextPoint = null;
+                         prevPoint = null;
                          return; // no movement
                      }
 
@@ -371,13 +419,19 @@ public class PathFollower implements MovementComposer {
                }
                else {
                	  // Astar not initialized, just saving data
-               	     path = new List(1,0);
-               	     path.addElement( pDst );
+               	     endPoint = new ScreenPoint( pDst );
                	     movementTimeStamp = System.currentTimeMillis();
                }
            }
-           else
-               stopMovement();
+           else {
+             // No movement
+               walkingAlongPath = false;
+               turningAlongPath = false;
+               path = null;
+               nextPoint = null;
+               prevPoint = null;
+               endPoint = null;
+           }
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -483,6 +537,8 @@ public class PathFollower implements MovementComposer {
 
             updateMovementAspect();
             initMovement( path );
+
+ // player.send( new PathUpdateMovementMessage( this, player.getPrimaryKey() ) );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -583,7 +639,11 @@ public class PathFollower implements MovementComposer {
         orientationAngle = angle( a0, a1 );
         xPosition = (float)a1.x;
         yPosition = (float)a1.y;
-        stopMovement();
+        walkingAlongPath = false;
+        turningAlongPath = false;
+        path = null;
+        nextPoint = null;
+        prevPoint = null;
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

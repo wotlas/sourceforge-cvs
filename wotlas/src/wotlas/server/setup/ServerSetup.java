@@ -66,7 +66,7 @@ public class ServerSetup extends JFrame
          JPanel mainPanel = new JPanel(new GridLayout(22,1,10,10));
 
       // Server Name
-         JLabel label1 = new JLabel("Server Name :");
+         JLabel label1 = new JLabel("Server Name (IP address or DNS name):");
          t_serverName = new JTextField( config.getServerName() );
          mainPanel.add( label1 );
          mainPanel.add( t_serverName );

@@ -20,8 +20,13 @@
 package wotlas.libs.pathfinding;
 
 import wotlas.client.DataManager;
+import wotlas.client.WorldManager;
+
 import wotlas.common.*;
 import wotlas.common.message.movement.*;
+
+import wotlas.common.universe.*;
+
 import wotlas.utils.*;
 
 import java.awt.Point;
@@ -607,8 +612,42 @@ public class PathFollower implements MovementComposer {
             if ( !AStarDouble.isValidStart(startPt) ) {
               if (DataManager.SHOW_DEBUG)
                 System.out.println("PathFollower : invalid start point");
-              return;
-              // Faire un reset de la position
+              
+                // We reset the position
+                WotlasLocation location = player.getLocation();
+                
+                 // We search for a valid insertion point
+                ScreenPoint pReset = null;
+
+                if ( location.isRoom() )
+                  pReset = ((wotlas.client.PlayerImpl)player).getMyRoom().getInsertionPoint();
+                else {
+                  // We get the world manager
+                  WorldManager wManager = DataManager.getDefaultDataManager().getWorldManager();
+
+                  if ( location.isTown() ) {
+                    TownMap myTown = wManager.getTownMap( location );
+                    if (myTown!=null) 
+                      pReset = myTown.getInsertionPoint();
+                  }
+                  else if ( location.isWorld() ) {
+                    WorldMap myWorld = wManager.getWorldMap( location );
+                    if (myWorld!=null)  
+                      pReset = myWorld.getInsertionPoint();
+                  }
+                }
+                if (pReset==null) {
+                  pReset = new ScreenPoint(-1, -1);
+                } else {
+                  //if (DataManager.SHOW_DEBUG)
+                    System.out.println("PathFollower : find a new valid start point");
+                }
+              
+                player.setX(pReset.x);
+                player.setY(pReset.y);
+                startPt.x = pReset.x;
+                startPt.y = pReset.y;
+              
             } else {
               if (DataManager.SHOW_DEBUG)
                 System.out.println("PathFollower : valid start point");

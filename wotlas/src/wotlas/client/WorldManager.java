@@ -47,7 +47,29 @@ public class WorldManager extends wotlas.common.WorldManager
    */
   WorldManager() {
     super();
+    
+    // we use the PersistenceManager to load the worlds.
+    if( !loadLocalUniverse() ) {
+      Debug.signal( Debug.FAILURE, null, "Could not load data correctly ! Exiting..." );
+      Debug.exit();
+    }
+
+    // We rebuild shortcuts
+    init();
   }
+  
+  /** To load our local game universe. 
+   *
+   * @return true in case of success, false otherwise.
+   */
+
+   public boolean loadLocalUniverse() {
+
+       // Call to the PersistenceManager to load the worlds from the dataBase.
+          PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
+          worldMaps = pm.loadLocalUniverse();
+          return true;
+   }
 
  /*------------------------------------------------------------------------------------*/
 

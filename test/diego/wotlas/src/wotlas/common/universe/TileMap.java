@@ -55,8 +55,8 @@ public class TileMap extends ScreenRectangle implements WotlasMap,BackupReady {
     public static byte WALLX  = 2;
     public static byte WALLY  = 3;
     
-    public static byte TILE_FREE      = 0;
-    public static byte TILE_NOT_FREE  = 1;
+    public static boolean TILE_FREE      = true;
+    public static boolean TILE_NOT_FREE  = false;
 
  /*------------------------------------------------------------------------------------*/
     
@@ -382,4 +382,19 @@ public class TileMap extends ScreenRectangle implements WotlasMap,BackupReady {
     public void initNewTileMap( WorldMap myWorldMap ) {
         this.myWorldMap = myWorldMap;
     }        
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Returns the eventual MapExit the given player is intersecting.
+   *
+   * @param rCurrent rectangle containing the player's current position, width & height
+   * @return the Building the player is heading to (if he has reached it, or if there
+   *         are any), null if none.
+   */
+    public MapExit isIntersectingMapExit( int destX, int destY, Rectangle rCurrent ) {
+        return manager.isIntersectingMapExit( destX, destY, rCurrent );
+    }
+
+    public MapExit[] getMapExits(){
+        return manager.getMapExits();
+    }
 }

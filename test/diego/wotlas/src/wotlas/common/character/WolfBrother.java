@@ -1,4 +1,18 @@
 /*
+ *
+ *          GREAT MISSING : the Server should SEND the CLIENT
+ *          the ACTUAL ENVIRONMENT!!!
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
  * Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
  * Copyright (C) 2001-2003 WOTLAS Team
  *
@@ -29,6 +43,7 @@ import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.graphics2D.filter.*;
 
+import wotlas.common.environment.*;
 
 /** A Wolf Brother character.
  *
@@ -387,5 +402,38 @@ public class WolfBrother extends Male {
         } else {
             // to do.... when new version
         }
+    }
+
+   /** used to store the drawable for tilemaps after creating it.
+    */
+    transient private FakeSprite fakeSprite;
+    
+   /** To get a Drawable for this character. This should not be used on the
+    *  server side. This drawable is only used in tilemaps and is still in beta.
+    * it doesnt support animations actually, however it will support the
+    * change of the image from the datasupplier, to let the users change their
+    * images (polymorth, disguise and so on)
+    *
+    * @param player the player to chain the drawable to. If a XXXDataSupplier is needed
+    *               we sets it to this player object.
+    * @return a Drawable for this character.
+    */
+    public Drawable getDrawableForTileMaps( Player player ) {
+        if(fakeSprite!=null)
+            return (Drawable) fakeSprite;
+        
+        int imageNr = 0;
+        switch( EnvironmentManager.whtGraphicSetIs() ){
+            case EnvironmentManager.GRAPHICS_SET_ROGUE:
+                imageNr = 0;
+                break;
+            default:
+                imageNr = EnvironmentManager.getDefaultNpcImageNr();
+        }
+        
+        fakeSprite = new FakeSprite( (SpriteDataSupplier) player, ImageLibRef.PLAYER_PRIORITY
+        , EnvironmentManager.getServerEnvironment().getGraphics(EnvironmentManager.SET_OF_NPC
+        )[ EnvironmentManager.getDefaultPlayerImage() ], imageNr  );
+        return fakeSprite;
     }
 }

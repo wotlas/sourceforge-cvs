@@ -150,7 +150,33 @@ public class GraphicsDirector extends JPanel {
    *        is dictated by the WindowPolicy and refers to this drawable.
    * @param screen initial dimension for this JPanel
    */
-   public void preTileMapInit(  Dimension screen ) {
+   public void preTileMapInitWithPlayer( Drawable refDrawable, Dimension screen ) {
+
+      // we reset the GraphicsDirector's drawables
+         drawables.clear();
+         addDrawable( refDrawable );
+      // Background dims
+         display = false;
+      // Screen defaults
+         this.screen = new Rectangle( screen );
+         setPreferredSize( screen );
+         setMinimumSize( new Dimension(10,10) );
+
+      // We set the new drawable reference an tick our WindowPolicy.
+         this.refDrawable = refDrawable;
+   }
+
+    /** To initialize the GraphicsDirector when using TileMap. A call to this method suppresses all the
+    *  previously possessed Drawable Objects.
+    *  <p><b>IMPORTANT:</b> The backDrawable & refDrawable are automatically added to
+    *  the GraphicsDirector's Drawable list.
+    *
+    * @param backDrawable the drawable that you will use as a reference for your 2D cordinates.
+    * @param refDrawable reference Drawable for screen movements. The way the screen moves
+    *        is dictated by the WindowPolicy and refers to this drawable.
+    * @param screen initial dimension for this JPanel
+    */
+    public void preTileMapInit( Dimension screen ) {
 
       // we reset the GraphicsDirector's drawables
          drawables.clear();
@@ -160,15 +186,16 @@ public class GraphicsDirector extends JPanel {
          this.screen = new Rectangle( screen );
          setPreferredSize( screen );
          setMinimumSize( new Dimension(50,50) );
-   }
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   public void tileMapInit( Dimension background ) {
-         setMaximumSize( background );
-         windowPolicy.tick();
-         display = true;
-   }
+    public void tileMapInit( Dimension background ) {
+        this.background = background;
+        setMaximumSize( background );
+        windowPolicy.tick();
+        display = true;
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

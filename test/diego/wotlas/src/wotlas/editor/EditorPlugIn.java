@@ -56,7 +56,7 @@ import javax.swing.tree.TreeSelectionModel;
 public class EditorPlugIn extends JPanelPlugIn {
  /*------------------------------------------------------------------------------------*/ 
     
-    transient static public byte selectedIsFree = 0;
+    transient static public boolean selectedIsFree = false;
     transient static public int selectedGroup = 0;
     transient static public int selectedGroupImgNr = 0;
     transient static private GraphicsDirector gDirector;
@@ -76,7 +76,8 @@ public class EditorPlugIn extends JPanelPlugIn {
   /** Center panel where the macros are set...
    */
     transient private JPanel centerPanel;
-    
+
+    transient private DefaultListModel listModel1,listModel2,listModel3,listExitMod;
     
     /** Creates new form EditorPlugIn2 */
     public EditorPlugIn() {
@@ -170,6 +171,11 @@ public class EditorPlugIn extends JPanelPlugIn {
         Preview = new javax.swing.JLabel();
         TileNotFree = new javax.swing.JCheckBox();
         jPanel29 = new javax.swing.JPanel();
+        jPanel35 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jPanel36 = new javax.swing.JPanel();
+        jListExits = GetExitList();
         jPanel31 = new javax.swing.JPanel();
         jTabbedPane2 = new javax.swing.JTabbedPane();
         jPanel25 = new javax.swing.JPanel();
@@ -465,7 +471,23 @@ public class EditorPlugIn extends JPanelPlugIn {
 
         jTabbedPane1.addTab("Graphics", jPanel32);
 
-        jTabbedPane1.addTab("Connect Exit", jPanel29);
+        jPanel29.setLayout(new java.awt.BorderLayout());
+
+        jButton1.setText("Add");
+        jPanel35.add(jButton1);
+
+        jButton2.setText("Delete");
+        jPanel35.add(jButton2);
+
+        jPanel29.add(jPanel35, java.awt.BorderLayout.SOUTH);
+
+        jPanel36.setLayout(new java.awt.BorderLayout());
+
+        jPanel36.add(jListExits, java.awt.BorderLayout.CENTER);
+
+        jPanel29.add(jPanel36, java.awt.BorderLayout.CENTER);
+
+        jTabbedPane1.addTab("Map Exits", jPanel29);
 
         jPanel31.setLayout(new java.awt.BorderLayout());
 
@@ -549,9 +571,9 @@ public class EditorPlugIn extends JPanelPlugIn {
 
     private void TileNotFreeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TileNotFreeActionPerformed
         if( !TileNotFree.isSelected() )
-            setFreeTileOrNot( TileMap.TILE_FREE );
+            selectedIsFree = TileMap.TILE_FREE;
         else
-            setFreeTileOrNot( TileMap.TILE_NOT_FREE );
+            selectedIsFree = TileMap.TILE_NOT_FREE;
     }//GEN-LAST:event_TileNotFreeActionPerformed
 
     private void DataHeightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DataHeightActionPerformed
@@ -568,6 +590,7 @@ public class EditorPlugIn extends JPanelPlugIn {
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton2;
     private javax.swing.JList DataGroupOfGraphics;
     private javax.swing.JPanel jPanel32;
     private javax.swing.JPanel jPanel16;
@@ -591,10 +614,12 @@ public class EditorPlugIn extends JPanelPlugIn {
     private javax.swing.JPanel mapData;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JTree BigTree;
+    private javax.swing.JList jListExits;
     private javax.swing.JList jList1;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JButton buttonSave;
+    private javax.swing.JPanel jPanel35;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JTextField DataMusicName;
     private javax.swing.JPanel jPanel1;
@@ -621,6 +646,7 @@ public class EditorPlugIn extends JPanelPlugIn {
     private javax.swing.JButton buttonNew;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JButton jButton1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JButton buttonLoad;
@@ -632,10 +658,11 @@ public class EditorPlugIn extends JPanelPlugIn {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField DataLength;
     private javax.swing.JTextField DataSmallImage;
+    private javax.swing.JPanel jPanel36;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel22;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JButton buttonRefresh;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel17;
     private javax.swing.JPanel jPanel18;
@@ -648,8 +675,8 @@ public class EditorPlugIn extends JPanelPlugIn {
     private javax.swing.JCheckBox TileNotFree;
     private javax.swing.JPanel jPanel15;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JPanel jPanel9;
     private javax.swing.JLabel jLabel15;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JPanel jPanel23;
     private javax.swing.JLabel jLabel10;
     // End of variables declaration//GEN-END:variables
@@ -678,6 +705,7 @@ public class EditorPlugIn extends JPanelPlugIn {
         // DataMapTileSize.setText();
         DataBasicSetId.setText( "" + EditTile.workingOnThisTileMap.getManager().getBasicFloorId() );
         DataBasicSetIdNr.setText( "" + EditTile.workingOnThisTileMap.getManager().getBasicFloorNr() );
+        SetListExitMod(0);
         return true; // this plug-in always works...
     }
 
@@ -734,8 +762,6 @@ public class EditorPlugIn extends JPanelPlugIn {
     public boolean isSystemPlugIn() {
         return false;
     }
-      
-    DefaultListModel listModel1,listModel2,listModel3;
     
     public JList GetNewGOGList() {
         ImageLibrary imageLib = EditTile.getDataManager().getImageLibrary();
@@ -866,10 +892,6 @@ public class EditorPlugIn extends JPanelPlugIn {
         gDirector = value;
     }
 
-    static public void setFreeTileOrNot(byte value){
-        selectedIsFree = value;
-    }
-
     public void LoadTree() {
         // createNodes(treeOfTileMapNode);
         BigTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -902,5 +924,36 @@ public class EditorPlugIn extends JPanelPlugIn {
         DefaultMutableTreeNode map = null;
         map = new DefaultMutableTreeNode( new TreeMapInfo( value.getFullName(), value.tileMapID ) );
         return map;
+    }
+
+    public JList GetExitList() {
+        listExitMod = new DefaultListModel();
+        // SetListExitMod(0);
+        
+      	JList list = new JList();
+        list = new JList(listExitMod);
+        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        list.setSelectedIndex(0);
+        // list.setCellRenderer(new RendIcon());
+        list.setVisibleRowCount(5);
+        list.getSelectionModel().addListSelectionListener( new ListSelectionListener() {
+            public void valueChanged( ListSelectionEvent e ) {
+                ListSelectionModel lsm = (ListSelectionModel)e.getSource();
+                if( !lsm.getValueIsAdjusting() ) {
+                    // xxx = lsm.getLeadSelectionIndex();
+                }
+            }
+        });
+        return list;
+    }
+
+    public void SetListExitMod(int index) {
+        listExitMod.removeAllElements();
+        MapExit[] exits = EditTile.workingOnThisTileMap.getMapExits();
+        String tmp;
+        for(int i=0; i<exits.length; i++) {
+            tmp = ""+exits[i];
+            listExitMod.addElement( tmp );
+        }
     }
 }

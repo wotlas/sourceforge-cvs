@@ -38,6 +38,7 @@ import wotlas.utils.ScreenPoint;
 import wotlas.utils.ScreenRectangle;
 
 import wotlas.editor.*;
+import wotlas.common.environment.*;
 
 import java.awt.image.BufferedImage;
 import java.awt.Rectangle;
@@ -54,6 +55,10 @@ import java.util.Hashtable;
   * @author ??? who started TownMapData, Diego
  */
 public class TileMapData implements MapData {
+
+    /** id used in Serialized interface.
+     */
+    private static final long serialVersionUID = 556565L;
     
  /*------------------------------------------------------------------------------------*/
 
@@ -119,6 +124,8 @@ public class TileMapData implements MapData {
     currentTileMapID = location.getTileMapID();
 
     TileMap tileMap = dataManager.getWorldManager().getTileMap(location);
+    tileMap.initGroupOfGraphics( gDirector );
+    EnvironmentManager.initGraphics( gDirector );
 
       if (SHOW_DEBUG) {
          System.out.println("TileMap");
@@ -133,21 +140,19 @@ public class TileMapData implements MapData {
     // 2 - We set player's position if his position is incorrect
 
     // 3 - preInit the GraphicsDirector : reset it...
-    // ??? WHY DO THIS ??? gDirector.preTileMapInit( new Dimension( JClientScreen.leftWidth, JClientScreen.mapHeight ) );
-    gDirector.preTileMapInit( tileMap.getMapFullSize() );
+    gDirector.preTileMapInitWithPlayer( myPlayer.getBasicChar().getDrawableForTileMaps(myPlayer),tileMap.getMapFullSize() );
+    // gDirector.preTileMapInitWithPlayer( myPlayer.getDrawable(),tileMap.getMapFullSize() );
 
     // 4 - We load the background tile and create the background
-    tileMap.initGroupOfGraphics( gDirector );
     tileMap.drawAllLayer( gDirector );
 
     // 5 - We load the mask
 
     // 6 - We initialize the AStar algo
-    // IMPOSSIBLE : astar cant understand tilemap
-/*
-    myPlayer.getMovementComposer().setMovementMask( BinaryMask.create( bufIm ), 5, 1 );
-    bufIm.flush(); // free image resource
-*/
+    // myPlayer.getMovementComposer().setMovementMask( tileMap.getManager().getMapMask()
+    // , 5, 1 );
+    myPlayer.getMovementComposer().setMovementMask( tileMap.getManager().getMapMask()
+    , tileMap.getMapTileDim().height, 1 );  
     myPlayer.getMovementComposer().resetMovement();
 
     gDirector.tileMapInit( tileMap.getMapFullSize() );
@@ -155,6 +160,13 @@ public class TileMapData implements MapData {
     // 7 - We add buildings' images
 
     // 8 - We add MapExits' images
+    MapExit[] mapExits = tileMap.getManager().getMapExits();
+    if (mapExits!= null) {
+        if (SHOW_DEBUG)
+            System.out.println("\tDrawing MapExits");
+        for (int i=0; i<mapExits.length; i++) 
+            dataManager.drawScreenRectangle(mapExits[i].toRectangle(), Color.yellow);
+    }
 
     // 9 - We show some informations on the screen
     gDirector.addDrawable(myPlayer.getGameScreenFullPlayerName());
@@ -187,6 +199,12 @@ public class TileMapData implements MapData {
         tileMap.initGroupOfGraphics( gDirector );
         tileMap.drawAllLayer( gDirector );
         gDirector.tileMapInit( tileMap.getMapFullSize() );
+        // 8 - We add MapExits' images
+        MapExit[] mapExits = tileMap.getManager().getMapExits();
+        if (mapExits!= null) {
+            for (int i=0; i<mapExits.length; i++) 
+                editorDataManager.drawScreenRectangle( mapExits[i].toRectangle(), Color.yellow );
+        }
         String[] strTemp2 = { tileMap.getFullName() };
         MultiLineText mltLocationName = new MultiLineText(strTemp2, 10, 10, Color.black, 15.0f, "Lucida Blackletter", ImageLibRef.TEXT_PRIORITY, MultiLineText.RIGHT_ALIGNMENT);
         gDirector.addDrawable(mltLocationName);
@@ -194,37 +212,57 @@ public class TileMapData implements MapData {
 
   /*------------------------------------------------------------------------------------*/
 
-  /** To update the location<br>
-   * - test if player is intersecting a screenZone<br>
-   * - test if player is entering a new WotlasLocation<br>
-   * - change the current MapData
-   */
-  public void locationUpdate(PlayerImpl myPlayer) {
+    /** To update the location<br>
+    * - test if player is intersecting a screenZone<br>
+    * - test if player is entering a new WotlasLocation<br>
+    * - change the current MapData
+    */
+    public void locationUpdate(PlayerImpl myPlayer) {
+        if(dataManager==null)
+            return;
 
-    if(dataManager==null)
-       return;
-
-    // Has the currentLocation changed ?
-
-    if ( (currentTileMapID != myPlayer.getLocation().getTileMapID())
-          || (myPlayer.getLocation().getBuildingID()>-1) ) {
-      if (DataManager.SHOW_DEBUG)
-        System.out.println("LOCATION HAS CHANGED in TileMapData");
+        // Has the currentLocation changed ?
+        if ( (currentTileMapID != myPlayer.getLocation().getTileMapID())
+        || (myPlayer.getLocation().getBuildingID()>-1) ) {
+            if (DataManager.SHOW_DEBUG)
+                System.out.println("LOCATION HAS CHANGED in TileMapData");
         
-      Debug.signal( Debug.NOTICE, null, "LOCATION HAS CHANGED in TileMapData");
+            Debug.signal( Debug.NOTICE, null, "LOCATION HAS CHANGED in TileMapData");
 
-      dataManager.getPlayers().clear();
-      dataManager.cleanInteriorMapData();
-      dataManager.getClientScreen().getChatPanel().reset();
-      dataManager.changeMapData();
-      return;
+            dataManager.getPlayers().clear();
+            dataManager.cleanInteriorMapData();
+            dataManager.getClientScreen().getChatPanel().reset();
+            dataManager.changeMapData();
+            return;
+        }
+
+        TileMap tileMap = dataManager.getWorldManager().getTileMap( myPlayer.getLocation() );
+
+        // I - MAPEXIT INTERSECTION UPDATE ( is the player moving to a world map ? )
+        Point destination = myPlayer.getEndPosition();
+        MapExit mapExit = tileMap.isIntersectingMapExit( destination.x,
+                                                        destination.y,
+                                                        myPlayer.getCurrentRectangleForTiles()
+//                                                        myPlayer.getCurrentRectangle()
+                                                        );
+    
+        if ( mapExit!=null ) {
+            // Ok, we are going to a world map...
+            if (SHOW_DEBUG)
+                System.out.println("We are going to a world map...");
+
+            myPlayer.getMovementComposer().resetMovement();
+
+            if (isNotMovingToAnotherMap) {
+                isNotMovingToAnotherMap = false;
+                myPlayer.sendMessage( new CanLeaveTileMapMessage(myPlayer.getPrimaryKey(),
+                                      mapExit.getTargetWotlasLocation(),
+                                      mapExit.getTargetPosition().x, mapExit.getTargetPosition().y,
+                                      mapExit.getTargetOrientation() ) );
+            }
+        }
+
+        // II - BUILDING INTERSECTION UPDATE ( is the player entering a building ? )
+
     }
-
-    TileMap tileMap = dataManager.getWorldManager().getTileMap( myPlayer.getLocation() );
-
-    // I - MAPEXIT INTERSECTION UPDATE ( is the player moving to a world map ? )
-
-    // II - BUILDING INTERSECTION UPDATE ( is the player entering a building ? )
-
-  }
 }

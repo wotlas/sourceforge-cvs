@@ -95,7 +95,21 @@ public abstract class Human extends WotCharacter {
          // Default image for towns & worlds
             if( playerLocation.isTown() || playerLocation.isWorld() )
                 return new ImageIdentifier( "players-0/players-small-images-1/player-small-0" );
-
+            /*
+            if( playerLocation.isTileMap() )
+                return new ImageIdentifier( "players-0" );
+             9,0 : groupofgraphics
+            /*
+            GroupOfGraphics.ROGUE_SET[9]
+                background = (Drawable) new MotionlessSprite( x*tileMap.getMapTileDim().width,  // ground x=0
+                y*tileMap.getMapTileDim().height,         // ground y=0
+                tileMap.getGroupOfGraphics()[getMapBackGroundData()[x][y][0]],  // GroupOfGraphics
+                getMapBackGroundData()[x][y][1],  // number of internal tile
+                ImageLibRef.SECONDARY_MAP_PRIORITY       // priority
+            );
+            gDirector.addDrawable( background );
+            */
+            
             return null; // null otherwise, we let sub-classes redefine the rest...
      }
 
@@ -111,6 +125,8 @@ public abstract class Human extends WotCharacter {
               return 60.0f;  // Default human speed ( 60pixel/s = 2m/s )
          else if ( playerLocation.isTown() )
               return 10.0f;
+         else if ( playerLocation.isTileMap() )
+              return 35.0f;  // Default human speed ( 60pixel/s = 2m/s )
          else
               return 5.0f;
      }

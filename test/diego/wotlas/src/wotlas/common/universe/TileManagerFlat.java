@@ -51,6 +51,7 @@ public class TileManagerFlat extends TileMapManager{
   /** data of additive layers of map.
    */
     private byte[][][] mapBackgroundData;
+    private boolean[][] mapBackgroundDataMask;
     
     /** wht's the basic floor id, eventually used for overlay tiles?
      *  it's basicFloorId
@@ -97,6 +98,7 @@ public class TileManagerFlat extends TileMapManager{
     throws java.io.IOException {
         objectOutput.writeInt( ExternalizeGetVersion() );
         objectOutput.writeObject( mapBackgroundData );
+        objectOutput.writeObject( mapBackgroundDataMask );
         objectOutput.writeByte( basicFloorId );
         objectOutput.writeByte( basicFloorIdTileNr );
         objectOutput.writeObject( mapExits );
@@ -111,6 +113,7 @@ public class TileManagerFlat extends TileMapManager{
         int IdTmp = objectInput.readInt();
         if( IdTmp == ExternalizeGetVersion() ){
             mapBackgroundData = ( byte[][][] ) objectInput.readObject();
+            mapBackgroundDataMask = ( boolean[][] ) objectInput.readObject();
             basicFloorId = objectInput.readByte();
             basicFloorIdTileNr = objectInput.readByte();
             mapExits = ( MapExit[] ) objectInput.readObject();
@@ -141,12 +144,13 @@ public class TileManagerFlat extends TileMapManager{
         mapSize.width  = x;
         mapSize.height = y;
         tileMap.setMapSize( mapSize );
-        mapBackgroundData = new byte[x][y][3];
+        mapBackgroundData = new byte[x][y][2];
+        mapBackgroundDataMask = new boolean[x][y];
         for( int xx=0; xx < x; xx++)
             for( int yy=0; yy < y; yy++) {
                 mapBackgroundData[xx][yy][0] = basicFloorId;
                 mapBackgroundData[xx][yy][1] = basicFloorIdTileNr;
-                mapBackgroundData[xx][yy][2] = TileMap.TILE_FREE;
+                mapBackgroundDataMask[xx][yy] = TileMap.TILE_FREE;
             }
     }
     
@@ -164,7 +168,7 @@ public class TileManagerFlat extends TileMapManager{
          */
         mapBackgroundData[x][y][0] = (byte) map;
         mapBackgroundData[x][y][1] = (byte) tileNr;
-        mapBackgroundData[x][y][2] = TileMap.TILE_FREE;
+        mapBackgroundDataMask[x][y] = TileMap.TILE_FREE;
     }
 
     public byte[][][] getMapBackGroundData() {
@@ -210,7 +214,7 @@ public class TileManagerFlat extends TileMapManager{
                                                                   getMapBackGroundData()[x][y][1],  // number of internal tile
                                                                   ImageLibRef.SECONDARY_MAP_PRIORITY       // priority
                                                                   );
-                        gDirector.addDrawable( background );
+                    gDirector.addDrawable( background );
                 }
             }
         }
@@ -239,58 +243,58 @@ public class TileManagerFlat extends TileMapManager{
    * @return a new MapExit object
    */
     public MapExit addMapExit(ScreenRectangle r) {
-      MapExit myMapExit = new MapExit(r);
+        MapExit myMapExit = new MapExit(r);
     
-      if (mapExits == null) {
-         mapExits = new MapExit[1];
-         myMapExit.setMapExitID(0);
-         mapExits[0] = myMapExit;
-      } else {
-         MapExit[] myMapExits = new MapExit[mapExits.length+1];
-         myMapExit.setMapExitID(mapExits.length);
-         System.arraycopy(mapExits, 0, myMapExits, 0, mapExits.length);
-         myMapExits[mapExits.length] = myMapExit;
-         mapExits = myMapExits;
-      }
-      return myMapExit;
+        if (mapExits == null) {
+            mapExits = new MapExit[1];
+            myMapExit.setMapExitID(0);
+            mapExits[0] = myMapExit;
+        } else {
+            MapExit[] myMapExits = new MapExit[mapExits.length+1];
+            myMapExit.setMapExitID(mapExits.length);
+            System.arraycopy(mapExits, 0, myMapExits, 0, mapExits.length);
+            myMapExits[mapExits.length] = myMapExit;
+            mapExits = myMapExits;
+        }
+        return myMapExit;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Add a new MapExit object to the array {@link #mapExits mapExits}
-   *
-   * @param me MapExit object
-   */
+    /** Add a new MapExit object to the array {@link #mapExits mapExits}
+    *
+    * @param me MapExit object
+    */
     public void addMapExit( MapExit me ) {
-      if (mapExits == null) {
-         mapExits = new MapExit[1];
-         mapExits[0] = me;
-      } else {
-         MapExit[] myMapExits = new MapExit[mapExits.length+1];
-         System.arraycopy(mapExits, 0, myMapExits, 0, mapExits.length);
-         myMapExits[mapExits.length] = me;
-         mapExits = myMapExits;
-      }
+        if (mapExits == null) {
+            mapExits = new MapExit[1];
+            mapExits[0] = me;
+        } else {
+            MapExit[] myMapExits = new MapExit[mapExits.length+1];
+            System.arraycopy(mapExits, 0, myMapExits, 0, mapExits.length);
+            myMapExits[mapExits.length] = me;
+            mapExits = myMapExits;
+        }
     }
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Returns the MapExit which is on the side given by the specified rectangle.
-   *  It's an helper for you : if your player is on a WorldMap and wants to go inside
-   *  a TileMap use this method to retrieve a valid MapExit and get an insertion point.
-   *
-   *  The MapExit is in fact a ScreenRectangle and the so called "insertion point"
-   *  should be the center of this ScreenRectangle.
-   * 
-   * @param rCurrent rectangle containing the player's current position, width & height
-   *        the rectangle position can be anything BUT it should represent in some
-   *        way the direction by which the player hits this TileMap zone.
-   * @return the appropriate MapExit, null if there are no MapExits.
-   */
-   public MapExit findTileMapExit( Rectangle fromPosition ) {
+    /** Returns the MapExit which is on the side given by the specified rectangle.
+    *  It's an helper for you : if your player is on a WorldMap and wants to go inside
+    *  a TileMap use this method to retrieve a valid MapExit and get an insertion point.
+    *
+    *  The MapExit is in fact a ScreenRectangle and the so called "insertion point"
+    *  should be the center of this ScreenRectangle.
+    * 
+    * @param rCurrent rectangle containing the player's current position, width & height
+    *        the rectangle position can be anything BUT it should represent in some
+    *        way the direction by which the player hits this TileMap zone.
+    * @return the appropriate MapExit, null if there are no MapExits.
+    */
+    public MapExit findTileMapExit( Rectangle fromPosition ) {
 
-      if(mapExits==null) {
-         return null; // no position to analyze
-      }  
+        if(mapExits==null) {
+            return null; // no position to analyze
+        }  
 /*
 
            if(fromPosition==null)
@@ -317,42 +321,48 @@ public class TileManagerFlat extends TileMapManager{
       }
 */
 
-      if(mapExits.length==1)
-         return mapExits[0];
+        if(mapExits.length==1)
+            return mapExits[0];
 
-      for(int i=0; i<mapExits.length; i++ ) {
-         if( mapExits[i].getMapExitSide()==MapExit.WEST && fromPosition.x <= tileMap.x+tileMap.width/2 )
-             return mapExits[i];
+        for(int i=0; i<mapExits.length; i++ ) {
+            if( mapExits[i].getMapExitSide()==MapExit.WEST && fromPosition.x <= tileMap.x+tileMap.width/2 )
+                return mapExits[i];
 
-         if( mapExits[i].getMapExitSide()==MapExit.EAST && fromPosition.x >= tileMap.x+tileMap.width/2 )
-             return mapExits[i];
+            if( mapExits[i].getMapExitSide()==MapExit.EAST && fromPosition.x >= tileMap.x+tileMap.width/2 )
+                return mapExits[i];
 
-         if( mapExits[i].getMapExitSide()==MapExit.NORTH && fromPosition.y <= tileMap.y+tileMap.height/2 )
-             return mapExits[i];
+            if( mapExits[i].getMapExitSide()==MapExit.NORTH && fromPosition.y <= tileMap.y+tileMap.height/2 )
+                return mapExits[i];
 
-         if( mapExits[i].getMapExitSide()==MapExit.SOUTH && fromPosition.y >= tileMap.y+tileMap.height/2 )
-             return mapExits[i];
-      }
+            if( mapExits[i].getMapExitSide()==MapExit.SOUTH && fromPosition.y >= tileMap.y+tileMap.height/2 )
+                return mapExits[i];
+        }
    
-      return mapExits[0]; // default
-   }
+        return mapExits[0]; // default
+    }
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Returns the eventual MapExit the given player is intersecting.
-   *
-   * @param rCurrent rectangle containing the player's current position, width & height
-   * @return the ~Building:others tilemap the player is heading to (if he has reached it, or if there
-   *         are any), null if none.
-   */
-     public MapExit isIntersectingMapExit( int destX, int destY, Rectangle rCurrent ) {
+    /** Returns the eventual MapExit the given player is intersecting.
+    *
+    * @param rCurrent rectangle containing the player's current position, width & height
+    * @return the ~Building:others tilemap the player is heading to (if he has reached it, or if there
+    *         are any), null if none.
+    */
+    public MapExit isIntersectingMapExit( int destX, int destY, Rectangle rCurrent ) {
         if(mapExits==null)
-           return null;
+            return null;
 
-        for( int i=0; i<mapExits.length; i++ )
-             if( mapExits[i].toRectangle().contains(destX,destY)
-                 && mapExits[i].toRectangle().intersects( rCurrent ) )
-                 return mapExits[i]; // mapExits reached
-
+        for( int i=0; i<mapExits.length; i++ ){
+//            System.out.println("got there :"+mapExits[i].toRectangle()
+//            +" "+rCurrent);
+            if( mapExits[i].toRectangle().contains(destX,destY)
+            && mapExits[i].toRectangle().intersects( rCurrent ) )
+                return mapExits[i]; // mapExits reached
+        }
         return null;
-     }
+    }
+
+    public boolean[][] getMapMask() {
+        return mapBackgroundDataMask;
+    }
 }

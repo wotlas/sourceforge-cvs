@@ -30,6 +30,8 @@ import wotlas.client.*;
 import wotlas.client.screen.*;
 import wotlas.common.character.*;
 
+import wotlas.common.environment.*;
+
 
 /** Plug In that shows information on the selected player and enables the
  *  local player to set his/her past.
@@ -133,9 +135,9 @@ public class InfoPlugIn extends JPanelPlugIn {
   /** To set the player info given a player.
    */
     public void setPlayerInfo( Player player ) {
-        if( player.getBasicChar().getEnvironment() == BasicChar.ENVIRONMENT_WOT )
+        if( player.getBasicChar().getEnvironment() == EnvironmentManager.ENVIRONMENT_WOT )
             setWotPlayerInfo( player );
-        else
+        else if ( player.getBasicChar().getEnvironment() == EnvironmentManager.ENVIRONMENT_ROGUE_LIKE )
             setRLikePlayerInfo( player );
     }
 
@@ -156,8 +158,8 @@ public class InfoPlugIn extends JPanelPlugIn {
                 this.setText("...");
                 savePastButtonDisplayed = true;
 
-                ImageIcon im_saveup  = ClientDirector.getResourceManager().getImageIcon("save-up.gif");
-                ImageIcon im_savedo  = ClientDirector.getResourceManager().getImageIcon("save-do.gif");
+                ImageIcon im_saveup = ClientDirector.getResourceManager().getImageIcon("save-up.gif");
+                ImageIcon im_savedo = ClientDirector.getResourceManager().getImageIcon("save-do.gif");
   
                 savePastButton = new AButton(im_saveup);
                 savePastButton.setRolloverIcon(im_savedo);
@@ -222,8 +224,8 @@ public class InfoPlugIn extends JPanelPlugIn {
                 this.setText("...");
                 savePastButtonDisplayed = true;
 
-                ImageIcon im_saveup  = ClientDirector.getResourceManager().getImageIcon("save-up.gif");
-                ImageIcon im_savedo  = ClientDirector.getResourceManager().getImageIcon("save-do.gif");
+                ImageIcon im_saveup = ClientDirector.getResourceManager().getImageIcon("save-up.gif");
+                ImageIcon im_savedo = ClientDirector.getResourceManager().getImageIcon("save-do.gif");
   
                 savePastButton = new AButton(im_saveup);
                 savePastButton.setRolloverIcon(im_savedo);

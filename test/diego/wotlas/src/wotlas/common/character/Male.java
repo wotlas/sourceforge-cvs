@@ -33,5 +33,4 @@ public abstract class Male extends Human {
      */
     private static final long serialVersionUID = 556565L;
 
-
 }

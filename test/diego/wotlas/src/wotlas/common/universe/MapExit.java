@@ -57,7 +57,7 @@ public class MapExit extends ScreenRectangle
    */
    public byte type;
 
-  /** one of INTERIOR_MAP_EXIT, BUILDING_EXIT, TOWN_EXIT,TILEMAP_EXIT
+  /** 
    */
    public int z; // (z only used by fakeIso maps, it's the third point after x,y,<z>)
    

@@ -77,23 +77,22 @@ public class WorldGenerator {
            tileMap.selectGroupOfGraphics( GroupOfGraphics.ROGUE_SET );
            
            TileManagerFlat manager = new TileManagerFlat(  tileMap );
-           manager.setMap( 10, 20, TileMap.PIXEL_32, (byte)10, (byte)9 );
+           manager.setMap( 10, 20, TileMap.PIXEL_32, (byte)2, (byte)121 );
            manager.setMapPoint(3,2,0,0);
            manager.setMapPoint(4,2,1,0);
-           manager.setMapPoint(5,3,2,3);
-           manager.setMapPoint(6,4,3,2);
+           manager.setMapPoint(5,3,2,0);
+           manager.setMapPoint(6,4,3,0);
            manager.setMapPoint(7,2,4,0);
            manager.setMapPoint(8,2,5,0);
            manager.setMapPoint(9,2,6,0);
            tileMap.setManager( (TileMapManager)manager );
-           /*
+           
            MapExit mapExit1 = null;
            mapExit1 = manager.addMapExit( new ScreenRectangle(0*32,1*32,1*32,2*32) );
-           mapExit1.setType( MapExit.TILEMAP_EXIT );
-           mapExit1.setMapExitSide( MapExit.WEST );
+           mapExit1.setType( MapExit.TOWN_EXIT );
+           mapExit1.setMapExitSide( MapExit.NONE );
            mapExit1.setTargetWotlasLocation( new WotlasLocation(0) );
-           mapExit1.setTargetPosition( new ScreenPoint(0,1) );
-           */
+           mapExit1.setTargetPosition( new ScreenPoint(745,280) );
 
            // Rak Timin Creation   
            tileMap = new TileMap(720,207,17,17);
@@ -145,6 +144,12 @@ public class WorldGenerator {
            manager2.setFakeIsoLayers( 3 /* x */, 2 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
            manager2.setFakeIsoLayers( 3 /* x */, 3 /* y */, (byte)0 /* floor/layer */, (byte)3, (byte)0, FakeIsoLayers.HOUSE_FLOOR_DIR);
            tileMap.setManager( (TileMapManager)manager2 );
+
+           mapExit1 = manager2.addMapExit( new ScreenRectangle(0*32,1*32,1*32,2*32) );
+           mapExit1.setType( MapExit.TOWN_EXIT );
+           mapExit1.setMapExitSide( MapExit.NONE );
+           mapExit1.setTargetWotlasLocation( new WotlasLocation(0) );
+           mapExit1.setTargetPosition( new ScreenPoint(745,280) );
 
            // STEP 3b - TOWNS
            TownMap townMaps[] = new TownMap[5];

@@ -103,7 +103,7 @@ public class MotionlessSprite extends Drawable implements DrawableOwner {
         
         this.tileGraphic = tileGraphic;
         this.internalTile = internalTile;
-    	this.image = tileGraphic.getImage();    	
+    	this.image = tileGraphic.getImage();
         this.priority = priority;
         this.isBackgroundCordinates = true;
         this.owner = null;

@@ -67,6 +67,7 @@ public class TileManagerFakeIso extends TileMapManager{
   /** data of additive layers of map.
    */
     private byte[][][] mapBackgroundData;
+    private boolean[][] mapBackgroundDataMask;
     
   /** only for persistence
    */
@@ -103,6 +104,7 @@ public class TileManagerFakeIso extends TileMapManager{
     throws java.io.IOException {
         objectOutput.writeInt( ExternalizeGetVersion() );
         objectOutput.writeObject( mapBackgroundData );
+        objectOutput.writeObject( mapBackgroundDataMask );
         objectOutput.writeObject( fakeIsoLayers );
         objectOutput.writeByte( basicFloorId );
         objectOutput.writeByte( basicFloorIdTileNr );
@@ -118,6 +120,7 @@ public class TileManagerFakeIso extends TileMapManager{
         int IdTmp = objectInput.readInt();
         if( IdTmp == ExternalizeGetVersion() ){
             mapBackgroundData = ( byte[][][] ) objectInput.readObject();
+            mapBackgroundDataMask = ( boolean[][] ) objectInput.readObject();
             fakeIsoLayers = ( FakeIsoLayers[][] ) objectInput.readObject();
             basicFloorId = objectInput.readByte();
             basicFloorIdTileNr = objectInput.readByte();
@@ -162,12 +165,13 @@ public class TileManagerFakeIso extends TileMapManager{
         mapSize.width  = x;
         mapSize.height = y;
         tileMap.setMapSize( mapSize );
-        mapBackgroundData = new byte[x][y][3];
+        mapBackgroundData = new byte[x][y][2];
+        mapBackgroundDataMask = new boolean[x][y];
         for( int xx=0; xx < x; xx++)
             for( int yy=0; yy < y; yy++) {
                 mapBackgroundData[xx][yy][0] = basicFloorId;
                 mapBackgroundData[xx][yy][1] = basicFloorIdTileNr;
-                mapBackgroundData[xx][yy][2] = TileMap.TILE_FREE;
+                mapBackgroundDataMask[xx][yy] = TileMap.TILE_FREE;
             }
         fakeIsoLayers = new FakeIsoLayers[x][y];
         for( int xx=0; xx < x; xx++)
@@ -189,7 +193,7 @@ public class TileManagerFakeIso extends TileMapManager{
          */
         mapBackgroundData[x][y][0] = (byte) map;
         mapBackgroundData[x][y][1] = (byte) tileNr;
-        mapBackgroundData[x][y][2] = TileMap.TILE_FREE;
+        mapBackgroundDataMask[x][y] = TileMap.TILE_FREE;
     }
 
     public byte[][][] getMapBackGroundData() {
@@ -391,5 +395,9 @@ public class TileManagerFakeIso extends TileMapManager{
                  return mapExits[i]; // mapExits reached
 
         return null;
+     }
+
+     public boolean[][] getMapMask() {
+         return mapBackgroundDataMask;
      }
 }

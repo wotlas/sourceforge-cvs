@@ -32,8 +32,11 @@ import java.awt.*;
   * @see wotlas.common.universe.TileMap
   * @see wotlas.client.TileMapData
   */
- 
 public abstract class TileMapManager implements BackupReady {
+
+    /** id used in Serialized interface.
+     */
+    private static final long serialVersionUID = 556565L;
 
     abstract public byte getMapType();
 
@@ -86,4 +89,6 @@ public abstract class TileMapManager implements BackupReady {
    abstract public MapExit isIntersectingMapExit( int destX, int destY, Rectangle rCurrent );
 
    abstract public MapExit[] getMapExits();
+
+   abstract public boolean[][] getMapMask();
 }

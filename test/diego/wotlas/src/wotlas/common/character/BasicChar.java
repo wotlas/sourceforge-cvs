@@ -23,6 +23,7 @@ import wotlas.common.*;
 import wotlas.common.universe.*;
 import wotlas.common.objects.inventories.Inventory;
 import wotlas.libs.graphics2D.*;
+import wotlas.libs.graphics2D.drawable.*;
 
 import java.io.*;
 import java.awt.Color;
@@ -137,4 +138,16 @@ public abstract class BasicChar extends CharData {
       *
       */
     abstract public byte getEnvironment();
+
+   /** To get a Drawable for this character. This should not be used on the
+    *  server side. This drawable is only used in tilemaps and is still in beta.
+    * it doesnt support animations actually, however it will support the
+    * change of the image from the datasupplier, to let the users change their
+    * images (polymorth, disguise and so on)
+    *
+    * @param player the player to chain the drawable to. If a XXXDataSupplier is needed
+    *               we sets it to this player object.
+    * @return a Drawable for this character.
+    */
+    abstract public Drawable getDrawableForTileMaps( Player player );
 }

@@ -582,9 +582,17 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
   }
 
   /** To get player's rectangle (to test intersection)
+   * it's used in world/town/interior/rooms sprites
    */
   public Rectangle getCurrentRectangle() {
     return wotCharacter.getDrawable(this).getRectangle();
+  }
+
+  /** To get player's rectangle (to test intersection)
+   * it's used in tilemaps with fakesprite
+   */
+  public Rectangle getCurrentRectangleForTiles() {
+    return wotCharacter.getDrawableForTileMaps(this).getRectangle();
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -79,7 +79,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
   /** TIMEOUT to the Account Server
    */
-    private static final int CONNECTION_TIMEOUT = 5000;
+    private static final int CONNECTION_TIMEOUT = 30000;
 
   /** Number of tick before destroying the circle
    */
@@ -362,11 +362,20 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
    public void waitForConnection(long timeout) {
 
+      long t0 = System.currentTimeMillis();
+
       synchronized( personalityLock ) {
-         if(personality==null)
-            try{
-               personalityLock.wait(timeout);
-            }catch(Exception e ) {}
+        do{
+         long now = System.currentTimeMillis();
+
+           if( personality==null && timeout>(now-t0) )
+              try{
+                 personalityLock.wait(timeout-(now-t0));
+              }catch(Exception e ) {}
+           else
+              return;
+        }
+        while( true );
       }
    }
 
@@ -385,7 +394,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
     pauseTickThread();
 
-     if ( (clientScreen!=null) && (clientScreen.isShowing()) ) {
+     if ( clientScreen!=null && clientScreen.isShowing() ) {
 
         if( !ClientDirector.getClientManager().getAutomaticLogin() ) {
            gDirector.removeAllDrawables();
@@ -396,6 +405,15 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
            public void run() {
               ClientDirector.getClientManager().start(ClientManager.ACCOUNT_LOGIN_SCREEN);  // we restart the ClientManager
            }                                                                                // on the Login entry
+        };
+
+        SwingUtilities.invokeLater( runnable );
+     }
+     else if( clientScreen!=null ) {
+        Runnable runnable = new Runnable() {
+           public void run() {
+              ClientDirector.getClientManager().start(ClientManager.MAIN_SCREEN);
+           }
         };
 
         SwingUtilities.invokeLater( runnable );
@@ -512,7 +530,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        }
 
        if(myPlayer==null) {
+          pMonitor.close();
           showWarningMessage("Failed to retrieve your player data from the Game Server !\nPlease retry later...");
+          imageLib = null;
           closeConnection();
           return;
        }
@@ -611,6 +631,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        }
 
        if(myPlayer==null) {
+          pMonitor.close();
           showWarningMessage("Failed to retrieve your player data from the Game Server !\nPlease retry later...");
           closeConnection();
           return;

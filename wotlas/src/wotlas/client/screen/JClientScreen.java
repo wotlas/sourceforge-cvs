@@ -154,7 +154,6 @@ public class JClientScreen extends JFrame {
           public void actionPerformed (ActionEvent e) {
             hide();
             ClientDirector.getDataManager().closeConnection();
-            ClientDirector.getClientManager().start(ClientManager.MAIN_SCREEN);
           }
         }
       );

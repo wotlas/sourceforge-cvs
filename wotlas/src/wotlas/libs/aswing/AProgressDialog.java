@@ -58,8 +58,10 @@ public class AProgressDialog extends JDialog {
          getContentPane().setBackground(Color.white);
          
       // Top Label
-         label = new ALabel("                             ",SwingConstants.CENTER );
+         label = new ALabel("  ",SwingConstants.CENTER );
          getContentPane().add( label, BorderLayout.CENTER );
+         label.setPreferredSize(new Dimension(300,30));
+         label.setMinimumSize(new Dimension(300,30));
 
       // Progress Bar
          progressBar = new JProgressBar(0,100);

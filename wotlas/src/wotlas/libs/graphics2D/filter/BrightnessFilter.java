@@ -89,8 +89,16 @@ public class BrightnessFilter implements DynamicImageFilter {
     * @param y y coordinate of pixel    
     */          
      public void setBrightness(float x, float y) {
+     	int xb = (int) (x/tilesize);
+     	int yb = (int) (y/tilesize);
+
+        if(xb<0) xb=0;
+        if(yb<0) yb=0;
+        if(xb>=brightnessMask.length) xb=brightnessMask.length-1;
+        if(yb>=brightnessMask[0].length) yb=brightnessMask[0].length-1;
+
         if (brightnessMask!=null)
-            brightness = ((float) brightnessMask[(int) (x/tilesize)][(int) (y/tilesize)])/255;
+            brightness = ((float) brightnessMask[xb][yb])/255;
      }
      
 

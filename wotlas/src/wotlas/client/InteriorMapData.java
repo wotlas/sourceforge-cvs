@@ -226,10 +226,11 @@ public class InteriorMapData implements MapData {
        }
 
        if(bufIm2==null) {
-          Debug.signal( Debug.CRITICAL, this, "Brightness mask not found" );
-          BrightnessFilter.setBrightnessMask(null, 5);                    
+          Debug.signal( Debug.WARNING, this, "Brightness mask not found" );
+          BrightnessFilter.setBrightnessMask(null, 5);
        } else {          
           BrightnessFilter.setBrightnessMask(GrayMask.create( bufIm2 ), 5);                              
+          Debug.signal( Debug.NOTICE, this, "Brightness mask found..." );
        }
     }
     catch( ImageLibraryException e ) {

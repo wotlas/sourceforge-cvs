@@ -144,6 +144,9 @@ public class Sprite extends Drawable implements DrawableOwner {
    *  @param imageFilter a DynamicImageFilter.
    */
     public void setDynamicImageFilter( DynamicImageFilter imageFilter ) {
+        if(imageFilter==null)
+           return;
+
         if (imageFilters==null) {
             imageFilters = new DynamicImageFilter[1];            
             imageFilters[0] = imageFilter;            

@@ -11,7 +11,7 @@
 # On Unix gnu make should find your sh automatically. 
 #
 
-SHELL = c:\\command.com
+SHELL = c:\\winnt\cmd.exe
 
 
 # PACKAGES
@@ -38,6 +38,7 @@ SERVER_PACKAGES = wotlas/server \
                   wotlas/server/message/account
 
 CLIENT_PACKAGES = wotlas/client \
+                  wotlas/client/screen \
                   wotlas/client/message/account
 
 

@@ -19,6 +19,9 @@
 
 package wotlas.common;
 
+import wotlas.common.universe.*;
+
+
 /** Interface of a Wotlas Player.
  *
  * @author Aldiss
@@ -36,4 +39,37 @@ public interface Player
       public void init();
 
  /*------------------------------------------------------------------------------------*/
+
+   /** To get the player location
+    *
+    *  @return player WotlasLocation
+    */
+      public WotlasLocation getLocation();
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To get the player name ( short name )
+    *
+    *  @return player name
+    */
+      public String getPlayerName();
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To get the player's full name.
+    *
+    *  @return player full name ( should contain the player name )
+    */
+      public String getFullPlayerName();
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To get the player primary Key ( account name or any unique ID )
+    *
+    *  @return player primary key
+    */
+      public String getPrimaryKey();
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }

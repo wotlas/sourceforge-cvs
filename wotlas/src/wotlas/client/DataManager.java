@@ -507,6 +507,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
     //System.out.println("end tick");
     */
+    
     gDirector.tick();
   }
 
@@ -536,10 +537,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       myPlayer.setEndPosition(newX, newY);
 
       // Create the trajectory
-
       wotlas.utils.List path = aStar.findPath( new Point( myPlayer.getX()/TILE_SIZE, myPlayer.getY()/TILE_SIZE),
                                            new Point(newX/TILE_SIZE, newY/TILE_SIZE));
-
 
       if (path!=null) {
         Point p0[] = new Point[path.size()];
@@ -550,18 +549,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         Drawable pathDrawable = (Drawable) new PathDrawable( p0, Color.red, (short) ImageLibRef.AURA_PRIORITY );
         gDirector.addDrawable( pathDrawable );
       }
-
-      wotlas.utils.List smoothPath = aStar.smoothPath(path);
-      if (smoothPath!=null) {
-        Point p1[] = new Point[smoothPath.size()];
-        for (int i=0; i<smoothPath.size(); i++) {
-          Point p = (Point) smoothPath.elementAt(i);
-          p1[i] = new Point(p.x*TILE_SIZE, p.y*TILE_SIZE);
-        }
-        Drawable pathDrawable1 = (Drawable) new PathDrawable( p1, Color.blue, (short) ImageLibRef.AURA_PRIORITY );
-        gDirector.addDrawable( pathDrawable1 );
-      }
-
 
       /*if (path!=null) {
         Point p0[] = new Point[path.size()];
@@ -575,15 +562,36 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         gDirector.addDrawable( pathDrawable );
       } */
 
-      if (smoothPath!=null) {
-        for (int i=0; i<smoothPath.size(); i++) {
-          Point p = (Point) smoothPath.elementAt(i);
-          p.x *= TILE_SIZE;
-          p.y *= TILE_SIZE;
-          //System.out.println("smoothPath["+i+"] = ("+p.x+","+p.y+")");
+      WotlasLocation location = myPlayer.getLocation();
+      if ( myPlayer.getLocation().isRoom() ) {
+        // Room -> we use rotations
+        wotlas.utils.List smoothPath = aStar.smoothPath(path);
+        
+        if (smoothPath!=null) {
+          Point p1[] = new Point[smoothPath.size()];
+          for (int i=0; i<smoothPath.size(); i++) {
+            Point p = (Point) smoothPath.elementAt(i);
+            p1[i] = new Point(p.x*TILE_SIZE, p.y*TILE_SIZE);
+          }
+          Drawable pathDrawable1 = (Drawable) new PathDrawable( p1, Color.blue, (short) ImageLibRef.AURA_PRIORITY );
+          gDirector.addDrawable( pathDrawable1 );
+        }        
+        
+        if (smoothPath!=null) {
+          for (int i=0; i<smoothPath.size(); i++) {
+            Point p = (Point) smoothPath.elementAt(i);
+            p.x *= TILE_SIZE;
+            p.y *= TILE_SIZE;
+            //System.out.println("smoothPath["+i+"] = ("+p.x+","+p.y+")");
+          }          
         }
-      }
-      myPlayer.initMovement(smoothPath);
+        myPlayer.initMovement(smoothPath);
+      } else {
+        // World or Town -> we don't use rotations
+        myPlayer.setTrajectory(path);
+      }          
+      
+      
 
     } else {
       System.out.println("object.getClass().getName() = " + object.getClass().getName());
@@ -1066,6 +1074,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
                    );
 
   }
+
+ /*------------------------------------------------------------------------------------*/
 
   /** suppress drawables, shadows, data
    */

@@ -25,6 +25,8 @@ import java.util.*;
 import wotlas.utils.Debug;
 
 import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.libs.sound.*;
+
 import wotlas.common.message.description.*;
 import wotlas.common.universe.*;
 import wotlas.common.Player;
@@ -89,6 +91,7 @@ public class AddPlayerToRoomMsgBehaviour extends AddPlayerToRoomMessage implemen
                	       players.put( player.getPrimaryKey(), player );
                	       ((PlayerImpl)player).init();
                	       ((PlayerImpl)player).initVisualProperties(dataManager.getGraphicsDirector());
+                       SoundLibrary.getSoundLibrary().playSound("human-steps.wav");
                	  }
                }
 
@@ -112,6 +115,7 @@ public class AddPlayerToRoomMsgBehaviour extends AddPlayerToRoomMessage implemen
                	           players.put( player.getPrimaryKey(), player );
                            ((PlayerImpl)player).init();
                            ((PlayerImpl)player).initVisualProperties(dataManager.getGraphicsDirector());
+                           SoundLibrary.getSoundLibrary().playSound("human-steps.wav");
                        }
                     }
 

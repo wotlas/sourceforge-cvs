@@ -16,7 +16,8 @@
   <p><font size="2"><b><a href="#q10">1.0</a></b> - What do I need to do to host 
     a server ?<br>
     <b><a href="#q11">1.1</a></b> - Why do I need to register my server ?<br>
-    <b><a href="#q12">1.2</a></b> - What is the <i>setup</i> utility for ?<br>
+    <b><a href="#q12">1.2</a></b> - What is the <i>manual setup wizard</i> utility 
+    for ?<br>
     <b><a href="#q13">1.3</a></b> - My server has a fixed domain name, can I enter 
     it in the setup utility instead of the IP address ?<br>
     <b><a href="#q14">1.4</a></b> - My server has no domain name and its IP is 
@@ -183,45 +184,39 @@
       <br>
       <a href="#top">back to the top</a></font></p>
   </blockquote>
-  <p><b>1.2</b> - What is the <i>setup</i> utility for ?<a name="q12"></a></p>
+  <p><b>1.2</b> - What is the <i>manual setup wizard</i> utility for ?<a name="q12"></a></p>
   <blockquote> 
-    <p><font size="2">The <i>setup</i> utility is used to publish your server's 
-      IP/DNS address on our wotlas web server. When you used the <i>register</i> 
-      utility you declared and exported a server config that does <i>not</i> contain 
-      your IP/DNS address. Why ? because your server's IP address can change very 
-      often (if you don't have a domain name) and the <i>register</i> utility 
-      is only there to declare static data. Each time your server's IP change 
-      you'll have to use the <i>setup</i> utility.<br>
+    <p><font size="2">This utility is used to publish your server's IP/DNS address 
+      on our wotlas web server <b>IF</b> the <i>Automatic Update</i> feature is 
+      not working with your configuration. Each time your server's IP change you'll 
+      have to use the <i>setup</i> utility. That's why you should prefer to configure 
+      the <i>Automatic Update </i>feature.<br>
       <br>
       <a href="#top">back to the top</a></font></p>
   </blockquote>
   <p><b>1.3</b> - My server has a fixed domain name, can I enter it in the setup 
     utility instead of the IP address ?<a name="q13"></a></p>
   <blockquote> 
-    <p><font size="2"> Yes. If your server has its own domain name, just call 
-      the <i>setup</i> utility once, enter your DNS name, export it and quit. 
-      You can now start your server and don't need to bother again about setup... 
-      unless your computer's IP changes often. You can find free domain name offers 
-      on the Internet but you should avoid them. To learn why, read the answer 
-      to question 1.16 .<br>
+    <p><font size="2"> Yes. If your server has its own domain name, just enter 
+      your DNS name in the <i>Setup Wizard</i>. You can now start your server 
+      and won't need to bother again about it... unless your computer's IP changes 
+      often. You can find free domain name offers on the Internet but you should 
+      avoid them. To learn why, read the answer to question 1.16 .<br>
       <br>
       <a href="#top">back to the top</a></font></p>
   </blockquote>
   <p><b>1.4</b> - My server has no domain name and its IP is often changed by 
     my Internet provider. What can I do ?<a name="q14"></a></p>
   <blockquote> 
-    <p><font size="2">Well there are no miracles. Each time your server's IP changes 
-      you'll have to stop your wotlas server, use the <i>setup</i> utility to 
-      update your server's IP and re-start your wotlas server. It's a matter of 
-      tempo. If you know your Internet provider's habits it can help you <i>a 
-      lot</i>. For example, DSL providers often reset your connection after 24 
-      hours of use and change your IP every 1-4 days. Knowing that you can start 
-      your Internet connection at a period of the day where you know you'll be 
-      at home. This way you'll be there each time to check if the IP has changed.<br>
+    <p><font size="2">Select </font><font size="2"><i>Automatic IP Update </i>in 
+      the <i>Setup Wizard</i>. This way your server will automatically publish 
+      the new IP on the wotlas web site. You'll just be asked to enter a Login 
+      &amp; Password for file transfer when you start your server. In the case 
+      of our public wotlas servers, we use <i>pscp</i> for file transfer so your 
+      password is never shown non-encrypted over the Internet.<br>
       <br>
-      Note also if your network connection is reseted there is no need to stop 
-      &amp; restart your wotlas server if your IP has not changed ( at least on 
-      windows systems... we've not checked for Linux ).<br>
+      Note also that if your network connection is reseted there is no need to 
+      stop &amp; restart your wotlas server.<br>
       <br>
       <a href="#top">back to the top</a></font></p>
   </blockquote>
@@ -260,17 +255,18 @@
         - ADD IP NAT TCP 765 192.168.1.2 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;( 
         Gateway server )</font></p>
     </blockquote>
-    <p><font size="2">2</font><font size="2"> - Put your private server IP ( 192.168.1.2 
-      here ) in the file base/servers/server-<i>N</i>.cfg.adr (where <i>N</i> 
-      is your server id).<br>
+    <p><font size="2">2</font><font size="2"> - Start the <i>Setup Wizard</i>. 
+      Edit your server config : select your private IP as server interface (192.168.1.2 
+      here ) and enter your ADSL modem's public IP in &quot;<i>Publish another 
+      IP/DNS</i>&quot;. The public IP we publish is the address clients will use 
+      to connect on your server.<br>
       <br>
       3 - Start your server.<br>
       <br>
-      4 - Publish your public ip with the <i>setup</i> utility (cf. <a href="#q12">1.2</a>).<br>
-      <br>
-      Each time your public ip changes, you can use the <i>setup</i> utility (cf. 
-      <a href="#q12">1.2</a>) to update your server's IP <b><i>without</i></b> 
-      having to restart your server (cf. <a href="#q15">1.5</a>).<br>
+      Beware ! Each time your public ip changes, you'll have to use the <i>manual 
+      setup</i> <i>wizard</i> utility (cf. <a href="#q12">1.2</a>) to export your 
+      server's plublic IP (cf. <a href="#q15">1.5</a>). You won't have to restart 
+      your server.<br>
       <br>
       IMPORTANT : To test the wotlas client ( via the wotlas-client package ) 
       from your private network, the file base/servers/server-<i>N</i>.cfg.adr 
@@ -304,9 +300,8 @@
   </blockquote>
   <p><b>1.9</b> - How do I shutdown my server ?<a name="q19"></a></p>
   <blockquote> 
-    <p><font size="2">Press Enter. It will take 30s to shutdown. If nobody connected 
-      to the server since the last maintenance save then you can stop it with 
-      a CTRL+C. If you are not sure press ENTER.<br>
+    <p><font size="2">Press Enter. It will take 30s to shutdown. If nobody is 
+      connected on your server just hit CTRL+C. <b>If you are not sure press ENTER.</b><br>
       <br>
       <a href="#top">back to the top</a></font></p>
   </blockquote>
@@ -397,9 +392,8 @@
         for about 4 hours...</font></p>
     </blockquote>
     <p><font size="2">So, unless you have a domain name with its own static IP, 
-      we strongly advice you to enter your IP address in the wotlas <i>setup</i> 
-      utility each time you have to. It will make your server immediately available 
-      to users.<br>
+      we strongly advice you to prefer automatic interface monitoring in the wotlas 
+      <i>setup wizard</i>. It will make your server immediately available to users.<br>
       <br>
       <a href="#top">back to the top</a></font></p>
   </blockquote>

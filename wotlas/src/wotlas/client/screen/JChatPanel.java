@@ -34,13 +34,14 @@ import java.awt.*;
 import java.awt.event.*;
 
 import java.util.Hashtable;
+import java.util.Set;
 
 /** JPanel to show the chat engine
  *
  * @author Petrus
  */
 
-public class JChatPanel extends JPanel implements MouseListener, ActionListener
+public class JChatPanel extends JPanel implements MouseListener, ActionListener, ChatList
 {
 
  /*------------------------------------------------------------------------------------*/  
@@ -300,7 +301,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
    *
    * @param primaryKey primary key of the ChatRoom
    */
-  public Player[] getPlayers(String primaryKey) {
+  public Set getPlayers(String primaryKey) {
     return null;
   }
    

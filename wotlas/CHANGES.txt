@@ -1,3 +1,44 @@
+CHANGES BETWEEN V1.2.1 AND V1.2.2
+---------------------------------
+
+ - all the wotlas resources are now gathered in a same directory ( default is ../base ).
+ - the wotlas server, client & server utilities ( register & setup ) are now completely independent
+   from the location of the resources. By default they search data in "../base" but this can be changed
+   easily by adding a  '-base e:\wotlas\data' on their command lines. We now use a Resource Manager.
+ - the wotlas server & client have new command line options.
+ - The ClientManager (manages the different client swing windows) now extends the JIntroWizard.
+ - The Persistence Managers (used to load/save universe, configs, etc... to/from dot properties file)
+   do not exist anymore. Their save/load methods have been moved to other object managers.
+ - The ServerConfigList (managed the configs of the servers) has been renamed to ServerConfigManager
+   and possesses now all its asociated save/load/create methods.
+ - The World Managers (manages the world data) found in wotlas.client and wotlas.server do not
+   exist anymore. Their code has been transfered to the standard wotlas.common.WorldManager.
+ - The wotlas.client.ClientManager, wotlas.client.DataManager (manages the client data and processes)
+   are not singletons anymore.
+ - The chat commands are now loaded dynamically on the server side.
+ - Client Plug-Ins ! the JPlayerPanel ( class that previously held the tab panels Info, Away & Lie )
+   now dynamically loads the classes found in the wotlas.client.screen.plugin package
+   AND that are instances of the JPanelPlugIn class.
+ - The smiley system has been made more severe.
+ - New sounds when you enter *doh* or *toh* in the chat
+ - Added 10 new smileys.
+ - Added hardware acceleration for the 2D game screen. The new graphics director ( EnhancedGraphicsDirector )
+   uses Java 1.4 Volatile images. The option is available in the Options Panel only if the Java version is
+   equal or higher than 1.4.0.
+ - Added new Wotlas-FAQ entries on PPPoE, flickering, and pscp's first use (thanks to Bibi).
+ - Added a shutdown Hook on the server side, so that the wotlas server can now be shut down safely
+   by CTRL+C or any system signal (SIGTERM, SIGKILL).
+ - Added a new chat button to insert images in the chat via the IMG HTML tag.
+ - Added automatic info to Away messages : last connection date.
+ - Corrected bugs in the chat player name list.
+
+
+CHANGES BETWEEN V1.2 AND V1.2.1 (19 March 2002)
+-----------------------------------------------
+
+ - Corrected a bug found by valere & petrus on the "/who" command.
+
+
 CHANGES BETWEEN V1.2 AND V1.1.2 (18 March 2002)
 -----------------------------------------------
 
@@ -94,3 +135,6 @@ CHANGES BETWEEN V1.1 AND V1.0 (28 November 2001)
 
 
 
+V1.0 released the 20 October 2001
+
+Project started in March 2001

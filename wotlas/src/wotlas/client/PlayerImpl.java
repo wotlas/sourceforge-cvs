@@ -164,9 +164,9 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
    */
   public void initVisualProperties(GraphicsDirector gDirector) {
 
-    if (isMaster) {
-      gDirector.addDrawable(wotCharacter.getShadow());
-    } else {
+    if(isMaster)
+      gDirector.addDrawable(wotCharacter.getShadow()); // Drawable has already been added
+    else {
       gDirector.addDrawable(wotCharacter.getDrawable(this));
       gDirector.addDrawable(wotCharacter.getShadow());
     }

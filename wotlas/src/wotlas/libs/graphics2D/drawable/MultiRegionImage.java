@@ -19,8 +19,6 @@
 
 package wotlas.libs.graphics2D.drawable;
 
-import wotlas.utils.Debug;
-
 import wotlas.libs.graphics2D.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;

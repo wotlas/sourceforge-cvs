@@ -38,8 +38,9 @@ public interface ContainerInterface
 	
   /** Add an object to the container.
    * @param o the object to add
+   * @return false if max capacity is already reached ; true if the object was added
    */
-   	public void addObject(BaseObject o);
+   	public boolean addObject(BaseObject o);
 	
   /** Remove an object from the container.
    * @param o the object to remove. Can be found by getObjectByName() or getObjectAt()

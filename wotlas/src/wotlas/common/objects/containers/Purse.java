@@ -46,10 +46,6 @@ public class Purse extends ContainerObject implements TransportableInterface
   */  																						
   protected ValuedObject content;
  
- /** Is the object "on" ?
-  */  																						
-  protected boolean equipped;
-
  /*------------------------------------------------------------------------------------*/
 
  /** The default constructor.<br>
@@ -79,13 +75,14 @@ public class Purse extends ContainerObject implements TransportableInterface
 
   /** Add a valued object to the purse.
    * @param o the object to add
+   * @return true if added - false if a problem occurs
    */
-    public void addObject(BaseObject o)
+    public boolean addObject(BaseObject o)
 	{
 	 if (o.getClassName()!="ValuedObject")
-	 	return;							  // throw ?
+	 	return false;							 
 		
-	 super.addObject(o);
+	 return super.addObject(o);
 	}
 
   /** Remove a valued object from the purse.
@@ -154,17 +151,6 @@ public class Purse extends ContainerObject implements TransportableInterface
 	 /* no op */
 	 return new BaseObject();
 	}
-	
-	
-  /** Put the object "on".<br>
-   * Enable usage for some objects, visibility for others.
-   */
-    public void equip()
-	{
-	 /* no op */
-	 equipped=true;
-	}
-	
 	
  /*------------------------------------------------------------------------------------*/
 	

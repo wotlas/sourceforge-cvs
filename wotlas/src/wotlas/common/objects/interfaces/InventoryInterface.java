@@ -24,6 +24,8 @@ import wotlas.common.objects.containers.*;
 import wotlas.common.objects.weapons.*;
 import wotlas.common.objects.armors.*;
 
+import wotlas.common.objects.BaseObject;
+
 /** 
  * The common interface for all inventories. 
  * 
@@ -186,24 +188,26 @@ public interface InventoryInterface
   /** Get the object ready for right hand.
    * @return rightObject
    */
-    public UsefulObject getRightObject();
+    public BaseObject getRightObject();
 
-  /** Set the object ready for right hand.
+  /** Set the object ready for right hand.<br>
+   * This method does not check for validity - you can put anything in hand.
    * @param rightObject the new object ready for right hand
    */
-    public void setRightObject(UsefulObject rightObject);
+    public void setRightObject(BaseObject rightObject);
 	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
   /** Get the object ready for left hand.
    * @return leftObject
    */
-    public UsefulObject getLeftObject();
+    public BaseObject getLeftObject();
 
-  /** Set the object ready for left hand.
-   * @param leftObject the new object ready for left hand
+  /** Set the object ready for left hand.<br>
+   * This method does not check for validity - you can put anything in hand.
+   * @param rightObject the new object ready for left hand
    */
-    public void setLeftObject(UsefulObject leftObject);
+    public void setLeftObject(BaseObject leftObject);
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  

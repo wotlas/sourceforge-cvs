@@ -104,15 +104,17 @@ public class ContainerObject extends BaseObject implements ContainerInterface
 	
   /** Add an object to the container.
    * @param o the object to add
+   * @return false if max capacity is already reached ; true if the object was added
    */
-    public void addObject(BaseObject o)
+    public boolean addObject(BaseObject o)
 	{
 	 if (quantity<capacity) 
 	 	content[findFirstFree(content)]=o;
-	 else  	  // may throw something. Must see with implementors
-	 	 return;
+	 else  	  // implementors should check return value
+	 	 return false;
 		 	
 	 quantity++;
+	 return true;
 	}
 	
   /** Remove an object from the container.

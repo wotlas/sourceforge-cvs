@@ -55,12 +55,6 @@ public interface TransportableInterface
   	* @return the object given by the other player.
     */
     public BaseObject tradeTo(Player buyer);
-
-  /** Put the object "on".<br>
-    * Enable usage for some objects, just visibility for others.
-    */
-    public void equip();
-
 		
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

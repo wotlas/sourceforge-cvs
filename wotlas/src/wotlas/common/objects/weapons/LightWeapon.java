@@ -42,16 +42,20 @@ public abstract class LightWeapon extends Weapon implements RepairInterface, Tra
  /*------------------------------------------------------------------------------------*/
 
  /** The current state of the weapon. Goes from newly-made to broken.
-   */
+  */
    	  protected short state;  
 
  /** The knowledges needed to repair this.
-   */
-	  protected String[] /* Knowledge[] */ repairKnowledge;	  	  
+  */
+	  protected String[] /* Knowledge[] */ repairKnowledge;
+	  
+ /** The sheathed position of the weapon.
+  */
+  	  protected String position;	  	  
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Equips the weapon. The weapon is ready to use but plainly visible.
+  /** Equips the weapon. The weapon is ready to use and plainly visible.
    * @param hand the hand in which it will be put 
    */
     public abstract void equip(String hand);

@@ -19,7 +19,7 @@
  
 package wotlas.common.objects;
 
-import wotlas.common.Player;	// the class used to give or sell. It has to be adapted.
+import wotlas.common.Player;
 //import wotlas.common.Levels;	// not implemented
 //import wotlas.common.Knowledge; // not implemented
 import wotlas.common.universe.WotlasLocation;	

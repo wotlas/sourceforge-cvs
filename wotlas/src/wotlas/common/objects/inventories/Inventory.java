@@ -24,6 +24,8 @@ import wotlas.common.objects.containers.*;
 import wotlas.common.objects.weapons.*;
 import wotlas.common.objects.armors.*;
 
+import wotlas.common.objects.BaseObject;
+
 import wotlas.common.objects.interfaces.InventoryInterface;
 
 /** 
@@ -37,7 +39,7 @@ import wotlas.common.objects.interfaces.InventoryInterface;
 public class Inventory implements InventoryInterface {
 
  /*------------------------------------------------------------------------------------*/
-
+  
   /*-------------- Armor ------------*/
 
   /** The main armor. At least shirt ?
@@ -79,11 +81,12 @@ public class Inventory implements InventoryInterface {
       protected Belt belt;
 	
 	  
-  /*---------- UsefulObject ---------*/
+  /*---------- Objects in hands ---------*/
 
-  /** The useful object equipped.
+  /** The object equipped. <br>
+   * May be an object from the slots or any transportable object.
    */
-      protected UsefulObject rightObject,leftObject;
+      protected BaseObject rightObject,leftObject;
   
   /*-------------- Book -------------*/
   
@@ -95,11 +98,101 @@ public class Inventory implements InventoryInterface {
 
   /** Constructor.
    */
-    public Inventory() {
-        book = new Book();
+    public Inventory() 
+	{
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+	
+  /** The player has received an object.<br>
+   * First, this method try to find an available slot to put it.<br>
+   * If none is available, the object should go in the bag.<br>
+   * If the bag hasn't got enough space, failure.<br>
+   *
+   * @param object the object the player received
+   * @return true if the object is put in the inventory ; false if it is refused 
+   */
+    public boolean receiveObject(BaseObject object) 
+	{
+	 String clName=object.getClassName();
+	 
+	 if (clName=="Bag")
+	 {
+	  	   if (this.bag==null)
+		   {
+		   	this.bag=(Bag)object;
+			return true;
+		   }
+	 }
+	 else
+	 if (clName=="Belt")
+	 {
+	  	   if (this.belt==null)
+		   {
+		   	this.belt=(Belt)object;
+			return true;
+		   }
+	 }
+	 else
+	 if (clName=="BodyArmor")
+	 {
+	  	   if (this.bodyArmor==null)
+		   {
+		   	this.bodyArmor=(BodyArmor)object;
+			return true;
+		   }
+	 }
+	 else
+	 if (clName=="Book")
+	 {
+	  	   if (this.book==null)
+		   {
+		   	this.book=(Book)object;
+			return true;
+		   }
+	 }
+	 else
+	 if (clName=="Bow")
+	 {
+	  	   if (this.bow==null)
+		   {
+		   	this.bow=(Bow)object;
+			return true;
+		   }
+	 }
+	 else
+	 if (clName=="HeadArmor")
+	 {
+	  	   if (this.headArmor==null)
+		   {
+		   	this.headArmor=(HeadArmor)object;
+			return true;
+		   }
+	 }
+	 else
+	 if (clName=="HeavyWeapon")
+	 {
+	  	   if (this.heavyWeapon==null)
+		   {
+		   	this.heavyWeapon=(HeavyWeapon)object;
+			return true;  
+		   }
+ 	 }
+	 else
+	 if (clName=="Purse")
+	 {
+	  	   if (this.purse==null)
+		   {
+		   	this.purse=(Purse)object;
+			return true;
+		   }
+	 }
+
+	 return this.bag.addObject(object);
+    }
+	
+	
+ /* - - - - - - - - - - - - - - Getters / Setters - - - - - - - - - - - - - - - - - - -*/
  
   /** Get the body armor.
    * @return bodyArmor
@@ -320,15 +413,16 @@ public class Inventory implements InventoryInterface {
   /** Get the object ready for right hand.
    * @return rightObject
    */
-    public UsefulObject getRightObject()
+    public BaseObject getRightObject()
     {
         return rightObject;
     }
 
-  /** Set the object ready for right hand.
+  /** Set the object ready for right hand.<br>
+   * This method does not check for validity - you can put anything in hand.
    * @param rightObject the new object ready for right hand
    */
-    public void setRightObject(UsefulObject rightObject)
+    public void setRightObject(BaseObject rightObject)
     {
         this.rightObject=rightObject;
     }
@@ -338,15 +432,16 @@ public class Inventory implements InventoryInterface {
   /** Get the object ready for left hand.
    * @return leftObject
    */
-    public UsefulObject getLeftObject()
+    public BaseObject getLeftObject()
     {
         return leftObject;
     }
 
   /** Set the object ready for left hand.
+   * This method does not check for validity - you can put anything in hand.
    * @param leftObject the new object ready for left hand
    */
-    public void setLeftObject(UsefulObject leftObject)
+    public void setLeftObject(BaseObject leftObject)
     {
         this.leftObject=leftObject;
     }
@@ -374,4 +469,3 @@ public class Inventory implements InventoryInterface {
  
  
 }
-

@@ -31,7 +31,7 @@ public class Coin extends ValuedObject
 
  /*------------------------------------------------------------------------------------*/
 
- /** The origin of the coin. Should be used to be refused by some.
+ /** The origin of the coin. <br>Should be used to be refused by some.
   * For instance Tar Valon marks are not welcomed everywhere.
   */
   	private String country;

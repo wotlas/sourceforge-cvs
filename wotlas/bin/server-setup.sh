@@ -2,4 +2,4 @@
 
 cd ..
 cd classes
-java -classpath . wotlas.server.setup.ServerAddressSetup
+java -classpath . wotlas.server.ServerDirector -admin

@@ -1,10 +1,11 @@
 CHANGES BETWEEN V1.2 AND V1.1.2
 -------------------------------
 
- - added new maps : "Shayol Ghul" (2 maps), "White Tower" (2 maps), and "South Tv Ruins" is no longer hidden
- - added multi-server support. A player account can now travel from a server to another.
+ - added new maps : "Shayol Ghul" (2 maps), "White Tower" (3 maps), and "South Tv Ruins" is no longer hidden
+ - added multi-server support. A player account can now travel from one server to another.
    The game universe can now be shared between servers. Each server possesses a set of buildings.
- - corrected bugs in ServerConfigList : the previous code was sometimes attempting to reach wrong URI.
+ - added new characters to the game : Younglings, Warders, Tower Guard, Shaitan, Keeper of chronicles,
+   Children of the Light, Wolf Brother.
  - added ServerConfigList buffer flush every six hour (to force update of the server table)
    The server's IP/DNS name is now stored in a separate file server-X.cfg.adr that has a short buffer life
    (twenty minutes) also our system is now on a "fail-first" mode. We don't check for a new server address
@@ -19,19 +20,27 @@ CHANGES BETWEEN V1.2 AND V1.1.2
    /knock to knock on a door... you have to wait 10 seconds between two sounds (error msg otherwise)
  - about 8 new musics for all the levels...
  - local password storage. Your passwords are now saved on disk. This option can be unset.
+ - corrected bugs in ServerConfigList : the previous code was sometimes attempting to reach a wrong URI.
  - behaviour part of some messages are now in the "invokeLater" mode to avoid events error.
    we made extensive use of the SwingUtilities.invokeLater() utility.
  - reformed and improved the wotlas.libs.net library : it no longuer uses a static registry.
    Our network library is now easier to use : you write a message and its associated behaviour and that's all.
  - The JCroppedWindow code has been improved : it now uses SwingUtilities.invokeLater() and doesn't crash
    anymore. Also it now uses a MouseMotionListener for better movement management.
-   The About window now uses JCroppedWindow.
+   The About window now uses JCroppedWindow. The JLogWindow has a new image & dark menu bar support.
  - Music management improved : the current music is not stopped if the new level one's is the same.
  - chat display enhanced : we now use our own version of the HTMLEditorKit.
  - persistence manager behaviour changed : we no longer save universe data during daily persistence save.
  - Our wizard classes for wotlas setup have now been gathered into a library. The new approach uses a factory
    to build steps from a class of parameters. These parameters can be saved to a configuration file or sent
    on a stream. 8 generic steps are available.
+ - added messages history to the chat. The last 16 chat messages are saved and you can navigate within the
+   list with the up & down arrows.
+ - added wotlas central web server up/down detection to the Wotlas Client start-up.
+ - added support for direct building to building travel (without returning to the town map).
+ - added chat command to ring a server administrator (private chat command).
+ - added pause/resume feature to the tick thread (client side). It corrected bugs that could happen during
+   a player re-connection or player switching.
 
 
 CHANGES BETWEEN V1.1.2 AND V1.1.1
@@ -79,5 +88,6 @@ KNOWN CONFLICTS IN V1.x
 
  - Divx3.1alpha drivers cause Wotlas to crash... install the Divx4.0 or better ! 
  - If you experience any problems WHEN you enter the game after your account creation,
-   please turn off the sound in the option panel (available on the main screen).
+   please turn off the sound in the option panel (available on the main screen). Midi files
+   can make wotlas crash (seems to be a bug in java 1.3.1 volume control).
 

@@ -62,11 +62,6 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
           DataManager dataManager = (DataManager) context;
           PlayerImpl player = dataManager.getMyPlayer();
 
-          System.out.println("SendTextMsgBehaviour");
-          System.out.println("\tchatRoomPrimaryKey = " + chatRoomPrimaryKey);
-          System.out.println("\tsenderPrimaryKey = " + senderPrimaryKey);
-          System.out.println("\tmessage = " + message);
-
        // We get the sender of this message
           Hashtable players = dataManager.getPlayers();
           PlayerImpl sender = null;
@@ -77,6 +72,10 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
           if( sender==null )
               Debug.signal( Debug.WARNING, this, "Couldnot find the sender of this message : "+senderPrimaryKey);
 
+       // We add sender name
+          message = "["+senderFullName+"] " + message;
+          System.out.println("newMessage = " + message);
+           
        // We display the message
           if( voiceSoundLevel!=ChatRoom.SHOUTING_VOICE_LEVEL ) {
               JChatRoom chatRoom = dataManager.getChatPanel().getJChatRoom(chatRoomPrimaryKey);
@@ -100,7 +99,6 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
               chatRoom.appendText("<font color='red'>"+message+"</font>"); // if it wasn't already the case              
           }
 
-System.out.println("CLIENT SENDTEXT MSGB DONE");
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -626,6 +626,7 @@ public class WorldGenerator {
                mapExit.setMapExitSide( MapExit.NONE );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,2,1,0) );
                mapExit.setTargetPosition( new ScreenPoint(400,40) );
+               mapExit.setTargetOrientation( (float)(Math.PI/4) );
 
         // STEP 11 - Rooms of Tar Valon NW Terrace InteriorMap Level 1
            rooms = new Room[1];
@@ -643,6 +644,7 @@ public class WorldGenerator {
                mapExit.setMapExitSide( MapExit.NONE );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,2,0,0) );
                mapExit.setTargetPosition( new ScreenPoint(500,205) );
+               mapExit.setTargetOrientation( (float)(Math.PI/4) );
 
         // STEP 12 - Blight Refuge Building
            buildings = new Building[1];
@@ -700,6 +702,7 @@ public class WorldGenerator {
                mapExit.setMapExitSide( MapExit.NONE );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,1,0,1,0) );
                mapExit.setTargetPosition( new ScreenPoint(370,142) );
+               mapExit.setTargetOrientation( (float)(Math.PI) );
 
                mapExit = rooms[0].addMapExit( new ScreenRectangle(700,60,20,300) );
                mapExit.setType( MapExit.BUILDING_EXIT );
@@ -728,6 +731,7 @@ public class WorldGenerator {
                mapExit.setMapExitSide( MapExit.NONE );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,1,0,1,2) );
                mapExit.setTargetPosition( new ScreenPoint(350,360) );
+               mapExit.setTargetOrientation( (float)(Math.PI) );
 
         // STEP 15 - Blight Refuge Int0 InteriorMap
            map = new InteriorMap();
@@ -781,6 +785,7 @@ public class WorldGenerator {
                mapExit.setMapExitSide( MapExit.NONE );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,1,0,2,0) );
                mapExit.setTargetPosition( new ScreenPoint(500,260) );
+               mapExit.setTargetOrientation( (float)(Math.PI) );
 
            rooms[1] = new Room();
            rooms[1].setRoomID(1);

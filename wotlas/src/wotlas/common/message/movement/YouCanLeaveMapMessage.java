@@ -55,12 +55,13 @@ public class YouCanLeaveMapMessage extends LocationChangeMessage
   /** Constructor with Player's primaryKey & location.  The syncID is the new synchronization
    *  ID that needs to be set for the player.
    */
-     public YouCanLeaveMapMessage(String primaryKey, WotlasLocation location, int x, int y, byte syncID) {
+     public YouCanLeaveMapMessage(String primaryKey, WotlasLocation location, int x, int y, float orientation, byte syncID) {
           this();
           this.primaryKey = primaryKey;
           this.location = location;
           this.x = x;
           this.y = y;
+          this.orientation = orientation;
           this.syncID = syncID;
      }
 

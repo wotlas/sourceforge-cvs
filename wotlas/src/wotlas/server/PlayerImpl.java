@@ -218,11 +218,25 @@ public class PlayerImpl implements Player, NetConnectionListener
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To set the player's Y position.
-   *
-   *  @return y
    */
       public void setY( int y ) {
           movementComposer.setYPosition( (float)y );
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To set the player's orientation.
+   */
+      public void setOrientation( float orientation ) {
+          movementComposer.setOrientationAngle( orientation );
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the player's orientation.
+   */
+      public float getOrientation() {
+          return (float) movementComposer.getOrientationAngle();
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

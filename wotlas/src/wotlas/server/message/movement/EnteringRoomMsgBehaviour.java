@@ -139,10 +139,11 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
        // 3 - We change our location & send ADD messages or ChangeLocation Messages
           Hashtable players = targetRoom.getPlayers();
           player.setLocation( location );
+          player.setOrientation( orientation );
 
           AddPlayerToRoomMessage aMsg = new AddPlayerToRoomMessage( player );
           LocationChangeMessage lMsg = new LocationChangeMessage( player.getPrimaryKey(),
-                                           player.getLocation(), 0, 0 );
+                                           player.getLocation(), 0, 0, 0.0f );
 
           synchronized( players ) {
               players.put( primaryKey, player );
@@ -290,7 +291,8 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
 
       // We send the message...
          player.sendMessage( new ResetPositionMessage( primaryKey, player.getLocation(),
-                                                       pReset.x, pReset.y, player.getSyncID() ) );
+                                                       pReset.x, pReset.y,
+                                                       player.getOrientation(), player.getSyncID() ) );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

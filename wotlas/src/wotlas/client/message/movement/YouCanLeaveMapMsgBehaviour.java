@@ -90,6 +90,7 @@ public class YouCanLeaveMapMsgBehaviour extends YouCanLeaveMapMessage implements
            myPlayer.getMovementComposer().resetMovement();
            myPlayer.setX(x);
            myPlayer.setY(y);
+           myPlayer.setAngle( orientation );
            myPlayer.setLocation( location );
            myPlayer.setSyncID( syncID );
      }

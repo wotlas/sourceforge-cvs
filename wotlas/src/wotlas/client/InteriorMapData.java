@@ -279,7 +279,8 @@ public class InteriorMapData implements MapData
         }
 
     // - We declare ourselves to other players...
-    dataManager.sendMessage( new EnteringRoomMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation(), myPlayer.getX(), myPlayer.getY()) );
+    dataManager.sendMessage( new EnteringRoomMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation(),
+                                 myPlayer.getX(), myPlayer.getY(), (float)myPlayer.getAngle() ) );
 
     //   - We play music
     String midiFile = imap.getMusicName();
@@ -400,7 +401,9 @@ public class InteriorMapData implements MapData
 /* NETMESSAGE */
         if (SHOW_DEBUG)
           System.out.println("dataManager.sendMessage( new EnteringRoomMessage(...) )");
-        dataManager.sendMessage( new EnteringRoomMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation(), myPlayer.getX(), myPlayer.getY()) );
+        dataManager.sendMessage( new EnteringRoomMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation(),
+                                                         myPlayer.getX(), myPlayer.getY(),
+                                                         (float)myPlayer.getAngle() ) );
 
         if (SHOW_DEBUG)
           System.out.println("Changing main ChatRoom");
@@ -460,7 +463,8 @@ public class InteriorMapData implements MapData
           isNotMovingToAnotherMap = false;
           myPlayer.sendMessage( new CanLeaveIntMapMessage( myPlayer.getPrimaryKey(),
                                         mapExit.getTargetWotlasLocation(),
-                                        mapExit.getTargetPosition().x, mapExit.getTargetPosition().y ) );
+                                        mapExit.getTargetPosition().x, mapExit.getTargetPosition().y,
+                                        mapExit.getTargetOrientation() ) );
         }
       }
     } // End of part II

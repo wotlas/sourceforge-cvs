@@ -64,6 +64,10 @@ public class MapExit extends ScreenRectangle
   /** Position on the target map.
    */
    public ScreenPoint targetPosition;
+
+  /** Target player orientation
+   */
+   public float targetOrientation;
    
   /** knowledge required to use MapExit
    * -1 if no knowledge required
@@ -129,6 +133,12 @@ public class MapExit extends ScreenRectangle
   public ScreenPoint getTargetPosition() {
     return targetPosition;
   }
+  public void setTargetOrientation(float targetOrientation) {
+    this.targetOrientation = targetOrientation;
+  }
+  public float getTargetOrientation() {
+    return targetOrientation;
+  }
   public void setMapExitSide(byte mapExitSide) {
     this.mapExitSide = mapExitSide;
   }
@@ -165,6 +175,28 @@ public class MapExit extends ScreenRectangle
         }
 
         return p;
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To get the local orientation when arriving on this MapExit.
+   */
+    public float getLocalOrientation() {
+        switch( mapExitSide ) {
+
+          case MapExit.NORTH:
+            return (float)(Math.PI/2);
+
+          case MapExit.SOUTH:
+            return (float)(-Math.PI/2);
+
+          case MapExit.EAST:
+            return (float)(Math.PI);
+
+          case MapExit.WEST:
+          default:
+            return 0.0f;
+        }
     }
 
  /*------------------------------------------------------------------------------------*/

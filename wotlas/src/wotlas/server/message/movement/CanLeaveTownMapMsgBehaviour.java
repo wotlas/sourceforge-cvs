@@ -124,13 +124,15 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
                  player.getMovementComposer().resetMovement();
                  player.setX( x );
                  player.setY( y );
+                 player.setOrientation( orientation );
 
                  synchronized( players ) {
                      players.put( primaryKey, player );
                  }
 
               // 4 - SEND MESSAGE TO PLAYER
-                 player.sendMessage( new YouCanLeaveMapMessage( primaryKey, location, x ,y, player.getSyncID() ) );
+                 player.sendMessage( new YouCanLeaveMapMessage( primaryKey, location, x ,y,
+                                                                orientation, player.getSyncID() ) );
                  return;
               }
 
@@ -179,13 +181,15 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
                    player.getMovementComposer().resetMovement();
                    player.setX( x );
                    player.setY( y );
+                   player.setOrientation( orientation );
 
                    synchronized( players ) {
                       players.put( primaryKey, player );
                    }
 
                 // 4 - SEND MESSAGE TO PLAYER
-                   player.sendMessage( new YouCanLeaveMapMessage( primaryKey, location, x, y, player.getSyncID() ) );
+                   player.sendMessage( new YouCanLeaveMapMessage( primaryKey, location,
+                                                                  x, y, orientation, player.getSyncID() ) );
                    return;
                 }
               }
@@ -231,7 +235,8 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
 
       // We send the message...
          player.sendMessage( new ResetPositionMessage( primaryKey, player.getLocation(),
-                                                       pReset.x, pReset.y, player.getSyncID() ) );
+                                                       pReset.x, pReset.y,
+                                                       player.getOrientation(), player.getSyncID() ) );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -281,7 +281,8 @@ public class TownMapData implements MapData
         isNotMovingToAnotherMap = false;
         myPlayer.sendMessage( new CanLeaveTownMapMessage(myPlayer.getPrimaryKey(),
                                   mapExit.getTargetWotlasLocation(),
-                                  mapExit.getTargetPosition().x, mapExit.getTargetPosition().y ) );
+                                  mapExit.getTargetPosition().x, mapExit.getTargetPosition().y,
+                                  mapExit.getTargetOrientation() ) );
       }
     }
 
@@ -332,7 +333,8 @@ public class TownMapData implements MapData
          ScreenPoint newPos = mapExit.getInsertionPoint();
          
          myPlayer.sendMessage( new CanLeaveTownMapMessage(myPlayer.getPrimaryKey(),
-                               mapExit.getMapExitLocation(), newPos.x, newPos.y) );
+                               mapExit.getMapExitLocation(), newPos.x, newPos.y,
+                               mapExit.getLocalOrientation() ) );
       }
     }
   }

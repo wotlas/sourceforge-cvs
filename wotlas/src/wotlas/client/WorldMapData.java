@@ -269,7 +269,7 @@ public class WorldMapData implements MapData
 
          myPlayer.sendMessage( new CanLeaveWorldMapMessage(myPlayer.getPrimaryKey(),
                                   mapExit.getMapExitLocation(),
-                                  newPos.x, newPos.y ) );
+                                  newPos.x, newPos.y, mapExit.getLocalOrientation() ) );
       }
     }
   }

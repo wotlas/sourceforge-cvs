@@ -53,6 +53,10 @@ public class LocationChangeMessage extends NetMessage
    */
     protected int y;
 
+  /** orientation on new location
+   */
+    protected float orientation;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. Just initializes the message category and type.
@@ -74,12 +78,13 @@ public class LocationChangeMessage extends NetMessage
 
   /** Constructor with Player's primaryKey & location.
    */
-     public LocationChangeMessage(String primaryKey, WotlasLocation location, int x, int y) {
+     public LocationChangeMessage(String primaryKey, WotlasLocation location, int x, int y, float orientation) {
           this();
           this.primaryKey = primaryKey;
           this.location = location;
           this.x = x;
           this.y = y;
+          this.orientation = orientation;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -102,6 +107,7 @@ public class LocationChangeMessage extends NetMessage
 
          ostream.writeInt( x );
          ostream.writeInt( y );
+         ostream.writeFloat( orientation );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -126,6 +132,7 @@ public class LocationChangeMessage extends NetMessage
 
          x = istream.readInt();
          y = istream.readInt();
+         orientation = istream.readFloat();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

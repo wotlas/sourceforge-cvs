@@ -153,6 +153,26 @@ public class ImageLibrary {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To get the default image databasepath.
+   *
+   * @return the default image databasepath.
+   */
+   public String getImageDataBasePath() {
+         return imageDataBasePath;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the default databasepath (image database's parent directory).
+   *
+   * @return the default databasepath.
+   */
+   public String getDataBasePath() {
+         return new File(imageDataBasePath).getParent();
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** To load the image database. We don't load "set directories" that ends with the "-jit"
    *  or "-exc" options.
    */

@@ -43,10 +43,6 @@ public class ServerAddressSetup extends JWizard {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Database Relative Path.
-   */
-    private final static String DATABASE_PATH = "../base";
-
   /** Database Config.
    */
     private final static String DATABASE_CONFIG = "../src/config/server.cfg";
@@ -56,6 +52,10 @@ public class ServerAddressSetup extends JWizard {
     private final static String REMOTE_SERVER_CONFIG = "../src/config/remote-servers.cfg";
 
  /*------------------------------------------------------------------------------------*/
+
+   /** Database Relative Path.
+    */
+     private static String databasePath;
 
    /** Our serverID
     */
@@ -75,7 +75,6 @@ public class ServerAddressSetup extends JWizard {
    */
     public ServerAddressSetup() {
          super("Server Address Setup",470,550);
-
          setLocation(200,100);
 
        // We display first step
@@ -586,7 +585,7 @@ public class ServerAddressSetup extends JWizard {
                 System.exit(1);
              }
 
-           String databasePath = properties.getProperty( "DATABASE_PATH","" );
+           databasePath = properties.getProperty( "DATABASE_PATH","" );
 
            if( databasePath.length()==0 ) {
                Debug.signal( Debug.FAILURE, null, "No Database Path specified in config file !" );

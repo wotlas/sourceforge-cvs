@@ -53,7 +53,7 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
 
   /** Wotlas Version Number for the code.
    */
-     public static final String WOTLAS_VERSION = "1.2.4";
+     public static final String WOTLAS_VERSION = "1.3";
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

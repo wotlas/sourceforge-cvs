@@ -694,10 +694,19 @@ System.out.println("Frame show");
            if( door.isPlayerNear( myPlayer.getCurrentRectangle() ) ) {
                WotlasLocation location = new WotlasLocation(myPlayer.getLocation());
                sendMessage( new DoorStateMessage(location, door.getMyRoomLinkID(), !door.isOpened()) );
-               return;
            }
-           else
-              object=null;
+           else {
+             // we go to the door
+                Point doorPoint = door.getPointNearDoor( myPlayer.getCurrentRectangle() );
+
+                if( doorPoint!=null ) {
+                    myPlayer.moveTo( doorPoint );
+                    if( myMapData instanceof InteriorMapData )
+                        ( (InteriorMapData) myMapData ).setAutomaticDoorOpen();
+                }
+           }
+
+           return;
     }
 
     synchronized( players ) {

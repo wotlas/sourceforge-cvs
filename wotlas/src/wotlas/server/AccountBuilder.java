@@ -284,7 +284,7 @@ public class AccountBuilder implements NetConnectionListener
 
            // we send a Success Message
               personality.queueMessage( new AccountCreatedMessage(account.getLocalClientID(),
-                                                account.getOriginalServerID() ) );
+                                                account.getOriginalServerID(), player.getPlayerName() ) );
 
            // And close the connection
               personality.closeConnection();

@@ -78,6 +78,25 @@ public interface BookInterface
    * @param nbChapters the new number of chapters. 
    */
     public void setNbChapters(short nbChapters);
+
+  /** Set a chapter.<br>
+   * Add the given chapter at the end of the book.
+   * @param chapter the new chapter 
+   */ 
+   	public void setChapter(Chapter chapter);
+	
+  /** Add a chapter.<br>
+   * Create a new chapter at the end of the book.
+   * @return true if a new chapter was created 
+   */ 
+   	public boolean addChapter();
+	
+  /** Remove a chapter from the book.<br>
+   * Range checking done here.
+   * @param index the index of the chapter to delete. 
+   */
+    public void delChapter(short index);
+
 		
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

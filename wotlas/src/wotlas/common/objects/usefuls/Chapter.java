@@ -30,7 +30,7 @@ import wotlas.utils.Debug;
  * @see wotlas.common.objects.usefuls.Paragraph
  */
 
-class Chapter
+public class Chapter
 {
 
  /*------------------------------------------------------------------------------------*/
@@ -68,7 +68,7 @@ class Chapter
  
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- /** Add a paragraph in the chapter.
+ /** Add a new empty paragraph in the chapter.
    */	
     public void addParagraph()
 	{

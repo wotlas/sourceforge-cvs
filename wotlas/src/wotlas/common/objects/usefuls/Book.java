@@ -97,7 +97,9 @@ public class Book extends Document implements BookInterface
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Open the book. First chapter active.
+  /** Open the book.<br>
+   * First chapter active. <br>
+   * GUI should be launched at the end of this method.
    */
     public void open()
 	{
@@ -156,7 +158,7 @@ public class Book extends Document implements BookInterface
    */ 
    	public Chapter getChapter(int index)
 	{
-	 if (this.nbChapters<index || index<0)
+	 if (nbChapters<index || index<0)
 	 {
 	  Debug.signal(Debug.WARNING,this,"Trying to get an unexistant chapter");
 	  return null;	 
@@ -183,15 +185,16 @@ public class Book extends Document implements BookInterface
 	}
 
   /** Get the document's text.<br>
-   * If the book is open, returns the current paragraph. Otherwise returns the book's title (cover).
+   * If the book is open, returns the current paragraph.<br>
+   * Otherwise returns the book's title (cover) which is chapters[0].
    * @return current readable text
    */
     public String readText()
 	{
-	 if (this.currentChapter<0)
+	 if (currentChapter<0)
 	 	return title;
 
-	 Chapter currChapter=this.chapters[this.currentChapter];
+	 Chapter currChapter=chapters[currentChapter];
 	 Paragraph currParagraph=currChapter.getParagraph(currChapter.getCurrentParagraph());
 		
 	 return currParagraph.getText();		
@@ -203,13 +206,13 @@ public class Book extends Document implements BookInterface
    */
     public void writeText(String text)
 	{
-	 if (this.currentChapter<0)
+	 if (currentChapter<0)
 	 {
 	  Debug.signal(Debug.WARNING,this,"Trying to write in a closed book");
 	  return;		
 	 }
 
-	 Chapter currChapter=this.chapters[this.currentChapter];
+	 Chapter currChapter=chapters[currentChapter];
 	 Paragraph currParagraph=currChapter.getParagraph(currChapter.getCurrentParagraph());
 		
 	 currParagraph.appendString(text);			
@@ -250,7 +253,61 @@ public class Book extends Document implements BookInterface
 	 else	   
 	 	return chapters[index];	
 	}
+
+
+  /** Set a chapter.<br>
+   * Create a new chapter at the end of the book.
+   * @param chapter the new chapter 
+   */ 
+   	public void setChapter(Chapter chapter)
+	{
+	 if (nbChapters==maxNbChaptersPerBook)
+	 {
+	  Debug.signal(Debug.WARNING,this,"Trying to add too much chapters");
+	  return;	 
+	 }
+	 Chapter tmp[]=new Chapter[++nbChapters];
+	 System.arraycopy( chapters, 0, tmp, 0, chapters.length );
+	 chapters=tmp;		  
+	 chapters[nbChapters-1]=chapter;
+	}
+
+  /** Add a chapter.<br>
+   * Create a new chapter at the end of the book.
+   * @return true if a new chapter was created
+   */ 
+   	public boolean addChapter()
+	{
+	 if (nbChapters==maxNbChaptersPerBook)
+	 {
+	  Debug.signal(Debug.WARNING,this,"Trying to add too much chapters");
+	  return false;
+	 }
+	 
+	 Chapter tmp[]=new Chapter[++nbChapters];
+	 System.arraycopy( chapters, 0, tmp, 0, chapters.length );
+	 chapters=tmp;		  
+	 chapters[nbChapters-1]=new Chapter();
+	 return true;	 	 
+	}
 	
+  /** Remove a chapter from the book.<br>
+   * Range checking done here.
+   * @param index the index of the chapter to delete. 
+   */
+    public void delChapter(short index)
+	{	
+	 if (nbChapters<index || index<0)
+	 {
+	  Debug.signal(Debug.WARNING,this,"Trying to delete an unexistant chapter");
+	  return;
+	 }
+	 chapters[index]=null;
+	 Chapter tmp[]=new Chapter[--nbChapters];
+	 System.arraycopy(chapters,0,tmp,0,index);	 
+	 System.arraycopy(chapters,index+1,tmp,index,chapters.length-index-1);
+	 chapters=tmp;	
+	}
 	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  

@@ -21,7 +21,7 @@ package wotlas.client;
 
 import wotlas.client.screen.JClientScreen;
 
-import wotlas.common.ImageLibRef;
+import wotlas.common.*;
 import wotlas.common.universe.*;
 
 import wotlas.libs.graphics2D.*;
@@ -158,9 +158,14 @@ public class InteriorMapData implements MapData
     }
 
     // 5 - We initialize the AStar algo
-    dataManager.getAStar().setMask( BinaryMask.create( bufIm ) );
-    dataManager.getAStar().setSpriteSize(4);
+///////////////////////////// ALDISS : changement de l'initialisation de Astar
+
+    myPlayer.getMovementComposer().setMovementMask( BinaryMask.create( bufIm ), 5, 4 );
+//    dataManager.getAStar().setMask(  );
+//    dataManager.getAStar().setSpriteSize(4);
     bufIm.flush(); // free image resource
+
+///////////////////////////// FIN ALDISS
 
     // 6 - We init the GraphicsDirector
     GraphicsDirector gDirector = dataManager.getGraphicsDirector();
@@ -292,7 +297,11 @@ public class InteriorMapData implements MapData
         if (SHOW_DEBUG)
           System.out.println("We are going to a new map...");
 
-        myPlayer.stopMoving();
+///////////////////////////// ALDISS : avant la methode s'appelait stopMoving
+
+        myPlayer.stopMovement();
+///////////////////////////// FIN ALDISS
+
         myRoom.removePlayer( myPlayer );
         myPlayer.setLocation( mapExit.getTargetWotlasLocation() );
         dataManager.cleanInteriorMapData(); // suppress drawables, shadows, data

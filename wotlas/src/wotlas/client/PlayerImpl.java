@@ -21,21 +21,21 @@
 package wotlas.client;
 
 import wotlas.common.character.*;
-import wotlas.common.ImageLibRef;
-import wotlas.common.Player;
-import wotlas.common.Tickable;
+import wotlas.common.*;
 import wotlas.common.universe.*;
 
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
 
-import wotlas.libs.pathfinding.PathFollower;
+import wotlas.libs.pathfinding.*;
 
 import wotlas.utils.*;
 
 import java.awt.Point;
 import java.awt.Rectangle;
 
+///////////////////////////// ALDISS : ben j'ai fait tellement de modifs que le + simple
+///////////////////////////// est que tu essayes de reprendre ce fichier directement...
 
 /** Class of a Wotlas Player.
  *
@@ -72,7 +72,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
 
   /** Player's PathFollower for movements...
    */
-  private PathFollower pathFollower = new PathFollower();
+  private MovementComposer movementComposer = (MovementComposer) new PathFollower();
 
  /*------------------------------------------------------------------------------------*/
 
@@ -87,6 +87,10 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   /** True if player is moving
    */
   private boolean isMoving = false;
+
+  /** True if this player is controlled by the client.
+   */
+  private boolean isMaster = false;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -213,7 +217,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     this.wotCharacter = wotCharacter;
   }
 
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 /*** SpriteDataSupplier implementation ***/
 
@@ -223,7 +227,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
    */
   public int getX() {
     synchronized( xLock ) {
-      return (int) pathFollower.getXPosition();
+      return (int) movementComposer.getXPosition();
     }
   }
 
@@ -233,7 +237,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
    */
   public int getY() {
     synchronized( yLock ) {
-      return (int) pathFollower.getYPosition();
+      return (int) movementComposer.getYPosition();
     }
   }
 
@@ -253,7 +257,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
    */
   public double getAngle() {
     synchronized( angleLock ) {
-      return pathFollower.getOrientationAngle();
+      return movementComposer.getOrientationAngle();
     }
   }
 
@@ -281,14 +285,14 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     return 1.0f;
   }
 
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To set X.
    * @param x cordinate
    */
   public void setX( int x ){
     synchronized( xLock ) {
-         pathFollower.setXPosition( (float)x );
+         movementComposer.setXPosition( (float)x );
     }
   }
 
@@ -297,7 +301,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
    */
   public void setY( int y ){
     synchronized( yLock ) {
-         pathFollower.setYPosition( (float)y );
+         movementComposer.setYPosition( (float)y );
     }
   }
 
@@ -305,7 +309,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
    */
   public void setAngle( double angleRad ) {
     synchronized( angleLock ) {
-         pathFollower.setOrientationAngle( angleRad );
+         movementComposer.setOrientationAngle( angleRad );
     }
   }
 
@@ -319,25 +323,25 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   /** To set player's speed
    */
   public void setSpeed( float speed ) {
-     pathFollower.setSpeed( (float)speed );
+     movementComposer.setSpeed( (float)speed );
   }
 
   /** To get player's speed
    */
   public float getSpeed() {
-    return pathFollower.getSpeed();
+    return movementComposer.getSpeed();
   }
 
   /** To set player's angular speed
    */
   public void setAngularSpeed(float angularSpeed) {
-    pathFollower.setAngularSpeed( angularSpeed );
+    movementComposer.setAngularSpeed( angularSpeed );
   }
 
   /** To get player's angular speed
    */
   public float getAngularSpeed() {
-    return pathFollower.getAngularSpeed();
+    return movementComposer.getAngularSpeed();
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -345,53 +349,34 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   /** To get destination of trajectory
    */
    public Point getEndPosition() {
-     return pathFollower.getTargetPosition();
+     return movementComposer.getTargetPosition();
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To set the player's movement.
    */
-   public void initMovement(List path) {
+   public void moveTo( Point endPoint ) {
       synchronized( trajectoryLock ) {
-         boolean noRotations = true;
-
-         if ( location.isRoom() ) {
-              noRotations = false;
-              pathFollower.setSpeed( 60.0f );
-         }
-         else if ( location.isTown() )
-              pathFollower.setSpeed( 10.0f );
-         else if ( location.isWorld() )
-              pathFollower.setSpeed( 5.0f );
-
-         pathFollower.initMovement( path, noRotations );
+         movementComposer.moveTo( endPoint );
       }
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the player's path follower.
-   */
-   public PathFollower getPathFollower() {
-      return pathFollower;
-   }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Returns true if player is moving
+  /** Returns true if the player is moving
    */
   public boolean isMoving() {
-    return pathFollower.isMoving();
+    return movementComposer.isMoving();
   }
 
   /** To stop the player's movement
    */
-  public void stopMoving() {
-    pathFollower.stopMovement();
+  public void stopMovement() {
+    movementComposer.stopMovement();
   }
 
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To get the player's drawable
    *  @return player sprite
@@ -406,7 +391,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     return wotCharacter.getDrawable(this).getRectangle();
   }
 
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Tick
    */
@@ -414,15 +399,53 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
 
    // 1 - Movement Update
       synchronized( trajectoryLock ) {
-           pathFollower.tick();
+           movementComposer.tick();
       }
 
    // 2 - Animation Update
-      if(!pathFollower.isMoving())
+      if(!movementComposer.isMoving())
          animation.reset();
       else
          animation.tick();
   }
 
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Is this player a Master player ? ( directly controlled  by the client )
+    * @return true if this is a Master player, false otherwise.
+    */
+      public boolean isMaster() {
+      	return isMaster;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set if this player is controlled by the client.
+    * @param isMaster true means controlled by the client.
+    */
+      public void setIsMaster( boolean isMaster ) {
+         this.isMaster = isMaster;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the player's movement Composer.
+    *
+    *  @return player MovementComposer
+    */
+      public MovementComposer getMovementComposer() {
+      	  return movementComposer;
+      }
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the player's movement Composer.
+    *
+    *  @param movement MovementComposer.
+    */
+      public void setMovementComposer( MovementComposer movementComposer ) {
+      	  this.movementComposer = movementComposer;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }

@@ -71,7 +71,7 @@ import java.util.Iterator;
 /** A DataManager manages Game Data and client's connection.
  * It possesses a WorldManager
  *
- * @author Petrus
+ * @author Petrus, Aldiss
  * @see wotlas.common.NetConnectionListener
  */
 
@@ -423,8 +423,14 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     // 1 - Create Graphics Director
     gDirector = new GraphicsDirector( new LimitWindowPolicy() );
 
-    // 2 - Retreive player's informations
+    // 2 - Retrieve player's informations
     myPlayer = new PlayerImpl();
+
+
+///////////////////////////// ALDISS : added isMaster
+    myPlayer.setIsMaster( true );   // this player is controlled by the user.
+////////////////////////////// FIN ALDISS
+
     try {
       synchronized(startGameLock) {
         personality.queueMessage(new MyPlayerDataPleaseMessage());
@@ -459,8 +465,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     chatPanel = new JChatPanel();
     previewPanel = new JPreviewPanel();
     playerPanel = new JPlayerPanel();
-    logPanel = new JLogPanel();    
-    
+    logPanel = new JLogPanel();
+
     // 6 - Init map display
     changeMapData();
 
@@ -471,15 +477,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     // 7 - Start main loop tick
     Debug.signal( Debug.NOTICE, null, "Beginning to tick Graphics Director" );
     this.start();
-
-    // 8 - Show informations on player
-    /*String mltString[] = new String[2];
-    mltString[0] = myPlayer.getFullPlayerName();    
-    mltString[1] = myPlayer.getPlayerName();*/
-    String mltString[] = {myPlayer.getFullPlayerName(), myPlayer.getPlayerName()};
-    
-    mltPlayerName = new MultiLineText(mltString, 10, 10, ImageLibRef.MAP_PRIORITY);
-    gDirector.addDrawable(mltPlayerName);
 
     mFrame.show();
 
@@ -504,9 +501,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     String vers = System.getProperty( "os.version" );
     Debug.signal( Debug.NOTICE, this, "OS INFO :\n\nOS NAME : <"+os+">\nOS ARCH: <"+arch+">\nOS VERSION: <"+vers+">\n" );
 
-    delay = 30;
+    delay = 20;
     if ( os.equals("Windows 2000") ) {
-      delay = 35;
+      delay = 25;
     }
 
     Object lock = new Object();
@@ -571,6 +568,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** Called when user left-clic on JMapPanel
    */
   public void onLeftClicJMapPanel(MouseEvent e) {
+
+///////////////////////////// ALDISS : euh j'ai viré les PathDrawable pour mes tests...
+///////////////////////////// et j'ai viré le circle par erreur... désolé...
     if (SHOW_DEBUG)
       System.out.println("DataManager::onLeftClicJMapPanel");
 
@@ -581,55 +581,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     if (object == null) {
       int newX = e.getX() + (int)screen.getX();
       int newY = e.getY() + (int)screen.getY();
-      if (SHOW_DEBUG)
-        System.out.println("endPosition = ("+newX+","+newY+")");
-  //      myPlayer.setEndPosition(newX, newY);
 
-      // Create the trajectory
-      List path = aStar.findPath( new Point( myPlayer.getX()/TILE_SIZE, myPlayer.getY()/TILE_SIZE ),
-                                               new Point( newX/TILE_SIZE, newY/TILE_SIZE ) );
-      if (SHOW_DEBUG)
-      if (path!=null) {
-        Point p0[] = new Point[path.size()];
-        for (int i=0; i<path.size(); i++) {
-          Point p = (Point) path.elementAt(i);
-          //System.out.println("path[" + i + "] = " + p.x  + "," + p.y + ")");
-          p0[i] = new Point(p.x*TILE_SIZE, p.y*TILE_SIZE);
-        }
-        Drawable pathDrawable = (Drawable) new PathDrawable( p0, Color.red, (short) ImageLibRef.AURA_PRIORITY );
-        gDirector.addDrawable( pathDrawable );
-      }
-
-      WotlasLocation location = myPlayer.getLocation();
-      List smoothPath = aStar.smoothPath(path);
-
-      if (SHOW_DEBUG)
-      if (smoothPath!=null) {
-        Point p1[] = new Point[smoothPath.size()];
-        for (int i=0; i<smoothPath.size(); i++) {
-          Point p = (Point) smoothPath.elementAt(i);
-          //System.out.println("smoothPath[" + i + "] = (" + p.x  + "," + p.y + ")");
-          p1[i] = new Point(p.x*TILE_SIZE, p.y*TILE_SIZE);
-        }
-        Drawable pathDrawable1 = (Drawable) new PathDrawable( p1, Color.blue, (short) ImageLibRef.AURA_PRIORITY );
-        gDirector.addDrawable( pathDrawable1 );
-      }
-
-      if (smoothPath!=null) {
-        for (int i=0; i<smoothPath.size(); i++) {
-          Point p = (Point) smoothPath.elementAt(i);
-          p.x *= TILE_SIZE;
-          p.y *= TILE_SIZE;
-          //System.out.println("smoothPath["+i+"] = (" + p.x + "," + p.y + ")");
-        }
-      }
-      myPlayer.initMovement(smoothPath);
-
+      myPlayer.moveTo( new Point(newX,newY) );
+////////////////////////////// FIN ALDISS
     } else {
       if (SHOW_DEBUG)
         System.out.println("object.getClass().getName() = " + object.getClass().getName());
-
-      // Test to create multi players
+      
       if ( object.getClass().getName().equals("wotlas.client.PlayerImpl") ) {
         myPlayer = (PlayerImpl) object;
         //if (circle!=null) {
@@ -641,9 +599,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         
         TextDrawable textDrawable = new TextDrawable( myPlayer.getFullPlayerName(), myPlayer.getDrawable(), Color.black, 12.0f, "Lblack.ttf", ImageLibRef.AURA_PRIORITY, 5000 );
         gDirector.addDrawable(textDrawable);
-        
       }
     }
+    
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -651,9 +609,12 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
  /** Called when user right-clic on JMapPanel
    */
   public void onRightClicJMapPanel(MouseEvent e) {
-    
-    
-    
+    if (SHOW_DEBUG) {
+      System.out.println("Hiding debug informations");      
+    } else {
+      System.out.println("Showing debug informations");
+    }
+    SHOW_DEBUG = !SHOW_DEBUG;
 
     /*PlayerImpl newPlayer;
     Rectangle screen = gDirector.getScreenRectangle();

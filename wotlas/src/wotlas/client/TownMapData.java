@@ -21,7 +21,7 @@ package wotlas.client;
 
 import wotlas.client.screen.JClientScreen;
 
-import wotlas.common.ImageLibRef;
+import wotlas.common.*;
 import wotlas.common.universe.*;
 
 import wotlas.libs.graphics2D.*;
@@ -128,9 +128,16 @@ public class TownMapData implements MapData
     }
 
     // 5 - We initialize the AStar algo
-    dataManager.getAStar().setMask( BinaryMask.create( bufIm ) );
-    dataManager.getAStar().setSpriteSize(1);
+
+///////////////////////////// ALDISS : changement de l'initialisation de Astar
+
+    myPlayer.getMovementComposer().setMovementMask( BinaryMask.create( bufIm ), 5, 1 );
+
+//    dataManager.getAStar().setMask( BinaryMask.create( bufIm ) );
+//    dataManager.getAStar().setSpriteSize(1);
     bufIm.flush(); // free image resource
+
+//////////////////////////////// FIN ALDISS
 
     // 6 - Init the GraphicsDirector
     GraphicsDirector gDirector = dataManager.getGraphicsDirector();
@@ -201,7 +208,10 @@ public class TownMapData implements MapData
       if (SHOW_DEBUG)
         System.out.println("We are going to a world map...");
 
-      myPlayer.stopMoving();
+///////////////////////////// ALDISS : avant stopMoving()
+      myPlayer.stopMovement();
+///////////////////////////// FIN ALDISS
+
       myPlayer.setLocation( mapExit.getTargetWotlasLocation() );
       dataManager.cleanInteriorMapData(); // suppress drawables, shadows, data
 
@@ -213,7 +223,7 @@ public class TownMapData implements MapData
       if (mapExit.getType() == MapExit.TOWN_EXIT) {
         if (SHOW_DEBUG)
           System.out.println("Move to a WorldMap");
-        //initWorldMapDisplay(myPlayer.getLocation());
+        //initWorldMapisplay(myPlayer.getLocation());
         dataManager.changeMapData();
       } else {
         Debug.signal( Debug.CRITICAL, this, "Unknown mapExit : " + mapExit.getType() );
@@ -234,7 +244,9 @@ public class TownMapData implements MapData
       if (SHOW_DEBUG)
         System.out.println("We are entering a building...");
 
-      myPlayer.stopMoving();
+///////////////////////////// ALDISS : avant stopMoving()
+      myPlayer.stopMovement();
+///////////////////////////// FIN ALDISS
 
       if (SHOW_DEBUG) {
         System.out.println("\t\tbuildingMap.getFullName() = " + buildingMap.getFullName());

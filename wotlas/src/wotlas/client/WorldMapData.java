@@ -21,7 +21,7 @@ package wotlas.client;
 
 import wotlas.client.screen.JClientScreen;
 
-import wotlas.common.ImageLibRef;
+import wotlas.common.*;
 import wotlas.common.universe.*;
 
 import wotlas.libs.graphics2D.*;
@@ -127,10 +127,16 @@ public class WorldMapData implements MapData
       System.out.println("\tbackground.height = " + background.getHeight());
     }
 
+///////////////////////////// ALDISS : changement de l'initialisation de Astar
+
     // 5 - We initialize the AStar algo
-    dataManager.getAStar().setMask( BinaryMask.create( bufIm ) );
-    dataManager.getAStar().setSpriteSize(1);
+    myPlayer.getMovementComposer().setMovementMask( BinaryMask.create( bufIm ), 5, 1 );
+
+//    dataManager.getAStar().setMask( BinaryMask.create( bufIm ) );
+//    dataManager.getAStar().setSpriteSize(1);
     bufIm.flush(); // free image resource
+
+///////////////////////////// FIN ALDISS 
 
     // 6 - We init the GraphicsDirector
     GraphicsDirector gDirector = dataManager.getGraphicsDirector();
@@ -188,7 +194,10 @@ public class WorldMapData implements MapData
       if (SHOW_DEBUG)
         System.out.println("We are entering a town...");
 
-      myPlayer.stopMoving();
+///////////////////////////// ALDISS : changement de nom de stopMoving
+
+      myPlayer.stopMovement();
+///////////////////////////// FIN ALDISS
 
       MapExit mapExit = townMap.findTownMapExit( myPlayer.getCurrentRectangle() );
 

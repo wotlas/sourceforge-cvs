@@ -88,7 +88,8 @@ public class JMapPanel extends JPanel implements MouseListener
    */
   public void mouseReleased(MouseEvent e) {
     
-        System.out.println("[JMapPanel] : clic sur (" + e.getX() + "," + e.getY() + ")");
+    if (DataManager.SHOW_DEBUG)
+      System.out.println("[JMapPanel] : clic sur (" + e.getX() + "," + e.getY() + ")");
     if (SwingUtilities.isRightMouseButton(e)) {
       if (DataManager.SHOW_DEBUG)
         System.out.println("\tright clic");

@@ -80,7 +80,8 @@ public class ContainerObject extends BaseObject implements ContainerInterface
 	  }
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Empty the container on the ground. Equivalent to discard on all contained objects.
+  /** Empty the container on the ground. Equivalent to discard on all contained objects.<br>
+   * Use a typecast to an interface to achieve this. May be a bit slow.
    */
     public void empty()
 	{

@@ -134,4 +134,73 @@ public class FileTools
 
  /*------------------------------------------------------------------------------------*/
 
+   /** Saves the given string to a text file pointed by filename.
+    *
+    * @param filepath the complete filename (ex: /infres/pub/bob.txt )
+    * @param text the string to save
+    * @return true on success, false on failure
+    */
+
+   public static boolean saveTextToFile( String filename, String text ) {
+      try
+      {
+        BufferedWriter w_out = new BufferedWriter( new FileWriter(filename));
+
+        int pos_start=0, pos_end=0;
+        
+        // we must transform any "\n" into newLine() separator
+        // this way we aren't system dependent...
+          while( (pos_end=text.indexOf("\n",pos_start))!=-1 ) {
+             w_out.write(text,pos_start,pos_end-pos_start);
+             w_out.newLine();
+             pos_start = pos_end+1;
+          }
+
+        // last line ?
+          if(pos_start<text.length())
+              w_out.write(text,pos_start,text.length()-pos_start);
+
+          w_out.flush();
+          w_out.close();
+      }
+      catch(IOException e) {
+          Debug.signal( Debug.ERROR, null, "Error: "+e );
+          return false;
+      }
+
+      return true;	
+   }
+
+ 
+ /*------------------------------------------------------------------------------------*/
+
+   /** Loads the text file pointed by the filename.
+    *
+    * @param filename the complete filename (ex: /infres/pub/bob.txt )
+    * @return a string representing the text file on success, null on failure
+    */
+   public static String loadTextFromFile( String filename )
+   {
+     String text = new String("");
+     String tmp;
+
+      try
+      {
+        BufferedReader r_in = new BufferedReader( new FileReader(filename));
+
+         while( (tmp = r_in.readLine())!=null )
+               text = text.concat(tmp.concat("\n"));
+
+         r_in.close();
+      }
+      catch(IOException e) {
+         Debug.signal( Debug.ERROR, null, "Error: "+e );
+         text = null;
+      }
+   
+      return text;	
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
 }

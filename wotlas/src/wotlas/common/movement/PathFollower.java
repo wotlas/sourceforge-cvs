@@ -627,12 +627,12 @@ public class PathFollower implements MovementComposer {
            }
            else if(deltaA>Math.PI/8)
                 return; // no footsteps, the angle is to great, we just turn...
-
-           if( path==null )
-               return; // no path to follow we just have to turn on ourself
        }
 
     // 3 - Position Update
+       if( path==null )
+           return; // no path to follow we just have to turn on ourself
+
        xPosition = (float)(xPosition + speed*deltaT*Math.cos( orientationAngle ) );
        yPosition = (float)(yPosition + speed*deltaT*Math.sin( orientationAngle ) );
 

@@ -38,14 +38,32 @@ public class LieManager
    */
   public final static int MEETS_NUMBER = 50;
   
-  /** if we meet other player less than MEETS_MIN_NUMBER
-   * then we remove player from our memory
+  /** when we leave an InteriorMap, we forget all players
+   * that we met less than MEET_CHANGEINTERIORMAP times
    */
-  public final static int MEETS_MIN_NUMBER = 5;
+  public final static int MEET_CHANGEINTERIORMAP = 10;
   
-  /** Simple meet (weight 1)
+  /** when we leave an TownMap, we forget all players
+   * that we met less than MEET_CHANGEINTERIORMAP times
    */
-  public final static int MEET_SIMPLE = 1;
+  public final static int MEET_CHANGETOWNMAP = 20;
+  
+  /** when we leave an WorldMap, we forget all players
+   * that we met less than MEET_CHANGEINTERIORMAP times
+   */
+  public final static int MEET_CHANGEWORLDMAP = 30;
+  
+  /** Simple meet (weight 2)
+   */
+  public final static int MEET_SIMPLE = 2;
+  
+  /** Chat meet (weight 1)
+   */
+  public final static int MEET_CHATMESSAGE = 1;
+  
+  /** Number of meetsNumber to forget when player leave an interiormap
+   */
+  public final static int FORGET_INTERIORMAP = 5;
   
   /** List of player's fake names
    */
@@ -181,8 +199,9 @@ public class LieManager
               if (j-i-1 > 0) {                
                 System.arraycopy(memories, i+1, myMemories, i, j-i-1);
                 // insert new element before position j
-                myMemories[j-1] = memories[i];
-                myMemories[j-1].meetsNumber = newMeetsNumber;
+                myMemories[j-1].otherPlayerKey = memories[i].otherPlayerKey;
+                myMemories[j-1].otherPlayerFakeNameIndex = memories[i].otherPlayerFakeNameIndex;
+                myMemories[j-1].meetsNumber = newMeetsNumber;                
                 // copy from j to tab length                    
                 System.arraycopy(memories, j, myMemories, j, memories.length-j);
                 memories = myMemories;
@@ -190,9 +209,13 @@ public class LieManager
               } else {
                 // if j=i+1
                 // just swap rows at index i and j
-                LieMemory memTemp = memories[i];
-                memories[i] = memories[j];
-                memories[j] = memTemp;
+                String tempOtherPlayerKey = memories[i].otherPlayerKey;
+                short tempOtherPlayerFakeNameIndex = memories[i].otherPlayerFakeNameIndex;                
+                memories[i].otherPlayerKey = memories[j].otherPlayerKey;
+                memories[i].otherPlayerFakeNameIndex = memories[j].otherPlayerFakeNameIndex;
+                memories[i].meetsNumber = memories[j].meetsNumber;
+                memories[j].otherPlayerKey = tempOtherPlayerKey;
+                memories[j].otherPlayerFakeNameIndex = tempOtherPlayerFakeNameIndex;
                 memories[j].meetsNumber = newMeetsNumber;               
                 return;                 
               }              
@@ -223,13 +246,27 @@ public class LieManager
     }
   }     
   
-  /** To forgive players we don't meet often
+  /** To forget players
+   *
+   * @param meetType number of meetsNumber to forget
    */
-  synchronized public void forgive() {
+  synchronized public void removeMeet(int meetType) {
+    if (memories==null)
+      return;
+    for (int i=0; i<memories.length; i++) {
+      memories[i].meetsNumber -= meetType;
+    }
+  }
+  
+  /** To forget players we don't meet often
+   *
+   * @param meetType minium of meetsNumber to remember
+   */
+  synchronized public void forget(int meetType) {  
     if (memories==null)
       return;      
     int i;
-    for (i=0; (i<memories.length) && (memories[i].meetsNumber<MEETS_MIN_NUMBER); i++) {;}
+    for (i=0; (i<memories.length) && (memories[i].meetsNumber<meetType); i++) {;}
     LieMemory[] myMemories = new LieMemory[memories.length-i];
     System.arraycopy(memories, i, myMemories, 0, memories.length-i);
     memories = myMemories;

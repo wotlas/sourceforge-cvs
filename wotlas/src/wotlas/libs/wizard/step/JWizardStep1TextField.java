@@ -36,9 +36,9 @@ import javax.swing.*;
  *  
  *  We need some properties to initialize properly : ( see parameters.getProperty() ).<br>
  *  <pre>
- *    - "init.label"       ( label for the first text field - MANDATORY )
- *    - "init.text"        ( default text for the first text field - OPTIONAL )
- *    - "init.info"        ( information text to display - OPTIONAL )
+ *    - "init.label0"       ( label for the first text field - MANDATORY )
+ *    - "init.text0"        ( default text for the first text field - OPTIONAL )
+ *    - "init.info0"        ( information text to display - OPTIONAL )
  *  </pre>
  *
  *  Optional properties are set to "" by default.
@@ -51,9 +51,9 @@ public class JWizardStep1TextField extends JWizardStep {
 
   /** Swing components of this step
    */
-   private ALabel label1;
+   private ALabel label0;
 
-   protected ATextField tfield1;
+   protected ATextField tfield0;
 
    private ATextArea tarea;
    private JPanel formPanel;
@@ -70,10 +70,10 @@ public class JWizardStep1TextField extends JWizardStep {
       
       formPanel = new JPanel(new GridLayout(1,2,5,5));
       formPanel.setBackground(Color.white);
-        label1 = new ALabel();
-        formPanel.add(label1);
-        tfield1 = new ATextField(15);
-        formPanel.add(tfield1);
+        label0 = new ALabel();
+        formPanel.add(label0);
+        tfield0 = new ATextField(15);
+        formPanel.add(tfield0);
       
       add(formPanel,BorderLayout.NORTH);
     
@@ -98,9 +98,9 @@ public class JWizardStep1TextField extends JWizardStep {
         super.init(parameters);
       
      // 1 - We retrieve init properties
-        String s_label  = parameters.getProperty("init.label");
-        String s_text   = parameters.getProperty("init.text");
-        String s_info   = parameters.getProperty("init.info");
+        String s_label  = parameters.getProperty("init.label0");
+        String s_text   = parameters.getProperty("init.text0");
+        String s_info   = parameters.getProperty("init.info0");
 
      // 2 - We check the properties we have
         if(s_label==null)
@@ -110,8 +110,8 @@ public class JWizardStep1TextField extends JWizardStep {
         if(s_info==null)  s_info="";
 
      // 3 - We end the GUI init
-        label1.setText(s_label);
-        tfield1.setText(s_text);
+        label0.setText(s_label);
+        tfield0.setText(s_text);
         tarea.setText(s_info);
    }
 
@@ -136,6 +136,14 @@ public class JWizardStep1TextField extends JWizardStep {
    */
    protected boolean onPrevious(Object context, JWizard wizard) {
    	return true;
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To get the text entered in the first JTextField.
+    */
+   public String getText0() {
+   	return tfield0.getText();
    }
 
  /*------------------------------------------------------------------------------------*/

@@ -37,7 +37,7 @@ import javax.swing.*;
  *  
  *  We need some properties to initialize properly : ( see parameters.getProperty() ).<br>
  *  <pre>
- *    - "init.info"        ( information text to display - OPTIONAL )
+ *    - "init.info0"        ( information text to display - OPTIONAL )
  *  </pre>
  *
  *  Optional properties are set to "" by default.
@@ -111,7 +111,7 @@ public class JWizardStepPassword extends JWizardStep {
         super.init(parameters);
       
      // 1 - We retrieve init properties
-        String s_info   = parameters.getProperty("init.info");
+        String s_info   = parameters.getProperty("init.info0");
 
      // 2 - We check the properties we have
         if(s_info==null)  s_info="";
@@ -159,6 +159,22 @@ public class JWizardStepPassword extends JWizardStep {
    */
    protected boolean onPrevious(Object context, JWizard wizard) {
    	return true;
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To get the login entered in the JTextField.
+    */
+   public String getLogin() {
+   	return tfield1.getText();
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To get the password entered in the JPasswordField.
+    */
+   public String getPassword() {
+   	return new String(tfield2.getPassword());
    }
 
  /*------------------------------------------------------------------------------------*/

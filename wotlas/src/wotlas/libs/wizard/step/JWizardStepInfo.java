@@ -36,7 +36,7 @@ import javax.swing.*;
  *  
  *  We need some properties to initialize properly : ( see parameters.getProperty() ).<br>
  *  <pre>
- *    - "init.info"       ( information text to display - MANDATORY )
+ *    - "init.info0"       ( information text to display - MANDATORY )
  *  </pre>
  *
  * @author Petrus
@@ -82,11 +82,11 @@ public class JWizardStepInfo extends JWizardStep {
         super.init(parameters);
       
      // 1 - We retrieve init properties
-        String s_info = parameters.getProperty("init.info");
+        String s_info = parameters.getProperty("init.info0");
 
      // 2 - We check the properties we have
         if(s_info==null)
-           throw new WizardException("No 'init.info' property found !");
+           throw new WizardException("No information property found !");
 
      // 3 - We end the GUI init
         tarea.setText(s_info);

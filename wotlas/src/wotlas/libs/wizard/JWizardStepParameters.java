@@ -356,6 +356,56 @@ public class JWizardStepParameters {
 
  /*------------------------------------------------------------------------------------*/
 
+  /** Returns a copy of this JWizardStepParameters that has no "init.*" properties.
+   *  Other fields are copied EXCEPT the step's title.
+   *  The original JWizardStepParameters remains unchanged.
+   */
+    public JWizardStepParameters getCopyWithNoInitProps() {
+      // 1 - Some cloning...
+    	JWizardStepParameters noInitParam = new JWizardStepParameters();
+        noInitParam.stepClass = stepClass;
+        noInitParam.stepTitle = "";
+        noInitParam.isDynamic = isDynamic;
+        noInitParam.isPrevButtonEnabled = isPrevButtonEnabled;
+        noInitParam.isNextButtonEnabled = isPrevButtonEnabled;
+        noInitParam.isLastStep = isPrevButtonEnabled;
+
+      // 2 - Property copy
+        if(stepProperties!=null)
+           for( int i=0; i<stepProperties.length; i++ )
+                if( !stepProperties[i][0].startsWith("init.") )
+                    noInitParam.setProperty( stepProperties[i][0], stepProperties[i][1] );
+
+        return noInitParam;
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Returns a copy of this JWizardStepParameters that has no "server.*" properties.
+   *  All the other fields are copied.
+   *  The original JWizardStepParameters remains unchanged.
+   */
+    public JWizardStepParameters getCopyWithNoServerProps() {
+      // 1 - Some cloning...
+    	JWizardStepParameters noServerParam = new JWizardStepParameters();
+        noServerParam.stepClass = stepClass;
+        noServerParam.stepTitle = stepTitle;
+        noServerParam.isDynamic = isDynamic;
+        noServerParam.isPrevButtonEnabled = isPrevButtonEnabled;
+        noServerParam.isNextButtonEnabled = isPrevButtonEnabled;
+        noServerParam.isLastStep = isPrevButtonEnabled;
+
+      // 2 - Property copy
+        if(stepProperties!=null)
+           for( int i=0; i<stepProperties.length; i++ )
+                if( !stepProperties[i][0].startsWith("server.") )
+                    noServerParam.setProperty( stepProperties[i][0], stepProperties[i][1] );
+
+        return noServerParam;
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
    /** To load JWizardStepParameters from a file. This method uses the Wotlas
     *  Persistent Library and the Wotlas Debug utility.
     *

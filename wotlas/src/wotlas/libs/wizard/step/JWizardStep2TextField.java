@@ -36,11 +36,11 @@ import javax.swing.*;
  *  
  *  We need some properties to initialize properly : ( see parameters.getProperty() ).<br>
  *  <pre>
- *    - "init.label1"      ( label for the first text field - MANDATORY )
- *    - "init.text1"       ( default text for the first text field - OPTIONAL )
- *    - "init.label2"      ( label for the second text field - MANDATORY )
- *    - "init.text2"       ( default text for the second text field - OPTIONAL )
- *    - "init.info"        ( information text to display - OPTIONAL )
+ *    - "init.label0"      ( label for the first text field - MANDATORY )
+ *    - "init.text0"       ( default text for the first text field - OPTIONAL )
+ *    - "init.label1"      ( label for the second text field - MANDATORY )
+ *    - "init.text1"       ( default text for the second text field - OPTIONAL )
+ *    - "init.info0"        ( information text to display - OPTIONAL )
  *  </pre>
  *
  *  Optional properties are set to "" by default.
@@ -53,9 +53,9 @@ public class JWizardStep2TextField extends JWizardStep {
 
   /** Swing components of this step
    */
-   private ALabel label1, label2;
+   private ALabel label0, label1;
 
-   protected ATextField tfield1, tfield2;
+   protected ATextField tfield0, tfield1;
 
    private ATextArea tarea;
    private JPanel formPanel;
@@ -72,14 +72,14 @@ public class JWizardStep2TextField extends JWizardStep {
       
       formPanel = new JPanel(new GridLayout(2,2,5,5));
       formPanel.setBackground(Color.white);
+        label0 = new ALabel();
+        formPanel.add(label0);
+        tfield0 = new ATextField(15);
+        formPanel.add(tfield0);
         label1 = new ALabel();
         formPanel.add(label1);
         tfield1 = new ATextField(15);
         formPanel.add(tfield1);
-        label2 = new ALabel();
-        formPanel.add(label2);
-        tfield2 = new ATextField(15);
-        formPanel.add(tfield2);
       
       add(formPanel,BorderLayout.NORTH);
     
@@ -104,25 +104,25 @@ public class JWizardStep2TextField extends JWizardStep {
         super.init(parameters);
       
      // 1 - We retrieve init properties
+        String s_label0 = parameters.getProperty("init.label0");
+        String s_text0  = parameters.getProperty("init.text0");
         String s_label1 = parameters.getProperty("init.label1");
         String s_text1  = parameters.getProperty("init.text1");
-        String s_label2 = parameters.getProperty("init.label2");
-        String s_text2  = parameters.getProperty("init.text2");
-        String s_info   = parameters.getProperty("init.info");
+        String s_info   = parameters.getProperty("init.info0");
 
      // 2 - We check the properties we have
-        if(s_label1==null || s_label2==null)
+        if(s_label0==null || s_label1==null)
            throw new WizardException("No label property found !");
 
+        if(s_text0==null) s_text0="";
         if(s_text1==null) s_text1="";
-        if(s_text2==null) s_text2="";
         if(s_info==null)  s_info="";
 
      // 3 - We end the GUI init
+        label0.setText(s_label0);
+        tfield0.setText(s_text0);
         label1.setText(s_label1);
         tfield1.setText(s_text1);
-        label2.setText(s_label2);
-        tfield2.setText(s_text2);
 
         tarea.setText(s_info);
    }
@@ -148,6 +148,22 @@ public class JWizardStep2TextField extends JWizardStep {
    */
    protected boolean onPrevious(Object context, JWizard wizard) {
    	return true;
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To get the text entered in the first JTextField.
+    */
+   public String getText0() {
+   	return tfield0.getText();
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To get the text entered in the second JTextField.
+    */
+   public String getText1() {
+   	return tfield1.getText();
    }
 
  /*------------------------------------------------------------------------------------*/

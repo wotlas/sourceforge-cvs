@@ -36,9 +36,9 @@ import javax.swing.*;
  *  
  *  We need some properties to initialize properly : ( see parameters.getProperty() ).<br>
  *  <pre>
- *    - "init.info"        ( information text to display first - MANDATORY )
- *    - "init.text"        ( default text for the text area - OPTIONAL )
- *    - "init.option"      ( optional checkbox text - OPTIONAL )
+ *    - "init.info0"        ( information text to display first - MANDATORY )
+ *    - "init.text0"        ( default text for the text area - OPTIONAL )
+ *    - "init.option0"      ( optional checkbox text - OPTIONAL )
  *  </pre>
  *
  *  Optional properties are set to "" by default. If the text of the checkbox is not set
@@ -102,9 +102,9 @@ public class JWizardStepTextArea extends JWizardStep {
         super.init(parameters);
       
      // 1 - We retrieve init properties
-        String s_info  = parameters.getProperty("init.info");
-        String s_text   = parameters.getProperty("init.text");
-        String s_option   = parameters.getProperty("init.option");
+        String s_info  = parameters.getProperty("init.info0");
+        String s_text   = parameters.getProperty("init.text0");
+        String s_option   = parameters.getProperty("init.option0");
 
      // 2 - We check the properties we have
         if(s_info==null)
@@ -143,6 +143,25 @@ public class JWizardStepTextArea extends JWizardStep {
    */
    protected boolean onPrevious(Object context, JWizard wizard) {
    	return true;
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To get the text entered in the JTextArea.
+    */
+   public String getText0() {
+   	return tareaInput.getText();
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To get option0 state: true or false. If the checkBox doesn't exist we return false.
+    */
+   public boolean getOption0() {
+   	if(checkBox==null)
+   	   return false;
+
+   	return checkBox.isSelected();
    }
 
  /*------------------------------------------------------------------------------------*/

@@ -37,7 +37,7 @@ import javax.swing.*;
  *  
  *  We need some properties to initialize properly : ( see parameters.getProperty() ).<br>
  *  <pre>
- *    - "init.label"      ( label for the combo box content - MANDATORY )
+ *    - "init.label0"      ( label for the combo box content - MANDATORY )
  *    - "init.nbChoices"  ( number of jradio button choices - MANDATORY )
  *
  *    - "init.choice0"             ( choice 0 : the text of the radio button - MANDATORY )
@@ -54,7 +54,7 @@ import javax.swing.*;
  *
  *  Optional properties are set to "" by default.
  *
- * @author Petrus
+ * @author Aldiss
  * @see wotlas.libs.wizard.JWizardStep
  */
 
@@ -71,6 +71,10 @@ public class JWizardStepRadio extends JWizardStep implements ActionListener{
    private JPanel formPanel;
 
    private ButtonGroup btGroup;
+
+  /** The index of the selected radio button.
+   */
+   protected int selectedRadio;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -114,7 +118,7 @@ public class JWizardStepRadio extends JWizardStep implements ActionListener{
         super.init(parameters);
       
      // 1 - We retrieve init properties
-        String s_label = parameters.getProperty("init.label");
+        String s_label = parameters.getProperty("init.label0");
         String s_nbChoices  = parameters.getProperty("init.nbChoices");
 
         String choices[] = null;
@@ -164,7 +168,10 @@ public class JWizardStepRadio extends JWizardStep implements ActionListener{
         if(choices.length>0) {
            buttons[0].setSelected(true);
            tarea.setText(aRadioInfo[0]);
+           selectedRadio=0;
         }
+        else
+           selectedRadio=-1;
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -182,7 +189,10 @@ public class JWizardStepRadio extends JWizardStep implements ActionListener{
           return;
 	}
 
-        if(i>=0) tarea.setText(aRadioInfo[i]);
+        if(i>=0) {
+          tarea.setText(aRadioInfo[i]);
+          selectedRadio=i;
+        }
     }
 
  /*------------------------------------------------------------------------------------*/
@@ -206,6 +216,14 @@ public class JWizardStepRadio extends JWizardStep implements ActionListener{
    */
    protected boolean onPrevious(Object context, JWizard wizard) {
    	return true;
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To get the selected choice : integer 0 to nbChoices, -1 if none selected.
+    */
+   public int getChoice() {
+   	return selectedRadio;
    }
 
  /*------------------------------------------------------------------------------------*/

@@ -36,15 +36,15 @@ import javax.swing.*;
  *  
  *  We need some properties to initialize properly : ( see parameters.getProperty() ).<br>
  *  <pre>
- *    - "init.label"      ( label for the combo box content - MANDATORY )
- *    - "init.nbChoices"  ( number of combo box choices - MANDATORY )
+ *    - "init.label0"      ( label for the combo box content - MANDATORY )
+ *    - "init.nbChoices"   ( number of combo box choices - MANDATORY )
  *
  *    - "init.choice0"             ( choice 0 in the combo box - MANDATORY )
  *    - "init.choice1"             ( choice 1 in the combo box - MANDATORY )
  *    - ...
  *    - "init.choice[nbChoices-1]" ( choice [nbChoices-1] in the combo box - MANDATORY )
  *
- *    - "init.info"       ( information text to display - OPTIONAL )
+ *    - "init.info0"       ( information text to display - OPTIONAL )
  *  </pre>
  *
  *  Optional properties are set to "" by default.
@@ -105,9 +105,9 @@ public class JWizardStepComboBox extends JWizardStep {
         super.init(parameters);
       
      // 1 - We retrieve init properties
-        String s_label = parameters.getProperty("init.label");
+        String s_label = parameters.getProperty("init.label0");
         String s_nbChoices  = parameters.getProperty("init.nbChoices");
-        String s_info   = parameters.getProperty("init.info");
+        String s_info   = parameters.getProperty("init.info0");
 
         String choices[] = null;
 
@@ -164,6 +164,14 @@ public class JWizardStepComboBox extends JWizardStep {
    */
    protected boolean onPrevious(Object context, JWizard wizard) {
    	return true;
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To get the selected choice : integer 0 to nbChoices, -1 if none selected.
+    */
+   public int getChoice() {
+   	return comboBox.getSelectedIndex();
    }
 
  /*------------------------------------------------------------------------------------*/

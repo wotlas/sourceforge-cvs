@@ -83,7 +83,7 @@ public class JWizardTestingBench extends JWizard {
 
            parameters.setStepClass("wotlas.libs.wizard.step.JWizardStepInfo");
            parameters.setStepTitle("Information Step (JWizardStepInfo)");
-           parameters.setProperty("init.info", "Please note this important information : "
+           parameters.setProperty("init.info0", "Please note this important information : "
                                            +"This important information you will please note : "
                                            +"Please note this important information and of course "
                                            +"this important information please note : one two three four\nfive six "
@@ -97,10 +97,10 @@ public class JWizardTestingBench extends JWizard {
            parameters.setStepClass("wotlas.libs.wizard.step.JWizardStep1TextField");
            parameters.setStepTitle("Information Input Step (JWizardStep1TextField)");
 
-           parameters.setProperty("init.label", "Kyzophrenic Proton :");
-           parameters.setProperty("init.text", "krypton A");
+           parameters.setProperty("init.label0", "Kyzophrenic Proton :");
+           parameters.setProperty("init.text0", "krypton A");
 
-           parameters.setProperty("init.info", "\nPlease note these fields are very important and should "
+           parameters.setProperty("init.info0", "\nPlease note these fields are very important and should "
                                            +"not be set without a good understanding of neutronic computing.");
            break;
 
@@ -109,13 +109,13 @@ public class JWizardTestingBench extends JWizard {
            parameters.setStepClass("wotlas.libs.wizard.step.JWizardStep2TextField");
            parameters.setStepTitle("Information Input Step (JWizardStep2TextField)");
 
-           parameters.setProperty("init.label1", "Kyzophrenic Proton :");
-           parameters.setProperty("init.text1", "krypton A");
+           parameters.setProperty("init.label0", "Kyzophrenic Proton :");
+           parameters.setProperty("init.text0", "krypton A");
 
-           parameters.setProperty("init.label2", "Triple Recursive Quanta :");
-           // no default value for text field 2
+           parameters.setProperty("init.label1", "Triple Recursive Quanta :");
+           // no default value for text field1
 
-           parameters.setProperty("init.info", "\nPlease note these fields are very important and should "
+           parameters.setProperty("init.info0", "\nPlease note these fields are very important and should "
                                            +"not be set without a good understanding of neutronic computing.");
            break;
 
@@ -124,7 +124,7 @@ public class JWizardTestingBench extends JWizard {
            parameters.setStepClass("wotlas.libs.wizard.step.JWizardStepComboBox");
            parameters.setStepTitle("Information Choice Step (JWizardStepComboBox)");
  
-           parameters.setProperty("init.label", "Kyzophrenic Proton :");
+           parameters.setProperty("init.label0", "Kyzophrenic Proton :");
 
            parameters.setProperty("init.nbChoices", "4");
            parameters.setProperty("init.choice0", "Proton");
@@ -132,7 +132,7 @@ public class JWizardTestingBench extends JWizard {
            parameters.setProperty("init.choice2", "Krypton");
            parameters.setProperty("init.choice3", "Trypton");
 
-           parameters.setProperty("init.info", "\nPlease note these fields are very important and should "
+           parameters.setProperty("init.info0", "\nPlease note these fields are very important and should "
                                               +"not be set without a good understanding of neutronic computing.");
            break;
 
@@ -141,7 +141,7 @@ public class JWizardTestingBench extends JWizard {
            parameters.setStepClass("wotlas.libs.wizard.step.JWizardStepList");
            parameters.setStepTitle("Information Choice Step (JWizardStepList)");
 
-           parameters.setProperty("init.label", "Kyzophrenic Proton vs Psychotic Deuterium :");
+           parameters.setProperty("init.label0", "Kyzophrenic Proton vs Psychotic Deuterium :");
 
            parameters.setProperty("init.nbChoices", "4");
            parameters.setProperty("init.choice0", "Proton");
@@ -149,7 +149,7 @@ public class JWizardTestingBench extends JWizard {
            parameters.setProperty("init.choice2", "Krypton");
            parameters.setProperty("init.choice3", "Trypton Titan Jupiter");
 
-           parameters.setProperty("init.info", "\nPlease note these fields are very important and should "
+           parameters.setProperty("init.info0", "\nPlease note these fields are very important and should "
                                               +"not be set without a good understanding of neutronic computing.");
            break;
 
@@ -158,7 +158,7 @@ public class JWizardTestingBench extends JWizard {
            parameters.setStepClass("wotlas.libs.wizard.step.JWizardStepPassword");
            parameters.setStepTitle("Login & Password Step (JWizardStepPassword)");
 
-           parameters.setProperty("init.info", "\nPlease note these fields are very important and should "
+           parameters.setProperty("init.info0", "\nPlease note these fields are very important and should "
                                            +"not be set without a good understanding of neutronic computing.");
            break;
 
@@ -167,11 +167,11 @@ public class JWizardTestingBench extends JWizard {
            parameters.setStepClass("wotlas.libs.wizard.step.JWizardStepTextArea");
            parameters.setStepTitle("Story Input Step (JWizardStepTextArea)");
 
-           parameters.setProperty("init.info", "Please note these fields are very important and should "
+           parameters.setProperty("init.info0", "Please note these fields are very important and should "
                                            +"not be set without a good understanding of neutronic computing.");
 
-           parameters.setProperty("init.text", "My Kyzophrenic Proton !");
-           parameters.setProperty("init.option", "kryptonit forever"); // without this line no checkbox is created
+           parameters.setProperty("init.text0", "My Kyzophrenic Proton !");
+           parameters.setProperty("init.option0", "kryptonit forever"); // without this line no checkbox is created
 
            break;
 
@@ -180,7 +180,7 @@ public class JWizardTestingBench extends JWizard {
            parameters.setStepClass("wotlas.libs.wizard.step.JWizardStepRadio");
            parameters.setStepTitle("Information Choice Step (JWizardStepRadio)");
  
-           parameters.setProperty("init.label", "Your Kyzophrenic possibilities :");
+           parameters.setProperty("init.label0", "Your Kyzophrenic possibilities :");
 
            parameters.setProperty("init.nbChoices", "3");
            parameters.setProperty("init.choice0", "Protons forever young");

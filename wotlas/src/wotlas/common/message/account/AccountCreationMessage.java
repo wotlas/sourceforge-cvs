@@ -27,7 +27,8 @@ import wotlas.libs.net.NetMessage;
 
 
 /** 
- * To notice the server that the account should be created now. (Message Sent by Client)
+ * To notice the AccountBuilder that we are ready to receive the first JWizardStep.
+ * (Message Sent by Client after connection has been established)
  *
  * @author Aldiss
  */
@@ -36,7 +37,7 @@ public class AccountCreationMessage extends NetMessage
 {
  /*------------------------------------------------------------------------------------*/
 
-  /** Constructor. Just initializes the message category and type.
+  /** Constructor.
    */
      public AccountCreationMessage() {
           super();

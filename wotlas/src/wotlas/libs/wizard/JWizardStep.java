@@ -42,9 +42,19 @@ public abstract class JWizardStep extends JPanel {
 
  /*------------------------------------------------------------------------------------*/
 
+  /** Maximum time we wait on a await() call.
+   */
+   public static final long LOCK_TIMEOUT = 1000*20;  // 20s
+
+ /*------------------------------------------------------------------------------------*/
+
   /** JWizardStep parameters
    */
    protected JWizardStepParameters parameters;
+
+  /** Lock for multi-purpose use. See the method awake().
+   */
+   protected Object lock;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -73,6 +83,7 @@ public abstract class JWizardStep extends JPanel {
    public JWizardStep() {
        super();
        setBackground(Color.white);
+       lock = new Object();
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -93,6 +104,29 @@ public abstract class JWizardStep extends JPanel {
    */
    protected JWizardStepParameters getParameters() {
    	return parameters;
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To awake this step if it was locked on a lock.wait().
+   */
+   public void awake() {
+   	synchronized(lock) {
+   	    lock.notify();
+   	}
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To await something an event, a message. Locks this step.
+   *  We wait no more than LOCK_TIMEOUT.
+   */
+   public void await() {
+   	synchronized(lock) {
+   	    try{
+               lock.wait(LOCK_TIMEOUT);
+            } catch( Exception e ) {}
+   	}
    }
 
  /*------------------------------------------------------------------------------------*/

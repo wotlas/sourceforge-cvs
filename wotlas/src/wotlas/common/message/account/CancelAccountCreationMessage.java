@@ -27,7 +27,7 @@ import wotlas.libs.net.NetMessage;
 
 
 /** 
- * To revert to the previous state of the account's creation (Message Sent by Client)
+ * To cancel the account's creation (Message Sent by Client)
  *
  * @author Aldiss
  */
@@ -36,7 +36,7 @@ public class CancelAccountCreationMessage extends NetMessage
 {
  /*------------------------------------------------------------------------------------*/
 
-  /** Constructor. Just initializes the message category and type.
+  /** Constructor.
    */
      public CancelAccountCreationMessage() {
           super();

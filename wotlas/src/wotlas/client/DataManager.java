@@ -364,12 +364,18 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
     // Retreive player's location
     WotlasLocation location = myPlayer.getLocation();
+    
     System.out.println("\tmyPlayer.location = "   + location);
     System.out.println("\tlocation.worldMapID = " + location.getWorldMapID());
     System.out.println("\tlocation.townMapID = "  + location.getTownMapID());
     System.out.println("\tlocation.buildingID = " + location.getWorldMapID());
 
     // 3 - Create the drawable reference
+    location.setWorldMapID(0);
+    location.setTownMapID(0);
+    location.setInteriorMapID(0);
+    location.setBuildingID(0);
+    location.setRoomID(0);
     myPlayer.init();
     System.out.println("\tmyPlayer = " + myPlayer);
     System.out.println("\tmyPlayer.fullPlayerName = "  + myPlayer.getFullPlayerName());
@@ -378,11 +384,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     System.out.println("\tmyPlayer.ImageIdentifier = " + myPlayer.getImageIdentifier());
     System.out.println("\tmyPlayer.Drawable = "        + myPlayer.getDrawable());
 
+    /*
     location.setWorldMapID(0);
     location.setTownMapID(0);
     location.setInteriorMapID(0);
     location.setBuildingID(0);
     location.setRoomID(0);
+    */
 
   //*** World
     if (location.isWorld()) {
@@ -556,15 +564,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   public void tick() {
     //myPlayer.tick();
 
-    WotlasLocation location = myPlayer.getLocation();
-
-    if (location!=null) {
-      if ( location.isRoom() ) {
-        //System.out.println("Room");
-
-      }
-    }
-
     if (circle != null) {
       if (circleLife < CIRCLE_LIFETIME) {
         circleLife++;
@@ -609,12 +608,21 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       int newY = e.getY() + (int)screen.getY();
       myPlayer.setEndPosition(newX, newY);
       // Create the trajectory
+      
       wotlas.utils.List path = aStar.findPath( new Point( myPlayer.getX()/TILE_SIZE, myPlayer.getY()/TILE_SIZE),
-                                           new Point(newX/TILE_SIZE, newY/TILE_SIZE));
-                                           
-      //myPlayer.setTrajectory(aStar.smoothPath(path));
-      //myPlayer.setTrajectory(path);
-      myPlayer.initMovement(aStar.smoothPath(path));
+                                           new Point(newX/TILE_SIZE, newY/TILE_SIZE));                         
+      /*
+      myPlayer.setTrajectory(path);
+      */      
+      
+      if (path!=null)
+        for (int i=0; i<path.size(); i++) {
+          Point p = (Point) path.elementAt(i);
+          p.x *= TILE_SIZE;
+          p.y *= TILE_SIZE;
+        }
+      myPlayer.initMovement(path);
+      
 
     } else {
       System.out.println("object.getClass().getName() = " + object.getClass().getName());

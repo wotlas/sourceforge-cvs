@@ -21,16 +21,90 @@ package wotlas.common.power;
 
 import wotlas.common.*;
 import wotlas.common.universe.*;
+import java.util.*;
+import java.io.*;
 
-/** Interface of a Wotlas Channeller. Any character capable of channelling extends the Channeller class
+import wotlas.utils.Debug;
+
+/** Implementation of a generic WotChanneller. Any character capable of channelling 
+ * extends a Channeller class, all of which are subclasses of this.
  *
  * @author Chris
  * @see wotlas.common.Player
  * @see wotlas.libs.graphics2D.Drawable
  */
 
-public interface WotChanneller
-{ 
+public abstract class Channeller 
+{
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Storage for the list of Powers
+     */
+    private HashMap powerList = new HashMap();
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Storage for the full list of Powers
+     */
+    private HashMap fullPowerList = new HashMap();
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Storage for the status of the True Source
+     */
+    private boolean trueSourceUsable = false;
+    private boolean trueSourceInUse = false;
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Storage for the status of the Source
+     */
+    private boolean isChannelling = false;
+ 
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Constructor
+     */
+    public Channeller() {
+
+	/** Load the available Power classes
+	 * ASSUMING NOT IN JAR FILE
+	 */
+	File powersFiles[] = new File( "wotlas/common/power/Powers" ).listFiles();
+
+	if( powersFiles==null || powersFiles.length==0 ) {
+	    Debug.signal( Debug.WARNING, this, "No Powers found in wotlas/common/power/Powers!" );
+	    return;
+	}
+
+	for (int i=0; i< powersFiles.length; i++ ) {
+
+	    if( !powersFiles[i].isFile() || !powersFiles[i].getName().endsWith(".class") )
+		continue;
+
+	    // Load the class
+	    try{
+		String name = powersFiles[i].getName();
+		Class cl = Class.forName("wotlas.common.power.Powers." 
+					 + name.substring( 0, name.lastIndexOf(".class") ) );
+
+		if (cl==null || cl.isInterface())
+		    continue;
+
+		Object o = cl.newInstance();
+
+		if( o==null || !(o instanceof Power) )
+		    continue;
+	    // Ok, we have a valid Power class.
+		fullPowerList.put( ((Power) o).getName(), (Power) o );
+	    }
+	    catch( Exception e ) {
+		Debug.signal( Debug.WARNING, this, e );
+	    }
+	}
+
+    }
+
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
     /** To get a list of Talents usable by this Channeller.</P>
@@ -38,16 +112,26 @@ public interface WotChanneller
      *
      * @return an array of the Strings, the names of the powers.
      */
-    public String[] getPowerList();
+    public String[] getPowerList() {
+	return (String[] ) powerList.keySet().toArray();
+    }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-    /** Adds a Power to this Channeller's list
+    /** Add a power to the Channeller's list
      *
      * @param powerName the name of the new power to be added.
-     * @return success status (true if successful)
+     * @return success status
      */
-    public boolean addPower( String powerName );
+    public boolean addPower( String powerName ) {
+	if ( !(fullPowerList.containsKey(powerName)) ) {
+	     return false;
+	}
+	else {
+	    powerList.put(powerName, fullPowerList.get(powerName) );
+	    return true;
+	}
+    }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -56,7 +140,9 @@ public interface WotChanneller
      * @param powerName the name of the Power (see the list produced by getPowerList())
      * @return the Power
      */
-    public Power getPower( String powerName );
+    public Power getPower( String powerName ) {
+	return (Power) powerList.get(powerName);
+    }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -65,7 +151,10 @@ public interface WotChanneller
      *
      * @return success status (true if successful)
      */
-    public boolean openSource();
+    public boolean openSource() {
+	isChannelling = true;
+	return isChannelling;
+    }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -73,7 +162,10 @@ public interface WotChanneller
      *
      * This is here for when I implement time spent holding the source effects
      */
-    public boolean releaseSource();
+    public boolean releaseSource() {
+	isChannelling = false;
+	return true;
+    }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -82,7 +174,9 @@ public interface WotChanneller
      *
      * @return the number of Power Points the channeller has remaining
      */
-    public int getPowerPoints();
+    public int getPowerPoints() {
+	return -1;
+    }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -96,7 +190,9 @@ public interface WotChanneller
      * NOT YET IMPLEMENTED
      * @return the Power level of the Channeller
      */
-    public int getPowerLevel();
+    public int getPowerLevel() {
+	return -1;
+    }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -104,7 +200,9 @@ public interface WotChanneller
      *
      * @return success status
      */
-    public boolean isTrueSourceAvailable();
+    public boolean isTrueSourceAvailable() {
+	return trueSourceUsable;
+    }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -112,7 +210,15 @@ public interface WotChanneller
      *
      * @return the status of the True Source, true=in use
      */
-    public boolean toggleTrueSource();
+    public boolean toggleSourcePower() {
+	if (trueSourceUsable) {
+	    trueSourceInUse = !(trueSourceInUse);
+	    return trueSourceInUse;
+	}
+	else {
+	    return false;
+	}
+    }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -120,6 +226,8 @@ public interface WotChanneller
      *
      * @return success status
      */
-    public boolean isChanneller();
+    public boolean isChanneller() {
+	return true; // Not considering the option of severed Channellers yet
+    }
 
 }

@@ -1,0 +1,100 @@
+Log opened the 2002-04-20 at 19h-04m-39s
+NOTICE - *-----------------------------------*
+NOTICE - |   Wheel Of Time - Light & Shadow  |
+NOTICE - |  Copyright (C) 2001 - WOTLAS Team |
+NOTICE - *-----------------------------------*
+
+NOTICE - Client properties loaded successfully :
+NOTICE - Help directory     : ../docs/help
+NOTICE - Data directory     : ../base
+NOTICE - Server home URL    : http://wotlas.sourceforge.net/game/
+NOTICE - Font Factory created...
+ERROR - Failed to load client configuration. Creating a new one.
+ERROR - java.lang.String
+   ../base/configs/client-profiles.cfg (No such file or directory)
+EXCEPTION STACK: java.io.FileNotFoundException: ../base/configs/client-profiles.cfg (No such file or directory)
+	at java.io.FileInputStream.open(Native Method)
+	at java.io.FileInputStream.<init>(FileInputStream.java:103)
+	at java.io.FileInputStream.<init>(FileInputStream.java:66)
+	at wotlas.libs.persistence.PropertiesConverter.load(PropertiesConverter.java:166)
+	at wotlas.client.ProfileConfigList.load(ProfileConfigList.java:224)
+	at wotlas.client.ClientManager.<init>(ClientManager.java:158)
+	at wotlas.client.ClientDirector.main(ClientDirector.java:196)
+
+ERROR - Failed to load client's profiles config: ../base/configs/client-profiles.cfg (No such file or directory)
+NOTICE - wotlas.client.ClientManager
+   no client's profile found : creating a new one...
+NOTICE - Server config Manager started with success !
+NOTICE - Client Manager created...
+NOTICE - Loading Universe Data from :../base/universe/default
+WARNING - wotlas.common.WorldManager
+   Found Empty World directory : ../base/universe/default/CVS
+NOTICE - World Manager loaded 0 worlds, 0 towns, 0 buildings, 0 maps.
+WARNING - wotlas.common.WorldManager
+   Universe inits failed: No WorldMaps.
+NOTICE - DataManager created...
+NOTICE - Loading server table...
+NOTICE - Trying to load Server Table from network...
+NOTICE - WOTLAS Client started with success...
+NOTICE - wotlas.client.screen.JAccountCreationWizard
+   Wizard canceled.
+NOTICE - DataManager connected to GameServer
+NOTICE - closing JConnectionDialog
+NOTICE - ClientManager connected to GameServer
+NOTICE - DataManager call to ShowInterface
+NOTICE - Graphics Engine is using hardware mode : false
+ERROR - wotlas.common.WorldManager
+   No World data available.
+NOTICE - No macros config found...
+NOTICE - Loaded 4 plug-ins...
+ERROR - wotlas.common.WorldManager
+   No World data available.
+ERROR - wotlas.common.WorldManager
+   No World data available.
+ERROR - wotlas.client.DataManager
+   java.lang.NullPointerException
+EXCEPTION STACK: java.lang.NullPointerException
+	at wotlas.client.InteriorMapData.initDisplay(InteriorMapData.java:158)
+	at wotlas.client.DataManager.changeMapData(DataManager.java:950)
+	at wotlas.client.DataManager.showInterface(DataManager.java:519)
+	at wotlas.client.ClientManager.start(ClientManager.java:1062)
+	at wotlas.client.ClientManager$17.actionPerformed(ClientManager.java:935)
+	at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1767)
+	at javax.swing.AbstractButton$ForwardActionEvents.actionPerformed(AbstractButton.java:1820)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:419)
+	at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:257)
+	at javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:258)
+	at java.awt.Component.processMouseEvent(Component.java:5021)
+	at java.awt.Component.processEvent(Component.java:4818)
+	at java.awt.Container.processEvent(Container.java:1380)
+	at java.awt.Component.dispatchEventImpl(Component.java:3526)
+	at java.awt.Container.dispatchEventImpl(Container.java:1437)
+	at java.awt.Component.dispatchEvent(Component.java:3367)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:3214)
+	at java.awt.LightweightDispatcher.processMouseEvent(Container.java:2929)
+	at java.awt.LightweightDispatcher.dispatchEvent(Container.java:2859)
+	at java.awt.Container.dispatchEventImpl(Container.java:1423)
+	at java.awt.Window.dispatchEventImpl(Window.java:1566)
+	at java.awt.Component.dispatchEvent(Component.java:3367)
+	at java.awt.EventQueue.dispatchEvent(EventQueue.java:445)
+	at java.awt.EventDispatchThread.pumpOneEventForHierarchy(EventDispatchThread.java:190)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:144)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:138)
+	at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:130)
+	at java.awt.EventDispatchThread.run(EventDispatchThread.java:98)
+
+NOTICE - wotlas.client.DataManager
+   OS INFO :
+
+OS NAME : <Linux>
+OS ARCH: <i386>
+OS VERSION: <2.2.17-21mdksecure>
+
+ERROR - wotlas.common.WorldManager
+   No World data available.
+NOTICE - Started the tick thread...
+WARNING - wotlas.client.message.description.PlayerConnectedToGameMsgBehaviour
+   Player not found :fredmc-1-27
+WARNING - wotlas.libs.net.NetReceiver
+   Connection closed : java.net.SocketException: Socket closed
+NOTICE - DataManager not connected anymore to GameServer

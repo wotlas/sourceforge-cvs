@@ -54,6 +54,10 @@ public class SimpleMenu2DDrawable extends Drawable {
     */
     static final private int ANIM_SPEED = 300; // 300ms to display 100 pixels
 
+   /** Maximum time them menu is displayed if none of its item is selected
+    */
+    static final private int DISPLAY_TIMEOUT = 3000; // 3s
+
    /** DRAWABLE PRIORITIES
     */
     static final public short MENU_PRIORITY      = 1000;      // menu drawable
@@ -440,6 +444,12 @@ public class SimpleMenu2DDrawable extends Drawable {
    *  @return true if the drawable is "live", false if it must be deleted.
    */
      public boolean tick() {
+        long now = System.currentTimeMillis();
+
+        if( now-timeStamp>DISPLAY_TIMEOUT && ( 
+            menu2D.getSelectedItemIndex()==-1 || menu2D.getSelectedItemIndex()>=menu2D.getItems().length ) )
+            menu2D.hide();
+
         return true;
      }
 

@@ -6,7 +6,7 @@
 * ( File Best Viewed in 1024x768 or above)
 *
 
-CHANGES BETWEEN V1.2.3 AND V1.3 (15 May 2002)
+CHANGES BETWEEN V1.2.3 AND V1.3 (20 May 2002)
 ---------------------------------------------
 
  - Added bots definitions and a link to a remote AliceBot server.
@@ -28,6 +28,7 @@ CHANGES BETWEEN V1.2.3 AND V1.3 (15 May 2002)
  - New transfer scripts enabling the wotlas server to perform automatic IP updates on the wotlas web server.
  - Corrected a very old bug on the Warning messages.
  - Improved ImageLibrary code : JIT resources from a directory can now be loaded together.
+ - Updated FAQ entries.
 
 
 CHANGES BETWEEN V1.2.2 AND V1.2.3 (11 April 2002)

@@ -34,7 +34,7 @@
     V - <a href="#V">How to Build the Wotlas Javadoc API</a><br>
     <br>
     <a href="#A">Appendix A - GNU Make</a></p>
-</blockquote>
+  </blockquote>
 <hr width="50%">
 <p><br>
   <font size="4">I - About Jakarta Ant</font><b><a name="I"></a><br>
@@ -202,14 +202,16 @@
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set 
     <b>ALICE_LIB</b>=lib/aliceserver.jar<b>;lib/alicewotlas.jar</b><br>
     <br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Now open the <i>ProgramD/server.properties</i> 
-    file, and search for the following line near the end of the file :<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Now open the <i>ProgramD/startup.xml</i> 
+    file, search for the &lt;listeners&gt; tag and add the lines :<br>
     <br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>programd.listeners.scan 
-    </b>= false<b><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b> 
+    &lt;listener type=&quot;AliceWOTLAS&quot; enabled=&quot;true&quot;&gt;<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b> 
+    </b>&lt;/listener&gt;<br>
     </b><br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Just set the value to <i><b>true</b></i>, 
-    this way the programD will search for listeners and will find ours in <i>alicewotlas.jar</i>.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This way the programD will 
+    find our listener in <i>alicewotlas.jar</i>.<br>
     <br>
     <b>7</b> - Congratulations ! You can now start your AliceBot ProgramD by using 
     the run.bat ( or <i>run.sh</i> ). Note the IP interface name/address on which 

@@ -25,7 +25,7 @@ import wotlas.client.screen.plugin.MacroPlugIn;
 import wotlas.common.chat.*;
 import wotlas.common.character.*;
 import wotlas.common.message.chat.*;
-import wotlas.common.Player;
+import wotlas.common.*;
 import wotlas.common.universe.WotlasLocation;
 
 import wotlas.utils.*;

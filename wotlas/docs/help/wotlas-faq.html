@@ -22,15 +22,16 @@
       name it will make things easier for you, but you can still live without 
       it ( depends on your Internet provider ). The most important thing to know 
       is that your computer will have to run 24 hours per day and 7days per week. 
-      Of course you are free to stop your server sometimes or stop hosting it 
-      for ever. We are not a dictatorship !</font></p>
+      Of course you are still free to stop your server now and then or stop hosting 
+      it for ever. We are not a dictatorship !</font></p>
   </blockquote>
   <p><b>1.1</b> - Why do I need to register my server ?</p>
   <blockquote> 
     <p><font size="2">To enable other users to find it and connect to it ! This 
       way your server will be listed in our public server table. Of course you 
       can also create you own wotlas network with your own list of servers. To 
-      do that download the <i>wotlas manager</i> package and follow the instructions.</font></p>
+      do that download the <i>wotlas manager</i> package and follow the instructions 
+      ( note it's experimental ).</font></p>
   </blockquote>
   <p><b>1.2</b> - What is the <i>setup</i> utility for ?</p>
   <blockquote> 
@@ -43,27 +44,30 @@
       you'll have to use the <i>setup</i> utility.</font></p>
   </blockquote>
   <p><b>1.3</b> - My server has a fixed domain name, can I enter it in the setup 
-    utility instead of its IP address ?</p>
+    utility instead of the IP address ?</p>
   <blockquote> 
     <p><font size="2"> Yes. If your server has its own domain name, just call 
       the <i>setup</i> utility once, enter your DNS name, export it and quit. 
-      You can now start your server.</font></p>
+      You can now start your server and don't need to bother again about setup... 
+      unless your computer's IP changes often. You can find free domain name offers 
+      on the Internet but you should avoid them. To learn why, read the answer 
+      to question 1.16 .</font></p>
   </blockquote>
   <p><b>1.4</b> - My server has no domain name and its IP is often changed by 
     my Internet provider. What can I do ?</p>
   <blockquote> 
-    <p><font size="2">Well there are no miracles. Each time your server's IP is 
-      changed you'll have to stop your wotlas server, use the <i>setup</i> utility 
-      to update your server's IP and re-start your wotlas server. It's a matter 
-      of tempo. If you know your Internet provider's habits it can help you <i>a 
+    <p><font size="2">Well there are no miracles. Each time your server's IP changes 
+      you'll have to stop your wotlas server, use the <i>setup</i> utility to 
+      update your server's IP and re-start your wotlas server. It's a matter of 
+      tempo. If you know your Internet provider's habits it can help you <i>a 
       lot</i>. For example, DSL providers often reset your connection after 24 
       hours of use and change your IP every 1-4 days. Knowing that you can start 
       your Internet connection at a period of the day where you know you'll be 
-      at home. This way you'll be there to check if the IP has changed.</font></p>
+      at home. This way you'll be there each time to check if the IP has changed.</font></p>
   </blockquote>
   <p><b>1.5</b> - How do I get my server's IP ?</p>
   <blockquote> 
-    <p><font size="2">On windows systems just open a MS-DOS window or command-line 
+    <p><font size="2">On Windows systems just open a MS-DOS window or command-line 
       window and enter <i>ipconfig</i>. It'll display all your IP interfaces. 
       On unix systems enter <i>ifconfig</i> to obtain the same result.</font></p>
   </blockquote>
@@ -81,17 +85,17 @@
   <p><b>1.8</b> - I have a firewall on my computer what do I need to do ?</p>
   <blockquote> 
     <p><font size="2">You'll have to configure it to make it accept : incoming 
-      connections on <i>java.exe </i>( if you want to be precise just open the 
-      ports you declared in the <i>register</i> utility ), outgoing connections 
-      on <i>java.exe</i> ( your server will probably use HTTP, your server's ports 
-      and the gateway ports of other servers, so the best is to let any outgoing 
-      ports available for java ).</font></p>
+      connections on <i>java </i>( if you want to be precise just open the ports 
+      you declared in the <i>register</i> utility ), outgoing connections on <i>java 
+      </i> ( your server will probably use HTTP, your server's ports and the gateway 
+      ports of other servers, so the easiest solution is to let any outgoing ports 
+      available for java ).</font></p>
   </blockquote>
   <p><b>1.9</b> - How do I shutdown my server ?</p>
   <blockquote> 
-    <p><font size="2">Press Enter. It will take 30s for it to shutdown. If nobody 
-      connected to the server since the last maintenance save then you can stop 
-      it with a CTRL+C.</font></p>
+    <p><font size="2">Press Enter. It will take 30s to shutdown. If nobody connected 
+      to the server since the last maintenance save then you can stop it with 
+      a CTRL+C. If you are not sure press ENTER.</font></p>
   </blockquote>
   <p><b>1.10</b> - I can't host my wotlas server anymore, how do I un-register 
     ?</p>
@@ -100,7 +104,7 @@
       mail the following zipped directories of your server package : <i>base/home</i> 
       , <i>src/config</i>.</font></p>
   </blockquote>
-  <p><b>1.11</b> - Someone mailed me to ask a key to create a <i>special character</i> 
+  <p><b>1.11</b> - Someone mailed me to ask for a key to create a <i>special character</i> 
     ? what's this all about ?</p>
   <blockquote> 
     <p><font size="2">Special characters are characters that can only appear once 
@@ -114,10 +118,10 @@
   </blockquote>
   <p><b>1.12</b> - I want to delete someone's account. How can I do that ?</p>
   <blockquote> 
-    <p><font size="2">You'll need to know the primary key ( 'aldiss-1-1' for example 
-      ) of the account you want to delete. Once you have it you'll have to stop 
-      your server ( press Enter ), delete the directory of <i>base/home</i> which 
-      name is the primary key and re-start your server.</font></p>
+    <p><font size="2">You'll need to know the primary key ( <i>aldiss-1-1</i> 
+      for example ) of the account you want to delete. Once you have it you'll 
+      have to stop your server ( press Enter ), delete the directory in <i>base/home/</i> 
+      which name is the primary key and re-start your server.</font></p>
   </blockquote>
   <p><b>1.13</b> - I'm using ports above 1024 for my wotlas server and it seems 
     nobody can connect to my server ! what's happening ?</p>
@@ -128,9 +132,9 @@
   </blockquote>
   <p><b>1.14</b> - Do I need to warn the wotlas network administrator if I have 
     to stop my server for some time ?</p>
-  <blockquote>
+  <blockquote> 
     <p><font size="2">If you have to stop your server for less than 12 hours there 
-      should be no need to warn the wotlas network administrator. If you have 
+      should be no need to ring the wotlas network administrator. If you have 
       to stop your server for more than 12 hours mail the administrator, he will 
       update the wotlas news to warn users.</font></p>
   </blockquote>
@@ -141,19 +145,48 @@
       you want more debug information, a <i>-erroronly</i> if you only want errors 
       to be displayed and not <i>NOTICE</i>,<i> WARNING</i> messages.</font></p>
   </blockquote>
-  <p>&nbsp;</p>
+  <p><b>1.16</b> - I've found a free domain name offer on the Internet, do you 
+    advice me to use it for wotlas ?</p>
+  <blockquote> 
+    <p><font size="2">Well, it depends on the offer's content... know that a domain 
+      name will be useful to you <i>ONLY </i> if it offers you to have a static 
+      ( or quite never changing ) IP address. Well, all the offers of this kind 
+      we've met so far are not free... (see your Internet Provider offers). So 
+      what can you do ? well, you can still use a free domain name for your wotlas 
+      server BUT you have to know the side effects. Let's take the example of 
+      <i>www.dyndns.org</i> that proposes you a free <i>xxx.dyndns.org</i> domain 
+      name :</font></p>
+    <blockquote> 
+      <p><font size="2">1 - The offer consists in the association DNS entry / 
+        your IP address. Therefore if your IP changes you'll have to use the <i>Dyndns</i> 
+        web interface to update your IP in the dyndns DNS tables.</font></p>
+      <p><font size="2">2 - Of course <i>Dyndns</i> proposes client programs that 
+        will detect when your IP changed and will automatically update the <i>Dyndns</i> 
+        tables. But even if you can get these client programs to work, there will 
+        remain a <i>huge trouble : </i>Internet uses <i>a lot</i> of DNS buffers, 
+        proxies and it will take <i>around 4 hours</i> for your new IP to be spread 
+        among them. So each time your IP changes your wotlas server will be unreachable 
+        for about 4 hours...</font></p>
+    </blockquote>
+    <p><font size="2">So, unless you have a domain name with its own static IP, 
+      we strongly advice you to enter your IP address in the wotlas <i>setup</i> 
+      utility each time you have to. It will make your server immediately available 
+      to users.</font></p>
+  </blockquote>
 </blockquote>
+<p>&nbsp;</p>
 <p><font size="4" color="#006699">II - FAQ - Wotlas Client Technical Problems</font><font size="4" color="#006666"><br>
   </font><font size="3" color="#006666"></font> </p>
 <blockquote> 
   <p><b>2.0</b> - When I start wotlas, nothing happens, no windows appear. What's 
     going on ?</p>
   <blockquote> 
-    <p><font size="2">Oups. If you have installed Java 1.3 this situation should 
-      not happen... Please mail us. We also witnessed a situation where wotlas 
-      makes windows crash (?). Thank god it's very rare because we have no explanation... 
-      If only we could get some error messages... we tried to use tools like <i>Rational</i>'s 
-      <i>Purify</i> ( thanks for the demo !), but we failed to reproduce the bug...</font></p>
+    <p><font size="2">Oups... If you have installed Java 1.3 or 1.4 this situation 
+      should not happen... Please contact us. We also witnessed a situation where 
+      wotlas makes Windows crash (?). Thank god it's very rare because we have 
+      no explanation... If only we could get some error messages... we tried to 
+      use tools like <i>Rational</i>'s <i>Purify</i> ( thanks for the demo !), 
+      but we failed to reproduce the bug...</font></p>
   </blockquote>
   <p><b>2.1</b>- When I start wotlas, the log window appears and then nothing 
     happens. What's going on ?</p>
@@ -170,24 +203,24 @@
       if :</font></p>
     <blockquote> 
       <p><font size="2">(1) the wotlas web server is not working. Because our 
-        default web server is SourceForge.net this situation won't happen every 
-        day...<br>
-        (2) you are trying to use wotlas from your company. There is 99% chance 
+        default web server is <i>SourceForge.net</i> this situation is unlikely 
+        to happen every day...<br>
+        (2) you are trying to use wotlas from your work office. There is 99% chance 
         that your company uses a firewall or a proxy and wotlas doesn't like it 
-        very much... ( prefer wotlas at home... )<br>
-        (3) a strange error occured... in this case mail us ! ( take a look at 
-        question 2.6 to know what to do )</font></p>
+        very much... ( prefer wotlas at home... ).<br>
+        (3) a strange error occured... in this case contact us ! ( take a look 
+        at question 2.6 to know what to do ).</font></p>
     </blockquote>
   </blockquote>
   <p><b>2.2</b> - I have a firewall on my computer, what do I need to do ?</p>
   <blockquote> 
     <p><font size="2">You'll have to configure it to make it accept outgoing connections 
-      on <i>java.exe</i> ( your <i>wotlas-client</i> will probably use HTTP, and 
-      various server ports... so the best is to let any outgoing ports available 
+      on <i> java</i> ( your <i>wotlas-client</i> will probably use HTTP and various 
+      server ports... so the easiest solution is to let any outgoing ports available 
       for java ).</font></p>
   </blockquote>
-  <p><b>2.3</b> - I'm trying to start wotlas from a computer within my company 
-    and it doesn't work. What's going on ?</p>
+  <p><b>2.3</b> - I'm trying to start wotlas from my work office and it doesn't 
+    work. What's going on ?</p>
   <blockquote> 
     <p><font size="2">Read the answer to question 2.1 . There is 99% chance that 
       your company uses a firewall or a proxy and wotlas doesn't like it very 
@@ -201,22 +234,21 @@
       menu and take a look at the <i>Connections</i> tab. If your HTTP port is 
       not 80 it means there is a proxy somewhere.</font></p>
   </blockquote>
-  <p><b>2.5</b> - When I started wotlas I had a window telling me to choose a 
-    server to create an account, but the server's list is empty ! What happened 
-    ?</p>
+  <p><b>2.5</b> - When I start wotlas I have a window telling me to choose a server 
+    to create an account, but the server's list is empty ! What happened ?</p>
   <blockquote> 
     <p><font size="2">Are you sure you didn't get a warning message when you started 
       wotlas ? no ? well, if there wasn't any you can still read the answer to 
-      question 2.1, there is 99% chance it'll represent your situation. If you 
-      find an error message in a command window somewhere please contact us, you've 
-      probably found a new bug...</font></p>
+      question 2.1, there is 99% chance it'll explain your situation... but if 
+      there is an error message somewhere in a command window please contact us, 
+      you've probably found a new bug...</font></p>
   </blockquote>
   <p><b>2.6</b> - The game crashed after the final step of the account creation. 
     What happened ?</p>
   <blockquote> 
     <p><font size="2">Well, this is just after this final step, when you enter 
       the game, that some conflicts can happen. Here are the conflicts we know 
-      :</font></p>
+      about :</font></p>
     <blockquote> 
       <p><font size="2">- Divx3.1 software. Please un-install it and install Divx4.0 
         (or more).<br>
@@ -230,15 +262,15 @@
   <p><b>2.7</b> - My problem is not listed here <i>or</i> Wotlas has crashed... 
     what do I need to do ?</p>
   <blockquote> 
-    <p><font size="2">If the questions listed here didn't help you solve your 
-      problem please contact us. You'll find all the addresses to contact us in 
-      the <i>wotlas.html</i> file of your package's root directory. Our support 
-      page is <i>http://sourceforge.net/projects/wotlas . </i>You can choose to 
-      create a new bug entry or leave a message on one of our forums.</font></p>
-    <p><font size="2">In any case, you'll have to (1) describe where and when 
-      your problem occured, (2) tell us about any error messages that might have 
-      been displayed in the command line window, (3) give us the content of your 
-      log file : <i>log/wotlas-client.log</i> .</font></p>
+    <p><font size="2">If the questions listed here didn't help to solve your problem 
+      please contact us. You'll find all the needed URL in the <i>wotlas.html</i> 
+      file of your wotlas package's root directory. Our support page is <i>http://sourceforge.net/projects/wotlas 
+      . </i>You can choose to create a new bug entry or leave a message in one 
+      of our forums.</font></p>
+    <p><font size="2">In the case of a technical problem, you'll have to (1) describe 
+      where and when your problem occured, (2) tell us about any error messages 
+      that might have been displayed in the command line window, (3) give us the 
+      content of your log file : <i>log/wotlas-client.log</i> .</font></p>
   </blockquote>
   <p><b>2.8</b> - Are there any start-up options I can use for my wotlas client 
     ?</p>
@@ -254,31 +286,32 @@
 <p><font size="4" color="#006699">III - FAQ - Wotlas Client - Playing Wotlas</font><font size="4"><br>
   </font><font size="3"></font></p>
 <blockquote> 
-  <p><b>3.0 -</b> I'm searching help on how to play wotlas, where can I find it 
-    ?</p>
+  <p><b>3.0 -</b> I'm searching for some help on how to play wotlas, where can 
+    I find it ?</p>
   <blockquote> 
-    <p><font size="2">Well, you will find some help here but you will also get 
-      some in the game : just hit the <i>Help</i> button ! The in-game help has 
-      some sections that explain how the chat works, how the movement system works, 
-      etc... </font></p>
+    <p><font size="2">Well, you'll find some help here but you will also get some 
+      in the game : just hit the <i>Help</i> button ! The in-game help has some 
+      sections explaining how the chat works, how the movement system works, etc... 
+      </font></p>
   </blockquote>
   <p><b>3.1</b> - Can I create more than one game account ?</p>
   <blockquote> 
-    <p><font size="2">Well, of course ! There is no particular upper limit. You 
-      can also delete old characters you don't want to use anymore.</font></p>
+    <p><font size="2">Well, of course ! There is no particular limit. Don't forget 
+      to delete old characters you don't want to use anymore.</font></p>
   </blockquote>
   <p><b>3.2</b> - Ok I'm in the game. What can I do ?</p>
   <blockquote> 
     <p><font size="2">Wotlas is a virtual community so the main things you'll 
-      do here are : travel, chat with other players, build plots, make up stories, 
-      search darkfriends, preach to Dark Lord's return, discuss literature, etc... 
-      whatever you like. Wotlas is a free discussion/play ground. Of course those 
-      of you that expected a real MUD ( Multi-User Dungeon ) will be very disappointed... 
-      We will probably add fights features and one power effects in a next version 
-      of wotlas but this is not our primary goal.</font></p>
+      do here are : travel, chat with other players, build plots, travel, make 
+      up stories, search for darkfriends, chat, preach the Dark Lord's return, 
+      discuss literature, etc... whatever you like. Wotlas is a free discussion/play 
+      ground. Of course those of you that expected a real MUD ( Multi-User Dungeon 
+      ) will be very disappointed... We will probably add fights features and 
+      one power effects in a next version of wotlas but this is not our primary 
+      goal.</font></p>
   </blockquote>
   <p><b>3.3</b> - I'm trying to speak to someone in the chat but he doesn't seem 
-    to hear me. How does this damned chat works?</p>
+    to hear me. How does this damned chat work ?</p>
   <blockquote> 
     <p><font size="2">It's important to understand that only people that are in 
       the <i>same</i> room as you can hear you ( unless you shout of course ). 
@@ -290,16 +323,17 @@
   <p><b>3.4 </b> - Why are the movements on the world map so slow ?</p>
   <blockquote> 
     <p><font size="2">The answer is in the question ! In a future version of wotlas 
-      it will be even slower ! We intend to make movements in phase with reality. 
-      But of course we will never force you to wait for the end of a long trip 
-      ! If you start a long travel on the world map, quit wotlas and re-connect 
-      later you'll notice that your player continued his/her travel on the server-side.</font></p>
+      it will be even slower ! We intend to make a travel's duration in phase 
+      with reality. But of course we will never force you to wait in front of 
+      your screen for the end of a long journey ! If you start a long journey 
+      on the world map, quit wotlas and re-connect later you'll notice that your 
+      player carried on his travel on the server-side.</font></p>
   </blockquote>
   <p><b>3.5</b> - I'm on a map where there seems to be an opening on a side, but 
     it doesn't lead me to anywhere. What's this all about ?</p>
   <blockquote> 
-    <p><font size="2">We let some openings on maps to be sure we'll eventually 
-      be able to add/connect more maps.</font></p>
+    <p><font size="2">We let some openings on our maps to be sure we'll eventually 
+      be able to add/connect more maps to them.</font></p>
   </blockquote>
   <p><b>3.6</b> - I've been wandering on a map and I don't seem to be able to 
     leave it. What's happening ?</p>
@@ -307,10 +341,10 @@
     <p><font size="2">Well, you are not lucky it's a room link detection bug. 
       To solve your problem look at the room name where you got this bug ( it's 
       the name on the top-right of the game window ). Try to come back to this 
-      room and re-try to leave it. Please also contact us to tell us on which 
-      map/room you got this bug.</font></p>
+      room and re-try to leave it. Please contact us also to tell us on which 
+      map/room you caught this bug.</font></p>
   </blockquote>
-  <p><b>3.7</b> - I don't meet anybody in that game. Isn't it supposed to be an 
+  <p><b>3.7</b> - I don't meet anybody in this game. Isn't it supposed to be an 
     online community ?</p>
   <blockquote> 
     <p><font size="2">Keep in mind we are all in different time zones. Also we 
@@ -322,8 +356,8 @@
     <p><font size="2">Well, I'm sure lot of wotlas users are not aware of it, 
       but <i>yes, </i>your character can get killed in wotlas... In fact the Dark 
       One is the only character that can kill someone in the game. So if you go 
-      to Shayol Ghul to visit him don't displease him ! Note also that he can 
-      only kill your character ( connected or not ) if your are near his prison.</font></p>
+      to Shayol Ghul don't displease him ! Note also that he can only kill your 
+      character ( connected or not ) if your are near his prison.</font></p>
   </blockquote>
   <p><b>3.9</b> - I see a lot of people in the game but they are transparent and 
     don't answer me. Can you explain ?</p>
@@ -332,22 +366,21 @@
       the word <i>'away' </i>appearing near the player name when you click on 
       a player. Also the player's <i>Away Message</i> appear when he is not connected.</font></p>
   </blockquote>
-  <p><b>3.10</b> - When I chat with someone in wotlas, is our discussion saved 
-    ?</p>
+  <p><b>3.10</b> - is my discussion saved when I chat with someone in wotlas ?</p>
   <blockquote> 
     <p><font size="2">Yes. Take a look at the content of your wotlas <i>log/ </i>directory. 
       It contains all your wotlas discussions. They are automatically saved.</font></p>
   </blockquote>
-  <p><b>3.11</b> - Sometime when I travel to a location of the game the wotlas 
+  <p><b>3.11</b> - Sometimes when I travel to a location of the game the wotlas 
     server connection seems to be shut and automatically re-started. what's happening 
     ?</p>
   <blockquote> 
-    <p><font size="2">This is because of the wotlas multi-server feature. See 
-      question 3.12 .</font></p>
+    <p><font size="2">This is because of our multi-server feature. See question 
+      3.12 .</font></p>
   </blockquote>
   <p><b>3.12</b> - What's this multi-server feature all about ?</p>
   <blockquote> 
-    <p><font size="2">Since v1.2 wotlas can share its game universe between multiple 
+    <p><font size="2">Since v1.2 wotlas can share its game universe among multiple 
       servers ( the unit of share is the building ). It means for example that 
       one server will host the White Tower in Tar Valon while another server will 
       host the remaining buildings of the Tar Valon town. When travelling from 
@@ -361,7 +394,7 @@
   <blockquote> 
     <p><font size="2">Yes but don't get caught ! try to move near enough a chat 
       group ( humming... looking at the sky... &nbsp;) to hear what is said and 
-      then don't move. Beware you won't hear what is whispered... A good solution 
+      then don't move. Beware ! you won't hear what is whispered... A good solution 
       if you don't want to be identified too easily is to first create a fake 
       name in the lie panel... but of course it won't work if the people you are 
       trying to spy know you already !</font></p>
@@ -369,21 +402,22 @@
   <p><b>3.14</b> - I want to become a darkfriend, what do I need to do ?</p>
   <blockquote> 
     <p><font size="2">Try to find other darkfriends or make a trip to the Blight 
-      ( north of the world ). You can also visit Shayol Ghul but it can be dangerous...</font></p>
+      ( north of the world ). You can also visit Shayol Ghul but it can get dangerous...</font></p>
   </blockquote>
   <p><b>3.15</b> - How do I know the people I'm speaking to are darkfriends ?</p>
   <blockquote>
-    <p><font size="2">Well, if they try to convince you that the Dark One can't 
-      be beaten... or that the dark side has its good aspects... If you are hunting 
-      Black Ajah Aes Sedai remember that an Aes Sedai can not lie...</font></p>
+    <p><font size="2">Well, if they are trying to convince you that the Dark One 
+      can't be beaten... or that the dark side has its good aspects... If you 
+      are hunting black ajah Aes Sedai, remember that a true Aes Sedai can not 
+      lie...</font></p>
   </blockquote>
   <p><b>3.16</b> - I'm trying to speak to another connected player be he/she doesn't 
     react ? what's happening ?</p>
   <blockquote> 
     <p><font size="2">Someone may be connected to the game but doing something 
       else, not seeing that you are there. To draw attention try to enter a <i>/bell</i>, 
-      <i>/fanfare</i> or <i>/knock</i> in the chat. All you have to hope is that 
-      the other player has not turned off his/her PC speakers ...</font></p>
+      <i>/fanfare</i> or <i>/knock</i> in the chat. Hope that the other player 
+      has not turned off his/her PC speakers ...</font></p>
   </blockquote>
   <p><b>3.17</b> - Can I use wotlas for meetings on other subjects than the Wheel 
     Of Time ?</p>
@@ -396,14 +430,41 @@
 <p><font size="4" color="#006699">IV - FAQ - Known Bugs</font><font size="4"><br>
   </font><font size="3"></font></p>
 <blockquote> 
-  <p><b>4.0 -</b> The game crashes often with a <i>'external exception occured'</i> 
+  <p><b>4.0 -</b> The game has crashed with a <i>'external exception occured'</i> 
     message. What happened ?</p>
-  <p><b>4.1</b> - I've checked the <i>/tmp </i>or <i>c:\windows\tmp</i> directories 
-    of my operating system and they are full of <i>font*.ttf</i> files ! What's 
-    that ?</p>
-  <p><b>4.2</b> - I'm using Java 1.4. Why can't I see the players name above their 
+  <blockquote> 
+    <p><font size="2">Well, we thought we had fixed this bug... it was due to 
+      a bad synchronization in our sound library. Try to turn off the music in 
+      the <i>Options</i> panel. If it doesn't work please let us know.</font></p>
+  </blockquote>
+  <p><b>4.1</b> - I've checked my <i>c:\windows\tmp</i> directory and it's full 
+    of <i>font*.ttf</i> files ! What's that ?</p>
+  <blockquote> 
+    <p><font size="2">It's a Java 1.3 bug. The fonts we use are stored by Java 
+      in temporary system files. The problem is, for an obscure reason, Java or 
+      Windows fails to delete these temporary files... so you'll have to do it 
+      yourself. Beware on Windows 2000 and XP the tmp/ directory is in your user 
+      data directory, not in <i>c:\windows\tmp</i>.</font></p>
+  </blockquote>
+  <p><b>4.2</b> - I'm using Java 1.4. Why can't I see my player name above my 
     character ?</p>
+  <blockquote> 
+    <p><font size="2">We have been succesfully testing Java 1.4 with wotlas <i>but</i> 
+      with some graphic cards there seems to be the following problems : the player's 
+      name doesn't appear above him when you click on him, the location's name 
+      doesn't appear on the top right side of the game screen. We are working 
+      on these bugs.</font></p>
+  </blockquote>
   <p><b>4.3</b> - The music volume increased suddendly. What happened ?</p>
+  <blockquote>
+    <p><font size="2">Well we encountered a lot of problems with the javax.sound.midi 
+      API 1.3 and we solved them all. If you still have music volume problems 
+      please let us know. There is one last bug we didn't fixed in Java 1.3 : 
+      try to produce a sound ( chat sound, door creaking, etc... ) when the current 
+      music ends... you'll notice it starts again ( normal ) but with a much higher 
+      volume... you'll have to leave the map to make it return to normal. With 
+      Java 1.4 the problem disappears...</font></p>
+  </blockquote>
 </blockquote>
 <p>&nbsp;</p>
 <p><font size="4" color="#006699">V - FAQ - Miscellaneous</font><font size="4"><br>
@@ -421,7 +482,7 @@
       member named Val&egrave;re which wanted to create a new kind of mud/chat 
       for the mailing list members. After some brain storming on the subject a 
       development project begun in March 2001. Our goal was, at the time, to create 
-      a new kind of online multiplayer game that would offer players enhanced 
+      a new kind of online multiplayer game that would offer to players enhanced 
       ways to communicate and interact. We've not reach our goal yet but we are 
       getting closer each day.</font></p>
   </blockquote>
@@ -430,23 +491,23 @@
     <p><font size="2">Well, yes and no. We really don't know. We have a <i>Wotlas 
       Features</i> <i>To Do </i>list that could keep ourselves busy for years... 
       and we work very sporadically on the project... ( we are all working for 
-      busy companies... ) We are still surprised that we worked on it for now 
-      more than a year... if you want to participate in the development you are 
-      welcome... it might maintain the project alive.</font></p>
+      busy companies... ) We are still surprised to realize that we worked on 
+      it for now more than a year... if you want to join our development team 
+      you are welcome... it might maintain the project alive.</font></p>
   </blockquote>
   <p><b>5.3</b> - What are the next features that should appear in the next version 
     of wotlas ?</p>
   <blockquote>
     <p><font size="2">Ah ! huge question... briefly we want to add : objects, 
       one power effects, a knowledge system, books that you'll be able to write, 
-      role playing features, fight features, bots, money, in-game post, more maps, 
-      more graphical effects, more characters, etc... and that's only the beginning... 
-      we have a huge <i>ToDo</i> list.</font></p>
+      libraries, role playing features, bots, IA bots, money, in-game post/mails, 
+      more maps, more graphical effects, more characters, etc... and that's only 
+      the beginning... we have a huge <i>ToDo</i> list.</font></p>
   </blockquote>
   <p><b>5.4</b> - Where can I get information on the current development of wotlas 
     ?</p>
   <blockquote> 
-    <p><font size="2">The main source of information on wotlas is our web site 
+    <p><font size="2">The main source of information on wotlas is its web site 
       : <i>wotlas.sourceforge.net. </i>For more information on what we develop 
       you can try <i>wotlas.sf.net/devel</i> but it's all in french...</font></p>
   </blockquote>
@@ -454,13 +515,13 @@
   <blockquote> 
     <p><font size="2">Mainly we lack of time to create new maps for the game. 
       So if you know how to use Adobe Photoshop, know the Wheel Of Time universe 
-      and think you can create maps that are in the same style as ours... well 
-      you're welcome ! you can download our texture package in <i>wotlas.sf.net/pub. 
+      and think you can create maps that are in the same style as ours... you're 
+      welcome ! you can download our texture package in <i>wotlas.sf.net/pub. 
       </i>Please<i> </i>mail us to get more information on the map's format, scale 
       and cell units.</font></p>
     <p><font size="2">If you are a skilled Java developer and want to work on 
-      our project you are welcome too ! but know that because we work on wotlas 
-      very sporadically you'll have to work a lot on your own. Don't worry we'll 
+      our project you are welcome too ! but know that, because we work on wotlas 
+      very sporadically, you'll have to work a lot on your own. Don't worry we'll 
       still be there to answer any of your questions.</font></p>
   </blockquote>
   <p><b>5.6</b> - Are you going to use the wotlas user database for some purpose 
@@ -471,8 +532,8 @@
       to anybody and never use them for any purpose ( apart, for the email address, 
       to contact you in case of account problems ).</font></p>
   </blockquote>
-  <p><b>5.7</b> - I've found a lot of english language mistakes. Don't you read 
-    what you write ?</p>
+  <p><b>5.7</b> - I've found a lot of english language mistakes in this FAQ. Don't 
+    you read what you write ?</p>
   <blockquote> 
     <p><font size="2">Well, the writers of this FAQ are from a non english-speaking 
       country. So if you find let's say <i>typography</i> errors ;) please warn 
@@ -480,6 +541,6 @@
       even used to it... ;)</font></p>
   </blockquote>
 </blockquote>
-<p>&nbsp;</p><hr>
+<hr>
 <p>&nbsp;</p></body>
 </html>

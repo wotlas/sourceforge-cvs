@@ -74,7 +74,7 @@ public class YourFakeNamesMsgBehaviour extends YourFakeNamesMessage implements N
       liePanel.setFakeName(i, fakeNames[i]);
     }
     
-    liePanel.setCurrentFakeName(currentFakeName);
+    liePanel.setCurrentFakeName(currentFakeNameIndex);
   }
 
  /*------------------------------------------------------------------------------------*/

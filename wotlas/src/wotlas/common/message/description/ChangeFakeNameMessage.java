@@ -37,7 +37,7 @@ public class ChangeFakeNameMessage extends NetMessage
 
   /** index of fake name
    */
-  protected int index;
+  protected short index;
 
  /*------------------------------------------------------------------------------------*/
   
@@ -51,7 +51,7 @@ public class ChangeFakeNameMessage extends NetMessage
    *
    * @param index index of the fake name
    */
-  public ChangeFakeNameMessage(int index) {
+  public ChangeFakeNameMessage(short index) {
     this.index = index;
   }
     
@@ -64,7 +64,7 @@ public class ChangeFakeNameMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
   public void encode( DataOutputStream ostream ) throws IOException {
-    ostream.writeInt(index);
+    ostream.writeShort(index);
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -76,7 +76,7 @@ public class ChangeFakeNameMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
   public void decode( DataInputStream istream ) throws IOException {
-    index = istream.readInt();
+    index = istream.readShort();
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

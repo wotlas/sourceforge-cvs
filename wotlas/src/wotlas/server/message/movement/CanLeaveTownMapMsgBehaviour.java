@@ -126,6 +126,7 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
                  player.setX( x );
                  player.setY( y );
                  player.setOrientation( orientation );
+                 player.getLieManager().forgive();
 
                  synchronized( players ) {
                      players.put( primaryKey, player );

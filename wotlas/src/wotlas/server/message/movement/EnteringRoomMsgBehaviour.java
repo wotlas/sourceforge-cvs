@@ -57,7 +57,6 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
    *        this message.
    */
      public void doBehaviour( Object sessionContext ) {
-
         // The sessionContext is here a PlayerImpl.
            PlayerImpl player = (PlayerImpl) sessionContext;
            boolean mapEnter = false; // to tell if it's an entry on the map, or just an move on the map
@@ -122,7 +121,6 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
            
        // 2 - We send REMOVE player messages
           if(!mapEnter) {
-
              RemovePlayerFromRoomMessage rMsg = new RemovePlayerFromRoomMessage(primaryKey, player.getLocation() );
 
              for( int i=0; i<currentRoom.getRoomLinks().length; i++ ) {
@@ -158,7 +156,7 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
           player.setLocation( location );
           player.setOrientation( orientation );
 
-          AddPlayerToRoomMessage aMsg = new AddPlayerToRoomMessage( player );
+          AddPlayerToRoomMessage aMsg = new AddPlayerToRoomMessage( player.getPrimaryKey(), player );
           LocationChangeMessage lMsg = new LocationChangeMessage( player.getPrimaryKey(),
                                            player.getLocation(), 0, 0, 0.0f );
 
@@ -169,10 +167,12 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
                  while( it.hasNext() ) {
                      PlayerImpl p = (PlayerImpl)it.next();
                      if(p!=player) {
-                        if(mapEnter)
+                        if(mapEnter) {
+                           aMsg.setOtherPlayerKey(p.getPrimaryKey());
                            p.sendMessage( aMsg );
-                        else
+                        } else {
                            p.sendMessage( lMsg );
+                        }
                      }
               	 }
           }
@@ -229,8 +229,7 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
                    false );
 
        // 5(bis) - Send the player of the default chat room to our player
-          player.sendMessage( new SetCurrentChatRoomMessage( ChatRoom.DEFAULT_CHAT, targetRoom.getPlayers() ) );
-
+          player.sendMessage( new SetCurrentChatRoomMessage( player.getPrimaryKey(), ChatRoom.DEFAULT_CHAT, targetRoom.getPlayers() ) );
 
        // 6 - We seek for a valid chatList if any...
           players = player.getMyRoom().getPlayers();
@@ -269,6 +268,7 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
                  player.sendMessage( crcMsg );
              }
           }
+
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -310,6 +310,8 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
          player.sendMessage( new ResetPositionMessage( primaryKey, player.getLocation(),
                                                        pReset.x, pReset.y,
                                                        player.getOrientation(), player.getSyncID() ) );
+
+
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -35,7 +35,7 @@ import wotlas.utils.Tools;
 /** 
  * To send player data (Message Sent by Server).
  *
- * @author Aldiss
+ * @author Aldiss, Petrus
  */
 
 public class PlayerDataMessage extends NetMessage
@@ -45,6 +45,10 @@ public class PlayerDataMessage extends NetMessage
   /** Player interface.
    */
       protected Player player;
+  
+  /** key of destinated player.
+   */
+      protected String otherPlayerKey;
 
   /** Do we have to write/read public info or all the player's data ?
    */
@@ -74,6 +78,7 @@ public class PlayerDataMessage extends NetMessage
          super();
          this.player = player;
          this.publicInfoOnly = publicInfoOnly;
+//         this.otherPlayerKey = player.getPrimaryKey();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -89,6 +94,17 @@ public class PlayerDataMessage extends NetMessage
          this.player = player;
          this.publicInfoOnly = publicInfoOnly;
          this.playerClass = playerClass;
+//         this.otherPlayerKey = player.getPrimaryKey();
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    
+   /** To set otherPlayerKey
+    *
+    * @param otherPlayerKey key of player this message is sent to
+    */
+     public void setOtherPlayerKey(String otherPlayerKey) {
+         this.otherPlayerKey = otherPlayerKey;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -100,7 +116,6 @@ public class PlayerDataMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void encode( DataOutputStream ostream ) throws IOException {
-
          ostream.writeBoolean( publicInfoOnly );
 
       // Wotlas Location
@@ -112,7 +127,7 @@ public class PlayerDataMessage extends NetMessage
 
       // Player Data
          ostream.writeUTF( player.getPlayerName() );
-         ostream.writeUTF( player.getFullPlayerName() );
+         ostream.writeUTF( player.getFullPlayerName(otherPlayerKey) );
          ostream.writeUTF( player.getPrimaryKey() );
 
          if(!publicInfoOnly) {
@@ -137,6 +152,7 @@ public class PlayerDataMessage extends NetMessage
       // Wotlas Character Data
          ostream.writeUTF( player.getWotCharacter().getClass().getName() );
          player.getWotCharacter().encode( ostream, publicInfoOnly ); // call to encode character's data
+
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -148,7 +164,6 @@ public class PlayerDataMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void decode( DataInputStream istream ) throws IOException {
-
          publicInfoOnly = istream.readBoolean();
 
       // Player Client Instance creation ( no direct call to "server"

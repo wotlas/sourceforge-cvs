@@ -132,6 +132,7 @@ public class CanLeaveWorldMapMsgBehaviour extends CanLeaveWorldMapMessage implem
                    player.setX( x );
                    player.setY( y );
                    player.setOrientation( orientation );
+                   player.getLieManager().forgive();
 
                    synchronized( players ) {
                       players.put( primaryKey, player );

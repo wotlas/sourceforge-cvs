@@ -57,9 +57,9 @@ public class YourAccountDataMsgBehaviour extends YourAccountDataMessage implemen
         ClientManager clientManager = ClientManager.getDefaultClientManager();
         
         ProfileConfig currentProfileConfig = clientManager.getCurrentProfileConfig();
-        System.out.println(playerName);
+        
         currentProfileConfig.setPlayerName(playerName);
-        System.out.println(serverID);
+        
         currentProfileConfig.setServerID(serverID);
                 
         ProfileConfigList profileConfigList = clientManager.getProfileConfigList();

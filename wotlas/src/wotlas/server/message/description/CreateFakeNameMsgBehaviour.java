@@ -56,7 +56,7 @@ public class CreateFakeNameMsgBehaviour extends CreateFakeNameMessage implements
     PlayerImpl player = (PlayerImpl) sessionContext;
     LieManager lieManager = player.getLieManager();
     
-    int currentFakeName = lieManager.createFakeName(fakeName);    
+    short currentFakeName = lieManager.createFakeName(fakeName);    
     if (currentFakeName > 0) {
       player.sendMessage(new SetFakeNameMessage(currentFakeName, fakeName));
     }

@@ -64,13 +64,13 @@ public class PlayerImpl implements Player, NetConnectionListener
     */
        private WotlasLocation location;
 
-   /** Player name
+   /** Player name (nickname)
     */
        private String playerName;
 
-   /** Player full name
+   /** Player full name (player can lie)
     */
-       private String fullPlayerName;
+       transient String fullPlayerName;
 
    /** Player character's past
     */
@@ -287,17 +287,28 @@ public class PlayerImpl implements Player, NetConnectionListener
     *  @return player name
     */
       public String getPlayerName() {
-         return lieManager.getFakeName();
+         return playerName;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-   /** To get the player's full name.
+  
+   /** To get the player's full name
+    */
+      public String getFullPlayerName() {
+        System.out.println("old method");
+        return lieManager.getCurrentFakeName();
+      }
+      
+   /** To get the player's full name or fake name
     *
     *  @return player full name ( should contain the player name )
     */
-      public String getFullPlayerName() {
-         return fullPlayerName;
+      public String getFullPlayerName(String otherPlayerKey) {        
+        if (otherPlayerKey.equals(primaryKey)) {
+          return lieManager.getCurrentFakeName();
+        } else {        
+          return lieManager.getFakeName(otherPlayerKey);                
+        }
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -327,7 +338,7 @@ public class PlayerImpl implements Player, NetConnectionListener
     *  @param player name
     */
       public void setPlayerName( String playerName ) {
-           lieManager.setPlayerName(playerName);           
+         this.playerName = playerName;           
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -358,6 +369,7 @@ public class PlayerImpl implements Player, NetConnectionListener
     */
       public void setFullPlayerName( String fullPlayerName ) {
           this.fullPlayerName = fullPlayerName;
+          lieManager.setFullPlayerName(fullPlayerName);          
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -580,7 +592,7 @@ public class PlayerImpl implements Player, NetConnectionListener
                  sendMessageToNearRooms( myRoom, pMsg, false );
              }
 
-             Debug.signal(Debug.NOTICE,null,"Connection opened for player "+lieManager.getPlayerName()+" at "+Tools.getLexicalTime());
+             Debug.signal(Debug.NOTICE,null,"Connection opened for player "+playerName+" at "+Tools.getLexicalTime());
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -597,7 +609,7 @@ public class PlayerImpl implements Player, NetConnectionListener
                  this.personality = null;
              }
 
-             Debug.signal(Debug.NOTICE, null, "Connection closed on player: "+lieManager.getPlayerName()+" at "+Tools.getLexicalTime());
+             Debug.signal(Debug.NOTICE, null, "Connection closed on player: "+playerName+" at "+Tools.getLexicalTime());
 
          // 1 - Leave any current chat...
             if( !currentChatPrimaryKey.equals( ChatRoom.DEFAULT_CHAT ) ) {
@@ -808,7 +820,7 @@ public class PlayerImpl implements Player, NetConnectionListener
     	     return;
     	  }
     	
-          AddPlayerToRoomMessage aMsg = new AddPlayerToRoomMessage( this );
+          AddPlayerToRoomMessage aMsg = new AddPlayerToRoomMessage( primaryKey, this );
 
           sendMessageToRoom( myRoom, aMsg, true );
           sendMessageToNearRooms( myRoom, aMsg, true );

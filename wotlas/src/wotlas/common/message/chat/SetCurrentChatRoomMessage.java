@@ -64,7 +64,7 @@ public class SetCurrentChatRoomMessage extends NetMessage
   
   /** Constructor with parameters.
    */
-  public SetCurrentChatRoomMessage(String chatRoomPrimaryKey, Hashtable players ) {
+  public SetCurrentChatRoomMessage(String otherPlayerKey, String chatRoomPrimaryKey, Hashtable players ) {
     super();
     this.chatRoomPrimaryKey = chatRoomPrimaryKey;
 
@@ -84,7 +84,7 @@ public class SetCurrentChatRoomMessage extends NetMessage
         while( it.hasNext() ) {
                Player p = (Player) it.next();
                playersPrimaryKey[i] = p.getPrimaryKey();
-               fullPlayerNames[i] = p.getFullPlayerName();
+               fullPlayerNames[i] = p.getFullPlayerName(otherPlayerKey);
                i++;
         }
      }

@@ -30,7 +30,7 @@ import wotlas.common.Player;
 /** 
  * The message the GameServer sends to tell us to add a player... (Message Sent by Server).
  *
- * @author Aldiss
+ * @author Aldiss, Petrus
  */
 
 public class AddPlayerToRoomMessage extends PlayerDataMessage
@@ -47,10 +47,12 @@ public class AddPlayerToRoomMessage extends PlayerDataMessage
 
   /** Constructor with the Player object.
    *
+   * @param otherPlayerKey key of player this message is sent to
    * @param player Player object to send.
    */
-     public AddPlayerToRoomMessage( Player player ) {
+     public AddPlayerToRoomMessage( String otherPlayerKey, Player player ) {
          this();
+         this.otherPlayerKey = otherPlayerKey;
          this.player = player;
          this.publicInfoOnly = true;
      }

@@ -87,9 +87,10 @@ public interface Player extends PreciseLocationOwner
 
    /** To get the player's full name.
     *
+    *  @param otherPlayerKey the key of player who requested player's full name
     *  @return player full name ( should contain the player name )
     */
-      public String getFullPlayerName();
+      public String getFullPlayerName( String otherPlayerKey);
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

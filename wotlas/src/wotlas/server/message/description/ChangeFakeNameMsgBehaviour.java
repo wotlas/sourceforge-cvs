@@ -56,7 +56,7 @@ public class ChangeFakeNameMsgBehaviour extends ChangeFakeNameMessage implements
     PlayerImpl player = (PlayerImpl) sessionContext;
     LieManager lieManager = player.getLieManager();
     
-    lieManager.setCurrentFakeName(index);    
+    lieManager.setCurrentFakeNameIndex(index);    
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -37,7 +37,7 @@ public class SetFakeNameMessage extends NetMessage
 
   /** index of fake name
    */
-  protected int index;
+  protected short index;
 
   /** player fake name
    */
@@ -56,7 +56,7 @@ public class SetFakeNameMessage extends NetMessage
    * @param index
    * @param fakeName player fake name
    */
-  public SetFakeNameMessage(int index, String fakeName) {
+  public SetFakeNameMessage(short index, String fakeName) {
     this.index = index;
     this.fakeName = fakeName;
   }
@@ -70,7 +70,7 @@ public class SetFakeNameMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
   public void encode( DataOutputStream ostream ) throws IOException {
-    ostream.writeInt(index);
+    ostream.writeShort(index);
     ostream.writeUTF(fakeName);
   }
 
@@ -83,7 +83,7 @@ public class SetFakeNameMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
   public void decode( DataInputStream istream ) throws IOException {
-    index = istream.readInt();
+    index = istream.readShort();
     fakeName = istream.readUTF();
   }
 

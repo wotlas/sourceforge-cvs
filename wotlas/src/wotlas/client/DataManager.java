@@ -574,7 +574,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     if (SHOW_DEBUG)
         System.out.println("Displaying window");
     
-    
     // Welcome message
     sendMessage(new WelcomeMessage());
 
@@ -609,6 +608,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     // 10 - We can now ask for eventual remaining data
     // This step should have been done in the current MapData.init() but it was not
     // the cas because our DataManager thread was not started...
+    if (SHOW_DEBUG)
+        System.out.println("sending AllDataLeftPleaseMessage");
     sendMessage(new AllDataLeftPleaseMessage());
     
     // Free memory
@@ -631,7 +632,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     waitForConnection(5000); // 5s max...
 
     // Reset the data
-    chatPanel.reset();
+    chatPanel.reset();    
     personality.setPingListener( (NetPingListener) pingPanel );
     
     mFrame.show();

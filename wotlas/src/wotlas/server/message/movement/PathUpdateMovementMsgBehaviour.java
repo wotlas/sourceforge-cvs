@@ -162,8 +162,8 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
                     return; // no player near us, or no chat...
 
              // New chat selected !
-                player.sendMessage( new SetCurrentChatRoomMessage( chatRoom.getPrimaryKey(), chatRoom.getPlayers() ) );
-
+                player.sendMessage( new SetCurrentChatRoomMessage( primaryKey, chatRoom.getPrimaryKey(), chatRoom.getPlayers() ) );            
+             
              // A player is a plain member of a chat only
              // when he speaks the first time, but his/her name appear
              // in the chatters's list.

@@ -122,7 +122,7 @@ public class InfoPanel extends JPanel
     else if(savePastButtonDisplayed)
          reset();
 
-    setLabelText( player.getFullPlayerName() );
+    setLabelText( player.getFullPlayerName("") );
 
     setText( 
          "Nickname: "+player.getPlayerName()+"\n"+

@@ -40,7 +40,7 @@ public class YourPlayerDataMessage extends PlayerDataMessage
   /** Constructor. Just initializes the message category and type.
    */
      public YourPlayerDataMessage() {
-          super();
+          super();          
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -52,6 +52,7 @@ public class YourPlayerDataMessage extends PlayerDataMessage
      public YourPlayerDataMessage( Player player ) {
          super();
          this.player = player;
+         this.otherPlayerKey = player.getPrimaryKey();         
          this.publicInfoOnly = false;
      }
 

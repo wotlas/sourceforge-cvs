@@ -56,7 +56,7 @@ public class AllDataLeftPleaseMsgBehaviour extends AllDataLeftPleaseMessage impl
            PlayerImpl player = (PlayerImpl) sessionContext;
 
         // We send the player's fake names
-           player.sendMessage( new YourFakeNamesMessage( player.getLieManager().getFakeNames(), player.getLieManager().getCurrentFakeName() ) );
+           player.sendMessage( new YourFakeNamesMessage( player.getLieManager().getFakeNames(), player.getLieManager().getCurrentFakeNameIndex() ) );
            
         // We send the all the data left
 
@@ -79,7 +79,6 @@ public class AllDataLeftPleaseMsgBehaviour extends AllDataLeftPleaseMessage impl
 
                      WotlasLocation roomLoc = new WotlasLocation( player.getLocation() );
                      roomLoc.setRoomID( otherRoom.getRoomID() );
-
                      player.sendMessage( new RoomPlayerDataMessage( roomLoc,
                                          player, otherRoom.getPlayers() ) );
                 }

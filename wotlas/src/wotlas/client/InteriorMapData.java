@@ -293,6 +293,8 @@ public class InteriorMapData implements MapData
         }
 
     // - We declare ourselves to other players...
+    if (SHOW_DEBUG)
+        System.out.println("sending EnteringRoomMessage");
     dataManager.sendMessage( new EnteringRoomMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation(),
                                  myPlayer.getX(), myPlayer.getY(), (float)myPlayer.getAngle() ) );
 

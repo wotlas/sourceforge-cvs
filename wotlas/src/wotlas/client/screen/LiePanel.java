@@ -66,9 +66,9 @@ public class LiePanel extends JPanel
     
     JPanel centerPanel = new JPanel( new BorderLayout() );
     
-    final String[][] data = {{"one"}, {"two"}, {"three"}, {"four"}, {"five yes"}};
-    String[] columnNames = {"names"};
-    fakeNamesList = new JTable(data, columnNames);
+    //final String[][] data = {{"one"}, {"two"}, {"three"}, {"four"}, {"five yes"}};
+    //String[] columnNames = {"names"};
+    //fakeNamesList = new JTable(data, columnNames);
     //centerPanel.add(fakeNamesList);
         
     JPanel form = new JPanel(new GridLayout(fakeNamesLength, 1));    
@@ -158,7 +158,10 @@ public class LiePanel extends JPanel
   /** To reset this panel.
    */
   public void reset() {
-    
+    for (int i=0; i<fakeNamesLength; i++) {         
+      b_fakeNames[i].setVisible(false);
+      b_fakeNames[i].setActionCommand("");      
+    }    
   }
   
   /** Listen to the radio button selection.
@@ -167,7 +170,7 @@ public class LiePanel extends JPanel
     public void actionPerformed(ActionEvent e) {
       int currentFakeName = Integer.parseInt(e.getActionCommand());
       PlayerImpl player = DataManager.getDefaultDataManager().getMyPlayer(); 
-      player.sendMessage(new ChangeFakeNameMessage(currentFakeName));        
+      player.sendMessage(new ChangeFakeNameMessage((short) currentFakeName));        
     }
   }
 }

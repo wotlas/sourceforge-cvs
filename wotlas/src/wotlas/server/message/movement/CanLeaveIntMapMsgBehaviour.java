@@ -130,6 +130,7 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
                              player.setX( x );
                              player.setY( y );
                              player.setOrientation( orientation );
+                             player.getLieManager().forgive();
 
                              //player.sendMessage( new WarningMessage("Please Wait. There is admittance control to enter this place.") );
 

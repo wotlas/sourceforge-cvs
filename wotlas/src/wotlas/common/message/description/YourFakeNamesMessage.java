@@ -40,7 +40,7 @@ public class YourFakeNamesMessage extends NetMessage
       protected String[] fakeNames;
    
    // current fake name
-      protected int currentFakeName;
+      protected short currentFakeNameIndex;
       
    // number of fake names
       protected int fakeNamesLength;
@@ -60,10 +60,10 @@ public class YourFakeNamesMessage extends NetMessage
    *
    * @param fakeNames array of player's fake names
    */
-     public YourFakeNamesMessage(String[] fakeNames, int currentFakeName) {
+     public YourFakeNamesMessage(String[] fakeNames, short currentFakeNameIndex) {
          super();
          this.fakeNames = fakeNames;
-         this.currentFakeName = currentFakeName;
+         this.currentFakeNameIndex = currentFakeNameIndex;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -80,7 +80,7 @@ public class YourFakeNamesMessage extends NetMessage
        for (int i=0; i<fakeNamesLength; i++) {
          ostream.writeUTF(fakeNames[i]);
        }
-       ostream.writeInt(currentFakeName);           
+       ostream.writeShort(currentFakeNameIndex);           
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -97,7 +97,7 @@ public class YourFakeNamesMessage extends NetMessage
        for (int i=0; i<fakeNamesLength; i++) {
          fakeNames[i] = istream.readUTF();
        }
-       currentFakeName = istream.readInt();
+       currentFakeNameIndex = istream.readShort();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

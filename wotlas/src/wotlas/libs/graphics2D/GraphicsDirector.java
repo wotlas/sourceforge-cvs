@@ -273,10 +273,10 @@ public class GraphicsDirector extends JPanel {
           boolean previousHadAntiA = false;
           final Rectangle r_screen =  new Rectangle( screen );
 
-          synchronized( drawables ) {
+          backBufferGraphics.setColor( Color.white );
+          backBufferGraphics.fillRect( 0, 0, getWidth(), getHeight() );
 
-             backBufferGraphics.setColor( Color.white );
-             backBufferGraphics.fillRect( 0, 0, getWidth(), getHeight() );
+          synchronized( drawables ) {
 
              drawables.resetIterator();
         

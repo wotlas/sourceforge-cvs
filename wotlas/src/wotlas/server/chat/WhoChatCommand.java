@@ -97,7 +97,7 @@ public class WhoChatCommand implements ChatCommand
           HashMap onlinePlayers = DataManager.getDefaultDataManager().getAccountManager().getOnlinePlayers();
 
           Iterator it = onlinePlayers.values().iterator();
-          StringBuffer result = new StringBuffer("/cmd:There are <b>"+onlinePlayers.size() + "</b> online players:");
+          StringBuffer result = new StringBuffer("/cmd:There are <b>"+onlinePlayers.size() + "</b> online players on this server :");
 
           PlayerImpl onlinePlayer;
 

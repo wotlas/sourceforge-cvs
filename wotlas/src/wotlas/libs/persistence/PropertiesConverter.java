@@ -72,7 +72,9 @@ public class PropertiesConverter
       
       try{
         os.close(); // close stream : ADDED by ALDISS
-      }catch(IOException e) {}
+      }catch(IOException e) {
+      	e.printStackTrace();
+      }
    }
 
    /**
@@ -167,7 +169,16 @@ public class PropertiesConverter
          Debug.signal(Debug.ERROR, name, ex);
          throw new PersistenceException(ex);
       }
-      return load(is);                    
+
+      Object obj = load(is); 
+
+      try{
+        is.close(); // close stream : ADDED by ALDISS
+      }catch(IOException e) {
+      	e.printStackTrace();
+      }
+
+      return obj;
    }
 
    /**
@@ -189,10 +200,6 @@ public class PropertiesConverter
          Debug.signal(Debug.ERROR, is, ex);
          throw new PersistenceException(ex);
       }
-  
-      try{    
-        is.close(); // close the stream : Added by ALDISS
-      }catch(IOException e) {}
       
       // Build the object from its content
       return fromProperties(toBeRestored, "");

@@ -177,8 +177,8 @@ public class Debug
    */
      static public void exit() {
        // We close our printStream ( can be a log so we do things properly )
-          out.close();
-          System.exit(1);
+          out.flush();
+          System.exit(0);
      }
 
  /*------------------------------------------------------------------------------------*/

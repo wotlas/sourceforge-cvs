@@ -64,8 +64,8 @@ public class WelcomeMsgBehaviour extends WelcomeMessage implements NetMessageBeh
         
         // Get the list of online players
            HashMap onlinePlayers = DataManager.getDefaultDataManager().getAccountManager().getOnlinePlayers();
-           message += "There are currently " + onlinePlayers.size() + " online players...";
-        
+           message += "There are currently " + (onlinePlayers.size()-1) + " online players on this server...";
+
            player.sendMessage( new SendTextMessage( player.getPrimaryKey(),
                                                player.getFullPlayerName(),
                                                ChatRoom.DEFAULT_CHAT,

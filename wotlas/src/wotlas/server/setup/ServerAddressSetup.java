@@ -255,7 +255,7 @@ public class ServerAddressSetup extends JWizard {
            	   serverProperties.getProperty("FILE_TRANSFER_PROG",""),
            	   "../bin/win32/pscp.exe",
            	   "\"../bin/win32/pscp.exe\"   (for win2000 & XP, don't remove the \" \" )",
-           	   "../bin/unix/scp",
+           	   "scp",
            	   "ftp",
            	   };
 

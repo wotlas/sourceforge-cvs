@@ -396,6 +396,7 @@ System.out.println("tab removed");
 
     DataManager dManager = DataManager.getDefaultDataManager();
     dManager.sendMessage( new SendTextMessage( dManager.getMyPlayer().getPrimaryKey(),
+                                               dManager.getMyPlayer().getFullPlayerName(),
                                                getMyCurrentChatPrimaryKey(),
                                                message,
                                                (byte)chatVoiceLevel.getValue() ));

@@ -91,13 +91,11 @@ public class SetCurrentChatRoomMsgBehaviour extends SetCurrentChatRoomMessage im
           if(players!=null)
              sender = (PlayerImpl) players.get( playersPrimaryKey[i] );
 
-          if( sender==null ) {
-              Debug.signal( Debug.ERROR, this, "Could not find the player for chat... "+playersPrimaryKey[i]);
-              continue;
-          }
+          if( sender==null )
+              Debug.signal( Debug.WARNING, this, "Could not find the player for chat... "+playersPrimaryKey[i]);
 
        // We add the player
-          chatRoom.addPlayer(sender);
+          chatRoom.addPlayer(playersPrimaryKey[i], fullPlayerNames[i]);
        }
   }
   

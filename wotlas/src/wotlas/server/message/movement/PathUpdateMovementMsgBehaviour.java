@@ -183,7 +183,7 @@ System.out.println("RECEVIED BEHAVIOUR for "+primaryKey);
 
              // We advertise our presence
                 players = chatRoom.getPlayers();
-                AddPlayerToChatRoomMessage aMsg = new AddPlayerToChatRoomMessage( primaryKey, chatRoom.getPrimaryKey() );
+                AddPlayerToChatRoomMessage aMsg = new AddPlayerToChatRoomMessage( primaryKey, player.getFullPlayerName(), chatRoom.getPrimaryKey() );
              
                 synchronized( players ) {
                     Iterator it = players.values().iterator();

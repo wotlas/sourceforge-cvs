@@ -47,7 +47,12 @@ public class SetCurrentChatRoomMessage extends NetMessage
   /** ChatRoom Players primaryKey
    */
   protected String playersPrimaryKey[];
-  
+
+  /** ChatRoom Players full player name
+   */
+  protected String fullPlayerNames[];
+
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. Just initializes the message category and type.
@@ -67,6 +72,7 @@ public class SetCurrentChatRoomMessage extends NetMessage
 
      if(players==null){
         playersPrimaryKey = new String[0];
+        fullPlayerNames = new String[0];
         return;
      }
 
@@ -75,9 +81,14 @@ public class SetCurrentChatRoomMessage extends NetMessage
         int i=0;
 
         playersPrimaryKey = new String[players.size()];
+        fullPlayerNames = new String[players.size()];
         
-        while( it.hasNext() )
-               playersPrimaryKey[i++] = ( (Player) it.next() ).getPrimaryKey();
+        while( it.hasNext() ) {
+               Player p = (Player) it.next();
+               playersPrimaryKey[i] = p.getPrimaryKey();
+               fullPlayerNames[i] = p.getFullPlayerName();
+               i++;
+        }
      }
   }
   
@@ -96,6 +107,11 @@ public class SetCurrentChatRoomMessage extends NetMessage
 
     for( int i=0; i<playersPrimaryKey.length; i++ )
          writeString( playersPrimaryKey[i], ostream);
+
+    ostream.writeInt( fullPlayerNames.length );    
+
+    for( int i=0; i<fullPlayerNames.length; i++ )
+         writeString( fullPlayerNames[i], ostream);
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -114,6 +130,11 @@ public class SetCurrentChatRoomMessage extends NetMessage
 
     for( int i=0; i<playersPrimaryKey.length; i++ )
        playersPrimaryKey[i] = readString( istream );
+
+    fullPlayerNames = new String[ istream.readInt() ];
+
+    for( int i=0; i<fullPlayerNames.length; i++ )
+       fullPlayerNames[i] = readString( istream );
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -43,6 +43,10 @@ public class SendTextMessage extends NetMessage
    */
   protected String senderPrimaryKey;
  
+  /** Sender Full Player Name
+   */
+  protected String senderFullName;
+ 
   /** Id of the ChatRoom
    */
   protected String chatRoomPrimaryKey;
@@ -68,9 +72,10 @@ public class SendTextMessage extends NetMessage
 
   /** Constructor with parameters.
    */
-  public SendTextMessage(String senderPrimaryKey, String chatRoomPrimaryKey, String message, byte voiceSoundLevel ) {
+  public SendTextMessage(String senderPrimaryKey, String senderFullName, String chatRoomPrimaryKey, String message, byte voiceSoundLevel ) {
     this();
     this.senderPrimaryKey = senderPrimaryKey;
+    this.senderFullName = senderFullName;
     this.chatRoomPrimaryKey = chatRoomPrimaryKey;
     this.message = message;
     this.voiceSoundLevel = voiceSoundLevel;
@@ -86,6 +91,7 @@ public class SendTextMessage extends NetMessage
    */
   public void encode( DataOutputStream ostream ) throws IOException {
     writeString( senderPrimaryKey, ostream );
+    writeString( senderFullName, ostream );
     writeString( chatRoomPrimaryKey, ostream );
     writeString( message, ostream);
     ostream.writeByte( voiceSoundLevel );
@@ -101,6 +107,7 @@ public class SendTextMessage extends NetMessage
    */
   public void decode( DataInputStream istream ) throws IOException {
     senderPrimaryKey = readString( istream );
+    senderFullName = readString( istream );
     chatRoomPrimaryKey = readString( istream );
     message = readString( istream );
     voiceSoundLevel = istream.readByte();

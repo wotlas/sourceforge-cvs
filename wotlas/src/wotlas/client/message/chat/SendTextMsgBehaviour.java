@@ -82,7 +82,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
               JChatRoom chatRoom = dataManager.getChatPanel().getJChatRoom(chatRoomPrimaryKey);
           
               if(chatRoom!=null) {
-                 chatRoom.addPlayer(sender);   // we add the player to the member's list
+                 chatRoom.addPlayer(senderPrimaryKey,senderFullName);   // we add the player to the member's list
                  chatRoom.appendText(message); // if it wasn't already the case
               }
               else

@@ -70,7 +70,12 @@ public class PlayerImpl implements Player, NetConnectionListener
 
    /** Player ChatRooms
     */
-       transient private Hashtable chatRooms;
+       //transient private Hashtable chatRooms;
+       transient private ChatListImpl chatList;
+       
+   /** Number of ChatRooms
+    */
+       private static int chatCounter = 0;
        
  /*------------------------------------------------------------------------------------*/
 
@@ -443,6 +448,15 @@ System.out.println("SENDING MESSAGE "+message);
                  movementComposer.resetMovement();
              }
      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get a valid ChatRoom primaryKey
+   */
+  synchronized public String getNewChatRoomID() {
+    chatCounter++;
+    return "chat-"+chatCounter;
+  }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

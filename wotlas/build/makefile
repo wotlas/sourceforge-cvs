@@ -34,17 +34,21 @@ LIBS_PACKAGES2 = wotlas/libs/graphics2D \
 
 COMMON_PACKAGES = wotlas/common \
                   wotlas/common/universe \
+                  wotlas/common/character \
                   wotlas/common/message \
-                  wotlas/common/message/account \
-                  wotlas/common/character
+                  wotlas/common/message/account
+
+COMMON_PACKAGES2 = wotlas/common/message/description
 
 SERVER_PACKAGES = wotlas/server \
                   wotlas/server/setup \
-                  wotlas/server/message/account
+                  wotlas/server/message/account \
+                  wotlas/server/message/description
 
 CLIENT_PACKAGES = wotlas/client \
                   wotlas/client/screen \
                   wotlas/client/message/account \
+                  wotlas/client/message/description \
                   wotlas/client/gui
 
 GRAPHICS_DEMO_PACKAGE = test/graphics/ants
@@ -65,6 +69,8 @@ SRC_LIBS2 = $(foreach dir,$(LIBS_PACKAGES2),$(SRCDIR)/$(dir)/*.java)
 
 SRC_COMMON = $(foreach dir,$(COMMON_PACKAGES),$(SRCDIR)/$(dir)/*.java)
 
+SRC_COMMON2 = $(foreach dir,$(COMMON_PACKAGES2),$(SRCDIR)/$(dir)/*.java)
+
 SRC_SERVER = $(foreach dir,$(SERVER_PACKAGES),$(SRCDIR)/$(dir)/*.java)
 
 SRC_CLIENT = $(foreach dir,$(CLIENT_PACKAGES),$(SRCDIR)/$(dir)/*.java)
@@ -73,7 +79,7 @@ SRC_GRDEMO = $(foreach dir,$(GRAPHICS_DEMO_PACKAGE),$(SRCDIR)/$(dir)/*.java)
 
 
 # And we compile it all
-all: utils libs libs2 common server client
+all: utils libs libs2 common common2 server client
 
 utils:
 	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_UTILS)
@@ -86,6 +92,9 @@ libs2:
 
 common:
 	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_COMMON)
+
+common2:
+	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_COMMON2)
 
 server:
 	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_SERVER)

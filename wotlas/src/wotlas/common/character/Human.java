@@ -19,6 +19,10 @@
 
 package wotlas.common.character;
 
+import wotlas.common.*;
+import wotlas.common.universe.*;
+import wotlas.libs.graphics2D.*;
+
 import java.io.*;
 
 /** A Human Wotlas Character.
@@ -72,6 +76,24 @@ public abstract class Human implements WotCharacter {
     	    return true;
     	return false;
     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Returns an image for this character.
+   *
+   *  @param playerLocation player current location
+   *  @return image identifier of this character.
+   */
+     public ImageIdentifier getImage( WotlasLocation playerLocation ) {
+
+         // Default image for towns & worlds
+            if( playerLocation.isTown() || playerLocation.isWorld() )
+                return new ImageIdentifier( ImageLibRef.PLAYERS_CATEGORY ,
+                                            ImageLibRef.PLAYER_SMALL_IMAGES_SET ,
+                                            ImageLibRef.PLAYER_SMALL_IM_ACTION );
+
+            return null; // null otherwise, we let sub-classes redefine the rest...
+     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

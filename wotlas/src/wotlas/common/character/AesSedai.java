@@ -22,6 +22,7 @@ package wotlas.common.character;
 import java.io.*;
 
 import wotlas.common.*;
+import wotlas.common.universe.*;
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.graphics2D.filter.*;
@@ -95,7 +96,7 @@ public class AesSedai extends Female {
       	     return null;
 
          if(aesSedaiSprite!=null)
-             return (Drawable) aesSedaiSprite; 
+             return (Drawable) aesSedaiSprite;
 
        // 1 - Sprite Creation + Filter
           aesSedaiSprite = new Sprite( (SpriteDataSupplier) player, ImageLibRef.PLAYER_PRIORITY );
@@ -184,7 +185,7 @@ public class AesSedai extends Female {
                                                        ImageLibRef.AES_SEDAI_WALK_SHADOW_ACTION ),
                                                   ImageLibRef.SHADOW_PRIORITY, 4, 4 );
 
-          return aesSedaiShadowSprite;
+         return aesSedaiShadowSprite;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -200,14 +201,22 @@ public class AesSedai extends Female {
 
   /** Returns an image for this character.
    *
+   *  @param playerLocation player current location
    *  @return image identifier of this character.
    */
-     public ImageIdentifier getImage() {
-         // We return the default Aes Sedai Sprite...
-              return new ImageIdentifier( ImageLibRef.PLAYERS_CATEGORY ,
-                                     ImageLibRef.AES_SEDAI_SET ,
-                                     ImageLibRef.AES_BLUE_GOLDH_WALKING_ACTION
-                                   );
+     public ImageIdentifier getImage( WotlasLocation playerLocation ) {
+
+         ImageIdentifier imID = super.getImage(playerLocation);
+
+         if( imID==null ) // We return the default Aes Sedai Sprite...
+             return new ImageIdentifier( ImageLibRef.PLAYERS_CATEGORY ,
+                                         ImageLibRef.AES_SEDAI_SET ,
+                                         ImageLibRef.AES_BLUE_GOLDH_WALKING_ACTION );
+
+         if(aesSedaiSprite!=null)
+            aesSedaiSprite.setDynamicImageFilter( null ); // no filter for player small image
+
+         return imID;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

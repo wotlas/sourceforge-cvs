@@ -19,7 +19,8 @@
 
 package wotlas.common.character;
 
-import wotlas.common.Player;
+import wotlas.common.*;
+import wotlas.common.universe.*;
 import wotlas.libs.graphics2D.*;
 
 import java.io.*;
@@ -46,10 +47,12 @@ public interface WotCharacter
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Returns an image for this character.
+  /** Returns an image for this character, depending on the Map type.
+   *
+   *  @param playerLocation player current location
    *  @return image identifier of this character.
    */
-     public ImageIdentifier getImage();
+     public ImageIdentifier getImage( WotlasLocation playerLocation );
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

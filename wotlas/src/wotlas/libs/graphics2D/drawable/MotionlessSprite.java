@@ -31,7 +31,7 @@ import java.awt.*;
  * @author MasterBob, Aldiss
  */
 
-public class MotionlessSprite extends Drawable {
+public class MotionlessSprite extends Drawable implements DrawableOwner {
 
  /*------------------------------------------------------------------------------------*/
 
@@ -47,9 +47,13 @@ public class MotionlessSprite extends Drawable {
    */
      private ImageIdentifier image;
 
+  /** Owner name of this sprite.
+   */
+     private String owner;
+
  /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
+  /** Constructor with no Owner ( see the DrawableOwner interface ) for this sprite.
    *
    * @param x sprite's x cordinate
    * @param y sprite's y cordinate
@@ -59,6 +63,24 @@ public class MotionlessSprite extends Drawable {
    *        if set to false, we let the ImageIdentifier imageIndex set to 0.
    */
     public MotionlessSprite( int x, int y, ImageIdentifier image, short priority, boolean hasAnimation ) {
+        this( x, y, image, priority, hasAnimation, null );
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Constructor with owner. The owner is just given as a string that should represent
+   *  its name.
+   *
+   * @param x sprite's x cordinate
+   * @param y sprite's y cordinate
+   * @param image image identifier to use for this sprite.
+   * @param priority sprite's priority
+   * @param hasAnimation if set to true we use the given identifier as a base for an animation,
+   *        if set to false, we let the ImageIdentifier imageIndex set to 0.
+   * @param owner the owner's name
+   */
+    public MotionlessSprite( int x, int y, ImageIdentifier image, short priority, boolean hasAnimation,
+                             String owner ) {
     	super();
     	r.x = x;
     	r.y = y;
@@ -70,6 +92,8 @@ public class MotionlessSprite extends Drawable {
 
         if(hasAnimation)
            sprAnim = new Animation( image );
+
+        this.owner = owner;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -113,4 +137,16 @@ public class MotionlessSprite extends Drawable {
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the owner of this drawable. By 'owner' we mean here a name linked to the
+    *  object which this MotionlessSprite is the graphical representation.
+    *
+    * @return Object owner of this drawable : the owner name
+    */
+     public Object getOwner() {
+        return (Object) owner;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }

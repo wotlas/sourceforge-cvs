@@ -37,16 +37,16 @@ public class MultiLineText extends Drawable {
 
     static public short LEFT_ALIGNMENT  = 0;
     static public short RIGHT_ALIGNMENT = 1;
-    
-   /**le text a ecrire
+
+   /** The text to write
     */
      private String[] text;
 
-   /**the color of the text
+   /** The color of the text
     */
      private Color color = Color.black;
 
-   /**le font utilise
+   /** The font used
     */
      private Font font;
 
@@ -74,7 +74,7 @@ public class MultiLineText extends Drawable {
     /** Space between lines
      */
      private int gap;
-     
+
     /** Space around the text
      */
      private int textSpace = 6;
@@ -82,7 +82,7 @@ public class MultiLineText extends Drawable {
     /** y coordinate of each line
      */
      private int heightsText[];
-     
+
     /** True if text is left aligned (default)
      */
      private boolean isLeftAligned = true;
@@ -167,7 +167,6 @@ public class MultiLineText extends Drawable {
     font = font.deriveFont(Font.PLAIN, size);
     Map fontAttributes = font.getAttributes();
     recalculate = true;
-    //System.out.println("Attrihbutes=" + fontAttributes);
    }
 
 
@@ -177,17 +176,15 @@ public class MultiLineText extends Drawable {
  /**
   * To set the current font.
   */
-  public void setFont(String fontName){
-   try {
+  public void setFont(String fontName) {
+    try {
       String fontPath = ImageLibrary.getDefaultImageLibrary().getDataBasePath()+File.separator+"fonts";
 
       FileInputStream fis = new FileInputStream(fontPath+File.separator+fontName);
       font = Font.createFont(Font.TRUETYPE_FONT, fis);
-      //System.out.println("Font=" + font);
       font = font.deriveFont(Font.PLAIN, size);
       Map fontAttributes = font.getAttributes();
       recalculate = true;
-      //System.out.println("Attrihbutes=" + fontAttributes);
     } catch (Exception e) {
       font = new Font("Dialog", Font.PLAIN, (int)size);
       e.printStackTrace();
@@ -210,7 +207,7 @@ public class MultiLineText extends Drawable {
 
         if(text == null)
            return;
-        
+
         if (recalculate) {
               heightsText = null;
               heightsText = new int[text.length];
@@ -221,11 +218,15 @@ public class MultiLineText extends Drawable {
               heightsText[0] = (int) t.getBounds().getHeight();
               widthText      = (int) t.getBounds().getWidth();
               gc.setColor(color);
-              gc.drawString(this.text[0], xs, ys+heightsText[0]);
+
+              if (isLeftAligned)
+                gc.drawString(this.text[0], xs, ys+heightsText[0]);
+              else
+                gc.drawString(this.text[0], (int)screen.getWidth()-xs-widthText, ys+heightsText[0]);
 
               gap = (int) heightsText[0]/2; //spaces between lines (half height of the text)
 
-              for(int i=1; i<text.length; i++)
+              for (int i=1; i<text.length; i++)
               {
                 t = new TextLayout(text[i],gc.getFont(),frc);
 
@@ -237,13 +238,13 @@ public class MultiLineText extends Drawable {
                 if (isLeftAligned)
                   gc.drawString(this.text[i], xs, ys+heightsText[i]);
                 else
-                  gc.drawString(this.text[i], xs-widthText, ys+heightsText[i]);
+                  gc.drawString(this.text[i], (int)screen.getWidth()-xs-widthText, ys+heightsText[i]);
               }
-              
+
               r.width = widthText + 12;
               r.height = heightsText[text.length-1] + 12;
               if (isLeftAligned) {
-                r.x = xs;                
+                r.x = xs;
               } else {
                 r.x = (int)screen.getWidth()-xs;
               }
@@ -269,14 +270,15 @@ public class MultiLineText extends Drawable {
             // display text
                gc.setColor(color);
 
-               if(isLeftAligned)
-                   for(int i=0; i<text.length; i++)
+               if (isLeftAligned)
+                   for (int i=0; i<text.length; i++)
                        gc.drawString(this.text[i], xs, ys+heightsText[i]);
                else
-                   for(int i=0; i<text.length; i++)
+                   for (int i=0; i<text.length; i++)
                        gc.drawString(this.text[i], (int)screen.getWidth()-xs-widthText, ys+heightsText[i]);
         }
     }
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Tick method called by the GraphicsDirector. This tick method has a returned value

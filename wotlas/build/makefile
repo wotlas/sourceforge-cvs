@@ -11,7 +11,7 @@
 # On Unix gnu make should find your sh automatically. 
 #
 
-# SHELL=c:\\command.com
+SHELL=c:\\command.com
 
 
 # PACKAGES

@@ -38,7 +38,7 @@ public class Menu2DManager {
 
    /** Our GraphicsDirector.
     */
-     private GraphicsDirector gDirector;
+     protected GraphicsDirector gDirector;
 
    /** Our Listeners.
     */
@@ -46,7 +46,7 @@ public class Menu2DManager {
 
    /** Our root menu.
     */
-     private Menu2D rootMenu;
+     protected Menu2D rootMenu;
 
  /*------------------------------------------------------------------------------------*/
 

@@ -165,11 +165,25 @@ public class SimpleMenu2D implements Menu2D {
   /** To get the item name at the specified index.
    * @return null if not found, the itemname otherwise
    */
-     public String getItemName( int index) {
+     public String getItemName( int index ) {
      	 if( index<0 || index>=items.length )
      	     return null;
 
          return items[index].itemName;
+     }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To get an item's index given its name.
+   * @return -1 if not found, the item's index otherwise
+   */
+     public int getItemIndex( String itemName ) {
+         // we search the item's index
+            for( int i=0; i<items.length; i++ )
+                 if( items[i].itemName.equals(itemName) )
+                     return i;
+
+          return -1; // not found
      }
 
  /*------------------------------------------------------------------------------------*/
@@ -197,12 +211,74 @@ public class SimpleMenu2D implements Menu2D {
 
  /*------------------------------------------------------------------------------------*/
 
+  /** To add an item to the list. This method is not synchronized.
+   * @param itemName name of the item to add
+   */
+     public void addItem( String itemName ) {
+       // any sub-menus too hide ?
+         if( items!=null )
+            for( int i=0; i<items.length; i++ )
+                 if( items[i].link !=null )
+                     items[i].link.hide();
+
+       // items update
+          SimpleMenu2DItem tmp[];
+       
+         if( items==null )
+            tmp = new SimpleMenu2DItem[1];
+         else
+            tmp = new SimpleMenu2DItem[items.length+1];
+
+         System.arraycopy( items, 0, tmp, 0, tmp.length-1 );
+         tmp[tmp.length-1] = new SimpleMenu2DItem(itemName);
+
+       // we refresh the state of our drawable...
+         items = tmp;
+         menuDrawable.refreshState();
+     }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To remove an item from the list. This method is not synchronized.
+   * @param itemName name of the item to remove
+   * @return true if removed, false if not found
+   */
+     public boolean removeItem( String itemName ) {
+
+       // Item index
+          int ind = getItemIndex(itemName);
+
+          if( ind<0 )
+             return false;
+ 
+       // any sub-menus to hide ?
+         if( items!=null )
+            for( int i=0; i<items.length; i++ )
+                 if( items[i].link !=null )
+                     items[i].link.hide();
+
+       // items update
+          SimpleMenu2DItem tmp[] = new SimpleMenu2DItem[items.length-1];
+
+          System.arraycopy( items, 0, tmp, 0, ind );
+
+          if(ind+1<items.length)
+            System.arraycopy( items, ind+1, tmp, ind, items.length-ind-1 );
+
+       // we refresh the state of our drawable...
+          items = tmp;
+          menuDrawable.refreshState();
+          return true;
+     }
+
+ /*------------------------------------------------------------------------------------*/
+
   /** To enable/disable an item.
    * @param itemName to search and to enable/disable
    * @param enabled true to enable, false to disable.
    * @return true if the item was found, false if not found
    */
-     public boolean setEnabled( String itemName, boolean enabled ) {
+     public boolean setItemEnabled( String itemName, boolean enabled ) {
          // we search the item index
             for( int i=0; i<items.length; i++ )
                  if( items[i].itemName.equals(itemName) ) {
@@ -220,18 +296,20 @@ public class SimpleMenu2D implements Menu2D {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** To remove a menu link on an item.
-   * @param itemName to search and remove the link on
-   * @return true if the item was found & the menu removed, false if not found
+  /** To add a menu link to an item. The link replaces any previous link.
+   * @param itemName to search and add the link on
+   * @param menu2D to add (beware ! MUST be a SimpleMenu2D here)
+   * @return true if the item was found & the menu added, false if not found
    */
-     public boolean removeLink( String itemName ) {
+     public boolean addItemLink( String itemName, Menu2D menu2D ) {
          // we search the item index
             for( int i=0; i<items.length; i++ )
                  if( items[i].itemName.equals(itemName) ) {
                      if( items[i].link!=null && items[i].link.isVisible() )
                          items[i].link.hide();
 
-                     items[i].link = null;
+                     menu2D.init(menuManager); // we init the sub-menu
+                     items[i].link = (SimpleMenu2D) menu2D;
                      return true;
                  }
 
@@ -240,20 +318,18 @@ public class SimpleMenu2D implements Menu2D {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** To add a menu link to an item. The link replaces any previous link.
-   * @param itemName to search and add the link on
-   * @param menu2D to add
-   * @return true if the item was found & the menu added, false if not found
+  /** To remove a menu link on an item.
+   * @param itemName to search and remove the link on
+   * @return true if the item was found & the menu removed, false if not found
    */
-     public boolean addLink( String itemName, SimpleMenu2D menu2D ) {
+     public boolean removeItemLink( String itemName ) {
          // we search the item index
             for( int i=0; i<items.length; i++ )
                  if( items[i].itemName.equals(itemName) ) {
                      if( items[i].link!=null && items[i].link.isVisible() )
                          items[i].link.hide();
 
-                     menu2D.init(menuManager); // we init the sub-menu
-                     items[i].link = menu2D;
+                     items[i].link = null;
                      return true;
                  }
 
@@ -323,7 +399,6 @@ public class SimpleMenu2D implements Menu2D {
      }
 
  /*------------------------------------------------------------------------------------*/
-
   /** To find a menu by its name. The search is performed also among sub-menus.
    * @param menuName the menu's name to search
    * @return the menu if found, null if not.

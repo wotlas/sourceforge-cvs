@@ -72,6 +72,70 @@ public interface Menu2D {
 
  /*------------------------------------------------------------------------------------*/
 
+  /** To get the item name at the specified index.
+   * @return null if not found, the itemname otherwise
+   */
+     public String getItemName( int index );
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To get an item's index given its name.
+   * @return -1 if not found, the item's index otherwise
+   */
+     public int getItemIndex( String itemName );
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To change the name of an item.
+   * @param oldItemName item to search & update
+   * @param newItemName new name to set
+   * @return true if the item was found, false if not found
+   */
+     public boolean changeItemName( String oldItemName, String newItemName );
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To add an item to the list. This method is not synchronized.
+   * @param itemName name of the item to add
+   */
+     public void addItem( String itemName );
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To remove an item from the list. This method is not synchronized.
+   * @param itemName name of the item to remove
+   * @return true if removed, false if not found
+   */
+     public boolean removeItem( String itemName );
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To enable/disable an item.
+   * @param itemName to search and to enable/disable
+   * @param enabled true to enable, false to disable.
+   * @return true if the item was found, false if not found
+   */
+     public boolean setItemEnabled( String itemName, boolean enabled );
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To add a menu link to an item. The link replaces any previous link.
+   * @param itemName to search and add the link on
+   * @param menu2D to add
+   * @return true if the item was found & the menu added, false if not found
+   */
+     public boolean addItemLink( String itemName, Menu2D menu2D );
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To remove a menu link on an item.
+   * @param itemName to search and remove the link on
+   * @return true if the item was found & the menu removed, false if not found
+   */
+     public boolean removeItemLink( String itemName );
+
+ /*------------------------------------------------------------------------------------*/
+
   /** To process a mouse event.
    * @param mEvent the mouse event received on this menu
    * @return true if the event was processed by us or one of our sub-menus, false

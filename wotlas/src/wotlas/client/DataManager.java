@@ -141,7 +141,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
   /** Our menu manager.
    */
-    private Menu2DManager menuManager;
+    private MenuManager menuManager;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -541,8 +541,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        myPlayer.tick();                // we tick the player to validate data recreation
        addPlayer(myPlayer);
 
-       createWotlasMenu(); // we init the in-game menus
-
        if (SHOW_DEBUG)
           System.out.println("POSITION set to x:"+myPlayer.getX()+" y:"+myPlayer.getY()+" location is "+myPlayer.getLocation());
 
@@ -555,6 +553,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
        if ( (clientConfiguration.getClientWidth()>0) && (clientConfiguration.getClientHeight()>0) )
           clientScreen.setSize(clientConfiguration.getClientWidth(),clientConfiguration.getClientHeight());
+
+       menuManager = new MenuManager( myPlayer, gDirector );
+       menuManager.addMenu2DListener(this);
 
        pMonitor.setProgress("Loading Map Data...",85);
 
@@ -616,6 +617,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
        clientScreen.getMapPanel().updateGraphicsDirector(gDirector);
 
+       if(menuManager!=null)
+          menuManager.clear();
+
     // 2 - Retrieve player's informations
        pMonitor.setProgress("Loading Player Data from Server...",30);
        myPlayer = null;
@@ -641,8 +645,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        myPlayer.tick();
        addPlayer(myPlayer);
 
-       createWotlasMenu(); // we init the in-game menus
-
        if(SHOW_DEBUG)
           System.out.println("POSITION set to x:"+myPlayer.getX()+" y:"+myPlayer.getY()+" location is "+myPlayer.getLocation());
 
@@ -653,6 +655,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        clientScreen.getPlayerPanel().reset();
        players.clear();
        connection.setPingListener( (NetPingListener) clientScreen.getPingPanel() );
+
+       menuManager = new MenuManager( myPlayer, gDirector );
+       menuManager.addMenu2DListener(this);
 
     // 4 - Init map display, resume tick thread & show screen...
        pMonitor.setProgress("Loading Map Data...",85);
@@ -809,114 +814,21 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
           else
                return;
 
-   // what was the object clicked ?
+   // Object/Player selected ?
+      if( mouseSelect( e.getX(), e.getY(), true ) )
+          return;
+
+   // Clicked object is the game screen...
+   // We move the player to that location.
       Rectangle screen = gDirector.getScreenRectangle();
-      Object object = gDirector.findOwner( e.getX(), e.getY() );
 
-   // We take a look at the selected object the user clicked
-   // Is it a player ? a door ? or the current map ?
+      synchronized( players ) {
+          myPlayer.moveTo( new Point( e.getX() + (int)screen.getX(),
+                                      e.getY() + (int)screen.getY() ), worldManager );
+      }
 
-      if ( object instanceof PlayerImpl ) {
-      	// We display selection and player info
-           String previouslySelectedPlayerKey = "";
-
-           if (selectedPlayer!=null)
-               previouslySelectedPlayerKey = selectedPlayer.getPrimaryKey();
-
-           selectedPlayer = (PlayerImpl) object; // new player selected      
-
-        // We get the InfoPlugIn
-           InfoPlugIn infoPanel = (InfoPlugIn) clientScreen.getPlayerPanel().getPlugIn("Info");
-
-           if(infoPanel==null) {
-              Debug.signal(Debug.ERROR,this,"InfoPlugIn not found !");
-       	      return;
-           }
-
-        // We erase the previous selection circle
-           if (circle!=null) {
-               gDirector.removeDrawable(circle);
-               circle=null;
-           }
-
-        // Deselect ?
-           if ( previouslySelectedPlayerKey.equals(selectedPlayer.getPrimaryKey()) ) {
-                gDirector.addDrawable(selectedPlayer.getTextDrawable());
-                gDirector.addDrawable(selectedPlayer.getWotCharacter().getAura());
-                selectedPlayer=null;
-
-                if(infoPanel!=null) infoPanel.reset();
-                return;
-           }
-
-        // Select
-           circle = new CircleDrawable( selectedPlayer.getDrawable(),
-                                       20,
-                                       selectedPlayer.getWotCharacter().getColor(),
-                                       true,
-                                       ImageLibRef.AURA_PRIORITY);
-           gDirector.addDrawable(circle);
-           gDirector.addDrawable(selectedPlayer.getTextDrawable());
-           gDirector.addDrawable(selectedPlayer.getWotCharacter().getAura());
-
-           if(infoPanel!=null)
-              infoPanel.setPlayerInfo( selectedPlayer );
-
-        // Away Message
-           String awayMessage = selectedPlayer.getPlayerAwayMessage();
-
-           //if( selectedPlayer.isConnectedToGame() )  return; 
-           if( selectedPlayer.getPlayerState().value == PlayerState.CONNECTED ) return;
-           if( !selectedPlayer.canDisplayAwayMessage() )  return;
-
-           if( awayMessage!=null ) {
-               JChatRoom chatRoom = clientScreen.getChatPanel().getCurrentJChatRoom();
-                if ( selectedPlayer.getPlayerState().value==PlayerState.DISCONNECTED ) {
-                  chatRoom.appendText("<font color='gray'> "+selectedPlayer.getFullPlayerName()+" (disconnected) says: <i> "
-                                                     +selectedPlayer.getPlayerAwayMessage()+" </i></font>");
-                } else {
-                  chatRoom.appendText("<font color='gray'> "+selectedPlayer.getFullPlayerName()+" (away) says: <i> "
-                                                     +selectedPlayer.getPlayerAwayMessage()+" </i></font>");
-                }
-           }
-
-           return;
-     }
-     else if( object instanceof Door ) {
-        // We open/close the door IF the player is near enough...
-           Door door = (Door) object;
-           
-           if (SHOW_DEBUG)
-              System.out.println("A door has been clicked...");
-
-        // player near enough the door ?
-           if( door.isPlayerNear( myPlayer.getCurrentRectangle() ) ) {
-               WotlasLocation location = new WotlasLocation(myPlayer.getLocation());
-               sendMessage( new DoorStateMessage(location, door.getMyRoomLinkID(), !door.isOpened()) );
-           }
-           else {
-             // we go to the door
-                Point doorPoint = door.getPointNearDoor( myPlayer.getCurrentRectangle() );
-
-                if( doorPoint!=null )
-                    myPlayer.moveTo( doorPoint, worldManager );
-           }
-
-           return;
-    }
-
-  // Clicked object is the game screen...
-  // We move the player to that location.
-     synchronized( players ) {
-       if (object == null) {
-          int newX = e.getX() + (int)screen.getX();
-          int newY = e.getY() + (int)screen.getY();
-          myPlayer.moveTo( new Point(newX,newY), worldManager );
-       }
-     }
-
-     if (SHOW_DEBUG)
-        System.out.println("END of DataManager::onLeftClicJMapPanel");
+      if (SHOW_DEBUG)
+         System.out.println("END of DataManager::onLeftClicJMapPanel");
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -930,10 +842,15 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       if( menuManager.isVisible() )
           menuManager.hide();
       else {
-      	  if(selectedPlayer==null)
-             changePlayerNameInRootMenu("none selected");
+      	 // Menu selection & display
+          mouseSelect( e.getX(), e.getY(), false );
+
+          if(selectedPlayer!=null)
+               menuManager.initContent( selectedPlayer );      
+//        else if(selectedObject!=null)
+//             ADD menuManager initContent here
           else
-             changePlayerNameInRootMenu( selectedPlayer.getFullPlayerName() );
+               menuManager.initNoContent();
 
           menuManager.show( new Point( e.getX(), e.getY() ) );
       }
@@ -1007,6 +924,136 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
  /*------------------------------------------------------------------------------------*/
 
+  /** To select an object/player on screen via a mouse click
+   * @param screen game screen dimension
+   * @param x x position of the mouse
+   * @param y y position of the mouse
+   * @param isLeftClick true if the left button was clicked, false if it's the right.
+   * @return true if we processed the mouse event, false if it was not for us.
+   */
+    public boolean mouseSelect( int x, int y, boolean isLeftClick ) {
+
+     // We search for the owner of the object
+        Object object = gDirector.findOwner( x, y );
+
+     // We take a look at the selected object the user clicked
+     // Is it a player ? a door ?
+
+        if ( object instanceof PlayerImpl ) {
+          // We display selection and player info
+             String previouslySelectedPlayerKey = "";
+
+             if (selectedPlayer!=null)
+                 previouslySelectedPlayerKey = selectedPlayer.getPrimaryKey();
+
+             selectedPlayer = (PlayerImpl) object; // new player selected
+
+          // We get the InfoPlugIn
+             InfoPlugIn infoPanel = (InfoPlugIn) clientScreen.getPlayerPanel().getPlugIn("Info");
+
+             if(infoPanel==null) {
+                Debug.signal(Debug.ERROR,this,"InfoPlugIn not found !");
+       	        return true;
+             }
+
+          // We erase the previous selection circle
+             if (circle!=null) {
+                 gDirector.removeDrawable(circle);
+                 circle=null;
+             }
+
+          // Deselect ?
+             if ( previouslySelectedPlayerKey.equals(selectedPlayer.getPrimaryKey()) && isLeftClick ) {
+                gDirector.addDrawable(selectedPlayer.getTextDrawable());
+                gDirector.addDrawable(selectedPlayer.getWotCharacter().getAura());
+                selectedPlayer=null;
+
+                if(infoPanel!=null) infoPanel.reset();
+                return true;
+             }
+
+          // Select
+             circle = new CircleDrawable( selectedPlayer.getDrawable(), 20,
+                                       selectedPlayer.getWotCharacter().getColor(), true,
+                                       ImageLibRef.AURA_PRIORITY );
+             gDirector.addDrawable(circle);
+             gDirector.addDrawable(selectedPlayer.getTextDrawable());
+             gDirector.addDrawable(selectedPlayer.getWotCharacter().getAura());
+
+             if(infoPanel!=null)
+                infoPanel.setPlayerInfo( selectedPlayer );
+
+          // Connection state
+             if( selectedPlayer.getPlayerState().value == PlayerState.CONNECTED )
+                return true;
+
+             if( !isLeftClick )
+                return true; // no away message displayed if right click
+
+          // Away Message
+             String awayMessage = selectedPlayer.getPlayerAwayMessage();
+
+             if( !selectedPlayer.canDisplayAwayMessage() )  return true;
+
+             if( awayMessage!=null ) {
+                 JChatRoom chatRoom = clientScreen.getChatPanel().getCurrentJChatRoom();
+                 if ( selectedPlayer.getPlayerState().value==PlayerState.DISCONNECTED ) {
+                      chatRoom.appendText("<font color='gray'> "+selectedPlayer.getFullPlayerName()+" (disconnected) says: <i> "
+                                                     +selectedPlayer.getPlayerAwayMessage()+" </i></font>");
+                 } else
+                     chatRoom.appendText("<font color='gray'> "+selectedPlayer.getFullPlayerName()+" (away) says: <i> "
+                                                     +selectedPlayer.getPlayerAwayMessage()+" </i></font>");
+             }
+
+             return true;
+        }
+        else if( object instanceof Door ) {
+          // We open/close the door IF the player is near enough...
+             Door door = (Door) object;
+
+             if (SHOW_DEBUG)
+                System.out.println("A door has been clicked...");
+
+          // player near enough the door ?
+             if( door.isPlayerNear( myPlayer.getCurrentRectangle() ) ) {
+
+                 if( isLeftClick ) {
+                     WotlasLocation location = new WotlasLocation(myPlayer.getLocation());
+                    
+                    // ADD HERE lock test, does the player has the key if the door is locked ?
+                    
+                     sendMessage( new DoorStateMessage(location, door.getMyRoomLinkID(), !door.isOpened()) );
+                 }
+                 else {
+                    // Door Selection ?
+
+                 }
+             }
+             else {
+              // we go to the door
+                 Point doorPoint = door.getPointNearDoor( myPlayer.getCurrentRectangle() );
+
+                 if( doorPoint!=null )
+                     myPlayer.moveTo( doorPoint, worldManager );
+             }
+
+             return true;
+        }
+//      else if( object instanceof BaseObject ) {
+//
+//             ADD HERE SELECTION CODE FOR OBJECTS (use the player selection as example)
+//      }
+        else if( object!=null ) {
+           // Unknown Object !
+              Debug.signal(Debug.WARNING,this,"Unknown Object Clicked : "+object);
+              return true;
+        }
+
+       return false; // event not for us
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
  /** To add a wave arc effect on the player.
   */
    public void addWaveDrawable( PlayerImpl player ) {
@@ -1053,6 +1100,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
     public void changeMapData() {
       updatingMapData=true;
+
+      if( menuManager.isVisible() )
+          menuManager.hide();
 
       try{
         if ( myPlayer.getLocation().isRoom() ) {
@@ -1139,79 +1189,11 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Creates the wotlas menu
-   */
-    private void createWotlasMenu() {
-    	if(menuManager!=null)
-    	   menuManager.hide();
-
-     // 1 - Creation of the Menu Manager and its root menu
-        menuManager = new Menu2DManager();
-        menuManager.init( gDirector );
-        menuManager.addMenu2DListener(this);
-
-        String rootItems[] = { "  Player Selected  ",
-                               "none selected",
-                               "-",
-                               "Use Weave",
-                               "Use Object",
-                               "Use Knowledge",
-                               "-",
-                               "Teach Knowledge",
-                               "Give Object",
-                               "-",
-                               "Description" };
-
-        SimpleMenu2D rootMenu = new SimpleMenu2D( "root", rootItems );
-        menuManager.setRootMenu(rootMenu);
-        rootMenu.setEnabled( "Use Knowledge", false );
-        rootMenu.setEnabled( "Teach Knowledge", false );
-        rootMenu.setEnabled( "Description", false );
-
-     // 2 - Weaves
-        String weaveItems[] = { "channel" };
-
-        SimpleMenu2D useWeaveMenu = new SimpleMenu2D( "use-weave", weaveItems );
-        rootMenu.addLink( "Use Weave", useWeaveMenu );
-
-     // 3 - Objects
-        String objectItems[] = { "Weapons ",
-                                 "Books",
-                                 "Armors" };
-
-        SimpleMenu2D useObjectMenu = new SimpleMenu2D( "use-object", objectItems );
-        rootMenu.addLink( "Use Object", useObjectMenu );
-
-        String bookItems[] = { "No books are available !" };
-
-        SimpleMenu2D useBooksMenu = new SimpleMenu2D( "use-books", bookItems );
-        useObjectMenu.addLink( "Books", useBooksMenu );
-
-        String weaponItems[] = { "Axe", "Sword", "Bow", "Dagger", "Rainbow", "Battle Axe",
-                               "-", "Cursed dagger", "Gun", "MachineGun", "Vibro Axe",
-                               "-", "CannonBall", "Jacusi" };
-
-        SimpleMenu2D useWeaponMenu = new SimpleMenu2D( "use-weapon", weaponItems );
-        useObjectMenu.addLink( "Weapons ", useWeaponMenu );
-    }
-
- /*------------------------------------------------------------------------------------*/
-
-  /** To update the item name which is displayed in the root menu.
-   */
-    private void changePlayerNameInRootMenu( String newName ) {
-    	SimpleMenu2D rootMenu = (SimpleMenu2D) menuManager.getRootMenu();
-
-        rootMenu.changeItemName( rootMenu.getItemName(1), newName );
-    }
-
- /*------------------------------------------------------------------------------------*/
-
    /** Method called when an item has been clicked on an item who is not a menu link.
     *  @param e menu event generated.
     */
       public void menuItemClicked( Menu2DEvent e ) {
-//          if(SHOW_DEBUG)
+          if(SHOW_DEBUG)
              System.out.println("Menu Item Clicked : "+e.toString());
       }
 

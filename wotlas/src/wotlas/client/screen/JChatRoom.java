@@ -21,7 +21,7 @@ package wotlas.client.screen;
 
 import wotlas.common.chat.ChatRoom;
 import wotlas.client.*;
-
+import wotlas.utils.Tools;
 
 import javax.swing.*;
 import javax.swing.text.*;
@@ -108,6 +108,7 @@ public class JChatRoom extends JPanel
     StyleConstants.setFontSize(attribut,12);
     
     strBuffer = "Welcome!<br>\n";
+    
     messagesPane.setText("<html><body>" + strBuffer + "</body></html>");
     System.out.println("init = " + messagesPane.getText());
     
@@ -210,12 +211,16 @@ System.out.println("REMOVING PLAYER "+player.getPrimaryKey());
         System.out.println("Chat Error:"+e.getMessage());*/
       } 
 
-    // text color
-    //StyleConstants.setForeground( attribut, Color.blue );
+      // Search for smiles
+
+      text = Tools.subString(text, ":D", "<img src='file:..\\base\\graphics\\gui\\chat\\biggrin.gif'>");
+      text = Tools.subString(text, ":)", "<img src='file:..\\base\\graphics\\gui\\chat\\smile.gif'>");
+      text = Tools.subString(text, ":(", "<img src='file:..\\base\\graphics\\gui\\chat\\perplexed.gif'>");
 
     //try {
       System.out.println("insertString");
       //doc_chat.insertString (doc_chat.getLength(), text+"<br>\n", attribut );
+      
       strBuffer += text + "<br>\n";
 
       Runnable runnable = new Runnable() {
@@ -240,7 +245,7 @@ System.out.println("REMOVING PLAYER "+player.getPrimaryKey());
   }
   
  /*------------------------------------------------------------------------------------*/  
-  
+
 }
   
   

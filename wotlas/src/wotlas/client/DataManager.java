@@ -556,7 +556,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
           clientScreen.setSize(clientConfiguration.getClientWidth(),clientConfiguration.getClientHeight());
 
        menuManager = new MenuManager( myPlayer, gDirector );
-       menuManager.addMenu2DListener(this);
+       menuManager.addMenu2DListener(this);       
 
        pMonitor.setProgress("Loading Map Data...",85);
 
@@ -587,7 +587,21 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
                  
     // 10 - Add extra plugin
           //clientScreen.getPlayerPanel().addPlugIn((JPanelPlugIn) new ChangeAspectPlugIn(), -1);
-        
+          
+// Test Petrus
+      String empty[] = { "head", "body", "left hand", "right hand" };
+      SimpleMenu2D emptyMenu = new SimpleMenu2D("emptyMenu",empty);
+      emptyMenu.setItemEnabled( "head", true );
+      emptyMenu.setItemEnabled( "body", true );
+      emptyMenu.setItemEnabled( "left hand", true );
+      emptyMenu.setItemEnabled( "right hand", true );
+      ((SimpleMenu2D) menuManager.getRootMenu()).addItemLink(MenuManager.OBJECT_ITEM_NAME, emptyMenu );
+      
+      /*SimpleMenu2D objectMenu = (SimpleMenu2D) menuManager.findByName(MenuManager.OBJECT_ITEM_NAME);
+      objectMenu.addItem("head");
+      */
+// end Test Petrus
+     
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -1208,7 +1222,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     */
       public void menuItemClicked( Menu2DEvent e ) {
           if(SHOW_DEBUG)
-             System.out.println("Menu Item Clicked : "+e.toString());
+             System.out.println("Menu Item Clicked : "+e.toString()); 
+// Test petrus
+          if (e.getItemName().equals("test inventory plugin")) {
+            System.out.println("ok");
+          } else {
+            System.out.println("not a test");
+          }
       }
 
  /*------------------------------------------------------------------------------------*/

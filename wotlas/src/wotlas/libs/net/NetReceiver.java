@@ -25,7 +25,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 
 import wotlas.utils.Debug;
-import wotlas.utils.Tools;
+import wotlas.libs.net.message.PingMessage;
 
 /** A NetReceiver waits for NetMessage to arrive on an opened socket.
  *  It decodes them and execute their associated code.
@@ -75,10 +75,17 @@ public class NetReceiver extends NetThread
      */
         private int max_msg;
 
+    /** Do we have to send back ping messages ?
+     */
+        private boolean sendBackPingMessages;
+
  /*------------------------------------------------------------------------------------*/
 
     /**  Constructor. Should be called only by the NetServer & NetClient classes.
      *   We assume that a NetMessageFactory has already been created.
+     *
+     *   By default we don't send PingMessages back... use the setSendBackPingMessages
+     *   method to change that.
      *
      * @param socket a previously created & connected socket.
      * @param personality a NetPersonality linked to the specified socket.
@@ -94,6 +101,7 @@ public class NetReceiver extends NetThread
           this.sync = sync;
           this.context = context;
           this.personality = personality;
+          sendBackPingMessages = false;
 
           if(sync)
              max_msg = 15; // default value
@@ -101,6 +109,15 @@ public class NetReceiver extends NetThread
        // we retrieve & construct some useful handles
           in_stream = new DataInputStream( getBufferedInputStream( buffer_size ) );
           factory = NetMessageFactory.getDefaultMessageFactory();
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Do we have to send back ping messages ?
+   * @param sendBack set to true to automatically send back ping messages.
+   */
+      public void sendBackPingMessages( boolean sendBack ) {
+          sendBackPingMessages = sendBack;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -125,7 +142,15 @@ public class NetReceiver extends NetThread
                 try{
                      NetMessageBehaviour msg = factory.getNewMessageInstance( msg_cat, msg_typ );
                      ((NetMessage) msg ).decode( in_stream );
-                     msg.doBehaviour( context );
+
+                     if(msg instanceof PingMessage) {
+                     	if(sendBackPingMessages)
+                           personality.queueMessage( (NetMessage)msg ); // send back the PingMessage
+                        else
+                           personality.receivedPingMessage( ((PingMessage) msg).getSeqID() );
+                     }
+                     else
+                        msg.doBehaviour( context );
                 }
                 catch(ClassNotFoundException e) {
                       Debug.signal( Debug.WARNING, this, e );
@@ -165,7 +190,6 @@ public class NetReceiver extends NetThread
 
         try
         {
-
            while( in_stream.available()!=0 && msg_counter<max_msg )
            {
              // we read the message category & type.
@@ -176,7 +200,15 @@ public class NetReceiver extends NetThread
                 try{
                      NetMessageBehaviour msg = factory.getNewMessageInstance( msg_cat, msg_typ );
                      ((NetMessage) msg ).decode( in_stream );
-                     msg.doBehaviour( context );
+
+                     if(msg instanceof PingMessage) {
+                     	if(sendBackPingMessages)
+                           personality.queueMessage( (NetMessage)msg ); // send back the PingMessage
+                        else
+                           personality.receivedPingMessage( ((PingMessage) msg).getSeqID() );
+                     }
+                     else
+                        msg.doBehaviour( context );
                 }
                 catch(ClassNotFoundException e) {                     
                       Debug.signal( Debug.WARNING, this, e );

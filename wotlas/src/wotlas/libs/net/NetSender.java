@@ -84,7 +84,7 @@ public class NetSender extends NetThread
         private boolean stop_aggregation;
 
     /** To signal that we a thread is locked on pleaseSendAllMessagesNow()
-      */
+     */
         private boolean locked;
 
  /*------------------------------------------------------------------------------------*/
@@ -364,6 +364,7 @@ public class NetSender extends NetThread
          return aggregation_msg_limit;
      }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ /*------------------------------------------------------------------------------------*/
+
 }
 

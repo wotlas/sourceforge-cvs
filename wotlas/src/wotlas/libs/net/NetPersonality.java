@@ -19,6 +19,9 @@
  
 package wotlas.libs.net;
 
+import wotlas.utils.Debug;
+import wotlas.libs.net.message.*;
+
 import java.io.IOException;
 import java.net.Socket;
 
@@ -72,6 +75,14 @@ public abstract class NetPersonality
    /** An eventual connection listener
     */
       private NetConnectionListener listener;
+
+   /** An eventual PingThread ( internal class )
+    */
+      private PingThread pingThread;
+
+   /** An eventual lock for the pingThread
+    */
+      private Object pingLock;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -247,13 +258,169 @@ public abstract class NetPersonality
           synchronized( my_netsender ) {
                 my_netsender.notify();    // we don't forget to wake up the thread !
           }                               // (the NetSender is locked when there are no msgs )
-          
+
+          if( pingLock!=null )
+            synchronized( pingLock ){
+               pingThread.stopThread();
+            }
+
           my_netsender = null;
           my_netreceiver = null;
           listener=null;
      }
 
+ /*------------------------------------------------------------------------------------*/
+
+  /** To set a ping listener for this network connection.
+   *
+   * @param pListener the object that will receive ping information.
+   */
+    public void setPingListener( NetPingListener pListener ) {
+
+    	if( pingLock!=null )
+            synchronized( pingLock ) {
+                if( pingThread==null ) return; // No longer living net connnection
+
+    	     // just swap the listener
+    	        pingThread.pListener = pListener;
+                return;
+            }
+    	
+      // Ping Thread Creation
+         pingLock = new Object();
+         pingThread = new PingThread(pListener);
+         pingThread.start();
+    }
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Called by the NetReceiver when it receives a PingMessage (if not in SendBack mode).
+   * @param sequenceID ping message's sequence ID.
+   */
+    protected void receivedPingMessage( int sequenceID ) {
+
+       if( pingLock==null ) return;
+
+       synchronized( pingLock ) {
+           if( pingThread==null || pingThread.sequenceID!=sequenceID)
+    	       return;
+
+           pingThread.lastPingValue = (int)(System.currentTimeMillis()-pingThread.lastPingT0);
+           pingThread.pingReceivedBack = true;
+           pingThread.pListener.pingComputed( pingThread.lastPingValue );
+       }
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To use 
+   */
+    public synchronized void sendBackPingMessages( boolean sendBack ) {
+
+        if( pingLock!=null && sendBack ) {
+            Debug.signal( Debug.ERROR, this, "Conflict detected: ping thread exists ! Can't send back ping messages");
+        }
+
+        if( my_netreceiver!=null )
+            my_netreceiver.sendBackPingMessages( sendBack );
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** A Thread that send PingMessages and manages the ping info.
+   *  It is created when a NetPingListener is set and lives as long as the network
+   *  connection does.
+   */
+    private class PingThread extends Thread {
+
+     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+         protected byte sequenceID; // current ping sequence ID
+
+         protected boolean pingReceivedBack; // has the last ping been received ?
+
+         protected int lastPingValue; // last ping value
+
+         protected long lastPingT0; // last ping sent t0
+
+         protected NetPingListener pListener; // our ping listener
+         
+         protected boolean shouldStopPingThread;
+
+     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+       /** Constructor with ping listener.
+        */
+         public PingThread( NetPingListener pListener ) {
+             sequenceID = 0;
+             pingReceivedBack = false;
+             shouldStopPingThread = false;
+             this.pListener = pListener;
+         }
+
+     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+       /** Our Ping Loop
+        */
+         public void run(){
+
+            while( !shouldStopPingThread ) {
+
+              // 1 - We send a PingMessage to the other side
+                 queueMessage( new PingMessage( sequenceID ) );
+                 lastPingT0 = System.currentTimeMillis();
+
+              // 2 - We wait 1 second
+                 synchronized( this ) {
+                    try{
+                       wait( 1000 );
+                    }catch( Exception e ) {}
+                    
+                    if(shouldStopPingThread)
+                       break;
+                 }
+
+              // 3 - Do we have received the answer ?
+                 synchronized( pingLock ) {
+                     if(!pingReceivedBack) {
+                        // we wait one more second and a half
+                           try{
+                              wait( 1500 );
+                           }catch( Exception e ) {
+                           }
+
+                        // if there is still no answer we declare the message lost
+                           if( !pingReceivedBack ) {
+                               lastPingValue = NetPingListener.PING_FAILED;
+                               pListener.pingComputed( lastPingValue );
+                           }
+                     }
+
+                     sequenceID = (byte) ( (sequenceID+1)%120 );
+                     pingReceivedBack = false;
+                 }
+            }
+
+         // Advertise the end of this connection
+            synchronized( pingLock ) {
+               pListener.pingComputed( NetPingListener.PING_CONNECTION_CLOSED );
+               pListener = null;
+               pingThread = null;
+            }
+         }
+
+     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+         public synchronized void stopThread() {
+             shouldStopPingThread = true;
+             notify();
+         }
+
+     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    };
+
+ /*------------------------------------------------------------------------------------*/
 
 }
 

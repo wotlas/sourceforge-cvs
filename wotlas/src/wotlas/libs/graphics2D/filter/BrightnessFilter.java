@@ -101,14 +101,14 @@ public class BrightnessFilter implements DynamicImageFilter {
      */
        private int filterPixel( int argb ) {
 
-       	   short alpha = getAlpha( argb );
+       	   short alpha = Converter.getAlpha( argb );
 
            if( alpha == 0 )
                return argb; // transparent pixel
 	   	   
-           short redIndex   = getRed( argb );
-           short blueIndex  = getBlue( argb );
-           short greenIndex = getGreen( argb );
+           short redIndex   = Converter.getRed( argb );
+           short blueIndex  = Converter.getBlue( argb );
+           short greenIndex = Converter.getGreen( argb );
            
            float[] hsbvals = new float[3];
            Color.RGBtoHSB(redIndex, greenIndex, blueIndex, hsbvals);
@@ -123,46 +123,6 @@ public class BrightnessFilter implements DynamicImageFilter {
            	}
            }
            return Color.HSBtoRGB(hsbvals[0], hsbvals[1], newBrightness) | (alpha << 24);
-       }
-
- /*------------------------------------------------------------------------------------*/
-
-     /** To get the blue component of a argb pixel.
-      * @param argb pixel of the DirectColorModel type.
-      * @return the blue component in the [0,255] range
-      */
-       private short getBlue( int argb ) {
-           return (short) (argb & 0xff);
-       }
-
- /*------------------------------------------------------------------------------------*/
-
-     /** To get the green component of a argb pixel.
-      * @param argb pixel of the DirectColorModel type.
-      * @return the green component in the [0,255] range
-      */
-       private short getGreen( int argb ) {
-          return (short) ((argb & 0xff00) >> 8 );
-       }
-
- /*------------------------------------------------------------------------------------*/
-
-     /** To get the red component of a argb pixel.
-      * @param argb pixel of the DirectColorModel type.
-      * @return the red component in the [0,255] range
-      */
-       private short getRed( int argb ) {
-          return (short) ((argb & 0xff0000) >> 16 );
-       }
-
- /*------------------------------------------------------------------------------------*/
-
-     /** To get the alpha component of a argb pixel.
-      * @param argb pixel of the DirectColorModel type.
-      * @return the alpha component in the [0,255] range
-      */
-       private short getAlpha( int argb ) {
-          return (short) ((argb & 0xff000000) >> 24 );
        }
 
  /*------------------------------------------------------------------------------------*/

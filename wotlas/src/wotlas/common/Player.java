@@ -34,18 +34,27 @@ public interface Player
 {
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** When this method is called, the player can intialize its own fields safely : all
-    *  the game data has been loaded.
-    */
-      public void init();
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
    /** To get the player location
     *
     *  @return player WotlasLocation
     */
       public WotlasLocation getLocation();
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the player's X position.
+   *
+   *  @return x
+   */
+      public int getX();
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the player's Y position.
+   *
+   *  @return y
+   */
+      public int getY();
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

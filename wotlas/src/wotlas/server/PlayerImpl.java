@@ -57,6 +57,14 @@ public class PlayerImpl implements Player, NetConnectionListener
     */
        private String fullPlayerName;
 
+   /** Player's x position
+    */
+       private int x;
+
+   /** Player's y position
+    */
+       private int y;
+
  /*------------------------------------------------------------------------------------*/
 
    /** Personality Lock
@@ -76,7 +84,27 @@ public class PlayerImpl implements Player, NetConnectionListener
       public PlayerImpl() {
       }
 
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the player's X position.
+   *
+   *  @return x
+   */
+      public int getX() {
+      	  return x;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the player's Y position.
+   *
+   *  @return y
+   */
+      public int getY() {
+      	  return y;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To initialize the player location to the first existent worlds found.
     *  WARNING : the player is NOT moved in the world... that means this method
@@ -96,7 +124,7 @@ public class PlayerImpl implements Player, NetConnectionListener
              location.setTownMapID( -1 );
       }
 
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** When this method is called, the player can intialize its own fields safely : all
     *  the game data has been loaded.

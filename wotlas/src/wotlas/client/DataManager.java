@@ -456,6 +456,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       
       myPlayer.setX(insertionPoint.x);
       myPlayer.setY(insertionPoint.y);
+      myPlayer.setPosition(insertionPoint);
 
     }
 
@@ -611,18 +612,50 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       
       wotlas.utils.List path = aStar.findPath( new Point( myPlayer.getX()/TILE_SIZE, myPlayer.getY()/TILE_SIZE),
                                            new Point(newX/TILE_SIZE, newY/TILE_SIZE));                         
-      /*
-      myPlayer.setTrajectory(path);
-      */      
       
-      if (path!=null)
+           
+      if (path!=null) {
+        Point p0[] = new Point[path.size()];
         for (int i=0; i<path.size(); i++) {
-          Point p = (Point) path.elementAt(i);
+          Point p = (Point) path.elementAt(i);             
+          p0[i] = new Point(p.x*TILE_SIZE, p.y*TILE_SIZE);
+        }
+        Drawable pathDrawable = (Drawable) new PathDrawable( p0, Color.red, (short) ImageLibRef.AURA_PRIORITY ); 
+        gDirector.addDrawable( pathDrawable );
+      }
+      
+      wotlas.utils.List smoothPath = aStar.smoothPath(path);            
+      if (smoothPath!=null) {
+        Point p1[] = new Point[smoothPath.size()];
+        for (int i=0; i<smoothPath.size(); i++) {
+          Point p = (Point) smoothPath.elementAt(i);                    
+          p1[i] = new Point(p.x*TILE_SIZE, p.y*TILE_SIZE);          
+        }
+        Drawable pathDrawable1 = (Drawable) new PathDrawable( p1, Color.blue, (short) ImageLibRef.AURA_PRIORITY ); 
+        gDirector.addDrawable( pathDrawable1 );
+      }
+      
+            
+      /*if (path!=null) {
+        Point p0[] = new Point[path.size()];
+        for (int i=0; i<path.size(); i++) {
+          Point p = (Point) path.elementAt(i);      
           p.x *= TILE_SIZE;
           p.y *= TILE_SIZE;
+          p0[i] = p;
         }
-      myPlayer.initMovement(path);
-      
+        Drawable pathDrawable = (Drawable) new PathDrawable( p0, Color.red, (short) ImageLibRef.AURA_PRIORITY ); 
+        gDirector.addDrawable( pathDrawable );
+      } */   
+            
+      if (smoothPath!=null) {       
+        for (int i=0; i<smoothPath.size(); i++) {
+          Point p = (Point) smoothPath.elementAt(i);                    
+          p.x *= TILE_SIZE;
+          p.y *= TILE_SIZE;
+        }        
+      }
+      myPlayer.initMovement(smoothPath);
 
     } else {
       System.out.println("object.getClass().getName() = " + object.getClass().getName());

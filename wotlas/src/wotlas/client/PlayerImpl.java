@@ -107,11 +107,11 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
 
   /** X coordinate
    */
-  private int x=0;
+  private int x;
 
   /** Y coordinate
    */
-  private int y=0;
+  private int y;
 
   /** our angle (in rads)
    */
@@ -147,7 +147,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     sprite = (Sprite) wotCharacter.getDrawable(this);        
     endPosition = new Point();
     trajectory = new List();
-    position = new Point(x,y);
+    position = new Point(x, y);
   }
 
   /** Called after graphicsDirector's init
@@ -343,6 +343,15 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     }
   }
 
+  public void setPosition(wotlas.utils.ScreenPoint p) {
+    if (position==null) {
+      position = new Point(p.x, p.y);
+    } else {
+      position.x = p.x;
+      position.y = p.y;
+    }
+  }
+  
  /*------------------------------------------------------------------------------------*/
 
   /** To set endPosition of trajectory.
@@ -395,6 +404,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
       sprite.tick();      
       return;
     }
+    
     /*if (indexTrajectory < trajectory.size()) {    
       Point newPosition = (Point) trajectory.elementAt(indexTrajectory);
       x = newPosition.x*DataManager.TILE_SIZE;

@@ -19,13 +19,16 @@
 
 package wotlas.libs.pathfinding;
 
-import java.lang.*;
-import java.util.*;
-import java.awt.Point;
-import java.awt.image.BufferedImage;
-
 import wotlas.client.DataManager;
 import wotlas.utils.List;
+
+import java.awt.image.BufferedImage;
+import java.awt.Point;
+import java.awt.Rectangle;
+
+import java.lang.*;
+
+import java.util.*;
 
 /** A* algorithm finds the optimal path between 2 points
  *
@@ -660,23 +663,33 @@ public class AStarDouble
 
  /*------------------------------------------------------------------------------------*/
  
+  private synchronized void changeRectangle(Rectangle r, int maskTileSize, boolean value) {
+    int cx = (int) (r.x/maskTileSize);
+    int cy = (int) (r.y/maskTileSize);
+    int cWidth = (int) r.getWidth() + 1;
+    int cHeight = (int) r.getHeight() + 1;
+    for (int i=0; i<cWidth; i++)
+      for (int j=0; j<cHeight; j++)
+        map[i][j] = value;
+  }
+
   /** To dynamically modify the mask setting all pixels of a rectangle to true
    *
-   * @param cr the rectangle to clean (in screen pixels coordinate)
+   * @param r the rectangle to clean (in screen pixels coordinate)
    * @param maskTileSize mask tile size (in pixels)
    */
-  public void cleanRectangle(Rectangle cr, int maskTileSize) {
-    ;
+  public void cleanRectangle(Rectangle r, int maskTileSize) {
+    changeRectangle(r, maskTileSize, true);
   }
   
   /** To dynamically modify the mask setting all pixels of a rectangle to false
    *
-   * @param cr the rectangle to fill (in screen pixels coordinate)
+   * @param r the rectangle to fill (in screen pixels coordinate)
    * @param maskTileSize mask tile size (in pixels)
 
    */
-  public void fillRectangle(Rectangle fr, int maskTileSize) {
-    ;
+  public void fillRectangle(Rectangle r, int maskTileSize) {
+    changeRectangle(r, maskTileSize, false);
   }
   
  /*------------------------------------------------------------------------------------*/

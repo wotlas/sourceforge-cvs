@@ -36,7 +36,6 @@ public class BaseKnowledge
  /*------------------------------------------------------------------------------------*/
 
 
-
   /** The name of the knowledge.
    */
       private String knowledgeName;
@@ -47,7 +46,7 @@ public class BaseKnowledge
 	  
   /** The maximum duration of use.
    */
-      private short duration;
+      private short maxDuration;
 
   /** The required levels. THE CLASS LEVEL DOESN'T EXISTS 
    */
@@ -64,6 +63,60 @@ public class BaseKnowledge
    */
      public BaseKnowledge();
 	 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Get the knowledge name.
+   * @return knowledgeName
+   */
+    public String getKnowledgeName()
+    {
+        return knowledgeName;
+    }
+
+  /** Set the knowledge name.
+   * @param knowledgeName the new knowledge name
+   */
+    public void setKnowledgeName(String knowledgeName)
+    {
+        this.knowledgeName=knowledgeName;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Get the knowledge kind name.
+   * @return kindName
+   */
+    public String getKindName()
+    {
+        return kindName;
+    }
+
+  /** Set the knowledge kind name.
+   * @param kindName the new knowledge kind name
+   */
+    public void setKindName(String kindName)
+    {
+        this.kindName=kindName;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Get the maximum duration of continuous use.
+   * @return maxDuration
+   */
+    public short getMaxDuration()
+    {
+        return maxDuration;
+    }
+
+  /** Set the maximum duration of continuous use.
+   * @param maxDuration the new maximum duration
+   */
+    public void setMaxDuration(short maxDuration)
+    {
+        this.maxDuration=maxDuration;
+    }
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Get the pre-required knowledges to learn this one.
@@ -84,5 +137,22 @@ public class BaseKnowledge
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** Get the pre-required levels to learn this knowledge.
+   * @return preRequiredLevels
+   */
+    public String[]/*Level[]*/ getPreRequiredLevels()
+    {
+        return preRequiredLevels;
+    }
+
+  /** Set the pre-required levels to learn this knowledge.
+   * @param preRequiredLevels the new pre-required levels
+   */
+    public void setPreRequiredLevels(String[]/*Level[]*/ preRequiredLevels)
+    {
+        this.preRequiredLevels=preRequiredLevels;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
 

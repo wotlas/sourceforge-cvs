@@ -74,7 +74,7 @@ public class BaseObject
 	 
  /*------------------------------------------------------------------------------------*/
 		
-  /* ------- Constructor - TO DO ----- */		
+  /* ------- Constructor - TO DO . ----- */		
 		
   /* ------- Getters / Setters - still missing some - boring :-( --------- */
 	

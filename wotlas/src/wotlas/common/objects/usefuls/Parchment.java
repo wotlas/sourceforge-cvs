@@ -26,6 +26,7 @@ import wotlas.common.objects.interfaces.*;
  * 
  * @author Elann
  * @see wotlas.common.objects.usefuls.Document
+ * @see wotlas.common.objects.usefuls.Chapter
  */
 
 public class Parchment extends Document
@@ -37,9 +38,13 @@ public class Parchment extends Document
   */
   private boolean equipped;
   
- /** The text of the parchment. HTML formatted. Perhaps a Chapter ?
+ /** The text of the parchment.
   */
-  private String text;
+  private Chapter text;
+  
+ /** The name of the parchment.
+  */
+  private String title;
 
  
  /*------------------------------------------------------------------------------------*/
@@ -48,17 +53,38 @@ public class Parchment extends Document
    */			
     public Parchment()
 	{
-	 this.className="Parchment";
-	 this.objectName="default parchment";
+	 className="Parchment";
+	 objectName="default parchment";
+	 title="Untitled";
+	 
+	 text=new Chapter();
+	 text.setChapterTitle(title);
 	}															
  
+  /** Constructor with title.
+   * @param title the parchment's title 
+   */			
+    public Parchment(String title)
+	{
+	 className="Parchment";
+	 objectName="default parchment";
+	 this.title=title;
+	 
+	 text=new Chapter();
+	 text.setChapterTitle(title);
+	}															
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
   /** Use the object.<br> 
    */
     public void use()
 	{
+	 if (!equipped)
+	 	return;
+		
 	 makeReady();
+	 /* Open the GUI */
 	}
 
   /** Put the object "on". Needed before action is possible.
@@ -71,20 +97,20 @@ public class Parchment extends Document
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 	
   /** Ready the document.
-   * Unfold for a parchment, open for a book, ...  
+   * Currently no op.  
    */
     public void makeReady()
 	{
-	 /* open the GUI ? */
+	 /* no op */
 	}
 	
  
   /** Write to the document.
-   * @param text the text to write
+   * @param line the text to add
    */
-    public void writeText(String text)
+    public void writeText(String line)
 	{
-	 /* append ... */
+	 text.getParagraph(text.getCurrentParagraph()).appendString(line);
 	}
 	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -94,7 +120,7 @@ public class Parchment extends Document
    */
     public String readText()
 	{
-	 return text;
+	 return text.getParagraph(text.getCurrentParagraph()).getText();
 	}
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

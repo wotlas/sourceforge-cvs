@@ -20,10 +20,10 @@
 package wotlas.common.objects.usefuls;
 
 import wotlas.common.objects.interfaces.BookInterface;
-import wotlas.common.objects.usefuls.Chapter;
-
 import wotlas.common.objects.valueds.ValuedObject;
 import wotlas.common.Player;
+
+import wotlas.utils.Debug;
 
 /** 
  * The class of books.
@@ -65,11 +65,14 @@ public class Book extends Document implements BookInterface
    */			
     public Book()
 	{
-	 this.className="Book";
-	 this.objectName="default book";
+	 className="Book";
+	 objectName="default book";
 	 
-	 this.nbChapters=0;
-	 this.currentChapter=-1;	 
+	 chapters=null;
+	 nbChapters=0;
+	 currentChapter=-1;
+	 title="Untitled";
+	 equipped=false;	 	 
 	}															
  
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -79,6 +82,8 @@ public class Book extends Document implements BookInterface
    */
     public void use()
 	{
+	 if (!equipped)
+	 	return;
 	 open();
 	}
 
@@ -86,10 +91,9 @@ public class Book extends Document implements BookInterface
    */
     public void equip()
 	{
+	 /* Put it on */
 	 equipped=true;
 	}
-
-
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -97,13 +101,21 @@ public class Book extends Document implements BookInterface
    */
     public void open()
 	{
-	 if (this.nbChapters!=-1)
+	 if (nbChapters==-1)
 	 {
-//	  Debug.signal(Debug.WARNING,this,"Trying to open an empty book or a book already open");
+	  Debug.signal(Debug.WARNING,this,"Trying to open an empty book");
+	  return;	  
+	 }
+	 
+	 if (currentChapter!=-1)
+	 {
+	  Debug.signal(Debug.WARNING,this,"Trying to open already opened book");
 	  return;	  
 	 }
 	 	
-	 this.currentChapter=0;					/* Chapter 0 should be something special */
+	 currentChapter=0;					/* Chapter 0 should be something special */
+	 
+	 /* Launch the GUI */
 	}
 
   /** Ready the book.
@@ -111,7 +123,7 @@ public class Book extends Document implements BookInterface
    */
     public void makeReady()
 	{
-	 this.open();
+	 open();
 	}
 
   /** Get the current chapter.
@@ -122,21 +134,23 @@ public class Book extends Document implements BookInterface
 	 return currentChapter;
 	}
 	
-  /** Set the current chapter.
+  /** Set the current chapter.<br>
+   * Range checking done here.
    * @param targetChapter the new chapter.
    */
     public void setCurrentChapter(short targetChapter)
 	{
 	 if (this.nbChapters<targetChapter || targetChapter<0)
 	 {
-//	  Debug.signal(Debug.WARNING,this,"Trying to go to unexistant chapter");
+	  Debug.signal(Debug.WARNING,this,"Trying to go to unexistant chapter");
 	  return;	 
 	 }
 	 
 	 this.currentChapter=targetChapter;
 	}
 	
-  /** Get a chapter by index.
+  /** Get a chapter by index.<br>
+   * Range checking done here. Warning sent if invalid.
    * @param index the index in the book
    * @return the requested Chapter if available ; null else
    */ 
@@ -144,7 +158,7 @@ public class Book extends Document implements BookInterface
 	{
 	 if (this.nbChapters<index || index<0)
 	 {
-//	  Debug.signal(Debug.WARNING,this,"Trying to get an unexistant chapter");
+	  Debug.signal(Debug.WARNING,this,"Trying to get an unexistant chapter");
 	  return null;	 
 	 }
 	 
@@ -159,8 +173,8 @@ public class Book extends Document implements BookInterface
 	 return nbChapters;
 	}
 	
-  /** Set the number of chapters in the book.
-   * Should not be called directly.
+  /** Set the number of chapters in the book.<br>
+   * Should not be called directly. Array initialisation not done here.
    * @param nbChapters the new number of chapters. 
    */
     public void setNbChapters(short nbChapters)
@@ -168,7 +182,8 @@ public class Book extends Document implements BookInterface
 	 this.nbChapters=nbChapters;
 	}
 
-  /** Get the document's text.
+  /** Get the document's text.<br>
+   * If the book is open, returns the current paragraph. Otherwise returns the book's title (cover).
    * @return current readable text
    */
     public String readText()
@@ -190,8 +205,8 @@ public class Book extends Document implements BookInterface
 	{
 	 if (this.currentChapter<0)
 	 {
-//	  Debug.signal(Debug.WARNING,this,"Trying to write in a closed book");
-	 	return;		
+	  Debug.signal(Debug.WARNING,this,"Trying to write in a closed book");
+	  return;		
 	 }
 
 	 Chapter currChapter=this.chapters[this.currentChapter];
@@ -201,15 +216,22 @@ public class Book extends Document implements BookInterface
 	}
 	
 
-  /** Search the book for a chapter. If the chapter is found, it becomes the current chapter.
+  /** Search the book for a chapter.<br> 
+   * If the chapter is found, it becomes the current chapter. <br>Else returns -1.
    * @param chapterName the name of the chapter searched.
    * @return found index or -1
    */
     public short searchChapter(String chapterName)
 	{
 	 short index=0;
-	 /* implement the search */
-	 setCurrentChapter(index);
+	 while (chapters[index].getChapterTitle()!=chapterName && index<nbChapters)
+	 	   index++;
+	  
+	 if (index>nbChapters)
+	 	index=-1;
+	 else	   
+		 setCurrentChapter(index);
+		 
 	 return index;
 	}
 	
@@ -220,8 +242,13 @@ public class Book extends Document implements BookInterface
     public Chapter getChapterByTitle(String title)
 	{
 	 int index=0;
-	 /* implement the search */
-	 return chapters[index];	
+	 while (chapters[index].getChapterTitle()!=title && index<nbChapters)
+	 	   index++;
+	  
+	 if (index>nbChapters)
+	 	return null;
+	 else	   
+	 	return chapters[index];	
 	}
 	
 	

@@ -42,8 +42,8 @@ public abstract class UsefulObject extends BaseObject implements UsefulInterface
    */			
     public UsefulObject()
 	{
-	 this.className="UsefulObject";
-	 this.objectName="default useful object";
+	 className="UsefulObject";
+	 objectName="default useful object";
 	}															
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -27,21 +27,21 @@ package wotlas.common.objects.usefuls;
  * @see wotlas.common.objects.usefuls.Chapter
  */
 
-public class Paragraph
+class Paragraph
 {
 
  /*------------------------------------------------------------------------------------*/
 
- /** The actuel text of the paragraph. 
+ /** The actual text of the paragraph. 
   * HTML format.
   */
   private String text;
-
+ 
  /** The list of possible strike out styles. Defines if the text is readable, quite, barely or not at all.
   * Many thanks to Elaida ... ;-)
   */
   public static final String[] strikeOutStyles={"no strike","clear strike","bold strike","heavy strike"};
- 
+
  /** The current strike out style.
   */
   private short strikeOutStyle;
@@ -78,7 +78,7 @@ public class Paragraph
   */
    public void appendString(String newString)
    {
-    /* no op */
+    text=text+"<br>"+newString;
    }
 
  /** Get the strike out style of the paragraph.

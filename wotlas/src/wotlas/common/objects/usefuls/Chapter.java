@@ -19,17 +19,18 @@
  
 package wotlas.common.objects.usefuls;
 
-import wotlas.common.objects.usefuls.Paragraph;
+import wotlas.utils.Debug;
 
 /** 
  * The class of chapters.
- * Used in books.
+ * Used in books and parchments.
  * @author Elann
  * @see wotlas.common.objects.usefuls.Book
+ * @see wotlas.common.objects.usefuls.Parchment
  * @see wotlas.common.objects.usefuls.Paragraph
  */
 
-public class Chapter
+class Chapter
 {
 
  /*------------------------------------------------------------------------------------*/
@@ -61,29 +62,63 @@ public class Chapter
    */			
     public Chapter()
 	{
-	 this.nbParagraphs=0;	 
+	 nbParagraphs=0;
+	 chapterTitle="Untitled";	 
 	}															
  
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Get a paragraph in the chapter by index.
+ /** Add a paragraph in the chapter.
+   */	
+    public void addParagraph()
+	{
+	 if (nbParagraphs==0)
+	 	paragraphs=new Paragraph[1];
+	 else if (nbParagraphs<maxNbParagraphsPerChapter)
+	 	  {
+		   Paragraph tmp[]=new Paragraph[++nbParagraphs];
+		   System.arraycopy( paragraphs, 0, tmp, 0, paragraphs.length );
+		   paragraphs=tmp;		  
+		  }
+		 else
+		  Debug.signal(Debug.WARNING,this,"Trying to add too many paragraphs in a chapter");
+	} 
+
+ /** Remove a paragraph from the chapter.
+  * @param index the index of the paragraph to remove
+  */	
+    public void removeParagraph(int index)
+	{
+	 if (index>nbParagraphs || index<0)
+	 {
+	  Debug.signal(Debug.WARNING,this,"Trying to remove an inexistant paragraph");
+	  return;
+	 }
+	 
+	 Paragraph tmp[]=new Paragraph[--nbParagraphs];
+	 System.arraycopy(paragraphs,0,tmp,0,index);
+	 System.arraycopy(paragraphs,index+1,tmp,index,paragraphs.length-index-1);
+	 paragraphs=tmp;	
+	}
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Get a paragraph in the chapter by index.<br>
+   * Range checking done here. Warning sent if invalid.
    * @param index the index of the paragraph
+   * @return the requested paragraph if available ; null else
    */	
     public Paragraph getParagraph(int index)
 	{
+	 if (this.nbParagraphs<index || index<0)
+	 {
+	  Debug.signal(Debug.WARNING,this,"Trying to get an unexistant paragraph");
+	  return null;	 
+	 }
+	 	
 	 return paragraphs[index];
 	}
-	
-  /** Get a paragraph in the chapter by title.
-   * @param title the title of the paragraph
-   */	
-    public Paragraph getParagraphByTitle(String title)
-	{
-	 int index=0;
-	 /* implement a search */
-	 return paragraphs[index];
-	}
-	
+		
   /** Get the current number of paragraphs in the chapter.
    * @return nbParagraphs
    */
@@ -118,6 +153,24 @@ public class Chapter
 	 this.currentParagraph=currentParagraph;
 	}
 
+  /** Get the title of the chapter.
+   * @return chapterTitle
+   */
+	public String getChapterTitle()
+	{
+	 return chapterTitle;
+	}
+ 
+  /** Set the title of the Chapter
+   * @param chapterTitle the new title
+   */
+	public void setChapterTitle(String chapterTitle)
+	{
+	 this.chapterTitle=chapterTitle;
+	}
+	
+	
+	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
 }

@@ -33,7 +33,7 @@ public interface BookInterface
  /** The maximum allowed size of a book.
   */
  	public static final short maxNbChaptersPerBook=20;
-
+	
  /*------------------------------------------------------------------------------------*/
 
   /** Open the book. First chapter active.

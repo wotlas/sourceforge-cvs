@@ -22,7 +22,7 @@ package wotlas.server.message.movement;
 import java.io.IOException;
 import java.util.*;
 
-import wotlas.utils.Debug;
+import wotlas.utils.*;
 
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.common.message.movement.*;
@@ -58,6 +58,7 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
 
         // The context is here a PlayerImpl.
            PlayerImpl player = (PlayerImpl) context;
+           boolean mapEnter = false;
 
         // 1 - CONTROL
            if(primaryKey==null) {
@@ -71,93 +72,115 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
            }
        
            if( !player.getLocation().isRoom() ) {
-              Debug.signal( Debug.ERROR, this, "Current Player Location is not a Room !!" );
-              player.sendMessage( new ResetPositionMessage( primaryKey, player.getLocation()) );
+              sendError( player, "Current Player Location is not a Room !! "+player.getLocation());
               return;
            }
   
            if( location.getWorldMapID()!=player.getLocation().getWorldMapID() ||
                location.getTownMapID()!=player.getLocation().getTownMapID() ||
                location.getBuildingID()!=player.getLocation().getBuildingID() ||
-               location.getInteriorMapID()!=player.getLocation().getInteriorMapID() )
-           {
-               Debug.signal( Debug.ERROR, this, "Specified target location is not on our map !!" );
-               player.sendMessage( new ResetPositionMessage( primaryKey, player.getLocation()) );
+               location.getInteriorMapID()!=player.getLocation().getInteriorMapID() ) {
+               sendError( player, "Specified target location is not on our map !! "+location );
                return;
            }
-      
+
        // Is the movement possible ?
           Room currentRoom = player.getMyRoom();
           Room targetRoom = null;
 
-          if( currentRoom==null || currentRoom.getRoomID()==location.getRoomID() )
-              return; // no update needed
-
-
-       // which of them is the target room ?
-          if(currentRoom.getRoomLinks()==null)
-             return;
-
-          for( int i=0; i<currentRoom.getRoomLinks().length; i++ )
-          {
-              Room otherRoom = currentRoom.getRoomLinks()[i].getRoom1();
-                   
-              if( otherRoom==currentRoom )
-                  otherRoom = currentRoom.getRoomLinks()[i].getRoom2();
-
-              if( otherRoom.getRoomID()==location.getRoomID() ) {
-                  targetRoom = otherRoom;
-                  break;
-              }
-          }
-           
-          if( targetRoom==null ) {
-              Debug.signal( Debug.ERROR, this, "Target Room not found !" );
-              player.sendMessage( new ResetPositionMessage( primaryKey, player.getLocation()) );
+          if( currentRoom==null ) {
+              sendError( player, "Error could not get current room ! "+player.getLocation() );
               return;
-           }
+          }
 
+          if( currentRoom.getRoomID()==location.getRoomID() )
+              mapEnter=true;
+
+          if( !mapEnter && currentRoom.getRoomLinks()==null ) {
+              sendError( player, "No update possible ! "+location );
+              return;
+          }
+
+          if(!mapEnter) {
+             for( int i=0; i<currentRoom.getRoomLinks().length; i++ ) {
+                  Room otherRoom = currentRoom.getRoomLinks()[i].getRoom1();
+                   
+                  if( otherRoom==currentRoom )
+                      otherRoom = currentRoom.getRoomLinks()[i].getRoom2();
+
+                  if( otherRoom.getRoomID()==location.getRoomID() ) {
+                      targetRoom = otherRoom;
+                      break;
+                  }
+             }
+
+             if( targetRoom==null ) {
+                 sendError( player, "Target Room not found ! " +location );
+                 return;
+             }
+          }
+          else
+              targetRoom = currentRoom;
+           
+           
        // 2 - We send REMOVE player messages
-          RemovePlayerFromRoomMessage rMsg = new RemovePlayerFromRoomMessage(primaryKey, player.getLocation() );
+          if(!mapEnter) {
+             RemovePlayerFromRoomMessage rMsg = new RemovePlayerFromRoomMessage(primaryKey, player.getLocation() );
 
-          for( int i=0; i<currentRoom.getRoomLinks().length; i++ ) {
-               Room otherRoom = currentRoom.getRoomLinks()[i].getRoom1();
+             for( int i=0; i<currentRoom.getRoomLinks().length; i++ ) {
+                  Room otherRoom = currentRoom.getRoomLinks()[i].getRoom1();
+  
+                  if( otherRoom==currentRoom )
+                      otherRoom = currentRoom.getRoomLinks()[i].getRoom2();
 
-               if( otherRoom==currentRoom )
-                   otherRoom = currentRoom.getRoomLinks()[i].getRoom2();
+                  if( otherRoom==targetRoom )
+                      continue;
 
-               if( otherRoom==targetRoom )
-                   continue;
+                  Hashtable players = otherRoom.getPlayers();
 
-               Hashtable players = otherRoom.getPlayers();
-
-               synchronized( players ) {
-                 Iterator it = players.values().iterator();
+                  synchronized( players ) {
+                     Iterator it = players.values().iterator();
               	 
-                     while( it.hasNext() ) {
-              	          PlayerImpl p = (PlayerImpl)it.next();
-                          p.sendMessage( rMsg );
-              	     }
-               }
+                        while( it.hasNext() ) {
+                            PlayerImpl p = (PlayerImpl)it.next();
+                            p.sendMessage( rMsg );
+              	        }
+                  }
+             }
+
+             Hashtable players = currentRoom.getPlayers();
+ 
+             synchronized( players ) {
+                 players.remove( primaryKey );
+             }
+
+           // We also send a CleanGhost to our client
+              player.sendMessage( new CleanGhostsMessage( primaryKey, location ) );
           }
 
-       // We change our location
-          Hashtable players = currentRoom.getPlayers();
+       // We change our location & send ADD messages
+          Hashtable players = targetRoom.getPlayers();
+          player.setLocation( location );
 
-          synchronized( players ) {
-              players.remove( primaryKey );
-          }
-
-          players = targetRoom.getPlayers();
+          AddPlayerToRoomMessage aMsg = new AddPlayerToRoomMessage( player );
 
           synchronized( players ) {
               players.put( primaryKey, player );
+              
+              if(mapEnter) {
+                 Iterator it = players.values().iterator();
+              	 
+                 while( it.hasNext() ) {
+                       PlayerImpl p = (PlayerImpl)it.next();
+                       if(p!=player)
+                          p.sendMessage( aMsg );
+              	 }
+              }
           }
 
-          player.setLocation( location );
-
-       // We send ADD player messages
-          AddPlayerToRoomMessage aMsg = new AddPlayerToRoomMessage( player );
+       // We send ADD player messages to neighbour rooms & RoomPlayerDataMessages
+       // to ourseleves
+          if(targetRoom.getRoomLinks()==null) return;
 
           for( int i=0; i<targetRoom.getRoomLinks().length; i++ ) {
                Room otherRoom = targetRoom.getRoomLinks()[i].getRoom1();
@@ -168,6 +191,7 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
                if( otherRoom==currentRoom )
                    continue;
 
+            // AddPlayerDataMessages
                players = otherRoom.getPlayers();
 
                synchronized( players ) {
@@ -178,10 +202,37 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
                           p.sendMessage( aMsg );
               	     }
                }
-          }
 
+            // RoomPlayerDataMessages
+               if( !mapEnter ) {
+                  WotlasLocation roomLoc = new WotlasLocation( player.getLocation() );
+                  roomLoc.setRoomID( otherRoom.getRoomID() );
+
+                  player.sendMessage( new RoomPlayerDataMessage( roomLoc,
+                                       player, otherRoom.getPlayers() ) );
+               }
+          }
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To send an error message to the client.
+    */
+     public void sendError( PlayerImpl player, String message ) {
+         Debug.signal( Debug.ERROR, this, message );
+
+         ScreenPoint pReset = null;
+
+         if( player.getLocation().isRoom() )
+             pReset = player.getMyRoom().getInsertionPoint();
+         else
+             pReset = new ScreenPoint(-1, -1);
+
+         player.sendMessage( new ResetPositionMessage( primaryKey, player.getLocation(),
+                                                       pReset.x, pReset.y ));
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }
 

@@ -74,18 +74,19 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
        // We send the update to other players
           if( player.getLocation().isRoom() ) {
 
-              Room room = player.getMyRoom();              
+              Room room = player.getMyRoom();
               if( room==null ) return;
 
            // Current Room
               Hashtable players = room.getPlayers();
-     
+
               synchronized( players ) {
               	 Iterator it = players.values().iterator();
               	 
               	 while( it.hasNext() ) {
               	    PlayerImpl p = (PlayerImpl)it.next();
-                    p.sendMessage( this );    	    
+              	    if(p!=player)
+                       p.sendMessage( this );
               	 }
               }
 
@@ -109,7 +110,6 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
               	      }
                    }
               }
-
           }
      }
 

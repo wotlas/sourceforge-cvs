@@ -104,6 +104,7 @@ public class AesSedai extends Female {
 
        // 1 - Sprite Creation + Filter
           aesSedaiSprite = new Sprite( (SpriteDataSupplier) player, ImageLibRef.PLAYER_PRIORITY );
+          aesSedaiSprite.useAntialiasing(true);
 
           filter = new ColorImageFilter();
 
@@ -188,7 +189,7 @@ public class AesSedai extends Female {
                                                        ImageLibRef.PLAYER_SHADOW_IMAGES_SET,
                                                        ImageLibRef.AES_SEDAI_WALK_SHADOW_ACTION ),
                                                   ImageLibRef.SHADOW_PRIORITY, 4, 4 );
-
+         aesSedaiShadowSprite.useAntialiasing(true);
          return aesSedaiShadowSprite;
      }
 

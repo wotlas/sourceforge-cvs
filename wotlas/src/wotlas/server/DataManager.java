@@ -74,8 +74,11 @@ public class DataManager
        // located on Maps, it's our game organization... ).
           Iterator it = accountManager.getIterator();
 
-          while( it.hasNext() )
-                 worldManager.addNewPlayer( ( (GameAccount) it.next() ).getPlayer() );
+          while( it.hasNext() ) {
+          	 GameAccount account = (GameAccount) it.next();
+          	 if( !account.getIsDeadAccount() )
+                     worldManager.addNewPlayer( account.getPlayer() );
+          }
 
        // 6 - We initialize the player objects that we just placed in the world.
           it = accountManager.getIterator();

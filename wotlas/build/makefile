@@ -16,15 +16,26 @@ SHELL = c:\\command.com
 
 # PACKAGES
 # 
-# List here all the WOTLAS packages to compile.
+# List here all the WOTLAS packages to compile. We groupped the different packages
+# to wrestle with Grosoft Windows buffer limitations...
 #
 
-PACKAGES  = wotlas/libs/net \
-            wotlas/libs/net/message \
-            wotlas/libs/net/personality \
-            wotlas/libs/pathfinding \
-            wotlas/libs/persistence \
-            wotlas/utils
+UTILS_PACKAGES = wotlas/utils
+
+LIBS_PACKAGES  = wotlas/libs/net \
+                 wotlas/libs/net/message \
+                 wotlas/libs/net/personality \
+                 wotlas/libs/pathfinding \
+                 wotlas/libs/persistence
+
+COMMON_PACKAGES = wotlas/common \
+                  wotlas/common/universe \
+                  wotlas/common/message
+
+SERVER_PACKAGES = wotlas/server
+
+CLIENT_PACKAGES = 
+
 
 ##########################################################################
 
@@ -33,10 +44,35 @@ SRCDIR = ../src
 JAVAC = javac
 
 # We transform our package list into a source list
-SRCS = $(foreach dir,$(PACKAGES),$(SRCDIR)/$(dir)/*.java)
+
+SRC_UTILS = $(foreach dir,$(UTILS_PACKAGES),$(SRCDIR)/$(dir)/*.java)
+
+SRC_LIBS = $(foreach dir,$(LIBS_PACKAGES),$(SRCDIR)/$(dir)/*.java)
+
+SRC_COMMON = $(foreach dir,$(COMMON_PACKAGES),$(SRCDIR)/$(dir)/*.java)
+
+SRC_SERVER = $(foreach dir,$(SERVER_PACKAGES),$(SRCDIR)/$(dir)/*.java)
+
+SRC_CLIENT = $(foreach dir,$(CLIENT_PACKAGES),$(SRCDIR)/$(dir)/*.java)
+
 
 # And we compile it all
-all:
-	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRCS)
+all: utils libs common server client
+
+utils:
+	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_UTILS)
+
+libs:
+	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_LIBS)
+
+common:
+	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_COMMON)
+
+server:
+	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_SERVER)
+
+client:
+	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_CLIENT)
+
 
 ##########################################################################

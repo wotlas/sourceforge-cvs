@@ -23,8 +23,7 @@
     often changed by my Internet provider. What can I do ?<br>
     <b><a href="#q15">1.5</a></b> - How do I get my server's IP ?<br>
     <b><a href="#q16">1.6</a></b> - I have a DSL Internet connection that works 
-    with a DSL hub which is connected to my server via<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;an&nbsp;ethernet network. 
+    with a DSL hub which is connected to my server via an&nbsp;ethernet network. 
     How can I make my server be enabled from the Internet ?<br>
     <b><a href="#q17">1.7</a></b> - How can I move my wotlas server to another 
     computer ?<br>
@@ -38,15 +37,18 @@
     <b><a href="#q112">1.12</a></b> - I want to delete someone's account. How 
     can I do that ?<br>
     <b><a href="#q113">1.13</a></b> - I'm using ports above 1024 for my wotlas 
-    server and it seems nobody can connect to my server !<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; what's happening 
-    ?<br>
+    server and it seems nobody can connect to my server ! what's happening ?<br>
     <b><a href="#q114">1.14</a></b> - Do I need to warn the wotlas network administrator 
     if I have to stop my server for some time ?<br>
     <b><a href="#q115">1.15</a></b> - Are there any start-up options I can use 
     for my server ?<br>
     <b><a href="#q116">1.16</a></b> - I've found a free domain name offer on the 
-    Internet, do you advice me to use it for wotlas ?</font></p>
+    Internet, do you advice me to use it for wotlas ?<b><br>
+    <a href="#q117"> 1.17</a></b> - My DSL modem is using PPPoE, not PPPoA. Do 
+    I have to do something special to configure my server ?<br>
+    <a href="#q118"><b>1.18</b></a> - I'm tring to use the <i>Setup</i> utility 
+    but the file tranfer with <i>pscp</i> doesn't seem to be working... what's 
+    happening ?</font></p>
 </blockquote>
 <p><font size="3" color="#006699"><b>II - FAQ - Wotlas Client - Technical Problems</b></font><font size="2" color="#006666"><br>
   </font> </p>
@@ -62,8 +64,7 @@
     <b><a href="#q24">2.4</a></b> - How do I know if my Internet connection uses 
     a proxy ?<br>
     <b><a href="#q25">2.5</a></b> - When I start wotlas I have a window telling 
-    me to choose a server to create an account, but<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the server's list is empty 
+    me to choose a server to create an account, but the server's list is empty 
     ! What happened ?<br>
     <b><a href="#q26">2.6</a></b> - The game crashed after the final step of the 
     account creation. What happened ?<br>
@@ -72,7 +73,9 @@
     <b><a href="#q28">2.8</a></b> - Are there any start-up options I can use for 
     my wotlas client ?<br>
     <b><a href="#q29">2.9</a></b> - I've connected to the game, why does the game 
-    screen flickers when I click it ?</font></p>
+    screen flickers when I click it ?<br>
+    <b><a href="#q210">2.10</a></b> - I have Windows XP. Why are all the windows 
+    flickering when I play wotlas ?</font></p>
 </blockquote>
 <p><font size="3" color="#006699"><b>III - FAQ - Wotlas Client - Playing Wotlas</b></font><font size="3"><br>
   </font><font size="2"> </font></p>
@@ -82,13 +85,11 @@
     <b><a href="#q31">3.1</a></b> - Can I create more than one game account ?<br>
     <b><a href="#q32">3.2</a></b> - Ok I'm in the game. What can I do ?<br>
     <b><a href="#q33">3.3</a></b> - I'm trying to speak to someone in the chat 
-    but he doesn't seem to hear me. How does this damned <br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; chat work ?<br>
+    but he doesn't seem to hear me. How does this damned chat work ?<br>
     <b><a href="#q34">3.4</a> </b> - Why are the movements on the world map so 
     slow ?<br>
     <b><a href="#q35">3.5</a></b> - I'm on a map where there seems to be an opening 
-    on a side, but it doesn't lead me to anywhere. <br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; What's this all about ?<br>
+    on a side, but it doesn't lead me to anywhere. What's this all about ?<br>
     <b><a href="#q36">3.6</a></b> - I've been wandering on a map and I don't seem 
     to be able to leave it. What's happening ?<br>
     <b><a href="#q37">3.7</a></b> - I don't meet anybody in this game. Isn't it 
@@ -99,9 +100,8 @@
     <b><a href="#q310">3.10</a></b> - is my discussion saved when I chat with 
     someone in wotlas ?<br>
     <b><a href="#q311">3.11</a></b> - Sometimes when I travel to a location of 
-    the game the wotlas server connection seems to be shut<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; and automatically 
-    re-started. what's happening ?<br>
+    the game the wotlas server connection seems to be shut and automatically re-started. 
+    what's happening ?<br>
     <b><a href="#q312">3.12</a></b> - What's this multi-server feature all about 
     ?<br>
     <b><a href="#q313">3.13</a></b> - Can I spy chat groups ?<br>
@@ -238,35 +238,49 @@
   <p><b>1.6</b> - I have a DSL Internet connection that works with a DSL hub which 
     is connected to my server via an ethernet network. How can I make my server 
     be enabled from the Internet ?<a name="q16"></a></p>
-  <blockquote>
-    <p>
-    <font size="2">If you use NAT (Network Address Translation) because you have 
-    only one public IP address, you'll have to do port translation ( for the 3 
-    ports declared in the <i>register</i> utility) to the computer where your 
-    server is running.<br>
-    <br>
-    For example, if the server private IP is 192.168.1.2, add the following NAT 
-    rules:<br>
-    <br>
-    <li>ADD IP NAT TCP 763 192.168.1.2 (Game server) <br>
-    <li>ADD IP NAT TCP 764 192.168.1.2 (Account server)
-    <li>A<font size="2">DD IP NAT TCP 765 192.168.1.2 (Gateway server)<br>
+  <blockquote> 
+    <p> 
+    <p><font size="2">If your ADSL modem is directly connected to your computer 
+      via a PPPoE connection please go to question <a href="#q117">1.17</a>. If 
+      not you'll have to set up NAT ( Network Address Translation) entries on 
+      your ADSL hub.<br>
       <br>
-      1) Put your private server IP in the file base/servers/server-<i>N</i>.cfg.adr 
-      (where <i>N</i> is your server id)<br>
-      2) Start your server<br>
-      3) Publish your public ip with the <i>setup</i> utility (cf. <a href="#q12">1.2</a>).<br>
+      You need to use NAT because you have only one public IP address, so you'll 
+      have to do port translation ( for the 3 ports you declared in the <i>register.bat</i> 
+      utility) to the computer where your wotlas server is running.<br>
       <br>
-      Each time your public ip change, you can use the <i>setup</i> utility (cf. 
-      <a href="#q12">1.2</a>) to update your server's IP without having to restart 
-      your server (cf. <a href="#q15">1.5</a>).<br>
+      For example, if your server private IP is 192.168.1.2 and the declared wotlas 
+      server ports are 763, 764 and 765, then :<br>
       <br>
-      To test the client from your private network, the file base/servers/server-<i>N</i>.cfg.adr 
+      1 - add the following NAT rules:</font></p>
+    <blockquote> 
+      <p><font size="2">- ADD IP NAT TCP 763 192.168.1.2 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;( 
+        Game server )<br>
+        - ADD IP NAT TCP 764 192.168.1.2 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;( 
+        Account server )<br>
+        - ADD IP NAT TCP 765 192.168.1.2 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;( 
+        Gateway server )</font></p>
+    </blockquote>
+    <p><font size="2">2</font><font size="2"> - Put your private server IP ( 192.168.1.2 
+      here ) in the file base/servers/server-<i>N</i>.cfg.adr (where <i>N</i> 
+      is your server id).<br>
+      <br>
+      3 - Start your server.<br>
+      <br>
+      4 - Publish your public ip with the <i>setup</i> utility (cf. <a href="#q12">1.2</a>).<br>
+      <br>
+      Each time your public ip changes, you can use the <i>setup</i> utility (cf. 
+      <a href="#q12">1.2</a>) to update your server's IP <b><i>without</i></b> 
+      having to restart your server (cf. <a href="#q15">1.5</a>).<br>
+      <br>
+      IMPORTANT : To test the wotlas client ( via the wotlas-client package ) 
+      from your private network, the file base/servers/server-<i>N</i>.cfg.adr 
       must contain the private ip address of your server (not the public address!). 
       Good Luck !<br>
       <br>
-      <a href="#top">back to the top</a></font> 
-      <p></p>
+      <a href="#top">back to the top</a></font></p>
+    <font size="2"> 
+    <p></p>
     </font></blockquote>
   <p><b>1.7</b> - How can I move my wotlas server to another computer ?<a name="q17"></a></p>
   <blockquote> 
@@ -353,7 +367,9 @@
     <p><font size="2">Edit your <i>server.bat</i> or <i>server.sh</i> script. 
       At the end of the <i>ServerDirector</i> line you can add : a <i>-debug </i>if 
       you want more debug information, a <i>-erroronly</i> if you only want errors 
-      to be displayed and not <i>NOTICE</i>,<i> WARNING</i> messages.<br>
+      to be displayed and not <i>NOTICE</i>,<i> WARNING</i> messages. There is 
+      also a <i>-daemon</i> option if you want your server to send the log messages 
+      directly to disk without printing them to the screen.<br>
       <br>
       <a href="#top">back to the top</a></font></p>
   </blockquote>
@@ -387,8 +403,68 @@
       <br>
       <a href="#top">back to the top</a></font></p>
   </blockquote>
+  <p><b>1.17</b> - My DSL modem is using PPPoE, not PPPoA. Do I have to do something 
+    special to configure my server ?<a name="q117"></a></p>
+  <blockquote> 
+    <p><font size="2">Well, as long as your ADSL modem is directly connected to 
+      your computer there should be no problem with PPPoE ( PPP over Ethernet 
+      ) as with PPPoA ( PPP over ATM ), though PPPoE can be confusing.<br>
+      <br>
+      With a PPPoE DSL modem you'll notice that if you list your IP interfaces 
+      ( <i>ifconfig</i> or <i>ipconfig</i> ) you have two interfaces linked to 
+      your DSL modem :</font></p>
+    <blockquote> 
+      <p><font size="2"><b>Ethernet adapter DSL Modem:</b></font></p>
+      <blockquote> 
+        <p><font size="2"> Connection-specific DNS Suffix . : <br>
+          IP Address. . . . . . . . . . . . : 10.0.0.1<br>
+          Subnet Mask . . . . . . . . . . . : 255.0.0.0<br>
+          Default Gateway . . . . . . . . . : 10.0.0.120</font></p>
+      </blockquote>
+      <p><font size="2"><b>PPP adapter FastAccess:</b></font></p>
+      <blockquote> 
+        <p><font size="2"> Connection-specific DNS Suffix . :<br>
+          IP Address. . . . . . . . . . . . : 63.11.11.11<br>
+          Subnet Mask . . . . . . . . . . . : 255.255.255.255<br>
+          Default Gateway . . . . . . . . . : 63.11.11.88</font></p>
+      </blockquote>
+    </blockquote>
+    <p><font size="2">The IP interface you want to use here in <i>Setup.bat</i> 
+      is the last one <i>&quot;PPP adapter FastAccess&quot;</i>.<br>
+      <br>
+      <i>Thanks to Fred McMaster for his help on this entry.</i><a href="#top"><br>
+      back to the top</a></font></p>
+  </blockquote>
+  <p><b>1.18</b> - I'm tring to use the <i>Setup</i> utility but the file tranfer 
+    with <i>pscp</i> doesn't seem to be working... what's happening ?<a name="q118"></a></p>
+  <blockquote> 
+    <p><font size="2">First check that, if you have a firewall on your computer, 
+      <i>pscp</i> has access to Internet. Then, if you have registered your server 
+      on the wotlas public network, you'll have to make sure <i>pscp</i> knows 
+      the encryption key of <i>SourceForge.net</i>. To do that open a shell/command 
+      window and enter the following line :<br>
+      <br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pscp &nbsp;&nbsp;test.txt &nbsp;&nbsp;mySourceForgeLogin@shell.sf.net:/home/groups/w/wo/wotlas/<br>
+      <br>
+      Once you have done that the <i>Setup </i>utility should be working perfectly. 
+      For your information here is what the <i>PuTTY</i> docs says :</font></p>
+    <blockquote> 
+      <p><font size="2"><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PuTTY records 
+        the host key for each server you connect to, in the Windows Registry. 
+        Every time you connect to a server, it checks that the host key presented 
+        by the server is the same host key as it was the last time you connected. 
+        If it is not, you will see a warning, and you will have the chance to 
+        abandon your connection before you type any private information (such 
+        as a password) into it.</i></font></p>
+    </blockquote>
+    <p><font size="2">But because we are using <i>PuTTY's</i> <i>pscp</i> in batch 
+      mode you won't see the warnings at all, the command will just fail.<br>
+      <i><br>
+      Thanks to Fred McMaster for his help on this entry.</i><br>
+      <a href="#top">back to the top</a></font></p>
+  </blockquote>
+  <p>&nbsp;</p>
 </blockquote>
-<p>&nbsp;</p>
 <p><font size="4" color="#006699">II - FAQ - Wotlas Client Technical Problems</font><font size="4" color="#006666"><br>
   </font><font size="3" color="#006666"></font> </p>
 <blockquote> 
@@ -521,6 +597,16 @@
       it works fine but if you encounter any problems, stop wotlas and other running 
       programs, then restart wotlas.<br>
       <br>
+      <a href="#top">back to the top</a></font></p>
+  </blockquote>
+  <p><b>2.10</b> - I have Windows XP. Why are all the windows flickering when 
+    I play wotlas ?<a name="q210"></a></p>
+  <blockquote> 
+    <p><font size="2">This is because of the <i>shadows</i> option. If you look 
+      in your Windows <i>properties / appearance</i> panel and clear the <i>shadows</i> 
+      on menus then the flickering will go away.<br>
+      <i><br>
+      Thanks to Fred McMaster for his help on this entry.</i><br>
       <a href="#top">back to the top</a></font></p>
   </blockquote>
   <p>&nbsp;</p>

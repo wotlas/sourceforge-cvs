@@ -21,7 +21,7 @@
 
 	echo "\n<input type=hidden value=$num name=num>";	
 	echo "\nTitle :<br>";
-	echo "<input size=60 maxlength=128 name=titre value=".$lin["titre"]."><br>";
+	echo "<input size=60 maxlength=128 name=titre value=\"".$lin["titre"]."\"><br>";
 	
 	echo "\nDate : (dd-mm-yyyy)<br>";
 	echo "<input size=12 maxlength=10 name=date value=".Conv_date($lin["date"])."><br>";

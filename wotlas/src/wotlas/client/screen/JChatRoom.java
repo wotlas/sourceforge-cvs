@@ -292,13 +292,14 @@ public class JChatRoom extends JPanel implements MouseListener {
     if (DataManager.SHOW_DEBUG)
       System.out.println("[JChatRoom] : clic sur (" + e.getX() + "," + e.getY() + ")");
     if (SwingUtilities.isRightMouseButton(e)) {
-      
+      return;
     } else {
       if (DataManager.SHOW_DEBUG)
         System.out.println("\tleft clic");
-      String selectedPlayerName = (String) playersJList.getSelectedValue();      
+      String selectedPlayerName = ((PlayerState) playersJList.getSelectedValue()).fullName;      
       ClientDirector.getDataManager().getClientScreen().getChatPanel().setInputBoxText("/to:"+selectedPlayerName+":");
     }
+    
   }
 
   class PlayersListRenderer extends JLabel implements ListCellRenderer {
@@ -315,17 +316,17 @@ public class JChatRoom extends JPanel implements MouseListener {
         String s = ((PlayerState) value).fullName;
         setText(s);
          
-        if (isSelected) {
+        /*if (isSelected) {
           setBackground(list.getSelectionBackground());
-	        setForeground(list.getSelectionForeground());
-	      } else {
+	        setForeground(list.getSelectionForeground());	        
+	      } else {*/
           setBackground(list.getBackground());
           if ( ((PlayerState) value).isNotAway ) {
 	          setForeground(list.getForeground());
 	        } else {
 	          setForeground(Color.gray);
 	        }
-        }
+        //}
         setEnabled(list.isEnabled());
         setFont(list.getFont());
         return this;

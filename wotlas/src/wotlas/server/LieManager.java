@@ -402,7 +402,7 @@ public class LieManager
         if (memory.otherPlayerKey.equals(otherPlayerKey)) {      
           Calendar lastTime = Calendar.getInstance();
           lastTime.setTime(new Date(memory.lastMeetTime));             
-          return "already met on " + Tools.getLexicalDate(lastTime) + "\n";
+          return "player already met on " + Tools.getLexicalDate(lastTime) + "\n";
         }
       }
       return "player never met\n";

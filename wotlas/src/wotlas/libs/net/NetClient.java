@@ -136,7 +136,10 @@ public class NetClient
           catch(IOException e){
            // Hum ! this server doesn't want to hear from us...
               error_message = e.getMessage();
-              personality.closeConnection();
+
+              if(personality!=null)
+                 personality.closeConnection();
+   
               return null;
  	  }
        }

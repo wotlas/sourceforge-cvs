@@ -420,7 +420,7 @@ public abstract class JWizard extends JFrame {
 
   /** To set the context object which is given to JWizardSteps onXXX methods.
    */
-   protected void setContext(Object context) {
+   public void setContext(Object context) {
      this.context = context;
    }
 

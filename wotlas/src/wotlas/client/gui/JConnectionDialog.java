@@ -143,7 +143,17 @@ public abstract class JConnectionDialog extends JDialog implements Runnable
    /** To display en error message in a pop-up.
     */
     protected void displayError( String error ) {
-    	    new AInfoDialog( frame, error, true );
+
+        final String ferror = new String(error);
+
+        Runnable runnable = new Runnable() {
+           public void run() {
+              new AInfoDialog( frame, ferror, true );
+           }
+        };
+
+        SwingUtilities.invokeLater( runnable );
+
         //  JOptionPane.showMessageDialog( frame, error, "Error", JOptionPane.ERROR_MESSAGE);
     }
 

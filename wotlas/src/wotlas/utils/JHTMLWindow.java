@@ -134,6 +134,7 @@ public class JHTMLWindow extends JDialog implements ActionListener
 
          b_ok.addActionListener(new ActionListener() {
              public void actionPerformed (ActionEvent e) {
+                timer.stop();
                 dispose();
              }
          });
@@ -173,7 +174,7 @@ public class JHTMLWindow extends JDialog implements ActionListener
 
          show();
 
-         timer = new Timer(400,this);
+         timer = new Timer(500,this);
          timer.start();
     }
 
@@ -206,6 +207,8 @@ public class JHTMLWindow extends JDialog implements ActionListener
                               { 
                                   try { 
                                           html.setPage(e.getURL());
+                                          timer.stop();
+                                          nbRepaints=0;
                                           timer.start();
                                   } catch (IOException ioe) { 
                                           html.setText( "<b>ERROR</b><br>Failed to open URL: <i>"
@@ -225,7 +228,14 @@ public class JHTMLWindow extends JDialog implements ActionListener
        return;
 
      nbRepaints++;
-     html.repaint();
+
+      Runnable runnable = new Runnable() {
+        public void run() {
+          html.repaint();
+        }
+      };
+
+      SwingUtilities.invokeLater( runnable );
 
      if( nbRepaints >= MAX_REPAINTS ) {
      	 timer.stop();

@@ -22,6 +22,7 @@ package wotlas.client.screen;
 import wotlas.libs.net.*;
 import wotlas.utils.Debug;
 import wotlas.utils.Tools;
+import wotlas.utils.aswing.*;
 
 import wotlas.client.gui.JConnectionDialog;
 
@@ -80,12 +81,19 @@ public class JDeleteAccountDialog extends JConnectionDialog
    /** To display en error message in a pop-up.
     */
     protected void displayError( String error ) {
-    	if(error.equals("Account Deleted SuccessFully.")) {
+
+    	if(error.equals("Account Deleted SuccessFully."))
           hasSucceeded = true;
-          JOptionPane.showMessageDialog( frame, error, "Success", JOptionPane.INFORMATION_MESSAGE );    	
-        }
-    	else
-          JOptionPane.showMessageDialog( frame, error, "Error", JOptionPane.ERROR_MESSAGE);
+
+        final String ferror = new String(error);
+
+        Runnable runnable = new Runnable() {
+           public void run() {
+              new AInfoDialog( frame, ferror, true );
+           }
+        };
+
+        SwingUtilities.invokeLater( runnable );
     }
 
  /*------------------------------------------------------------------------------------*/

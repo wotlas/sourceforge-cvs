@@ -45,7 +45,7 @@ public class AwayPanel extends JPanel
    */
   public AwayPanel() {
     super();
-    this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
+    this.setLayout(new BorderLayout());
 
       ATextArea ta_infos = new ATextArea("You can enter here a message that will be displayed when you are not connected:");
       ta_infos.setLineWrap(true);
@@ -53,7 +53,9 @@ public class AwayPanel extends JPanel
       ta_infos.setEditable(false);
       ta_infos.setAlignmentX(0.5f);
       ta_infos.setOpaque(false);
-      add(ta_infos);
+      add(ta_infos, BorderLayout.NORTH);
+
+      JPanel centerPanel = new JPanel( new BorderLayout() );
 
       playerTextArea = new ATextArea(10,25);
       playerTextArea.setLineWrap(true);
@@ -62,7 +64,8 @@ public class AwayPanel extends JPanel
       playerTextArea.setAlignmentX(0.5f);
       PlayerImpl player = DataManager.getDefaultDataManager().getMyPlayer();
       playerTextArea.setText(player.getPlayerAwayMessage());
-      add(new JScrollPane(playerTextArea));    
+      centerPanel.add(new JScrollPane(playerTextArea),BorderLayout.CENTER);
+      add(centerPanel, BorderLayout.CENTER);
 
       ImageIcon im_saveup  = new ImageIcon("../base/gui/save-up.gif");
       ImageIcon im_savedo  = new ImageIcon("../base/gui/save-do.gif");
@@ -97,7 +100,7 @@ public class AwayPanel extends JPanel
       JPanel whitePanel = new JPanel();
       whitePanel.setBackground( Color.white );
       whitePanel.add(savePastButton);
-      add(whitePanel);
+      add(whitePanel,BorderLayout.SOUTH);
   }
 
 

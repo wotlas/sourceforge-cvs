@@ -318,9 +318,9 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
     *  @return player away Message
     */
       public String getPlayerAwayMessage() {
-      	     if(isConnectedToGame)
+      	     if(isConnectedToGame && this!=DataManager.getDefaultDataManager().getMyPlayer())
       	        return null;
-      	
+
              if(playerAwayMessage==null)
                 sendMessage( new PlayerAwayMessage( primaryKey, "") );
 

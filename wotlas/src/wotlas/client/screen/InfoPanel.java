@@ -50,8 +50,9 @@ public class InfoPanel extends JPanel
    */
   public InfoPanel() {
     super();
-    this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
-    infoPlayerLabel.setAlignmentX(0.5f);
+    this.setLayout(new BorderLayout());
+    infoPlayerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    infoPlayerLabel.setHorizontalAlignment(SwingConstants.CENTER);
     playerTextArea = new ATextArea(10,25);
     playerTextArea.setLineWrap(true);
     playerTextArea.setWrapStyleWord(true);    
@@ -60,8 +61,8 @@ public class InfoPanel extends JPanel
     this.setText("Click on a player...");
     this.setLabelText("No Player Selected");
     
-    add(infoPlayerLabel);
-    add(new JScrollPane(playerTextArea));    
+    add(infoPlayerLabel,BorderLayout.NORTH);
+    add(new JScrollPane(playerTextArea),BorderLayout.CENTER);
   }
     
   public void setText(String text) {
@@ -110,7 +111,7 @@ public class InfoPanel extends JPanel
                 whitePanel = new JPanel();
                 whitePanel.setBackground( Color.white );
                 whitePanel.add(savePastButton);
-                add(whitePanel);
+                add(whitePanel,BorderLayout.SOUTH);
                 revalidate();
              
              return;

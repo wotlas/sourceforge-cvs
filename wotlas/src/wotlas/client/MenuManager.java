@@ -138,7 +138,7 @@ public class MenuManager extends Menu2DManager {
 
 
       // tmp code to display empty menus :        
-        rootMenu.addItemLink( OBJECT_ITEM_NAME, getEmptyMenu() );
+      //  rootMenu.addItemLink( OBJECT_ITEM_NAME, getEmptyMenu() );
     }
 
  /*------------------------------------------------------------------------------------*/

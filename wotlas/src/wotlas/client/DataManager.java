@@ -656,7 +656,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
               ( (PlayerImpl) it.next() ).tick();
        }
 
-        if (circle!=null)
+        if ( (circle!=null) )
           circle.tick();
           
     // III - Graphics Director update & redraw
@@ -707,7 +707,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
             
            circle = new CircleDrawable( selectedPlayer.getDrawable(),
                                         20,
-                                        Color.yellow,
+                                        selectedPlayer.getWotCharacter().getColor(),
                                         true,
                                         ImageLibRef.AURA_PRIORITY);
            gDirector.addDrawable(circle);

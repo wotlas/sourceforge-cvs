@@ -182,21 +182,21 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
        currentPrimaryKey = ChatRoom.DEFAULT_CHAT;
        b_createChatRoom.setEnabled(true);
 
-if (DataManager.SHOW_DEBUG)
-System.out.println("TAB number:"+tabbedPane.getTabCount());
+       if (DataManager.SHOW_DEBUG)
+           System.out.println("TAB number:"+tabbedPane.getTabCount());
        for (int i=tabbedPane.getTabCount()-1; i>=0;i--) {
-if (DataManager.SHOW_DEBUG)
-System.out.println(""+tabbedPane.getComponentAt(i).getName());
+            if (DataManager.SHOW_DEBUG)
+                System.out.println(""+tabbedPane.getComponentAt(i).getName());
 
             if( !tabbedPane.getComponentAt(i).getName().equals(ChatRoom.DEFAULT_CHAT)  ) {
                 tabbedPane.remove(i);
-if (DataManager.SHOW_DEBUG)                
-System.out.println("tab removed");
+                if (DataManager.SHOW_DEBUG)                
+                   System.out.println("tab removed");
             }
             else {
                 ( (JChatRoom) tabbedPane.getComponentAt(i) ).removeAllPlayers();
-if (DataManager.SHOW_DEBUG)
-System.out.println("DEFAULT CHAT player list reseted");
+                if (DataManager.SHOW_DEBUG)
+                System.out.println("DEFAULT CHAT player list reseted");
             }
         }
 

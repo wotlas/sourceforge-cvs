@@ -24,7 +24,6 @@ import wotlas.client.*;
 import wotlas.common.chat.ChatRoom;
 
 import wotlas.utils.MyHTMLEditorKit;
-import wotlas.utils.MyImageView;
 import wotlas.utils.Tools;
 
 import javax.swing.*;
@@ -321,7 +320,7 @@ public class JChatRoom extends JPanel
       text = Tools.subString(text, ";)",  "<img width=15 height=15 src='file:../base/gui/chat/wink.gif'>");
 
       text = Tools.subString(text, "<|",  "<img width=15 height=15 src='file:../base/gui/chat/rolleyes.gif'>");
-      text = Tools.subString(text, ":?",  "<img width=15 height=22 src='file:../base/gui/chat/confused.gif'>");
+      text = Tools.subString(text, ":/",  "<img width=15 height=22 src='file:../base/gui/chat/confused.gif'>");
       text = Tools.subString(text, ">|",  "<img width=15 height=15 src='file:../base/gui/chat/shake.gif'>");
       text = Tools.subString(text, ">)",  "<img width=15 height=15 src='file:../base/gui/chat/devil.gif'>");
       text = Tools.subString(text, ">D",  "<img width=15 height=15 src='file:../base/gui/chat/evilgrin.gif'>");

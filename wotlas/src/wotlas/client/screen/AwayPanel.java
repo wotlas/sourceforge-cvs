@@ -47,7 +47,7 @@ public class AwayPanel extends JPanel
     super();
     this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
 
-      ATextArea ta_infos = new ATextArea("Leave here a message that will be displayed when you are not connected:");
+      ATextArea ta_infos = new ATextArea("You can enter here a message that will be displayed when you are not connected:");
       ta_infos.setLineWrap(true);
       ta_infos.setWrapStyleWord(true);
       ta_infos.setEditable(false);

@@ -95,6 +95,7 @@ public class ClientManager
   private ImageIcon im_exitup, im_exitdo;
   private ImageIcon im_aboutup, im_aboutdo;
   private ImageIcon im_helpup, im_helpdo;
+  private ImageIcon im_optionsup, im_optionsdo;
 
   /** Default font
    */
@@ -200,6 +201,7 @@ public class ClientManager
     final JButton b_load;
     final JButton b_help;
     final JButton b_about;
+    final JButton b_option;
     final JButton b_cancel;
     final JButton b_newProfile;
     final JButton b_delProfile;
@@ -245,7 +247,9 @@ public class ClientManager
       im_aboutdo  = new ImageIcon("../base/gui/about-do.gif");
       im_helpup  = new ImageIcon("../base/gui/help-up.gif");
       im_helpdo  = new ImageIcon("../base/gui/help-do.gif");
-      
+      im_optionsup = new ImageIcon("../base/gui/options-up.gif");
+      im_optionsdo  = new ImageIcon("../base/gui/options-do.gif");
+
         indexScreen = 0;
         state = 0;
 
@@ -263,7 +267,7 @@ public class ClientManager
       leftPanel = new JPanel();
       leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
       rightPanel = new JPanel();
-      rightPanel.setLayout(new FlowLayout(FlowLayout.CENTER, screenIntro.getRightWidth(), 10));
+      rightPanel.setLayout(new FlowLayout(FlowLayout.CENTER, screenIntro.getRightWidth(), 5));
 
       // Create buttons
       b_about = new JButton(im_aboutup);
@@ -272,6 +276,13 @@ public class ClientManager
       b_about.setBorderPainted(false);
       b_about.setContentAreaFilled(false);
       b_about.setFocusPainted(false);
+
+      b_option = new JButton(im_optionsup);
+      b_option.setRolloverIcon(im_optionsdo);
+      b_option.setPressedIcon(im_optionsdo);
+      b_option.setBorderPainted(false);
+      b_option.setContentAreaFilled(false);
+      b_option.setFocusPainted(false);
 
       b_ok = new JButton(im_okup);
       b_ok.setRolloverIcon(im_okdo);
@@ -437,6 +448,15 @@ public class ClientManager
 
       rightPanel.add( new JLabel( new ImageIcon("../base/gui/separator.gif") ) );  // SEPARATOR
 
+      b_option.addActionListener(new ActionListener() {
+          public void actionPerformed (ActionEvent e) {
+             new JConfigurationDlg( screenIntro );
+          }
+        }
+      );
+      rightPanel.add(b_option);
+
+
       b_help.addActionListener(new ActionListener() {
           public void actionPerformed (ActionEvent e) {
              new JHTMLWindow( screenIntro, "Help", "../docs/help/index.html", 330, 450, false );
@@ -444,6 +464,8 @@ public class ClientManager
         }
       );
       rightPanel.add(b_help);
+
+      rightPanel.add( new JLabel( new ImageIcon("../base/gui/separator.gif") ) );  // SEPARATOR
 
       b_about.addActionListener(new ActionListener() {
           public void actionPerformed (ActionEvent e) {
@@ -456,7 +478,6 @@ public class ClientManager
         }
       );
       rightPanel.add(b_about);
-
 
       b_exitProfile.addActionListener(new ActionListener() {
           public void actionPerformed (ActionEvent e) {
@@ -478,7 +499,7 @@ public class ClientManager
     // ********************************
 
     case 1:
-      screenIntro.setTitle("Wotlas - Account selection...");
+      screenIntro.setTitle("Wotlas - Login...");
 
       // Create panels
       leftPanel = new JPanel();
@@ -542,7 +563,7 @@ public class ClientManager
           char charPasswd[] = pfield1.getPassword();
           String passwd = "";
           if (charPasswd.length < 4) {
-            JOptionPane.showMessageDialog( screenIntro, "Password must have at least 5 characters !", "New Password", JOptionPane.ERROR_MESSAGE);                          
+            JOptionPane.showMessageDialog( screenIntro, "Password must have at least 5 characters !", "New Password", JOptionPane.ERROR_MESSAGE);
           } else {
             for (int i=0; i<charPasswd.length; i++) {
               passwd += charPasswd[i];
@@ -561,7 +582,7 @@ public class ClientManager
               Debug.signal( Debug.NOTICE, null, "ClientManager connected to GameServer");
               start(100);
             } else {
-              Debug.signal( Debug.ERROR, this, "ClientManager ejected from GameServer");              
+              Debug.signal( Debug.ERROR, this, "ClientManager ejected from GameServer");
               start(0);
             }
           }
@@ -877,7 +898,7 @@ public class ClientManager
             DataManager dataManager = DataManager.getDefaultDataManager();
             dataManager.setCurrentProfileConfig(currentProfileConfig);
 
-            screenIntro.hide();
+             // screenIntro.hide();
             
             JAccountConnectionDialog jaconnect = new JAccountConnectionDialog( screenIntro,
                        currentServerConfig.getServerName(), currentServerConfig.getAccountServerPort(),
@@ -960,8 +981,8 @@ public class ClientManager
       JEditorPane editorPane = new JEditorPane("text/html","<html>Your new account has been <br>"
                             + "successfully created! <br>"
                             + "Remember your key to access <br>"
-                            + "wotlas from anywhere : " + currentProfileConfig.getKey()
-                            + "<br>Click OK to enter WOTLAS....</html>");
+                            + "wotlas from anywhere : <b>" + currentProfileConfig.getKey()
+                            + "</b><br>Click OK to enter WOTLAS....</html>");
       leftPanel.add(editorPane, BorderLayout.CENTER);
      
       // *** Right Panel ***/

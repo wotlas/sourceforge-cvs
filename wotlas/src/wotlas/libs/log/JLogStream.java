@@ -20,7 +20,7 @@
 package wotlas.libs.log;
 
 import wotlas.utils.SwingTools;
-import wotlas.client.gui.JCroppedWindow;
+import wotlas.utils.JCroppedWindow;
 import wotlas.libs.graphics2D.ImageLibrary;
 import wotlas.utils.Tools;
 

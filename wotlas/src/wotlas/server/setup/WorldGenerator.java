@@ -99,12 +99,14 @@ public class WorldGenerator {
                                                         ImageLibRef.RANDLAND_MAP_ACTION ) );
            worldMap.setMusicName("tar-valon-01.mid");
 
-        // STEP 3 - Tar Valon Creation
-           TownMap townMaps[] = new TownMap[1];
+        // STEP 3 - TOWNS
+
+        // Tar Valon Creation
+           TownMap townMaps[] = new TownMap[2];
+           worldMap.setTownMaps( townMaps );
+
            TownMap townMap = new TownMap(758,280,12,11);
            townMaps[0] = townMap;
-
-           worldMap.setTownMaps( townMaps );
 
            townMap.setTownMapID(0);
            townMap.setFullName("Tar Valon");
@@ -158,10 +160,28 @@ public class WorldGenerator {
                mapExit.setTargetWotlasLocation( new WotlasLocation(0) );
                mapExit.setTargetPosition( new ScreenPoint(758,264) );
 
+        // Blight Refuge 'Town'
+           townMap = new TownMap(774,115,16,15);
+           townMaps[1] = townMap;
+
+           townMap.setTownMapID(1);
+           townMap.setFullName("Blight Refuge");
+           townMap.setShortName("blightrefuge");
+           townMap.setInsertionPoint( new ScreenPoint(0,0) );
+
+           townMap.setSmallTownImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
+                                                           ImageLibRef.TOWN_SMALL_SET,
+                                                           ImageLibRef.BLIGHT_REFUGE_SMALL_IM_ACTION ) );
+
+           townMap.setTownImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
+                                                      ImageLibRef.UNIVERSE_SET ,
+                                                      (short)-1 ) ); // no town image
+           townMap.setMusicName("tar-valon-01.mid");
+
 
         // STEP 4 - Tar Valon West Gate Building
            Building buildings[] = new Building[3];
-           townMap.setBuildings( buildings );
+           townMaps[0].setBuildings( buildings );
 
            buildings[0] = new Building(208,493,10,18);
            buildings[0].setBuildingID(0);
@@ -607,7 +627,7 @@ public class WorldGenerator {
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,2,1,0) );
                mapExit.setTargetPosition( new ScreenPoint(400,40) );
 
-        // STEP 11 - Rooms of Tar Valon NW Clearing InteriorMap Level 1
+        // STEP 11 - Rooms of Tar Valon NW Terrace InteriorMap Level 1
            rooms = new Room[1];
            maps[1].setRooms( rooms );
            rooms[0] = new Room();
@@ -623,6 +643,222 @@ public class WorldGenerator {
                mapExit.setMapExitSide( MapExit.NONE );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,2,0,0) );
                mapExit.setTargetPosition( new ScreenPoint(500,205) );
+
+        // STEP 12 - Blight Refuge Building
+           buildings = new Building[1];
+           townMaps[1].setBuildings( buildings );
+
+           buildings[0] = new Building(0,0,10,10);
+           buildings[0].setBuildingID(0);
+           buildings[0].setFullName("Blight Refuge");
+           buildings[0].setShortName("blightrefuge");
+           buildings[0].setServerID(0);
+           buildings[0].setHasTownExits(true);
+           buildings[0].setHasBuildingExits(true);
+           buildings[0].setSmallBuildingImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
+                                                                ImageLibRef.BUILDING_SMALL_SET,
+                                                                (short)-1 ) ); // no image
+        // STEP 13 - Blight Refuge Exterior InteriorMap
+           maps = new InteriorMap[3];
+           buildings[0].setInteriorMaps( maps );
+
+           map = new InteriorMap();
+           maps[0] = map;
+
+           map.setInteriorMapID(0);
+           map.setFullName("Blight Refuge Outside");
+           map.setShortName("blightrefugeouside");
+           map.setInteriorMapImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
+                                                      ImageLibRef.UNIVERSE_SET ,
+                                                      ImageLibRef.BLIGHT_REFUGE_EXT_MAP_ACTION ) );
+           map.setImageWidth(720);
+           map.setImageHeight(400);
+           map.setImageRegionWidth(720);
+           map.setImageRegionHeight(400);
+
+           map.setMusicName("tar-valon-01.mid");
+
+
+        // STEP 14 - Rooms of Blight Refuge Ext InteriorMap
+           rooms = new Room[2];
+           map.setRooms( rooms );
+
+           rooms[0] = new Room();
+           rooms[0].setRoomID(0);
+           rooms[0].setMaxPlayers(30);
+
+           rooms[0].setFullName("Blight Refuge - Outside");
+           rooms[0].setShortName("refuge-ouside");
+           rooms[0].setInsertionPoint( new ScreenPoint(610,200) );
+
+             roomLink = rooms[0].addRoomLink( new ScreenRectangle(400,30,5,15) );
+             roomLink.setRoom1ID(1);
+             roomLink.setRoom2ID(0);
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(400,170,20,80) );
+               mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,1,0,1,0) );
+               mapExit.setTargetPosition( new ScreenPoint(370,142) );
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(700,60,20,300) );
+               mapExit.setType( MapExit.BUILDING_EXIT );
+               mapExit.setMapExitSide( MapExit.EAST );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0) );
+               mapExit.setTargetPosition( new ScreenPoint(779,133) );
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(630,380,70,20) );
+               mapExit.setType( MapExit.BUILDING_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0) );
+               mapExit.setTargetPosition( new ScreenPoint(779,133) );
+
+           rooms[1] = new Room();
+           rooms[1].setRoomID(1);
+           rooms[1].setMaxPlayers(30);
+
+           rooms[1].setFullName("Blight Refuge - Terrace");
+           rooms[1].setShortName("refuge-terrace");
+           rooms[1].setInsertionPoint( new ScreenPoint(250,200) );
+
+             rooms[1].addRoomLink( rooms[0].getRoomLinks()[0] );
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(160,50,20,310) );
+               mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,1,0,1,2) );
+               mapExit.setTargetPosition( new ScreenPoint(350,360) );
+
+        // STEP 15 - Blight Refuge Int0 InteriorMap
+           map = new InteriorMap();
+           maps[1] = map;
+
+           map.setInteriorMapID(1);
+           map.setFullName("Blight Refuge Interior1");
+           map.setShortName("blightrefugeInterior1");
+           map.setInteriorMapImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
+                                                      ImageLibRef.UNIVERSE_SET ,
+                                                      ImageLibRef.BLIGHT_REFUGE_INT0_MAP_ACTION ) );
+           map.setImageWidth(400);
+           map.setImageHeight(500);
+           map.setImageRegionWidth(400);
+           map.setImageRegionHeight(500);
+
+           map.setMusicName("tar-valon-01.mid");
+
+        // STEP 16 - Rooms of Blight Refuge Int0 InteriorMap
+           rooms = new Room[4];
+           map.setRooms( rooms );
+
+           rooms[0] = new Room();
+           rooms[0].setRoomID(0);
+           rooms[0].setMaxPlayers(30);
+
+           rooms[0].setFullName("Blight Refuge - Hall");
+           rooms[0].setShortName("refuge-hall");
+           rooms[0].setInsertionPoint( new ScreenPoint(246,147) );
+
+             roomLink = rooms[0].addRoomLink( new ScreenRectangle(330,20,10,30) );
+             roomLink.setRoom1ID(0);
+             roomLink.setRoom2ID(1);
+             roomLink.setDoor( new Door( 331, 20, halfPI, (byte)ImageLibRef.VERTICAL_TOP_PIVOT,
+                               new ImageIdentifier((short)2,(short)0,(short)1,ImageLibRef.VERTICAL_TOP_PIVOT) ) );
+
+             roomLink = rooms[0].addRoomLink( new ScreenRectangle(90,290,30,10) );
+             roomLink.setRoom1ID(0);
+             roomLink.setRoom2ID(2);
+             roomLink.setDoor( new Door( 90, 291, halfPI, (byte)ImageLibRef.HORIZONTAL_LEFT_PIVOT,
+                               new ImageIdentifier((short)2,(short)0,(short)1,ImageLibRef.HORIZONTAL_LEFT_PIVOT) ) );
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(375,130,30,50) );
+               mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,1,0,0,0) );
+               mapExit.setTargetPosition( new ScreenPoint(410,200) );
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(0,70,20,160) );
+               mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,1,0,2,0) );
+               mapExit.setTargetPosition( new ScreenPoint(500,260) );
+
+           rooms[1] = new Room();
+           rooms[1].setRoomID(1);
+           rooms[1].setMaxPlayers(30);
+
+           rooms[1].setFullName("Blight Refuge - Room");
+           rooms[1].setShortName("refuge-room");
+           rooms[1].setInsertionPoint( new ScreenPoint(354,24) );
+
+             rooms[1].addRoomLink( rooms[0].getRoomLinks()[0] );
+
+           rooms[2] = new Room();
+           rooms[2].setRoomID(2);
+           rooms[2].setMaxPlayers(30);
+
+           rooms[2].setFullName("Blight Refuge - Meeting Room");
+           rooms[2].setShortName("refuge-meeting");
+           rooms[2].setInsertionPoint( new ScreenPoint(300,380) );
+
+             roomLink = rooms[2].addRoomLink( new ScreenRectangle(350,290,30,10) );
+             roomLink.setRoom1ID(3);
+             roomLink.setRoom2ID(2);
+             roomLink.setDoor( new Door( 350, 291, -halfPI, (byte)ImageLibRef.HORIZONTAL_RIGHT_PIVOT,
+                               new ImageIdentifier((short)2,(short)0,(short)1,ImageLibRef.HORIZONTAL_RIGHT_PIVOT) ) );
+
+             rooms[2].addRoomLink( rooms[0].getRoomLinks()[1] );
+
+               mapExit = rooms[2].addMapExit( new ScreenRectangle(355,355,25,55) );
+               mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,1,0,0,0) );
+               mapExit.setTargetPosition( new ScreenPoint(170,150) );
+
+           rooms[3] = new Room();
+           rooms[3].setRoomID(3);
+           rooms[3].setMaxPlayers(30);
+
+           rooms[3].setFullName("Blight Refuge - Store");
+           rooms[3].setShortName("refuge-store");
+           rooms[3].setInsertionPoint( new ScreenPoint(360,260) );
+
+             rooms[3].addRoomLink( rooms[2].getRoomLinks()[0] );
+
+        // STEP 17 - Blight Refuge Int1 InteriorMap
+           map = new InteriorMap();
+           maps[2] = map;
+
+           map.setInteriorMapID(2);
+           map.setFullName("Blight Refuge Interior2");
+           map.setShortName("blightrefugeInterior2");
+           map.setInteriorMapImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
+                                                      ImageLibRef.UNIVERSE_SET ,
+                                                      ImageLibRef.BLIGHT_REFUGE_INT1_MAP_ACTION ) );
+           map.setImageWidth(525);
+           map.setImageHeight(530);
+           map.setImageRegionWidth(525);
+           map.setImageRegionHeight(530);
+
+           map.setMusicName("tar-valon-01.mid");
+
+        // STEP 18 - Rooms of Blight Refuge Int0 InteriorMap
+           rooms = new Room[1];
+           map.setRooms( rooms );
+
+           rooms[0] = new Room();
+           rooms[0].setRoomID(0);
+           rooms[0].setMaxPlayers(30);
+
+           rooms[0].setFullName("Blight Refuge - Main Hall");
+           rooms[0].setShortName("refuge-mainhall");
+           rooms[0].setInsertionPoint( new ScreenPoint(450,230) );
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(500,230,25,70) );
+               mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,1,0,1,0) );
+               mapExit.setTargetPosition( new ScreenPoint(10,140) );
+
 
         // STEP XX - We save this simple universe.
            persistenceManager = wotlas.server.PersistenceManager.createPersistenceManager( databasePath );

@@ -161,6 +161,18 @@ public interface ImageLibRef extends ImageLibraryReference
     */
      public final static short TARVALON_NW_GATE_LV1_MAP_ACTION = 6;
 
+   /** Blight Refuge - Ext
+    */
+     public final static short BLIGHT_REFUGE_EXT_MAP_ACTION = 7;
+
+   /** Blight Refuge - Int 0
+    */
+     public final static short BLIGHT_REFUGE_INT0_MAP_ACTION = 8;
+
+   /** Blight Refuge - Int 1
+    */
+     public final static short BLIGHT_REFUGE_INT1_MAP_ACTION = 9;
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /*** Towns small images set - ACTION LIST ***/
@@ -168,6 +180,10 @@ public interface ImageLibRef extends ImageLibraryReference
    /** Tar valon small image
     */
      public final static short TARVALON_SMALL_IM_ACTION = 0;
+
+   /** Blight Refuge small image
+    */
+     public final static short BLIGHT_REFUGE_SMALL_IM_ACTION = 1;
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

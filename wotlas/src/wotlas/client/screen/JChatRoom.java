@@ -209,7 +209,7 @@ public class JChatRoom extends JPanel
 
   synchronized public void appendText(String text) {
     
-    if (text.toLowerCase().indexOf("<html") > -1) {
+    if ( (text.toLowerCase().indexOf("<html")>-1) || (text.toLowerCase().indexOf("</html")>-1) ) {
       return;
     }
     

@@ -20,6 +20,7 @@
 package wotlas.utils;
 
 import java.util.Calendar;
+import java.util.Random;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -229,6 +230,29 @@ public class Tools
            return null;
         }
   }
+
+ /*------------------------------------------------------------------------------------*/ 
+
+  /** To create a random key of 'nbChars' chars.
+   *  ( I smile because I'm sure there will be someone one day seeking this code
+   *    to find the key's logic... well, as you see, they keys are generated very
+   *    simply. ).
+   * @return a string containing a random key of nbChars
+   */
+   static public String keyGenerator( int nbChars, int seed ) {
+   	StringBuffer buf = new StringBuffer("");
+        
+        Random r = new Random(System.currentTimeMillis()/seed);
+        
+        for( int i=0; i<nbChars; i++ ) {
+             if(r.nextInt(2)==1)
+                buf.append( (char)('A'+r.nextInt(26)) );
+             else
+                buf.append( (char)('0'+r.nextInt(10)) );
+        }
+        
+        return buf.toString();
+   }
 
  /*------------------------------------------------------------------------------------*/ 
 

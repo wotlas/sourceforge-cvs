@@ -99,6 +99,10 @@ public class ServerDirector implements Runnable, NetServerErrorListener
     */
       public static boolean SHOW_DEBUG = false;
 
+   /** Period for changing the keys.
+    */
+      public static byte updateKeysPeriod =0;
+
  /*------------------------------------------------------------------------------------*/
 
    /** To stop the persistence thread.
@@ -220,6 +224,9 @@ public class ServerDirector implements Runnable, NetServerErrorListener
            serverManager.start();
            Debug.signal( Debug.NOTICE, null, "WOTLAS Servers started with success..." );
 
+        // STEP 6 - We generate new keys for special characters
+           updateKeys();
+
         // Everything is ok ! we enter the persistence loop
            Debug.signal( Debug.NOTICE, null, "Everything is Ok. Creating persistence thread..." );
 
@@ -312,7 +319,7 @@ public class ServerDirector implements Runnable, NetServerErrorListener
            // the message is a "server shuting down" message.
               serverManager.getGameServer().setServerLock( true );
               serverManager.getAccountServer().setServerLock( true );
-              /* serverManager.getGatewayServer().setServerLock( true ); */
+              serverManager.getGatewayServer().setServerLock( true );
 
               if( maintenance )
                   Debug.signal( Debug.NOTICE, null, "Server will enter maintenance mode in 2 minutes...");
@@ -378,9 +385,11 @@ public class ServerDirector implements Runnable, NetServerErrorListener
               if( maintenance ) {
                   serverManager.getGameServer().setServerLock( false );
                   serverManager.getAccountServer().setServerLock( false );
-               /* serverManager.getGatewayServer().setServerLock( false ); */
+                  serverManager.getGatewayServer().setServerLock( false );
 
                   Debug.signal( Debug.NOTICE, null, "Leaving maintenance mode... ("+Tools.getLexicalTime()+")" );
+
+                  updateKeys(); // we update the keys...
               }
      }
 
@@ -444,5 +453,39 @@ public class ServerDirector implements Runnable, NetServerErrorListener
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To change the keys used for special players.
+   */
+   public static void updateKeys() {
+
+        if(updateKeysPeriod!=0) {
+           updateKeysPeriod++;
+           if(updateKeysPeriod==4) updateKeysPeriod=0;
+           return;
+        }
+        else
+           updateKeysPeriod++;
+
+        String oldConfig = FileTools.loadTextFromFile( SERVER_CONFIG );
+
+        if( oldConfig!=null ) {
+
+            properties.setProperty( "key.shaitan", Tools.keyGenerator(23, serverID+1) );
+            properties.setProperty( "key.amyrlin", Tools.keyGenerator(23, serverID+2) );
+            properties.setProperty( "key.chronicles", Tools.keyGenerator(23, serverID+3) );
+
+            oldConfig = FileTools.updateProperty( "key.shaitan", properties.getProperty( "key.shaitan"), oldConfig);
+            oldConfig = FileTools.updateProperty( "key.amyrlin", properties.getProperty( "key.amyrlin"), oldConfig);
+            oldConfig = FileTools.updateProperty( "key.chronicles", properties.getProperty( "key.chronicles"), oldConfig);
+
+            if( !FileTools.saveTextToFile( SERVER_CONFIG, oldConfig ) )
+                Debug.signal(Debug.ERROR,null,"Failed to save characters keys in "+SERVER_CONFIG);
+            else
+                Debug.signal( Debug.NOTICE, null, "Generated new keys for special characters..." );
+        }
+        else
+            Debug.signal(Debug.ERROR,null,"Failed to open "+SERVER_CONFIG);
+   }
+
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
 

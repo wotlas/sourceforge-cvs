@@ -51,17 +51,19 @@ public class TownMap
    */
    private int fromWorldMapID;
   
-  /** Position and Dimension on the WorldMap
+  /** Position on the WorldMap
    * to enter the town
    */
-   private int worldMapEnter_X;
-   private int worldMapEnter_Y;
-   private int worldMapEnter_width;
-   private int worldMapEnter_height;
-   
+   private int worldMapEnterX;
+   private int worldMapEnterY;
+
+  /** To add : image identifier.
+   */
+   // private ImageIdentifier townImage;
+
   /** Array of Building
    */
-   private Building[] buildings;
+   private transient Building[] buildings;
   
   /** List of players in the Town
    */
@@ -70,7 +72,7 @@ public class TownMap
   /** List of buildings to enter the town
    * first  element : BuildingID
    */
-   private int[] buildingsEnter;
+   private transient int[] buildingsEnter;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -107,6 +109,21 @@ public class TownMap
   public int getFromWorldMapID() {
     return fromWorldMapID;
   }
+
+  public void setWorldMapEnterX(int worldMapEnterX) {
+    this.worldMapEnterX = worldMapEnterX;
+  }
+  public int getWorldMapEnterX() {
+    return worldMapEnterX;
+  }
+
+  public void setWorldMapEnterY(int worldMapEnterY) {
+    this.worldMapEnterY = worldMapEnterY;
+  }
+  public int getWorldMapEnterY() {
+    return worldMapEnterY;
+  }
+
   public void setBuildings(Building[] myBuildings) {
     this.buildings = myBuildings;
   }

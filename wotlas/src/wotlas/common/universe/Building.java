@@ -48,9 +48,9 @@ public class Building
    */
    private String shortName;
   
-  /** name of the Server the Building belongs to
+  /** Server ID of the server that posses this Building
    */
-   private String fromServerName;
+   private int serverID;
    
   /** ID of WorldMap the Building belongs to
    */
@@ -70,7 +70,7 @@ public class Building
    
   /** ScreenZone to clic in the TownMap to enter the building
    */
-   private ScreenZone townMapEnter;
+   // private ScreenZone townMapEnter;
 
  /*------------------------------------------------------------------------------------*/
   /*
@@ -109,6 +109,14 @@ public class Building
   public int getBuildingID() {
     return buildingID;
   }
+
+  public void setServerID(int myServerID) {
+    this.serverID = myServerID;
+  }
+  public int getServerID() {
+    return serverID;
+  }
+
   public void setFullName(String myFullName) {
     this.fullName = myFullName;
   }

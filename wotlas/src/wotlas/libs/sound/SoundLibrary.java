@@ -258,7 +258,7 @@ public class SoundLibrary implements MetaEventListener, ControllerEventListener
    *        we search in the databasePath/music.
    */
   public void playMusic( String musicName ) { 
-    if (noSoundDevice || noMusic)
+    if (noSoundDevice)
       return;
 
     if (currentMusic!=null)
@@ -274,7 +274,8 @@ public class SoundLibrary implements MetaEventListener, ControllerEventListener
     for (int i = 0; i < channels.length; i++)
       channels[i].controlChange(7, value );
 
-    sequencer.start();
+    if (!noMusic)
+      sequencer.start();
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -370,9 +371,13 @@ public class SoundLibrary implements MetaEventListener, ControllerEventListener
    */
   public void setNoMusic( boolean noMusic ) {
     this.noMusic = noMusic;
-    if (noMusic)
+    if (noMusic) {
       this.stopMusic();
+    } else {
+      if (currentMusic!=null)
+        this.startMusic();
     }
+  }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -412,6 +417,15 @@ public class SoundLibrary implements MetaEventListener, ControllerEventListener
     sequencer.stop();
     //currentMusic=null;
   }
+  
+  /** Starts the current music.
+   */
+  public void startMusic() {
+    if (noSoundDevice || sequencer==null)
+      return;
+    
+    sequencer.start();
+  }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -436,12 +450,12 @@ public class SoundLibrary implements MetaEventListener, ControllerEventListener
   /** Midi Events intercepted. We use it for automatic music loopback.
    */
   public void meta( MetaMessage message ) {
-    if (noSoundDevice || sequencer==null)
+    if (noSoundDevice || sequencer==null || noMusic)
         return;
 
     if (message.getType() == 47) {  // 47 means end of track      
       if (currentMusic!=null) {              
-        //sequencer.stop();
+        sequencer.stop();        
         sequencer.start();
       }
     }       

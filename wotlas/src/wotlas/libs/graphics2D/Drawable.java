@@ -28,6 +28,9 @@ import java.awt.Graphics2D;
  *  the order that the GraphicsDirector will use to display Drawables. Low priority Drawables
  *  are displayed first.
  *
+ *  A drawable can have antialiasing ( default is false ). The anti-aliasing is managed
+ *  by the GraphicsDirector.
+ *
  * @author MasterBob, Aldiss
  * @see wotlas.libs.graphics2D.GraphicsDirector
  */
@@ -50,6 +53,10 @@ public abstract class Drawable {
    */
      protected short priority;
 
+  /** Do we want to use anti-aliasing for this Drawable ?
+   */
+     protected boolean useAntialiasing;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
@@ -58,6 +65,7 @@ public abstract class Drawable {
         priority = -1;
         r = new Rectangle();
         rOld = r;
+        useAntialiasing=false;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -81,6 +89,24 @@ public abstract class Drawable {
    *  @return true if the drawable is "live", false if it must be deleted.
    */
      abstract public boolean tick();
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To set if we want or not antialiasing for this drawable.
+   * @param useAntialiasing set to true to use antialiasing.
+   */
+     public void useAntialiasing( boolean useAntialiasing ) {
+     	this.useAntialiasing = useAntialiasing;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Do we want antialiasing for this drawable ?
+   * @return true if we want antialiasing.
+   */
+     public boolean wantAntialiasing() {
+     	return useAntialiasing;
+     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

@@ -136,6 +136,7 @@ public class GraphicsDirector extends JPanel {
     public void paint(Graphics gc) {
         super.paint(gc);
 
+     // Fill the background.
         if(!display) {
            gc.setColor( Color.white );
            gc.fillRect( 0, 0, getWidth(), getHeight() );
@@ -144,12 +145,38 @@ public class GraphicsDirector extends JPanel {
 
         Graphics2D gc2D = (Graphics2D) gc;
 
-        synchronized( drawables ) {
+
+      // Anti-aliasing init
+         RenderingHints savedRenderHints = gc2D.getRenderingHints(); // save    
+         RenderingHints antiARenderHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING,
+                                                              RenderingHints.VALUE_ANTIALIAS_ON);
+         antiARenderHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+
+         boolean previousHadAntiA = false;
+
+         synchronized( drawables ) {
             drawables.resetIterator();
         
-            while( drawables.hasNext() )
-                   drawables.next().paint( gc2D, new Rectangle( screen ) );
-        }
+            while( drawables.hasNext() ) {
+                   Drawable d = drawables.next();
+
+                // Set Anti-aliasing or not ?
+                   if( d.wantAntialiasing() && !previousHadAntiA ) {
+                      previousHadAntiA = true;
+                      gc2D.setRenderingHints( antiARenderHints );
+                   }
+                   else if( !d.wantAntialiasing() && previousHadAntiA ) {
+                      previousHadAntiA = false;
+                      gc2D.setRenderingHints( savedRenderHints );
+                   }
+
+                // paint ?
+                   d.paint( gc2D, new Rectangle( screen ) );
+            }
+         }
+
+      // Rendering Hints restore...
+         gc2D.setRenderingHints( savedRenderHints );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

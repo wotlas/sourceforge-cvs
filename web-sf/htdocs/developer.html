@@ -1,0 +1,109 @@
+<html>
+<head>
+<title>Developer Corner</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body bgcolor="#FFFFFF">
+<p><img src="images/motif-vigne.gif" width="620" height="40"></p>
+<p><img src="images/developer.gif" width="244" height="39"></p>
+<p> <font size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In this section we 
+  describe some technical aspects of our project. For more details take a look 
+  at our <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/wotlas" target="_blank">CVS 
+  repository</a> ( code comments are in english ).</font></p>
+<p><img src="images/button.gif" width="15" height="14" align="absmiddle"> <b>Network 
+  Engine. </b><i>( wotlas.libs.net )</i></p>
+<blockquote> 
+  <p> <font size="2">It exchanges messages on top of TCP/IP sockets. The messages 
+    are made of two separated parts : data and behaviour. The behaviour is the 
+    message's associated code on the remote side. The data part is composed of 
+    raw java primitives only. The message sender possesses only the data part 
+    of the message, the message receiver posseses the data and behaviour parts. 
+    </font></p>
+  <p><font size="2">Main Features : </font></p>
+  <blockquote>
+    <p><font size="2">- client - server architecture. </font></p>
+    <p><font size="2">- different network personalities providing asynchronous 
+      message handling, packet aggregation, ping information, etc ... </font></p>
+    <p><font size="2">- dynamic message class loading. </font></p>
+    <p>&nbsp;</p>
+  </blockquote>
+</blockquote>
+<p><img src="images/button.gif" width="15" height="14" align="absmiddle"> <b>A-star 
+  pathfinding algorithm.</b> <i>( wotlas.libs.pathfinding )</i></p>
+<blockquote>
+  <p> <font size="2">We have an implementation of the A-star algorithm for path-finding. 
+    Given a 2 color bitmap mask this algorithm finds the path between two points. 
+    The only needed class is <i>wotlas.utils.List</i> which is an adapted implementation 
+    of the <i>java.util.Vector</i> class ( adapted for the A-star algorithm for 
+    better performance ).We also have developed a simple smoothing algoritm for 
+    our Astar.</font></p>
+  <p><font size="2">There is an example of implementation of this library in our 
+    CVS repository : <i> &nbsp;/wotlas/src/test/petrus</i>.</font></p>
+  <p>&nbsp;</p>
+</blockquote>
+<p><img src="images/button.gif" width="15" height="14" align="absmiddle"> <b>Persistence 
+  Engine.</b> <i>( wotlas.libs.persistence )</i></p>
+<blockquote> 
+  <p><font size="2">Our client accounts and game worlds need to be made persistent. 
+    This library allows us to save and restore objects in <i>dot-properties</i> 
+    files ( human readable text files ). It is mainly composed of one class, <i>PropertiesConverter, 
+    </i>that offers various <i>save</i> and <i>load</i> methods.</font></p>
+  <p><font size="2">To be saved/loaded, a property should only have a public <i>getter</i> 
+    and <i>setter</i> and should not be transient ( i.e. if the field is xxx, 
+    setXxx() and getXxx() should be public ).</font></p>
+  <p><font size="2"> Arrays are supported either with indexed setter/getter or 
+    with a global setter/getter (taking an array as an argument), but only one-dimension 
+    arrays are supported.</font></p>
+  <p>&nbsp;</p>
+</blockquote>
+<p><img src="images/button.gif" width="15" height="14" align="absmiddle"> <b>Generic 
+  2D graphics Engine</b> <i>( wotlas.libs.graphics2D )</i>.</p>
+<blockquote> 
+  <p><i><font size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font></i><font size="2">A<i> 
+    </i>flexible 2D Graphics engine you can use in applications that need 2D side-scrolling 
+    display. It mainly works around a <i>GraphicsDirector</i> that displays <i>Drawable 
+    </i>objects and uses a <i>WindowPolicy</i> to scroll the game screen in an 
+    appropriate manner.</font></p>
+  <p> <font size="2"><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Drawable </i>is the 
+    mother class of all the graphical objects. We provide a full set of graphical 
+    objects for our<i> </i>2D engine<i> </i>:<i> TextDrawable </i>(for text display 
+    with any font you want)<i>, MotionlessSprite </i>(to handle motionless images)<i>, 
+    Sprite </i>(to handle images that can have motion), <i>MultiRegionImage</i> 
+    (to handle huge images), <i>AuraEffect</i> (to display a selection aura on 
+    sprites), and much more... Of course you can develop your own <i>Drawable</i> 
+    objects very easily.</font></p>
+  <p> <font size="2"><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>To load/unload 
+    images efficiently and reduce memory costs we use an <i>ImageLibrary</i> which 
+    is a simple image database. Our <i>ImageLibrary</i> can load images from disk 
+    when the application starts and/or just in time when the images are needed. 
+    The structure of the library is a tree composed of directories and images. 
+    Each directory can contain images and/or sub-directories. You can indicate 
+    directories that must have mutually exclusive sub-directories (especially 
+    useful for huge images you don't want to be in memory at the same time).</font></p>
+  <p> <font size="2"><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>Finally, our 2D 
+    graphics engine works with <i>Java</i> <i>Swing</i> as its <i>GraphicsDirector</i> 
+    extends the <i>JPanel</i> class. But of course, because <i>Wotlas </i>is a 
+    GNU open-source project, you can change that easily.</font></p>
+  <p><font size="2">You can download our 2D engine ( <b>source + doc + demo</b> 
+    ) from our SourceForge <a href="http://sourceforge.net/projects/wotlas">homepage</a>.</font></p>
+  <p>&nbsp;</p>
+</blockquote>
+<p><img src="images/button.gif" width="15" height="14" align="absmiddle"> <b>World 
+  Organization </b> <i>( wotlas.common.universe )</i>.</p>
+<blockquote> 
+  <p><font size="2">Our game universe is made of distinct worlds, towns and buildings. 
+    Players can only see their character when they wander in buildings, moving 
+    from one room to another. To limit the awareness of players in buildings and 
+    have a modest scalable system we chose a simple approach : <i>locales</i> 
+    with a <i>1-step policy</i>.</font></p>
+  <p><font size="2"> Building floors are made of different rooms ( <i>locales 
+    ) </i>that are linked by gateways ( open space with or without doors ). Players 
+    can only see what's in the current room of their character <i>and </i>what's 
+    in the rooms linked to their current room ( <i>1-step policy</i> ). This is 
+    a simple way to perform some interest management. For a far more complete 
+    approach on the subject refer to the MASSIVE-III and RING virtual environments.</font></p>
+</blockquote>
+<p><img src="images/motif-vigne.gif" width="620" height="40"></p>
+</body>
+</html>

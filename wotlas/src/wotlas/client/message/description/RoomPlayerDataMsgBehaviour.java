@@ -72,8 +72,7 @@ public class RoomPlayerDataMsgBehaviour extends RoomPlayerDataMessage implements
           {
               Room myRoom = myPlayer.getMyRoom();       
               if( myRoom==null ) {
-if (DataManager.SHOW_DEBUG)
-System.out.println("ROOM IS NULLLLLLLLLLLLLLLLL !!!!!");
+              	Debug.signal( Debug.ERROR, this, "Null Room for "+myPlayer.getPrimaryKey() );
               	return;
               }
 
@@ -92,15 +91,11 @@ System.out.println("ROOM IS NULLLLLLLLLLLLLLLLL !!!!!");
            // Search in Current Room
               if( myRoom.getRoomID() == location.getRoomID() ) {
                   merge( dataManager );
-if (DataManager.SHOW_DEBUG)
-System.out.println("END OF ROOM MESSAGE");
                   return;  // success
               }
 
            // Search in other rooms
               if(myRoom.getRoomLinks()==null) {
-if (DataManager.SHOW_DEBUG)
-System.out.println("END OF ROOM MESSAGE");
               	  return; // not found
               }
 
@@ -112,18 +107,12 @@ System.out.println("END OF ROOM MESSAGE");
 
                    if( otherRoom.getRoomID() == location.getRoomID() ) {
                        merge( dataManager );
-if (DataManager.SHOW_DEBUG)                       
-System.out.println("END OF ROOM MESSAGE");
                        return;  // success
                    }
               }
-if (DataManager.SHOW_DEBUG)
-System.out.println("END OF ROOM MESSAGE");
 
              return; // the room was not found near us...
           }
-if (DataManager.SHOW_DEBUG)
-System.out.println("END OF ROOM MESSAGE");
 
      }
 

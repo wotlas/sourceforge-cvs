@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package wotlas.common.message.movement;
+package wotlas.common.message.description;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -28,32 +28,40 @@ import wotlas.common.message.MessageRegistry;
 import wotlas.common.universe.*;
 
 /** 
- * To tell the client that he can change location (Message Sent by Server).
+ * To ask the client to remove player data (Message Sent by Server).
  *
  * @author Aldiss
  */
 
-public class YouCanLeaveMapMessage extends LocationChangeMessage
+public class PlayerConnectedToGameMessage extends NetMessage
 {
+ /*------------------------------------------------------------------------------------*/
+
+  /** Primary Key
+   */
+    protected String primaryKey;
+  
+  /** In game or Out of the game ?
+   */
+    protected boolean isConnectedToGame;
+  
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. Just initializes the message category and type.
    */
-     public YouCanLeaveMapMessage() {
-          super( MessageRegistry.MOVEMENT_CATEGORY,
-                 MovementMessageCategory.YOU_CAN_LEAVE_MAP_MSG );
+     public PlayerConnectedToGameMessage() {
+          super( MessageRegistry.DESCRIPTION_CATEGORY,
+                 DescriptionMessageCategory.PLAYER_CONNECTED_GAME_MSG );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor with Player's primaryKey & location.
+  /** Constructor with Player's primaryKey.
    */
-     public YouCanLeaveMapMessage(String primaryKey, WotlasLocation location, int x, int y) {
+     public PlayerConnectedToGameMessage( String primaryKey, boolean isConnectedToGame ) {
           this();
           this.primaryKey = primaryKey;
-          this.location = location;
-          this.x = x;
-          this.y = y;
+          this.isConnectedToGame = isConnectedToGame;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -65,7 +73,9 @@ public class YouCanLeaveMapMessage extends LocationChangeMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void encode( DataOutputStream ostream ) throws IOException {
-            super.encode( ostream );
+
+         writeString( primaryKey, ostream );
+         ostream.writeBoolean( isConnectedToGame );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -77,7 +87,9 @@ public class YouCanLeaveMapMessage extends LocationChangeMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void decode( DataInputStream istream ) throws IOException {
-            super.decode( istream );
+
+         primaryKey = readString( istream );
+         isConnectedToGame = istream.readBoolean();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

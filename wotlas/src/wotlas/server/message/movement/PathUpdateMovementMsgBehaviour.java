@@ -57,7 +57,6 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
    *        this message.
    */
      public void doBehaviour( Object context ) {
-System.out.println("RECEVIED BEHAVIOUR for "+primaryKey);
 
         // 0 - The context is here a PlayerImpl.
            PlayerImpl player = (PlayerImpl) context;
@@ -163,9 +162,22 @@ System.out.println("RECEVIED BEHAVIOUR for "+primaryKey);
                          int dy = p.getY()-player.getY();
                          
                           if( dx*dx+dy*dy < ChatRoom.MIN_CHAT_DISTANCE ) {
-                              chatRoom = chatList.getChatRoom( p.getCurrentChatPrimaryKey() );                              
+
+                              if( p.getCurrentChatPrimaryKey().equals( ChatRoom.DEFAULT_CHAT )
+                                  && !player.getCurrentChatPrimaryKey().equals( ChatRoom.DEFAULT_CHAT ) ) {
+                                 // we change the current chat of THE OTHER player
+
+                                 // ATTENTION PLEASE !! FROM THIS LINE THE CURRENT PLAYER
+                                 // ( player ) IS NOW THE SELECTED PLAYER HERE ( p )
+
+                                   chatRoom = chatList.getChatRoom( player.getCurrentChatPrimaryKey() );
+                                   player = p; // <- change
+                              }
+                              else
+                                 chatRoom = chatList.getChatRoom( p.getCurrentChatPrimaryKey() );
+    
                               if( chatRoom==null ) continue;
-                              
+                                                         
                               chatRoom.addPlayer( player );
                               player.setCurrentChatPrimaryKey( chatRoom.getPrimaryKey() );
                               player.setIsChatMember( false );

@@ -110,6 +110,8 @@ public class PlayerDataMessage extends NetMessage
          if(!publicInfoOnly)
             writeString( player.getPlayerPast(), ostream );
 
+         ostream.writeBoolean( player.isConnectedToGame() );
+
       // Movement Composer
          writeString( player.getMovementComposer().getClass().getName(), ostream );
 
@@ -157,6 +159,8 @@ public class PlayerDataMessage extends NetMessage
 
          if(!publicInfoOnly)
              player.setPlayerPast(  readString( istream ) );
+
+         player.setIsConnectedToGame( istream.readBoolean() );
 
       // Movement Composer
          MovementComposer mvComposer = (MovementComposer) Tools.getInstance( readString( istream ) );

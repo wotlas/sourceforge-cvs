@@ -21,29 +21,32 @@ package wotlas.client.message.description;
 
 import java.io.IOException;
 import java.util.*;
+import java.awt.*;
 
 import wotlas.utils.Debug;
 
-import wotlas.libs.graphics2D.drawable.*;
+import wotlas.libs.sound.*;
 import wotlas.libs.net.NetMessageBehaviour;
+
 import wotlas.common.message.description.*;
 import wotlas.common.universe.*;
 import wotlas.common.Player;
+
 import wotlas.client.*;
 
 /**
- * Associated behaviour to the DoorsStateMessage...
+ * Associated behaviour to the PlayerConnectedToGameMessage...
  *
  * @author Aldiss
  */
 
-public class DoorsStateMsgBehaviour extends DoorsStateMessage implements NetMessageBehaviour
+public class PlayerConnectedToGameMsgBehaviour extends PlayerConnectedToGameMessage implements NetMessageBehaviour
 {
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
    */
-     public DoorsStateMsgBehaviour() {
+     public PlayerConnectedToGameMsgBehaviour() {
           super();
      }
 
@@ -58,40 +61,16 @@ public class DoorsStateMsgBehaviour extends DoorsStateMessage implements NetMess
 
         // The context is here a DataManager
            DataManager dataManager = (DataManager) context;
-           PlayerImpl myPlayer = dataManager.getMyPlayer();
+           Player searchedPlayer = (Player) dataManager.getPlayers().get(primaryKey);
 
         // 1 - Control
-           if( !myPlayer.getLocation().isRoom() ) {
-               Debug.signal( Debug.ERROR, this, "Master player is not on an InteriorMap" );
+           if( searchedPlayer==null ) {
+               Debug.signal( Debug.WARNING, this, "Player not found :"+primaryKey );
                return;
            }
 
-           Room room = dataManager.getWorldManager().getRoom( location );
-
-           if( room==null || room.getRoomLinks()==null ) {
-               Debug.signal( Debug.WARNING, this, "Room or RoomLink not found..." );
-               return;
-           }
-
-        // 2 - Update
-           for( int i=0; i<roomLinkIDs.length; i++ ) {
-                RoomLink roomLink = room.getRoomLink( roomLinkIDs[i] );
-                Door door = null;
-                
-                if( roomLink!=null)
-                    door = roomLink.getDoor();
-
-                if( door==null) {
-                    Debug.signal( Debug.WARNING, this, "Door not found ! "+location );
-                    continue;
-                }
-
-            // we set directly the state of the door, without any animation
-                if( isOpened[i] )
-                    door.setOpened();
-                else
-                    door.setClosed();
-           }
+        // 2 - Update of the player, and that's all !
+           searchedPlayer.setIsConnectedToGame( isConnectedToGame );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -160,7 +160,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
                                 p.sendMessage( this );
                         }
                      }
-System.out.println("SERVER SENDTEXT MSGB DONE");
+
                      return;
 
                 case ChatRoom.SHOUTING_VOICE_LEVEL :

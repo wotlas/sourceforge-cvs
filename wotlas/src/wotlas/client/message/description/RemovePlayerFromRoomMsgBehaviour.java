@@ -82,14 +82,12 @@ public class RemovePlayerFromRoomMsgBehaviour extends RemovePlayerFromRoomMessag
 
               if(playerImpl==null)
                  return;
-if (DataManager.SHOW_DEBUG)                 
-System.out.println("REMOVING PLAYER "+primaryKey);
+              if (DataManager.SHOW_DEBUG)                 
+                  System.out.println("REMOVING PLAYER "+primaryKey);
               players.remove( primaryKey );
            }
 
            playerImpl.cleanVisualProperties(dataManager.getGraphicsDirector());
-if (DataManager.SHOW_DEBUG)           
-System.out.println("SUCCESFUL END OF REMOVE MESSAGE");
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

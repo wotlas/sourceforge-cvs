@@ -47,7 +47,8 @@ class ServerDirector implements Runnable
 
    /** Static Link to Server Log File.
     */
-    public final static String SERVER_LOG = "../log/wot-server.log";
+    public final static String SERVER_LOG_PREFIX = "../log/wot-server-";
+    public final static String SERVER_LOG_SUFFIX = ".log";
 
    /** Persistence period in ms.
     */
@@ -84,6 +85,10 @@ class ServerDirector implements Runnable
     */
       private static ServerDirector serverDirector;
 
+   /** Show debug information ?
+    */
+      public static boolean SHOW_DEBUG = false;
+
  /*------------------------------------------------------------------------------------*/
 
    /** To stop the persistence thread.
@@ -100,11 +105,23 @@ class ServerDirector implements Runnable
    */
      public static void main( String argv[] )
      {
-           Debug.displayExceptionStack( true );
+        // Parse command line arguments
+           int i=0;
+           String arg;
+           while (i<argv.length && argv[i].startsWith("-")) {
+              arg = argv[i];
+              i++;
+                 if (arg.equals("-debug")) {
+                     System.out.println("mode DEBUG on");
+                     SHOW_DEBUG = true;
+                     Debug.displayExceptionStack( true );
+                 }
+           }
 
         // STEP 0 - Start a ServerLogStream to save our Debug messages           
            try{
-               Debug.setPrintStream( new ServerLogStream( SERVER_LOG ) );
+               Debug.setPrintStream( new ServerLogStream( SERVER_LOG_PREFIX
+                                +System.currentTimeMillis()+SERVER_LOG_SUFFIX ) );
            }catch( java.io.FileNotFoundException e ) {
                e.printStackTrace();
                return;

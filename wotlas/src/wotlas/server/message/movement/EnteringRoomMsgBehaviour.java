@@ -175,7 +175,6 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
                  while( it.hasNext() ) {
                      PlayerImpl p = (PlayerImpl)it.next();
                      if(p!=player) {
-                       	System.out.println("To player "+p+":");
                         if(mapEnter)
                            p.sendMessage( aMsg );
                         else

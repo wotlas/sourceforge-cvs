@@ -20,7 +20,6 @@
 package wotlas.libs.graphics2D.drawable;
 
 import wotlas.libs.graphics2D.*;
-import wotlas.libs.pathfinding.*;
 
 import java.awt.*;
 import java.awt.image.*;
@@ -110,9 +109,13 @@ public class DoorDrawable extends Drawable implements DrawableOwner {
    */
     private boolean isClosing = false;
 
-  /** our current Rectangle
+  /** our current Rectangle when the door is closed.
    */
-    private Rectangle rOwn;
+    private Rectangle rDoorClosed;
+
+  /** Rectangle representing the door opened.
+   */
+    private Rectangle rDoorOpened;
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -130,50 +133,109 @@ public class DoorDrawable extends Drawable implements DrawableOwner {
                          byte doorType, ImageIdentifier image, short priority) {
     	super();
 
-        rOwn = new Rectangle();
+      // Compute rectangle for door closed
+        rDoorClosed = new Rectangle();
 
-        rOwn.x = positionX;
-        rOwn.y = positionY;
-        rOwn.width = ImageLibrary.getDefaultImageLibrary().getWidth( image );
-        rOwn.height = ImageLibrary.getDefaultImageLibrary().getHeight( image );
+        rDoorClosed.x = positionX;
+        rDoorClosed.y = positionY;
+        rDoorClosed.width = ImageLibrary.getDefaultImageLibrary().getWidth( image );
+        rDoorClosed.height = ImageLibrary.getDefaultImageLibrary().getHeight( image );
 
-
-         switch( doorType ) {
+        
+      // Compute rectangle for door opened
+         rDoorOpened = new Rectangle();
+         if( iniAngle<=1.0 && Math.abs(variationAngle)>=1.55 /*Math.PI/2*/ ) {
+            switch( doorType ) {
              //default:
                case HORIZONTAL_LEFT_PIVOT:
-                       r.x = rOwn.x;
-                       r.y = rOwn.y - rOwn.width;
-                       r.width = rOwn.width;
-                       r.height = rOwn.height+2*rOwn.width;
+                       rDoorOpened.x = rDoorClosed.x;
+
+                       if( variationAngle>0 )
+                           rDoorOpened.y = rDoorClosed.y;
+                       else
+                           rDoorOpened.y = rDoorClosed.y - rDoorClosed.width +rDoorClosed.height;
                        break;
 
                   case HORIZONTAL_RIGHT_PIVOT:
-                       r.x = rOwn.x;
-                       r.y = rOwn.y - rOwn.width;
-                       r.width = rOwn.width;
-                       r.height = rOwn.height+2*rOwn.width;
+                       rDoorOpened.x = rDoorClosed.x +rDoorClosed.width-rDoorClosed.height;
+
+                       if( variationAngle>0 )
+                           rDoorOpened.y = rDoorClosed.y - rDoorClosed.width + rDoorClosed.height;
+                       else
+                           rDoorOpened.y = rDoorClosed.y;
                        break;
 
                   case VERTICAL_BOTTOM_PIVOT:
-                       r.x = rOwn.x-rOwn.height;
-                       r.y = rOwn.y;
-                       r.width = rOwn.width+2*rOwn.height;
-                       r.height = rOwn.height;
+                       rDoorOpened.y = rDoorClosed.y + rDoorClosed.height - rDoorClosed.width;
+
+                       if( variationAngle>0 )
+                           rDoorOpened.x = rDoorClosed.x;
+                       else
+                           rDoorOpened.x = rDoorClosed.x - rDoorClosed.height +rDoorClosed.width;
                        break;
 
                   case VERTICAL_TOP_PIVOT:
-                       r.x = rOwn.x-rOwn.height;
-                       r.y = rOwn.y;
-                       r.width = rOwn.width+2*rOwn.height;
-                       r.height = rOwn.height;
+                       rDoorOpened.y = rDoorClosed.y;
+
+                       if( variationAngle>0 )
+                           rDoorOpened.x = rDoorClosed.x - rDoorClosed.height +rDoorClosed.width;
+                       else
+                           rDoorOpened.x = rDoorClosed.x;
                        break;
-              }
+            }
+
+            rDoorOpened.width = rDoorClosed.height;
+            rDoorOpened.height = rDoorClosed.width;
+         }
+         else {
+           // we create a general rectangle
+            switch( doorType ) {
+             //default:
+               case HORIZONTAL_LEFT_PIVOT:
+                       rDoorOpened.x = rDoorClosed.x;
+                       rDoorOpened.y = rDoorClosed.y - rDoorClosed.width;
+                       rDoorOpened.width = rDoorClosed.width;
+                       rDoorOpened.height = rDoorClosed.height+2*rDoorClosed.width;
+                       break;
+
+                  case HORIZONTAL_RIGHT_PIVOT:
+                       rDoorOpened.x = rDoorClosed.x;
+                       rDoorOpened.y = rDoorClosed.y - rDoorClosed.width;
+                       rDoorOpened.width = rDoorClosed.width;
+                       rDoorOpened.height = rDoorClosed.height+2*rDoorClosed.width;
+                       break;
+
+                  case VERTICAL_BOTTOM_PIVOT:
+                       rDoorOpened.x = rDoorClosed.x-rDoorClosed.height;
+                       rDoorOpened.y = rDoorClosed.y;
+                       rDoorOpened.width = rDoorClosed.width+2*rDoorClosed.height;
+                       rDoorOpened.height = rDoorClosed.height;
+                       break;
+
+                  case VERTICAL_TOP_PIVOT:
+                       rDoorOpened.x = rDoorClosed.x-rDoorClosed.height;
+                       rDoorOpened.y = rDoorClosed.y;
+                       rDoorOpened.width = rDoorClosed.width+2*rDoorClosed.height;
+                       rDoorOpened.height = rDoorClosed.height;
+                       break;
+            }
+         }
 
         this.priority = priority;
         this.iniAngle = iniAngle;
         this.variationAngle = variationAngle;
         this.doorType = doorType;
         this.image = image;
+        r = rDoorClosed;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the real door rectangle, not its influence zone.
+   * @return strict rectangle representing the door CLOSED.
+   */
+    public Rectangle getRealDoorRectangle() {
+    	  return new Rectangle(rDoorClosed);
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -255,7 +317,7 @@ public class DoorDrawable extends Drawable implements DrawableOwner {
       this.isOpening = false;
       this.isClosing = false;
       this.currentAngle = this.iniAngle;
-      AStarDouble.fillRectangle( rOwn );
+      r = rDoorClosed;
      }
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -267,7 +329,7 @@ public class DoorDrawable extends Drawable implements DrawableOwner {
       this.isOpening = false;
       this.isClosing = false;
       this.currentAngle = this.iniAngle + this.variationAngle;
-      AStarDouble.cleanRectangle( rOwn );
+      r = rDoorOpened;
      }
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -304,6 +366,7 @@ public class DoorDrawable extends Drawable implements DrawableOwner {
     public void open() {
        setClosing(false);
        setOpening(true);
+       r = rDoorOpened;
     }
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -313,6 +376,7 @@ public class DoorDrawable extends Drawable implements DrawableOwner {
     public void close() {
        setOpening(false);
        setClosing(true);
+       r = rDoorClosed;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -344,23 +408,23 @@ public class DoorDrawable extends Drawable implements DrawableOwner {
               switch( doorType ) {
                   //default:
                   case HORIZONTAL_LEFT_PIVOT:
-                       anchorX = rOwn.x+rOwn.height/2;
-                       anchorY = rOwn.y + rOwn.height/2;
+                       anchorX = rDoorClosed.x+rDoorClosed.height/2;
+                       anchorY = rDoorClosed.y + rDoorClosed.height/2;
                        break;
 
                   case HORIZONTAL_RIGHT_PIVOT:
-                       anchorX = rOwn.x + rOwn.width - rOwn.height/2;
-                       anchorY = rOwn.y + rOwn.height/2;
+                       anchorX = rDoorClosed.x + rDoorClosed.width - rDoorClosed.height/2;
+                       anchorY = rDoorClosed.y + rDoorClosed.height/2;
                        break;
 
                   case VERTICAL_BOTTOM_PIVOT:
-                       anchorX = rOwn.x + rOwn.width/2;
-                       anchorY = rOwn.y + rOwn.height -rOwn.width/2;
+                       anchorX = rDoorClosed.x + rDoorClosed.width/2;
+                       anchorY = rDoorClosed.y + rDoorClosed.height -rDoorClosed.width/2;
                        break;
 
                   case VERTICAL_TOP_PIVOT:
-                       anchorX = rOwn.x + rOwn.width/2;
-                       anchorY = rOwn.y + rOwn.width/2;
+                       anchorX = rDoorClosed.x + rDoorClosed.width/2;
+                       anchorY = rDoorClosed.y + rDoorClosed.width/2;
                        break;
 
               }
@@ -373,9 +437,9 @@ public class DoorDrawable extends Drawable implements DrawableOwner {
          BufferedImage bufIm = ImageLibrary.getDefaultImageLibrary().getImage( image );
 
          if( affTr==null )
-             gc.drawImage( bufIm, rOwn.x-screen.x, rOwn.y-screen.y, null );
+             gc.drawImage( bufIm, rDoorClosed.x-screen.x, rDoorClosed.y-screen.y, null );
          else {
-             affTr.translate( rOwn.x-screen.x, rOwn.y-screen.y );
+             affTr.translate( rDoorClosed.x-screen.x, rDoorClosed.y-screen.y );
              gc.drawImage( bufIm, affTr, null );
          }
     }

@@ -87,6 +87,10 @@ public class InteriorMapData implements MapData
    */
   private InteriorMap imap;
 
+  /** Can we automatically open the next door ?
+   */
+  private boolean automaticDoorOpen = false;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Set to true to show debug information
@@ -102,6 +106,14 @@ public class InteriorMapData implements MapData
   public Object getChangeMapLock() {
     return changeMapLock;
   }  
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To automatically open the next door...
+   */
+    public void setAutomaticDoorOpen() {
+       automaticDoorOpen = true;
+    }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -155,9 +167,6 @@ public class InteriorMapData implements MapData
       myPlayer.setY(insertionPoint.y);
       myPlayer.setPosition(insertionPoint);
     }
-
-    if (SEND_NETMESSAGE)
-      dataManager.sendMessage( new EnteringRoomMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation(), myPlayer.getX(), myPlayer.getY()) );
 
     // 3 - We load the image
     backgroundImageID = imap.getInteriorMapImage();
@@ -255,6 +264,10 @@ public class InteriorMapData implements MapData
                       doors[d].setIsDisplayed(true);
                   }
         }
+
+    // - We declare ourselves to other players...
+    if (SEND_NETMESSAGE)
+      dataManager.sendMessage( new EnteringRoomMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation(), myPlayer.getX(), myPlayer.getY()) );
     
     //   - We play music
     String midiFile = imap.getMusicName();
@@ -300,12 +313,21 @@ public class InteriorMapData implements MapData
     RoomLink rl = myRoom.isIntersectingRoomLink( myPlayer.getCurrentRectangle() );
 
     // is there a Door ?
-      /*if ( rl!=null && rl.getDoor()!=null ) {
+      if ( rl!=null && rl.getDoor()!=null ) {
            if( !rl.getDoor().isOpened()
                && !rl.getDoor().canMove(myPlayer.getCurrentRectangle(),
-                                        myPlayer.getEndPosition() ) )
+                                        myPlayer.getEndPosition() ) ) {
                myPlayer.stopMovement();
-      }*/
+
+               if(automaticDoorOpen) {
+System.out.println("Automatic door open");
+                  WotlasLocation location = new WotlasLocation(myPlayer.getLocation());
+ //                 dataManager.sendMessage(
+ //                    new DoorStateMessage(location, rl.getRoomLinkID(), !rl.getDoor().isOpened()) );
+               	  automaticDoorOpen=false;
+               }
+           }
+      }
 
     // Moving to another Room ?
     if ( rl!=null && !couldBeMovingToAnotherRoom ) {
@@ -339,6 +361,7 @@ public class InteriorMapData implements MapData
           System.out.println("Changing main ChatRoom");
 
         dataManager.getChatPanel().reset();
+        dataManager.getChatPanel().changeMainJChatRoom(room.getShortName());
 
         if (SHOW_DEBUG)
           System.out.println("Adding a new player : " + myPlayer + "to room : " + room);

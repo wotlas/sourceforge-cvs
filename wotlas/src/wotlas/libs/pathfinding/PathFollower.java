@@ -39,10 +39,6 @@ public class PathFollower implements MovementComposer {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** size of a mask's cell (in pixels)
-   */
-    transient private static int tileSize = -1;
-
   /** To tell that we must reconstruct a trajectory that was not possible
    *  to construct before, due to a AStar not initialized...
    */
@@ -135,7 +131,7 @@ public class PathFollower implements MovementComposer {
     */
      public void setMovementMask( boolean mask[][], int maskTileSize, int playerSize ) {
          AStarDouble.setMask( mask );
-         tileSize = maskTileSize;
+         AStarDouble.setTileSize( maskTileSize );
          AStarDouble.setSpriteSize( playerSize );
      }
 
@@ -147,6 +143,8 @@ public class PathFollower implements MovementComposer {
     * @return path
     */
      public static List findPath(  Point a, Point b ) {
+           int tileSize = AStarDouble.getTileSize();
+        
            List path = AStarDouble.findPath( new Point( a.x/tileSize, a.y/tileSize ),
                                        new Point( b.x/tileSize, b.y/tileSize ) );
            path = AStarDouble.smoothPath(path);
@@ -183,7 +181,7 @@ public class PathFollower implements MovementComposer {
    *  @param orientationAngle orientation angle in radians.
    */
     public PathFollower( float xPosition, float yPosition, double orientationAngle ) {
-    	this();
+        this();
         this.xPosition = xPosition;
         this.yPosition = yPosition;
         this.orientationAngle = orientationAngle;
@@ -195,7 +193,7 @@ public class PathFollower implements MovementComposer {
     * @param player associated player.
     */
      public void init( Player player ) {
-     	this.player = player;
+        this.player = player;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -309,7 +307,7 @@ public class PathFollower implements MovementComposer {
     * @return current position
     */
      public Point getPosition() {
-     	return new Point( (int)xPosition, (int)yPosition );
+        return new Point( (int)xPosition, (int)yPosition );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -318,13 +316,13 @@ public class PathFollower implements MovementComposer {
     * @return returns the target position, can be the current position if we are not moving...
     */
      public Point getTargetPosition() {
-     	if(path!=null && path.size()>0)
+        if(path!=null && path.size()>0)
            return (Point)path.elementAt( path.size()-1 );
 
         if(endPoint!=null)
            return endPoint.toPoint();
 
-     	return new Point( -100, -100 ); // out of screen point
+        return new Point( -100, -100 ); // out of screen point
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -365,7 +363,7 @@ public class PathFollower implements MovementComposer {
    * @param realisticRotations true if you want realistic rotations.
    */
      public void setRealisticRotations( boolean realisticRotations ) {
-     	this.realisticRotations = realisticRotations;
+        this.realisticRotations = realisticRotations;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -392,7 +390,7 @@ public class PathFollower implements MovementComposer {
    * @return a MovementUpdateMessage 
    */
      public MovementUpdateMessage getUpdate() {
-     	 if(AStarDouble.isInitialized())
+         if(AStarDouble.isInitialized())
             return (MovementUpdateMessage) new PathUpdateMovementMessage( this, null );
          else
             return (MovementUpdateMessage) new PathUpdateMovementMessage( this, player.getPrimaryKey() );
@@ -411,6 +409,8 @@ public class PathFollower implements MovementComposer {
 
            PathUpdateMovementMessage msg = (PathUpdateMovementMessage) updateMessage;
 
+/*  SIMPLE UPDATE : WE FORCE THE NEW POSITION
+
            xPosition = (float)msg.srcPoint.x;
            yPosition = (float)msg.srcPoint.y;
            orientationAngle = msg.orientationAngle;
@@ -421,22 +421,82 @@ public class PathFollower implements MovementComposer {
                Point pDst = new Point( msg.dstPoint.x, msg.dstPoint.y );
 
                if (AStarDouble.isInitialized()) {
-               	  // Astar initialized, re-creating path
+                  // Astar initialized, re-creating path
                      recreateTrajectory( pDst, msg.movementDeltaTime );
                }
                else {
-               	  // Astar not initialized, just saving data
-               	     endPoint = new ScreenPoint( pDst );
-               	     movementTimeStamp = System.currentTimeMillis();
-               	     reconstructTrajectory = true;
-               	     movementDeltaTime = msg.movementDeltaTime;
+                  // Astar not initialized, just saving data
+                     endPoint = new ScreenPoint( pDst );
+                     movementTimeStamp = System.currentTimeMillis();
+                     reconstructTrajectory = true;
+                     movementDeltaTime = msg.movementDeltaTime;
                }
            }
            else {
              // No movement
                resetMovement();
            }
+*/
 
+/*  ADVANCED UPDATE : WE TEST THE NEW POSITION */
+
+           if (!AStarDouble.isInitialized()) {
+             // We just save the data
+                xPosition = (float)msg.srcPoint.x;
+                yPosition = (float)msg.srcPoint.y;
+                orientationAngle = msg.orientationAngle;
+
+                walkingAlongPath = msg.isMoving;
+
+                if( walkingAlongPath ) {
+                    endPoint = new ScreenPoint( msg.dstPoint.x, msg.dstPoint.y );
+                    movementTimeStamp = System.currentTimeMillis();
+                    reconstructTrajectory = true;
+                    movementDeltaTime = msg.movementDeltaTime;
+                }
+                else
+                    resetMovement(); // No movement
+           }
+           else
+           {
+             // AStar initialized
+             // Do we have to consider this update ?
+                boolean takeUpdate = false;
+
+                if( walkingAlongPath ) {
+                    Point target = getTargetPosition();
+
+                    if( msg.isMoving ) {
+                        if( distance( msg.srcPoint, getPosition() )>200 ||
+                            findPath( getPosition(), msg.dstPoint )==null )
+                            takeUpdate = true;
+                        else
+                            recreateTrajectory( msg.dstPoint, 0 );
+                    }
+                    else {
+                        if( target.x!=msg.srcPoint.x || target.y!=msg.srcPoint.y
+                    	    || distance( target, getPosition() )>200 )
+                    	    takeUpdate = true;
+                    }
+                }
+                else
+                    takeUpdate = true;
+
+                if(!takeUpdate)
+                   return;
+
+             // Our update...
+                xPosition = (float)msg.srcPoint.x;
+                yPosition = (float)msg.srcPoint.y;
+                orientationAngle = msg.orientationAngle;
+
+                walkingAlongPath = msg.isMoving;
+
+                if( walkingAlongPath )
+                    recreateTrajectory( msg.dstPoint, msg.movementDeltaTime );
+                else
+                    resetMovement(); // No movement
+           }
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -626,8 +686,8 @@ public class PathFollower implements MovementComposer {
     synchronized public void initMovement( List path, int deltaTime ) {
 
      // 1 - Control
-   	if(path==null || path.size()<1 ) {
-   	   resetMovement();
+        if(path==null || path.size()<1 ) {
+           resetMovement();
            Debug.signal(Debug.ERROR, this, "Invalid Path !!!! "+path);
            return;
          }
@@ -640,11 +700,11 @@ public class PathFollower implements MovementComposer {
         this.path = path;
 
      // 2 - Position evaluation
-   	float totalDistance = (deltaTime/1000.0f)*speed;
-   	double d = 0.0f;
-   	Point a0 = null;
-   	Point a1 = (Point)path.elementAt(0);
-   	
+        float totalDistance = (deltaTime/1000.0f)*speed;
+        double d = 0.0f;
+        Point a0 = null;
+        Point a1 = (Point)path.elementAt(0);
+        
         for( int i=0; i<path.size()-1; i++ ) {
             a0 = a1;
             a1 = (Point)path.elementAt(i+1);            

@@ -188,6 +188,20 @@ public interface Player
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** Is this player connected to the game ?
+    * @return true if the player is in the game, false if the client is not connected.
+    */
+      public boolean isConnectedToGame();
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set if this player is connected to the game.
+    * @param true if the player is in the game, false if the client is not connected.
+    */
+      public void setIsConnectedToGame( boolean isConnected );
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** To send a message to this player on the client or server side. If called on
    *  the client side it sends the message to the server. If called on the server
    *  side it sends the message to the client.

@@ -19,7 +19,6 @@
 
 package wotlas.libs.pathfinding;
 
-import wotlas.client.DataManager;
 import wotlas.utils.List;
 
 import java.awt.image.BufferedImage;
@@ -73,6 +72,10 @@ public class AStarDouble
    */
   static private int SPRITE_SIZE = 4;
 
+  /** size of a mask's cell (in pixels)
+   */
+  static private int tileSize = -1;
+
   /** True if we show debug informations
    */
   static public boolean SHOW_DEBUG = false;
@@ -92,11 +95,24 @@ public class AStarDouble
   }
 
  /*------------------------------------------------------------------------------------*/
+
+  /** To set the tile size
+   */
+  static public void setTileSize(int tileSize) {
+     AStarDouble.tileSize = tileSize;
+  }
+
+  /** To get the tile size
+   */
+  static public int getTileSize() {
+    return tileSize;
+  }
  
+ /*------------------------------------------------------------------------------------*/
+
   /** Empty constructor.
    */
   public AStarDouble() {
-    ;
   }
   
  /*------------------------------------------------------------------------------------*/
@@ -271,7 +287,7 @@ public class AStarDouble
       nodes.removeFirstElement();
       addToNodes(children, nodes);
     }
-    if (DataManager.SHOW_DEBUG)
+    if (SHOW_DEBUG)
       System.out.println("no path found");
     nodes.removeAllElements();
     open.clear();
@@ -363,15 +379,15 @@ public class AStarDouble
     int y = pointGoal.y;
     
     if (isNotBlock(x,y)) {
-      if (DataManager.SHOW_DEBUG)
+      if (SHOW_DEBUG)
         System.out.println("valid point");
       return true;
     } else {
-      if (DataManager.SHOW_DEBUG)
+      if (SHOW_DEBUG)
         System.out.println("not a valid point -> search a valid point"); 
     }
     
-    if (DataManager.SHOW_DEBUG) {
+    if (SHOW_DEBUG) {
       System.out.println("x = " + x);
       System.out.println("y = " + y);
       System.out.println("mapHeight = " + mapHeight);
@@ -380,20 +396,20 @@ public class AStarDouble
     
     // test if player is near border
     if (x+SPRITE_SIZE>mapWidth) {      
-      if (DataManager.SHOW_DEBUG)
+      if (SHOW_DEBUG)
         System.out.println("test x near border");      
       if (map[x-SPRITE_SIZE-1][y]) {      
-        if (DataManager.SHOW_DEBUG)
+        if (SHOW_DEBUG)
           System.out.print("player near border -> change x=mapWidth-SPRITE_SIZE-1");        
         pointGoal.x = mapWidth-SPRITE_SIZE-1;
         return true;
       }      
     }
     if (y+SPRITE_SIZE>mapHeight) {
-      if (DataManager.SHOW_DEBUG)
+      if (SHOW_DEBUG)
         System.out.println("test y near border");      
       if (map[x][mapHeight-SPRITE_SIZE-1]) {      
-        if (DataManager.SHOW_DEBUG)
+        if (SHOW_DEBUG)
           System.out.print("player near border -> change y=mapHeight-SPRITE_SIZE-1");        
         pointGoal.y = mapHeight-SPRITE_SIZE-1;
         return true;
@@ -403,7 +419,7 @@ public class AStarDouble
     // Correct the position
     if (x+SPRITE_SIZE<mapWidth) {
       if (isNotBlock(x+SPRITE_SIZE,y)) {
-        if (DataManager.SHOW_DEBUG)
+        if (SHOW_DEBUG)
           System.out.print("change x+");        
         pointGoal.x += SPRITE_SIZE;
         return true;
@@ -411,7 +427,7 @@ public class AStarDouble
     }
     if ((x+SPRITE_SIZE<mapWidth) && (y+SPRITE_SIZE<mapHeight)) {
       if (isNotBlock(x+SPRITE_SIZE,y+SPRITE_SIZE)) {
-        if (DataManager.SHOW_DEBUG)
+        if (SHOW_DEBUG)
           System.out.print("change x+ y+");
         pointGoal.x += SPRITE_SIZE;
         pointGoal.y += SPRITE_SIZE;
@@ -420,7 +436,7 @@ public class AStarDouble
     }
     if (y+SPRITE_SIZE<mapHeight) {
       if (isNotBlock(x,y+SPRITE_SIZE)) {
-        if (DataManager.SHOW_DEBUG)
+        if (SHOW_DEBUG)
           System.out.print("change y+");
         pointGoal.y += SPRITE_SIZE;
         return true;
@@ -428,7 +444,7 @@ public class AStarDouble
     }
     if ((x>SPRITE_SIZE) && (y+SPRITE_SIZE<mapHeight)) {
       if (isNotBlock(x-SPRITE_SIZE,y+SPRITE_SIZE)) {
-        if (DataManager.SHOW_DEBUG)
+        if (SHOW_DEBUG)
           System.out.print("change x- y+");
         pointGoal.x -= SPRITE_SIZE;
         pointGoal.y += SPRITE_SIZE;
@@ -437,7 +453,7 @@ public class AStarDouble
     }
     if (x>SPRITE_SIZE) {
       if (isNotBlock(x-SPRITE_SIZE,y)) {
-        if (DataManager.SHOW_DEBUG)
+        if (SHOW_DEBUG)
           System.out.print("change x-");
         pointGoal.x -= SPRITE_SIZE;
         return true;
@@ -445,7 +461,7 @@ public class AStarDouble
     }
     if ((x>SPRITE_SIZE) && (y>SPRITE_SIZE)) {
       if (isNotBlock(x-SPRITE_SIZE,y-SPRITE_SIZE)) {
-        if (DataManager.SHOW_DEBUG)
+        if (SHOW_DEBUG)
           System.out.print("change x- y-");
         pointGoal.x -= SPRITE_SIZE;
         pointGoal.y -= SPRITE_SIZE;
@@ -454,7 +470,7 @@ public class AStarDouble
     }
     if (y>SPRITE_SIZE) {
       if (isNotBlock(x,y-SPRITE_SIZE)) {
-        if (DataManager.SHOW_DEBUG)
+        if (SHOW_DEBUG)
           System.out.print("change y-");
         pointGoal.y -= SPRITE_SIZE;
         return true;
@@ -462,7 +478,7 @@ public class AStarDouble
     }
     if ((x+SPRITE_SIZE<mapWidth) && (y>SPRITE_SIZE)) {
       if (isNotBlock(x+SPRITE_SIZE,y-SPRITE_SIZE)) {
-        if (DataManager.SHOW_DEBUG)
+        if (SHOW_DEBUG)
          System.out.print("change x+ y-");
         pointGoal.x += SPRITE_SIZE;
         pointGoal.y -= SPRITE_SIZE;
@@ -509,7 +525,7 @@ public class AStarDouble
     if (SHOW_DEBUG)
       System.out.print(pointGoal);
     if ( (!aStar.isValidGoal(pointGoal)) ) {
-      if (DataManager.SHOW_DEBUG)
+      if (SHOW_DEBUG)
         System.err.println("error : invalid point");
       return null;
     }
@@ -666,14 +682,20 @@ public class AStarDouble
   private synchronized void changeRectangle(Rectangle r, int maskTileSize, boolean value) {
     int cx = (int) (r.x/maskTileSize);
     int cy = (int) (r.y/maskTileSize);
-    int cWidth = (int) (r.getWidth()/maskTileSize) + 1;
-    int cHeight = (int) (r.getHeight()/maskTileSize) + 1;
-    if (DataManager.SHOW_DEBUG) {
+
+    int cWidth = (int) (r.getWidth()/maskTileSize);
+    if( cWidth==0 ) cWidth=1;
+
+    int cHeight = (int) (r.getHeight()/maskTileSize);
+    if( cHeight==0 ) cHeight=1;
+
+    if (SHOW_DEBUG)
       System.out.println("cWidth = " + cWidth + " cHeight = " + cHeight);
-    }
+
     for (int i=0; i<cWidth; i++)
       for (int j=0; j<cHeight; j++)
-        map[cx+i][cy+j] = value;
+        if(cx+i<map.length && cy+j<map[0].length)
+           map[cx+i][cy+j] = value;
   }
 
   /** To dynamically modify the mask setting all pixels of a rectangle to true
@@ -681,7 +703,7 @@ public class AStarDouble
    * @param r the rectangle to clean (in screen pixels coordinate)
    */
   static public void cleanRectangle(Rectangle r) {
-    aStar.changeRectangle(r, 5, true);
+    aStar.changeRectangle(r, tileSize, true);
   }
   
   /** To dynamically modify the mask setting all pixels of a rectangle to false
@@ -689,7 +711,7 @@ public class AStarDouble
    * @param r the rectangle to fill (in screen pixels coordinate)
    */
   static public void fillRectangle(Rectangle r) {
-    aStar.changeRectangle(r, 5, false);
+    aStar.changeRectangle(r, tileSize, false);
   }
   
  /*------------------------------------------------------------------------------------*/

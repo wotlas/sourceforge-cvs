@@ -98,11 +98,11 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
 
   /** Our textDrawable
    */
-  transient private TextDrawable textDrawable;
+  private TextDrawable textDrawable;
   
  /** Our current Room ( if we are in a Room, null otherwise )
   */
-  transient private Room myRoom;
+  private Room myRoom;
 
   /** True if player is moving.
    */
@@ -111,6 +111,10 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   /** True if this player is controlled by the client.
    */
   private boolean isMaster = false;
+
+  /** Is this player representing a client that is connected to the game ?
+   */
+  private boolean isConnectedToGame = false;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -349,7 +353,10 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
    * @return alpha
    */
   public float getAlpha() {
-    return 1.0f;
+    if( isConnectedToGame )
+        return 1.0f;
+    else
+        return 0.25f;
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -562,6 +569,24 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     */
       public void setCurrentChatPrimaryKey( String currentChatPrimaryKey ) {
       	this.currentChatPrimaryKey = currentChatPrimaryKey;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Is this player connected to the game ? ( not synchronized )
+    * @return true if the player is in the game, false if the client is not connected.
+    */
+      public boolean isConnectedToGame() {
+            return isConnectedToGame;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set if this player is connected to the game.
+    * @param true if the player is in the game, false if the client is not connected.
+    */
+      public void setIsConnectedToGame( boolean isConnectedToGame ) {
+      	 this.isConnectedToGame = isConnectedToGame;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

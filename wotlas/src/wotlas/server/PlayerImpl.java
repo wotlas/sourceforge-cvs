@@ -31,7 +31,8 @@ import wotlas.libs.pathfinding.*;
 
 import wotlas.common.*;
 import wotlas.common.chat.*;
-import wotlas.common.message.movement.MovementUpdateMessage;
+import wotlas.common.message.movement.*;
+import wotlas.common.message.description.*;
 import wotlas.common.universe.*;
 import wotlas.utils.*;
 
@@ -166,8 +167,6 @@ public class PlayerImpl implements Player, NetConnectionListener
 
              setX( mExits[0].x+mExits[0].width/2 );
              setY( mExits[0].y+mExits[0].height/2 );
-
-System.out.println("POSITION set to x:"+getX()+" y:"+getY()+" location is "+location);
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -448,6 +447,15 @@ System.out.println("POSITION set to x:"+getX()+" y:"+getY()+" location is "+loca
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** To set if this player is connected to the game. (not used on this server side )
+    * @param true if the player is in the game, false if the client is not connected.
+    */
+      public void setIsConnectedToGame( boolean isConnected ) {
+      	// no external update possible on the server side !
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** This method is called when a new network connection is created on this player.
    *
    * @param personality the NetPersonality object associated to this connection.
@@ -458,9 +466,51 @@ System.out.println("POSITION set to x:"+getX()+" y:"+getY()+" location is "+loca
                  this.personality = personality;
              }
 
-          // great we do nothing
-             System.out.println("Connection opened for player "+playerName);
-        System.out.println( "OPEN isMoving:"+movementComposer.isMoving()+", ref:"+this);
+          // We signal our connection to players in the game
+             if(location.isRoom()) {
+              // We send an update to players near us...
+                 PlayerConnectedToGameMessage pMsg = new PlayerConnectedToGameMessage(primaryKey,true);
+
+                 if(myRoom==null) {
+                    Debug.signal( Debug.ERROR, this, "Player "+primaryKey+" has an incoherent location state");
+                    return;
+                 }
+
+                 Hashtable players = myRoom.getPlayers();
+
+              // to players of the current room
+                 synchronized( players ) {
+                    Iterator it = players.values().iterator();
+                 
+                    while( it.hasNext() ) {
+                        PlayerImpl p = (PlayerImpl)it.next();
+                        if(p!=this)
+                           p.sendMessage( pMsg );
+                    }
+                 }
+
+              // ... and players in other rooms
+                 if(myRoom.getRoomLinks()!=null)
+                    for( int j=0; j<myRoom.getRoomLinks().length; j++ ) {
+                         Room otherRoom = myRoom.getRoomLinks()[j].getRoom1();
+  
+                         if( otherRoom==myRoom )
+                             otherRoom = myRoom.getRoomLinks()[j].getRoom2();
+
+                         players = otherRoom.getPlayers();
+
+                         synchronized( players ) {
+                            Iterator it = players.values().iterator();
+                 
+                            while( it.hasNext() ) {
+                               PlayerImpl p = (PlayerImpl)it.next();
+                               p.sendMessage( pMsg );
+                            }
+                         }
+                    }
+             }
+
+             Debug.signal(Debug.NOTICE,null,"Connection opened for player "+playerName);
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -477,7 +527,7 @@ System.out.println("POSITION set to x:"+getX()+" y:"+getY()+" location is "+loca
                  this.personality = null;
              }
 
-             Debug.signal(Debug.NOTICE, this, "Connection closed on player: "+playerName);
+             Debug.signal(Debug.NOTICE, null, "Connection closed on player: "+playerName);
 
          // 1 - Leave any current chat...
             if( !currentChatPrimaryKey.equals( ChatRoom.DEFAULT_CHAT ) ) {
@@ -504,6 +554,7 @@ System.out.println("POSITION set to x:"+getX()+" y:"+getY()+" location is "+loca
 
               // We send an update to players near us...
                  MovementUpdateMessage uMsg = movementComposer.getUpdate();
+                 PlayerConnectedToGameMessage pMsg = new PlayerConnectedToGameMessage(primaryKey,false);
 
                  if(myRoom==null) {
                     Debug.signal( Debug.ERROR, this, "Player "+primaryKey+" has an incoherent location state");
@@ -518,8 +569,10 @@ System.out.println("POSITION set to x:"+getX()+" y:"+getY()+" location is "+loca
                  
                     while( it.hasNext() ) {
                         PlayerImpl p = (PlayerImpl)it.next();
-                        if(p!=this)
+                        if(p!=this) {
                            p.sendMessage( uMsg );
+                           p.sendMessage( pMsg );
+                        }
                     }
                  }
 
@@ -539,6 +592,7 @@ System.out.println("POSITION set to x:"+getX()+" y:"+getY()+" location is "+loca
                             while( it.hasNext() ) {
                                PlayerImpl p = (PlayerImpl)it.next();
                                p.sendMessage( uMsg );
+                               p.sendMessage( pMsg );
                             }
                          }
                     }
@@ -560,7 +614,8 @@ System.out.println("POSITION set to x:"+getX()+" y:"+getY()+" location is "+loca
      public void sendMessage( NetMessage message ) {
              synchronized( personalityLock ) {
                 if( personality!=null ) {
-System.out.println("SENDING MESSAGE "+message);
+                    if( ServerDirector.SHOW_DEBUG )
+                        System.out.println("Player "+primaryKey+" sending msg: "+message);
                     personality.queueMessage( message );
                 }
              }

@@ -24,7 +24,8 @@ import java.awt.*;
 import wotlas.common.*;
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
- 
+import wotlas.libs.pathfinding.*;
+
  /** A Door on an InteriorMap... Doors are possessed by RoomLinks.
   *
   * @author Petrus, Aldiss
@@ -203,7 +204,8 @@ public class Door
     * @return DoorDrawable corresponding to this room.
     */
      public Drawable getDoorDrawable() {
-           if( ImageLibrary.getDefaultImageLibrary() == null )
+           if( ImageLibrary.getDefaultImageLibrary() == null 
+               || !AStarDouble.isInitialized() )
       	       return null;
 
            if(doorDrawable!=null)
@@ -215,10 +217,14 @@ public class Door
            doorDrawable.useAntialiasing(true);
            doorDrawable.setOwner( this ); // we are the owner of this door draw...
 
-           if(isOpened)
+           if(isOpened) {
               doorDrawable.setOpened();
-           else
+              AStarDouble.cleanRectangle( doorDrawable.getRealDoorRectangle() );
+           }
+           else {
               doorDrawable.setClosed();
+              AStarDouble.fillRectangle( doorDrawable.getRealDoorRectangle() );
+           }
            
            return doorDrawable;
      }
@@ -226,7 +232,6 @@ public class Door
  /*------------------------------------------------------------------------------------*/
 
    /** To open the door...
-    * @param from direction from where the door is opened (see DoorDrawable).
     */
      public synchronized void open() {
          if( getDoorDrawable()==null ) {
@@ -235,12 +240,12 @@ public class Door
          }
 
          doorDrawable.open();
+         AStarDouble.cleanRectangle( doorDrawable.getRealDoorRectangle() );
      }
 
  /*------------------------------------------------------------------------------------*/  
 
    /** To close the door...
-    * @param from direction from where the door is opened (see DoorDrawable).
     */
      public synchronized void close() {
          if( getDoorDrawable()==null ) {
@@ -249,6 +254,35 @@ public class Door
          }
 
          doorDrawable.close();
+         AStarDouble.fillRectangle( doorDrawable.getRealDoorRectangle() );
+     }
+
+ /*------------------------------------------------------------------------------------*/  
+
+   /** To open the door without any animation...
+    */
+     public synchronized void setOpened() {
+         if( getDoorDrawable()==null ) {
+             isOpened = true;
+             return;
+         }
+
+         doorDrawable.setOpened();
+         AStarDouble.cleanRectangle( doorDrawable.getRealDoorRectangle() );
+     }
+
+ /*------------------------------------------------------------------------------------*/  
+
+   /** To close the door without any animation...
+    */
+     public synchronized void setClosed() {
+         if( getDoorDrawable()==null ) {
+             isOpened = false;
+             return;
+         }
+
+         doorDrawable.setClosed();
+         AStarDouble.fillRectangle( doorDrawable.getRealDoorRectangle() );
      }
 
  /*------------------------------------------------------------------------------------*/  
@@ -281,7 +315,8 @@ public class Door
  /*------------------------------------------------------------------------------------*/
 
    /** To check if the player is near this door...
-    * @param true if the player is near the door.
+    * @param playerRectangle player 's rectangle
+    * @return true if the player is near the door.
     */
      public boolean isPlayerNear( Rectangle playerRectangle ) {
        if( doorDrawable==null )
@@ -301,6 +336,46 @@ public class Door
 
  /*------------------------------------------------------------------------------------*/
 
+   /** To get a valid point near this door on the side of the player...
+    * @param playerRectangle player 's rectangle
+    * @return a point near the door.
+    */
+     public Point getPointNearDoor( Rectangle playerRectangle ) {
+       if( doorDrawable==null )
+           return null;
+
+       Point resultPoint = new Point();
+       Rectangle doorR = doorDrawable.getRealDoorRectangle();
+
+       int xpc = playerRectangle.x + playerRectangle.width/2;
+       int ypc = playerRectangle.y + playerRectangle.height/2;
+
+       int xdc = doorR.x + doorR.width/2;
+       int ydc = doorR.y + doorR.height/2;
+
+       if( doorType == DoorDrawable.VERTICAL_TOP_PIVOT ||
+           doorType == DoorDrawable.VERTICAL_BOTTOM_PIVOT ) {
+           resultPoint.y = ydc;
+
+           if( xpc < xdc )
+               resultPoint.x = ((xdc/AStarDouble.getTileSize())-AStarDouble.getSpriteSize())*AStarDouble.getTileSize();
+           else
+               resultPoint.x = ((xdc/AStarDouble.getTileSize())+AStarDouble.getSpriteSize())*AStarDouble.getTileSize();
+       }
+       else{
+           resultPoint.x = xdc;
+
+           if( ypc < ydc )
+               resultPoint.y = ((ydc/AStarDouble.getTileSize())-AStarDouble.getSpriteSize())*AStarDouble.getTileSize();
+           else
+               resultPoint.y = ((ydc/AStarDouble.getTileSize())+AStarDouble.getSpriteSize())*AStarDouble.getTileSize();
+       }
+
+       return resultPoint;
+     }
+
+ /*------------------------------------------------------------------------------------*/
+
    /** To check if the player can go to the specified direction...
     * @param true if the player can move...
     */
@@ -315,7 +390,7 @@ public class Door
        int ydc = doorDrawable.getY() + doorDrawable.getHeight()/2;
 
        if( doorType == DoorDrawable.VERTICAL_TOP_PIVOT ||
-           doorType == DoorDrawable.VERTICAL_TOP_PIVOT ) {
+           doorType == DoorDrawable.VERTICAL_BOTTOM_PIVOT ) {
            if( (xdc<xpc && xdc<destPoint.x) ||  (xdc>xpc && xdc>destPoint.x) )
                return true;
            return false;

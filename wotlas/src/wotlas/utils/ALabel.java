@@ -30,19 +30,21 @@ public class ALabel extends JLabel
 {
 
  /*------------------------------------------------------------------------------------*/
-  
+
   /** Constructor without arguments.
    */
   public ALabel() {
     super();
+    setOpaque(false);
   }
-  
+
  /*------------------------------------------------------------------------------------*/
-  
+
   /** Constructor.
    */
   public ALabel( String text ) {
-    super( text );      
+    super( text );
+    setOpaque(false);
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -51,6 +53,7 @@ public class ALabel extends JLabel
    */
   public ALabel( String text, int horizontalAlignment ) {
     super( text, horizontalAlignment );
+    setOpaque(false);
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -58,13 +61,13 @@ public class ALabel extends JLabel
   /** Mutated Paint Method.
    */
   public void paint( Graphics g ) {
-    Graphics2D g2D = (Graphics2D) g; 
+    Graphics2D g2D = (Graphics2D) g;
     RenderingHints saveRenderHints = g2D.getRenderingHints(); // save
-    
+
     RenderingHints renderHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING,
                                                         RenderingHints.VALUE_ANTIALIAS_ON);
     renderHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-    
+
     g2D.setRenderingHints( renderHints );
     super.paint(g);
     g2D.setRenderingHints( saveRenderHints ); // restore

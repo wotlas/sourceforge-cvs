@@ -35,6 +35,7 @@ public class ARadioButton extends JRadioButton
    */
   public ARadioButton() {
     super();
+    setOpaque(false);
   }
   
  /*------------------------------------------------------------------------------------*/
@@ -42,7 +43,8 @@ public class ARadioButton extends JRadioButton
   /** Constructor with the specified text.
    */
   public ARadioButton( String text ) {
-    super( text );      
+    super( text );   
+    setOpaque(false);   
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -51,6 +53,7 @@ public class ARadioButton extends JRadioButton
    */
   public ARadioButton( String text, boolean selected ) {
     super( text, selected );
+    setOpaque(false);
   }
   
  /*------------------------------------------------------------------------------------*/

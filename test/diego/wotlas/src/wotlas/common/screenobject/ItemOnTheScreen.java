@@ -19,6 +19,9 @@
 package wotlas.common.screenobject;
 
 import wotlas.common.*;
+import wotlas.common.character.*;
+import wotlas.common.action.*;
+import wotlas.common.universe.*;
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.graphics2D.drawable.*;
@@ -31,12 +34,12 @@ import java.awt.Rectangle;
  *
  * @author Diego
  */
-public class ItemOnTheScreen implements FakeSpriteDataSupplier {
+public class ItemOnTheScreen extends ScreenObject {
 
-    protected FakeSprite memImage;
-
-    public ItemOnTheScreen() {
-        
+    public ItemOnTheScreen(int x,int y, String key) {
+        this.primaryKey = key;
+        this.x = x;
+        this.y = y;
     }
     
     /** To get a Drawable for this character. This should not be used on the
@@ -73,21 +76,20 @@ public class ItemOnTheScreen implements FakeSpriteDataSupplier {
     public ImageIdentifier getImageIdentifier() {
         return new ImageIdentifier();
     }
-    
-    /** To get the X image position.
-     *
-     * @return x image cordinate
-     */
-    public int getX() {
-        return 20;
+   
+    public boolean isConnectedToGame() {
+        return true;
     }
     
-    /** To get the Y image position.
-     *
-     * @return y image cordinate
-     */
-    public int getY() {
-        return 20;
+    public void setLocation(WotlasLocation loc) {
+    }
+    
+    public byte getTargetType() {
+        return UserAction.TARGET_TYPE_ITEM;
+    }
+    
+    public CharData getCharData() {
+        return null;
     }
     
 }

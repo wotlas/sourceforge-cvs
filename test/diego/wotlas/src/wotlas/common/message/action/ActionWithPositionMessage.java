@@ -43,8 +43,10 @@ import wotlas.utils.Tools;
 
 abstract public class ActionWithPositionMessage extends NetMessage
 {
-    protected int action;
+    protected String targetKey;
+    protected int idOfAction;
     protected int x,y;
+    protected byte targetRange;
 
   /** Constructor. Just initializes the message category and type.
    */
@@ -52,11 +54,14 @@ abstract public class ActionWithPositionMessage extends NetMessage
         super();
     }
 
-    public ActionWithPositionMessage( int action, int x, int y) {
+    public ActionWithPositionMessage( int idOfAction, int x, int y, String targetKey
+    , byte targetRange ) {
         super();
-        this.action = action;
+        this.idOfAction = idOfAction;
         this.x = x;
         this.y = y;
+        this.targetKey = targetKey;
+        this.targetRange = targetRange;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -68,15 +73,11 @@ abstract public class ActionWithPositionMessage extends NetMessage
     * @exception IOException if the stream has been closed or is corrupted.
     */
     public void encode( DataOutputStream ostream ) throws IOException {
-        try{
-        ostream.writeInt( action );
+        ostream.writeInt( idOfAction );
         ostream.writeInt( x );
         ostream.writeInt( y );
-        }catch(IOException e){
-            System.out.println(" uhm error while encoding action+position msg !");
-            e.printStackTrace();
-            throw e;
-        }
+        ostream.writeUTF( targetKey );
+        ostream.writeByte( targetRange );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -88,15 +89,10 @@ abstract public class ActionWithPositionMessage extends NetMessage
     * @exception IOException if the stream has been closed or is corrupted.
     */
     public void decode( DataInputStream istream ) throws IOException {
-        try{
-        action = istream.readInt();
+        idOfAction = istream.readInt();
         x = istream.readInt();
         y = istream.readInt();
-        System.out.println(" decoding action+position msg !");
-        }catch(IOException e){
-            System.out.println(" uhm error while decoding action+position msg !");
-            e.printStackTrace();
-            throw e;
-        }
+        targetKey = istream.readUTF();        
+        targetRange = istream.readByte();
     }
 }

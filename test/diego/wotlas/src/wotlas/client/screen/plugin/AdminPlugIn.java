@@ -95,6 +95,9 @@ public class AdminPlugIn extends JPanelPlugIn  {
     private void ItemCrea1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ItemCrea1ActionPerformed
         // Add your handling code here:
         System.out.println("Calling item creation I");
+        ClientDirector.getDataManager().commandRequest = DataManager.COMMAND_CAST;
+        ClientDirector.getDataManager().getClientScreen().getMapPanel().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        ClientDirector.getDataManager().commandAction = CastAction.getCastAction(CastAction.CAST_ADMIN_CREATE);
     }//GEN-LAST:event_ItemCrea1ActionPerformed
 
     private void MobCrea1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MobCrea1ActionPerformed
@@ -103,7 +106,7 @@ public class AdminPlugIn extends JPanelPlugIn  {
         // avvisare l'inventory del player e il panel della mappa.
         ClientDirector.getDataManager().commandRequest = DataManager.COMMAND_CAST;
         ClientDirector.getDataManager().getClientScreen().getMapPanel().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-        ClientDirector.getDataManager().commandAction = CastAction.castActions[CastAction.CAST_ADMIN_SUMMON];
+        ClientDirector.getDataManager().commandAction = CastAction.getCastAction(CastAction.CAST_ADMIN_SUMMON);
     }//GEN-LAST:event_MobCrea1ActionPerformed
     
     

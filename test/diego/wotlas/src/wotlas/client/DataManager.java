@@ -147,6 +147,10 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
     private Hashtable players;
 
+  /** List of all the ScreenObjects displayed on screen.
+   */
+    private Hashtable screenObjects;
+    
   /** Our menu manager.
    */
     private MenuManager menuManager;
@@ -216,6 +220,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       // 2 - Misc inits
          syncMessageQueue = new NetQueue(1,3);
          players = new Hashtable();
+         screenObjects = new Hashtable();
          connectionLock = new byte[1];
          startGameLock = new Object();
 
@@ -289,6 +294,12 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       return players;
     }
  
+  /** To get the hashtable screenObjects
+   */
+    public Hashtable getScreenObjects() {
+      return screenObjects;
+    }
+    
   /** To get selected player
    */
     public String getSelectedPlayerKey() {
@@ -682,6 +693,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        clientScreen.getChatPanel().reset();
        clientScreen.getPlayerPanel().reset();
        players.clear();
+       screenObjects.clear();
        connection.setPingListener( (NetPingListener) clientScreen.getPingPanel() );
 
        menuManager = new MenuManager( myPlayer, gDirector );
@@ -985,19 +997,41 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
             byte indexForMaskTarget = 0;
             byte targetRange = 0;
             WotlasLocation loc = new WotlasLocation(myPlayer.getLocation());
+            String targetKey = "";
             
             // checking what's the target
             if( object==null ) {
                 if (SHOW_DEBUG)
                     System.out.println("The ground has been clicked...");
-                indexForMaskTarget = UserAction.TARGET_GROUND;
+                indexForMaskTarget = UserAction.TARGET_TYPE_GROUND;
+                targetKey = "";
             } 
+            else if ( object instanceof ScreenObject ) {
+                if (SHOW_DEBUG)
+                    System.out.println("A screenobject has been clicked...");
+                indexForMaskTarget = ((ScreenObject) object).getTargetType();
+                targetKey = ((ScreenObject) object).getPrimaryKey();
+            } 
+            /*
             else if ( object instanceof ItemOnTheScreen ) {
-                ItemOnTheScreen item = (ItemOnTheScreen) object;
                 if (SHOW_DEBUG)
                     System.out.println("An item has been clicked...");
                 indexForMaskTarget = UserAction.TARGET_ITEM;
+                targetKey = ((ScreenObject) object).getPrimaryKey();
             } 
+            else if ( object instanceof NpcOnTheScreen ) {
+                if (SHOW_DEBUG)
+                    System.out.println("An npc has been clicked...");
+                indexForMaskTarget = UserAction.TARGET_NPC;
+                targetKey = ((ScreenObject) object).getPrimaryKey();
+            } 
+            else if ( object instanceof PlayerOnTheScreen ) {
+                if (SHOW_DEBUG)
+                    System.out.println("A player has been clicked...");
+                indexForMaskTarget = UserAction.TARGET_PLAYER;
+                targetKey = ((ScreenObject) object).getPrimaryKey();
+            } 
+             */
             else  {
                 commandRequest = COMMAND_NOTHING;
                 if (SHOW_DEBUG) {
@@ -1043,7 +1077,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
                         // case UserAction.TARGET_RANGE_SEE_AND_MEDIUM:
                         // case UserAction.TARGET_RANGE_SEE_AND_LONG:
                         case UserAction.TARGET_RANGE_SAME_MAP:
-                            sendMessage( new CastActionWithPositionMessage( commandAction.getId(), x, y ) );
+                            sendMessage( 
+                            new CastActionWithPositionMessage( commandAction.getId(), x, y,targetKey ,targetRange ) );
                             break;
                         case UserAction.TARGET_RANGE_ONE_MAP:
                         case UserAction.TARGET_RANGE_MAP_ON_SAME_WORLD:
@@ -1207,6 +1242,24 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
     public synchronized boolean removePlayer(PlayerImpl player) {
        players.remove(player.getPrimaryKey());
+       return true;
+    }
+
+    /** To add a new screenObject to the screen<br>
+   * (called by client.message.description.MsgBehaviour)
+   *
+   * @screenObject  to add to the player screen
+   */
+    public synchronized void addScreenObject(ScreenObject item) {
+       screenObjects.put( item.getPrimaryKey(), item );
+    }
+
+  /** To remove a screenObject from player screen
+   *
+   * @screeenObject the player no more see, cause it's no more there
+   */
+    public synchronized boolean removeScreenObject(ScreenObject item) {
+       screenObjects.remove( item.getPrimaryKey() );
        return true;
     }
 

@@ -22,6 +22,7 @@ package wotlas.common.router;
 import wotlas.common.Player;
 import wotlas.common.WorldManager;
 import wotlas.common.universe.WotlasLocation;
+import wotlas.common.screenobject.*;
 
 import wotlas.libs.net.NetMessage;
 import wotlas.utils.Debug;
@@ -58,6 +59,10 @@ public abstract class MessageRouter {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+    /** Our items/npc
+    */
+    protected Hashtable screenObjects;
+
    /** Our players.
     */
      protected Hashtable players;
@@ -68,6 +73,7 @@ public abstract class MessageRouter {
     */
      public MessageRouter() {
          players = new Hashtable( 5 );
+         screenObjects = new Hashtable( 5 );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -164,6 +170,17 @@ public abstract class MessageRouter {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** To find a screenObject by its primary key. We search in our local group. MessageRouters
+    *  may extend this search.
+    * @param primaryKey screenObject to find
+    * @return null if not found, the ScreenObject otherwise
+    */
+     public ScreenObject getScreenObject( String primaryKey ) {
+        return (ScreenObject) screenObjects.get( primaryKey );
+     }
+     
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
    /** To send a message to the local group.
     *  @param msg message to send to the group
     */
@@ -233,6 +250,9 @@ public abstract class MessageRouter {
     */
      abstract public void sendMessages( NetMessage msg[], Player exceptThisPlayer, byte groupOption );
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/    
+     
+     public boolean addScreenObject( ScreenObject item ) {
+        return false;
+     }
 }

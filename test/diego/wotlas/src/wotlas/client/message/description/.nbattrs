@@ -9,11 +9,15 @@
         <attr name="class_dependency_wotlas.common.message.description.AddPlayerToRoomMessage" stringvalue="AddPlayerToRoomMsgBehaviour"/>
     </fileobject>
     <fileobject name="AddPlayerToTileMapMsgBehaviour.java">
-        <attr name="class_dependency_wotlas.libs.net.NetMessageBehaviour" stringvalue="AddPlayerToTileMapMsgBehaviour"/>
         <attr name="class_dependency_wotlas.common.message.description.AddPlayerToTileMapMessage" stringvalue="AddPlayerToTileMapMsgBehaviour"/>
+        <attr name="class_dependency_wotlas.libs.net.NetMessageBehaviour" stringvalue="AddPlayerToTileMapMsgBehaviour"/>
     </fileobject>
     <fileobject name="TileMapPlayerDataMsgBehaviour.java">
         <attr name="class_dependency_wotlas.common.message.description.TileMapPlayerDataMessage" stringvalue="TileMapPlayerDataMsgBehaviour"/>
         <attr name="class_dependency_wotlas.libs.net.NetMessageBehaviour" stringvalue="TileMapPlayerDataMsgBehaviour"/>
+    </fileobject>
+    <fileobject name="AddScreenObjectToTileMapMsgBehaviour.java">
+        <attr name="class_dependency_wotlas.common.message.description.AddScreenObjectToTileMapMessage" stringvalue="AddScreenObjectToTileMapMsgBehaviour"/>
+        <attr name="class_dependency_wotlas.libs.net.NetMessageBehaviour" stringvalue="AddScreenObjectToTileMapMsgBehaviour"/>
     </fileobject>
 </attributes>

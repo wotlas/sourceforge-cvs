@@ -184,7 +184,7 @@ public class NetMessageFactory {
          Class searchedClass = (Class) msgClasses.get( msgSuperClassName );
 
          if( searchedClass==null ){
-             System.out.println(" diego: problems with action "+msgSuperClassName );
+             System.out.println(" uhm wrong class, you should declare the package u'r using!");
              throw new ClassNotFoundException(msgSuperClassName);
          }
 

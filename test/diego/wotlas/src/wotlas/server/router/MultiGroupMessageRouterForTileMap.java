@@ -26,6 +26,7 @@ import wotlas.common.*;
 import wotlas.common.universe.*;
 import wotlas.common.router.*;
 import wotlas.common.chat.*;
+import wotlas.common.screenobject.*;
 
 import wotlas.common.message.description.*;
 import wotlas.common.message.movement.*;
@@ -46,9 +47,6 @@ import java.util.Iterator;
 
 public class MultiGroupMessageRouterForTileMap extends MessageRouter {
 
-    /** Our items/npc
-    */
-    protected Hashtable screenObject;
 //        player.setPrimaryKey( account.getAccountName() );
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -371,6 +369,71 @@ public class MultiGroupMessageRouterForTileMap extends MessageRouter {
         }
      }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ /* - - - - - - - - - - -screen object manipulation - - - - - - - - - - - - - - -*/
 
+    /** To add a screen object to this map to this group. We update its location.
+    *
+    *  Call this method when a player/npc/item is added to the map. 
+    *  
+    * @param item to add
+    * @return true if it was added successfully, false if an error occured.
+    */
+    public boolean addScreenObject( ScreenObject item ) {
+
+        // 1 - We add this player to our list & don't care if it's already in there
+        screenObjects.put( item.getPrimaryKey(), item );
+        item.setLocation( thisTileMap.getLocation() ); // update player location
+
+        if(!item.isConnectedToGame())
+            return true; // no need to advertise if the player is not connected
+
+        // solo per ora, finche non levo addplayer
+        AddScreenObjectToTileMapMessage uno = new AddScreenObjectToTileMapMessage( item );
+        synchronized( players ) {
+            Iterator it = players.values().iterator();
+            while( it.hasNext() ) {
+                Player p = (Player) it.next();
+                p.sendMessage( uno );  // asking for the player's name....
+            }
+        }
+
+        // 2 - We advertise our presence to the other players in the LOCAL map
+        //   and to the npc-> but not with message for npc.
+        AddScreenObjectToTileMapMessage aMsg = new AddScreenObjectToTileMapMessage( item );
+        synchronized( screenObjects ) {
+            Iterator it = screenObjects.values().iterator();
+            
+            Object tmpObject;
+            while( it.hasNext() ) {
+                tmpObject = it.next();
+                if( tmpObject instanceof PlayerOnTheScreen ){
+                    Player p = ( (PlayerOnTheScreen) it.next() ).getPlayer();
+                    if(tmpObject!=item) {
+                        // needed for the LieManager to know who is
+                        //aMsg.setOtherPlayer(p);
+                        // asking for the player's name....
+                        p.sendMessage( aMsg );
+                    }
+                }
+                else if( tmpObject instanceof NpcOnTheScreen )
+                    ; // add code to inform npc. (npc that looks for items.....
+                else if( tmpObject instanceof ItemOnTheScreen )
+                    ; // items are not interested in other items.....
+                else
+                    continue;
+            }
+        }
+        
+        if( item instanceof PlayerOnTheScreen ) {
+            Player p = ( (PlayerOnTheScreen) item ).getPlayer();
+            
+            // 3 - We send PLAYER data to the added player
+            p.sendMessage( new TileMapPlayerDataMessage( thisTileMap, p ) );
+
+            // 4 - We send CHAT DATA to the added player
+            updateChatInformation( (PlayerImpl) p );
+        }
+          
+        return true;
+    }
 }

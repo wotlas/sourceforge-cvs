@@ -182,48 +182,48 @@ public class PlayerImpl implements Player, SpriteDataSupplier,FakeSpriteDataSupp
 
  /*------------------------------------------------------------------------------------*/
 
- /** When this method is called, the player can initialize its own fields safely : all
-  *  the game data has been loaded.
-  */
-  public void init() {
-    if(!getLocation().isTileMap())  {
-    //Debug.signal( Debug.NOTICE, null, "PlayerImpl::init");
-        animation = new Animation( wotCharacter.getImage(location),
+    /** When this method is called, the player can initialize its own fields safely : all
+    *  the game data has been loaded.
+    */
+    public void init() {
+        if(!getLocation().isTileMap())  {
+            //Debug.signal( Debug.NOTICE, null, "PlayerImpl::init");
+            animation = new Animation( wotCharacter.getImage(location),
                                ClientDirector.getDataManager().getImageLibrary() );
-        sprite = (Sprite) wotCharacter.getDrawable(this);
-        brightnessFilter = new BrightnessFilter();
-        sprite.setDynamicImageFilter(brightnessFilter);
+            sprite = (Sprite) wotCharacter.getDrawable(this);
+            brightnessFilter = new BrightnessFilter();
+            sprite.setDynamicImageFilter(brightnessFilter);
+        }
+        movementComposer.init( this );
     }
-    movementComposer.init( this );
-  }
 
-  /** Called after graphicsDirector's init to add some visual effects to the master player
-   * or to show other players
-   */
-  public void initVisualProperties(GraphicsDirector gDirector) {
+    /** Called after graphicsDirector's init to add some visual effects to the master player
+    * or to show other players
+    */
+    public void initVisualProperties(GraphicsDirector gDirector) {
 
-    if(!getLocation().isTileMap()){
-        if(isMaster)
-            gDirector.addDrawable(wotCharacter.getShadow()); // Drawable has already been added
+        if(!getLocation().isTileMap()){
+            if(isMaster)
+                gDirector.addDrawable(wotCharacter.getShadow()); // Drawable has already been added
+            else {
+                gDirector.addDrawable(wotCharacter.getDrawable(this));
+                gDirector.addDrawable(wotCharacter.getShadow());
+            }
+        }
         else {
-          gDirector.addDrawable(wotCharacter.getDrawable(this));
-          gDirector.addDrawable(wotCharacter.getShadow());
+            gDirector.addDrawable(wotCharacter.getDrawable(this));
         }
     }
-    else {
-          gDirector.addDrawable(wotCharacter.getDrawable(this));
-    }
-  }
 
-  /** To remove player from the screen
-   */
-  public void cleanVisualProperties(GraphicsDirector gDirector) {
-    if (!isMaster) {
-      gDirector.removeDrawable(wotCharacter.getDrawable(this));
-      if(!getLocation().isTileMap())
-        gDirector.removeDrawable(wotCharacter.getShadow());
+    /** To remove player from the screen
+    */
+    public void cleanVisualProperties(GraphicsDirector gDirector) {
+        if (!isMaster) {
+            gDirector.removeDrawable(wotCharacter.getDrawable(this));
+            if(!getLocation().isTileMap())
+            gDirector.removeDrawable(wotCharacter.getShadow());
+        }
     }
-  }
 
  /*------------------------------------------------------------------------------------*/
 

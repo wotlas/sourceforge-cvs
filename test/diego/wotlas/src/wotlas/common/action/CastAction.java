@@ -20,6 +20,12 @@ package wotlas.common.action;
 
 import java.io.*;
 import wotlas.libs.persistence.*;
+import wotlas.common.screenobject.*;
+import wotlas.common.action.spell.*;
+import wotlas.common.universe.*;
+import wotlas.server.*;
+import wotlas.common.*;
+import wotlas.common.router.*;
 
 /**
  *
@@ -28,16 +34,19 @@ import wotlas.libs.persistence.*;
 public class CastAction extends UserAction {
 
     static public final int CAST_ADMIN_SUMMON   = 0;
-    static public final int CAST_LAST_CAST      = 1;
+    static public final int CAST_ADMIN_CREATE   = 1;    
+    static public final int CAST_LAST_CAST      = 2;
     
-    static public CastAction[] castActions;
+    static protected CastAction[] castActions;
 
     protected int manaCost;
     protected int minimumLevel;
+    protected Spell spell;
     
     public CastAction( int id, String name, String description
     , byte maskTarget, byte targetRange
-    , int manaCost, int minimumLevel){
+    , int manaCost, int minimumLevel
+    , Spell spell){
         this.name = name;
         this.description = description;
         this.id = id;
@@ -48,25 +57,52 @@ public class CastAction extends UserAction {
         this.ostileAction = false;
         this.effectRange = EFFECT_RANGE_NONE;
         this.maskInform = 0;
+        this.spell = spell;
     }
 
-    public boolean CanExecute(byte target, byte range){
-        // i can cast this ID?
-        // i have mana?
+    public boolean CanExecute(ScreenObject user, byte targetType, byte range){
+    // da attivare ma non ora....
+    //    if( user.getCharData() == null )
+    //            return false;
+        
+        // i can cast this ID? : use chardata to check it.....
+        
+        // i have mana? : use chardata to check it.....
+
         // valid target?
-        if( !super.isValidTarget(target, range) )
-            return false;
-        return true;
+        return isValidTarget(targetType, range);
     }
-
+    
+    /* -------------static functions--------------------------------------- */
     static public void InitCastActions(){
         if( castActions != null )
             return;
+        
         castActions = new CastAction[CAST_LAST_CAST];
         
         castActions[CAST_ADMIN_SUMMON] = new CastAction( CAST_ADMIN_SUMMON
         ,"Summon monster","Summon any monster anywhere!"
-        , (byte)(1<<TARGET_GROUND), TARGET_RANGE_SAME_MAP
-        , 0, 0 );
+        , (byte)(1<<TARGET_TYPE_GROUND), TARGET_RANGE_SAME_MAP
+        , 0, 0 
+        , new Summon( "mostriciattolo" ) );
+        
+        castActions[CAST_ADMIN_CREATE] = new CastAction( CAST_ADMIN_CREATE
+        ,"Create item","Create item anywhere!"
+        , (byte)(1<<TARGET_TYPE_GROUND), TARGET_RANGE_SAME_MAP
+        , 0, 0 
+        , new Create( "oggettino" ) );
+        
     }
+
+    static public CastAction getCastAction(int id){
+        return castActions[id];
+    }
+    
+    /** used by server execute the action
+     *
+     */
+    public void ExecuteToMap(WotlasLocation loc, int x, int y) {
+        spell.CastToMap(loc, x, y);
+    }
+
 }

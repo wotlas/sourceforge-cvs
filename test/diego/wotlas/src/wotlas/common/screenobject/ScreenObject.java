@@ -19,38 +19,45 @@
 
 package wotlas.common.screenobject;
 
+import wotlas.common.*;
+import wotlas.common.character.*;
+import wotlas.common.universe.*;
+import wotlas.libs.persistence.*;
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
+import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.graphics2D.filter.*;
+import wotlas.common.environment.*;
 
 import java.awt.Rectangle;
 
-/**  ScreenObject
-  *
-  * @author Diego
+/**  ScreenObject :
+ * This object is created by the server, then it's sended to the client
+ * by the MultiGroupMessageRouterForTileMap
+ *
+ * Every ScreenObject should have all the information so the client can show it
+ * without know all of what is behind (player,item and npc data)
+ * So the data behind can keept secret!
+ *
+ * @author Diego
  */
-public abstract class ScreenObject {
+public abstract class ScreenObject implements FakeSpriteDataSupplier, SendObjectReady{
+    
+    transient protected FakeSprite memImage;
+    protected int x,y;
+    protected WotlasLocation loc;
+    protected String primaryKey;
 
- /*------------------------------------------------------------------------------------*/
-    /** To get the player primary Key ( account name or any unique ID )
-    *
-    *  @return player primary key
-    */
-    abstract public String getPrimaryKey();
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ /*---------------all the abstract functions to implement------------------------------*/
 
-    /** To set the player's primary Key ( account name or any unique ID )
-    *
-    *  @param primaryKey player primary key
-    */
-    abstract public void setPrimaryKey( String primaryKey );
+    abstract public void setLocation(WotlasLocation loc);
 
-    /*
-    public void ScreenObject() {
-
-    }
-     */
+    abstract public boolean isConnectedToGame();
+    
+    abstract public byte getTargetType();
+    
+    abstract public CharData getCharData();
     
     /** To get the player's drawable
     *  @return player sprite
@@ -60,6 +67,68 @@ public abstract class ScreenObject {
     /** To get player's rectangle (to test intersection)
     * it's used in world/town/interior/rooms/tilemaps sprites
     */
-    abstract public Rectangle getCurrentRectangle();
+//    abstract public Rectangle getCurrentRectangle();
+     
+ /*---------------------All the common functions---------------------------------------*/
+
+    public WotlasLocation getLocation() {
+        return loc;
+    }
     
+    /** To get the player primary Key ( account name or any unique ID )
+    *
+    *  @return player primary key
+    */
+    public String getPrimaryKey() {
+        return primaryKey;
+    }
+    
+    /** To get the X image position.
+    *
+    * @return x image cordinate
+    */
+    public int getX() {
+        return x;
+    }
+    
+    /** To get the Y image position.
+    *
+    * @return y image cordinate
+    */
+    public int getY() {
+        return y;
+    }
+    
+    public void setPos(int x, int y){
+        this.x = x;
+        this.y = y;
+    }
+    
+    /* - - - - - - - - - - - - - - Send object by the net- - - - - - - - - - - - - - - - -*/
+    
+    /** id version of data, used in serialized persistance.
+    */
+    public int ExternalizeGetVersion(){
+        return 1;
+    }
+
+    public void writeObject(java.io.ObjectOutputStream objectOutput)
+    throws java.io.IOException {
+        objectOutput.writeInt( ExternalizeGetVersion() );
+        objectOutput.writeInt( x );
+        objectOutput.writeInt( y );
+        objectOutput.writeObject( primaryKey );
+    }
+    
+    public void readObject(java.io.ObjectInputStream objectInput)
+    throws java.io.IOException, java.lang.ClassNotFoundException {
+        int IdTmp = objectInput.readInt();
+        if( IdTmp == ExternalizeGetVersion() ){
+            x = objectInput.readInt();
+            y = objectInput.readInt();
+            primaryKey = ( String ) objectInput.readObject();
+        } else {
+            // to do.... when new version
+        }
+    }
 }

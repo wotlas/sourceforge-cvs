@@ -16,45 +16,48 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
-package wotlas.common.message.action;
+ 
+package wotlas.common.message.description;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.*;
-import wotlas.common.character.BasicChar;
-import wotlas.common.universe.WotlasLocation;
-import wotlas.common.action.*;
+import wotlas.common.screenobject.*;
+import wotlas.common.Player;
 
-import wotlas.utils.Tools;
 
 /** 
- * To send action reqest (Message Sent by Client).
+ * The message the GameServer sends to tell us to add a screenObjects... (Message Sent by Server).
  *
- * @author Diego
+ * @author Aldiss, Petrus, Diego
  */
 
-public class ActionMessage extends NetMessage
+public class AddScreenObjectToTileMapMessage extends NetMessage
 {
-    int idOfAction;
+    
+    protected ScreenObject item;
+    
+ /*------------------------------------------------------------------------------------*/
 
     /** Constructor. Just initializes the message category and type.
     */
-    public ActionMessage() {
+    public AddScreenObjectToTileMapMessage() {
         super();
     }
 
-    /** create an an actionmessage.
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Constructor with the ScreenObject object.
+    *
+    * @param item ScreenObject to send
     */
-    public ActionMessage(int idOfAction) {
+    public AddScreenObjectToTileMapMessage( ScreenObject item) {
         super();
-        this.idOfAction = idOfAction;
-    }
+        this.item = item;
+     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -65,7 +68,11 @@ public class ActionMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void encode( DataOutputStream ostream ) throws IOException {
-         ostream.writeInt( idOfAction );
+         try{
+            new ObjectOutputStream(ostream).writeObject( item ); 
+         } catch (Exception e) {
+            System.out.println(" diego: error, should still decide how to manage this error");
+         }
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -77,6 +84,13 @@ public class ActionMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void decode( DataInputStream istream ) throws IOException {
-         idOfAction = istream.readInt();
+         try {
+             item = (ScreenObject) new ObjectInputStream(istream).readObject();             
+             System.out.println(" item received");
+         } catch (Exception e) {
+             System.out.println(" diego: error, should still decide how to manage this error");
+         }
      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

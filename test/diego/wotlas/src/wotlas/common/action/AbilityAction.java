@@ -20,6 +20,7 @@ package wotlas.common.action;
 
 import java.io.*;
 import wotlas.libs.persistence.*;
+import wotlas.common.screenobject.*;
 
 /**
  *
@@ -43,8 +44,14 @@ public class AbilityAction extends UserAction {
         this.maskInform = 0;
     }
 
-    public boolean CanExecute(byte target, byte range){
-        if( !super.isValidTarget(target, range) )
+    public boolean CanExecute(ScreenObject user, byte targetType, byte range){
+        if( user.getCharData() == null )
+            return false;
+        
+        // i can use this ability : this ID? : use chardata to check it.....
+
+        // valid target?
+        if( !super.isValidTarget(targetType, range) )
             return false;
         return true;
     }

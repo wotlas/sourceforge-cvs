@@ -49,10 +49,13 @@ public class CastActionWithPositionMessage extends ActionWithPositionMessage
         super();
     }
 
-    public CastActionWithPositionMessage( int action, int x, int y) {
+    public CastActionWithPositionMessage( int idOfAction, int x, int y, String targetKey
+    , byte targetRange ) {
         super();
-        this.action = action;
+        this.idOfAction = idOfAction;
         this.x = x;
         this.y = y;
+        this.targetKey = targetKey;
+        this.targetRange = targetRange;
     }
 }

@@ -43,7 +43,7 @@ import wotlas.utils.Tools;
 
 abstract public class ActionWithLocationMessage extends NetMessage
 {
-    protected int action;
+    protected int idOfAction;
     protected WotlasLocation location;
 
   /** Constructor. Just initializes the message category and type.
@@ -52,9 +52,9 @@ abstract public class ActionWithLocationMessage extends NetMessage
         super();
     }
 
-    public ActionWithLocationMessage( int action, WotlasLocation location) {
+    public ActionWithLocationMessage( int idOfAction, WotlasLocation location) {
         super();
-        this.action = action;
+        this.idOfAction = idOfAction;
         this.location = location;
 //      this.location = location;
     }
@@ -68,7 +68,7 @@ abstract public class ActionWithLocationMessage extends NetMessage
     * @exception IOException if the stream has been closed or is corrupted.
     */
     public void encode( DataOutputStream ostream ) throws IOException {
-        ostream.writeInt( action );
+        ostream.writeInt( idOfAction );
 
         // SEND wotlas location
         ostream.writeInt( location.getWorldMapID() );
@@ -88,16 +88,16 @@ abstract public class ActionWithLocationMessage extends NetMessage
     * @exception IOException if the stream has been closed or is corrupted.
     */
     public void decode( DataInputStream istream ) throws IOException {
-        action = istream.readInt();
+        idOfAction = istream.readInt();
  
         // Wotlas Location
-        WotlasLocation wotLoc = new WotlasLocation();
+        location = new WotlasLocation();
 
-        wotLoc.setWorldMapID( istream.readInt() );
-        wotLoc.setTownMapID( istream.readInt() );
-        wotLoc.setBuildingID( istream.readInt() );
-        wotLoc.setInteriorMapID( istream.readInt() );
-        wotLoc.setRoomID( istream.readInt() );
-        wotLoc.setTileMapID( istream.readInt() );
+        location.setWorldMapID( istream.readInt() );
+        location.setTownMapID( istream.readInt() );
+        location.setBuildingID( istream.readInt() );
+        location.setInteriorMapID( istream.readInt() );
+        location.setRoomID( istream.readInt() );
+        location.setTileMapID( istream.readInt() );
    }
 }

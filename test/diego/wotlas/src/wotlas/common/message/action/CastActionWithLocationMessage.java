@@ -49,9 +49,9 @@ public class CastActionWithLocationMessage extends ActionWithLocationMessage
         super();
     }
 
-    public CastActionWithLocationMessage( int action, WotlasLocation location) {
+    public CastActionWithLocationMessage( int idOfAction, WotlasLocation location) {
         super();
-        this.action = action;
+        this.idOfAction = idOfAction;
         this.location = location;
     }
 }

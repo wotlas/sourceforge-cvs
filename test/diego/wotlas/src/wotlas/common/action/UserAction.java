@@ -22,6 +22,7 @@ package wotlas.common.action;
 import java.io.*;
 import wotlas.libs.persistence.*;
 import wotlas.utils.*;
+import wotlas.common.screenobject.*;
 
 /** basic class for actions
  * in the FAR future new cast action can be CREATED by players
@@ -34,11 +35,12 @@ import wotlas.utils.*;
 public abstract class UserAction implements SendObjectReady {
         
 //    static public final byte TARGET_NO_TARGET   = 0;
-    static public final byte TARGET_SELF        = 0;
-    static public final byte TARGET_NPC         = 1;
-    static public final byte TARGET_PLAYER      = 2;
-    static public final byte TARGET_ITEM        = 3;
-    static public final byte TARGET_GROUND      = 4;
+    static public final byte TARGET_TYPE_SELF       = 0;
+    static public final byte TARGET_TYPE_NPC        = 1;
+    static public final byte TARGET_TYPE_PLAYER     = 2;
+    static public final byte TARGET_TYPE_ITEM       = 3;
+    static public final byte TARGET_TYPE_GROUND     = 4;
+    static public final byte TARGET_TYPE_INVENTORY  = 5;
 
     static public final byte TARGET_RANGE_NONE      = 1;
     static public final byte TARGET_RANGE_TOUCH     = 2;
@@ -82,17 +84,32 @@ public abstract class UserAction implements SendObjectReady {
     protected byte maskInform;
     protected boolean ostileAction; // OSTILE ACTION CAUSE ATTACKS.
     
-    abstract public boolean CanExecute(byte target, byte range);
+    /** used by server to check if it's possible to execute
+     *
+     */
+    abstract public boolean CanExecute( ScreenObject user, byte targetType, byte range);
+
+    /** used by client to check if it's possible to execute
+     *
+     */
+    public boolean CanExecute(byte targetType, byte range) {
+        return isValidTarget(targetType, range);
+    }
 
     public int getId() {
         return id;
     }
     
-    public boolean isValidTarget(byte target, byte range) {
-        if( !MaskTools.isSet(maskTarget,target) )
+    public boolean isValidTarget(byte targetType, byte range) {
+        if( !MaskTools.isSet(maskTarget,targetType) ){
+            System.out.println(" type is not valid  ");
             return false;
-        if( targetRange >= range )
-            return true;
+        }
+        if( targetRange < range ){
+            System.out.println(" range is not valid  ");
+            return false;
+        }
+        System.out.println(" action is valid");
         return true;
     }
     

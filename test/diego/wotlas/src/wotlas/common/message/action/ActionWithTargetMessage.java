@@ -43,7 +43,7 @@ import wotlas.utils.Tools;
 
 public abstract class ActionWithTargetMessage extends NetMessage
 {
-    protected int action;
+    protected int idOfAction;
 
     /** Constructor. Just initializes the message category and type.
     */
@@ -53,9 +53,9 @@ public abstract class ActionWithTargetMessage extends NetMessage
 
     /** Constructor. Just initializes the message category and type.
     */
-    public ActionWithTargetMessage(int action) {
+    public ActionWithTargetMessage(int idOfAction) {
         super();
-        this.action = action;
+        this.idOfAction = idOfAction;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -67,7 +67,7 @@ public abstract class ActionWithTargetMessage extends NetMessage
     * @exception IOException if the stream has been closed or is corrupted.
     */
     public void encode( DataOutputStream ostream ) throws IOException {
-        ostream.writeInt( action );
+        ostream.writeInt( idOfAction );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -79,6 +79,6 @@ public abstract class ActionWithTargetMessage extends NetMessage
     * @exception IOException if the stream has been closed or is corrupted.
     */
     public void decode( DataInputStream istream ) throws IOException {
-        action = istream.readInt();
+        idOfAction = istream.readInt();
     }
 }

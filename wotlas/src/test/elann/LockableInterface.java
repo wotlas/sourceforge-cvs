@@ -19,44 +19,30 @@
  
 package wotlas.common.object;
 
+import wotlas.common.object.Key;
 
 /** 
- * The readable documents' class.
+ * The lockable objects' interface. May be used for doors, chests, ... 
  * 
  * @author Elann
- * @see wotlas.common.object.BaseObject
- * @see wotlas.common.object.UsefulInterface 
  */
 
-public abstract class Document extends BaseObject implements UsefulInterface
+public interface LockableInterface
 {
-
- /** The document content. String should be evolved to a class of our own.
-  */
-  private String text;
 
  /*------------------------------------------------------------------------------------*/
 
 
-  /** Read the document. Several implementations. 
+  /** Try to lock the object.
+   * @param key the key used 
    */
-    public abstract void read();
-	
-  /** Get the document's text. String should be evolved to a class of our own.
-   * @return text
-   */
-    public String getText()
-	{
-	 return this.text;
-	}
+    public void tryLock(Key key);
 
-   /** Set the document's text. String should be evolved to a class of our own.
-    * @param text the new text
-	*/
-	public void setText(String text)
-	{
-	 this.Text=text;
-	}
+  /** Try to unlock the object.
+   * @param key the key used 
+   */
+    public void tryUnlock(Key key);
+
 	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

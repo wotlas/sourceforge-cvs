@@ -146,7 +146,7 @@ public class LimitWindowPolicy implements WindowPolicy{
         screen.x = background.width-screen.width-1;                 
       
       if (background.height < screen.height)
-        screen.y = 1;
+        screen.y = -(screen.height-background.height)/2;
       else if ( (screen.y+screen.height)>=background.height )
         screen.y = background.height-screen.height-1;
       

@@ -55,8 +55,8 @@ public class Warder extends Male {
          //        Rank Color
                    Color.white,
                    new Color(184,184,184),
-                   new Color(128,206,113),
-                   new Color(209,203,99),
+                   new Color(160,160,180),
+                   new Color(140,140,160),
     };
 
  /*------------------------------------------------------------------------------------*/
@@ -166,13 +166,13 @@ public class Warder extends Male {
          String path = null;
 
               if(characterRank.equals("Youngling")) {
-                 path = "players-0/shadows-3/youngling-walking-0";
+                 path = "players-0/shadows-3/youngling-walking-1";
               }
               else if(characterRank.equals("Tower Guard")) {
-                 path = "players-0/shadows-3/guard-walking-1";
+                 path = "players-0/shadows-3/guard-walking-2";
               }
               else {
-                 path = "players-0/shadows-3/warder-walking-2";
+                 path = "players-0/shadows-3/warder-walking-3";
               }
 
          warderShadowSprite = new ShadowSprite( warderSprite.getDataSupplier(),
@@ -205,7 +205,9 @@ public class Warder extends Male {
          warderAuraEffect.useAntialiasing(true);
 
          if(characterRank.equals("Tower Guard"))
-            warderAuraEffect.setAmplitudeLimit( 0.6f );
+            warderAuraEffect.setAmplitudeLimit( 2.6f );
+         else if( characterRank.equals("Youngling") )
+            warderAuraEffect.setAmplitudeLimit( 3.1f );
 
          return warderAuraEffect;
      }
@@ -227,7 +229,7 @@ public class Warder extends Male {
          if(symbolName==null) symbolName=warderRank[0][1]; // default if not found
 
       // Aura Creation
-         return new ImageIdentifier( "players-0/symbols-2/warder-symbols-0/"+symbolName+".gif" );
+         return new ImageIdentifier( "players-0/symbols-2/warder-symbols-1/"+symbolName+".gif" );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -271,6 +273,7 @@ public class Warder extends Male {
    * @param rank the rank of this wotcharacter in his/her community.
    */
      public void setCharacterRank( String rank ) {
+
          if(rank!=null)
             for( int i=0; i<warderRank.length; i++ )
               if( rank.equals(warderRank[i][0]) ) {

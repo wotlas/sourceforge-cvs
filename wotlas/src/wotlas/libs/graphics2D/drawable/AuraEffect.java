@@ -152,6 +152,11 @@ public class AuraEffect extends Drawable {
           if(imageLib!=null) {
              r.width = getImageLibrary().getWidth( image );
              r.height = getImageLibrary().getHeight( image );
+
+             if( image.getIsAnimation() ) {
+                 sprAnim = new Animation( image, imageLib );
+                 hasAnimation = true;
+             }
           }
      }
 

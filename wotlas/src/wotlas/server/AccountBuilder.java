@@ -274,7 +274,7 @@ public class AccountBuilder implements NetConnectionListener
                sendStepError("Internal Error. This server was badly configurated.\nPlease mail this server's administrator ! (code: #metNofou)");
                return false;
             }
-                     	       
+
             Object params[] = new Object[1];
             params[0] = data;
             m.invoke(this,params);
@@ -407,7 +407,7 @@ public class AccountBuilder implements NetConnectionListener
      public void setWotCharacterRank( String data ) throws AccountException {
 
       // 1 - Set the rank
-        WotCharacter wotCharacter = (WotCharacter) player.getWotCharacter(); 
+        WotCharacter wotCharacter = (WotCharacter) player.getWotCharacter();
 
         if(wotCharacter==null)
            throw new AccountException("No character created !");

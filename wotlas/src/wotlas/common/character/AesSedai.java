@@ -257,13 +257,13 @@ public class AesSedai extends Female {
       // symbol selection
          String symbolName = null;
 
-         if(!blackAjah)
+         if(!blackAjah) {
             for( int i=0; i<aesSedaiRank.length; i++ )
               if( characterRank.equals(aesSedaiRank[i][0]) ) {
                   symbolName = aesSedaiRank[i][1];
                   break;
               }
-         else
+         } else
             symbolName="blackajah-12";
 
          if(symbolName==null) symbolName=aesSedaiRank[0][1]; // default if not found

@@ -350,7 +350,7 @@ public class PlayerImpl implements Player, NetConnectionListener
              }
 
           // great we do nothing
-             System.out.println("Connection closed on this player");
+             Debug.signal(Debug.NOTICE, this, "Connection closed on player: "+playerName);
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -360,18 +360,13 @@ public class PlayerImpl implements Player, NetConnectionListener
    *  AND checks that the player is connected.
    *
    * @param message message to send to the player.
-   * @return true if the message was sent, false if the client was not connected.
    */
-     public boolean sendMessage( NetMessage message ) {
-
+     public void sendMessage( NetMessage message ) {
              synchronized( personalityLock ) {
              	if( personality!=null ) {
                     personality.queueMessage( message );
-                    return true;
                 }
              }
-
-         return false;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

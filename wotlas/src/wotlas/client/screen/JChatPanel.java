@@ -419,6 +419,16 @@ System.out.println("DEFAULT CHAT player list reseted");
       return;
 
     DataManager dManager = DataManager.getDefaultDataManager();
+    
+    // Shortcuts
+    if (message.startsWith("/whisper")) {
+      chatVoiceLevel.setValue(ChatRoom.WHISPERING_VOICE_LEVEL);
+      message = message.substring(9);
+    } else if (message.startsWith("/shout")) {
+      chatVoiceLevel.setValue(ChatRoom.SHOUTING_VOICE_LEVEL);
+      message = message.substring(7);
+    }
+    
     dManager.sendMessage( new SendTextMessage( dManager.getMyPlayer().getPrimaryKey(),
                                                dManager.getMyPlayer().getFullPlayerName(),
                                                getMyCurrentChatPrimaryKey(),

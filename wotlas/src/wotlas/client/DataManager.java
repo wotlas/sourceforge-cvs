@@ -657,7 +657,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
               ( (PlayerImpl) it.next() ).tick();
        }
 
-        if ( (circle!=null) )
+       if ( (circle!=null) )
           circle.tick();
           
     // III - Graphics Director update & redraw

@@ -60,8 +60,15 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
     public void doBehaviour( Object context ) {
        // The context is here a DataManager.
           DataManager dataManager = (DataManager) context;
-          PlayerImpl player = dataManager.getMyPlayer();
-
+          PlayerImpl player = dataManager.getMyPlayer();          
+          
+       // Private message
+          if (message.startsWith("/msg")) {
+            JChatRoom chatRoom = dataManager.getChatPanel().getJChatRoom(chatRoomPrimaryKey);
+            chatRoom.appendText("<font color='brown'><i> ** [" + senderFullName + "] " + message.substring(4) + " ** </i></font>");
+            return;
+          }
+            
        // We get the sender of this message
           Hashtable players = dataManager.getPlayers();
           PlayerImpl sender = null;

@@ -67,6 +67,51 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
        if(message.length()>ChatRoom.MAXIMUM_MESSAGE_SIZE)
           message = message.substring( 0, ChatRoom.MAXIMUM_MESSAGE_SIZE-4)+"...";
 
+       Hashtable players = null;
+       WotlasLocation myLocation = player.getLocation(); 
+
+    // 0.1 - test shortcut
+       if (message.startsWith("/msg")) {
+        message = message.substring(5);
+        int index = message.indexOf(' ');
+        String key = message.substring(0,index);
+        message = "/msg " + message.substring(index);        
+        
+        if (myLocation.isRoom()) {          
+          InteriorMap iMap = DataManager.getDefaultDataManager().getWorldManager().getInteriorMap(myLocation);
+          Room[] rooms = iMap.getRooms();                    
+          for (int j=0; j<rooms.length; j++ ) {
+            Room room = rooms[j];                        
+            players = room.getPlayers();            
+            if (players.containsKey(key)) {
+              System.out.println("player found");
+              PlayerImpl player2 = (PlayerImpl) players.get(key);              
+              player2.sendMessage(this);
+              return;
+            }
+          }
+        } 
+        
+        TownMap town2 = DataManager.getDefaultDataManager().getWorldManager().getTownMap(myLocation);
+        players = town2.getPlayers();
+        if (players.containsKey(key)) {
+          System.out.println("player found");
+          PlayerImpl player2 = (PlayerImpl) players.get(key);
+          player2.sendMessage(this);
+          return;
+        }
+        
+        WorldMap world2 = DataManager.getDefaultDataManager().getWorldManager().getWorldMap(myLocation);
+        players = world2.getPlayers();
+        if (players.containsKey(key)) {
+          System.out.println("player found");
+          PlayerImpl player2 = (PlayerImpl) players.get(key);
+          player2.sendMessage(this);
+          return;
+        }
+                            
+       } 
+             
     // 1 - We send the message back to the user.
        if( chatRoomPrimaryKey.equals(player.getCurrentChatPrimaryKey()) ) {
            player.sendMessage(this);
@@ -78,10 +123,8 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
            return;       	   
        }
 
-    // 2 - We analyze who we must receive this message... it depends on location...
-       WotlasLocation myLocation = player.getLocation();    
-       Hashtable players = null;
-
+    // 2 - We analyze who we must receive this message... it depends on location...          
+               
     // 2.1 - ROOM CASE
        if ( myLocation.isRoom() ) {
        	 // 2.1.1 - Get Current Room

@@ -30,7 +30,7 @@ echo ""
 echo D - Sending server table to $WEB_NAME
 
 echo server-table.cfg ---O $WEB_LOGIN@$WEB_SHELL
-pscp ../../src/config/remote/server-table.cfg $WEB_LOGIN@$WEB_SHELL:$SHELL_PATH
+pscp ../../base/configs/remote/server-table.cfg $WEB_LOGIN@$WEB_SHELL:$SHELL_PATH
 
 echo ""
 echo Done.

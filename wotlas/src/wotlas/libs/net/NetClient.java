@@ -41,9 +41,16 @@ public class NetClient
 
    /** Latest error message generated during the NetPersonality creation.
     */
-       private static String error_message;
+       private String error_message;
 
  /*------------------------------------------------------------------------------------*/
+
+   /** Constructor.
+    */
+       public NetClient() {
+       }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** Creates a personality object for the new connection.
     *  Override this method if you don't want to use the LoparPersonality.
@@ -51,7 +58,7 @@ public class NetClient
     * @return a new LoparPersonality associated to this socket.
     * @exception IOException IO error.
     */
-      protected static NetPersonality getNewDefaultPersonality( Socket socket )
+      protected NetPersonality getNewDefaultPersonality( Socket socket )
       throws IOException {
               return new LoparPersonality( socket, null );
       }
@@ -72,7 +79,7 @@ public class NetClient
    * @param msg_packages a list of packages where we can find NetMsgBehaviour Classes.
    * @return a NetPersonality on success, null on failure.
    */
-     public static NetPersonality connectToServer( String server_name, int server_port,
+     public NetPersonality connectToServer( String server_name, int server_port,
                                                    String key, Object context,
                                                    String msg_packages[] )
      {
@@ -96,6 +103,7 @@ public class NetClient
 
             // We create a new personality and send our key.
                personality = getNewDefaultPersonality( socket );
+               personality.setContext( (Object) this );
 
                personality.queueMessage( new ClientRegisterMessage( key ) );
                personality.pleaseSendAllMessagesNow();
@@ -109,7 +117,7 @@ public class NetClient
 
             // Success ?
                if(error_message!=null) {
-                  Debug.signal(Debug.ERROR, null, "Server returned an Error");
+                  Debug.signal(Debug.ERROR, this, "Server returned an Error");
                   return null;
                }
 
@@ -129,7 +137,7 @@ public class NetClient
     *
     * @return the error message.
     */
-      public static String getErrorMessage() {
+      public String getErrorMessage() {
              return error_message;
       }
 
@@ -139,8 +147,8 @@ public class NetClient
     *
     * @param error_message the new error message.
     */
-      public static void setErrorMessage( String error_message) {
-             NetClient.error_message = error_message;
+      public void setErrorMessage( String error_message) {
+             this.error_message = error_message;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

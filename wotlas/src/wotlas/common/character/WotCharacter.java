@@ -94,6 +94,15 @@ public interface WotCharacter
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To set the rank of this WotCharacter in his/her community.
+   *  IMPORTANT : if the rank doesnot exist it is set to "unknown".
+   *
+   * @param rank the rank of this wotcharacter in his/her community.
+   */
+     public void setCharacterRank( String rank );
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** Returns the speed of this character.
    *
    *  @param playerLocation player current location

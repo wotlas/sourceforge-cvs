@@ -39,24 +39,53 @@ public class AesSedai extends Female {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Ajah & Aes Sedai status
+  /** Ajah & Aes Sedai rank
    */
-    public final static byte AES_NOVICE       = 0;
-    public final static byte AES_ACCEPTED     = 1;
-    public final static byte AES_BROWN_AJAH   = 2;
-    public final static byte AES_WHITE_AJAH   = 3;
-    public final static byte AES_BLUE_AJAH    = 4;
-    public final static byte AES_GREEN_AJAH   = 5;
-    public final static byte AES_RED_AJAH     = 6;
-    public final static byte AES_GRAY_AJAH    = 7;
-    public final static byte AES_YELLOW_AJAH  = 8;
-    public final static byte AES_AMYRLIN      = 9;
+    public final static String aesSedaiRank[][] = {
+          //        Rank Name                Rank Symbol
+                {   "Stilled",               "stilled-11",  },
+                {   "Novice",                "novice-9",    },
+                {   "Accepted",              "accepted-8",  },
+                {   "Blue Ajah",             "blue-4",      },
+                {   "Green Ajah",            "green-5",     },
+                {   "Yellow Ajah",           "yellow-1",    },
+                {   "Red Ajah",              "red-3",       },
+                {   "Brown Ajah",            "brown-2",     },
+                {   "White Ajah",            "white-6",     },
+                {   "Gray Ajah",             "gray-7",      },
+                {   "Keeper Of Chronicles",  "keeper-10",   },
+                {   "Amyrlin",               "amyrlin-0",   },
+                {   "Black Ajah",            "black-12",    },
+    };
+
+  /** Ajah & Aes Sedai rank
+   */
+    public final static Color aesSedaiColor[] = {
+         //        Rank Color
+                   new Color(160,115,130),
+                   Color.white,
+                   Color.white,
+                   new Color(119,152,213),
+                   new Color(128,206,113),
+                   new Color(209,203,99),
+                   new Color(223,83,65),
+                   new Color(180,158,80),
+                   Color.white,
+                   new Color(184,184,184),
+                   new Color(230,220,240),
+                   new Color(243,228,175),
+                   Color.black,
+    };
 
  /*------------------------------------------------------------------------------------*/
 
   /** Aes Sedai status ( ajah, novice, accepted, amyrlin ). [PUBLIC INFO]
    */
-    private byte aesSedaiStatus;
+    private String characterRank;
+
+  /** Do we have to wear a black Ajah dress ? [PUBLIC INFO]
+   */
+    private boolean blackAjah = false;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -76,23 +105,14 @@ public class AesSedai extends Female {
    */
     transient private ColorImageFilter filter;
 
-  /** Black Ajah ?
-   */
-    private boolean blackAjah = false;
-
  /*------------------------------------------------------------------------------------*/
 
-  /** Getters & Setters for persistence
-   */
-    public byte getAesSedaiStatus() {
-       return aesSedaiStatus; 
+   /** Constructor
+    */
+    public AesSedai() {
     }
 
-    public void setAesSedaiStatus( byte aesSedaiStatus ) {
-       this.aesSedaiStatus = aesSedaiStatus;
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ /*------------------------------------------------------------------------------------*/
 
    /** To get a Drawable for this character. This is can not be used on the
     *  server side : if no ImageLibrary has been created we return null.
@@ -105,8 +125,8 @@ public class AesSedai extends Female {
     * @return a Drawable for this character, null if no ImageLibrary is present.
     */
       public Drawable getDrawable( Player player ) {
-      	 if( ImageLibrary.getDefaultImageLibrary() == null )
-      	     return null;
+         if( ImageLibrary.getDefaultImageLibrary() == null )
+             return null;
 
          if(aesSedaiSprite!=null)
              return (Drawable) aesSedaiSprite;
@@ -124,68 +144,53 @@ public class AesSedai extends Female {
    */
       private void updateColorFilter() {
          if(aesSedaiSprite==null)
-      	     return;
-      	
+             return;
+
          filter = new ColorImageFilter();
 
-         if(!blackAjah)
-            switch( aesSedaiStatus ) {
-              case AES_NOVICE :
-                      filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.white );
-                      break;
-              case AES_ACCEPTED :
-                      filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.white );
-                      break;
-              case AES_BROWN_AJAH :
-                      filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.brown );
-                      break;
-              case AES_WHITE_AJAH:
-                      filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.white );
-                      break;
-              case AES_BLUE_AJAH :
-                      break;
-              case AES_GREEN_AJAH :
-                      filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.green );
-                      break;
-              case AES_RED_AJAH :
-                      filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.red );
-                      break;
-              case AES_GRAY_AJAH :
-                      filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.gray );
-                      break;
-              case AES_YELLOW_AJAH :
-                      filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.yellow );
-                      break;
-              case AES_AMYRLIN :
-                      filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.white );
-                      break;
-            }
+         if(!blackAjah) {
+              if(characterRank.equals("Brown Ajah")) {
+                   filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.brown );
+              }
+              else if(characterRank.equals("Blue Ajah")) {
+                   // no filter needed
+              }
+              else if(characterRank.equals("Green Ajah")) {
+                   filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.green );
+              }
+              else if(characterRank.equals("Red Ajah")) {
+                   filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.red );
+              }
+              else if(characterRank.equals("Gray Ajah")) {
+                   filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.gray );
+              }
+              else if(characterRank.equals("Yellow Ajah")) {
+                   filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.yellow );
+              }
+              else
+                   filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.white );
+          }
           else
               filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.darkgray ); // black dress
 
       // 2 - Hair Color
-         switch( hairColor ) {
-              case BALD :
-                      break;
-              case GOLDEN_HAIR :
-                      break;
-              case BROWN_HAIR :
-                      filter.addColorChangeKey( ColorImageFilter.yellow, ColorImageFilter.brown );
-                      break;
-              case BLACK_HAIR:
-                      filter.addColorChangeKey( ColorImageFilter.yellow, ColorImageFilter.darkgray );
-                      break;
-              case GREY_HAIR :
-                      filter.addColorChangeKey( ColorImageFilter.yellow, ColorImageFilter.gray );
-                      break;
-              case WHITE_HAIR :
-                      filter.addColorChangeKey( ColorImageFilter.yellow, ColorImageFilter.lightgray );
-                      break;
-              case REDDISH_HAIR :
-                      filter.addColorChangeKey( ColorImageFilter.yellow, ColorImageFilter.red );
-                      break;
-          }
+         if( hairColor.equals("brown") ) {
+                   filter.addColorChangeKey( ColorImageFilter.yellow, ColorImageFilter.brown );
+         }
+         else if( hairColor.equals("black") ) {
+                   filter.addColorChangeKey( ColorImageFilter.yellow, ColorImageFilter.darkgray );
+         }
+         else if( hairColor.equals("gray") ) {
+                   filter.addColorChangeKey( ColorImageFilter.yellow, ColorImageFilter.gray );
+         }
+         else if( hairColor.equals("white") ) {
+                   filter.addColorChangeKey( ColorImageFilter.yellow, ColorImageFilter.lightgray );
+         }
+         else if( hairColor.equals("reddish") ) {
+                   filter.addColorChangeKey( ColorImageFilter.yellow, ColorImageFilter.red );
+         }
 
+       // 3 - Set Filter
          aesSedaiSprite.setDynamicImageFilter( filter );
       }
 
@@ -198,11 +203,11 @@ public class AesSedai extends Female {
    *  @return character's Shadow Drawable.
    */
      public Drawable getShadow(){
-      	 if( ImageLibrary.getDefaultImageLibrary() == null )
-      	     return null;
+         if( ImageLibrary.getDefaultImageLibrary() == null )
+             return null;
 
          if(aesSedaiShadowSprite!=null)
-             return (Drawable) aesSedaiShadowSprite; 
+             return (Drawable) aesSedaiShadowSprite;
 
       // Shadow Creation
          String path[] = { "players-0", "shadows-3", "aes-sedai-walking-0" };
@@ -219,8 +224,8 @@ public class AesSedai extends Female {
    *  @return character's Aura Drawable.
    */
      public Drawable getAura(){
-      	 if( ImageLibrary.getDefaultImageLibrary() == null )
-      	     return null;
+         if( ImageLibrary.getDefaultImageLibrary() == null )
+             return null;
 
          if(aesSedaiAuraEffect!=null) {
              if(aesSedaiAuraEffect.isLive()) {
@@ -231,55 +236,42 @@ public class AesSedai extends Female {
              return (Drawable) aesSedaiAuraEffect;
          }
 
-      // symbol selection
-         String symbolName = null;
-
-          switch( aesSedaiStatus ) {
-              case AES_NOVICE :
-                      symbolName = "novice-9";
-                      break;
-              case AES_ACCEPTED :
-                      symbolName = "accepted-8";
-                      break;
-              case AES_BROWN_AJAH :
-                      symbolName = "brown-2";
-                      break;
-              case AES_WHITE_AJAH:
-                      symbolName = "white-6";
-                      break;
-              case AES_BLUE_AJAH :
-                      symbolName = "blue-4";
-                      break;
-              case AES_GREEN_AJAH :
-                      symbolName = "green-5";
-                      break;
-              case AES_RED_AJAH :
-                      symbolName = "red-3";
-                      break;
-              case AES_GRAY_AJAH :
-                      symbolName = "gray-7";
-                      break;
-              case AES_YELLOW_AJAH :
-                      symbolName = "yellow-1";
-                      break;
-              case AES_AMYRLIN :
-                      symbolName = "amyrlin-0";
-                      break;
-          }
-
       // Aura Creation
-         String path[] = { "players-0", "symbols-2", "aes-sedai-symbols-0", symbolName+".jpg" };
-         ImageIdentifier auraImage = new ImageIdentifier( path );
-
-         aesSedaiAuraEffect = new AuraEffect( aesSedaiSprite.getDataSupplier(), auraImage,
+         aesSedaiAuraEffect = new AuraEffect( aesSedaiSprite.getDataSupplier(), getAuraImage(),
                                               ImageLibRef.AURA_PRIORITY, 5000 );
          aesSedaiAuraEffect.useAntialiasing(true);
 
-         if(aesSedaiStatus==AES_NOVICE)
+         if(characterRank.equals("Novice"))
             aesSedaiAuraEffect.setAmplitudeLimit( 0.6f );
+         else if(characterRank.equals("Stilled"))
+            aesSedaiAuraEffect.setAmplitudeLimit( 3.1f );
 
          return aesSedaiAuraEffect;
      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the Aura Image Identifier.
+    */
+    private ImageIdentifier getAuraImage() {
+      // symbol selection
+         String symbolName = null;
+
+         if(!blackAjah)
+            for( int i=0; i<aesSedaiRank.length; i++ )
+              if( characterRank.equals(aesSedaiRank[i][0]) ) {
+                  symbolName = aesSedaiRank[i][1];
+                  break;
+              }
+         else
+            symbolName="blackajah-12";
+
+         if(symbolName==null) symbolName=aesSedaiRank[0][1]; // default if not found
+
+      // Aura Creation
+         String path[] = { "players-0", "symbols-2", "aes-sedai-symbols-0", symbolName+".gif" };
+         return new ImageIdentifier( path );
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -287,26 +279,12 @@ public class AesSedai extends Female {
    *  @return character's color
    */
      public Color getColor(){
-          switch( aesSedaiStatus ) {
-              case AES_BROWN_AJAH :
-                   return new Color(180,158,80);
-              case AES_BLUE_AJAH :
-                   return new Color(119,152,213);
-              case AES_GREEN_AJAH :
-                   return new Color(128,206,113);
-              case AES_RED_AJAH :
-                   return new Color(223,83,65);
-              case AES_GRAY_AJAH :
-                   return new Color(184,184,184);
-              case AES_YELLOW_AJAH :
-                   return new Color(209,203,99);
-              case AES_NOVICE :
-              case AES_ACCEPTED :
-              case AES_WHITE_AJAH:
-              case AES_AMYRLIN :
-          }
+       if(!blackAjah)
+         for( int i=0; i<aesSedaiRank.length; i++ )
+              if( characterRank.equals(aesSedaiRank[i][0]) )
+                  return aesSedaiColor[i];
 
-        return Color.white;
+        return Color.black;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -315,7 +293,7 @@ public class AesSedai extends Female {
    * @return the name of the community.
    */
      public String getCommunityName() {
-     	return "Aes Sedai";
+        return "Aes Sedai";
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -324,30 +302,24 @@ public class AesSedai extends Female {
    * @return the rank of this wotcharacter in his/her community.
    */
      public String getCharacterRank() {
-          switch( aesSedaiStatus ) {
-              case AES_NOVICE :
-                   return "Novice";
-              case AES_ACCEPTED :
-                   return "Accepted";
-              case AES_BROWN_AJAH :
-                   return "Brown Ajah";
-              case AES_WHITE_AJAH:
-                   return "White Ajah";
-              case AES_BLUE_AJAH :
-                   return "Blue Ajah";
-              case AES_GREEN_AJAH :
-                   return "Green Ajah";
-              case AES_RED_AJAH :
-                   return "Red Ajah";
-              case AES_GRAY_AJAH :
-                   return "Gray Ajah";
-              case AES_YELLOW_AJAH :
-                   return "Yellow Ajah";
-              case AES_AMYRLIN :
-                   return "Amyrlin";
-          }
+        return characterRank;
+     }
 
-        return "Unknown";
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To set the rank of this WotCharacter in his/her community.
+   *  IMPORTANT : if the rank doesnot exist it is  set to "unknown".
+   *
+   * @param rank the rank of this wotcharacter in his/her community.
+   */
+     public void setCharacterRank( String rank ) {
+         for( int i=0; i<aesSedaiRank.length; i++ )
+              if( characterRank.equals(aesSedaiRank[i][0]) ) {
+                  characterRank = rank;
+                  return; // success
+              }
+
+         characterRank="unknown"; // not found
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -382,9 +354,13 @@ public class AesSedai extends Female {
     * @return the new blackAjah state.
     */
     public boolean toggleBlackAjah() {
-    	blackAjah = !blackAjah;
-    	updateColorFilter();
-    	return blackAjah;
+        blackAjah = !blackAjah;
+        updateColorFilter();
+
+        if(aesSedaiAuraEffect!=null)
+           aesSedaiAuraEffect.setImage(getAuraImage());
+
+        return blackAjah;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -392,7 +368,7 @@ public class AesSedai extends Female {
    /** Get Black ajah state : for persistence only. Use toggleBlackAjah().
     */
     public boolean getBlackAjah() {
-    	return blackAjah;
+        return blackAjah;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -400,19 +376,7 @@ public class AesSedai extends Female {
    /** Set Black ajah state : for persistence only. Use toggleBlackAjah().
     */
     public void setBlackAjah(boolean blackAjah) {
-    	this.blackAjah = blackAjah;
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-   /** Tests if the given int is a valid aesSedaiStatus.
-    *  @param aesSedaiStatus
-    *  @return true if the aesSedaiStatus is valid, false otherwise.
-    */
-    public static boolean isValidAesSedaiStatus( byte aesSedaiStatus ) {
-    	if( aesSedaiStatus>=0 && aesSedaiStatus<=9 )
-    	    return true;
-    	return false;
+        this.blackAjah = blackAjah;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -426,9 +390,9 @@ public class AesSedai extends Female {
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void encode( DataOutputStream ostream, boolean publicInfoOnly ) throws IOException {
-     	super.encode( ostream, publicInfoOnly );
-     	ostream.writeByte( aesSedaiStatus );
-     	ostream.writeBoolean( blackAjah );
+        super.encode( ostream, publicInfoOnly );
+        ostream.writeUTF( characterRank );
+        ostream.writeBoolean( blackAjah );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -443,8 +407,8 @@ public class AesSedai extends Female {
    */
      public void decode( DataInputStream istream, boolean publicInfoOnly ) throws IOException {
         super.decode( istream, publicInfoOnly );
-     	aesSedaiStatus = istream.readByte();
-     	blackAjah = istream.readBoolean();
+        characterRank = istream.readUTF();
+        blackAjah = istream.readBoolean();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

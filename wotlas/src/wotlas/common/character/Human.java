@@ -37,48 +37,48 @@ public abstract class Human implements WotCharacter {
 
   /** Hair color
    */
-    public final static byte BALD        = 0;
-    public final static byte GOLDEN_HAIR = 1;
-    public final static byte BROWN_HAIR  = 2;
-    public final static byte BLACK_HAIR  = 3;
-    public final static byte GREY_HAIR   = 4;
-    public final static byte WHITE_HAIR  = 5;
-    public final static byte REDDISH_HAIR= 6;
+    public final static String hairColors[] = {
+    	           "bald",
+    	           "golden",
+    	           "brown",
+    	           "black",
+    	           "gray",
+    	           "white",
+    	           "reddish",
+    };
 
  /*------------------------------------------------------------------------------------*/
 
   /** Hair color [PUBLIC INFO]
    */
-    protected byte hairColor;
+    protected String hairColor;
 
   /** Speed [RECONSTRUCTED INFO - NOT REPLICATED]
    */
-    protected float speed;
+    transient protected float speed;
 
   /** TO ADD : other common human fields ( force, dexterity, etc ... ) */
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Getters & Setters for persistence
+  /** To get the hair color of the human player.
    */
-    public byte getHairColor() {
+    public String getHairColor() {
        return hairColor; 
     }
 
-    public void setHairColor( byte hairColor ) {
-       this.hairColor = hairColor;
-    }
+  /** To set the hair color of the human player. If the hair color given
+   *  doesn't exist in our list we set it as "unknown".
+   */
+    public void setHairColor( String hairColor ) {
+    	
+       for( int i=0; i<hairColors.length; i++ )
+            if( hairColor.equals(hairColors[i]) ) {
+                this.hairColor = hairColor;
+                return;
+            }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-   /** Tests if the given ID is a valid hair color
-    *  @param hairColor hairColor
-    *  @return true if the hairColor is valid, false otherwise.
-    */
-    public static boolean isValidHairColor( byte hairColor ) {
-    	if( hairColor>=0 && hairColor<=6 )
-    	    return true;
-    	return false;
+       this.hairColor = "unknown";
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -124,7 +124,7 @@ public abstract class Human implements WotCharacter {
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void encode( DataOutputStream ostream, boolean publicInfoOnly ) throws IOException {
-     	ostream.writeByte( hairColor );
+     	ostream.writeUTF( hairColor );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -138,7 +138,7 @@ public abstract class Human implements WotCharacter {
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void decode( DataInputStream istream, boolean publicInfoOnly ) throws IOException {
-     	hairColor = istream.readByte();
+     	hairColor = istream.readUTF();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

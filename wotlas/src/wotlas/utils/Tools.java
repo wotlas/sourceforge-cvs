@@ -103,6 +103,39 @@ public class Tools
 
  /*------------------------------------------------------------------------------------*/ 
 
+  /** To get the time in pre-formated way.
+   *  Example: "10h-05m-03s". Note that we write "03" instead of "3".
+   *
+   * @return time
+   */
+   static public String getLexicalTime()
+   {
+      Calendar rightNow = Calendar.getInstance();
+ 
+      String hour = null;
+      String min = null;
+      String sec = null;
+      
+      if( rightNow.get(Calendar.HOUR_OF_DAY) <= 9 )
+           hour = "0"+rightNow.get(Calendar.HOUR_OF_DAY);
+      else
+           hour = ""+rightNow.get(Calendar.HOUR_OF_DAY);
+
+      if( rightNow.get(Calendar.MINUTE) <= 9 )
+           min = "0"+rightNow.get(Calendar.MINUTE);
+      else
+           min = ""+rightNow.get(Calendar.MINUTE);
+
+      if( rightNow.get(Calendar.SECOND) <= 9 )
+           sec = "0"+rightNow.get(Calendar.SECOND);
+      else
+           sec = ""+rightNow.get(Calendar.SECOND);
+
+      return hour+"h-"+min+"m-"+sec+"s";
+   }
+
+ /*------------------------------------------------------------------------------------*/ 
+
    /** To get an instance of an object from its class name. We assume that the
     *  object has an empty constructor.
     *

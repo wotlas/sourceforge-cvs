@@ -52,7 +52,7 @@ class ServerDirector implements Runnable
 
    /** Persistence period in ms.
     */
-    public final static int PERSISTENCE_PERIOD = 1000*3600*12; // 12h
+    public final static int PERSISTENCE_PERIOD = 1000*3600*6; // 8h
 
  /*------------------------------------------------------------------------------------*/
 
@@ -135,6 +135,7 @@ class ServerDirector implements Runnable
            Debug.signal( Debug.NOTICE, null, "*-----------------------------------*" );
            Debug.signal( Debug.NOTICE, null, "|   Wheel Of Time - Light & Shadow  |" );
            Debug.signal( Debug.NOTICE, null, "|  Copyright (C) 2001 - WOTLAS Team |" );
+           Debug.signal( Debug.NOTICE, null, "|            Server v1.1            |" );
            Debug.signal( Debug.NOTICE, null, "*-----------------------------------*\n");
 
         // STEP 1 - We load the database path. Where is the data ?
@@ -234,10 +235,10 @@ class ServerDirector implements Runnable
     */
       public void run(){
            do{
-             // 1 - we wait the persistence period minus 5 minutes
+             // 1 - we wait the persistence period minus 2 minutes
                 synchronized( this ) {
                   try{
-                     wait( PERSISTENCE_PERIOD-1000*300 );
+                     wait( PERSISTENCE_PERIOD-1000*120 );
                   }catch(Exception e) {}
                 }
 
@@ -273,12 +274,12 @@ class ServerDirector implements Runnable
      private static void persistenceAction( boolean maintenance )
      {
            // We warn all the clients that the server is going to enter
-           // maintenance mode for 5 minutes, in 5 minutes.
+           // maintenance mode for 2-3 minutes, in 2 minutes.
            // If we are not in maintenance mode ( maintenance=false )
            // the message is a "server shuting down" message.
 
               if( maintenance )
-                  Debug.signal( Debug.NOTICE, null, "Server will enter maintenance mode in 5 minutes...");
+                  Debug.signal( Debug.NOTICE, null, "Server will enter maintenance mode in 2 minutes...");
               else
                   Debug.signal( Debug.NOTICE, null, "Sending warning messages to connected clients...");
 
@@ -289,8 +290,8 @@ class ServerDirector implements Runnable
                  WarningMessage msg = null;
               
                  if( maintenance )
-                    msg =new WarningMessage( "Your server will enter maintenance mode in 5 minutes.\n"
-                                           +"Please disconnect and reconnect in 10 minutes");
+                    msg =new WarningMessage( "Your server will enter maintenance mode in 2 minutes.\n"
+                                           +"Please disconnect and reconnect in 5 minutes");
                  else
                     msg =new WarningMessage( "Your server is about to shutdown in 30s.\n"
                                            +"Please disconnect and reconnect later.");
@@ -299,9 +300,9 @@ class ServerDirector implements Runnable
                     ( (GameAccount) it.next() ).getPlayer().sendMessage( msg );
               }
  
-           // 2 - We wait five more minutes ( or 30s if maintenance=false )
+           // 2 - We wait two more minutes ( or 30s if maintenance=false )
               if( maintenance ) {
-                  Tools.waitTime( 1000*300 ); // 5mn
+                  Tools.waitTime( 1000*120 ); // 2mn
                   Debug.signal( Debug.WARNING, null, "Server enters maintenance mode now...");
               }
               else {
@@ -365,6 +366,14 @@ class ServerDirector implements Runnable
     */
       private synchronized void stopThread() {
       	 mustStop = true;
+      	 notify();
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To awake the persistence thread and perform a save of the data (world, player...).
+    */
+      private synchronized void awakePersistenceThread() {
       	 notify();
       }
 

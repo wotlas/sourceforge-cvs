@@ -365,7 +365,6 @@ public class NetServer extends Thread
       public void setServerLock( boolean lock ) {
           server_lock = lock;
       }
-
   
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

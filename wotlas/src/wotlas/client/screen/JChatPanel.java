@@ -214,6 +214,8 @@ System.out.println("DEFAULT CHAT player list reseted");
       tabbedPane.setSelectedIndex(0);
       this.currentPrimaryKey = primaryKey;
       found = true;
+    } else {
+      tabbedPane.setEnabledAt(0, false);
     }
       
     for (int i=1; i<tabbedPane.getTabCount();i++) {

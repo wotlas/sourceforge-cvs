@@ -404,9 +404,9 @@ public abstract class NetPersonality
               // 3 - Do we have received the answer ?
                  synchronized( pingLock ) {
                      if(!pingReceivedBack) {
-                        // we wait one more second and a half
+                        // we wait two more seconds
                            try{
-                              wait( 1500 );
+                              wait( 2000 );
                            }catch( Exception e ) {
                            }
 

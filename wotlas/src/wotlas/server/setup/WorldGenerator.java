@@ -116,35 +116,41 @@ public class WorldGenerator {
 
            MapExit mapExit = null;
 
-               mapExit = townMap.addMapExit( new ScreenRectangle(20,300,35,40) );
+               mapExit = townMap.addMapExit( new ScreenRectangle(32,313,14,20) );
                mapExit.setType( MapExit.TOWN_EXIT );
                mapExit.setMapExitSide( MapExit.WEST );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0) );
                mapExit.setTargetPosition( new ScreenPoint(745,280) );
 
-               mapExit = townMap.addMapExit( new ScreenRectangle(10,715,30,70) );
+               mapExit = townMap.addMapExit( new ScreenRectangle(29,715,14,20) );
+               mapExit.setType( MapExit.TOWN_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0) );
+               mapExit.setTargetPosition( new ScreenPoint(763,300) );
+
+               mapExit = townMap.addMapExit( new ScreenRectangle(30,760,13,15) );
                mapExit.setType( MapExit.TOWN_EXIT );
                mapExit.setMapExitSide( MapExit.SOUTH );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0) );
                mapExit.setTargetPosition( new ScreenPoint(763,300) );
 
-               mapExit = townMap.addMapExit( new ScreenRectangle(560,720,15,30) );
+               mapExit = townMap.addMapExit( new ScreenRectangle(556,724,11,15) );
                mapExit.setType( MapExit.TOWN_EXIT );
                mapExit.setMapExitSide( MapExit.EAST );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0) );
                mapExit.setTargetPosition( new ScreenPoint(774,284) );
 
-               mapExit = townMap.addMapExit( new ScreenRectangle(565,170,15,30) );
-               mapExit.setType( MapExit.TOWN_EXIT );
-               mapExit.setMapExitSide( MapExit.NORTH );
-               mapExit.setTargetWotlasLocation( new WotlasLocation(0) );
-               mapExit.setTargetPosition( new ScreenPoint(758,264) );
-
-               mapExit = townMap.addMapExit( new ScreenRectangle(560,380,15,25) );
+               mapExit = townMap.addMapExit( new ScreenRectangle(561,386, 10, 13) );
                mapExit.setType( MapExit.TOWN_EXIT );
                mapExit.setMapExitSide( MapExit.NONE );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0) );
                mapExit.setTargetPosition( new ScreenPoint(769,273) );
+
+               mapExit = townMap.addMapExit( new ScreenRectangle(562, 181, 10, 15) );
+               mapExit.setType( MapExit.TOWN_EXIT );
+               mapExit.setMapExitSide( MapExit.NORTH );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0) );
+               mapExit.setTargetPosition( new ScreenPoint(758,264) );
 
 
         // STEP 4 - Tar Valon West Gate Building

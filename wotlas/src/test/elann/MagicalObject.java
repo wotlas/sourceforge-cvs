@@ -19,17 +19,16 @@
  
 package wotlas.common.object;
 
-import wotlas.common.Weave;		// is it implemented ?
-import wotlas.common.Power;		// One and True Power
+import wotlas.common.power.*;		// One and True Power - Weaves
 
 /** 
  * The base class for all magical objects.
  * 
  * @author Elann
- * @see wotlas.common.object.BaseObject
+ * @see wotlas.common.object.UsefulObject
  */
 
-public abstract class MagicalObject extends BaseObject
+public abstract class MagicalObject extends UsefulObject
 {
 
  /*------------------------------------------------------------------------------------*/

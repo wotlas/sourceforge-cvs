@@ -153,6 +153,14 @@ public interface ImageLibRef extends ImageLibraryReference
     */
      public final static short TARVALON_NW_CLEARING_ACTION = 4;
 
+   /** Tar Valon - North West Gate Level 0
+    */
+     public final static short TARVALON_NW_GATE_LV0_MAP_ACTION = 5;
+
+   /** Tar Valon - North West Gate Level 1
+    */
+     public final static short TARVALON_NW_GATE_LV1_MAP_ACTION = 6;
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /*** Towns small images set - ACTION LIST ***/
@@ -176,6 +184,10 @@ public interface ImageLibRef extends ImageLibraryReference
    /** Tar valon - NW Clearing Small image.
     */
      public final static short TARVALON_NWCLNG_SMALL_IM_ACTION = 2;
+
+   /** Tar valon - North West Gate small image.
+    */
+     public final static short TARVALON_NWGATE_SMALL_IM_ACTION = 3;
 
  /*------------------------------------------------------------------------------------*/
  /*------------------------------------------------------------------------------------*/

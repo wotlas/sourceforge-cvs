@@ -160,7 +160,7 @@ public class WorldGenerator {
 
 
         // STEP 4 - Tar Valon West Gate Building
-           Building buildings[] = new Building[2];
+           Building buildings[] = new Building[3];
            townMap.setBuildings( buildings );
 
            buildings[0] = new Building(208,493,10,18);
@@ -185,6 +185,18 @@ public class WorldGenerator {
            buildings[1].setSmallBuildingImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
                                                                 ImageLibRef.BUILDING_SMALL_SET,
                                                                 ImageLibRef.TARVALON_NWCLNG_SMALL_IM_ACTION ) );
+
+        // Tar Valon - North-West Gate (Building)
+           buildings[2] = new Building(210,400,13,21);
+           buildings[2].setBuildingID(2);
+           buildings[2].setFullName("Tar Valon North-West Gate");
+           buildings[2].setShortName("tarvalNWGate");
+           buildings[2].setServerID(0);
+           buildings[2].setHasTownExits(false);
+           buildings[2].setHasBuildingExits(true);
+           buildings[2].setSmallBuildingImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
+                                                                ImageLibRef.BUILDING_SMALL_SET,
+                                                                ImageLibRef.TARVALON_NWGATE_SMALL_IM_ACTION ) );
 
         // STEP 5 - Tar Valon West Gate InteriorMap
            InteriorMap maps[] = new InteriorMap[1];
@@ -485,7 +497,7 @@ public class WorldGenerator {
 
            buildings[1].setInteriorMaps( maps );
 
-        // STEP 6 - Rooms of TarValon WestGate InteriorMap
+        // STEP 8 - Rooms of Tar Valon NW Clearing InteriorMap
            rooms = new Room[1];
            maps[0].setRooms( rooms );
            rooms[0] = new Room();
@@ -520,7 +532,98 @@ public class WorldGenerator {
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
                mapExit.setTargetPosition( new ScreenPoint(65,225) );
 
-        // STEP 8 - We save this simple universe.
+
+        // STEP 9 - Tar Valon NW Gate InteriorMap
+           maps = new InteriorMap[2];
+           maps[0] = new InteriorMap();
+
+           maps[0].setInteriorMapID(0);
+           maps[0].setFullName("Tar Valon - North West Gate");
+           maps[0].setShortName("nw-gate-lv0");
+           maps[0].setInteriorMapImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
+                                                         ImageLibRef.UNIVERSE_SET ,
+                                                         ImageLibRef.TARVALON_NW_GATE_LV0_MAP_ACTION ) );
+           maps[0].setImageWidth(640);
+           maps[0].setImageHeight(460);
+           maps[0].setImageRegionWidth(640);
+           maps[0].setImageRegionHeight(460);
+
+           maps[0].setMusicName("tar-valon-01.mid");
+
+           maps[1].setInteriorMapID(1);
+           maps[1].setFullName("Tar Valon - North West Gate - Terrace");
+           maps[1].setShortName("nw-gate-lv1");
+           maps[1].setInteriorMapImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
+                                                         ImageLibRef.UNIVERSE_SET,
+                                                         ImageLibRef.TARVALON_NW_GATE_LV1_MAP_ACTION ) );
+           maps[1].setImageWidth(600);
+           maps[1].setImageHeight(460);
+           maps[1].setImageRegionWidth(600);
+           maps[1].setImageRegionHeight(460);
+
+           maps[1].setMusicName("tar-valon-01.mid");
+
+           buildings[2].setInteriorMaps( maps );
+
+        // STEP 10 - Rooms of Tar Valon NW Clearing InteriorMap Level 0
+           rooms = new Room[1];
+           maps[0].setRooms( rooms );
+           rooms[0] = new Room();
+           rooms[0].setRoomID(0);
+           rooms[0].setMaxPlayers(30);
+
+           rooms[0].setFullName("Tar Valon - North West Gate");
+           rooms[0].setShortName("nw-gate-bridge");
+           rooms[0].setInsertionPoint( new ScreenPoint(260,240) );
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(0,25,25,245) );
+               mapExit.setType( MapExit.BUILDING_EXIT );
+               mapExit.setMapExitSide( MapExit.WEST );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
+               mapExit.setTargetPosition( new ScreenPoint(207,400) );
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(330,435,310,25) );
+               mapExit.setType( MapExit.BUILDING_EXIT );
+               mapExit.setMapExitSide( MapExit.SOUTH );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
+               mapExit.setTargetPosition( new ScreenPoint(220,416) );
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(0,0,230,25) );
+               mapExit.setType( MapExit.BUILDING_EXIT );
+               mapExit.setMapExitSide( MapExit.NORTH );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
+               mapExit.setTargetPosition( new ScreenPoint(207,400) );
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(615,335,25,100) );
+               mapExit.setType( MapExit.BUILDING_EXIT );
+               mapExit.setMapExitSide( MapExit.EAST );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
+               mapExit.setTargetPosition( new ScreenPoint(220,416) );
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(485,200,40,25) );
+               mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,2,1,0) );
+               mapExit.setTargetPosition( new ScreenPoint(415,42) );
+
+        // STEP 11 - Rooms of Tar Valon NW Clearing InteriorMap Level 1
+           rooms = new Room[1];
+           maps[0].setRooms( rooms );
+           rooms[0] = new Room();
+           rooms[0].setRoomID(0);
+           rooms[0].setMaxPlayers(30);
+
+           rooms[0].setFullName("Tar Valon - North West Gate - Terrace");
+           rooms[0].setShortName("nw-gate-terrace");
+           rooms[0].setInsertionPoint( new ScreenPoint(400,300) );
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(400,25,25,40) );
+               mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,2,0,0) );
+               mapExit.setTargetPosition( new ScreenPoint(510,210) );
+
+        // STEP XX - We save this simple universe.
            persistenceManager = wotlas.server.PersistenceManager.createPersistenceManager( databasePath );
            Debug.signal( Debug.NOTICE, null, "Persistence Manager Created..." );
 

@@ -48,7 +48,7 @@ public class WorldMap
   
   /** List of players in the WorldMap
    */
-   private transient PlayerImpl[] playerImpls;
+   private transient PlayerImpl[] playerImpl;
   
  /*------------------------------------------------------------------------------------*/
   
@@ -89,9 +89,33 @@ public class WorldMap
   public void setPlayerImpls(PlayerImpl[] myPlayerImpls) {
     this.playerImpls = myPlayerImpls;
   }
-  public PlayerImpl[] getPlayerImpls() {
-    return playerImpls;
+  public PlayerImpl[] getPlayerImpl() {
+    return playerImpl;
   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Add a player to this world. The player must have been previously initialized.
+   *  We suppose that the player.getLocation() points out our World location.
+   *
+   * @param player player to add
+   */
+   public void addPlayer( PlayerImpl player )
+   {
+     if (playerImpl == null) {
+        playerImpl = new PlayerImpl[1];   /** TO DO : use a field player_length to avoid **/
+        playerImpl[0] = player;           /** array realloc each time **/
+     } else {
+    	PlayerImpl[] myPlayerImpl = new PlayerImpl[playerImpl.length+1];
+    	System.arraycopy( playerImpl, 0, myPlayerImpl, 0, playerImpl.length );
+    	myPlayerImpl[playerImpl.length] = player;
+    	playerImpl = myPlayerImpl;
+     }
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+/** removePlayer TO ADD **/
 
  /*------------------------------------------------------------------------------------*/
 
@@ -101,7 +125,7 @@ public class WorldMap
    */
   public TownMap addTownMap()
   {
-  	TownMap myTownMap = new TownMap();
+    TownMap myTownMap = new TownMap();
   		
     if (townMaps == null) {
       townMaps = new TownMap[1];

@@ -19,9 +19,15 @@
  
 package wotlas.common.universe;
 
- /** Location class
+ /** Location class. Identifies a precise location in the universe. Normally,
+  *  it points out a room of an InteriorMap, building, town, world.<br>
+  *  But it can point out :<p><br>
   *
-  * @author Petrus
+  *  - a World ( worldMapId set, townMapId=-1, buildingID=-1, interiorMapId=-1, roomID=-1)<br>
+  *
+  *  - a Town ( worldMapId set, townMapId set, buildingID=-1, interiorMapId=-1, roomID=-1)
+  *
+  * @author Petrus, Aldiss
   */
   
 public class WotlasLocation
@@ -29,30 +35,168 @@ public class WotlasLocation
 
  /*------------------------------------------------------------------------------------*/
  
-  /**
+  /** worldMapID
    */
-   private int WorldMapID;
+    private int worldMapID;
    
-  /**
+  /** townMapID
    */
-   private int TownMapID;
+    private int townMapID;
    
-  /**
+  /** buildingID
    */
-   private int BuildingID;
+    private int buildingID;
    
-  /**
+  /** interiorMapID
    */
-   private int InteriorMapID;
+    private int interiorMapID;
    
-  /**
+  /** roomID
    */
-   private int RoomID;
+    private int roomID;
  
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor
    */
-  public WotlasLocation() {}
+    public WotlasLocation() {}
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To get the WorldMapID
+    *
+    * @return WorldMapID
+    */
+    public int getWorldMapID() {
+        return worldMapID;
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To get the townMapID
+    *
+    * @return townMapID
+    */
+    public int getTownMapID() {
+        return townMapID;
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To get the buildingID
+    *
+    * @return buildingID
+    */
+    public int getBuildingID() {
+        return buildingID;
+    }
+
+ /*------------------------------------------------------------------------------------*/
   
+   /** To get the interiorMapID
+    *
+    * @return interiorMapID
+    */
+    public int getInteriorMapID() {
+        return interiorMapID;
+    }
+
+ /*------------------------------------------------------------------------------------*/
+  
+   /** To get the roomID
+    *
+    * @return roomID
+    */
+    public int getRoomID() {
+        return roomID;
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To set the worldMapID.
+    *
+    * @param worldMapID
+    */
+    public void setWorldMapID( int worldMapID ) {
+        this.worldMapID = worldMapID;
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To set the townMapID.
+    *
+    * @param townMapID
+    */
+    public void setTownMapID( int townMapID ) {
+        this.townMapID = townMapID;
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To set the buildingID.
+    *
+    * @param buildingID
+    */
+    public void setBuildingID( int buildingID ) {
+        this.buildingID = buildingID;
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To set the interiorMapID.
+    *
+    * @param interiorMapID
+    */
+    public void setInteriorMapID( int interiorMapID ) {
+        this.interiorMapID = interiorMapID;
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To set the roomID.
+    *
+    * @param roomID
+    */
+    public void setRoomID( int roomID ) {
+        this.roomID = roomID;
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** Does this location points out a Town ?
+    *
+    * @return true if it points out a town.
+    */
+    public boolean isTown() {
+        if( buildingID<0 )
+            return true;
+       return false;
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** Does this location points out a World ?
+    *
+    * @return true if it points out a world.
+    */
+    public boolean isWorld() {
+        if( townMapID<0 )
+            return true;
+       return false;
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** Does this location points out a Room ?
+    *
+    * @return true if it points out a room.
+    */
+    public boolean isRoom() {
+        if( building>=0 && townMapID>=0 )
+            return true;
+       return false;
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
 }

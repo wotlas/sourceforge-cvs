@@ -21,6 +21,7 @@
 package wotlas.client;
 
 import wotlas.common.character.*;
+import wotlas.common.chat.*;
 import wotlas.common.universe.*;
 import wotlas.common.*;
 
@@ -36,6 +37,7 @@ import wotlas.utils.*;
 import java.awt.Point;
 import java.awt.Rectangle;
 
+import java.util.Hashtable;
 
 /** Class of a Wotlas Player.
  *
@@ -67,6 +69,10 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   /** Wotlas Character
    */
   private WotCharacter wotCharacter;
+  
+  /** Player's chatRooms
+   */
+  private Hashtable chatRooms;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -84,23 +90,21 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
    */
   private Sprite sprite;
 
-  /** True if player is moving
+  /** Our textDrawable
+   */
+  transient private TextDrawable textDrawable;
+  
+ /** Our current Room ( if we are in a Room, null otherwise )
+  */
+  transient private Room myRoom;
+
+  /** True if player is moving.
    */
   private boolean isMoving = false;
 
   /** True if this player is controlled by the client.
    */
   private boolean isMaster = false;
-
- /*------------------------------------------------------------------------------------*/
-
-///////////// ALDISS pour se faciliter la vie... la pièce courante
-
-   /** Our current Room ( if we are in a Room, null otherwise )
-    */
-       transient private Room myRoom;
-
-/////////////////
 
  /*------------------------------------------------------------------------------------*/
 
@@ -129,6 +133,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     animation = new Animation(wotCharacter.getImage(location));
     sprite = (Sprite) wotCharacter.getDrawable(this);    
     movementComposer.init( this );
+    chatRooms = new Hashtable(2);
   }
 
   /** Called after graphicsDirector's init to add some visual effects to the master player
@@ -167,14 +172,12 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
    *  @param new player WotlasLocation
    */
   public void setLocation(WotlasLocation myLocation) {
-      location = myLocation;
+    location = myLocation;
 
-     ///////////// ALDISS mise à jour du champ myRoom
-      if( location.isRoom() )
-        myRoom = DataManager.getDefaultDataManager().getWorldManager().getRoom( location );
-      else
-        myRoom = null;
-     /////////////// FIN ALDISS
+    if ( location.isRoom() )
+      myRoom = DataManager.getDefaultDataManager().getWorldManager().getRoom( location );
+    else
+      myRoom = null;
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -213,6 +216,20 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     this.fullPlayerName = fullPlayerName;
   }
 
+ /*------------------------------------------------------------------------------------*/
+ 
+  /** To get the player's chatRooms.
+   */
+  public Hashtable getChatRooms() {
+    return chatRooms;
+  }
+  
+  /** To set the player's chatRooms.
+   */
+  public void setChatRooms(Hashtable chatRooms) {
+    this.chatRooms = chatRooms;
+  }
+  
  /*------------------------------------------------------------------------------------*/
 
 /*** Player implementation ***/
@@ -449,9 +466,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
       public boolean isMaster() {
       	return isMaster;
       }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
+      
    /** To set if this player is controlled by the client.
     * @param isMaster true means controlled by the client.
     */
@@ -468,8 +483,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
       public MovementComposer getMovementComposer() {
       	  return movementComposer;
       }
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
+ 
    /** To set the player's movement Composer.
     *
     *  @param movement MovementComposer.
@@ -490,16 +504,44 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- ///////////////// ALDISS pour récupérer la pièce courante
-
-   /** To get the player's current Room ( if we are in a Room ).
-    */
-      public Room getMyRoom() {
-      	return myRoom;
-      }
-
- //////////////////////// FIN ALDISS
+  /** To get the player's current Room ( if we are in a Room ).
+   */
+  public Room getMyRoom() {
+    return myRoom;
+  }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To add a chatRoom.
+   *
+   * @param chatRoom ChatRoom to add
+   * @return false if the chatRoom already exists, true otherwise
+   */
+  public boolean addChatRoom(ChatRoom chatRoom) {
+    if ( chatRooms.containsKey(chatRoom.getPrimaryKey()) ) {
+      Debug.signal( Debug.CRITICAL, this, "addChatRoom failed: key " + chatRoom.getPrimaryKey()
+                      + " already in " + this );
+      return false;
+    }
+    chatRooms.put(chatRoom.getPrimaryKey(), chatRoom);
+    return true;    
+  }
+
+  /** To remove a chatRoom.   
+   *
+   * @param chatRoom ChatRoom to remove
+   * @return false if the chatRoom doesn't exists, true otherwise
+   */
+  public boolean removeChatRoom(ChatRoom chatRoom) {
+    if ( !chatRooms.containsKey(chatRoom.getPrimaryKey()) ) {
+      Debug.signal( Debug.CRITICAL, this, "removeChatRoom failed: key " + chatRoom.getPrimaryKey()
+                      + " not found in " + this );
+      return false;
+    }
+    chatRooms.remove(chatRoom.getPrimaryKey() );
+    return true;
+  }
+
+ /*------------------------------------------------------------------------------------*/  
+ 
 }

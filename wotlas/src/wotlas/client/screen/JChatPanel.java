@@ -331,6 +331,8 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     if (message.length()==0)
       return;
 
+    System.out.println("okAction");
+    System.out.println("getMyJChatRoomID = " + getMyJChatRoomID());
     DataManager.getDefaultDataManager().sendMessage(new SendPublicTxtMessage( getMyJChatRoomID(), message ) );
 
     // entry reset

@@ -57,11 +57,13 @@ public class ReceivePublicTxtMsgBehaviour extends ReceivePublicTxtMessage implem
     DataManager dataManager = (DataManager) context;
     PlayerImpl player = dataManager.getMyPlayer();
     
-    System.out.println("ReceivePublicTxtMsgBehaviour");
+    System.out.println("ReceivePublicTxtMsgBehaviour::doBehaviour()");
     System.out.println("\tchatRoomPrimaryKey = " + chatRoomPrimaryKey);
     System.out.println("\tsenderPrimaryKey = " + senderPrimaryKey);
     System.out.println("\tmessage = " + message);
 
+    dataManager.getChatPanel().getJChatRoom(chatRoomPrimaryKey).appendText(message);
+    
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -17,6 +17,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+// TODO : not send message to current player
+
 package wotlas.server.message.chat;
 
 import java.io.IOException;
@@ -59,11 +61,12 @@ public class SendPublicTxtMsgBehaviour extends SendPublicTxtMessage implements N
     // The context is here a PlayerImpl.
     PlayerImpl player = (PlayerImpl) context;
 
-    System.out.println("public SendPublicTxtMsgBehaviour()");
+    System.out.println("SendPublicTxtMsgBehaviour()");
     System.out.println("\tchatRoomPrimaryKey = " + chatRoomPrimaryKey);
+    System.out.println("\tplayer.getPrimaryKey = " + player.getPrimaryKey());
     System.out.println("\tmessage = " + message);
     ReceivePublicTxtMessage rptMsg = new ReceivePublicTxtMessage(chatRoomPrimaryKey, player.getPrimaryKey(), message);
-    //player.sendMessage(rptMsg);
+    player.sendMessage(rptMsg);
     
     // We send the information to all players of the same ChatRoom
     WotlasLocation location = player.getLocation();
@@ -94,6 +97,7 @@ public class SendPublicTxtMsgBehaviour extends SendPublicTxtMessage implements N
       return;
     }
     
+    /*
     synchronized(players) {
       Iterator it = players.values().iterator();
       PlayerImpl p;
@@ -102,11 +106,11 @@ public class SendPublicTxtMsgBehaviour extends SendPublicTxtMessage implements N
         p = (PlayerImpl)it.next();
         if (p!=player) {
           System.out.println("To player "+p+":");
-          p.sendMessage( rptMsg );
+          //p.sendMessage( rptMsg );
         }
       }
     }
-    
+    */
   }
   
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

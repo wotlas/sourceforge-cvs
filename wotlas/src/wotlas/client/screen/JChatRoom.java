@@ -54,6 +54,7 @@ public class JChatRoom extends JPanel
    */
   private DefaultStyledDocument doc_chat;
   private SimpleAttributeSet attribut;
+  private String strBuffer;
   
   /** List of ChatRoom players.
    */
@@ -89,8 +90,10 @@ public class JChatRoom extends JPanel
     attribut = new SimpleAttributeSet();
     StyleConstants.setFontSize(attribut,12);
     
+    strBuffer = "Welcome!<br>\n";
+    messagesPane.setText("<html><body>" + strBuffer + "</body></html>");
     System.out.println("init = " + messagesPane.getText());
-    //messagesPane.setText("Welcome!<br>");
+    
     //messagesPane.setCaretPosition(messagesPane.getText().length());
     
     //Element elt = doc_chat.getElement("p");
@@ -141,7 +144,7 @@ public class JChatRoom extends JPanel
     // too much messages displayed ?
     msg_number++;
     
-   /* StringBuffer buffer = messagesPane.getText();
+    /*StringBuffer buffer = messagesPane.getText();
     System.out.println("buffer = " + buffer);
     buffer = buffer + text + "<br>";
     System.out.println("buffer after = " + buffer);
@@ -149,40 +152,46 @@ public class JChatRoom extends JPanel
    
 
     System.out.println("msg_number = " + msg_number);
-    try {
+    /*try {
       System.out.println("dochat = " + doc_chat.getText(0,doc_chat.getLength()));
+      System.out.println("messagesPane.getText() = " + messagesPane.getText());
     } catch (BadLocationException e) {
         System.out.println("Chat Error:"+e.getMessage());
-      } 
+    }*/ 
       
     if ( msg_number>MAX_DISPLAYED_MESSAGES )
-      try {
-        int pos = doc_chat.getText(0,doc_chat.getLength()).indexOf("\n");
-        doc_chat.remove(0,pos+1);
+      //try
+      {
+        /*int pos = doc_chat.getText(0,doc_chat.getLength()).indexOf("\n");
+        doc_chat.remove(0,pos+1);*/
+        
+        int pos = strBuffer.indexOf("\n");
+        strBuffer = strBuffer.substring(pos+1);        
         msg_number--;
-	    } catch(BadLocationException e) {
-        System.out.println("Chat Error:"+e.getMessage());
+	    /*} catch(BadLocationException e) {
+        System.out.println("Chat Error:"+e.getMessage());*/
       } 
 
     // text color
-    StyleConstants.setForeground( attribut, Color.blue );
+    //StyleConstants.setForeground( attribut, Color.blue );
 
-    try {
+    //try {
       System.out.println("insertString");
       System.out.println("doc_chat.getLength() = " + doc_chat.getLength());
-      doc_chat.insertString (doc_chat.getLength(), text+"<br>\n", attribut );
-      //messagesPane.setDocument(doc_chat);
-    } catch(BadLocationException e) {
+      //doc_chat.insertString (doc_chat.getLength(), text+"<br>\n", attribut );
+      strBuffer += text + "<br>\n";
+      messagesPane.setText(strBuffer);
+    /*} catch(BadLocationException e) {
       e.printStackTrace();
       return;
-    }
+    }*/
 
     // TRICK TRICK TRICK TRICK TRICK
 
     // we want the scrollbars to move when some text is added...
-    /*if (isShowing())
-      messagesPane.setCaretPosition( doc_chat.getLength() );
-*/
+    if (isShowing())
+      messagesPane.setCaretPosition( strBuffer.length() );
+
      // TRICK TRICK TRICK TRICK TRICK
   }
   

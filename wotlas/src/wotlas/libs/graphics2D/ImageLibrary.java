@@ -500,7 +500,7 @@ public class ImageLibrary {
            try{
                loadImageAction( imID );
            }catch( IOException e ) {
-               Debug.signal( Debug.ERROR, this, "An error occured while loading "+imID+" (action)");
+               Debug.signal( Debug.ERROR, this, "An error occured while loading "+imID+" (action) :"+e);
                return false;
            }
       }
@@ -510,7 +510,7 @@ public class ImageLibrary {
            try{
                loadImageIndex( imID );
            }catch( IOException e ) {
-               Debug.signal( Debug.ERROR, this, "An error occured while loading "+imID+" (index)");
+               Debug.signal( Debug.ERROR, this, "An error occured while loading "+imID+" (index) :"+e);
                return false;
            }
       }
@@ -656,12 +656,22 @@ public class ImageLibrary {
 
          for( int i=0; i<list.length; i++)
          {
-            if( list[i].isDirectory() || ( !list[i].getName().endsWith("jpg") && 
-                !list[i].getName().endsWith("gif") ) )
+            String name = list[i].getName().toLowerCase();
+
+            if( list[i].isDirectory() || ( !name.endsWith(".jpg") && !name.endsWith(".gif") ) )
                 continue;
 
-            im[i] = tk.getImage( path+File.separator+list[i].getName() );
-            tracker.addImage(im[i],i);
+            int id=0;
+
+            try{
+               id = getIDFromName( name.substring( 0, name.lastIndexOf('.')) );
+            }catch( IOException e ) {
+               Debug.signal( Debug.WARNING, null, "Bad Image Name Format ! :"+e);
+               continue;
+            }
+
+            im[id] = tk.getImage( path+File.separator+list[i].getName() );
+            tracker.addImage(im[id],i);
             nbImagesLoaded++;
          }
 

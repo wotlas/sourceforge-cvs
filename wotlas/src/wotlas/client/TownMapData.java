@@ -21,6 +21,7 @@ package wotlas.client;
 
 import wotlas.client.screen.JClientScreen;
 
+import wotlas.common.message.description.*;
 import wotlas.common.message.movement.*;
 import wotlas.common.universe.*;
 import wotlas.common.*;
@@ -54,9 +55,10 @@ public class TownMapData implements MapData
    */
   public static boolean SHOW_DEBUG = true;
 
-  /** True if we send netMessage
+ /** if true, the player can change its MapData
+   * otherwise, the server didn't send a message to do so => player stay where he is
    */
-  //public static boolean SEND_NETMESSAGE = false;
+  public boolean canChangeMap;
   
   /** lock to verify player can leave the map<br>
    * unlocked by client.message.movement.YourCanLeaveMsgBehaviour
@@ -152,16 +154,8 @@ public class TownMapData implements MapData
     }*/
 
     // 5 - We initialize the AStar algo
-
-///////////////////////////// ALDISS : changement de l'initialisation de Astar
-
     myPlayer.getMovementComposer().setMovementMask( BinaryMask.create( bufIm ), 5, 1 );
-
-//    dataManager.getAStar().setMask( BinaryMask.create( bufIm ) );
-//    dataManager.getAStar().setSpriteSize(1);
     bufIm.flush(); // free image resource
-
-//////////////////////////////// FIN ALDISS
 
     // 6 - Init the GraphicsDirector
     GraphicsDirector gDirector = dataManager.getGraphicsDirector();
@@ -209,6 +203,21 @@ public class TownMapData implements MapData
     String midiFile = townMap.getMusicName();
     if (midiFile != null)
       SoundLibrary.getSoundLibrary().playMusic( midiFile );
+      
+    //   - We retreive other players informations
+    dataManager.sendMessage(new AllDataLeftPleaseMessage());
+  }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** canChangeMap is set to true if player can change its MapData<br>
+   * called by wotlas.client.message.YouCanLeaveMapMessage
+   */
+  public void canChangeMapLocation( boolean canChangeMap ) {
+    synchronized( changeMapLock ) {
+      this.canChangeMap = canChangeMap;
+      changeMapLock.notify();
+    }
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -234,39 +243,52 @@ public class TownMapData implements MapData
         System.out.println("We are going to a world map...");
 
       if (SHOW_DEBUG)
-        System.out.println("Removing player from the map...");
-      townMap.removePlayer(myPlayer);
+        System.out.println("Removing player from the map...");      
 
       myPlayer.stopMovement();
 
-      myPlayer.setLocation( mapExit.getTargetWotlasLocation() );
-      
+      //myPlayer.setLocation( mapExit.getTargetWotlasLocation() );
+
+/* NETMESSAGE */      
       if (SEND_NETMESSAGE) {
         try {
           synchronized(changeMapLock) {
-            myPlayer.sendMessage( new CanLeaveTownMapMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation()) );
+            canChangeMap = false;
+            myPlayer.sendMessage( new CanLeaveTownMapMessage(myPlayer.getPrimaryKey(), mapExit.getTargetWotlasLocation(), myPlayer.getX(), myPlayer.getY()) );
             changeMapLock.wait(CONNECTION_TIMEOUT);
           }
         } catch (InterruptedException ie) {
           dataManager.showWarningMessage("Cannot change the map !");
           Debug.exit();
         }      
+      } else {      
+        // player doesn't receive NetMessage => he can always change its MapData
+        canChangeMap = true;
       }
-      
-      dataManager.cleanInteriorMapData(); // suppress drawables, shadows, data
+        
+      if (canChangeMap) {
+        // Player can change its MapData
+        townMap.removePlayer(myPlayer);
+        myPlayer.setLocation( mapExit.getTargetWotlasLocation() );
+        
+        dataManager.cleanInteriorMapData(); // suppress drawables, shadows, data
 
-      ScreenPoint targetPoint = mapExit.getTargetPosition();
-      myPlayer.setX(targetPoint.x);
-      myPlayer.setY(targetPoint.y);
-      myPlayer.setPosition(targetPoint);
+        ScreenPoint targetPoint = mapExit.getTargetPosition();
+        myPlayer.setX(targetPoint.x);
+        myPlayer.setY(targetPoint.y);
+        myPlayer.setPosition(targetPoint);
 
-      if (mapExit.getType() == MapExit.TOWN_EXIT) {
-        if (SHOW_DEBUG)
-          System.out.println("Move to a WorldMap");
-        //initWorldMapisplay(myPlayer.getLocation());
-        dataManager.changeMapData();
+        if (mapExit.getType() == MapExit.TOWN_EXIT) {
+          if (SHOW_DEBUG)
+            System.out.println("Move to a WorldMap");
+          //initWorldMapisplay(myPlayer.getLocation());
+          dataManager.changeMapData();
+        } else {
+          Debug.signal( Debug.CRITICAL, this, "Unknown mapExit : " + mapExit.getType() );
+        }
       } else {
-        Debug.signal( Debug.CRITICAL, this, "Unknown mapExit : " + mapExit.getType() );
+        // Player cannot change its MapData
+        dataManager.showWarningMessage("Cannot change the MapData !");
       }
     }
 
@@ -286,7 +308,7 @@ public class TownMapData implements MapData
 
       if (SHOW_DEBUG)
         System.out.println("Removing player from the map...");
-      townMap.removePlayer(myPlayer);
+      
       
 ///////////////////////////// ALDISS : avant stopMoving()
       myPlayer.stopMovement();
@@ -341,25 +363,37 @@ public class TownMapData implements MapData
       }
 
       myPlayer.setLocation(mapExit.getMapExitLocation());
-      
+
+/* NETMESSAGE */      
       if (SEND_NETMESSAGE) {
         try {
           synchronized(changeMapLock) {
-            myPlayer.sendMessage( new CanLeaveTownMapMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation()) );
+            canChangeMap = false;
+            myPlayer.sendMessage( new CanLeaveTownMapMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation(), myPlayer.getX(), myPlayer.getY()) );
             changeMapLock.wait(CONNECTION_TIMEOUT);
           }
         } catch (InterruptedException ie) {
           dataManager.showWarningMessage("Cannot change the map !");
           Debug.exit();
         }      
+      } else {
+        // player doesn't receive NetMessage => he can always change its MapData
+        canChangeMap = true;
       }
       
-      dataManager.cleanInteriorMapData();
+      if (canChangeMap) {
+        // Player can change its MapData
+        townMap.removePlayer(myPlayer);
+        dataManager.cleanInteriorMapData();
       
-      myPlayer.setPosition( new ScreenPoint(myPlayer.getX(), myPlayer.getY()) );
+        myPlayer.setPosition( new ScreenPoint(myPlayer.getX(), myPlayer.getY()) );
 
-      //initInteriorMapDisplay(myPlayer.getLocation()); // init new map
-      dataManager.changeMapData();
+        //initInteriorMapDisplay(myPlayer.getLocation()); // init new map
+        dataManager.changeMapData();
+      } else {
+        // Player cannot change its MapData
+        dataManager.showWarningMessage("Cannot change the MapData !");
+      }
     }
   }
 

@@ -33,7 +33,7 @@ public interface MapData
 {
   
  /*------------------------------------------------------------------------------------*/
- 
+  
  /** True if we send netMessage
    */
   public static boolean SEND_NETMESSAGE = false;
@@ -42,13 +42,22 @@ public interface MapData
    */
   public static final int CONNECTION_TIMEOUT = 5000;
   
+  
+  
   /** To get changeMap lock<br>
    * called by client.message.movement.YourCanLeaveMsgBehaviour
    */  
   public Object getChangeMapLock();
   
  /*------------------------------------------------------------------------------------*/
-
+  
+  /** canChangeMap is set to true if player can change its MapData<br>
+   * called by wotlas.client.message.YouCanLeaveMapMessage
+   */
+  public void canChangeMapLocation( boolean canChangeMap );
+ 
+ /*------------------------------------------------------------------------------------*/
+ 
   /** To init the display<br>
    * - load background and mask images<br>
    * - init the AStar algorithm

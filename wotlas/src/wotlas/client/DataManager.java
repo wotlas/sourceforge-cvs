@@ -484,6 +484,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     //myPlayer.setPosition(new ScreenPoint(70,640));
     myPlayer.setPosition(new ScreenPoint(31,759));
 
+    players = new Hashtable();
+    
     // 4 - Create AStar
     //aStar = new AStarDouble();
 
@@ -508,10 +510,12 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
     mFrame.show();
 
-    // 9 - Retreive other players informations
-    //players = new HashMap();
-    //personality.queueMessage(new AllDataLeftPleaseMessage());
-    //addPlayer(myPlayer);
+    // 9 - Retreive other players informations    
+    //personality.queueMessage(new AllDataLeftPleaseMessage());    
+    
+    if (!MapData.SEND_NETMESSAGE) {      
+      addPlayer(myPlayer);
+    }
 
   }
 
@@ -557,9 +561,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     // Update myPlayer's location
     myMapData.locationUpdate(myPlayer);
     
-    // Update players drawings
-    Hashtable players = myMapData.getPlayers(myPlayer);
-    synchronized( players) {
+    // Update players drawings    
+    synchronized(players) {
       Iterator it = players.values().iterator();
       while( it.hasNext() ) {
         ( (PlayerImpl) it.next() ).tick();

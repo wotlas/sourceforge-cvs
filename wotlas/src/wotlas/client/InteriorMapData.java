@@ -17,10 +17,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
+// todo : dataManager.sendMessage( new EnteringRoomMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation()) );                
+
 package wotlas.client;
 
 import wotlas.client.screen.JClientScreen;
 
+import wotlas.common.message.description.*;
 import wotlas.common.message.movement.*;
 import wotlas.common.universe.*;
 import wotlas.common.*;
@@ -54,9 +57,10 @@ public class InteriorMapData implements MapData
    */
   public static boolean SHOW_DEBUG = true;
 
-  /** True if we send netMessage
+ /** if true, the player can change its MapData
+   * otherwise, the server didn't send a message to do so => player stay where he is
    */
-  //public static boolean SEND_NETMESSAGE = false;
+  public boolean canChangeMap;
   
   /** lock to verify player can leave the map<br>
    * unlocked by client.message.movement.YourCanLeaveMsgBehaviour
@@ -126,6 +130,12 @@ public class InteriorMapData implements MapData
     }
     dataManager.getInfosPanel().setLocation(room.getFullName());
 
+/* NETMESSAGE */
+    if (SHOW_DEBUG)
+      System.out.println("dataManager.sendMessage( new EnteringRoomMessage(...) )");
+    if (SEND_NETMESSAGE)
+      dataManager.sendMessage( new EnteringRoomMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation(), myPlayer.getX(), myPlayer.getY()) );                
+
     if (SHOW_DEBUG)
       System.out.println("Adding a new player : " + myPlayer + "to room : " + room);
     room.addPlayer(myPlayer);
@@ -180,11 +190,7 @@ public class InteriorMapData implements MapData
     }*/
 
     // 5 - We initialize the AStar algo
-///////////////////////////// ALDISS : changement de l'initialisation de Astar
-
     myPlayer.getMovementComposer().setMovementMask( BinaryMask.create( bufIm ), 5, 4 );
-//    dataManager.getAStar().setMask(  );
-//    dataManager.getAStar().setSpriteSize(4);
     bufIm.flush(); // free image resource
 
 ///////////////////////////// FIN ALDISS
@@ -229,10 +235,25 @@ public class InteriorMapData implements MapData
     String midiFile = imap.getMusicName();
     if (midiFile != null)
       SoundLibrary.getSoundLibrary().playMusic( midiFile );
+      
+    //   - We retreive other players informations
+    dataManager.sendMessage(new AllDataLeftPleaseMessage());
   }
 
  /*------------------------------------------------------------------------------------*/
 
+  /** canChangeMap is set to true if player can change its MapData<br>
+   * called by wotlas.client.message.YouCanLeaveMapMessage
+   */
+  public void canChangeMapLocation( boolean canChangeMap ) {
+    synchronized( changeMapLock ) {
+      this.canChangeMap = canChangeMap;
+      changeMapLock.notify();
+    }
+  }
+  
+ /*------------------------------------------------------------------------------------*/
+   
   /** To update the location<br>
    * - test if player is intersecting a screenZone<br>
    * - test if player is entering a new WotlasLocation<br>
@@ -277,7 +298,7 @@ public class InteriorMapData implements MapData
         if (SHOW_DEBUG)
           System.out.println("dataManager.sendMessage( new EnteringRoomMessage(...) )");
         if (SEND_NETMESSAGE)
-          dataManager.sendMessage( new EnteringRoomMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation()) );                
+          dataManager.sendMessage( new EnteringRoomMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation(), myPlayer.getX(), myPlayer.getY()) );                
 
         if (SHOW_DEBUG)
           System.out.println("Adding a new player : " + myPlayer + "to room : " + room);
@@ -328,53 +349,67 @@ public class InteriorMapData implements MapData
         if (SHOW_DEBUG)
           System.out.println("We are going to a new map...");
 
-        myPlayer.stopMovement();
-        myRoom.removePlayer( myPlayer );
-        myPlayer.setLocation( mapExit.getTargetWotlasLocation() );
+        myPlayer.stopMovement();        
         
+        //myPlayer.setLocation( mapExit.getTargetWotlasLocation() );
+
+/* NETMESSAGE */        
         if (SEND_NETMESSAGE) {
           try {
             synchronized(changeMapLock) {
-              myPlayer.sendMessage( new CanLeaveIntMapMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation()) );
+              canChangeMap = false;
+              myPlayer.sendMessage( new CanLeaveIntMapMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation(), myPlayer.getX(), myPlayer.getY()) );
               changeMapLock.wait(CONNECTION_TIMEOUT);
             }
           } catch (InterruptedException ie) {
             dataManager.showWarningMessage("Cannot change the map !");
             Debug.exit();
           }      
+        } else {
+          // player doesn't receive NetMessage => he can always change its MapData
+          canChangeMap = true;
         }
       
-        dataManager.cleanInteriorMapData(); // suppress drawables, shadows, data
+        if (canChangeMap) {
+          // Player can change its MapData
+          myRoom.removePlayer( myPlayer );
+          myPlayer.setLocation( mapExit.getTargetWotlasLocation() );
+          
+          dataManager.cleanInteriorMapData(); // suppress drawables, shadows, data
 
-        ScreenPoint targetPoint = mapExit.getTargetPosition();
-        myPlayer.setX(targetPoint.x);
-        myPlayer.setY(targetPoint.y);
-        myPlayer.setPosition(targetPoint);
+          ScreenPoint targetPoint = mapExit.getTargetPosition();
+          myPlayer.setX(targetPoint.x);
+          myPlayer.setY(targetPoint.y);
+          myPlayer.setPosition(targetPoint);
 
-        switch( mapExit.getType() ) {
-          case MapExit.INTERIOR_MAP_EXIT :
-            if (SHOW_DEBUG)
-              System.out.println("Move to another InteriorMap");
-            //initInteriorMapDisplay(myPlayer.getLocation()); // init new map
-            dataManager.changeMapData();
-            break;
+          switch( mapExit.getType() ) {
+            case MapExit.INTERIOR_MAP_EXIT :
+              if (SHOW_DEBUG)
+                System.out.println("Move to another InteriorMap");
+              //initInteriorMapDisplay(myPlayer.getLocation()); // init new map
+              dataManager.changeMapData();
+              break;
 
-          case MapExit.TOWN_EXIT :
-            if (SHOW_DEBUG)
-              System.out.println("Move to TownMap");
-            //initTownMapDisplay(myPlayer.getLocation()); // init new map
-            dataManager.changeMapData();
-            break;
+            case MapExit.TOWN_EXIT :
+              if (SHOW_DEBUG)
+                System.out.println("Move to TownMap");
+              //initTownMapDisplay(myPlayer.getLocation()); // init new map
+              dataManager.changeMapData();
+              break;
 
-          case MapExit.BUILDING_EXIT :
-            if (SHOW_DEBUG)
-              System.out.println("Move to Building");
-            //initTownMapDisplay(myPlayer.getLocation()); // init new map
-            dataManager.changeMapData();
-            break;
+            case MapExit.BUILDING_EXIT :
+              if (SHOW_DEBUG)
+                System.out.println("Move to Building");
+              //initTownMapDisplay(myPlayer.getLocation()); // init new map
+              dataManager.changeMapData();
+              break;
 
-          default:
-            Debug.signal( Debug.CRITICAL, this, "Unknown mapExit of type : " + mapExit.getType() );
+            default:
+              Debug.signal( Debug.CRITICAL, this, "Unknown mapExit of type : " + mapExit.getType() );
+          }
+        } else {
+          // Player cannot change its MapData
+          dataManager.showWarningMessage("Cannot change the MapData !");
         }
       }
     } // End of part II

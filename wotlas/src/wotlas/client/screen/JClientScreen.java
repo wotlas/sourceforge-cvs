@@ -145,25 +145,30 @@ public class JClientScreen extends JFrame
 
     // *** Right Panel ***
 
-      JPanel rightPanel = new JPanel();
+      JPanel rightPanel = new JPanel();//new GridLayout(1,1,5,5));
       rightPanel.setPreferredSize(new Dimension(mainWidth-leftWidth, mainHeight-northHeight));
+      rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
+      rightPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
       rightPanel.setBackground(Color.black);
-
+      
       // *** Preview Panel ***
+      optionsPanel.setPreferredSize(new Dimension(mainWidth-leftWidth-10, thumbHeight));      
+      optionsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+      rightPanel.add(optionsPanel, BorderLayout.NORTH);
 
-      optionsPanel.setPreferredSize(new Dimension(mainWidth-leftWidth, thumbHeight));
-      rightPanel.add(optionsPanel);
-
+      rightPanel.add(Box.createRigidArea(new Dimension(0,5)));
+      
       // *** Player Panel ***
-
-      playerPanel.setPreferredSize(new Dimension(mainWidth-leftWidth, playerHeight));
-      rightPanel.add(playerPanel);
+      //playerPanel.setPreferredSize(new Dimension(mainWidth-leftWidth, playerHeight));
+      playerPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+      rightPanel.add(playerPanel, BorderLayout.CENTER);
 
       // *** Log Panel ***
-
-      logPanel.setPreferredSize(new Dimension(mainWidth-leftWidth, mainHeight-thumbHeight-playerHeight));      
+      //logPanel.setPreferredSize(new Dimension(mainWidth-leftWidth, mainHeight-thumbHeight-playerHeight));      
       //rightPanel.add(logPanel);
 
+      //rightPanel.add(innerRightPanel);
+      
     getContentPane().add(rightPanel, BorderLayout.EAST);
 
     // *** Left panel ***

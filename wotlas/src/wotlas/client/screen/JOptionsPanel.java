@@ -19,6 +19,7 @@
 
 package wotlas.client.screen;
 
+import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.sound.*;
 import wotlas.utils.*;
 
@@ -33,7 +34,7 @@ import javax.swing.event.*;
  * @author Petrus
  */
 
-public class JOptionsPanel extends JPanel implements MouseListener, ChangeListener
+public class JOptionsPanel extends JPanel implements MouseListener, ChangeListener, ItemListener 
 {
 
  /*------------------------------------------------------------------------------------*/
@@ -46,18 +47,54 @@ public class JOptionsPanel extends JPanel implements MouseListener, ChangeListen
    */
   public JOptionsPanel() {
     super();
-    JLabel label1 = new ALabel("Options");
     
+    JPanel innerPanel = new JPanel();
+    innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
+    innerPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+    
+    ALabel label1 = new ALabel("Configuration");
+    label1.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+// Volume Panel
     JPanel vPanel = new JPanel();
-    vPanel.add(new JLabel(new ImageIcon("../base/gui/volume16.gif")));
+    vPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    vPanel.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
+    
+    ALabel volTitle = new ALabel("volume : ");
+    vPanel.add(volTitle);
+
+    JLabel soundMin = new JLabel(new ImageIcon("../base/gui/volume16.gif"));
+    //soundMin.setAlignmentY(Component.CENTER_ALIGNMENT);
+    vPanel.add(soundMin);
+    
     volumeLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_VOLUME, SoundLibrary.MAX_VOLUME);
+    volumeLevel.setPreferredSize(new Dimension(50,30));
     volumeLevel.addChangeListener(this);
+    volumeLevel.setAlignmentY(Component.BOTTOM_ALIGNMENT);
     vPanel.add(volumeLevel);
-    vPanel.add(new JLabel(new ImageIcon("../base/gui/volume24.gif")));
     
+    JLabel soundMax = new JLabel(new ImageIcon("../base/gui/volume24.gif"));
+    //soundMax.setAlignmentY(Component.CENTER_ALIGNMENT);
+    vPanel.add(soundMax);
+
+// Text Quality
+    JPanel qTextPanel = new JPanel();
+    qTextPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+    qTextPanel.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
     
-    add(label1, BorderLayout.NORTH);
-    add(vPanel, BorderLayout.CENTER);
+    ALabel qTextTitle = new ALabel("high quality text : ");
+    qTextPanel.add(qTextTitle);
+    
+    JCheckBox cButton = new JCheckBox();
+    cButton.setSelected(false);
+    cButton.addItemListener(this);
+    qTextPanel.add(cButton);
+    
+    innerPanel.add(label1);
+    innerPanel.add(vPanel);
+    innerPanel.add(qTextPanel);
+        
+    add(innerPanel);
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -89,6 +126,13 @@ public class JOptionsPanel extends JPanel implements MouseListener, ChangeListen
    */
   public void stateChanged(ChangeEvent e) {
     SoundLibrary.getSoundLibrary().setVolume((short) volumeLevel.getValue());
+  }
+  
+  /** Invoked when check box state is changed
+   */
+  public void itemStateChanged(ItemEvent e) {        
+    Object source = e.getItemSelectable(); 
+    TextDrawable.setHighQualityTextDisplay( (e.getStateChange() == ItemEvent.SELECTED) );
   }
 
 }

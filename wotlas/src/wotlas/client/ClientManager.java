@@ -556,6 +556,7 @@ public class ClientManager
               start(100);
             } else {
               Debug.signal( Debug.ERROR, this, "ClientManager ejected from GameServer");
+              
             }
           }
         }

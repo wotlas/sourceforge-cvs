@@ -38,12 +38,16 @@ public class JWizardTestingBench extends JWizard {
 
  /*------------------------------------------------------------------------------------*/
 
-  /*** ABSTRACT METHODS ***/
+  /** ID for step selection
+   */
+   private int stepID;
+
+ /*------------------------------------------------------------------------------------*/
 
   /** Called when wizard is finished (after last step's end).
    */
    protected void onFinished(Object context) {
-   	System.exit(0);
+   	new JWizardTestingBench(stepID+1);
    }
 
   /** Called when wizard is canceled ('cancel' button pressed).
@@ -61,25 +65,24 @@ public class JWizardTestingBench extends JWizard {
    * @param width wizard width
    * @param height wizard height
    */
-   public JWizardTestingBench() {
+   public JWizardTestingBench( int stepID ) {
 
-        super("Wizard Testing Bench",420,450);
+        super("Wizard Testing Bench",420,410);
         setLocation(200,100);
+        this.stepID = stepID;
 
         JWizardStepParameters parameters = new JWizardStepParameters();
 
      /**
       **  Modify the code below to display the step you want :
       **/
-
-        int i = 6;
        
-        switch ( i ) {
+        switch ( stepID ) {
 
            case 0 :  /* STEP INFO */
 
            parameters.setStepClass("wotlas.libs.wizard.step.JWizardStepInfo");
-           parameters.setStepTitle("Information Step");
+           parameters.setStepTitle("Information Step (JWizardStepInfo)");
            parameters.setProperty("init.info", "Please note this important information : "
                                            +"This important information you will please note : "
                                            +"Please note this important information and of course "
@@ -92,7 +95,7 @@ public class JWizardTestingBench extends JWizard {
            case 1 :  /* STEP 1 TEXT FIELD */
 
            parameters.setStepClass("wotlas.libs.wizard.step.JWizardStep1TextField");
-           parameters.setStepTitle("Information Input Step");
+           parameters.setStepTitle("Information Input Step (JWizardStep1TextField)");
 
            parameters.setProperty("init.label", "Kyzophrenic Proton :");
            parameters.setProperty("init.text", "krypton A");
@@ -104,7 +107,7 @@ public class JWizardTestingBench extends JWizard {
            case 2 : /* STEP 2 TEXT FIELD */
 
            parameters.setStepClass("wotlas.libs.wizard.step.JWizardStep2TextField");
-           parameters.setStepTitle("Information Input Step");
+           parameters.setStepTitle("Information Input Step (JWizardStep2TextField)");
 
            parameters.setProperty("init.label1", "Kyzophrenic Proton :");
            parameters.setProperty("init.text1", "krypton A");
@@ -119,7 +122,7 @@ public class JWizardTestingBench extends JWizard {
            case 3 : /* STEP COMBO BOX */
 
            parameters.setStepClass("wotlas.libs.wizard.step.JWizardStepComboBox");
-           parameters.setStepTitle("Information Choice Step");
+           parameters.setStepTitle("Information Choice Step (JWizardStepComboBox)");
  
            parameters.setProperty("init.label", "Kyzophrenic Proton :");
 
@@ -136,8 +139,8 @@ public class JWizardTestingBench extends JWizard {
            case 4 : /* STEP LIST */
 
            parameters.setStepClass("wotlas.libs.wizard.step.JWizardStepList");
-           parameters.setStepTitle("Information Choice Step");
- 
+           parameters.setStepTitle("Information Choice Step (JWizardStepList)");
+
            parameters.setProperty("init.label", "Kyzophrenic Proton vs Psychotic Deuterium :");
 
            parameters.setProperty("init.nbChoices", "4");
@@ -153,7 +156,7 @@ public class JWizardTestingBench extends JWizard {
            case 5 :  /* STEP PASSWORD */
 
            parameters.setStepClass("wotlas.libs.wizard.step.JWizardStepPassword");
-           parameters.setStepTitle("Login & Password Step");
+           parameters.setStepTitle("Login & Password Step (JWizardStepPassword)");
 
            parameters.setProperty("init.info", "\nPlease note these fields are very important and should "
                                            +"not be set without a good understanding of neutronic computing.");
@@ -162,7 +165,7 @@ public class JWizardTestingBench extends JWizard {
            case 6 : /* STEP TEXT AREA */
 
            parameters.setStepClass("wotlas.libs.wizard.step.JWizardStepTextArea");
-           parameters.setStepTitle("Story Input Step");
+           parameters.setStepTitle("Story Input Step (JWizardStepTextArea)");
 
            parameters.setProperty("init.info", "Please note these fields are very important and should "
                                            +"not be set without a good understanding of neutronic computing.");
@@ -171,6 +174,29 @@ public class JWizardTestingBench extends JWizard {
            parameters.setProperty("init.option", "kryptonit forever"); // without this line no checkbox is created
 
            break;
+
+           case 7 : /* STEP COMBO BOX */
+
+           parameters.setStepClass("wotlas.libs.wizard.step.JWizardStepRadio");
+           parameters.setStepTitle("Information Choice Step (JWizardStepRadio)");
+ 
+           parameters.setProperty("init.label", "Your Kyzophrenic possibilities :");
+
+           parameters.setProperty("init.nbChoices", "3");
+           parameters.setProperty("init.choice0", "Protons forever young");
+           parameters.setProperty("init.choice1", "Neutrons incrementaly aging");
+           parameters.setProperty("init.choice2", "Neutrinos shining every day");
+
+           parameters.setProperty("init.info0", "Please note these fields are very important and should "
+                                              +"not be set without a good understanding of neutronic computing.");
+           parameters.setProperty("init.info1", "Try important things and should "
+                                              +"not be set without a good understanding of neutronic computing.");
+           parameters.setProperty("init.info2", "This really should "
+                                              +"not be set without a good understanding of this: 21=12.");
+           break;
+
+           default:
+                 System.exit(0);
         }
 
      /**
@@ -194,7 +220,7 @@ public class JWizardTestingBench extends JWizard {
   /** Main for starting the bench
    */
    public static void main(String argv[]) {
-   	new JWizardTestingBench();
+   	new JWizardTestingBench(0);
    }
 
  /*------------------------------------------------------------------------------------*/

@@ -27,7 +27,8 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-/** A step of a wizard with a ALabel, JList, AtextArea (info).<br>
+/** A step of a wizard with a ALabel, JRadioButton, AtextArea (associated
+ * JRadioButton description).<br>
  *
  * Note that onShow onNext and onPrevious are not abstract anymore but their
  * implementation does nothing.
@@ -36,15 +37,19 @@ import javax.swing.*;
  *  
  *  We need some properties to initialize properly : ( see parameters.getProperty() ).<br>
  *  <pre>
- *    - "init.label"      ( label for the JList content - MANDATORY )
- *    - "init.nbChoices"  ( number of JList choices - MANDATORY )
+ *    - "init.label"      ( label for the combo box content - MANDATORY )
+ *    - "init.nbChoices"  ( number of jradio button choices - MANDATORY )
  *
- *    - "init.choice0"             ( choice 0 in the jlist - MANDATORY )
- *    - "init.choice1"             ( choice 1 in the jlist - MANDATORY )
+ *    - "init.choice0"             ( choice 0 : the text of the radio button - MANDATORY )
+ *    - "init.choice1"             ( choice 1 : the text of the radio button - MANDATORY )
  *    - ...
- *    - "init.choice[nbChoices-1]" ( choice [nbChoices-1] in the jlist - MANDATORY )
+ *    - "init.choice[nbChoices-1]" ( choice [nbChoices-1] : the text of the radio button - MANDATORY )
  *
- *    - "init.info"       ( information text to display - OPTIONAL )
+ *    - "init.info0"             ( an optional information text for radio button 0 - OPTIONAL )
+ *    - "init.info1"             ( an optional information text for radio button 1 - OPTIONAL )
+ *    - ...
+ *    - "init.info[nbChoices-1]" ( an optional information text for radio button [nbChoices-1] - OPTIONAL )
+ *
  *  </pre>
  *
  *  Optional properties are set to "" by default.
@@ -53,52 +58,48 @@ import javax.swing.*;
  * @see wotlas.libs.wizard.JWizardStep
  */
 
-public class JWizardStepList extends JWizardStep {
+public class JWizardStepRadio extends JWizardStep implements ActionListener{
 
   /** Swing components of this step
    */
    private ALabel label1;
 
-   protected JList list;
+   protected ARadioButton buttons[];
+   protected String aRadioInfo[];
 
    private ATextArea tarea;
    private JPanel formPanel;
+
+   private ButtonGroup btGroup;
 
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor
    */
-   public JWizardStepList() {
+   public JWizardStepRadio() {
       super();
-      setBackground( Color.white );
-      setLayout( new BorderLayout() );
-      setBorder( BorderFactory.createEmptyBorder(20,20,0,20) );
+      setBackground(Color.white);
+      setLayout(new BorderLayout());
+      setBorder(BorderFactory.createEmptyBorder(20,20,0,20));
 
-        label1 = new ALabel();
-        label1.setHorizontalAlignment( SwingConstants.CENTER );
-        add( label1, BorderLayout.NORTH );
+      label1 = new ALabel();
+      add(label1,BorderLayout.NORTH);
 
-      formPanel = new JPanel( new GridLayout(1,1,10,2) );
-      formPanel.setAlignmentX( LEFT_ALIGNMENT );
-      formPanel.setBackground( Color.white );
+        btGroup = new ButtonGroup();
 
-        list = new JList();
-        list.setCellRenderer( new AListCellRenderer() );
-        list.setBorder( BorderFactory.createLineBorder( new Color(50,50,75) ) );
-        list.setSelectionMode( ListSelectionModel.SINGLE_SELECTION );
-        list.setAlignmentX( CENTER_ALIGNMENT );
-        formPanel.add( list );
-        formPanel.setBorder( BorderFactory.createEmptyBorder(10,80,10,80) );
-
-      add( formPanel, BorderLayout.CENTER );
+      formPanel = new JPanel();
+      formPanel.setAlignmentX(LEFT_ALIGNMENT);
+      formPanel.setBackground(Color.white);      
+      formPanel.setBorder(BorderFactory.createEmptyBorder(30,50,80,10));
+      add(formPanel, BorderLayout.CENTER);
 
       tarea = new ATextArea();
-      tarea.setBackground( Color.white );
-      tarea.setLineWrap( true );
-      tarea.setWrapStyleWord( true );
-      tarea.setEditable( false );
-      tarea.setAlignmentX( LEFT_ALIGNMENT );  
-      add( tarea, BorderLayout.SOUTH );
+      tarea.setBackground(Color.white);
+      tarea.setLineWrap(true);
+      tarea.setWrapStyleWord(true);
+      tarea.setEditable(false);
+      tarea.setAlignmentX(LEFT_ALIGNMENT);  
+      add(tarea, BorderLayout.SOUTH);
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -115,13 +116,14 @@ public class JWizardStepList extends JWizardStep {
      // 1 - We retrieve init properties
         String s_label = parameters.getProperty("init.label");
         String s_nbChoices  = parameters.getProperty("init.nbChoices");
-        String s_info   = parameters.getProperty("init.info");
 
         String choices[] = null;
 
         try{
            int nb = Integer.parseInt(s_nbChoices);
            choices = new String[nb];
+           aRadioInfo = new String[nb];
+           buttons = new ARadioButton[nb];
         }
         catch(Exception e) {
            throw new WizardException("nbChoices property badly set! "+e.getMessage());
@@ -137,20 +139,51 @@ public class JWizardStepList extends JWizardStep {
              if(choice==null)
                 throw new WizardException("Property 'init.choice"+i+"' missing !");
 
-             choices[i] = choice;
-        }
+             String s_info   = parameters.getProperty("init.info"+i);
 
-        if(s_info==null)  s_info="";
+             if(s_info==null) s_info="";
+
+             choices[i] = choice;
+             aRadioInfo[i] = s_info;
+        }
 
      // 3 - We end the GUI init
         label1.setText(s_label);
-        list.setListData(choices);
-        
-        if(choices.length!=0)
-           list.setSelectedIndex(0);
 
-        tarea.setText(s_info);
+        formPanel.setLayout( new GridLayout(choices.length,1,10,10) );
+
+        for( int i=0; i<choices.length; i++) {
+             buttons[i] = new ARadioButton(choices[i]);
+             buttons[i].setActionCommand(""+i);
+             buttons[i].setSelected(false);
+             buttons[i].addActionListener(this);
+             btGroup.add(buttons[i]);
+             formPanel.add(buttons[i]);
+        }
+
+        if(choices.length>0) {
+           buttons[0].setSelected(true);
+           tarea.setText(aRadioInfo[0]);
+        }
    }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** Action Performed when the user clicks a button.
+    */
+    public void actionPerformed(ActionEvent e) {
+
+        int i=0;
+
+        try{
+           i = Integer.parseInt( e.getActionCommand() );
+        }catch(Exception ex) {
+          ex.printStackTrace();
+          return;
+	}
+
+        if(i>=0) tarea.setText(aRadioInfo[i]);
+    }
 
  /*------------------------------------------------------------------------------------*/
 

@@ -67,7 +67,7 @@ public class WorldGenerator {
         // STEP 3 - TOWNS
 
         // Tar Valon Creation
-           TownMap townMaps[] = new TownMap[4];
+           TownMap townMaps[] = new TownMap[5];
            worldMap.setTownMaps( townMaps );
 
            TownMap townMap = new TownMap(755,277,17,17);
@@ -202,6 +202,20 @@ public class WorldGenerator {
            townMap.setInsertionPoint( new ScreenPoint(0,0) );
 
            townMap.setSmallTownImage( new ImageIdentifier( "maps-1/town-small-1/braem-small-3" ) );
+
+           townMap.setTownImage( new ImageIdentifier() ); // no town image
+           townMap.setMusicName("blight-refuge.mid");
+
+        // Two Rivers 'Town'
+           townMap = new TownMap(428,410,15,15);
+           townMaps[4] = townMap;
+
+           townMap.setTownMapID(4);
+           townMap.setFullName("Two Rivers");
+           townMap.setShortName("tworivers");
+           townMap.setInsertionPoint( new ScreenPoint(0,0) );
+
+           townMap.setSmallTownImage( new ImageIdentifier( "maps-1/town-small-1/two-small-4" ) );
 
            townMap.setTownImage( new ImageIdentifier() ); // no town image
            townMap.setMusicName("blight-refuge.mid");
@@ -2154,7 +2168,7 @@ public class WorldGenerator {
 
            maps[0].setMusicName("tv-clearing.mid");
 
-        // STEP 25 - Rooms of Braem Wood Road InteriorMap
+        // STEP 26 - Rooms of Braem Wood Road InteriorMap
            rooms = new Room[4];
            maps[0].setRooms( rooms );
 
@@ -2248,6 +2262,169 @@ public class WorldGenerator {
 
              rooms[3].addRoomLink( rooms[2].getRoomLinks()[0] );
              rooms[3].addRoomLink( rooms[2].getRoomLinks()[1] );
+
+
+        // STEP 27 - Two Rivers Building
+           buildings = new Building[1];
+           townMaps[4].setBuildings( buildings );
+
+           buildings[0] = new Building(0,0,10,10);
+           buildings[0].setBuildingID(0);
+           buildings[0].setFullName("Two Rivers Road");
+           buildings[0].setShortName("two-rivers-road");
+           buildings[0].setServerID(0);
+           buildings[0].setHasTownExits(true);
+           buildings[0].setHasBuildingExits(true);
+           buildings[0].setSmallBuildingImage( new ImageIdentifier() ); // no image
+
+        // STEP 28 - Two Rivers Road InteriorMap
+           maps = new InteriorMap[1];
+           maps[0] = new InteriorMap();
+           buildings[0].setInteriorMaps( maps );
+
+           maps[0].setInteriorMapID(0);
+           maps[0].setFullName("Two Rivers - Road");
+           maps[0].setShortName("trivers-road");
+           maps[0].setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/two-rivers-19" ) );
+           maps[0].setImageWidth(800);
+           maps[0].setImageHeight(700);
+           maps[0].setImageRegionWidth(200);
+           maps[0].setImageRegionHeight(700);
+
+           maps[0].setMusicName("two-rivers.mid");
+
+        // STEP 29 - Rooms of Two Rivers Road InteriorMap
+           rooms = new Room[9];
+           maps[0].setRooms( rooms );
+
+           for(int i=0; i<9; i++ ) {
+               rooms[i] = new Room();
+               rooms[i].setRoomID(i);
+               rooms[i].setMaxPlayers(30);
+           }
+
+           rooms[0].setFullName("Emond's Field - North Road");
+           rooms[0].setShortName("north-road");
+           rooms[0].setInsertionPoint( new ScreenPoint(300,200) );
+
+             roomLink = rooms[0].addRoomLink( new ScreenRectangle(160, 230, 10, 90) );
+             roomLink.setRoom1ID(1);
+             roomLink.setRoom2ID(0);
+
+             roomLink = rooms[0].addRoomLink( new ScreenRectangle(400,380,10,90) );
+             roomLink.setRoom1ID(0);
+             roomLink.setRoom2ID(2);
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(190,0,210,20) );
+               mapExit.setType( MapExit.BUILDING_EXIT );
+               mapExit.setMapExitSide( MapExit.NORTH );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0) );
+               mapExit.setTargetPosition( new ScreenPoint(437,404) );
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(170,680,180,20) );
+               mapExit.setType( MapExit.BUILDING_EXIT );
+               mapExit.setMapExitSide( MapExit.SOUTH );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0) );
+               mapExit.setTargetPosition( new ScreenPoint(442,424) );
+
+           rooms[1].setFullName("Two Rivers - West Forest");
+           rooms[1].setShortName("west-forest");
+           rooms[1].setInsertionPoint( new ScreenPoint(70,270) );
+
+             rooms[1].addRoomLink( rooms[0].getRoomLinks()[0] );
+
+           rooms[2].setFullName("Emond's Field - Aybara Domain");
+           rooms[2].setShortName("aybara");
+           rooms[2].setInsertionPoint( new ScreenPoint(500,440) );
+
+             roomLink = rooms[2].addRoomLink( new ScreenRectangle(410,90,70,10) );
+             roomLink.setRoom1ID(3);
+             roomLink.setRoom2ID(2);
+
+             roomLink = rooms[2].addRoomLink( new ScreenRectangle(740,360,40,10) );
+             roomLink.setRoom1ID(3);
+             roomLink.setRoom2ID(2);
+
+             roomLink = rooms[2].addRoomLink( new ScreenRectangle(570,370,30,10) );
+             roomLink.setRoom1ID(4);
+             roomLink.setRoom2ID(2);
+             roomLink.setDoor( new Door( 570, 372, halfPI, DoorDrawable.HORIZONTAL_RIGHT_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-8th-1/hor-right-pivot-3.gif" ) ) );
+
+             rooms[2].addRoomLink( rooms[0].getRoomLinks()[1] );
+
+           rooms[3].setFullName("Aybara Domain - Back");
+           rooms[3].setShortName("back");
+           rooms[3].setInsertionPoint( new ScreenPoint(700,50) );
+
+             roomLink = rooms[3].addRoomLink( new ScreenRectangle(750,210,10,30) );
+             roomLink.setRoom1ID(7);
+             roomLink.setRoom2ID(3);
+             roomLink.setDoor( new Door( 752, 210, -halfPI, DoorDrawable.VERTICAL_TOP_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-8th-1/vert-top-pivot-0.gif" ) ) );
+
+             rooms[3].addRoomLink( rooms[2].getRoomLinks()[0] );
+             rooms[3].addRoomLink( rooms[2].getRoomLinks()[1] );
+
+           rooms[4].setFullName("Aybara House - Hall");
+           rooms[4].setShortName("hall");
+           rooms[4].setInsertionPoint( new ScreenPoint(570,300) );
+
+             roomLink = rooms[4].addRoomLink( new ScreenRectangle(550,270,30,10) );
+             roomLink.setRoom1ID(5);
+             roomLink.setRoom2ID(4);
+             roomLink.setDoor( new Door( 550, 272, halfPI, DoorDrawable.HORIZONTAL_LEFT_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-5th-0/hor-left-pivot-2.gif" ) ) );
+
+             roomLink = rooms[4].addRoomLink( new ScreenRectangle(620,300,10,30) );
+             roomLink.setRoom1ID(4);
+             roomLink.setRoom2ID(6);
+             roomLink.setDoor( new Door( 622, 300, -halfPI, DoorDrawable.VERTICAL_TOP_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-5th-0/vert-top-pivot-0.gif" ) ) );
+
+             rooms[4].addRoomLink( rooms[2].getRoomLinks()[2] );
+
+           rooms[5].setFullName("Aybara House - Dining Room");
+           rooms[5].setShortName("dining-room");
+           rooms[5].setInsertionPoint( new ScreenPoint(510,210) );
+
+             roomLink = rooms[5].addRoomLink( new ScreenRectangle(620,90,10,40) );
+             roomLink.setRoom1ID(5);
+             roomLink.setRoom2ID(8);
+
+             roomLink = rooms[5].addRoomLink( new ScreenRectangle(620,210,10,30) );
+             roomLink.setRoom1ID(5);
+             roomLink.setRoom2ID(7);
+             roomLink.setDoor( new Door( 622, 210, -halfPI, DoorDrawable.VERTICAL_TOP_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-5th-0/vert-top-pivot-0.gif" ) ) );
+
+             rooms[5].addRoomLink( rooms[4].getRoomLinks()[0] );
+
+           rooms[6].setFullName("Aybara House - Lounge");
+           rooms[6].setShortName("lounge");
+           rooms[6].setInsertionPoint( new ScreenPoint(660,300) );
+
+             roomLink = rooms[6].addRoomLink( new ScreenRectangle(690,270,30,10) );
+             roomLink.setRoom1ID(7);
+             roomLink.setRoom2ID(6);
+             roomLink.setDoor( new Door( 690, 272, -halfPI, DoorDrawable.HORIZONTAL_RIGHT_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-5th-0/hor-right-pivot-3.gif" ) ) );
+
+             rooms[6].addRoomLink( rooms[4].getRoomLinks()[1] );
+
+           rooms[7].setFullName("Aybara House - Office");
+           rooms[7].setShortName("office");
+           rooms[7].setInsertionPoint( new ScreenPoint(670,200) );
+
+             rooms[7].addRoomLink( rooms[3].getRoomLinks()[0] );
+             rooms[7].addRoomLink( rooms[5].getRoomLinks()[1] );
+             rooms[7].addRoomLink( rooms[6].getRoomLinks()[0] );
+
+           rooms[8].setFullName("Aybara House - Kitchen");
+           rooms[8].setShortName("kitchen");
+           rooms[8].setInsertionPoint( new ScreenPoint(660,120) );
+
+             rooms[8].addRoomLink( rooms[5].getRoomLinks()[0] );
 
         // STEP XX - We save this simple universe.
            ResourceManager rManager = new ResourceManager(databasePath,"","","");

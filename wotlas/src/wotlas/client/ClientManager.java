@@ -434,6 +434,7 @@ public class ClientManager
 
       b_help.addActionListener(new ActionListener() {
           public void actionPerformed (ActionEvent e) {
+             new JHTMLWindow( screenIntro, "Help", "../docs/help/index.html", 330, 450, false );
           }
         }
       );

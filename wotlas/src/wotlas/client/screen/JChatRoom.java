@@ -310,11 +310,17 @@ public class JChatRoom extends JPanel
       text = Tools.subString(text, ":D",  "<img width=15 height=15 src='file:../base/gui/chat/laugh.gif'>");
       text = Tools.subString(text, ":(",  "<img width=15 height=15 src='file:../base/gui/chat/mad.gif'>");
       text = Tools.subString(text, ">0",  "<img width=15 height=15 src='file:../base/gui/chat/rant.gif'>");
-      text = Tools.subString(text, "|I",  "<img width=15 height=15 src='file:../base/gui/chat/sleep.gif'>");
+      text = Tools.subString(text, "|I",  "<img width=15 height=24 src='file:../base/gui/chat/sleep.gif'>");
       text = Tools.subString(text, ":)",  "<img width=15 height=15 src='file:../base/gui/chat/smile.gif'>");
       text = Tools.subString(text, ":|",  "<img width=15 height=15 src='file:../base/gui/chat/squint.gif'>");
       text = Tools.subString(text, ";)",  "<img width=15 height=15 src='file:../base/gui/chat/wink.gif'>");
 
+      text = Tools.subString(text, "<|",  "<img width=15 height=15 src='file:../base/gui/chat/rolleyes.gif'>");
+      text = Tools.subString(text, ":?",  "<img width=15 height=22 src='file:../base/gui/chat/confused.gif'>");
+      text = Tools.subString(text, ">|",  "<img width=15 height=15 src='file:../base/gui/chat/shake.gif'>");
+      text = Tools.subString(text, ">)",  "<img width=15 height=15 src='file:../base/gui/chat/devil.gif'>");
+      text = Tools.subString(text, ">D",  "<img width=15 height=15 src='file:../base/gui/chat/evilgrin.gif'>");
+      text = Tools.subString(text, ">(",  "<img width=16 height=16 src='file:../base/gui/chat/madfire.gif'>");
 
     //try {
       if (DataManager.SHOW_DEBUG)

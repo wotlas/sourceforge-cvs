@@ -21,6 +21,7 @@ package wotlas.libs.graphics2D;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.*;
 import javax.swing.*;
 
 /** A GraphicsDirector is the root class of this graphics2D engine. It manages
@@ -58,11 +59,11 @@ public class GraphicsDirector extends JPanel {
 
   /** Our drawables. They are sorted by priority.
    */
-    DrawableIterator drawables;
+    private DrawableIterator drawables;
 
   /** Our WindowPolicy. It tells us how to move the screen on the background.
    */
-    WindowPolicy windowPolicy;
+    private WindowPolicy windowPolicy;
 
   /** Can we display our drawables ?
    */
@@ -151,40 +152,48 @@ public class GraphicsDirector extends JPanel {
    */
     public void repaint() {      
        if(lockPaint==null) return;
-paint( getGraphics() );
-//super.repaint();
-/*       synchronized( lockPaint ) {
 
-          if(paintThread!=null) {
-              if(isLocked) return; // already a thread waiting
+       paint( getGraphics() );
 
-              try{
-                 isLocked=true;
-                 lockPaint.wait( 200 );
-              }catch( Exception e ) {}
-              
-              if(!isLocked) return;
-          }
+// SOLUTION 2 :
+/*
+       synchronized( lockPaint ) {
 
-          paintThread =new Thread() {
+         if(paintThread==null) {
+           isLocked=false;
+
+           paintThread =new Thread() {
              public void run() {
-                try{                  
+              while( true )
+                try{
                     GraphicsDirector.this.paint( GraphicsDirector.this.getGraphics() );
 
                     synchronized( lockPaint ) {
-              isLocked=false;
-                    	lockPaint.notifyAll();
+                        isLocked=true;
+                        lockPaint.notifyAll();
+                    	lockPaint.wait(400);
+                    	isLocked=false;
                     }
                 }catch( Exception e ) {
                    System.out.println("Exception in repaint() : "+e);
+                   isLocked=false;
                 }
-            }
-          };
+             }
+           };
 
+           paintThread.start();
+         }
+         else {
+              try{
+                  if(!isLocked)
+                     lockPaint.wait(400);
+              }catch( Exception e ) {}
+
+              lockPaint.notify();
+         }
        }
-
-       paintThread.start();
-  */  }
+*/
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -203,9 +212,10 @@ paint( getGraphics() );
     public void paint(Graphics gc) {      
          if(gc==null || getHeight()<=0 || getWidth()<=0) return;
 
-       // double-buffer init
+      // double-buffer init
          if (backBufferImage == null  || getWidth() != backBufferImage.getWidth(this) || getHeight() != backBufferImage.getHeight(this))
-             backBufferImage = createImage(getWidth(),getHeight());
+             backBufferImage = (Image) new BufferedImage(getWidth(),getHeight(), BufferedImage.TYPE_INT_RGB);
+
 
          Graphics backBufferGraphics = backBufferImage.getGraphics();
 
@@ -227,6 +237,7 @@ paint( getGraphics() );
           boolean previousHadAntiA = false;
 
           synchronized( drawables ) {
+
              backBufferGraphics.setColor( Color.white );
              backBufferGraphics.fillRect( 0, 0, getWidth(), getHeight() );
 
@@ -245,9 +256,9 @@ paint( getGraphics() );
                         gc2D.setRenderingHints( savedRenderHints );
                     }
 
-                 // paint ?
                     d.paint( gc2D, new Rectangle( screen ) );
              }
+
           }
 
        // Rendering Hints restore...
@@ -265,7 +276,7 @@ paint( getGraphics() );
    */
     public void addDrawable( Drawable dr ) {
     	if(dr==null) return;
-    	
+
         synchronized( drawables ) {
             drawables.resetIterator();
 

@@ -129,7 +129,7 @@ public class ServerAddressSetup extends JWizard {
        public static JWizardStepParameters getStaticParameters() {
           JWizardStepParameters param = new JWizardStepParameters( 
                           "wotlas.server.setup.ServerAddressSetup$AddressWizardStep",
-                          "Step 1/2 - Config  " );
+                          "Step 1/2 - Address Setup" );
 
           param.setIsPrevButtonEnabled(false);
           param.setIsDynamic(true); // we don't want the step to be buffered, we want its data
@@ -322,7 +322,7 @@ public class ServerAddressSetup extends JWizard {
       */
        protected boolean onNext(Object context, JWizard wizard) {
 
-              int value = JOptionPane.showConfirmDialog(null, "Save this config ?", "Server Address Config", JOptionPane.YES_NO_OPTION);
+              int value = JOptionPane.showConfirmDialog(null, "Save this config ? (required for transfer)", "Server Address Config", JOptionPane.YES_NO_OPTION);
 
               if( value != JOptionPane.YES_OPTION ) {
                   wizard.setNextStep(  TransferWizardStep.getStaticParameters()  );
@@ -388,7 +388,7 @@ public class ServerAddressSetup extends JWizard {
        public static JWizardStepParameters getStaticParameters() {
           JWizardStepParameters param = new JWizardStepParameters( 
                           "wotlas.server.setup.ServerAddressSetup$TransferWizardStep",
-                          "Step 2/2 - Transfer" );
+                          "Step 2/2 - Config Transfer" );
 
           param.setIsLastStep(true);
           return param;
@@ -401,22 +401,27 @@ public class ServerAddressSetup extends JWizard {
        public TransferWizardStep() {
            super();
 
-           JPanel group1 = new JPanel(new GridLayout(3,1,0,0));
+           JPanel group1 = new JPanel(new BorderLayout());
            group1.setAlignmentX(LEFT_ALIGNMENT);
            group1.setBackground(Color.white);
+           JTextArea taInfo = new JTextArea("\n\n\n      We will now run the command line you entered in the previous step. "
+                                    +"It will send your 'server-"+serverID+".cfg.adr' file to the "
+                                    +"web server hosting the following URL : "
+                                    +serverProperties.getProperty("REMOTE_SERVER_CONFIG_HOME_URL")
+                                    +"\n\n      Your '.adr' file will be available at this URL. "
+                                    +"This way other servers/client will be able to discover your server and connect to it.\n\n");
 
-           JTextArea text1 = new JTextArea("We will now run the transfer command line from the previous step." );
-
-           text1.setAlignmentX(LEFT_ALIGNMENT);
-           text1.setLineWrap(true);
-           text1.setWrapStyleWord(true);
-           text1.setEditable(false);
+           taInfo.setAlignmentX(LEFT_ALIGNMENT);
+           taInfo.setLineWrap(true);
+           taInfo.setWrapStyleWord(true);
+           taInfo.setEditable(false);
+           taInfo.setBackground(Color.white);
+           group1.add( taInfo, BorderLayout.NORTH );
 
            b_transfer = new JButton("Click here to launch file tranfer !");
-           group1.add( new JLabel(" "));
-           group1.add( text1 );
-           group1.add( b_transfer );
-           add( group1 );
+           b_transfer.setPreferredSize(new Dimension(250,30));
+           group1.add( b_transfer, BorderLayout.SOUTH );
+           add(group1);
 
            b_transfer.addActionListener(new ActionListener()
            {

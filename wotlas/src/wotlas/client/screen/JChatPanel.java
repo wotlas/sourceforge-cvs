@@ -62,6 +62,10 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
    */
    private JButton b_leaveChatRoom;
 
+  /** Button to get help on chat commands
+   */
+   private JButton b_helpChat;
+
   /** TextField where player writes messages
    */
    private JTextField inputBox;
@@ -102,6 +106,14 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     b_leaveChatRoom.addActionListener(this);
     b_leaveChatRoom.setToolTipText("Leave the current chat room");
     chatToolbar.add(b_leaveChatRoom);
+
+    //chatToolbar.add( new JToolBar.Separator(new Dimension(25,20)) );
+
+    b_helpChat = new JButton(new ImageIcon("../base/gui/chat-help.gif"));
+    b_helpChat.setActionCommand("helpChat");
+    b_helpChat.addActionListener(this);
+    b_helpChat.setToolTipText("To display the available chat commands");
+    chatToolbar.add(b_helpChat);
 
     // SOUTH
     JPanel bottomChat = new JPanel(false);
@@ -489,7 +501,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
       DataManager dataManager = DataManager.getDefaultDataManager();
       PlayerImpl myPlayer = dataManager.getMyPlayer();
 
-      if( !myPlayer.getLocation().isRoom() ) {
+      if( !myPlayer.getLocation().isRoom() && !actionCommand.equals("helpChat")) {
           JOptionPane.showMessageDialog(null, "Sorry, but you can not create/leave chat channels\n"
                                         +"on World/Town Maps.", "INFORMATION", JOptionPane.INFORMATION_MESSAGE);
           return;
@@ -520,6 +532,15 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
           if( !currentPrimaryKey.equals( ChatRoom.DEFAULT_CHAT ) )
               myPlayer.sendMessage( new RemPlayerFromChatRoomMessage( myPlayer.getPrimaryKey(),
                                                                      currentPrimaryKey) );
+      }
+      else if (actionCommand.equals("helpChat")) {
+           DataManager dManager = DataManager.getDefaultDataManager();
+
+           dManager.sendMessage( new SendTextMessage( dManager.getMyPlayer().getPrimaryKey(),
+                                               dManager.getMyPlayer().getFullPlayerName(),
+                                               getMyCurrentChatPrimaryKey(),
+                                               "/help",
+                                               ChatRoom.NORMAL_VOICE_LEVEL ));
       }
       else {
         if (DataManager.SHOW_DEBUG) {

@@ -63,36 +63,26 @@ class AccountManager
    public boolean loadAccounts()
    {
        // Call to the PersistenceManager to load the accounts from the dataBase.
-          try{
-               PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
-               GameAccount account_list[] = pm.loadAccounts();
+          PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
+          GameAccount account_list[] = pm.loadAccounts();
 
-               // HashMap init. ( initial size is 1.5*Nb Accounts +10 )
-               // The HashMap Load Factor is 75%. The size doubles after that.
-                  accounts = new HashMap( (int) (1.5*account.length + 10) );
+           int nbAccounts;
 
-               // we fill the hash-map...
-                  for( int i=0; i<account_list.length; i++ )
-                  {
-                    // 1 - We load the player's own data from his account.
-                       PlayerImpl player = pm.loadPlayer( account_list[i].getAccountName() );
+            if( account_list==null )
+                  nbAccounts = 0;
+             else
+                  nbAccounts = account_list.length;
 
-                    // 2 - We associate this data (PlayerImpl) with the Account...
-                    // There will be another association made by the DataManager
-                    // with the WorldManager.
-                       account[i].setPlayer( player );
+            // HashMap init. ( initial size is 1.5*Nb Accounts +10 )
+            // The HashMap Load Factor is 75%. The size doubles after that.
+               accounts = new HashMap( (int) (1.5*nbAccounts + 10) );
 
-                    // 3 - We create a new HashMap Entry, The account name is the key.
-                    // The account name is the login + IDs
+            // we fill the hash-map...
+               for( int i=0; i<nbAccounts; i++ )
+                   if( account_list[i]!=null )
                        accounts.put( account_list[i].getAccountName(), account_list[i] );
-                  }
-          }
-          catch( PersistenceException pe ) {
-              Debug.signal( Debug.FAILURE, this, pe );
-              return false;
-          }
 
-      return true;
+        return true;
    }
   
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

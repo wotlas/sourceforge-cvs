@@ -68,6 +68,10 @@ public class GraphicsDirector extends JPanel {
    */
     private boolean display;
 
+  /** Reset the background ? if true we repaint the background with a white color.
+   */
+    private boolean resetBackground;
+
   /** Lock for repaint...
    */
     private Object lockPaint = new Object();
@@ -90,10 +94,10 @@ public class GraphicsDirector extends JPanel {
    */
     public GraphicsDirector( WindowPolicy windowPolicy ) {
       super(false); // we don't use the default JPanel double-buffering
+      display = false;
       drawables = new DrawableIterator();
       setWindowPolicy( windowPolicy );
       setBackground( Color.white );
-      display = false;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -110,6 +114,7 @@ public class GraphicsDirector extends JPanel {
     public void init( Drawable backDrawable,  Drawable refDrawable, Dimension screen) {
 
       // Background dims
+         display = false;
          background = new Dimension( backDrawable.getWidth(), backDrawable.getHeight() );
 
       // Screen defaults
@@ -127,6 +132,7 @@ public class GraphicsDirector extends JPanel {
       // We set the new drawable reference an tick our WindowPolicy.
          this.refDrawable = refDrawable;
          windowPolicy.tick();
+         resetBackground = true;
          display = true;
    }
 
@@ -196,13 +202,13 @@ public class GraphicsDirector extends JPanel {
 
          Graphics backBufferGraphics = backBufferImage.getGraphics();
 
-         backBufferGraphics.setColor( Color.white );
-         backBufferGraphics.fillRect( 0, 0, getWidth(), getHeight() );
-
          if(!display) {
+            backBufferGraphics.setColor( Color.white );
+            backBufferGraphics.fillRect( 0, 0, getWidth(), getHeight() );
             gc.drawImage(backBufferImage, 0, 0, this);
             return;
          }
+
 
          Graphics2D gc2D = (Graphics2D) backBufferGraphics;
 
@@ -215,6 +221,13 @@ public class GraphicsDirector extends JPanel {
           boolean previousHadAntiA = false;
 
           synchronized( drawables ) {
+             if( resetBackground ) {
+               // We repaint the background
+                 backBufferGraphics.setColor( Color.white );
+                 backBufferGraphics.fillRect( 0, 0, getWidth(), getHeight() );
+                 resetBackground = false;
+             }
+
              drawables.resetIterator();
         
              while( drawables.hasNext() ) {

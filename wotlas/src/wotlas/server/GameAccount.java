@@ -190,14 +190,15 @@ public class GameAccount
    * @return true if the client can enter his password, false otherwise...
    */
    public boolean tooMuchBadPasswordEntered(){
-         if( badPasswordCounter<3 )
-             return false; // client can try again
+         long delta = System.currentTimeMillis() - lastConnectionTry;
 
-      // hum, we were locked... are the 30s already elapsed ?
-         if( (System.currentTimeMillis() - lastConnectionTry) >= 30000 ) {
-             badPasswordCounter = 0;  // ok 30s elapsed...
+         if(delta>=30000) {
+             badPasswordCounter = 0;  // more than  30s elapsed
              return false;
          }
+
+         if( badPasswordCounter<3 )
+             return false;  // client can try again
 
       return true; // nope...
    }

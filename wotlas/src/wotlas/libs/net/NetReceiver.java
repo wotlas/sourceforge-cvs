@@ -127,7 +127,7 @@ public class NetReceiver extends NetThread
                       in_stream.skipBytes( in_stream.available() );  // cleanse the source ;)
                 }
            }
-           while( shouldStopThread() );
+           while( !shouldStopThread() );
 
         }
         catch(Exception e){
@@ -139,7 +139,7 @@ public class NetReceiver extends NetThread
                Debug.signal( Debug.ERROR, this, e ); // serious error while processing message
         }
 
-       closeSocket();
+       closeConnection();
        in_stream=null;
      }
 
@@ -189,7 +189,7 @@ public class NetReceiver extends NetThread
            else
                Debug.signal( Debug.ERROR, this, e ); // serious error while processing message
 
-           closeSocket();
+           closeConnection();
         }
      }
 

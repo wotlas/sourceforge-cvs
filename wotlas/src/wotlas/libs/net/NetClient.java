@@ -25,6 +25,9 @@ import java.net.UnknownHostException;
 
 import wotlas.libs.net.personality.LoparPersonality;
 import wotlas.libs.net.message.ClientRegisterMessage;
+import wotlas.libs.net.message.ClientRegisterMsgBehaviour;
+
+import wotlas.utils.Debug;
 
 /** A NetClient...
  *
@@ -59,20 +62,26 @@ public class NetClient
    *  default NetPersonality and return it. If an error occurs, we return null
    *  and an error message is set ( use getCurrentErrorMessage() to get it ).
    *
+   *  You have to give the name of the packages where we'll be able to find
+   *  the NetMessageBehaviour classes.
+   *
    * @param server_name complete server name
    * @param server_port port to reach
    * @param key key identifying this client on the server side.
    * @param context an optional context object (see NetReceiver for more details).
+   * @param msg_packages a list of packages where we can find NetMsgBehaviour Classes.
    * @return a NetPersonality on success, null on failure.
    */
      public static NetPersonality connectToServer( String server_name, int server_port,
-                                                   String key, Object context )
+                                                   String key, Object context,
+                                                   String msg_packages[] )
      {
        Socket socket;
        NetPersonality personality=null;
+       error_message = null;
 
        // to make sure there is one...
-          NetMessageFactory.createMessageFactory();
+          NetMessageFactory.createMessageFactory( msg_packages );
 
           try
           {
@@ -88,20 +97,22 @@ public class NetClient
             // We create a new personality and send our key.
                personality = getNewDefaultPersonality( socket );
 
-               personality.getNetSender().queueMessage( new ClientRegisterMessage( key ) );
-               personality.getNetSender().pleaseSendAllMessagesNow();
+               personality.queueMessage( new ClientRegisterMessage( key ) );
+               personality.pleaseSendAllMessagesNow();
 
             // We wait for the answer... and process it when it's there.
             // If something went wrong on the server the received message will
             // set an error_message.
+               personality.waitForAMessageToArrive();
                personality.start();
-               personality.getNetReceiver().waitForAMessageToArrive();
-               personality.getNetReceiver().pleaseReceiveAllMessagesNow();
+               personality.pleaseReceiveAllMessagesNow();
 
             // Success ?
-               if(error_message!=null)
+               if(error_message!=null) {
+                  Debug.signal(Debug.ERROR, null, "Server returned an Error");
                   return null;
-            
+               }
+
                personality.setContext( context );
                return personality;
           }

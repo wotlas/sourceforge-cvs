@@ -175,7 +175,7 @@ public class NetSender extends NetThread
                     sendQueuedMessages();
                }
            }
-           while( shouldStopThread() );
+           while( !shouldStopThread() );
 
         }
         catch(Exception e){
@@ -187,7 +187,7 @@ public class NetSender extends NetThread
                Debug.signal( Debug.ERROR, this, e ); // serious error while sending message
         }
 
-       closeSocket();
+       closeConnection();
        out_stream=null;
      }
 

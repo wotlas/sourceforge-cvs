@@ -29,14 +29,17 @@ import wotlas.libs.net.personality.TormPersonality;
 import wotlas.libs.net.message.ServerErrorMessage;
 import wotlas.libs.net.message.ServerWelcomeMessage;
 
+import wotlas.libs.net.message.ServerErrorMsgBehaviour;
+import wotlas.libs.net.message.ServerWelcomeMsgBehaviour;
+
 
 /** A NetServer awaits client connections. There are two types of Server :
  *
  *    - server that have no predefined connection list. That means we
- *      don't know the clients that we are connected to. We erase their
- *      NetServerEntry as they quit.
+ *      don't know the clients that we are connected to (default).
  *
- *    - server that maintains client accounts.
+ *    - server that maintains client accounts. To create this type of server
+ *      extend this class and override the accessControl() method.
  *
  *
  * This server uses a TormPersonality as default. If you want to use another
@@ -46,7 +49,6 @@ import wotlas.libs.net.message.ServerWelcomeMessage;
  *
  * @author Aldiss
  * @see wotlas.libs.net.NetPersonality
- * @see wotlas.libs.net.NetServerEntry
  */
 
 
@@ -77,12 +79,15 @@ abstract public class NetServer extends Thread
 
  /*------------------------------------------------------------------------------------*/
 
-     /**  Constructs a ServiceServer and starts it.
+     /**  Constructs a NetServer but does not starts it. Call the start()
+      *   method to start the server. You have to give the name of the packages
+      *   where we'll be able to find the NetMessageBehaviour classes.
       *
       *  @param server_port port on which the server listens to clients.
       *  @param max_clients maximum number of clients to accept at the same time.
+      *  @param msg_packages a list of packages where we can find NetMsgBehaviour Classes.
       */
-        public NetServer( int server_port, int max_clients )
+        public NetServer( int server_port, int max_clients, String msg_packages[] )
         {
               super("Server");
               stop_server = false;
@@ -90,7 +95,7 @@ abstract public class NetServer extends Thread
               this.max_clients = max_clients;
 
            // we create a message factory
-              NetMessageFactory.createMessageFactory();
+              NetMessageFactory.createMessageFactory( msg_packages );
 
            // ServerSocket inits
               try{
@@ -105,36 +110,43 @@ abstract public class NetServer extends Thread
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Redefine this method to :
+   /** This method is called automatically when a new client establishes a connection
+    *  with this server ( the client sends a ClientRegisterMessage ). We are supposed
+    *  to provide here some basic access control.
     *
-    *  1) consider if the key ( personality.getKey() ) provided by the client is correct
-    *     for you ( you can bypass this if you don't want to provide any access control )
+    *  The default implementation contains the STRICT MINIMUM : we accept every
+    *  client without considering the key they provide.
+    *
+    *  You can redefine this method (recommended) to :
+    *
+    *  1) consider if the key ( key parameter ) provided by the client is correct for your
+    *     application. For example for a chat Server a key could be a chat channel name. In
+    *     the case of a repository server, a key would be a client login. You can then create
+    *     your own set of messages to ask for a password.
     *
     *  2) initialize the client context ( personality.setContext() ). The context can be
     *     any type of object and should be client dependent. It will be given to the messages
-    *     coming from the client.
+    *     coming from the client. For example, in a ChatServer the context could be the Chat
+    *     chanel object the client wants to register to. Messages would have then a direct
+    *     access to their right chat channel.
     *
-    *  3) MANDATORY : if you decide to accept this client call the acceptClient() method.
-    *     it will send a "Welcome!" to the client. If you decide to refuse the client call
+    *  3) MANDATORY : if you decide to accept this client, call the acceptClient() method.
+    *     it will send a "Welcome!" to the client. If you decide to refuse the client, call
     *     the refuseClient() method with an appropriate error message. It will immediately
     *     close the connection.
     *
     *
-    *  Example of implementation ( minimum ) : 
-    *
-    *     protected void accessControl( NetPersonality personality, String key )
-    *     throws IOException {
-    *         acceptClient( personality );  // we accept every client...
-    *     }
-    *
-    *
-    *  Never call accessControl() yourself. It's done automatically by the ClientRegisterMessage
-    *  behaviour.
-    *
     * @param personality a previously created personality for this connection.
     * @param key a string given by the client to identify itself.
     */
-      abstract public void accessControl( NetPersonality personality, String key );
+      public void accessControl( NetPersonality personality, String key ) {
+            try{
+                acceptClient( personality ); // we accept every client
+            }
+            catch(IOException e) {
+                Debug.signal( Debug.WARNING, this, e );
+            }
+      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -155,8 +167,8 @@ abstract public class NetServer extends Thread
     * @param personality a previously created personality for this connection.
     */
       protected void acceptClient( NetPersonality personality ) throws IOException{
-              personality.getNetSender().queueMessage( new ServerWelcomeMessage() );
-              personality.getNetSender().pleaseSendAllMessagesNow();
+              personality.queueMessage( new ServerWelcomeMessage() );
+              personality.pleaseSendAllMessagesNow();
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -168,16 +180,17 @@ abstract public class NetServer extends Thread
     */
       protected void refuseClient( NetPersonality personality, String error_message )
       throws IOException{
-              personality.getNetSender().queueMessage( new ServerErrorMessage( error_message ) );
-              personality.getNetSender().pleaseSendAllMessagesNow();
+              personality.queueMessage( new ServerErrorMessage( error_message ) );
+              personality.pleaseSendAllMessagesNow();
               personality.closeConnection();
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /**  Starts the server.
+   /**  Server Thread Runtime.
+    *  Never call this method it's done automatically.
     */
-      public void start()
+      public void run()
       {
         Socket client_socket;
         NetPersonality personality;

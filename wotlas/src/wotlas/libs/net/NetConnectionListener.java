@@ -22,11 +22,9 @@ package wotlas.libs.net;
 
 /** 
  * A NetConnectionListener defines methods to follow the life of a network connection.
- * it transmits it to a foreign NetReceiver.
  * 
  * @author Aldiss
- * @see wotlas.libs.net.NetSender
- * @see wotlas.libs.net.NetReceiver
+ * @see wotlas.libs.net.NetPersonality
  */
 
 public interface NetConnectionListener
@@ -35,14 +33,13 @@ public interface NetConnectionListener
 
   /** This method is called when a new network connection is created for you.
    *
-   * @param sender a NetSender object, useful to send messages.
-   * @param receiver a NetReceiver object, useful to receive messages. 
+   * @param personality the NetPersonality object associated to this connection.
    */
-     public void connectionCreated( NetSender sender, NetReceiver receiver );
+     public void connectionCreated( NetPersonality personality );
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** This method is called when the network connection is no longuer of this world.
+  /** This method is called when the network connection is no longer of this world.
    */
      public void connectionClosed();
 

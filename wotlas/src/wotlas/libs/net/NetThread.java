@@ -95,7 +95,7 @@ abstract class NetThread extends Thread
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /**  Use this method to close the socket connection.
+   /**  Method to close the socket connection.
     */
       public void closeSocket(){
            try{
@@ -113,8 +113,15 @@ abstract class NetThread extends Thread
                  }
                  catch(IOException ioe ) {}
            }
+      }
 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /**  Asks the NetPersonality to close the socket connection.
+    */
+      protected void closeConnection() {
         // we ask the NetPersonality to perform some cleanup
+        // and signal that the connection was closed ( connectionListener )
            personality.closeConnection();
       }
 

@@ -29,25 +29,26 @@ import java.net.Socket;
  * the generatePersonality() method. Default personalities are provided in the
  * wotlas.libs.net.personality package.
  *
- * Useful methods you can invoke on NetSender :
+ * Useful methods you can invoke to send messages :
  *
- *    - getNetSender().pleaseSendAllMessagesNow();
+ *    - queueMessage( message );
+ *      To queue a message you want to send. 
+ *      Works with every personality type ( but with different behaviour ).
+ *
+ *    - pleaseSendAllMessagesNow();
  *      Asks the NetSender to send all his queued messages now. It's typically the method
  *      you use in case of a USER_AGGREGATION NetSender or when you want to send all the
  *      remaining messages before closing a connection with the AGGREGATION_MESSAGES NetSender.
  *
- *    - getNetSender().queueMessage( message );
- *      To queue a message you want to send. 
- *      Works with every personality type ( but with different behaviour ).
  *
+ * Useful methods you can invoke to receive messages :
  *
- * Useful methods you can invoke on NetReceiver :
- *
- *    - getNetReceiver().pleaseReceiveAllMessagesNow();
+ *    - pleaseReceiveAllMessagesNow();
  *      Asks the NetReceiver to process all received messages now. This method
- *      does nothing if the NetReceiver is in the asynchronous mode.
+ *      does nothing if the NetReceiver is in the asynchronous mode. In the
+ *      asynchronous mode you have no method to call : everything is automated.
  *
- *    - getNetReceiver().waitForAMessageToArrive();
+ *    - waitForAMessageToArrive();
  *      Waits for a message to arrive. Useful in some cases when the NetReceiver
  *      is synchronous. This method does nothing if the NetReceiver is asynchronous.
  *
@@ -111,25 +112,6 @@ public abstract class NetPersonality
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To close this connection. Erases all the allocated resources.
-   */
-     synchronized public void closeConnection() {
-     	  if( my_netsender==null ||  my_netreceiver==null )
-     	      return;
-     	  
-     	  if( listener!=null )
-              listener.connectionClosed();
-
-          my_netsender.stopThread();
-          my_netreceiver.stopThread();
-
-          my_netreceiver.closeSocket();
-          my_netsender = null;
-          my_netreceiver = null;
-     }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
   /** To set the current context.
    *
    * @param context the new context.
@@ -164,6 +146,9 @@ public abstract class NetPersonality
    *  The destination will receive information about the current NetSender,
    *  NetReceiver... and will know when the connection will be closed.
    *
+   *  IMPORTANT : this is not an "add", the "set" means that you can only set
+   *              one listener for this personality.
+   *
    * @param listener an object implementing the NetConnectionListener interface.
    */
      public void setConnectionListener( NetConnectionListener listener ) {
@@ -173,9 +158,72 @@ public abstract class NetPersonality
          this.listener = listener;
 
          if( my_netsender!=null && my_netreceiver!=null )
-             listener.connectionCreated( my_netsender, my_netreceiver );
+             listener.connectionCreated( this );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Asks the NetSender to send all his queued messages now. It's typically the method
+   *  you use in case of a USER_AGGREGATION NetSender or when you want to send all the
+   *  remaining messages before closing a connection with the AGGREGATION_MESSAGES NetSender.
+   */
+     public void pleaseSendAllMessagesNow() {
+           my_netsender.pleaseSendAllMessagesNow();
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Asks the NetReceiver to process all received messages now. This method
+   *  does nothing if the NetReceiver is in the asynchronous mode.
+   */
+     public void pleaseReceiveAllMessagesNow() {
+           my_netreceiver.pleaseReceiveAllMessagesNow();
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To queue a message you want to send. 
+   *  Works with every personality type ( but with different behaviour ).
+   *
+   * @param message message you want to send.
+   */
+     public void queueMessage( NetMessage message ) {
+          my_netsender.queueMessage( message );
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Waits for a message to arrive. Useful in some cases when the NetReceiver
+   *  is synchronous. This method does nothing if the NetReceiver is asynchronous.
+   *
+   * @exception IOException if an IO error occur.
+   */
+     public void waitForAMessageToArrive() throws IOException{
+     	my_netreceiver.waitForAMessageToArrive();
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To close this connection. Erases all the allocated resources.
+   */
+     synchronized public void closeConnection() {
+     	  if( my_netsender==null ||  my_netreceiver==null )
+     	      return;
+     	  
+     	  if( listener!=null )
+              listener.connectionClosed();
+
+          my_netsender.stopThread();
+          my_netreceiver.stopThread();
+
+          my_netreceiver.closeSocket();
+
+          my_netsender = null;
+          my_netreceiver = null;
+          listener=null;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }
 

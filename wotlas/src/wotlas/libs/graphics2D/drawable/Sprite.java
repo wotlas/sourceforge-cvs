@@ -180,12 +180,15 @@ public class Sprite extends Drawable implements DrawableOwner {
                  affTr = new AffineTransform();
 
               affTr.scale( dataSupplier.getScaleX(), dataSupplier.getScaleY() );
+              r.x += (int)( ( r.width - r.width*dataSupplier.getScaleX() )/2 );
+              r.y += (int)( ( r.height - r.height*dataSupplier.getScaleY() )/2 );
+              r.width = (int) (r.width*dataSupplier.getScaleX() );
+              r.height = (int) ( r.height*dataSupplier.getScaleY() );
          }
 
       // 3 - Any alpha ?
          if( dataSupplier.getAlpha()!=1.0f )
              gc.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, dataSupplier.getAlpha() ) );
-
 
 
       // 4 - image display

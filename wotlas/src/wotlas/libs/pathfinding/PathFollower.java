@@ -408,7 +408,7 @@ System.out.println("SENDING MESSAGE"); // ALDISS
   /** To update the current movement.
    * @param updateMessage MovementUpdateMessage
    */
-     public void setUpdate( MovementUpdateMessage updateMessage ) {
+     public synchronized void setUpdate( MovementUpdateMessage updateMessage ) {
            if( !(updateMessage instanceof PathUpdateMovementMessage) ) {
                Debug.signal( Debug.ERROR, this, "Received bad update message :"+updateMessage.getClass());
                return;
@@ -523,6 +523,10 @@ System.out.println("SENDING MESSAGE"); // ALDISS
        yPosition = (float)(yPosition + speed*deltaT*Math.sin( orientationAngle ) );
 
     // 4 - Have we reached the next point in the path ?
+if(prevPoint==null)
+System.out.println("prevPoint null for pInd="+pathIndex+" & nextPoint="+nextPoint); 
+if(nextPoint==null)
+System.out.println("nextPoint null for pInd="+pathIndex+" & prevPoint="+prevPoint); 
        float deltaD = distance( getPosition(), prevPoint ) - distance( nextPoint, prevPoint );
 
         if( deltaD >= 0 ) {
@@ -674,7 +678,7 @@ System.out.println("SENDING MESSAGE walking="+isMoving()); // ALDISS
                  yPosition = (float)(a1.y - (d-totalDistance)*Math.sin(orientationAngle) );
 
                  prevPoint =  a0;
-                 nextPoint = (Point) path.elementAt(pathIndex);
+                 nextPoint = a1; //(Point) path.elementAt(pathIndex);
                  lastUpdateTime = System.currentTimeMillis();
                  movementTimeStamp = lastUpdateTime;
 
@@ -682,7 +686,7 @@ System.out.println("SENDING MESSAGE walking="+isMoving()); // ALDISS
 
               // We validate the movement
                  walkingAlongPath = true;
-System.out.println("VALID TRAJ RECONSTRUCTED !!!");
+System.out.println("VALID TRAJ RECONSTRUCTED !!! prevPoint is"+prevPoint+" to "+nextPoint);
                  return;
             }
         }

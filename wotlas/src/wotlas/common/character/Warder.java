@@ -128,19 +128,22 @@ public class Warder extends Male {
 
       // 2 - Hair Color
          if( hairColor.equals("brown") ) {
-                   filter.addColorChangeKey( ColorImageFilter.yellow, ColorImageFilter.brown );
+                   filter.addColorChangeKey( ColorImageFilter.lightYellow, ColorImageFilter.brown );
          }
          else if( hairColor.equals("black") ) {
-                   filter.addColorChangeKey( ColorImageFilter.yellow, ColorImageFilter.darkgray );
+                   filter.addColorChangeKey( ColorImageFilter.lightYellow, ColorImageFilter.darkgray );
          }
          else if( hairColor.equals("gray") ) {
-                   filter.addColorChangeKey( ColorImageFilter.yellow, ColorImageFilter.gray );
+                   filter.addColorChangeKey( ColorImageFilter.lightYellow, ColorImageFilter.gray );
          }
          else if( hairColor.equals("white") ) {
-                   filter.addColorChangeKey( ColorImageFilter.yellow, ColorImageFilter.lightgray );
+                   filter.addColorChangeKey( ColorImageFilter.lightYellow, ColorImageFilter.lightgray );
          }
          else if( hairColor.equals("reddish") ) {
-                   filter.addColorChangeKey( ColorImageFilter.yellow, ColorImageFilter.red );
+                   filter.addColorChangeKey( ColorImageFilter.lightYellow, ColorImageFilter.red );
+         }
+         else if( hairColor.equals("golden") ) {
+                   filter.addColorChangeKey( ColorImageFilter.lightYellow, ColorImageFilter.yellow );
          }
 
        // 3 - Set Filter

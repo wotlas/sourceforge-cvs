@@ -129,6 +129,7 @@ public class Sprite extends Drawable implements DrawableOwner {
 
   /** To add a DynamicImageFilter to this Sprite. The filter will be called to create
    *  a new filtered BufferedImage before rendering.
+   *  @param imageFilter a DynamicImageFilter.
    */
     public void setDynamicImageFilter( DynamicImageFilter imageFilter ) {
     	this.imageFilter = imageFilter;

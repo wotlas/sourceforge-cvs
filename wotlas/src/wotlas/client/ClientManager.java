@@ -304,11 +304,12 @@ public class ClientManager implements ActionListener {
         timer.stop();
 
         if( serverConfigList.getRemoteServerTable()==null )
-            JOptionPane.showMessageDialog( screenIntro, "We failed to contact the wotlas web server (see help). So we could not update\n"+
+            JOptionPane.showMessageDialog( screenIntro, "We failed to contact the wotlas web server. So we could not update\n"+
                                                  "our servers addresses. If this is not the first time you start wotlas on\n"+
-                                                 "your computer, you can try to connect with the previous server config files.\n"+
-                                                 "Otherwise please restart wotlas later.\n\n"+
-                                                 "Note also that wotlas is not firewall/proxy friendly.",
+                                                 "your computer, you can try to connect with the previous server config\n"+
+                                                 "files. Otherwise please restart wotlas later.\n\n"+
+                                                 "Note also that wotlas is not firewall/proxy friendly. See our FAQ for\n"+
+                                                 "more details ( from the help section or 'wotlas.html' local file ).",
                                                  "Warning", JOptionPane.WARNING_MESSAGE);
         else  // Wotlas News
             new JHTMLWindow( screenIntro, "Wotlas News", ClientDirector.getRemoteServerConfigHomeURL()+"news.html", 320, 400, false );
@@ -626,14 +627,17 @@ public class ClientManager implements ActionListener {
       // *** Left JPanel ***
 
       label1 = new ALabel("Welcome " + currentProfileConfig.getLogin() + ",");
+
+
+//      label1 = new ALabel("Welcome " + currentProfileConfig.getLogin() + ",");
       label1.setAlignmentX(Component.CENTER_ALIGNMENT);
-      label1.setFont( label1.getFont().deriveFont(18) );
       leftPanel.add(label1);
+      label1.setFont(f.deriveFont(18f));
 
       leftPanel.add(Box.createRigidArea(new Dimension(0,10)));
-
       JPanel mainPanel_01 = new JPanel();
         mainPanel_01.setBackground(Color.white);
+
         JPanel formPanel_01_left = new JPanel(new GridLayout(2,1,5,5));
           formPanel_01_left.setBackground(Color.white);
           formPanel_01_left.add(new JLabel(new ImageIcon("../base/gui/enter-password.gif")));
@@ -655,7 +659,9 @@ public class ClientManager implements ActionListener {
           });
           
           formPanel_01_right.add(pfield1);
-          formPanel_01_right.add(new ALabel(currentProfileConfig.getKey()));
+          ALabel alabel = new ALabel(currentProfileConfig.getLogin()+"-"+currentProfileConfig.getKey());
+          alabel.setFont(f.deriveFont(16f));
+          formPanel_01_right.add(alabel);
         mainPanel_01.add(formPanel_01_right);
       leftPanel.add(mainPanel_01);
 
@@ -751,6 +757,7 @@ public class ClientManager implements ActionListener {
       label1 = new ALabel("Delete " + currentProfileConfig.getPlayerName() + " ?");
       label1.setAlignmentX(Component.CENTER_ALIGNMENT);
       leftPanel.add(label1);
+      label1.setFont(f.deriveFont(18f));
 
       leftPanel.add(Box.createRigidArea(new Dimension(0,10)));
 
@@ -777,7 +784,9 @@ public class ClientManager implements ActionListener {
               pfield1.setText(currentProfileConfig.getPassword());
           
           formPanel_02_right.add(pfield1);
-          formPanel_02_right.add(new ALabel(currentProfileConfig.getKey()));
+          ALabel alabel2 = new ALabel(currentProfileConfig.getLogin()+"-"+currentProfileConfig.getKey());
+          alabel2.setFont(f.deriveFont(16f));
+          formPanel_02_right.add(alabel2);
         mainPanel_02.add(formPanel_02_right);
       leftPanel.add(mainPanel_02);
 
@@ -836,12 +845,12 @@ public class ClientManager implements ActionListener {
       break;
 
     // *********************************
-    // *** Load an existing account ****
+    // *** Recover an existing account ****
     // *********************************
     
     case 3:
     
-    screenIntro.setTitle("Wotlas - Login...");
+    screenIntro.setTitle("Wotlas - Recover Login");
 
       // Create panels
       leftPanel = new JPanel();
@@ -870,7 +879,7 @@ public class ClientManager implements ActionListener {
 
       label1 = new ALabel("Welcome,");
       label1.setAlignmentX(Component.CENTER_ALIGNMENT);
-      label1.setFont( label1.getFont().deriveFont(18) );
+      label1.setFont(f.deriveFont(18f));
       leftPanel.add(label1);
 
       leftPanel.add(Box.createRigidArea(new Dimension(0,10)));
@@ -906,7 +915,7 @@ public class ClientManager implements ActionListener {
         public void actionPerformed (ActionEvent e) {
           char charPasswd[] = pfield1.getPassword();
           if (charPasswd.length < 4) {
-            JOptionPane.showMessageDialog( screenIntro, "Password must have at least 5 characters !", "New Password", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog( screenIntro, "Password must have at least 5 characters !", "Password", JOptionPane.ERROR_MESSAGE);
           } else {
                     
             if (currentProfileConfig==null) {
@@ -916,6 +925,7 @@ public class ClientManager implements ActionListener {
             String tempKey = atf_key.getText();
             int index = tempKey.indexOf('-');
             if (index<0) {
+              JOptionPane.showMessageDialog( screenIntro, "Your key must have the following format : TEXT-NN-MM.\nExample: bob-1-36", "Bad Format", JOptionPane.ERROR_MESSAGE);
               start(0);
               return;
             }
@@ -923,6 +933,7 @@ public class ClientManager implements ActionListener {
             tempKey = tempKey.substring(index+1);
             index = tempKey.indexOf('-');
             if (index<0) {
+              JOptionPane.showMessageDialog( screenIntro, "Your key must have the following format : TEXT-NN-MM.\nExample: bob-1-36", "Bad Format", JOptionPane.ERROR_MESSAGE);
               start(0);   
               return;
             }         
@@ -931,6 +942,7 @@ public class ClientManager implements ActionListener {
               currentProfileConfig.setOriginalServerID(Integer.parseInt(tempKey.substring(0,index)));
               currentProfileConfig.setLocalClientID(Integer.parseInt(tempKey.substring(index+1)));
             } catch (NumberFormatException nfes) {
+              JOptionPane.showMessageDialog( screenIntro, "Your key must have the following format : TEXT-NN-MM.\nExample: bob-1-36", "Bad Format", JOptionPane.ERROR_MESSAGE);
               start(0);
               return;
             }       
@@ -1247,7 +1259,7 @@ public class ClientManager implements ActionListener {
       JEditorPane editorPane = new JEditorPane("text/html","<html>Your new account has been <br>"
                             + "successfully created! <br>"
                             + "Remember your key to access <br>"
-                            + "wotlas from anywhere : <b>" + currentProfileConfig.getKey()
+                            + "wotlas from anywhere : <b>" + currentProfileConfig.getLogin()+"-"+currentProfileConfig.getKey()
                             + "</b><br>Click OK to enter WOTLAS....</html>");
       leftPanel.add(editorPane, BorderLayout.CENTER);
       editorPane.setEditable(false);
@@ -1340,7 +1352,7 @@ public class ClientManager implements ActionListener {
   * @param e supposed timer event
   */
    public void actionPerformed( ActionEvent e) {
-     Debug.signal(Debug.WARNING,null,"Wotlas Web Server unreachable... Trying again... ("+nbTry+")");
+     Debug.signal(Debug.WARNING,null,"Wotlas Web Server unreachable. Trying again... ("+nbTry+"/12)");
      nbTry++;
    }
 

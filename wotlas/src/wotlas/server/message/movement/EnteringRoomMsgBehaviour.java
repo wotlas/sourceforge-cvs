@@ -122,9 +122,26 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
            
        // 2 - We send REMOVE player messages
           if(!mapEnter) {
-             player.sendMessageToNearRooms( currentRoom,
-                         new RemovePlayerFromRoomMessage(primaryKey, player.getLocation() ),
-                         false );
+
+             RemovePlayerFromRoomMessage rMsg = new RemovePlayerFromRoomMessage(primaryKey, player.getLocation() );
+
+             for( int i=0; i<currentRoom.getRoomLinks().length; i++ ) {
+                  Room otherRoom = currentRoom.getRoomLinks()[i].getRoom1();
+                   
+                  if( otherRoom==currentRoom )
+                      otherRoom = currentRoom.getRoomLinks()[i].getRoom2();
+
+                  if( otherRoom==targetRoom ) continue; // no remove sent to target room
+
+                  Hashtable players = otherRoom.getPlayers();
+
+                  synchronized( players ) {
+                     Iterator it = players.values().iterator();
+
+                       while( it.hasNext() )
+                           ((PlayerImpl)it.next()).sendMessage( rMsg );
+                  }
+             }
 
              Hashtable players = currentRoom.getPlayers();
  

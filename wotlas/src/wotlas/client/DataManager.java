@@ -21,6 +21,8 @@ package wotlas.client;
 
 import wotlas.client.gui.*;
 import wotlas.client.screen.*;
+import wotlas.client.screen.extraplugin.*;
+import wotlas.client.screen.JPanelPlugIn;
 import wotlas.client.screen.plugin.InfoPlugIn;
 
 import wotlas.common.character.*;
@@ -562,6 +564,10 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
        if(SHOW_DEBUG)
           System.out.println("End of DataManager's showInterface !");
+                 
+    // 10 - Add extra plugin
+          //clientScreen.getPlayerPanel().addPlugIn((JPanelPlugIn) new ChangeAspectPlugIn(), -1);
+        
   }
 
  /*------------------------------------------------------------------------------------*/

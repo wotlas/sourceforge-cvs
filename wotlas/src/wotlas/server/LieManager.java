@@ -61,9 +61,22 @@ public class LieManager
    */
   public final static int MEET_CHATMESSAGE = 1;
   
+ /*------------------------------------------------------------------------------------*/
+
   /** Number of meetsNumber to forget when player leave an interiormap
    */
   public final static int FORGET_INTERIORMAP = 5;
+  
+  /** Number of meetsNumber to forget when player has not connected for a long time
+   */
+  public final static int FORGET_RECONNECT_LONG = 40;
+  
+  /** Number of meetsNumber to forget when player reconnect
+   */
+  public final static int FORGET_RECONNECT = 2;
+  
+  
+ /*------------------------------------------------------------------------------------*/
   
   /** List of player's fake names
    */
@@ -265,10 +278,13 @@ System.out.println("\tmemories=\n"+this);
     if (memories==null)
       return;
     synchronized(memories) {
-      memories.resetIterator();
+      LieMemory memory;
+      memories.resetIterator();      
       while ( memories.hasNext() ) {
-        LieMemory memory = memories.next();
+        memory = memories.next();
         memory.meetsNumber -= meetType;
+        if (memory.meetsNumber<0)
+          memories.remove();
       }
     }
   }
@@ -283,9 +299,10 @@ System.out.println("\tmemories=\n"+this);
     if (memories==null)
       return;
     synchronized(memories) {
-      memories.resetIterator();
+      LieMemory memory;
+      memories.resetIterator();      
       while ( memories.hasNext() ) {
-        LieMemory memory = memories.next();
+        memory = memories.next();
         if (memory.meetsNumber < meetType) {
           memories.remove();
         } else {

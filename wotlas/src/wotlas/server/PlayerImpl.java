@@ -92,6 +92,10 @@ public class PlayerImpl implements Player, NetConnectionListener
    /** Lie Manager
     */
        private LieManager lieManager = new LieManager();
+       
+   /** Last time player disconnected (in days)
+    */
+       private long lastDisconnectedTime;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -296,7 +300,7 @@ public class PlayerImpl implements Player, NetConnectionListener
    /** To get the player's full name
     */
       public String getFullPlayerName(String otherPlayerKey) {
-System.out.println("getFullPlayerName(String otherPlayerKey)s deprecared");
+System.out.println("getFullPlayerName(String otherPlayerKey)s deprecated");
         return lieManager.getCurrentFakeName();
       }
       
@@ -436,6 +440,17 @@ System.out.println("getFullPlayerName() deprecated");
     */
       public void setLieManager(LieManager lieManager) {
         this.lieManager = lieManager;
+      }
+   
+   /** To get lastDisconnectedTime.
+    */
+      public long getLastDisconnectedTime() {
+        return (long) System.currentTimeMillis()/86400000;
+      }
+   /** To set lastDisconnectedTime.
+    */
+      public void setLastDisconnectedTime(long lastTime) {
+        this.lastDisconnectedTime = lastTime;
       }
       
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -589,6 +604,13 @@ System.out.println("getFullPlayerName() deprecated");
              synchronized( personalityLock ) {
                  this.personality = personality;
              }
+
+          // We forget a little about players we met
+          if (lastDisconnectedTime-System.currentTimeMillis()>3) {
+            lieManager.removeMeet(LieManager.FORGET_RECONNECT_LONG);
+          } else {
+            lieManager.removeMeet(LieManager.FORGET_RECONNECT);
+          }
 
           // We signal our connection to players in the game
           // ... and players in the rooms near us

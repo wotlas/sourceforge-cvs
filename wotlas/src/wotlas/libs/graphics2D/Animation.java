@@ -40,21 +40,45 @@ public class Animation {
    */
     private short animLength;
 
+  /** Number of ticks before next image
+   */
+    private byte nbTicksBeforeNextImage;
+
+  /** Ticks counter before next image
+   */
+    private byte tickCounter;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Empty constructor.
    */
     public Animation() {
+      nbTicksBeforeNextImage = 1;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Constructor with specified image identifier to use as a base for the animation.
+   *  We change the image for display at each tick (nbTicksBeforeNextImage=1).
    *
    * @param animBase image identifier of the images to use for the animation.
    */
     public Animation( ImageIdentifier animBase ) {
        setAnimBase( animBase );
+       nbTicksBeforeNextImage = 1;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Constructor with specified image identifier to use as a base for the animation
+   *  and the number of ticks before we select the next image for display.
+   *
+   * @param animBase image identifier of the images to use for the animation.
+   * @param nbTicksBeforeNextImage number of ticks before next image.
+   */
+    public Animation( ImageIdentifier animBase, byte nbTicksBeforeNextImage ) {
+       setAnimBase( animBase );
+       this.nbTicksBeforeNextImage = nbTicksBeforeNextImage;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -73,6 +97,7 @@ public class Animation {
    */
     public void reset() {
    	animBase.imageIndex = 0;
+   	tickCounter = 0;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -80,7 +105,12 @@ public class Animation {
   /** Updates the animation state.
    */
     public void tick() {
-       animBase.imageIndex = (short) ( (animBase.imageIndex+1)%animLength );
+       tickCounter++;
+
+       if( ( tickCounter%nbTicksBeforeNextImage ) == 0 ) {
+           animBase.imageIndex = (short) ( (animBase.imageIndex+1)%animLength );
+           tickCounter=0;
+       }
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

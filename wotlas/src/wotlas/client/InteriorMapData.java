@@ -227,15 +227,15 @@ public class InteriorMapData implements MapData {
 
        if(bufIm2==null) {
           Debug.signal( Debug.WARNING, this, "Brightness mask not found" );
-          BrightnessFilter.setBrightnessMask(null, 5);
+          BrightnessFilter.setBrightnessMask(null, 10);
        } else {          
-          BrightnessFilter.setBrightnessMask(GrayMask.create( bufIm2 ), 5);                              
+          BrightnessFilter.setBrightnessMask(GrayMask.create( bufIm2 ), 10);                              
           Debug.signal( Debug.NOTICE, this, "Brightness mask found..." );
        }
     }
     catch( ImageLibraryException e ) {
       Debug.signal( Debug.CRITICAL, this, "Brightness mask not found: "+e );
-      BrightnessFilter.setBrightnessMask(null, 5);          
+      BrightnessFilter.setBrightnessMask(null, 10);          
     }
 
     // 5 - We initialize the AStar algo

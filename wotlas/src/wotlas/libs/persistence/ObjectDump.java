@@ -66,7 +66,7 @@ public class ObjectDump
             }*/
             if (o.getClass().isArray()) {
               os = (Object[]) o;
-              for (j=1; j<os.length; j++)
+              for (j=0; j<os.length; j++)
               {
                 System.out.println(os[j].getClass().getName() + "[" + j + "]");
                 dumpObjectByInstance(os[j]);

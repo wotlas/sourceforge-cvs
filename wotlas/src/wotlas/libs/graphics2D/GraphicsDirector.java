@@ -309,6 +309,9 @@ public class GraphicsDirector extends JPanel {
       if (backBufferImage==null)
         return;
       
+      if (getHeight()==0)
+        return;
+          
       synchronized(backBufferImage) {
         if (getWidth() != backBufferImage.getWidth(this) || getHeight() != backBufferImage.getHeight(this))
           backBufferImage = createImage(getWidth(),getHeight());

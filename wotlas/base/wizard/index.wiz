@@ -9,13 +9,19 @@ isPrevButtonEnabled=false
 stepClass=wotlas.libs.wizard.step.JWizardStepInfoNet
 stepTitle=Welcome\ !
 
-stepPropertiesKey=2
-stepPropertiesValue=2
+stepPropertiesKey=4
+stepPropertiesValue=4
 
 stepPropertiesKey.0=init.info0
-stepPropertiesValue.0=\ \ \ \ \ \ \ \ This\ wizard\ will\ help\ you\ create\ your\ wotlas\ account.\ No\ particular\ knowledge\ of\ Robert\ Jordan's\ Wheel\ Of\ Time\ books\ is\ required.\n\nClick\ on\ 'Next'\ to\ continue.
+stepPropertiesValue.0=\ \ \ \ \ \ \ \ This\ wizard\ will\ help\ you\ create\ your\ wotlas\ account.\ No\ particular\ knowledge\ of\ Robert\ Jordan's\ Wheel\ Of\ Time\ books\ is\ required.\n\nClick\ on\ 'Next'\ to\ continue.\n\n\n\n\n\n\n\n\n\nYou\ are\ on\ the\ '$SERVER_NAME$'\ wotlas\ server\ .\ If\ you\ encounter\ any\ problem\ please\ contact\ $EMAIL_ADMIN$\ .
 
 # SERVER SIDE INCLUDES
 
 stepPropertiesKey.1=server.next
 stepPropertiesValue.1=wotclass.wiz
+
+stepPropertiesKey.2=server.info0.$SERVER_NAME$
+stepPropertiesValue.2=getServerName
+
+stepPropertiesKey.3=server.info0.$EMAIL_ADMIN$
+stepPropertiesValue.3=getAdminEmail

@@ -113,7 +113,7 @@ public abstract class JConnectionDialog extends JDialog implements Runnable
     public void run() {
 
         do{
-             Tools.waitTime( 500 );
+             Tools.waitTime( 1500 );
         }
         while( !isShowing() );
 
@@ -150,7 +150,6 @@ public abstract class JConnectionDialog extends JDialog implements Runnable
 
          l_info.setText( "Connection succeeded..." );
          hasSucceeded = true;
-         Tools.waitTime( 2000 );
 
       // NetConnectionListener
          if(context instanceof NetConnectionListener)

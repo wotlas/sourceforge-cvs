@@ -149,6 +149,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     endPosition = new Point();
     trajectory = new List();
     position = new Point(x, y);
+    
   }
 
   /** Called after graphicsDirector's init
@@ -499,21 +500,21 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
            setAngle( getAngle() + angularDirection*deltaT*angularSpeed );           
 
         // End of turn ?
-        System.out.println("Enf of turn?");
+        //System.out.println("Enf of turn?");
         float deltaA = (float)( (nextAngle-getAngle())*deltaT*angularDirection);
-        System.out.print("nextAngle = ");System.out.println(nextAngle*180/Math.PI);
-        System.out.print("getAngle() = ");System.out.println(getAngle()*180/Math.PI);
-        System.out.println("deltaA = " + deltaA);
+        //System.out.print("nextAngle = ");System.out.println(nextAngle*180/Math.PI);
+        //System.out.print("getAngle() = ");System.out.println(getAngle()*180/Math.PI);
+        //System.out.println("deltaA = " + deltaA);
 
            if( deltaA<=0 ) {
                 turningAlongPath = false;
                 //setAngle( nextAngle );
-                System.out.println("deltaA<0");
+                //System.out.println("deltaA<0");
                 setAngle(angle( new Point( (int)position.x, (int)position.y), nextPoint) );
-                System.out.println("\tgetAngle() = " + getAngle()*180/Math.PI);
+                //System.out.println("\tgetAngle() = " + getAngle()*180/Math.PI);
            }
            else if(deltaA>Math.PI/4) {
-            System.out.println("no footsteps, the angle is to great, we just turn...");
+            //System.out.println("no footsteps, the angle is to great, we just turn...");
                 return; // no footsteps, the angle is to great, we just turn...
            }
        } else {
@@ -645,8 +646,10 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
         */
             
         //test
-        /*    if( (nextAngle-getAngle())*angularDirection<=Math.PI/8 && distance(prevPoint,nextPoint)<10 )
-             turningAlongPath = false;*/
+        /*
+        if( (nextAngle-getAngle())*angularDirection<=Math.PI/8 && distance(prevPoint,nextPoint)<10 )
+        turningAlongPath = false;
+        */
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

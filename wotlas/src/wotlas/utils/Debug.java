@@ -136,4 +136,17 @@ public class Debug
 
  /*------------------------------------------------------------------------------------*/
 
+  /** To get the stack trace of an exception.
+   *
+   * @param e exception to inspect
+   */
+
+     static public String getStackTrace(Exception e) {
+       java.io.StringWriter s = new java.io.StringWriter();    
+       e.printStackTrace(new java.io.PrintWriter(s));
+       return s.toString();
+     }
+
+ /*------------------------------------------------------------------------------------*/
+
 }

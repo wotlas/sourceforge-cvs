@@ -147,8 +147,8 @@ public class NetMessageFactory {
 
                // Ok, we have a valid Message Behaviour Class.
                // we check if this message behaviour already exists in our table.
-                  if( msgClasses.get( cl.getSuperclass().getName() )!=null )
-                      Debug.signal( Debug.WARNING, this, "Replacing message code :"+name );
+               //   if( msgClasses.get( cl.getSuperclass().getName() )!=null )
+               //       Debug.signal( Debug.WARNING, this, "Replacing message code :"+name );
 
                   msgClasses.put( cl.getSuperclass().getName(), cl );
                   nbMsg++;

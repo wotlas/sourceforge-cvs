@@ -241,7 +241,9 @@ public class ClientManager
               passwd += charPasswd[i];
             }          
             wotlas.client.Client.FalseClient falseC = new wotlas.client.Client.FalseClient( currentProfile.getLogin(), passwd );            
-            wotlas.client.screen.JGameConnectionDialog jconnect = new wotlas.client.screen.JGameConnectionDialog( new JFrame(), currentProfile.getServerName(), 26500, currentProfile.getLogin(), passwd, "1", "5", falseC );
+            wotlas.client.screen.JGameConnectionDialog jconnect = new wotlas.client.screen.JGameConnectionDialog( new JFrame(), 
+                    currentProfile.getServerName(), 26500, currentProfile.getLogin(), passwd, ""+currentProfile.getLocalClientID(),
+                    ""+currentProfile.getOriginalServerID(),  falseC );
             if ( jconnect.hasSucceeded() ) {
               System.out.println("connected");
               myNetPersonality = jconnect.getPersonality();

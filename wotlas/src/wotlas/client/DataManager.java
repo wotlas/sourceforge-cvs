@@ -272,7 +272,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         wait( 1000 );
       } catch(Exception e){
         ; // Do nothing
-      }
+      }      
       */
 
       return;
@@ -474,9 +474,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         gDirector.removeDrawable(circle);
         circle = null;
       }
-      circle = new CircleDrawable(myPlayer.getDrawable(), 20, Color.yellow, (short) 0);      
+      circle = new CircleDrawable(myPlayer.getDrawable(), 20, Color.yellow, (short) 10);      
       gDirector.addDrawable(circle);  
-      circle.tick();
+      //circle.tick();
       //PlayerImpl player = (PlayerImpl) object;
     }
   }

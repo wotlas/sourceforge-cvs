@@ -169,7 +169,7 @@ class ClientDirector
     Debug.signal( Debug.NOTICE, null, "DataManager created..." );
     
     // STEP 6 - Start the ClientManager
-    clientManager.start(0);
+    clientManager.start(-1);
     Debug.signal( Debug.NOTICE, null, "WOTLAS Client started with success..." );
         
   }

@@ -557,6 +557,8 @@ System.out.println("Frame show");
   public void resumeInterface() {
     Debug.signal( Debug.NOTICE, null, "DataManager::ResumeInterface");
     
+    mFrame.show();
+
     // Retrieve player's informations
     try {
       synchronized(startGameLock) {

@@ -23,6 +23,7 @@
 
 package wotlas.client.screen;
 
+import wotlas.client.ClientManager;
 import wotlas.client.DataManager;
 
 import wotlas.libs.graphics2D.*;
@@ -101,9 +102,10 @@ public class JClientScreen extends JFrame
     this.logPanel = logPanel;
     addWindowListener( new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
-        System.out.println("See you soon!");
-        DataManager.getDefaultDataManager().closeConnection();
-        Debug.exit();
+        //System.out.println("See you soon!");
+        //DataManager.getDefaultDataManager().closeConnection();
+        //Debug.exit();
+        ClientManager.getDefaultClientManager().start(0);
       }
     });
   }
@@ -119,8 +121,10 @@ public class JClientScreen extends JFrame
     this.logPanel = logPanel;
     addWindowListener( new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
-        System.out.println("See you soon!");
-        DataManager.getDefaultDataManager().exit();
+        //System.out.println("See you soon!");
+        //DataManager.getDefaultDataManager().exit();
+        hide();
+        ClientManager.getDefaultClientManager().start(0);
       }
     });
   }

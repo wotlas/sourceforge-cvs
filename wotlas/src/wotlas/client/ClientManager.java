@@ -221,12 +221,15 @@ public class ClientManager
       // *** First Screen ***
       // ********************
 
-      case 0:
-      if(firstDisplay) {
+      case -1:
+      //if(firstDisplay) {
          new JHTMLWindow( screenIntro, "Wotlas News", ClientDirector.getRemoteServerConfigHomeURL()+"news.html", 320, 400, false );
-         firstDisplay=false;
-      }
+         //firstDisplay=false;
+      //}
+      indexScreen = 0;
+      state = 0;
 
+      case 0:
       screenIntro.setTitle("Wotlas - Account selection...");
 
       // Load images of buttons

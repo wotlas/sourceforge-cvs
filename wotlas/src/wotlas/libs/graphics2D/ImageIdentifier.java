@@ -23,7 +23,7 @@ package wotlas.libs.graphics2D;
 /** Identifies an image in the ImageLibrary.
  *
  * @author MasterBob, Aldiss
- * @see wotlas.libs.graphics2D.ImageLibrary.
+ * @see wotlas.libs.graphics2D.ImageLibrary
  */
 
 public class ImageIdentifier {

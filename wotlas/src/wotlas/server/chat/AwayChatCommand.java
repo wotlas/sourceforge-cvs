@@ -94,27 +94,31 @@ public class AwayChatCommand implements ChatCommand
       public boolean exec( String message, PlayerImpl player, SendTextMessage response ) {
 
               PlayerState playerState = player.getPlayerState();
-              
-              if(message.indexOf(' ')!=5) {
+                            
+              if(message.length()<6) {
                 // no parameters
                 if (playerState.value==PlayerState.AWAY) {
-                  playerState.value=PlayerState.CONNECTED;                  
+                  playerState.value=PlayerState.CONNECTED;  
+                  message = "/away";                
                   response.setMessage("/away");                                              
                 } else {
                   if (playerState.value==PlayerState.CONNECTED) {
-                    playerState.value=PlayerState.AWAY;                    
+                    playerState.value=PlayerState.AWAY;                   
+                    message = "/away "; 
                     response.setMessage("/away ");                                              
                   }       
-                }          
-              } else {              
-                message = message.substring(6);              
-                playerState.value = PlayerState.DISCONNECTED;                
-                response.setMessage("/away " + message);                            
+                }                        
+              } else {     
+                if (playerState.value!=PlayerState.DISCONNECTED) {
+                  message = message.substring(6);                                
+                  playerState.value = PlayerState.AWAY;                
+                  response.setMessage("/away " + message);                            
+                }
               }
-
-              //player.sendMessage(response);
+              
               return false;
       }
 
  /*------------------------------------------------------------------------------------*/
+ 
 }

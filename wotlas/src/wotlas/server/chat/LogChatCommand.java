@@ -36,8 +36,7 @@ public class LogChatCommand implements ChatCommand
  /*------------------------------------------------------------------------------------*/
 
    /** Returns the first part of the chat command. For example if your chat command
-    *  has the following format '/msg:playerId:message' the prefix is '/msg' ( note
-    *  that there is ':' at the end).
+    *  has the following format '/msg playerId message' the prefix is '/msg'.
     *  Other example : if your command is '/who' the prefix is '/who'. 
     *
     * @return the chat command prefix that will help identify the command.
@@ -75,11 +74,11 @@ public class LogChatCommand implements ChatCommand
     */
       public String getCommandDocumentation() {
       	return "<font size='4'>Command 'log'</font>" +
-      	       "<br><b> Syntax :</b> /log:[message] " +
-      	       "<br><b> Voice  :</b> normal voice level " +
+      	       "<br><b> Syntax :</b> /log [message] " +
+      	       "<br><b> Voice  :</b> whisper voice level " +
       	       "<br><b> Descr  :</b> prints the given message in the server log." +
       	       "<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;It's useful if you want to report a bug." +
-      	       "<br><b> Example:</b> /log: Damned ! I got a null pointer exception !" ;
+      	       "<br><b> Example:</b> /log Damned ! I got a null pointer exception !" ;
       }
 
  /*------------------------------------------------------------------------------------*/
@@ -95,7 +94,7 @@ public class LogChatCommand implements ChatCommand
     */
       public boolean exec( String message, PlayerImpl player, SendTextMessage response ) {
 
-          if(message.indexOf(':')!=4)
+          if(message.indexOf(' ')!=4)
              return true; // no parameters
 
           message = message.substring(4);

@@ -24,9 +24,9 @@ import wotlas.common.message.chat.SendTextMessage;
 import wotlas.common.chat.ChatRoom;
 
 /** Represents a chat command. A chat command is a String that begins with a '/'
- *  and possess eventual parameters separated by ':'.<br>
+ *  and possess eventual parameters separated by ' '.<br>
  *
- *  Example "/find:bob-2-45" or "/help" or "/msg:bob-2-33:hello bob !"
+ *  Example "/find bob-2-45" or "/help" or "/msg bob-2-33 hello bob !"
  *
  *  When sending a text message ( SendTextMessage ) to a client, if you want the message
  *  content to be displayed as the result of a command, just begin your message with
@@ -40,8 +40,7 @@ public interface ChatCommand
  /*------------------------------------------------------------------------------------*/
 
    /** Returns the first part of the chat command. For example if your chat command
-    *  has the following format '/msg:playerId:message' the prefix is '/msg' ( note
-    *  that there is ':' at the end).
+    *  has the following format '/msg playerId message' the prefix is '/msg'.
     *  Other example : if your command is '/who' the prefix is '/who'. 
     *
     * @return the chat command prefix that will help identify the command.

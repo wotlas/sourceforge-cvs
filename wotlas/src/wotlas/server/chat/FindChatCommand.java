@@ -34,8 +34,7 @@ public class FindChatCommand implements ChatCommand
  /*------------------------------------------------------------------------------------*/
 
    /** Returns the first part of the chat command. For example if your chat command
-    *  has the following format '/msg:playerId:message' the prefix is '/msg' ( note
-    *  that there is no ':' at the end).
+    *  has the following format '/msg playerId message' the prefix is '/msg'.
     *  Other example : if your command is '/who' the prefix is '/who'. 
     *
     * @return the chat command prefix that will help identify the command.
@@ -73,11 +72,11 @@ public class FindChatCommand implements ChatCommand
     */
       public String getCommandDocumentation() {
       	return "<font size='4'>Command 'find'</font>" +
-      	       "<br><b> Syntax :</b> /find:[playerKey] " +
+      	       "<br><b> Syntax :</b> /find [playerKey] " +
       	       "<br><b> Voice  :</b> normal voice level " +
       	       "<br><b> Descr  :</b> returns a player's location." +
       	       "<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use the /who command to find the player key." +
-      	       "<br><b> Example:</b> /find:alice-1-34";
+      	       "<br><b> Example:</b> /find alice-1-34";
       }
 
  /*------------------------------------------------------------------------------------*/
@@ -93,7 +92,7 @@ public class FindChatCommand implements ChatCommand
     */
       public boolean exec( String message, PlayerImpl player, SendTextMessage response ) {
 
-              if(message.indexOf(':')!=5)
+              if(message.indexOf(' ')!=5)
                  return true; // no parameters
 
               message = message.substring(6);

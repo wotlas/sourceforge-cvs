@@ -461,17 +461,22 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
 
     messageHistory.add(message);
 
-    DataManager dManager = DataManager.getDefaultDataManager();
-
     // Shortcuts
     if (message.startsWith("/whisper")) {
       chatVoiceLevel.setValue(ChatRoom.WHISPERING_VOICE_LEVEL);
-      message = message.substring(9);
+      message = message.substring(8);
+      inputBox.setText(message);
+      if(message.length()==0) return;
     }
     else if (message.startsWith("/shout")) {
       chatVoiceLevel.setValue(ChatRoom.SHOUTING_VOICE_LEVEL);
-      message = message.substring(7);
+      message = message.substring(6);
+      inputBox.setText(message);
+      if(message.length()==0) return;
     }
+
+
+    DataManager dManager = DataManager.getDefaultDataManager();
 
     dManager.sendMessage( new SendTextMessage( dManager.getMyPlayer().getPrimaryKey(),
                                                dManager.getMyPlayer().getFullPlayerName(),

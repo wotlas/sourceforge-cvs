@@ -36,8 +36,7 @@ public class HelpChatCommand implements ChatCommand
  /*------------------------------------------------------------------------------------*/
 
    /** Returns the first part of the chat command. For example if your chat command
-    *  has the following format '/msg:playerId:message' the prefix is '/msg' ( note
-    *  that there is ':' at the end).
+    *  has the following format '/msg playerId message' the prefix is '/msg'.
     *  Other example : if your command is '/who' the prefix is '/who'. 
     *
     * @return the chat command prefix that will help identify the command.
@@ -96,14 +95,14 @@ public class HelpChatCommand implements ChatCommand
 
           boolean displayAll = false;
 
-          if( message.endsWith(":all") )
+          if( message.endsWith(" all") )
               displayAll = true;
 
           ChatCommandProcessor processor = DataManager.getDefaultDataManager().getChatCommandProcessor();
           message = "/cmd:Here are the commands you can use:<br><b>"
                        + processor.getCommandList( displayAll )+"</b><br>"
                        + "Use the /info command to get more information on the other commands."
-                       + "<br>For example, enter '/info:/who'.";
+                       + "<br>For example, enter '/info /who'.";
 
           response.setMessage(message);
           player.sendMessage(response);

@@ -37,8 +37,7 @@ public class ServerChatCommand implements ChatCommand
  /*------------------------------------------------------------------------------------*/
 
    /** Returns the first part of the chat command. For example if your chat command
-    *  has the following format '/msg:playerId:message' the prefix is '/msg' ( note
-    *  that there is ':' at the end).
+    *  has the following format '/msg playerId message' the prefix is '/msg'.
     *  Other example : if your command is '/who' the prefix is '/who'. 
     *
     * @return the chat command prefix that will help identify the command.
@@ -97,7 +96,7 @@ public class ServerChatCommand implements ChatCommand
 
           ServerConfig ourConfig = ServerManager.getDefaultServerManager().getServerConfig();
 
-          if(message.equals("/server:bell")) {
+          if(message.equals("/server bell")) {
                SoundLibrary.createSoundLibrary("../base").playSound("server.wav");
                Debug.signal(Debug.NOTICE,null,""+player.getFullPlayerName()+" is ringing this server...");
 

@@ -36,8 +36,7 @@ public class KillChatCommand implements ChatCommand
  /*------------------------------------------------------------------------------------*/
 
    /** Returns the first part of the chat command. For example if your chat command
-    *  has the following format '/msg:playerId:message' the prefix is '/msg' ( note
-    *  that there is ':' at the end).
+    *  has the following format '/msg playerId message' the prefix is '/msg'.
     *  Other example : if your command is '/who' the prefix is '/who'. 
     *
     * @return the chat command prefix that will help identify the command.
@@ -75,11 +74,11 @@ public class KillChatCommand implements ChatCommand
     */
       public String getCommandDocumentation() {
       	return "<font size='4'>Command 'kill'</font>" +
-      	       "<br><b> Syntax :</b> /kill:[playerKey] " +
+      	       "<br><b> Syntax :</b> /kill [playerKey] " +
       	       "<br><b> Voice  :</b> shouting voice level " +
       	       "<br><b> Descr  :</b> kills the given player (of the same room)." +
       	       "<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Only works if you are the dark one." +
-      	       "<br><b> Example:</b> /kill:asmodean-1-34";
+      	       "<br><b> Example:</b> /kill asmodean-1-34";
       }
 
  /*------------------------------------------------------------------------------------*/
@@ -98,7 +97,7 @@ public class KillChatCommand implements ChatCommand
               if( !(player.getWotCharacter() instanceof DarkOne) )
                   return true; // not the Dark One
 
-              if(message.indexOf(':')!=5)
+              if(message.indexOf(' ')!=5)
                  return true; // no parameters
 
               message = message.substring(6);

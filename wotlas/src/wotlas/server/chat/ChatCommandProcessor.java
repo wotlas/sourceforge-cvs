@@ -103,8 +103,8 @@ public class ChatCommandProcessor
     */
       public boolean processCommand( String message, PlayerImpl player, SendTextMessage response ) {
 
-    	// 1 - Search for an eventual separator ':'
-           int separator = message.indexOf(':');
+    	// 1 - Search for an eventual separator ' '
+           int separator = message.indexOf(' ');
            String commandName;
 
            if(separator<0)

@@ -82,6 +82,8 @@ public class PersistenceManager
    */
    public WorldMap[] loadLocalUniverse()
    {
+      int worldCount=0, townCount=0, buildingCount=0, mapCount=0;
+
       String universeHome =  databasePath+File.separator+UNIVERSE_HOME;
 
      // We search for the latest save...
@@ -129,7 +131,8 @@ public class PersistenceManager
                     worlds = myWorldMaps;
                 }
 
-                worlds[world.getWorldMapID()] = world;        
+                worlds[world.getWorldMapID()] = world;
+                worldCount++;
 
              // we load all the towns of this world
                 File townSaveList[] = new File( worldHome ).listFiles();
@@ -145,6 +148,7 @@ public class PersistenceManager
                     TownMap town = (TownMap) PropertiesConverter.load( townHome + File.separator
                                                                        + TOWN_FILE );
                     world.addTownMap( town );
+                    townCount++;
 
                  // we load all this town's buildings
                     File buildingSaveList[] = new File( townHome ).listFiles();
@@ -160,6 +164,7 @@ public class PersistenceManager
                         Building building = (Building) PropertiesConverter.load( buildingHome + File.separator
                                                                          + BUILDING_FILE );
                         town.addBuilding( building );
+                        buildingCount++;
 
                      // we load all this building's maps
                         File mapsSaveList[] = new File( buildingHome ).listFiles();
@@ -167,7 +172,7 @@ public class PersistenceManager
                         for( int m=0; m<mapsSaveList.length; m++ )
                         {
                           if( mapsSaveList[m].getName().equals(BUILDING_FILE)
-                              || buildingSaveList[m].isDirectory()
+                              || mapsSaveList[m].isDirectory()
                               || !mapsSaveList[m].getName().endsWith(MAP_SUFFIX) )
                             continue;
 
@@ -176,6 +181,7 @@ public class PersistenceManager
 
                             InteriorMap map = (InteriorMap) PropertiesConverter.load( mapName );
                             building.addInteriorMap( map );
+                            mapCount++;
                         }
                     }
                 }
@@ -187,6 +193,9 @@ public class PersistenceManager
               System.exit(1);
            }
         }
+
+      Debug.signal( Debug.NOTICE, this, "Loaded "+worldCount+" worlds, "+townCount+" towns,"
+                    +buildingCount+" buildings, "+mapCount+" maps." );
 
       return worlds;
    }
@@ -201,6 +210,7 @@ public class PersistenceManager
    */
    public boolean saveLocalUniverse( WorldMap worlds[], boolean isDefault )
    {
+       int worldCount=0, townCount=0, buildingCount=0, mapCount=0;
        boolean failed = false;
    	
      // which home ?
@@ -232,6 +242,7 @@ public class PersistenceManager
 
              // we save the world object
                 PropertiesConverter.save( worlds[w], worldHome + File.separator + WORLD_FILE );
+                worldCount++;
 
              // we save all the towns of this world
                 TownMap towns[] = worlds[w].getTownMaps();
@@ -249,6 +260,7 @@ public class PersistenceManager
                     new File(townHome).mkdir();
 
                     PropertiesConverter.save( towns[t], townHome + File.separator + TOWN_FILE );
+                    townCount++;
 
                  // we save all this town's buildings
                     Building buildings[] = towns[t].getBuildings();
@@ -266,6 +278,7 @@ public class PersistenceManager
                         new File(buildingHome).mkdir();
 
                         PropertiesConverter.save( buildings[b], buildingHome + File.separator + BUILDING_FILE );
+                        buildingCount++;
 
                      // we save all this building's maps
                         InteriorMap interiorMaps[] = buildings[t].getInteriorMaps();
@@ -283,6 +296,7 @@ public class PersistenceManager
                                               + interiorMaps[m].getShortName() + MAP_SUFFIX;
 
                             PropertiesConverter.save( interiorMaps[m], mapName );
+                            mapCount++;
                         }
                     }
                 }
@@ -295,6 +309,9 @@ public class PersistenceManager
                             + worlds[w].getShortName() +"\n Message:"+pe.getMessage() );
            }
         }
+
+      Debug.signal( Debug.NOTICE, this, "Saved "+worldCount+" worlds, "+townCount+" towns,"
+                    +buildingCount+" buildings, "+mapCount+" maps." );
 
       return !failed;
    }

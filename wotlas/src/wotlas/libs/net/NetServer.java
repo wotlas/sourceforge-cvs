@@ -23,10 +23,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.net.BindException;
 import java.io.IOException;
 import java.io.InterruptedIOException;
 
 import wotlas.utils.Debug;
+import wotlas.utils.Tools;
 import wotlas.libs.net.personality.TormPersonality;
 import wotlas.libs.net.message.ServerErrorMessage;
 import wotlas.libs.net.message.ServerWelcomeMessage;
@@ -85,6 +87,14 @@ public class NetServer extends Thread
    */
      private byte server_local_ID;
 
+  /** Server Port
+   */
+     private int serverPort;
+
+  /** Server Host Name
+   */
+     private String host;
+
  /*------------------------------------------------------------------------------------*/
 
      /**  Constructs a NetServer but does not starts it. Call the start()
@@ -94,12 +104,13 @@ public class NetServer extends Thread
       *   By default we accept a maximum of 200 opened socket connections for
       *   this server.
       *
-      *  @param server_port port on which the server listens to clients.
-      *  @param msg_packages a list of packages where we can find NetMsgBehaviour Classes.
+      *  @param serverPort port on which the server listens to clients.
+      *  @param msgPackages a list of packages where we can find NetMsgBehaviour Classes.
       */
-        public NetServer( int server_port, String msg_packages[] )
+        public NetServer( int serverPort, String msgPackages[] )
         {
               super("Server");
+              this.serverPort = serverPort;
               stop_server = false;
               server_lock = false;
 
@@ -111,17 +122,10 @@ public class NetServer extends Thread
               max_opened_sockets = 200;
 
            // we create a message factory
-              NetMessageFactory.createMessageFactory( msg_packages );
+              NetMessageFactory.createMessageFactory( msgPackages );
 
            // ServerSocket inits
-              try{
-                  server = new ServerSocket(server_port); 
-                  server.setSoTimeout(5000);
-               }
-               catch (IOException e){
-                  Debug.signal( Debug.FAILURE, this, e );
-                  Debug.exit();
-               }
+              server = getServerSocket();
         }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -134,12 +138,14 @@ public class NetServer extends Thread
       *   this server.
       *
       *  @param host the host interface to bind to. Example: wotlas.tower.org
-      *  @param server_port port on which the server listens to clients.
-      *  @param msg_packages a list of packages where we can find NetMsgBehaviour Classes.
+      *  @param serverPort port on which the server listens to clients.
+      *  @param msgPackages a list of packages where we can find NetMsgBehaviour Classes.
       */
-        public NetServer( String host, int server_port, String msg_packages[] )
+        public NetServer( String host, int serverPort, String msgPackages[] )
         {
               super("Server");
+              this.host = host;
+              this.serverPort = serverPort;
               stop_server = false;
               server_lock = false;
 
@@ -150,30 +156,45 @@ public class NetServer extends Thread
            // default maximum number of opened sockets
               max_opened_sockets = 200;
 
-           // we create a message factory
-              NetMessageFactory.createMessageFactory( msg_packages );
+           // we create a message factory & server
+              NetMessageFactory.createMessageFactory( msgPackages );
 
+              server = getServerSocket(); 
+        }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get a valid ServerSocket. We use the host & serverPort to init the
+    *  server socket. ANY ERROR at this level will cause a DIRECT EXIT.
+    *
+    *  @return server socket
+    */
+     public ServerSocket getServerSocket() {
            // We get the ip address of the specified host
-              InetAddress host_ip = null;
+              InetAddress hostIP = null;
+              ServerSocket server = null;
            
-               try{
-                    host_ip = InetAddress.getByName( host );
-               }
-               catch(UnknownHostException ue) {
-                  Debug.signal( Debug.FAILURE, this, ue );
-                  Debug.exit();
-               }
+               if(host!=null)
+                  try{
+                     hostIP = InetAddress.getByName( host );
+                  }
+                  catch(UnknownHostException ue) {
+                     Debug.signal( Debug.FAILURE, this, ue );
+                     Debug.exit();
+                  }
 
            // ServerSocket inits
-               try{
-                  server = new ServerSocket(server_port, 50, host_ip ); 
+              try{
+                  server = new ServerSocket(serverPort, 50, hostIP ); 
                   server.setSoTimeout(5000);
-               }
-               catch (IOException e){
+              }
+              catch (IOException e){
                   Debug.signal( Debug.FAILURE, this, e );
                   Debug.exit();
-               }
-        }
+              }
+               
+              return server;
+     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -277,9 +298,21 @@ public class NetServer extends Thread
                      if( e instanceof InterruptedIOException )
                         continue;
 
-                  // bad IOException generated...
-                     Debug.signal( Debug.FAILURE, this, e );
-                     Debug.exit();
+                  // bad IOException generated ?
+                     if( e instanceof BindException ) {
+                         Debug.signal( Debug.CRITICAL, this, e );
+
+                      // We'll retry our connection in 50s
+                         Debug.signal(Debug.WARNING, null,"Server #"+server_local_ID+" will be restarted in 50s.");
+                         Tools.waitTime(50000);
+                         Debug.signal(Debug.WARNING, null,"Attempt to restart server #"+server_local_ID+"...");
+                         server = getServerSocket();
+                         continue;
+                     }
+                     else {
+                         Debug.signal( Debug.FAILURE, this, e );
+                         Debug.exit();
+                     }
                }
 
             // Ok, a client has arrived.

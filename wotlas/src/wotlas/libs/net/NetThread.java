@@ -36,7 +36,7 @@ import wotlas.utils.Debug;
  * @see wotlas.libs.net.NetPersonality
  */
 
-abstract class NetThread extends Thread
+abstract public class NetThread extends Thread
 {
  /*------------------------------------------------------------------------------------*/
 
@@ -121,6 +121,9 @@ abstract class NetThread extends Thread
         // we ask the NetPersonality to perform some cleanup
         // and signal that the connection was closed ( connectionListener )
            personality.closeConnection();
+
+        // we decrease the number of thread
+           count--;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -151,5 +154,16 @@ abstract class NetThread extends Thread
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /**  To get the number of opened socket. This method should only be used
+    *   for resource management (NetServer). Note that this method is not
+    *   synchronized.
+    *
+    * @return the current number of opened sockets on this JVM...
+    */
+      public static int getOpenedSocketNumber() {
+           return count/2; // there are two NetThread per socket connection
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

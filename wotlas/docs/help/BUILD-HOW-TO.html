@@ -28,10 +28,10 @@
 <blockquote> 
   <p><b>SUMMARY</b></p>
   <p>I - <a href="#I">About Jakarta Ant</a><br>
-    II - <a href="#II">Compile Wotlas with Ant</a><br>
-    III - <a href="#III">Compile Wotlas with Ant &amp; Jikes</a><br>
-    IV - <a href="#IV">Compile &amp; Use the AliceBot part of Wotlas</a><br>
-    V - <a href="#V">Build the Wotlas Javadoc API</a><br>
+    II - <a href="#II">How to Compile Wotlas with Ant</a><br>
+    III - <a href="#III">How to Compile Wotlas with Ant &amp; Jikes</a><br>
+    IV - <a href="#IV">How to Compile &amp; Use the AliceBot part of Wotlas</a><br>
+    V - <a href="#V">How to Build the Wotlas Javadoc API</a><br>
     <br>
     <a href="#A">Appendix A - GNU Make</a></p>
 </blockquote>
@@ -53,7 +53,7 @@
   Ant Guide</a></i> . You can also go directly to Ant's official home <i><a href="http://jakarta.apache.org/ant/" target="_blank">here</a></i>.<br>
   <br>
 </p>
-<p><font size="4">II - Compile Wotlas with Ant</font><b><a name="II"></a><br>
+<p><font size="4">II - How to Compile Wotlas with Ant</font><b><a name="II"></a><br>
   </b></p>
 <p>To compile the whole wotlas project with Ant just :</p>
 <blockquote> 
@@ -64,8 +64,10 @@
     path to your JDK where asked to.<br>
     3- Run <i>build.bat</i> ( or build.sh under Unix ), that's all !</p>
   </blockquote>
-<p> For more options, open a shell window and enter <i>build usage</i>, it'll 
-  display the list of available targets.<br>
+<p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Java classes are saved to the <i>classes/</i> 
+  directory and a <i>wotlas-client.jar</i> file is created in the <i>lib/</i> 
+  directory. For more options, open a shell window and enter <i>build usage</i>, 
+  it'll display the list of available targets.<br>
   Here are some :</p>
 <div align="center">
   <table width="403" border="0">
@@ -79,11 +81,11 @@
     </tr>
     <tr> 
       <td width="126"><font size="2">build client</font></td>
-      <td width="267"><font size="2">build the client side only</font></td>
+      <td width="267"><font size="2">builds the client side only, creates a JAR</font></td>
     </tr>
     <tr> 
       <td width="126"><font size="2">build libs</font></td>
-      <td width="267"><font size="2">build the wotlas libraries only</font></td>
+      <td width="267"><font size="2">builds the wotlas libraries only</font></td>
     </tr>
     <tr> 
       <td width="126"><font size="2">build clean</font></td>

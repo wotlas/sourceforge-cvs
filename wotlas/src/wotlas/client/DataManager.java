@@ -821,7 +821,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
        // Select
           circle = new CircleDrawable( selectedPlayer.getDrawable(),
-                                       15,
+                                       20,
                                        selectedPlayer.getWotCharacter().getColor(),
                                        true,
                                        ImageLibRef.AURA_PRIORITY);

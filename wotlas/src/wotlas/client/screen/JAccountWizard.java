@@ -96,9 +96,11 @@ public class JAccountWizard extends JWizard
   class Step1 extends JWizardStep
   {
     private ALabel lbl_infos;
-    private ARadioButton bt_char1, bt_char2;
+    private ARadioButton bt_char0, bt_char1, bt_char2, bt_char3, bt_char4, bt_char5, bt_char6, bt_char7, bt_char8, bt_char9;
     private ButtonGroup btGroup;
     private JPanel mainPanel, formPanel;
+    private String className;
+    private byte wotCharacterStatus;
 
     /** called when the step is to be shown
      */
@@ -132,19 +134,121 @@ public class JAccountWizard extends JWizard
 
       formPanel = new JPanel(new GridLayout(2,1,10,2));
       formPanel.setBackground(Color.white);
-        bt_char1 = new ARadioButton("Aes Sedai");
-        bt_char1.setActionCommand("wotlas.common.character.AesSedai");
-        bt_char1.setSelected(true);
-
+        bt_char0 = new ARadioButton("Aes Sedai, Novice");
+        bt_char0.setActionCommand("wotlas.common.character.AesSedai");
+        bt_char0.setSelected(true);
+        bt_char0.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            className = "wotlas.common.character.AesSedai";
+            wotCharacterStatus = wotlas.common.character.AesSedai.AES_NOVICE;
+          }
+        });
+        formPanel.add(bt_char0);
+        
+        bt_char1 = new ARadioButton("Aes Sedai, Accepted");
+        bt_char1.setActionCommand("wotlas.common.character.AesSedai");     
+        bt_char1.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            className = "wotlas.common.character.AesSedai";
+            wotCharacterStatus = wotlas.common.character.AesSedai.AES_ACCEPTED;
+          }
+        });   
         formPanel.add(bt_char1);
-        bt_char2 = new ARadioButton("GIJoe");
-        bt_char2.setActionCommand("GiJoe");
-        bt_char2.setEnabled(false);
+        
+        bt_char2 = new ARadioButton("Aes Sedai, Brown Ajah");
+        bt_char2.setActionCommand("wotlas.common.character.AesSedai");  
+        bt_char2.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            className = "wotlas.common.character.AesSedai";
+            wotCharacterStatus = wotlas.common.character.AesSedai.AES_BROWN_AJAH;
+          }
+        });      
         formPanel.add(bt_char2);
+        
+        bt_char3 = new ARadioButton("Aes Sedai, White Ajah");
+        bt_char3.setActionCommand("wotlas.common.character.AesSedai");    
+        bt_char3.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            className = "wotlas.common.character.AesSedai";
+            wotCharacterStatus = wotlas.common.character.AesSedai.AES_WHITE_AJAH;
+          }
+        });    
+        formPanel.add(bt_char3);
+        
+        bt_char4 = new ARadioButton("Aes Sedai, Blue Ajah");
+        bt_char4.setActionCommand("wotlas.common.character.AesSedai");        
+        bt_char4.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            className = "wotlas.common.character.AesSedai";
+            wotCharacterStatus = wotlas.common.character.AesSedai.AES_BLUE_AJAH;
+          }
+        });    
+        formPanel.add(bt_char4);
+        
+        bt_char5 = new ARadioButton("Aes Sedai, Green Ajah");
+        bt_char5.setActionCommand("wotlas.common.character.AesSedai");        
+        bt_char5.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            className = "wotlas.common.character.AesSedai";
+            wotCharacterStatus = wotlas.common.character.AesSedai.AES_GREEN_AJAH;
+          }
+        });    
+        formPanel.add(bt_char5);
+        
+        bt_char6 = new ARadioButton("Aes Sedai, Red Ajah");
+        bt_char6.setActionCommand("wotlas.common.character.AesSedai");        
+        bt_char6.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            className = "wotlas.common.character.AesSedai";
+            wotCharacterStatus = wotlas.common.character.AesSedai.AES_RED_AJAH;
+          }
+        });    
+        formPanel.add(bt_char6);
+        
+        bt_char7 = new ARadioButton("Aes Sedai, Gray Ajah");
+        bt_char7.setActionCommand("wotlas.common.character.AesSedai");   
+        bt_char7.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            className = "wotlas.common.character.AesSedai";
+            wotCharacterStatus = wotlas.common.character.AesSedai.AES_GRAY_AJAH;
+          }
+        });         
+        formPanel.add(bt_char7);
+        
+        bt_char8 = new ARadioButton("Aes Sedai, Yellow Ajah");
+        bt_char8.setActionCommand("wotlas.common.character.AesSedai");    
+        bt_char8.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            className = "wotlas.common.character.AesSedai";
+            wotCharacterStatus = wotlas.common.character.AesSedai.AES_YELLOW_AJAH;
+          }
+        });        
+        formPanel.add(bt_char8);
+        
+        bt_char9 = new ARadioButton("Aes Sedai, Amyrlin");
+        bt_char9.setActionCommand("wotlas.common.character.AesSedai");        
+        bt_char9.setEnabled(false);
+        bt_char9.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            className = "wotlas.common.character.AesSedai";
+            wotCharacterStatus = wotlas.common.character.AesSedai.AES_AMYRLIN;
+          }
+        });    
+        formPanel.add(bt_char9);
+        
         // Group the radio buttons.
         btGroup = new ButtonGroup();
+        btGroup.add(bt_char0);
         btGroup.add(bt_char1);
-        btGroup.add(bt_char1);
+        btGroup.add(bt_char2);
+        btGroup.add(bt_char3);
+        btGroup.add(bt_char4);
+        btGroup.add(bt_char5);
+        btGroup.add(bt_char6);
+        btGroup.add(bt_char7);
+        btGroup.add(bt_char8);
+        btGroup.add(bt_char9);
+        
       mainPanel.add(formPanel);
 
       mainPanel.setAlignmentX(LEFT_ALIGNMENT);
@@ -227,7 +331,7 @@ public class JAccountWizard extends JWizard
   class Step2 extends JWizardStep
   {
     private ALabel lbl_infos;
-    private ARadioButton bt_color0, bt_color1, bt_color2, bt_color3, bt_color4, bt_color5;
+    private ARadioButton bt_color1, bt_color2, bt_color3, bt_color4, bt_color5, bt_color6;
     private ButtonGroup btGroup;
     private ActionListener myListener;
     private JPanel mainPanel, formPanel;
@@ -266,16 +370,6 @@ public class JAccountWizard extends JWizard
       mainPanel.setBackground(Color.white);
       formPanel = new JPanel(new GridLayout(6,1,10,2));
       formPanel.setBackground(Color.white);
-        bt_color0 = new ARadioButton("BALD");
-        bt_color0.setActionCommand("0");
-        bt_color0.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            hairColor = wotlas.common.character.Human.BALD;
-          }
-        });
-        formPanel.add(bt_color0);
-        bt_color0.setEnabled(false);
-
         bt_color1 = new ARadioButton("GOLDEN");
         bt_color1.setActionCommand("1");
         bt_color1.setSelected(true);
@@ -294,8 +388,7 @@ public class JAccountWizard extends JWizard
             hairColor = wotlas.common.character.Human.BROWN_HAIR;
           }
         });
-        formPanel.add(bt_color2);
-        bt_color2.setEnabled(false);
+        formPanel.add(bt_color2);        
 
         bt_color3 = new ARadioButton("BLACK");
         bt_color3.setActionCommand("3");
@@ -304,8 +397,7 @@ public class JAccountWizard extends JWizard
             hairColor = wotlas.common.character.Human.BLACK_HAIR;
           }
         });
-        formPanel.add(bt_color3);
-        bt_color3.setEnabled(false);
+        formPanel.add(bt_color3);        
 
         bt_color4 = new ARadioButton("GREY");
         bt_color4.setActionCommand("4");
@@ -314,8 +406,7 @@ public class JAccountWizard extends JWizard
             hairColor = wotlas.common.character.Human.GREY_HAIR;
           }
         });
-        formPanel.add(bt_color4);
-        bt_color4.setEnabled(false);
+        formPanel.add(bt_color4);        
 
         bt_color5 = new ARadioButton("WHITE");
         bt_color5.setActionCommand("5");
@@ -324,17 +415,26 @@ public class JAccountWizard extends JWizard
             hairColor = wotlas.common.character.Human.WHITE_HAIR;
           }
         });
-        formPanel.add(bt_color5);
-        bt_color5.setEnabled(false);
+        formPanel.add(bt_color5);        
+
+        bt_color6 = new ARadioButton("REDDISH");
+        bt_color6.setActionCommand("6");
+        bt_color6.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            hairColor = wotlas.common.character.Human.REDDISH_HAIR;
+          }
+        });
+        formPanel.add(bt_color6);        
+
 
         btGroup = new ButtonGroup();
-
-        btGroup.add(bt_color0);
+        
         btGroup.add(bt_color1);
         btGroup.add(bt_color2);
         btGroup.add(bt_color3);
         btGroup.add(bt_color4);
         btGroup.add(bt_color5);
+        btGroup.add(bt_color6);
       mainPanel.add(formPanel);
 
       mainPanel.setAlignmentX(LEFT_ALIGNMENT);

@@ -59,7 +59,8 @@ SERVER_PACKAGES = wotlas/server \
 SERVER_PACKAGES2 = wotlas/server/message/movement \
                    wotlas/server/message/chat \
                    wotlas/server/chat \
-                   wotlas/server/router
+                   wotlas/server/router \
+                   wotlas/server/bots
 
 CLIENT_PACKAGES = wotlas/client \
                   wotlas/client/screen \

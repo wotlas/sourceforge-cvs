@@ -158,6 +158,7 @@ public class JChatRoom extends JPanel
     playersListModel = new DefaultListModel();
     
     playersJList = new JList(playersListModel);
+    playersJList.setFixedCellWidth(100);
 
     playersJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     
@@ -166,9 +167,9 @@ public class JChatRoom extends JPanel
             ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
             ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-    playersJList.setPreferredSize(new Dimension(100,0));
-    playersJList.setMinimumSize(new Dimension(100,0));
-    playersJList.setMaximumSize(new Dimension(100,0));
+    //playersJList.setPreferredSize(new Dimension(100,0));
+    //playersJList.setMinimumSize(new Dimension(100,0));
+    //playersJList.setMaximumSize(new Dimension(100,0));
     
     add("Center", displayScroller);
     add("East", listScroller);
@@ -209,7 +210,7 @@ public class JChatRoom extends JPanel
       public void run() {
         if (!strNewName.equals(DataManager.getDefaultDataManager().getMyPlayer().getFullPlayerName()))
           ;//appendText("<font color='green'>" + strNewName + " entered the chat...</font>");
-        playersListModel.addElement(strNewName);
+        playersListModel.addElement(strNewName);       
         revalidate();
         repaint();
       }
@@ -250,6 +251,8 @@ public class JChatRoom extends JPanel
     Runnable runnable = new Runnable() {
       public void run() {
         playersListModel.removeAllElements();
+        revalidate();
+        repaint();
       }
     };
     SwingUtilities.invokeLater( runnable );

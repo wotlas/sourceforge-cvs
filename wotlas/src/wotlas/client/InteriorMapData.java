@@ -74,6 +74,10 @@ public class InteriorMapData implements MapData
   /** tells if the player could be moving to another room
    */
   private boolean couldBeMovingToAnotherRoom = false;
+  
+  /** tells if the player is going to another map
+   */
+  private boolean isNotMovingToAnotherMap = true;
 
   /** current RoomLink considered for intersection
    */
@@ -133,6 +137,9 @@ public class InteriorMapData implements MapData
    * - show the other images (shadows, buildings, towns...)
    */
   public void initDisplay(PlayerImpl myPlayer) {
+    if (DataManager.SHOW_DEBUG)
+      System.out.println("-- initDisplay in InteriorMapData --");
+    
     myPlayer.init();
 
     ImageIdentifier backgroundImageID = null;   // background image identifier
@@ -288,21 +295,19 @@ public class InteriorMapData implements MapData
         }
 
     // - We declare ourselves to other players...
-    if (SEND_NETMESSAGE)
-      dataManager.sendMessage( new EnteringRoomMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation(), myPlayer.getX(), myPlayer.getY()) );
+    dataManager.sendMessage( new EnteringRoomMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation(), myPlayer.getX(), myPlayer.getY()) );
 
     //   - We play music
     String midiFile = imap.getMusicName();
     if (midiFile != null)
       SoundLibrary.getSoundLibrary().playMusic( midiFile );
-
-    if (SHOW_DEBUG)
-      System.out.println("Sending final AllDataLeftMessage");
-
+    
     //   - We retreive other players informations
     if( dataManager.isAlive() ) {
       if (SHOW_DEBUG)
-    	  System.out.println("DATAMANAGER ALLIVE !!!");
+    	  System.out.println("DATAMANAGER ALIVE !!!");
+      if (SHOW_DEBUG)
+        System.out.println("Sending final AllDataLeftMessage");    	  
       dataManager.sendMessage(new AllDataLeftPleaseMessage());
     }
   }
@@ -333,6 +338,9 @@ public class InteriorMapData implements MapData
     // Has the currentLocation changed ?
 
     if ( currentInteriorMapID != myPlayer.getLocation().getInteriorMapID() ) {
+      if (DataManager.SHOW_DEBUG)
+        System.out.println("LOCATION HAS CHANGED in InteriorMapData");
+        
       Debug.signal( Debug.NOTICE, null, "LOCATION HAS CHANGED in InteriorMapData");
 
       dataManager.getPlayers().clear();
@@ -484,10 +492,12 @@ public class InteriorMapData implements MapData
         myPlayer.getMovementComposer().resetMovement();
 
 /* NETMESSAGE */
-        myPlayer.sendMessage( new CanLeaveIntMapMessage( myPlayer.getPrimaryKey(),
+        if (isNotMovingToAnotherMap) {
+          isNotMovingToAnotherMap = false;
+          myPlayer.sendMessage( new CanLeaveIntMapMessage( myPlayer.getPrimaryKey(),
                                         mapExit.getTargetWotlasLocation(),
                                         mapExit.getTargetPosition().x, mapExit.getTargetPosition().y ) );
-
+        }
       }
     } // End of part II
   }

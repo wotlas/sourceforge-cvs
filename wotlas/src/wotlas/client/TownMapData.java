@@ -67,7 +67,11 @@ public class TownMapData implements MapData
 
   /** Our default dataManager
    */
-  DataManager dataManager;
+  private DataManager dataManager;
+  
+  /** tells if the player is going to another map
+   */
+  private boolean isNotMovingToAnotherMap = true;
 
   /** previous location
    */
@@ -98,6 +102,9 @@ public class TownMapData implements MapData
    * - show the other images (shadows, buildings, towns...)
    */
   public void initDisplay(PlayerImpl myPlayer) {
+    if (DataManager.SHOW_DEBUG)
+      System.out.println("-- initDisplay in TownMapData --");
+      
     myPlayer.init();
 
     ImageIdentifier backgroundImageID = null;   // background image identifier
@@ -245,6 +252,9 @@ public class TownMapData implements MapData
 
     if ( (currentTownMapID != myPlayer.getLocation().getTownMapID())
           || (myPlayer.getLocation().getBuildingID()>-1) ) {
+      if (DataManager.SHOW_DEBUG)
+        System.out.println("LOCATION HAS CHANGED in TownMapData");
+        
       Debug.signal( Debug.NOTICE, null, "LOCATION HAS CHANGED in TownMapData");
 
       dataManager.getPlayers().clear();
@@ -274,10 +284,12 @@ public class TownMapData implements MapData
       myPlayer.getMovementComposer().resetMovement();
 
 /* NETMESSAGE */
-      myPlayer.sendMessage( new CanLeaveTownMapMessage(myPlayer.getPrimaryKey(),
+      if (isNotMovingToAnotherMap) {
+        isNotMovingToAnotherMap = false;
+        myPlayer.sendMessage( new CanLeaveTownMapMessage(myPlayer.getPrimaryKey(),
                                   mapExit.getTargetWotlasLocation(),
                                   mapExit.getTargetPosition().x, mapExit.getTargetPosition().y ) );
-
+      }
     }
 
     // II - BUILDING INTERSECTION UPDATE ( is the player entering a building ? )
@@ -324,40 +336,40 @@ public class TownMapData implements MapData
         
         switch( mapExit.getMapExitSide() ) {
           case MapExit.NONE:
-            /*System.out.println("NONE");
-            myPlayer.setX( mapExit.getX() + mapExit.getWidth()/2 );
+            //System.out.println("NONE");
+            /*myPlayer.setX( mapExit.getX() + mapExit.getWidth()/2 );
             myPlayer.setY( mapExit.getY() + mapExit.getHeight()/2 );
             */
             newX = mapExit.getX() + mapExit.getWidth()/2;
             newY = mapExit.getY() + mapExit.getHeight()/2;            
             break;
           case MapExit.NORTH:
-            /*System.out.println("NORTH");
-            myPlayer.setX( mapExit.getX() + mapExit.getWidth()/2 );
+            //System.out.println("NORTH");
+            /*myPlayer.setX( mapExit.getX() + mapExit.getWidth()/2 );
             myPlayer.setY( mapExit.getY() + mapExit.getHeight()/2 );
             */
             newX = mapExit.getX() + mapExit.getWidth()/2;
             newY = mapExit.getY() + mapExit.getHeight()/2;
             break;
           case MapExit.SOUTH:
-            /*System.out.println("SOUTH");
-            myPlayer.setX( mapExit.getX() + mapExit.getWidth()/2 );
+            //System.out.println("SOUTH");
+            /*myPlayer.setX( mapExit.getX() + mapExit.getWidth()/2 );
             myPlayer.setY( mapExit.getY() + mapExit.getHeight()/2 - 10); // top left corner coordinate
             */
             newX = mapExit.getX() + mapExit.getWidth()/2;
             newY = mapExit.getY() + mapExit.getHeight()/2 - 10; // top left corner coordinate            
             break;
           case MapExit.EAST:
-            /*System.out.println("EAST");
-            myPlayer.setX( mapExit.getX() + mapExit.getWidth()/2 - 10 ); // top left corner coordinate
+            //System.out.println("EAST");
+            /*myPlayer.setX( mapExit.getX() + mapExit.getWidth()/2 - 10 ); // top left corner coordinate
             myPlayer.setY( mapExit.getY() + mapExit.getHeight()/2 );
             */
             newX = mapExit.getX() + mapExit.getWidth()/2 - 10; // top left corner coordinate
             newY = mapExit.getY() + mapExit.getHeight()/2;            
             break;
           case MapExit.WEST:
-            /*System.out.println("WEST");
-            myPlayer.setX( mapExit.getX() + mapExit.getWidth()/2 );
+            //System.out.println("WEST");
+            /*myPlayer.setX( mapExit.getX() + mapExit.getWidth()/2 );
             myPlayer.setY( mapExit.getY() + mapExit.getHeight()/2 );
             */
             newX = mapExit.getX() + mapExit.getWidth()/2;
@@ -375,8 +387,11 @@ public class TownMapData implements MapData
 /* NETMESSAGE */
       /*myPlayer.sendMessage( new CanLeaveTownMapMessage(myPlayer.getPrimaryKey(),
                               myPlayer.getLocation(), myPlayer.getX(), myPlayer.getY()) );*/
-      myPlayer.sendMessage( new CanLeaveTownMapMessage(myPlayer.getPrimaryKey(),
+      if (isNotMovingToAnotherMap) {
+        isNotMovingToAnotherMap = false;
+        myPlayer.sendMessage( new CanLeaveTownMapMessage(myPlayer.getPrimaryKey(),
                               mapExit.getMapExitLocation(), newX, newY) );
+      }
     }
   }
 

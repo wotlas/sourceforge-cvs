@@ -69,6 +69,10 @@ public class WorldMapData implements MapData
    */
   private DataManager dataManager;
 
+  /** tells if the player is going to another map
+   */
+  private boolean isNotMovingToAnotherMap = true;
+  
   /** previous location
    */
   //private String previousLocation = "";
@@ -257,19 +261,18 @@ public class WorldMapData implements MapData
       if (SHOW_DEBUG)
         System.out.println("We are entering a town...");
 
-      if (SHOW_DEBUG)
-        System.out.println("Removing player from the map...");
-
       myPlayer.getMovementComposer().resetMovement();
 
       MapExit mapExit = townMap.findTownMapExit( myPlayer.getCurrentRectangle() );
 
 /* NETMESSAGE */
-      myPlayer.sendMessage( new CanLeaveWorldMapMessage(myPlayer.getPrimaryKey(),
+      if (isNotMovingToAnotherMap) {
+        isNotMovingToAnotherMap = false;
+        myPlayer.sendMessage( new CanLeaveWorldMapMessage(myPlayer.getPrimaryKey(),
                                   mapExit.getMapExitLocation(),
                                   mapExit.getX() + mapExit.getWidth()/2,
                                   mapExit.getY() + mapExit.getHeight()/2 ) );
-                                  
+      }                                  
     }
   }
 

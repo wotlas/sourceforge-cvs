@@ -68,12 +68,17 @@ abstract public class NetServer extends Thread
    */
      private boolean server_lock;
 
+  /** Maximum number of opened sockets
+   */
+     private short max_opened_sockets;
 
  /*------------------------------------------------------------------------------------*/
 
      /**  Constructs a NetServer but does not starts it. Call the start()
       *   method to start the server. You have to give the name of the packages
       *   where we'll be able to find the NetMessageBehaviour classes.
+      *
+      *   By default we accept a maximum of 200 opened socket connections.
       *
       *  @param server_port port on which the server listens to clients.
       *  @param msg_packages a list of packages where we can find NetMsgBehaviour Classes.
@@ -83,6 +88,9 @@ abstract public class NetServer extends Thread
               super("Server");
               stop_server = false;
               server_lock = false;
+
+           // default maximum number of opened sockets
+              max_opened_sockets = 200;
 
            // we create a message factory
               NetMessageFactory.createMessageFactory( msg_packages );
@@ -212,7 +220,12 @@ abstract public class NetServer extends Thread
                      personality = getNewDefaultPersonality( client_socket );
 
                   // we inspect our server state... do we really accept him ?
-                     if(server_lock) {
+                     if( NetThread.getOpenedSocketNumber() >= max_opened_sockets ) {
+                       // we have reached the server's connections limit
+                          refuseClient( personality, "Server has reached its maximum number of connections for the moment." );
+                          Debug.signal(Debug.NOTICE,this,"Server has reached its max number of connections");
+                     }
+                     else if(server_lock) {
                        // we don't accept new connections for the moment
                           refuseClient( personality, "Server does not accept connections for the moment." );
                           Debug.signal(Debug.NOTICE,this,"Server Locked - just refused incoming connection");
@@ -273,6 +286,17 @@ abstract public class NetServer extends Thread
       }  
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To change the maximum number of opened sockets.
+    *
+    *  @param max_opened_sockets maximum number of opened sockets
+    */
+      protected void setMaximumOpenedSockets( short max_opened_sockets ) {
+          this.max_opened_sockets = max_opened_sockets;
+      }
+  
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }
 
 

@@ -161,7 +161,7 @@ public class WorldMap
    * @return false if the player already exists on this WorldMap, true otherwise
    */
     public boolean addPlayer( Player player ) {
-       if( players.contains( player.getPrimaryKey() ) ) {
+       if( players.containsKey( player.getPrimaryKey() ) ) {
            Debug.signal( Debug.CRITICAL, this, "addPlayer failed: key "+player.getPrimaryKey()
                          +" already in "+this );
            return false;
@@ -180,7 +180,7 @@ public class WorldMap
    * @return false if the player doesn't exists on this WorldMap, true otherwise
    */
     public boolean removePlayer( Player player ) {
-       if( !players.contains( player.getPrimaryKey() ) ) {
+       if( !players.containsKey( player.getPrimaryKey() ) ) {
            Debug.signal( Debug.CRITICAL, this, "removePlayer failed: key "+player.getPrimaryKey()
                          +" not found in "+this );
            return false;

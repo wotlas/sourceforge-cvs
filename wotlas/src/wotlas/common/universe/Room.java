@@ -299,7 +299,7 @@ public class Room
    * @return false if the player already exists on this RoomMap, true otherwise
    */
     public boolean addPlayer( Player player ) {
-       if( players.contains( player.getPrimaryKey() ) ) {
+       if( players.containsKey( player.getPrimaryKey() ) ) {
            Debug.signal( Debug.CRITICAL, this, "addPlayer failed: key "+player.getPrimaryKey()
                          +" already in "+this );
            return false;

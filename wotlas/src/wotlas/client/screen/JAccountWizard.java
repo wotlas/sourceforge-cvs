@@ -27,16 +27,18 @@ import wotlas.common.message.description.*;
 
 import wotlas.libs.net.NetPersonality;
 
-import javax.swing.JRadioButton;
-import javax.swing.*;
+import wotlas.utils.*;
 
 import java.awt.*;
 import java.awt.event.*;
+
+import javax.swing.*;
 
 /** A wizard to create an account
  *
  * @author Petrus
  * @see wotlas.client.gui.JWizard
+ * @see wotlas.client.gui.JWizardStep
  */
 public class JAccountWizard extends JWizard
 {
@@ -93,8 +95,8 @@ public class JAccountWizard extends JWizard
    */
   class Step1 extends JWizardStep
   {
-    private JLabel lbl_infos;
-    private JRadioButton bt_char1, bt_char2;
+    private ALabel lbl_infos;
+    private ARadioButton bt_char1, bt_char2;
     private ButtonGroup btGroup;
     private JPanel mainPanel, formPanel;
 
@@ -117,28 +119,32 @@ public class JAccountWizard extends JWizard
     public Step1()
     {
       super("Character");
+      setBackground(Color.white);
+
       setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-      lbl_infos = new JLabel("Please, choose your chracter:");
+      lbl_infos = new ALabel("Please, choose your character:");
       lbl_infos.setAlignmentX(LEFT_ALIGNMENT);
       add(lbl_infos);
 
       mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+      mainPanel.setBackground(Color.white);
 
       formPanel = new JPanel(new GridLayout(2,1,10,2));
-        bt_char1 = new JRadioButton("Aes Sedai");
+      formPanel.setBackground(Color.white);
+        bt_char1 = new ARadioButton("Aes Sedai");
         bt_char1.setActionCommand("wotlas.common.character.AesSedai");
         bt_char1.setSelected(true);
 
         formPanel.add(bt_char1);
-        bt_char2 = new JRadioButton("GIJoe");
-        bt_char2.setActionCommand("GieJoe");
+        bt_char2 = new ARadioButton("GIJoe");
+        bt_char2.setActionCommand("GiJoe");
         bt_char2.setEnabled(false);
         formPanel.add(bt_char2);
         // Group the radio buttons.
         btGroup = new ButtonGroup();
         btGroup.add(bt_char1);
-        btGroup.add(bt_char1);        
+        btGroup.add(bt_char1);
       mainPanel.add(formPanel);
 
       mainPanel.setAlignmentX(LEFT_ALIGNMENT);
@@ -155,9 +161,9 @@ public class JAccountWizard extends JWizard
    */
   class Step3 extends JWizardStep
   {
-    private JLabel lbl_infos;
-    private JLabel lbl_nickname, lbl_fullname, lbl_email;
-    private JTextField tf_nickname, tf_fullname, tf_email;
+    private ALabel lbl_infos;
+    private ALabel lbl_nickname, lbl_fullname, lbl_email;
+    private ATextField tf_nickname, tf_fullname, tf_email;
     private JPanel mainPanel, formPanel;
 
     /** called when the step is to be shown
@@ -166,7 +172,7 @@ public class JAccountWizard extends JWizard
 
     /** called when Next button is clicked
      */
-    public void onNext(Object context) {      
+    public void onNext(Object context) {
       personality.queueMessage( new PlayerNamesMessage(tf_nickname.getText(), tf_fullname.getText()));
     }
 
@@ -179,27 +185,29 @@ public class JAccountWizard extends JWizard
     public Step3()
     {
       super("Informations (last step)");
+      setBackground(Color.white);
 
       setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-      lbl_infos = new JLabel("Complete these fields:");
+      lbl_infos = new ALabel("Complete these fields:");
       lbl_infos.setAlignmentX(LEFT_ALIGNMENT);
       add(lbl_infos);
 
       mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
+      mainPanel.setBackground(Color.white);
       formPanel = new JPanel(new GridLayout(3,2,10,2));
-        lbl_nickname = new JLabel("Nickname: ");
+      formPanel.setBackground(Color.white);
+        lbl_nickname = new ALabel("Nickname: ");
         formPanel.add(lbl_nickname);
-        tf_nickname = new JTextField(10);
+        tf_nickname = new ATextField(10);
         formPanel.add(tf_nickname);
-        lbl_fullname = new JLabel("Full name: ");
+        lbl_fullname = new ALabel("Full name: ");
         formPanel.add(lbl_fullname);
-        tf_fullname = new JTextField(10);
+        tf_fullname = new ATextField(10);
         formPanel.add(tf_fullname);
-        lbl_email = new JLabel("Email: ");
+        lbl_email = new ALabel("Email: ");
         formPanel.add(lbl_email);
-        tf_email = new JTextField(10);
+        tf_email = new ATextField(10);
         formPanel.add(tf_email);
 
       mainPanel.add(formPanel);
@@ -218,8 +226,8 @@ public class JAccountWizard extends JWizard
    */
   class Step2 extends JWizardStep
   {
-    private JLabel lbl_infos;
-    private JRadioButton bt_color0, bt_color1, bt_color2, bt_color3, bt_color4, bt_color5;
+    private ALabel lbl_infos;
+    private ARadioButton bt_color0, bt_color1, bt_color2, bt_color3, bt_color4, bt_color5;
     private ButtonGroup btGroup;
     private ActionListener myListener;
     private JPanel mainPanel, formPanel;
@@ -231,7 +239,7 @@ public class JAccountWizard extends JWizard
 
     /** called when Next button is clicked
      */
-    public void onNext(Object context) {      
+    public void onNext(Object context) {
       personality.queueMessage( new VisualPropertiesMessage(hairColor) );
     }
 
@@ -244,19 +252,21 @@ public class JAccountWizard extends JWizard
     public Step2()
     {
       super("Description");
+      setBackground(Color.white);
 
       hairColor = wotlas.common.character.Human.GOLDEN_HAIR;
 
       setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-      lbl_infos = new JLabel("Choose your hair color:");
+      lbl_infos = new ALabel("Choose your hair color:");
       lbl_infos.setAlignmentX(LEFT_ALIGNMENT);
       add(lbl_infos);
 
       mainPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
+      mainPanel.setBackground(Color.white);
       formPanel = new JPanel(new GridLayout(6,1,10,2));
-        bt_color0 = new JRadioButton("BALD");
+      formPanel.setBackground(Color.white);
+        bt_color0 = new ARadioButton("BALD");
         bt_color0.setActionCommand("0");
         bt_color0.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
@@ -266,7 +276,7 @@ public class JAccountWizard extends JWizard
         formPanel.add(bt_color0);
         bt_color0.setEnabled(false);
 
-        bt_color1 = new JRadioButton("GOLDEN");
+        bt_color1 = new ARadioButton("GOLDEN");
         bt_color1.setActionCommand("1");
         bt_color1.setSelected(true);
         bt_color1.addActionListener(new ActionListener() {
@@ -277,7 +287,7 @@ public class JAccountWizard extends JWizard
         formPanel.add(bt_color1);
         bt_color1.setSelected(true);
 
-        bt_color2 = new JRadioButton("BROWN");
+        bt_color2 = new ARadioButton("BROWN");
         bt_color2.setActionCommand("2");
         bt_color2.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
@@ -287,7 +297,7 @@ public class JAccountWizard extends JWizard
         formPanel.add(bt_color2);
         bt_color2.setEnabled(false);
 
-        bt_color3 = new JRadioButton("BLACK");
+        bt_color3 = new ARadioButton("BLACK");
         bt_color3.setActionCommand("3");
         bt_color3.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
@@ -297,7 +307,7 @@ public class JAccountWizard extends JWizard
         formPanel.add(bt_color3);
         bt_color3.setEnabled(false);
 
-        bt_color4 = new JRadioButton("GREY");
+        bt_color4 = new ARadioButton("GREY");
         bt_color4.setActionCommand("4");
         bt_color4.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
@@ -307,7 +317,7 @@ public class JAccountWizard extends JWizard
         formPanel.add(bt_color4);
         bt_color4.setEnabled(false);
 
-        bt_color5 = new JRadioButton("WHITE");
+        bt_color5 = new ARadioButton("WHITE");
         bt_color5.setActionCommand("5");
         bt_color5.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {

@@ -20,17 +20,20 @@
 package wotlas.client.gui;
 
 import wotlas.libs.net.*;
+import wotlas.utils.ALabel;
 import wotlas.utils.Debug;
+import wotlas.utils.SwingTools;
 import wotlas.utils.Tools;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+import javax.swing.ImageIcon;
+import javax.swing.*;
 
 /** A small utility to connect to a server using a JDialog.
  *
- * @author Aldiss
+ * @author Aldiss, Petrus
  * @see wotlas.libs.net.NetClient
  */
 
@@ -38,8 +41,8 @@ public abstract class JConnectionDialog extends JDialog implements Runnable
 {
  /*------------------------------------------------------------------------------------*/
 
-    private JLabel l_info;    // information label
-    private JButton b_cancel; // cacel button
+    private ALabel l_info;    // information label
+    private JButton b_cancel; // cancel button
 
     private boolean hasSucceeded; // has connection succeeded ?
     private NetPersonality personality;
@@ -68,26 +71,37 @@ public abstract class JConnectionDialog extends JDialog implements Runnable
 
       // some inits
          this.frame = frame;
-         this.server =server;
+         this.server = server;
          this.port = port;
          this.key = key;
          this.context = context;
 
          hasSucceeded = false;
          getContentPane().setLayout( new BorderLayout() );
-
+         getContentPane().setBackground(Color.white);
+         
       // Top Label
-         JLabel label1 = new JLabel("Trying to connect to "+server+":"+port+", please wait...",
+         ALabel label1 = new ALabel("Trying to connect to "+server+":"+port+", please wait...",
                                     SwingConstants.CENTER );
          getContentPane().add( label1, BorderLayout.NORTH );
 
       // Center label
-         l_info = new JLabel("Initializing Network Connection...",SwingConstants.CENTER);
+         l_info = new ALabel("Initializing Network Connection...", SwingConstants.CENTER);
          l_info.setPreferredSize( new Dimension( 200, 100 ) );
          getContentPane().add( l_info, BorderLayout.CENTER );
 
       // Cancel Button
-         b_cancel = new JButton("Cancel Server Connection");
+         ImageIcon im_cancelup = new ImageIcon("..\\base\\gui\\cancel-up.gif");
+         ImageIcon im_canceldo = new ImageIcon("..\\base\\gui\\cancel-do.gif");
+         ImageIcon im_cancelun = new ImageIcon("..\\base\\gui\\cancel-un.gif");
+         b_cancel = new JButton(im_cancelup);
+         b_cancel.setRolloverIcon(im_canceldo);
+         b_cancel.setPressedIcon(im_canceldo);
+         b_cancel.setDisabledIcon(im_cancelun);
+         b_cancel.setBorderPainted(false);
+         b_cancel.setContentAreaFilled(false);
+         b_cancel.setFocusPainted(false);
+         //b_cancel = new JButton("Cancel Server Connection");
          getContentPane().add(b_cancel, BorderLayout.SOUTH );
 
           b_cancel.addActionListener(new ActionListener()
@@ -102,6 +116,7 @@ public abstract class JConnectionDialog extends JDialog implements Runnable
          pack();
 
          new Thread( this ).start();
+         SwingTools.centerComponent(this);
          show();
 
    }

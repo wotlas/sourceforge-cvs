@@ -165,18 +165,25 @@ public class JIntroWizard extends JFrame
     
     UIManager.put("Label.font", f.deriveFont(18f));
     UIManager.put("Label.foreground", Color.black);
-            
-    UIManager.put("TextField.font", f.deriveFont(18f));
-    UIManager.put("TextField.foreground", Color.black);
     
-    UIManager.put("TextArea.font", f.deriveFont(16f));
-    UIManager.put("TextArea.foreground", Color.black);
-        
+    UIManager.put("PasswordField.font", f.deriveFont(16f));
+    UIManager.put("PasswordField.foreground", Color.black);
+    
+    UIManager.put("RadioButton.font", f.deriveFont(16f));
+    UIManager.put("RadioButton.foreground", Color.black);
+            
+    UIManager.put("Table.font", f.deriveFont(16f));
+    UIManager.put("Table.foreground", Color.black);    
+    
     UIManager.put("TableHeader.font", f.deriveFont(18f));
     UIManager.put("TableHeader.foreground", Color.black);
     
-    UIManager.put("Table.font", f.deriveFont(16f));
-    UIManager.put("Table.foreground", Color.black);    
+    UIManager.put("TextArea.font", f.deriveFont(16f));
+    UIManager.put("TextArea.foreground", Color.black);
+    
+    UIManager.put("TextField.font", f.deriveFont(18f));
+    UIManager.put("TextField.foreground", Color.black);    
+   
   }
   
  /*--------------------------------------------------------------------------*/

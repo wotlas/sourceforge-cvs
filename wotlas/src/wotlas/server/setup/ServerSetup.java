@@ -21,6 +21,7 @@ package wotlas.server.setup;
 
 import wotlas.server.ServerConfig;
 import wotlas.server.PersistenceManager;
+import wotlas.utils.Debug;
 
 import javax.swing.*;
 import java.awt.*;
@@ -161,7 +162,37 @@ public class ServerSetup extends JFrame
                    config.setLocation( t_location.getText() );
                    config.setAdminEmail( t_adminEmail.getText() );
 
-                   pm.saveServerConfig(config);
+
+                   try{
+                      int val1 = Integer.parseInt( t_serverID.getText() );
+                      int val2 = Integer.parseInt( t_accountServerPort.getText() );
+                      int val3 = Integer.parseInt( t_gameServerPort.getText() );
+                      int val4 = Integer.parseInt( t_gatewayServerPort.getText() );
+                      int val5 = Integer.parseInt( t_maxNumberOfGameConnections.getText() );
+                      int val6 = Integer.parseInt( t_maxNumberOfAccountConnections.getText() );
+                      int val7 = Integer.parseInt( t_maxNumberOfGatewayConnections.getText() );
+                   
+                      config.setServerID( val1 );
+                      config.setAccountServerPort( val2 );
+                      config.setGameServerPort( val3 );
+                      config.setGatewayServerPort( val4 );
+                      config.setMaxNumberOfGameConnections( val5 );
+                      config.setMaxNumberOfAccountConnections( val6 );
+                      config.setMaxNumberOfGatewayConnections( val7 );
+                   }
+                   catch(Exception ee) {
+                       Debug.signal( Debug.ERROR, this, ""+ee );
+                       JOptionPane.showMessageDialog( ServerSetup.this, "Failed to save : bad number format !",
+                                                      "Error", JOptionPane.ERROR_MESSAGE);
+                       return;
+                   }
+
+                   if( !pm.saveServerConfig(config) )
+                       JOptionPane.showMessageDialog( ServerSetup.this, "Failed to save : server.cfg file not found",
+                                                      "Error", JOptionPane.ERROR_MESSAGE);
+                   else
+                       JOptionPane.showMessageDialog( ServerSetup.this, "Config saved: "+config.toString(),
+                                                      "Success", JOptionPane.INFORMATION_MESSAGE);
               }
            });
 

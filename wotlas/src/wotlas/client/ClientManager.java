@@ -85,9 +85,9 @@ public class ClientManager
   private int indexScreen;
 
   /** Path to the local server database.
-   */   
+   */
   private String databasePath;
-  
+
   /** pictures of buttons
    */
   private ImageIcon im_okup, im_okdo, im_okun;
@@ -106,13 +106,13 @@ public class ClientManager
    */
   private ClientManager(String databasePath) {
     this.databasePath = databasePath;
-    
+
     PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
 
     // 1 - We load the ProfileConfigList
     profileConfigList = pm.loadProfileConfigs();
     if (profileConfigList == null) {
-      Debug.signal( Debug.NOTICE, this, "no client's profile found : creating a new one..." );      
+      Debug.signal( Debug.NOTICE, this, "no client's profile found : creating a new one..." );
     } else {
       Debug.signal( Debug.NOTICE, null, "Client Configs loaded with success !" );
     }
@@ -127,10 +127,10 @@ public class ClientManager
     }
 
     // 3 - We create the wizard to connect Wotlas
-    screenIntro = new JIntroWizard();    
-    screenIntro.setGUI();    
-    f = SwingTools.loadFont("../base/fonts/Lblack.ttf");        
-    
+    screenIntro = new JIntroWizard();
+    screenIntro.setGUI();
+    f = SwingTools.loadFont("../base/fonts/Lblack.ttf");
+
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -196,7 +196,7 @@ public class ClientManager
 
     final JTable profilesTable;
     final JTable serversTable ;
-    
+
     indexScreen = state;
 
     switch(state)
@@ -208,7 +208,7 @@ public class ClientManager
 
       case 0:
       screenIntro.setTitle("Wotlas - Account selection...");
-         
+
       // Load images of buttons
       im_cancelup = new ImageIcon("..\\base\\gui\\cancel-up.gif");
       im_canceldo = new ImageIcon("..\\base\\gui\\cancel-do.gif");
@@ -231,7 +231,7 @@ public class ClientManager
         start(10);
         return;
       }
-      
+
       // Create panels
       leftPanel = new JPanel();
       leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
@@ -294,17 +294,18 @@ public class ClientManager
       // Creates a table of profiles
       // data
       ProfileConfigListTableModel profileConfigListTabModel = new ProfileConfigListTableModel(profileConfigList, serverConfigList);
-      profilesTable = new JTable(profileConfigListTabModel) {
-        public String getToolTipText(MouseEvent event) {   
+      /*profilesTable = new JTable(profileConfigListTabModel) {
+        public String getToolTipText(MouseEvent event) {
           if (getSelectedRow() > -1) {
-            currentServerConfig = serverConfigList.ServerConfigAt(getSelectedRow());            
+            currentServerConfig = serverConfigList.ServerConfigAt(getSelectedRow());
             String str = currentServerConfig.getServerName() + " : " + currentServerConfig.getDescription() + " .";
             return str;
           } else {
             return null;
           }
-        }         
-      };      
+        }
+      };*/
+      profilesTable = new JTable(profileConfigListTabModel);
       profilesTable.setDefaultRenderer(Object.class, new ATableCellRenderer());
       profilesTable.setBackground(Color.white);
       profilesTable.setForeground(Color.black);
@@ -313,7 +314,7 @@ public class ClientManager
       profilesTable.setRowHeight(24);
       // selection
       profilesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-      ListSelectionModel rowProfilesSM = profilesTable.getSelectionModel();      
+      ListSelectionModel rowProfilesSM = profilesTable.getSelectionModel();
       rowProfilesSM.addListSelectionListener(new ListSelectionListener()
       {
         public void valueChanged(ListSelectionEvent e)
@@ -323,8 +324,8 @@ public class ClientManager
           ListSelectionModel lsm = (ListSelectionModel) e.getSource();
           if (lsm.isSelectionEmpty()) {
             //no rows are selected
-          } else {                        
-            int selectedRow = lsm.getMinSelectionIndex();            
+          } else {
+            int selectedRow = lsm.getMinSelectionIndex();
             //selectedRow is selected
             //currentServerConfig = serverConfigList.ServerConfigAt(selectedRow);
             //profilesTable.setToolTipText(currentServerConfig.getDescription());
@@ -338,7 +339,7 @@ public class ClientManager
       scrollPane = new JScrollPane(profilesTable);
       profilesTable.setPreferredScrollableViewportSize(new Dimension(0, 100));
       scrollPane.getViewport().setBackground(Color.white);
-      JScrollBar jsb_01 = scrollPane.getVerticalScrollBar();      
+      JScrollBar jsb_01 = scrollPane.getVerticalScrollBar();
       leftPanel.add(scrollPane);
 
       // *** Right Panel ***
@@ -516,7 +517,7 @@ public class ClientManager
       imgLabel1 = new JLabel(new ImageIcon("..\\base\\gui\\complete-info.gif"));
       imgLabel1.setAlignmentX(Component.CENTER_ALIGNMENT);
       leftPanel.add(imgLabel1);
-      
+
       leftPanel.add(Box.createRigidArea(new Dimension(0,10)));
 
       JPanel mainPanel_10 = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -539,7 +540,7 @@ public class ClientManager
       leftPanel.add(mainPanel_10);
 
       leftPanel.add(Box.createRigidArea(new Dimension(0,10)));
-      
+
       imgLabel2 = new JLabel(new ImageIcon("..\\base\\gui\\choose-server.gif"));
       imgLabel2.setAlignmentX(Component.CENTER_ALIGNMENT);
       leftPanel.add(imgLabel2);
@@ -560,15 +561,15 @@ public class ClientManager
       rowServerSM.addListSelectionListener(new ListSelectionListener()
       {
         public void valueChanged(ListSelectionEvent e)
-        {          
+        {
           //Ignore extra messages.
-          if (e.getValueIsAdjusting()) return;          
+          if (e.getValueIsAdjusting()) return;
           ListSelectionModel lsm = (ListSelectionModel) e.getSource();
           if (lsm.isSelectionEmpty()) {
             //no rows are selected
-          } else {            
-            int selectedRow = lsm.getMinSelectionIndex();               
-            //selectedRow is selected            
+          } else {
+            int selectedRow = lsm.getMinSelectionIndex();
+            //selectedRow is selected
             currentServerConfig = serverConfigList.ServerConfigAt(selectedRow);
             //serversTable.setToolTipText(currentServerConfig.getDescription());
             currentProfileConfig.setOriginalServerID(currentServerConfig.getServerID());
@@ -577,22 +578,22 @@ public class ClientManager
           }
         }
       });
-      // show table      
+      // show table
       scrollPane = new JScrollPane(serversTable);
       serversTable.setPreferredScrollableViewportSize(new Dimension(0, 100));
-      scrollPane.getViewport().setBackground(Color.white);      
+      scrollPane.getViewport().setBackground(Color.white);
       leftPanel.add(scrollPane);
 
       // *** Right Panel ***
 
       b_ok.setEnabled(false);
       b_ok.addActionListener(new ActionListener() {
-        public void actionPerformed (ActionEvent e) {          
+        public void actionPerformed (ActionEvent e) {
           char charPasswd[] = pfield1.getPassword();
           String passwd = "";
           if (charPasswd.length < 6) {
             JOptionPane.showMessageDialog( screenIntro, "Password mut have at least 5 characters !", "New Password", JOptionPane.ERROR_MESSAGE);
-            
+
           } else {
             b_ok.setEnabled(false);
             for (int i=0; i<charPasswd.length; i++) {
@@ -607,9 +608,14 @@ public class ClientManager
             DataManager dataManager = DataManager.getDefaultDataManager();
             dataManager.setCurrentProfileConfig(currentProfileConfig);
 
+            screenIntro.hide();
+            
             JAccountConnectionDialog jaconnect = new JAccountConnectionDialog( screenIntro,
                        currentServerConfig.getServerName(), currentServerConfig.getAccountServerPort(),
                        dataManager);
+
+
+
 
             if ( jaconnect.hasSucceeded() ) {
               Debug.signal( Debug.NOTICE, null, "ClientManager connected to AccountServer");
@@ -648,8 +654,8 @@ public class ClientManager
     // **************************************
 
     case 11:
-      screenIntro.setTitle("Wotlas - Account creation...");
-
+      screenIntro.setTitle("Wotlas - Account creation...");      
+      
       // Save accounts informations
       profileConfigList.addProfile(currentProfileConfig);
       PersistenceManager.getDefaultPersistenceManager().saveProfilesConfig(profileConfigList);
@@ -667,7 +673,7 @@ public class ClientManager
       b_ok.setBorderPainted(false);
       b_ok.setContentAreaFilled(false);
       b_ok.setFocusPainted(false);
-      
+
       b_cancel = new JButton(im_cancelup);
       b_cancel.setRolloverIcon(im_canceldo);
       b_cancel.setPressedIcon(im_canceldo);
@@ -675,17 +681,17 @@ public class ClientManager
       b_cancel.setBorderPainted(false);
       b_cancel.setContentAreaFilled(false);
       b_cancel.setFocusPainted(false);
-      
-      // *** Left Panel ***/            
+
+      // *** Left Panel ***/
       label1 = new ALabel("<html>Your new account has been"
                             + "<br>successfully created!<br>"
                             + "Remember your key to access<br>"
                             + "wotlas from anywhere : " + currentProfileConfig.getKey()
-                            + "</center><br>Click OK to enter WOTLAS....</html>");        
+                            + "</center><br>Click OK to enter WOTLAS....</html>");
       leftPanel.add(label1, BorderLayout.CENTER);
-      
-      // *** Right Panel ***/      
-      
+
+      // *** Right Panel ***/
+
       b_ok.addActionListener(new ActionListener() {
         public void actionPerformed (ActionEvent e) {
             JGameConnectionDialog jgconnect = new JGameConnectionDialog( screenIntro,
@@ -704,7 +710,7 @@ public class ClientManager
         }
       );
       rightPanel.add(b_ok);
-      
+
       b_cancel.addActionListener(new ActionListener() {
           public void actionPerformed (ActionEvent e) {
             start(0);

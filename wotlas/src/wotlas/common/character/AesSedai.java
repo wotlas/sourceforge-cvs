@@ -261,6 +261,10 @@ public class AesSedai extends Female {
          aesSedaiAuraEffect = new AuraEffect( aesSedaiSprite.getDataSupplier(), auraImage,
                                               ImageLibRef.AURA_PRIORITY, false, 5000 );
          aesSedaiAuraEffect.useAntialiasing(true);
+
+         if(aesSedaiStatus==AES_NOVICE)
+            aesSedaiAuraEffect.setAmplitudeLimit( 0.6f );
+
          return aesSedaiAuraEffect;
      }
 

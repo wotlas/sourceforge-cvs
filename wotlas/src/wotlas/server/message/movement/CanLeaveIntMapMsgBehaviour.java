@@ -130,7 +130,8 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
                              player.setX( x );
                              player.setY( y );
                              player.setOrientation( orientation );
-                             player.getLieManager().forgive();
+                             player.getLieManager().removeMeet(LieManager.FORGET_INTERIORMAP);
+                             player.getLieManager().forget(LieManager.MEET_CHANGEINTERIORMAP);
 
                              //player.sendMessage( new WarningMessage("Please Wait. There is admittance control to enter this place.") );
 
@@ -148,7 +149,7 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
                                     player.setLocation( oldLocation );
                                     player.setX( oldX );
                                     player.setY( oldY );
-                                    player.setOrientation( oldOrientation );
+                                    player.setOrientation( oldOrientation );                                    
 
                                     synchronized( players ) {
                                        players.put( primaryKey, player ); // we re-add our player
@@ -202,6 +203,8 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
                    player.setX( x );
                    player.setY( y );
                    player.setOrientation( orientation );
+                   player.getLieManager().removeMeet(LieManager.FORGET_INTERIORMAP);
+                   player.getLieManager().forget(LieManager.MEET_CHANGEINTERIORMAP);
 
                    synchronized( players ) {
                        players.put( primaryKey, player );

@@ -126,7 +126,7 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
                  player.setX( x );
                  player.setY( y );
                  player.setOrientation( orientation );
-                 player.getLieManager().forgive();
+                 player.getLieManager().forget(LieManager.MEET_CHANGETOWNMAP);
 
                  synchronized( players ) {
                      players.put( primaryKey, player );
@@ -181,6 +181,7 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
                         player.setX( x );
                         player.setY( y );
                         player.setOrientation( orientation );
+                        player.getLieManager().forget(LieManager.MEET_CHANGETOWNMAP);
 
                         //player.sendMessage( new WarningMessage("Please Wait. There is admittance control to enter this place.") );
 
@@ -233,6 +234,7 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
                    player.setX( x );
                    player.setY( y );
                    player.setOrientation( orientation );
+                   player.getLieManager().forget(LieManager.MEET_CHANGETOWNMAP);
 
                    synchronized( players ) {
                       players.put( primaryKey, player );

@@ -48,13 +48,15 @@ public abstract class JWizardStep extends JPanel
    */
   public abstract void onShow(Object context);
   
-  /** called when Next button is clicked
+  /** called when Next button is clicked. Return true to validate the next action
+   *  false to cancel it...
    */
-  public abstract void onNext(Object context);
+  public abstract boolean onNext(Object context);
   
-  /** called when Previous button is clicked
+  /** called when Previous button is clicked. Return true to validate the next action
+   *  false to cancel it...
    */
-  public abstract void onPrevious(Object context);
+  public abstract boolean onPrevious(Object context);
 
  /*------------------------------------------------------------------------------------*/
 

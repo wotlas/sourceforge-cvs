@@ -171,6 +171,10 @@ public abstract class JWizard extends JFrame
       {
         public void actionPerformed(ActionEvent e) {
           JWizardStep step = (JWizardStep)vPanels.elementAt(currentIndex);
+
+          if( !step.onPrevious(getContext()) )
+              return;
+
           currentIndex--;
         // we restore the images of the next button
           b_next.setIcon(im_nextup);
@@ -178,7 +182,6 @@ public abstract class JWizard extends JFrame
           b_next.setPressedIcon(im_nextdo);
           b_next.setDisabledIcon(im_nextun);
 
-          step.onPrevious(getContext());
           mainPanel.remove(step);
           showStep(currentIndex);
         }
@@ -199,9 +202,12 @@ public abstract class JWizard extends JFrame
       new ActionListener()
       {
         public void actionPerformed(ActionEvent e) {
-          if (currentIndex == (vPanels.size()-1)) {
-            JWizardStep step = (JWizardStep)vPanels.elementAt(currentIndex);
-            step.onNext(getContext());
+          JWizardStep step = (JWizardStep)vPanels.elementAt(currentIndex);
+
+            if( !step.onNext(getContext()) )
+                return;
+
+          if (currentIndex == (vPanels.size()-1)) { 
             //b_next.setEnabled(false);
             setVisible(false);
             mainPanel.removeAll();
@@ -209,7 +215,6 @@ public abstract class JWizard extends JFrame
             // End of Wizard
             onFinished(getContext());
           } else {
-            JWizardStep step = (JWizardStep)vPanels.elementAt(currentIndex);
             currentIndex++;
             if (currentIndex == (vPanels.size()-1)) {
               //b_next.setText("Finish");
@@ -220,7 +225,6 @@ public abstract class JWizard extends JFrame
             }
 
             //b_previous.setEnabled(true);
-            step.onNext(getContext());
             mainPanel.remove(step);
             showStep(currentIndex);
           }

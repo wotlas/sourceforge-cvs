@@ -32,7 +32,7 @@ import wotlas.common.universe.*;
 import wotlas.libs.graphics2D.Animation;
 import wotlas.libs.graphics2D.ImageLibrary;
 import wotlas.libs.graphics2D.*;
-import wotlas.libs.graphics2D.drawable.ShadowSprite;
+//import wotlas.libs.graphics2D.drawable.ShadowSprite;
 import wotlas.libs.graphics2D.drawable.Sprite;
 import wotlas.libs.graphics2D.drawable.*;
 
@@ -98,7 +98,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
 
   /** Our shadow.
    */
-  private ShadowSprite shadow;
+  //private ShadowSprite shadow;
   
   // Test : sens of trajectory
   private boolean reverse = false;
@@ -154,8 +154,8 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
 
     animation = new Animation(wotCharacter.getImage());
     sprite = (Sprite) wotCharacter.getDrawable(this);
-    shadow = new ShadowSprite(this, new ImageIdentifier((short)0, (short) 3, (short) 0), ImageLibRef.SHADOW_PRIORITY, 3, 3);        
-    gDirector.addDrawable(shadow);
+    //shadow = new ShadowSprite(this, new ImageIdentifier((short)0, (short) 3, (short) 0), ImageLibRef.SHADOW_PRIORITY, 3, 3);        
+    //gDirector.addDrawable(shadow);
     endPosition = new Point();
     trajectory = new List();
 
@@ -397,7 +397,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
       //x = position.x;
       //y = position.y; 
       animation.tick();
-      shadow.tick();
+      //shadow.tick();
       sprite.tick();
       indexTrajectory++;
     }

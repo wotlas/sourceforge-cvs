@@ -285,6 +285,14 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   }
 
  /*------------------------------------------------------------------------------------*/
+
+  /** Set to true to show debug information
+   */
+  public void showDebug(boolean value) {
+    SHOW_DEBUG = value;
+  }
+  
+ /*------------------------------------------------------------------------------------*/
   
   /** To get the hashtable players
    */
@@ -471,8 +479,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
     // Retreive player's location
     WotlasLocation location = myPlayer.getLocation();
-//    if (SHOW_DEBUG)
+    if (SHOW_DEBUG)
         System.out.println("POSITION set to x:"+myPlayer.getX()+" y:"+myPlayer.getY()+" location is "+location);
+
 // ALDISS
     // 3 - Create the drawable reference
 /*    location.setWorldMapID(0);
@@ -500,13 +509,17 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     playerPanel = new JPlayerPanel();
     logPanel = new JLogPanel();    
 
+if (SHOW_DEBUG)
 System.out.println("Displaying window");
     // 8 - Create main Frame
     mFrame = new JClientScreen(infosPanel, mapPanel, chatPanel, optionsPanel, playerPanel, logPanel);
+if (SHOW_DEBUG)
 System.out.println("JCLient created");
     mFrame.init();
+if (SHOW_DEBUG)
 System.out.println("End of init");    
 
+if (SHOW_DEBUG)
 System.out.println("Changing map data");
     // 6 - Init map display
     changeMapData();
@@ -524,9 +537,11 @@ catch(Exception e) {e.printStackTrace();}
     // 7 - Start main loop tick
     Debug.signal( Debug.NOTICE, null, "Beginning to tick Graphics Director" );
     this.start();
+if (SHOW_DEBUG)    
 System.out.println("tick thread started");
 
     mFrame.show();
+if (SHOW_DEBUG)
 System.out.println("Frame show");
 
     // 9 - Retreive other players informations    
@@ -622,8 +637,9 @@ System.out.println("Frame show");
     else if( object instanceof Door ) {
         // We open/close the door IF the player is near enough...
            Door door = (Door) object;
-
-System.out.println("DOOOORRR CLICKED");
+           
+        if (SHOW_DEBUG)
+          System.out.println("DOOOORRR CLICKED");
 
         // player near enough the door ?
            if( door.isPlayerNear( myPlayer.getCurrentRectangle() ) ) {
@@ -649,8 +665,9 @@ System.out.println("DOOOORRR CLICKED");
           myPlayer.moveTo( new Point(newX,newY) );
        }
     }
-
-    System.out.println("END JCLICK");
+    
+    if (SHOW_DEBUG)
+      System.out.println("END JCLICK");
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -658,12 +675,6 @@ System.out.println("DOOOORRR CLICKED");
  /** Called when user right-clic on JMapPanel
    */
   public void onRightClicJMapPanel(MouseEvent e) {
-    if (SHOW_DEBUG) {
-      System.out.println("Hiding debug informations");
-    } else {
-      System.out.println("Showing debug informations");
-    }
-    SHOW_DEBUG = !SHOW_DEBUG;
     
     /*
     NetMessage toto = new TotoMessage();
@@ -742,7 +753,6 @@ System.out.println("DOOOORRR CLICKED");
       myMapData = new InteriorMapData();
     }
     else if ( myPlayer.getLocation().isTown() ) {
-      System.out.println("town");
       myMapData = new TownMapData();
     }
     else if ( myPlayer.getLocation().isWorld() ) {
@@ -782,23 +792,22 @@ System.out.println("DOOOORRR CLICKED");
 
  /*------------------------------------------------------------------------------------*/
 
-  /** To close the client
+  /** To close the client.
    */
   public void exit() {
     if (gDirector!=null)
       gDirector.removeAllDrawables();
-    //closeConnection();
     Debug.exit();
   }
 
+ /*------------------------------------------------------------------------------------*/
+
+  /** To get the master player.
+   */
+  public PlayerImpl getMyPlayer() {
+    return myPlayer;
+  }
 
  /*------------------------------------------------------------------------------------*/
-  //////////////// ALDISS ajout d'une méthod pour récupérer le joueur courant.
-   /** To get the master player.
-    */
-    public PlayerImpl getMyPlayer() {
-       return myPlayer;
-    }
 
-  ////////////////// FIN ALDISS
 }

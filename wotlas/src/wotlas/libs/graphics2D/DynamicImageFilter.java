@@ -21,10 +21,13 @@ package wotlas.libs.graphics2D;
 
 import java.awt.image.BufferedImage;
 
-/** 
+/** This interface represents a filter that can be applied to dynamically create
+ *  a new buffered image. For instance the ColorImageFilter found in the filter
+ *  sub-package can change colors of a BufferedImage before rendering (if used on
+ *  a Sprite).
+ *
  * @author Aldiss
- * @see wotlas.libs.graphics2D.ImageLibrary
- * @see wotlas.libs.graphics2D.ImageIdentifier
+ * @see wotlas.libs.graphics2D.filter.ColorImageFilter
  */
 
 public interface DynamicImageFilter {
@@ -33,6 +36,7 @@ public interface DynamicImageFilter {
 
    /** To create a new filtered image from an image source.
     *
+    * @param srcIm source BufferedImage we take our data from (not modified).
     * @return new BufferedImage constructed from the given image.
     */
      public BufferedImage filterImage( BufferedImage srcIm );

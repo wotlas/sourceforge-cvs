@@ -36,6 +36,7 @@ import wotlas.libs.pathfinding.*;
 
 import wotlas.utils.*;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
 
@@ -147,7 +148,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   public void init() {
     Debug.signal( Debug.NOTICE, null, "PlayerImpl::init");
     animation = new Animation(wotCharacter.getImage(location));
-    sprite = (Sprite) wotCharacter.getDrawable(this);    
+    sprite = (Sprite) wotCharacter.getDrawable(this);              
     movementComposer.init( this );
   }
 
@@ -554,8 +555,13 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
            return textDrawable;
        }
 
-       textDrawable = new TextDrawable( fullPlayerName, getDrawable(), wotCharacter.getColor(),
+       if (isConnectedToGame) {
+        textDrawable = new TextDrawable( fullPlayerName, getDrawable(), wotCharacter.getColor(),
                                         13.0f, "Lblack.ttf", ImageLibRef.TEXT_PRIORITY, 5000 );
+       } else {
+        textDrawable = new TextDrawable( fullPlayerName + " (zzzz)", getDrawable(), wotCharacter.getColor(),
+                                        13.0f, "Lblack.ttf", ImageLibRef.TEXT_PRIORITY, 5000 );
+       }                                        
        return textDrawable;
    }
  

@@ -392,7 +392,7 @@ public class AccountBuilder implements NetConnectionListener
     */
      public void cancelCreation() {
         Debug.signal( Debug.NOTICE, this, "Account Creation cancelled..." );
-        connection.closeConnection();
+        connection.close();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -427,7 +427,7 @@ public class AccountBuilder implements NetConnectionListener
                                                                         account.getPassword(),
                                                                         player.getFullPlayerName() ) );
            // And close the connection
-              connection.closeConnection();
+              connection.close();
         }
         else {
            // Account not created for some reason

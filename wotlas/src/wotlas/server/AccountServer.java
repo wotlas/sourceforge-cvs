@@ -63,15 +63,15 @@ public class AccountServer extends NetServer implements ErrorCodeList {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Constructor (see wotlas.libs.net.NetServer for details)
+  /** Constructor (see wotlas.libs.net.NetServer for details).
    *
-   *  @param host the host interface to bind to. Example: wotlas.tower.org
-   *  @param server_port port on which the server listens to clients.
-   *  @param msg_packages a list of packages where we can find NetMsgBehaviour Classes.
+   *  @param serverInterface the host interface to bind to. Example: wotlas.tower.org
+   *  @param port port on which the server listens to clients.
+   *  @param packages a list of packages where we can find NetMsgBehaviour Classes.
    *  @param nbMaxSockets maximum number of sockets that can be opened on this server
    */
-    public AccountServer( String host, int port, String packages[], int nbMaxSockets ) {
-       super( host, port, packages );
+    public AccountServer( String serverInterface, int port, String packages[], int nbMaxSockets ) {
+       super( serverInterface, port, packages );
        setMaximumOpenedSockets( nbMaxSockets );
 
      // we create our wizars step factory
@@ -128,7 +128,6 @@ public class AccountServer extends NetServer implements ErrorCodeList {
     public void accessControl( NetConnection connection, String key ) {
 
        // The key is there to prevent wrong connections
-
           if( key.equals("AccountServerPlease!") ) {
 
             // ok, let's create an AccountBuilder for this future client.
@@ -136,7 +135,7 @@ public class AccountServer extends NetServer implements ErrorCodeList {
 
             // we set his message context to his player...
                connection.setContext( accountBuilder );
-               connection.setConnectionListener( accountBuilder );
+               connection.addConnectionListener( accountBuilder );
 
             // welcome on board...
                acceptClient( connection );

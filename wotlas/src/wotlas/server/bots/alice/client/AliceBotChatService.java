@@ -157,7 +157,7 @@ public class AliceBotChatService implements BotChatService, ActionListener, NetC
                    return false;
               }
               else {
-                   connection.setConnectionListener( this ); // WE will monitor the state of the connection
+                   connection.addConnectionListener( this ); // WE will monitor the state of the connection
 
                 // Connection succeeded !
                    if(timer!=null) {
@@ -188,7 +188,7 @@ public class AliceBotChatService implements BotChatService, ActionListener, NetC
              shutdown = true;
 
              if(connection!=null) {
-      	        connection.closeConnection();
+      	        connection.close();
                 connection = null;
              }
 
@@ -232,7 +232,7 @@ public class AliceBotChatService implements BotChatService, ActionListener, NetC
               //  String message = "Hi, my name is "+((PlayerImpl) player).getFullPlayerName( (PlayerImpl) bot );
                   String message = "Hi!";
               
-                connection.queueMessage(
+                  connection.queueMessage(
                           new AliceWotlasMessage( player.getPrimaryKey(),
                                                   ((PlayerImpl)bot).getPrimaryKey(),
                                                   message,

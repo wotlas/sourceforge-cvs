@@ -19,29 +19,32 @@
 
 package wotlas.libs.net;
 
-
 /** 
- * A NetConnectionListener defines methods to follow the life of a network connection.
- * 
+ * A NetServerListener receives information on the server network interface signaling
+ * when it's down or up. This informations are sent regularly as the server socket
+ * has a SO timeout of 5 seconds.
+ *
  * @author Aldiss
  * @see wotlas.libs.net.NetConnection
  */
 
-public interface NetConnectionListener {
+public interface NetServerListener {
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- /*------------------------------------------------------------------------------------*/
-
-  /** This method is called when a new network connection is created for you.
-   * @param connection the NetConnection object associated to this connection.
+  /** This method is called when the server network interface is down.
+   * @param itf the network interface we tried which is NOT available.
    */
-     public void connectionCreated( NetConnection connection );
+     public void serverInterfaceIsDown( String itf );
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** This method is called when the network connection is no longer of this world.
-   * @param connection the NetConnection object associated to this connection.
+  /** This method is called when the server network interface is Up.
+   * @param ipAddress currently used IP address
+   * @param stateChanged if true it means the interface has been re-created ( ip changed or
+   *        serverSocket has just been created ). If false it means that the interface is Up
+   *        and its state has not changed (since last check).
    */
-     public void connectionClosed( NetConnection connection );
+     public void serverInterfaceIsUp( String ipAddress, boolean stateChanged );
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

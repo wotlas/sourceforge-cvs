@@ -56,15 +56,15 @@ public class AliceWotlasServer extends NetServer implements NetConnectionListene
 
   /** Constructor (see wotlas.libs.net.NetServer for details)
    *
-   *  @param host the host interface to bind to. Example: wotlas.tower.org
-   *  @param server_port port on which the server listens to clients.
-   *  @param msg_packages a list of packages where we can find NetMsgBehaviour Classes.
+   *  @param serverInterface the host interface to bind to. Example: wotlas.tower.org
+   *  @param port port on which the server listens to clients.
+   *  @param packages a list of packages where we can find NetMsgBehaviour Classes.
    *  @param nbMaxSockets maximum number of sockets that can be opened on this server
    *  @param aliceWotlas wotlas alice chat listener
    */
-    public AliceWotlasServer( String host, int port, String packages[],
+    public AliceWotlasServer( String serverInterface, int port, String packages[],
                               int nbMaxSockets, AliceWOTLAS aliceWotlas ) {
-       super( host, port, packages );
+       super( serverInterface, port, packages );
        this.aliceWotlas = aliceWotlas;
        serverLinks = new Hashtable(10);
 
@@ -105,7 +105,7 @@ public class AliceWotlasServer extends NetServer implements NetConnectionListene
 
        // 3 - we set the message context to our alice chat listener...
           connection.setContext( aliceWotlas );     // requests will go to our AliceWOTLAS class
-          connection.setConnectionListener( this ); // we will listen to the connection's state
+          connection.addConnectionListener( this ); // we will listen to the connection's state
 
        // 4 - Final step, all inits have been done, we welcome our new client...
           acceptClient( connection );
@@ -184,10 +184,10 @@ public class AliceWotlasServer extends NetServer implements NetConnectionListene
          // 2 - Shuts down all connections
             synchronized( serverLinks ) {
                 Iterator it = serverLinks.values().iterator();
-          
+
                 while( it.hasNext() ) {
                    NetConnection np = (NetConnection) it.next();
-                   np.closeConnection();
+                   np.close();
                 }
             }
       }

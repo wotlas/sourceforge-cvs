@@ -20,12 +20,9 @@
 package wotlas.server;
 
 import wotlas.server.bots.BotPlayer;
-
 import wotlas.libs.net.NetServer;
 import wotlas.libs.net.NetConnection;
-
 import wotlas.common.ErrorCodeList;
-
 import wotlas.utils.Debug;
 
 import java.io.IOException;
@@ -45,14 +42,14 @@ public class GameServer extends NetServer implements ErrorCodeList {
 
   /** Constructor (see wotlas.libs.net.NetServer for details)
    *
-   *  @param host the host interface to bind to. Example: wotlas.tower.org
-   *  @param server_port port on which the server listens to clients.
-   *  @param msg_packages a list of packages where we can find NetMsgBehaviour Classes.
+   *  @param serverInterface the host interface to bind to. Example: wotlas.tower.org
+   *  @param port port on which the server listens to clients.
+   *  @param packages a list of packages where we can find NetMsgBehaviour Classes.
    *  @param nbMaxSockets maximum number of sockets that can be opened on this server
    */
-    public GameServer( String host, int port, String packages[], int nbMaxSockets ) {
-       super( host, port, packages );
-       setMaximumOpenedSockets( nbMaxSockets );
+    public GameServer( String serverInterface, int port, String packages[], int nbMaxSockets ) {
+         super( serverInterface, port, packages );
+         setMaximumOpenedSockets( nbMaxSockets );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -65,8 +62,8 @@ public class GameServer extends NetServer implements ErrorCodeList {
     *        is the following "accountName:password". See wotlas.server.GameAccount
     *        for the accountName structure.
     */
-    public void accessControl( NetConnection connection, String key )
-    {
+    public void accessControl( NetConnection connection, String key ) {
+
        // key sanity check
           if( key.indexOf(':')<=4 || key.endsWith(":") ) {
                Debug.signal( Debug.NOTICE, this, "A client tried to connect with a bad key format.");
@@ -87,13 +84,7 @@ public class GameServer extends NetServer implements ErrorCodeList {
                refuseClient( connection, ERR_UNKNOWN_ACCOUNT, "This account does not exist on this server" );
                return;
           }
-/*
-          if( account.getPlayer() instanceof BotPlayer ) {
-               Debug.signal( Debug.ERROR, this, accountName+" tried to connect on a bot's account.");
-               refuseClient( connection, ERR_BOT_ACCOUNT, "This account is owned by a bot.\nYou can't connect to it !" );
-               return;
-          }
-*/
+
           if( account.getPlayer().isConnectedToGame() && !(account.getPlayer() instanceof BotPlayer) ) {
                Debug.signal( Debug.ERROR, this, accountName+" tried to connect twice to the game server.");
                refuseClient( connection, ERR_ALREADY_CONNECTED, "Someone is already connected on this account !" );
@@ -108,8 +99,7 @@ public class GameServer extends NetServer implements ErrorCodeList {
           }
 
        // The account exists... but do we have the right password ?
-          if( account.isRightPassword( password ) )
-          {
+          if( account.isRightPassword( password ) ) {
             // account alive ?
                if( account.getIsDeadAccount() ) {
                    refuseClient( connection, ERR_DEAD_ACCOUNT, "Sorry, your character has been killed !" );
@@ -121,7 +111,7 @@ public class GameServer extends NetServer implements ErrorCodeList {
 
             // we set his message context to his player...
                connection.setContext( account.getPlayer() );
-               connection.setConnectionListener( account.getPlayer() );
+               connection.addConnectionListener( account.getPlayer() );
                
             // We will send back ping messages if we receive them
                connection.sendBackPingMessages( true );
@@ -136,13 +126,6 @@ public class GameServer extends NetServer implements ErrorCodeList {
           }
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-    /** To get the server ID
-     */
-    static public int getServerID() {
-      return ServerDirector.getServerID();
-    }
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

@@ -817,7 +817,7 @@ public class PlayerImpl implements Player, NetConnectionListener {
      public void closeConnection() {
              synchronized( connectionLock ) {
                 if( connection!=null )
-                    connection.closeConnection();
+                    connection.close();
              }
      }
 

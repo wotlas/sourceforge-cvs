@@ -23,7 +23,7 @@ import java.net.Socket;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
-import wotlas.libs.net.connection.TormConnection;
+import wotlas.libs.net.connection.AsynchronousNetConnection;
 import wotlas.libs.net.message.ClientRegisterMessage;
 import wotlas.libs.net.message.ClientRegisterMsgBehaviour;
 
@@ -31,17 +31,17 @@ import wotlas.utils.Debug;
 import wotlas.utils.Tools;
 
 /** A NetClient provides methods to initiate a connection with a server.
- *  The default NetConnection it provides is a TormConnection.
+ *  The default NetConnection it provides is a AsynchronousNetConnection. This can be changed
+ *  by overriding the getNewConnection().
  *
  *  IMPORTANT: The NetClient object is only a tool that can be erased after its use.
- *             If must also be re-created if it fails to connect to the server.
+ *             It is a façade for creating a single NetConnection object.
  *
  * @author Aldiss
  * @see wotlas.libs.net.NetConnection
  */
 
-public class NetClient implements NetErrorCodeList
-{
+public class NetClient implements NetErrorCodeList {
  /*------------------------------------------------------------------------------------*/
 
    /** Timeout for our server connection.
@@ -88,28 +88,28 @@ public class NetClient implements NetErrorCodeList
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** Creates a connection object for the new connection.
-    *  Override this method if you don't want to use the LoparConnection.
+    *  Override this method if you don't want to use the SynchronousNetConnection.
     *
-    * @return a new LoparConnection associated to this socket.
+    * @return a new SynchronousNetConnection associated to this socket.
     * @exception IOException IO error.
     */
-      protected NetConnection getNewDefaultConnection( Socket socket )
+      protected NetConnection getNewConnection( Socket socket )
       throws IOException {
-              return new TormConnection( socket, null );
+              return new AsynchronousNetConnection( socket );
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** We try to build a connection with a server. On success we create a
-   *  default NetConnection and return it. If an error occurs, we return null
-   *  and an error message is set ( use getCurrentErrorMessage() to get it ).<p>
+   *  default NetConnection and returns it. If an error occurs, we return null
+   *  and an error message is set ( use getCurrentErrorMessage() to get it ).<br>
    *
    *  You have to give the name of the packages where we'll be able to find
-   *  the NetMessageBehaviour classes.<p>
+   *  the NetMessageBehaviour classes to use for this connection.<br>
    *
    *  If the connection is validated the context is immediately set and, if the
-   *  given context object implements the NetConnectionListener, we sets it as the
-   *  default NetConnection connection observer ( connection.setConnectionListener() )...
+   *  given context object implements the NetConnectionListener, we adds it to the
+   *  NetConnection's listener ( connection.addConnectionListener() )...
    *
    * @param serverName complete server name
    * @param serverPort port to reach
@@ -120,18 +120,16 @@ public class NetClient implements NetErrorCodeList
    */
      public NetConnection connectToServer( String serverName, int serverPort,
                                             String key, Object sessionContext,
-                                            String msgPackages[] )
-     {
-       Socket socket;
-       errorMessage = null;
-       errorCode = ERR_NONE;
-       this.sessionContext = sessionContext;
+                                            String msgPackages[] ) {
+          Socket socket;
+          errorMessage = null;
+          errorCode = ERR_NONE;
+          this.sessionContext = sessionContext;
 
        // to load the eventually new packages of messages...
           NetMessageFactory.getMessageFactory().addMessagePackages( msgPackages );
 
-          try
-          {
+          try{
             // We try a connection with specified server.
                try{
                     socket = new Socket( serverName, serverPort );
@@ -150,11 +148,11 @@ public class NetClient implements NetErrorCodeList
             // We create a new connection and send our key.
             // This client is the temporary context of the first
             // incoming message sent by the server.
-               connection = getNewDefaultConnection( socket );
+               connection = getNewConnection( socket );
                connection.setContext( (Object) this );
 
                connection.queueMessage( new ClientRegisterMessage( key ) );
-               connection.pleaseSendAllMessagesNow();
+               connection.sendAllMessages();
 
                if( stop() ) {
                    clean();
@@ -165,14 +163,13 @@ public class NetClient implements NetErrorCodeList
             // If something went wrong on the server the received message will
             // set an error_message. Otherwise "error_message" will remain null.
             
-               if( connection.getNetReceiver().isSynchronous() )
-               {
+               if( connection.getNetReceiver().isSynchronous() ) {
                   // easier case: the synchronous NetReceiver
                   // yeah I know we don't use any timeout here...
                   // the waitForAMessage should be modified to
                   // support a timeout. Easy to say...
-                     connection.waitForAMessageToArrive();
-                     connection.pleaseReceiveAllMessagesNow();
+                     connection.waitForMessage();
+                     connection.receiveAllMessages();
                }
                else {
                  // we cope with the asynchronous NetReceiver
@@ -291,7 +288,7 @@ public class NetClient implements NetErrorCodeList
 
           // NetConnectionListener
              if(sessionContext instanceof NetConnectionListener)
-                connection.setConnectionListener( (NetConnectionListener) sessionContext );
+                connection.addConnectionListener( (NetConnectionListener) sessionContext );
        }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -311,7 +308,7 @@ public class NetClient implements NetErrorCodeList
      */
        private synchronized void clean(){
               if(connection!=null)
-                 connection.closeConnection();
+                 connection.close();
 
               connection=null;
               sessionContext=null;

@@ -65,7 +65,7 @@ public class LoopBackBotChatService implements BotChatService {
     *  @return true if the connection was successfully established, false otherwise
     */
       public boolean connect() {
-          Debug.signal(Debug.NOTICE, null, "Bot Chat Service : Connect received.");
+          Debug.signal(Debug.NOTICE, null, "Bot Chat Service   : Connect received.");
           ServerDirector.getDataManager().getBotManager().refreshBotState();
           return true;
       }

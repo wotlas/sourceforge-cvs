@@ -29,6 +29,7 @@ import wotlas.libs.wizard.step.*;
 import wotlas.libs.log.*;
 
 import wotlas.libs.graphics2D.FontFactory;
+import wotlas.libs.net.utils.NetInterface;
 
 import java.io.*;
 import javax.swing.*;
@@ -288,12 +289,12 @@ public class ServerSetup extends JWizard {
                    break;
 
             	case 2:
-                   wizard.setNextStep(  ServerConfigWizardStep.getStaticParameters()  );
+                   wizard.setNextStep(  ServerInterfaceWizardStep.getStaticParameters()  );
                    break;
 
             	case 3:
             	   serverID=0;
-                   wizard.setNextStep(  ServerConfigWizardStep.getStaticParameters()  );
+                   wizard.setNextStep(  ServerInterfaceWizardStep.getStaticParameters()  );
                    break;
             }
 
@@ -376,7 +377,7 @@ public class ServerSetup extends JWizard {
                return false;
             }
 
-            wizard.setNextStep(  ServerConfigWizardStep.getStaticParameters()  );
+            wizard.setNextStep(  ServerInterfaceWizardStep.getStaticParameters()  );
             return true;
        }
 
@@ -478,8 +479,323 @@ public class ServerSetup extends JWizard {
     }
 
  /*------------------------------------------------------------------------------------*/
+
  /**
-  * Second Step of our JWizard. Register choices.
+  * Second Step of our JWizard. Server Interface Choice.
+  */
+  public static class ServerInterfaceWizardStep extends JWizardStep implements ActionListener{
+
+     /* -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  */
+
+     /** This is a static JWizardStep, to build it more simply this method
+      *  returns the JWizardStepParameters needed for the JWizard.
+      */
+       public static JWizardStepParameters getStaticParameters() {
+          JWizardStepParameters param = new JWizardStepParameters(
+                          "wotlas.server.setup.ServerSetup$ServerInterfaceWizardStep",
+                          "Server Network Interface Setup" );
+
+          param.setIsPrevButtonEnabled(true);
+          param.setIsDynamic(true);
+          return param;
+       }
+
+     /* -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  */
+
+      /** Swing Components
+       */
+       private ATextField t_itfName, t_itfPublish;
+       private ALabel l_itfDesc,l1,l2,l3,l4;
+       private JPanel autoPanel, fixedPanel;
+
+       private JComboBox c_itfName,c_ipName;
+       private ARadioButton r_automatic, r_fixed, r_publishSelect, r_publishFixed;
+       private ButtonGroup btGroupItf, btGroupPublish;
+
+     /* -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  */
+
+     /** Constructor.
+      */
+       public ServerInterfaceWizardStep() {
+           super();
+
+        // I - Swing components
+           setLayout( new BorderLayout() );
+           JPanel mainPanel = new JPanel();
+           mainPanel.setLayout( new BorderLayout() );
+           mainPanel.setBackground(Color.white);
+           add(mainPanel,BorderLayout.CENTER);
+           mainPanel.setBorder(BorderFactory.createEmptyBorder(0,15,0,10));
+
+         // First Radio section
+            r_automatic = new ARadioButton("Automatic Interface Detection & Monitoring");
+            r_automatic.setActionCommand("automaticItf");
+            r_automatic.addActionListener(this);
+
+            r_fixed = new ARadioButton("Fixed IP/DNS name");
+            r_fixed.setActionCommand("fixedItf");
+            r_fixed.addActionListener(this);
+
+            btGroupItf = new ButtonGroup();
+            btGroupItf.add(r_automatic);
+            btGroupItf.add(r_fixed);
+
+         // Automatic Itf Detection components
+            autoPanel = new JPanel(new GridLayout(3,2,0,0));
+            autoPanel.setBackground(Color.white);
+            autoPanel.setBorder(BorderFactory.createEmptyBorder(0,50,0,10));
+            
+            l1 = new ALabel("Network Interfaces :");
+            l1.setBackground(Color.white);
+            autoPanel.add( l1 );
+
+            String itf[] = NetInterface.getInterfaceNames();
+            c_itfName = new JComboBox( itf );
+            c_itfName.setEditable(false);
+            if(itf.length!=0) c_itfName.setSelectedIndex(0);
+            c_itfName.addActionListener(this);
+            c_itfName.setActionCommand("itf");
+            autoPanel.add( c_itfName );
+
+            l2 = new ALabel("Interface Description:");
+            l2.setBackground(Color.white);
+            autoPanel.add( l2 );
+
+            l_itfDesc = new ALabel("-");
+            if(itf.length!=0) l_itfDesc.setText( NetInterface.getInterfaceDescription(itf[0]) );
+            l_itfDesc.setBackground(Color.white);
+            autoPanel.add( l_itfDesc );
+
+            l3 = new ALabel("Interface IP addresses:");
+            l3.setBackground(Color.white);
+            autoPanel.add( l3 );
+
+            String ip[] = new String[0];
+            if(itf.length!=0) ip = NetInterface.getInterfaceAddresses(itf[0]);
+
+            c_ipName = new JComboBox( ip );
+            c_ipName.setEditable(false);
+            if(ip.length!=0) c_ipName.setSelectedIndex(0);
+            autoPanel.add( c_ipName );
+
+         // Fixed Itf components
+            fixedPanel = new JPanel(new GridLayout(1,2,0,0));
+            fixedPanel.setBackground(Color.white);
+            fixedPanel.setBorder(BorderFactory.createEmptyBorder(0,50,0,10));
+            
+            l4 = new ALabel("Enter the address to use :");
+            l4.setBackground(Color.white);
+            fixedPanel.add( l4 );
+
+            t_itfName = new ATextField("");
+            t_itfName.setBackground(Color.white);
+            fixedPanel.add( t_itfName );
+
+         // Creation of the network interface panel
+            JPanel netPanel = new JPanel(new BorderLayout());
+            netPanel.setBackground(Color.white);
+            netPanel.setBorder(BorderFactory.createLineBorder(Color.gray));
+
+            JPanel netPanel1 = new JPanel(new BorderLayout());
+            netPanel1.setBackground(Color.white);
+            netPanel1.add(r_automatic,BorderLayout.NORTH);
+            netPanel1.add(autoPanel,BorderLayout.SOUTH);
+
+            JPanel netPanel2 = new JPanel(new GridLayout(2,1,0,0));
+            netPanel2.setBackground(Color.white);
+            netPanel2.add(r_fixed);
+            netPanel2.add(fixedPanel);
+            
+            netPanel.add( netPanel1, BorderLayout.NORTH);
+            netPanel.add( netPanel2, BorderLayout.SOUTH);
+            mainPanel.add( netPanel, BorderLayout.NORTH );
+
+         // Creation of the publish panel
+            r_publishSelect = new ARadioButton("Publish the IP of the interface selected above.");
+            r_publishSelect.setActionCommand("publishItf");
+            r_publishSelect.addActionListener(this);
+
+            r_publishFixed = new ARadioButton("Publish another IP/DNS name:");
+            r_publishFixed.setActionCommand("publishOther");
+            r_publishFixed.addActionListener(this);
+
+            btGroupPublish = new ButtonGroup();
+            btGroupPublish.add(r_publishSelect);
+            btGroupPublish.add(r_publishFixed);
+
+            t_itfPublish = new ATextField("");
+            t_itfPublish.setBackground(Color.white);
+
+            JPanel otherPanel = new JPanel(new GridLayout(1,2,0,0));
+            otherPanel.setBackground(Color.white);
+            otherPanel.add(r_publishFixed);
+            otherPanel.add(t_itfPublish);
+            
+            JPanel publishPanel = new JPanel(new GridLayout(3,1,5,10));
+            publishPanel.setBackground(Color.white);
+
+            ALabel l5 = new ALabel("Published Network Address");
+            l5.setBackground(Color.white);
+            publishPanel.add(l5);
+
+            publishPanel.add(r_publishSelect);
+            publishPanel.add(otherPanel);
+            publishPanel.setBorder(BorderFactory.createLineBorder(Color.gray));
+            mainPanel.add( publishPanel, BorderLayout.SOUTH );
+
+         // Selection init
+            r_automatic.setSelected(true);
+            t_itfName.setEnabled(false);
+            l4.setEnabled(false);
+            r_publishSelect.setSelected(true);
+            t_itfPublish.setEnabled(false);
+       }
+
+     /* -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  */
+
+       /** Action Performed when the user clicks a button.
+        */
+        public void actionPerformed(ActionEvent e) {
+
+           String name = e.getActionCommand();
+
+           if( name.equals("automaticItf") ) {
+               c_itfName.setEnabled(true);
+               c_ipName.setEnabled(true);
+               l_itfDesc.setEnabled(true);
+               t_itfName.setEnabled(false);
+               l1.setEnabled(true);
+               l2.setEnabled(true);
+               l3.setEnabled(true);
+               l4.setEnabled(false);
+           }
+           else if( name.equals("fixedItf") ) {
+               c_itfName.setEnabled(false);
+               c_ipName.setEnabled(false);
+               l_itfDesc.setEnabled(false);
+               t_itfName.setEnabled(true);
+               l1.setEnabled(false);
+               l2.setEnabled(false);
+               l3.setEnabled(false);
+               l4.setEnabled(true);
+           }
+           else if( name.equals("publishItf") ) {
+               t_itfPublish.setEnabled(false);
+           }
+           else if( name.equals("publishOther") ) {
+               t_itfPublish.setEnabled(true);
+           }
+           else if( name.equals("itf") ) {
+               if( c_itfName.getItemCount()==0 || l_itfDesc==null || c_ipName==null)
+                   return;
+               
+               String itfName = (String) c_itfName.getSelectedItem();
+               if(itfName==null) return;
+               l_itfDesc.setText( NetInterface.getInterfaceDescription(itfName) );
+
+               String ip[] = NetInterface.getInterfaceAddresses( itfName );
+               c_ipName.removeAllItems();
+
+               for( int i=0; i<ip.length; i++ )
+                    c_ipName.addItem(ip[i]);
+
+               if(ip.length!=0)
+                  c_ipName.setSelectedIndex(0);
+           }
+       }
+
+     /* -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  */
+
+     /** Called each time the step is shown on screen.
+      */
+       protected void onShow(Object context, JWizard wizard) {
+       }
+
+     /* -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  */
+
+     /** Called when the "Next" button is clicked.
+      *  Use the wizard's setNextStep() method to set the next step to be displayed.
+      *  @return return true to validate the "Next" button action, false to cancel it...
+      */
+       protected boolean onNext(Object context, JWizard wizard) {
+
+         // we retrieve the setup data
+            String itf = "";
+            String publish = "";
+         
+            if( r_automatic.isSelected() ) {
+                itf = (String) c_itfName.getSelectedItem();
+
+                if(itf==null || itf.length()==0) {
+                   JOptionPane.showMessageDialog( null, "No network interface selected.",
+                                                  "Error", JOptionPane.ERROR_MESSAGE);
+                   return false;
+                }
+
+                int ind = c_ipName.getSelectedIndex();
+
+                if( ind<0 ) {
+                   JOptionPane.showMessageDialog( null, "No IP address index selected.",
+                                                  "Error", JOptionPane.ERROR_MESSAGE);
+                   return false;
+                }
+                
+                itf = itf+","+ind;
+            }
+            else {
+                if( t_itfName.getText().length()==0 ) {
+                   JOptionPane.showMessageDialog( null, "No IP/DNS name entered.",
+                                                  "Error", JOptionPane.ERROR_MESSAGE);
+                   return false;
+                }
+
+                itf = t_itfName.getText();
+            }
+
+            if( r_publishFixed.isSelected() ) {
+                if( t_itfPublish.getText().length()==0 ) {
+                   JOptionPane.showMessageDialog( null, "No IP/DNS name entered (publish section).",
+                                                  "Error", JOptionPane.ERROR_MESSAGE);
+                   return false;
+                }
+
+                publish = t_itfPublish.getText();
+            }
+
+         // set this config as default ?
+            int value = JOptionPane.showConfirmDialog( null, "Set this config as default ?\n  Server Interface : "+itf
+                                                       +"\n  Published Interface: "+(publish.length()==0?itf:publish),
+                                                       "Server Interface Update", JOptionPane.YES_NO_OPTION);
+
+            if( value == JOptionPane.YES_OPTION ) {
+                serverProperties.setProperty( "init.serverItf", itf );
+                serverProperties.setProperty( "init.publishAddress", publish );
+            }
+            else
+                return false;
+
+            wizard.setNextStep(  ServerConfigWizardStep.getStaticParameters() );
+            return true;
+       }
+
+     /* -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  */
+
+     /** Called when Previous button is clicked.
+      *  Use the wizard's setNextStep() method to set the next step to be displayed.
+      *  @return return true to validate the "Previous" button action, false to cancel it...
+      */
+       protected boolean onPrevious(Object context, JWizard wizard) {
+            wizard.setNextStep(  RegisterChoicesWizardStep.getStaticParameters()  );
+            return true;
+       }
+
+     /* -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  */
+
+    }
+
+ /*------------------------------------------------------------------------------------*/
+ /**
+  * Third Step of our JWizard. Server config.
   */
   public static class ServerConfigWizardStep extends JWizardStep {
 
@@ -525,14 +841,8 @@ public class ServerSetup extends JWizard {
            super();
 
         // II - we load the default server config.
-           Debug.setLevel( Debug.CRITICAL );
-           Debug.displayExceptionStack( false );
-
            serverConfigManager = new ServerConfigManager( rManager );
            config = serverConfigManager.loadServerConfig( serverID );
-
-           Debug.setLevel( Debug.NOTICE );
-           Debug.displayExceptionStack( true );
 
            if( config == null )
                config = new ServerConfig();  // none ? ok, we build one...
@@ -709,7 +1019,7 @@ public class ServerSetup extends JWizard {
       *  @return return true to validate the "Previous" button action, false to cancel it...
       */
        protected boolean onPrevious(Object context, JWizard wizard) {
-            wizard.setNextStep(  RegisterChoicesWizardStep.getStaticParameters()  );
+            wizard.setNextStep(  ServerInterfaceWizardStep.getStaticParameters()  );
             return true;
        }
 
@@ -845,6 +1155,9 @@ public class ServerSetup extends JWizard {
               e.printStackTrace();
               Debug.exit();
            }
+
+           System.setOut( Debug.getPrintStream() );
+           System.setErr( Debug.getPrintStream() );
 
            Debug.signal(Debug.NOTICE,null,"Starting Register Setup...");
 

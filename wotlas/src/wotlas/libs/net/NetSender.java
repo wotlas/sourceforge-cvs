@@ -19,7 +19,6 @@
  
 package wotlas.libs.net;
 
-
 import java.net.Socket;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -27,20 +26,19 @@ import java.io.IOException;
 import wotlas.utils.Debug;
 
 
-/** A NetSender sends NetMessage on an opened socket.
- *
+/** A NetSender sends NetMessages on an opened socket.
  * A NetSender has three different modes :
  *<br>
- *   (1) simply send messages as they arrive. <p>
- *   (2) aggregate messages with a timeout and max message limit. <p>
- *   (3) wait for a user signal to send the message aggregation <p>
+ *   (1) simply send messages as they arrive. <br>
+ *   (2) aggregate messages with a timeout and max message limit and send them. <br>
+ *   (3) wait for a user signal to send the messages (user aggregation of messages)<br>
  *
  * @author Aldiss
  * @see wotlas.libs.net.NetThread
  */
 
-public class NetSender extends NetThread
-{
+public class NetSender extends NetThread {
+
  /*------------------------------------------------------------------------------------*/
 
     /** Mode 1 : we send messages as they arrive.
@@ -78,11 +76,11 @@ public class NetSender extends NetThread
         private short aggregationMsgLimit;
 
     /** Stop aggregation for this time. (useful only for the AGGREGATE_MESSAGES
-     *  type and the pleaseSendAllMessagesNow() call )
+     *  type and the sendAllMessages() call )
      */
         private boolean stopAggregation;
 
-    /** To signal that we a thread is locked on pleaseSendAllMessagesNow()
+    /** To signal that we a thread is locked on sendAllMessages()
      */
         private boolean locked;
 
@@ -98,8 +96,8 @@ public class NetSender extends NetThread
 
  /*------------------------------------------------------------------------------------*/
 
-    /**  Constructor. Should be called only by the NetServer & NetClient classes.
-     *   Default values :
+    /** Constructor. Should be called only by the NetConnection implementations.
+     *  Default values :
      *<br>
      *      - aggregation_timeout = 20ms<br>
      *      - aggregation_msg_limit = 10 messages
@@ -111,8 +109,7 @@ public class NetSender extends NetThread
      * @exception IOException if the socket wasn't already connected.
      */
       public NetSender( Socket socket, NetConnection connection,
-                        byte senderType, int bufferSize ) throws IOException
-      {
+                        byte senderType, int bufferSize ) throws IOException {
           super(socket);
           this.connection = connection;
 
@@ -138,66 +135,58 @@ public class NetSender extends NetThread
   /** NetSender Thread action.
    *  Never call this method it's done automatically.
    */
-    public void run()
-    {
+    public void run() {
      	if( senderType==USER_AGGREGATION )  // we have nothing to do here
      	  return;
 
-        try
-        {
-           do
-           {
-               synchronized( this )
-               {
-                  // we wait for some action...
+        try{
+           do{
+               synchronized( this ){
+                  // 1 - we wait for some action...
                      while( nbMessages==0 && !shouldStopThread() )
                          try{
                            wait();
                          } catch( InterruptedException e ) {}
 
-                  // ok, we have at least one message... what do we do ?
-                     if( senderType==AGGREGATE_MESSAGES )
-                     {
-                       if( !stopAggregation )
-                       {
-                        // aggregation start
-                           long t0 = System.currentTimeMillis();
-                           long tr = aggregationTimeout;
+                  // 2 - ok, we have at least one message... what do we do ?
+                     if( senderType==AGGREGATE_MESSAGES ) {
+                         if( !stopAggregation ) {
+                          // aggregation start
+                             long t0 = System.currentTimeMillis();
+                             long tr = aggregationTimeout;
 
-                            while( nbMessages<aggregationMsgLimit && !shouldStopThread())
-                            {
-                               try{
+                             while( nbMessages<aggregationMsgLimit && !shouldStopThread()) {
+                                    try{
                                         wait( tr );
-                               } catch( InterruptedException e ) {}
+                                    } catch( InterruptedException e ) {}
 
-                               tr = aggregationTimeout-System.currentTimeMillis()-t0;
+                                    tr = aggregationTimeout-System.currentTimeMillis()-t0;
+                                    if(tr<3)
+                                      break; // aggregation end, we are not going to loop again for 3ms
+                             }
+                         }
+                         else
+                             stopAggregation = false;
+                     }
 
-                               if(tr<3) break; // aggregation end
-                            }
-                       }
-                       else
-                           stopAggregation = false;
-                    }
-
-                 // we send all the messages
-                    sendQueuedMessages();
+                  // we send all the messages
+                     sendQueuedMessages();
                }
            }
            while( !shouldStopThread() );
-
+        }
+        catch(IOException ioe){
+           // Socket error, connection was probably closed a little roughly...
+              Debug.signal( Debug.WARNING, this, ioe );
         }
         catch(Exception e){
-           if(e instanceof IOException) {
-             // Socket error, connection was probably closed a little roughly...
-               Debug.signal( Debug.WARNING, this, e );
-           }
-           else
-               Debug.signal( Debug.ERROR, this, e ); // serious error while sending message
+           // serious error while sending message
+              Debug.signal( Debug.ERROR, this, e );
         }
 
      // we ask the NetConnection to perform some cleanup
      // and signal that the connection was closed ( connectionListener )
-        connection.closeConnection();
+        connection.close();
         outStream=null;
     }
 
@@ -211,8 +200,8 @@ public class NetSender extends NetThread
    */
      synchronized public void queueMessage( NetMessage message ) {
           if( nbMessages==aggregationMsgLimit ) {
-                // the user has not tunned his aggregation limit very well...
-                setAggregationMessageLimit( (short) (aggregationMsgLimit+5) );
+             // the user has not tunned his aggregation limit very well...
+                setAggregationMessageLimit( (short) (aggregationMsgLimit+10) );
           }
 
           messageList[nbMessages] = message;
@@ -229,27 +218,32 @@ public class NetSender extends NetThread
    *  send of the queued messages. For the SEND_IMMEDIATELY type we do nothing but
    *  make sure that the message has been sent.
    */
-     synchronized public void pleaseSendAllMessagesNow()
-     {
-            if( senderType==USER_AGGREGATION )
-            {
+     synchronized public void sendAllMessages() {
+         // Different behaviours depending on the sender's type
+            if( senderType==USER_AGGREGATION ) {
                 try{
                     sendQueuedMessages();
                     return;
                 }
-                catch( Exception e )
-                {
-                    if(e instanceof IOException) {
-                       // Socket error, connection was probably closed a little roughly...
-                          Debug.signal( Debug.WARNING, this, e );
-                    }
-                    else
-                          Debug.signal( Debug.ERROR, this, e ); // serious error
+                catch( IOException ioe ) {
+                    // Socket error, connection was probably closed a little roughly...
+                       Debug.signal( Debug.WARNING, this, ioe );
 
-                // we ask the NetConnection to perform some cleanup
-                // and signal that the connection was closed ( connectionListener )
-                   connection.closeConnection();
-                   outStream=null;
+                    // we ask the NetConnection to perform some cleanup
+                    // and signal that the connection was closed ( connectionListener )
+                       connection.close();
+                       outStream=null;
+                       return;
+                }
+                catch( Exception e ) {
+                    // serious error occured
+                       Debug.signal( Debug.ERROR, this, e );
+
+                    // we ask the NetConnection to perform some cleanup
+                    // and signal that the connection was closed ( connectionListener )
+                       connection.close();
+                       outStream=null;
+                       return;
                 }
             }
             else if( senderType==AGGREGATE_MESSAGES ) {
@@ -258,22 +252,19 @@ public class NetSender extends NetThread
             }
 
         // we wait until the last message is sent. The sendQueuedMessages() will notify us.
-        // (max 15s to avoid a deadlock if an Exception has been thrown in sendQueuedMessages)
+        // (max 10s to avoid a deadlock if an Exception has been thrown in sendQueuedMessages)
            if(nbMessages!=0) {
               locked = true;
  
               try{
-                   wait( 15000 );
-              }
-              catch( InterruptedException e )
-              {}
+                   wait( 10000 );
+              }catch( InterruptedException e ) {}
            }
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Sends all queued messages.
-   * 
    * @exception IOException if something goes wrong while sending this message
    */
      synchronized private void sendQueuedMessages() throws IOException {
@@ -283,15 +274,18 @@ public class NetSender extends NetThread
         for( short i=0; i<nbMessages; i++) {
      	    if(messageList[i]==null) continue;
 
+          // 1 - We first write the header of the message : the message class name.
             outStream.writeUTF( messageList[i].getMessageClassName() );
+
+          // 2 - We write the user data
      	    messageList[i].encode( outStream );
      	    messageList[i] = null;
      	}
 
-        outStream.flush();
+        outStream.flush(); // send the whole
      	nbMessages = 0;
 
-      // A notifyAll if there are threads locked on pleaseSendAllMessagesNow()
+      // We throw a "notifyAll" signal if there are threads locked on sendAllMessages()
          if(locked) {
             locked=false;
             notifyAll();

@@ -439,10 +439,10 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** To close the network connection if any.
    */
   public void closeConnection() {
-    synchronized( connectionLock ) {
-      if ( connection!=null )
-        connection.closeConnection();
-    }
+      synchronized( connectionLock ) {
+           if ( connection!=null )
+                connection.close();
+      }
   }
 
  /*------------------------------------------------------------------------------------*/

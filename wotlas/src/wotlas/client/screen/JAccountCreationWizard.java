@@ -67,7 +67,7 @@ public class JAccountCreationWizard extends JWizard {
          if(context!=null) {
             NetConnection connection = (NetConnection) context;
             connection.queueMessage( new CancelAccountCreationMessage() );
-            connection.closeConnection();
+            connection.close();
          }
 
          ClientManager clientManager = ClientDirector.getClientManager();
@@ -84,7 +84,7 @@ public class JAccountCreationWizard extends JWizard {
          if(context!=null) {
             NetConnection connection = (NetConnection) context;
             connection.queueMessage( new CancelAccountCreationMessage() );
-            connection.closeConnection();
+            connection.close();
          }
 
          ClientManager clientManager = ClientDirector.getClientManager();

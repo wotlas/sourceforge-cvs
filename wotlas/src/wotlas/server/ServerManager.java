@@ -86,7 +86,7 @@ public class ServerManager {
        // 2 - We create the AccountServer
           String account_packages[] = { "wotlas.server.message.account" };
 
-          accountServer = new AccountServer( ourConfig.getServerName(),
+          accountServer = new AccountServer( ServerDirector.getServerProperties().getProperty("init.serverItf"),
                                              ourConfig.getAccountServerPort(),
                                              account_packages,
                                              ourConfig.getMaxNumberOfAccountConnections() );
@@ -96,7 +96,7 @@ public class ServerManager {
                                      "wotlas.server.message.movement",
                                      "wotlas.server.message.chat" };
 
-          gameServer = new GameServer( ourConfig.getServerName(),
+          gameServer = new GameServer( ServerDirector.getServerProperties().getProperty("init.serverItf"),
                                        ourConfig.getGameServerPort(),
                                        game_packages,
                                        ourConfig.getMaxNumberOfGameConnections() );
@@ -104,7 +104,7 @@ public class ServerManager {
        // 4 - We create the GatewayServer
           String gateway_packages[] = { "wotlas.server.message.gateway" };
 
-          gatewayServer = new GatewayServer( ourConfig.getServerName(),
+          gatewayServer = new GatewayServer( ServerDirector.getServerProperties().getProperty("init.serverItf"),
                                              ourConfig.getGatewayServerPort(),
                                              gateway_packages,
                                              ourConfig.getMaxNumberOfGatewayConnections(),
@@ -172,15 +172,9 @@ public class ServerManager {
   /** To send a warning message to all connected players.
    */
     public void sendWarningMessage( String text ) {
-
-       synchronized( ServerDirector.getDataManager().getAccountManager() ) {
-           Iterator it = ServerDirector.getDataManager().getAccountManager().getIterator();
-
-           WarningMessage msg = new WarningMessage( text );
-
-           while( it.hasNext() )
-              ( (GameAccount) it.next() ).getPlayer().sendMessage( msg );
-       }
+        WarningMessage msg = new WarningMessage( text );
+        gameServer.sendMessageToOpenedConnections( msg );
+        accountServer.sendMessageToOpenedConnections( msg );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -188,13 +182,9 @@ public class ServerManager {
   /** To close all the connections on the servers.
    */
     public void closeAllConnections() {
-
-       synchronized( ServerDirector.getDataManager().getAccountManager() ) {
-           Iterator it = ServerDirector.getDataManager().getAccountManager().getIterator();
-
-           while( it.hasNext() )
-              ( (GameAccount) it.next() ).getPlayer().closeConnection();
-       }
+        gameServer.closeConnections();
+        accountServer.closeConnections();
+        gatewayServer.closeConnections();
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

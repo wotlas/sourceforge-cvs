@@ -29,7 +29,7 @@ import java.net.Socket;
  * A NetConnection brings together a NetSender and NetReceiver to send and receive
  * messages. This class is abstract because there are many different types of
  * NetSender and NetReceiver. You have to create your own ones by redefining
- * the generateConnection() method. Default personalities are provided in the
+ * the init() method. Default personalities are provided in the
  * wotlas.libs.net.connection package.
  *<br>
  * Useful methods you can invoke to send messages :
@@ -38,23 +38,22 @@ import java.net.Socket;
  *      To queue a message you want to send. 
  *      Works with every connection type ( but with different behaviour ).
  *<br>
- *    - pleaseSendAllMessagesNow();
+ *    - sendAllMessages();
  *      Asks the NetSender to send all his queued messages now. It's typically the method
  *      you use in case of a USER_AGGREGATION NetSender.
  *
  *<br><p>
  * Useful methods you can invoke to receive messages :
  *<br>
- *    - pleaseReceiveAllMessagesNow();
+ *    - receiveAllMessages();
  *      Asks the NetReceiver to process all received messages now. This method
  *      does nothing if the NetReceiver is in the asynchronous mode. In the
  *      asynchronous mode you have no method to call : everything is automated.
  *<br>
- *    - waitForAMessageToArrive();
+ *    - waitForMessage();
  *      Waits for a message to arrive. Useful in some cases when the NetReceiver
  *      is synchronous. This method does nothing if the NetReceiver is asynchronous.
- *
- *
+ *</p>
  * @author Aldiss
  * @see wotlas.libs.net.NetSender
  * @see wotlas.libs.net.NetReceiver
@@ -72,15 +71,15 @@ public abstract class NetConnection {
     */
       protected NetReceiver myNetreceiver;
 
-   /** An eventual connection listener
+   /** Our connection listeners (objects that will be told when the connection is created or closed).
     */
-      private NetConnectionListener listener;
+      private NetConnectionListener listeners[];
 
    /** An eventual PingThread ( internal class )
     */
       private PingThread pingThread;
 
-   /** An eventual lock for the pingThread
+   /** A lock for the pingThread
     */
       private Object pingLock;
 
@@ -89,29 +88,23 @@ public abstract class NetConnection {
   /** Constructor with an already opened socket.
    *
    * @param socket an already opened socket
-   * @param sessionContext object to give to messages when they arrive.
    * @exception IOException if the socket wasn't already connected.
    */
-     public NetConnection( Socket socket, Object sessionContext ) throws IOException {
-           generateConnection( socket, sessionContext );
+     public NetConnection( Socket socket ) throws IOException {
+           this( socket, null );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor with an already opened socket and a local ID to identify
-   *  a set of threads ( see NetServer ).
+  /** Constructor with an already opened socket and a session context to use.
    *
    * @param socket an already opened socket
    * @param sessionContext object to give to messages when they arrive.
-   * @param localID an ID that identifies a set of threads.
    * @exception IOException if the socket wasn't already connected.
    */
-     public NetConnection( Socket socket, Object sessionContext, byte localID ) throws IOException {
-           generateConnection( socket, sessionContext );
-        
-        // we attach the socket of the NetThread to 
-           myNetreceiver.attachTo( localID );
-           myNetsender.attachTo( localID );
+     public NetConnection( Socket socket, Object sessionContext ) throws IOException {
+           init( socket, sessionContext );
+           listeners = new NetConnectionListener[0]; // no listeners for now
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -125,7 +118,7 @@ public abstract class NetConnection {
    * @param sessionContext an object to give to messages as they arrive.
    * @exception IOException if the socket wasn't already connected.
    */
-     protected abstract void generateConnection( Socket socket, Object sessionContext )
+     protected abstract void init( Socket socket, Object sessionContext )
      throws IOException;
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -140,7 +133,8 @@ public abstract class NetConnection {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To set the current sessionContext.
+  /** To set the current sessionContext. It can be any wanted object and it will be given
+   *  to NetMessageBehaviour in their doBehaviour() method.
    *
    * @param sessionContext the new sessionContext.
    */
@@ -181,60 +175,98 @@ public abstract class NetConnection {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To set the NetConnectionListener destination for this connection.
-   *  The destination will receive information about the current NetSender,
-   *  NetReceiver... and will know when the connection will be closed.
+  /** To add a NetConnectionListener on this connection.
+   *  The listener will receive information on the life on this connection : when it's
+   *  created and when it's closed.
    *
-   *  IMPORTANT : this is not an "add", the "set" means that you can only set
-   *              one listener for this connection.
+   *  If this NetConnection is still alive we automatically call connectionCreated() on
+   *  the new listener.
    *
    * @param listener an object implementing the NetConnectionListener interface.
    */
-     public void setConnectionListener( NetConnectionListener listener ) {
-         if( listener==null )
-             return;
+     public void addConnectionListener( NetConnectionListener listener ) {
 
-         this.listener = listener;
+         NetConnectionListener tmp[] = new NetConnectionListener[listeners.length+1];
 
+         for( int i=0; i<listeners.length; i++ )
+              tmp[i] = listeners[i];
+
+         tmp[tmp.length-1]= listener;
+         listeners = tmp;
+
+       // We warn the listener that this connection has been created
          if( myNetsender!=null && myNetreceiver!=null )
              listener.connectionCreated( this );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To remove the specified network listener.
+  /** To remove the specified network listener. We don't call any method on the listener.
    * @param listener listener to remove.
+   * @return true if the listener was removed, false if it was nor found
    */
-     public void removeConnectionListener( NetConnectionListener listener ) {
-         if( listener==null )
-             return;
+     public boolean removeConnectionListener( NetConnectionListener listener ) {
 
-         if( this.listener == listener )
-             this.listener = null;
+       // does the listener exists ?
+          boolean found = false;
+
+          for( int i=0; i<listeners.length; i++ )
+               if( listeners[i]==listener ) {
+                   found = true;
+                   break;
+               }
+
+          if( !found )
+             return false;  // not found
+
+       // We remove the connection listener
+          NetConnectionListener tmp[] = new NetConnectionListener[listeners.length-1];
+          int nb=0;
+
+          for( int i=0; i<listeners.length; i++ )
+               if( listeners[i]!=listener ) {
+                   tmp[nb]=listeners[i];
+                   nb++;
+               }
+
+          listeners = tmp;
+          return true;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Asks the NetSender to send all his queued messages now. It's typically the method
-   *  you use in case of a USER_AGGREGATION NetSender.
+   *  you use in case of a USER_AGGREGATION NetSender when the messages are not sent
+   *  automatically, waiting for you to call this method to send them.
+   *  If the NetSender is not in the USER_AGGREGATION it will still try to send currently
+   *  queued messages (asynchronous, we just fire a "send!" signal).
    */
-     public void pleaseSendAllMessagesNow() {
-           myNetsender.pleaseSendAllMessagesNow();
+     public void sendAllMessages() {
+           myNetsender.sendAllMessages();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Asks the NetReceiver to process all received messages now. This method
-   *  does nothing if the NetReceiver is in the asynchronous mode.
+   *  does nothing if the NetReceiver is in the asynchronous mode. If in synchronous mode
+   *  messages are queued when they arrive and wait for this method call to be processed.
    */
-     public void pleaseReceiveAllMessagesNow() {
-           myNetreceiver.pleaseReceiveAllMessagesNow();
+     public void receiveAllMessages() {
+           myNetreceiver.receiveAllMessages();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To queue a message you want to send. 
-   *  Works with every connection type ( but with different behaviour ).
+  /** To queue a message you want to send.
+   *
+   *  This method works with every connection type but has different behaviours. If your
+   *  connection type is asynchronous this method will just leave the message on a queue
+   *  and the message will be sent automatically later. If the connection type is synchronous
+   *  you'll have to call the sendAllMessages() method to signal that queued messages can now
+   *  be sent.<br>
+   *
+   *  The connection type depends on the implementation of this abstract NetConnection class
+   *  Take a look at the provided implementation in wotlas.libs.net.connection .
    *
    * @param message message you want to send.
    */
@@ -250,17 +282,17 @@ public abstract class NetConnection {
    *
    * @exception IOException if an IO error occur.
    */
-     public void waitForAMessageToArrive() throws IOException{
-     	myNetreceiver.waitForAMessageToArrive();
+     public void waitForMessage() throws IOException{
+     	myNetreceiver.waitForMessage();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To close this connection. Erases all the allocated resources.
-   *  Before closing the connection we wait for the remaining messages
-   *  to be sent. We then perform some clean up.
+  /** To close this connection. Erases all the allocated resources. This method will return
+   *  immediately but the remaining queued messages will still be sent. This method performs
+   *  some clean-up on the NetConnection object and does nothing when called twice.
    */
-     synchronized public void closeConnection() {
+     synchronized public void close() {
 
      	  if( myNetsender==null ||  myNetreceiver==null )
      	      return;
@@ -273,7 +305,7 @@ public abstract class NetConnection {
           myNetreceiver.stopThread();
 
        // we wait for the remaining messages to be sent
-          myNetsender.pleaseSendAllMessagesNow();
+          myNetsender.sendAllMessages();
             
        // massive destruction
           myNetsender.stopThread();
@@ -281,26 +313,27 @@ public abstract class NetConnection {
                                       // before closing
           
           synchronized( myNetsender ) {
-                myNetsender.notify();    // we don't forget to wake up the thread !
-          }                               // (the NetSender is locked when there are no msgs )
+             myNetsender.notify();    // we don't forget to wake up the thread !
+          }                           // (the NetSender is locked when there are no msgs )
 
           if( pingLock!=null )
             synchronized( pingLock ){
                pingThread.stopThread();
             }
 
-          if( listener!=null )
-              listener.connectionClosed( this );
+          for( int i=0; i<listeners.length; i++ )
+               listeners[i].connectionClosed( this );
 
           myNetsender = null;
           myNetreceiver = null;
-          listener = null;
+          listeners = null;
      }
 
  /*------------------------------------------------------------------------------------*/
 
-  /** To set a ping listener for this network connection.
-   *
+  /** To set a ping listener for this network connection. Ping messages will be added to
+   *  this network connection and if the remote peer supports it, Ping info will be sent
+   *  regularly to this listener.
    * @param pListener the object that will receive ping information.
    */
     public void setPingListener( NetPingListener pListener ) {
@@ -419,17 +452,17 @@ public abstract class NetConnection {
                  queueMessage( new PingMessage( sequenceID ) );
                  lastPingT0 = System.currentTimeMillis();
 
-              // 2 - We wait 1 second
+              // 2 - We wait 2 seconds between two Ping.
                  synchronized( this ) {
                     try{
-                       this.wait( 1000 );
+                       this.wait( 2000 );
                     }catch( Exception e ) {}
                     
                     if(shouldStopPingThread)
                        break;
                  }
 
-              // 3 - Do we have received the answer ?
+              // 3 - Have we received the answer ?
                  synchronized( pingLock ) {
                      if(!pingReceivedBack) {
                         // we wait two more seconds

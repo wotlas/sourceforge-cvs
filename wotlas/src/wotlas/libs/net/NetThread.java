@@ -35,33 +35,21 @@ import wotlas.utils.Debug;
  * @see wotlas.libs.net.NetSender
  */
 
-abstract public class NetThread extends Thread
-{
- /*------------------------------------------------------------------------------------*/
-
-   /** Thread Counters. ( This JVM may have different servers for example, each of them
-    *  owning a set of threads ).
-    */
-       private static int threadCounter[] = new int[1];
+abstract public class NetThread extends Thread {
 
  /*------------------------------------------------------------------------------------*/
 
    /** Our socket.
     */
-       private Socket socket;
+      private Socket socket;
 
    /** tells the thread if it must stop.
     */ 
-       private boolean stopThread;
-
-   /** An ID representing our owner. This is also our index in the threadCounter array.
-    */
-       private byte localID;
+      private boolean stopThread;
 
  /*------------------------------------------------------------------------------------*/
 
-   /** NetThread constructor.
-    *
+   /** NetThread constructor with an opened socket.
     * @param socket an already opened socket. 
     */
       protected NetThread( Socket socket ){
@@ -69,7 +57,32 @@ abstract public class NetThread extends Thread
 
          this.socket = socket;
          stopThread = false;
-         localID = -1;       // no owner for now, see attachTo() method
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /**  To get a buffered socket input stream.
+    *
+    * @param buffer_size buffer size for the BufferedInputStream.
+    * @return a buffered input stream linked to the socket input stream.
+    * @exception IOException if the socket has not already been opened.
+    */
+      protected BufferedInputStream getBufferedInputStream( int buffer_size )
+      throws IOException {
+           return new BufferedInputStream( socket.getInputStream(), buffer_size );
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /**  To get a buffered socket output stream.
+    *
+    * @param buffer_size buffer size for the BufferedOutputStream.
+    * @return a buffered output stream linked to the socket output stream.
+    * @exception IOException if the socket has not already been opened.
+    */
+      protected BufferedOutputStream getBufferedOutputStream( int buffer_size )
+      throws IOException {
+           return new BufferedOutputStream( socket.getOutputStream(), buffer_size );
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -109,100 +122,6 @@ abstract public class NetThread extends Thread
                  }
                  catch(IOException ioe ) {}
            }
-
-
-        // we decrease the number of threads for our set...
-           if( localID!=-1 )
-               synchronized( threadCounter ) {
-                   threadCounter[localID] -= 2; // this method is called once
-               }                                // and there are 2 threads.
-      }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-   /**  To get a buffered socket input stream.
-    *
-    * @param buffer_size buffer size for the BufferedInputStream.
-    * @return a buffered input stream linked to the socket input stream.
-    * @exception IOException if the socket has not already been opened.
-    */
-      protected BufferedInputStream getBufferedInputStream( int buffer_size )
-      throws IOException {
-           return new BufferedInputStream( socket.getInputStream(), buffer_size );
-      }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-   /**  To get a buffered socket output stream.
-    *
-    * @param buffer_size buffer size for the BufferedOutputStream.
-    * @return a buffered output stream linked to the socket output stream.
-    * @exception IOException if the socket has not already been opened.
-    */
-      protected BufferedOutputStream getBufferedOutputStream( int buffer_size )
-      throws IOException {
-           return new BufferedOutputStream( socket.getOutputStream(), buffer_size );
-      }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-   /**  To get the number of opened socket for the given owner ID.
-    *   This method should only be used for resource management (NetServer).
-    *
-    * @param localID the ID of the sockets owner
-    * @return the current number of opened sockets for this owner.
-    */
-      public static int getOpenedSocketNumber( byte localID ) { 
-             return getThreadsNumber(localID)/2;  // two threads per socket
-      }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-   /**  To get the number of threads for the given owner ID.
-    *   This method should only be used for resource management (NetServer).
-    *
-    * @param localID the ID of the sockets owner (ID>0).
-    * @return the current number of working threads for this owner.
-    */
-      public static int getThreadsNumber( byte localID ) { 
-           synchronized (threadCounter) {
-            // if no socket were opened it is possible that the
-            // array length was not increased yet.
-               if( localID>=threadCounter.length )
-                   return 0;
-           
-               return threadCounter[localID];
-           }
-      }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-   /** Attach this thread to the given owner ID.<p>
-    *
-    *  The purpose of this method is mainly to keep trace of the number
-    *  of opened sockets. It's optional and currently only used by the
-    *  NetServer class.
-    * 
-    *  @param localID an ID identifying an entity that owns this thread.
-    */
-      public void attachTo( byte localID ) {
-          this.localID = localID;
-
-          synchronized(threadCounter)
-          {
-            // new localID ? array not big enough ?
-              if( localID>=threadCounter.length ) {
-                 int tmp[] = new int[localID+1];
-                
-                 for( int i=0; i<threadCounter.length; i++ )
-                      tmp[i] = threadCounter[i];
-                
-                 threadCounter = tmp;
-              }
-          
-            // counter incr
-               threadCounter[localID]++;
-          }
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

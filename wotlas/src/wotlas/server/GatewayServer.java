@@ -54,15 +54,15 @@ public class GatewayServer extends NetServer implements ErrorCodeList {
 
   /** Constructor (see wotlas.libs.net.NetServer for details)
    *
-   *  @param host the host interface to bind to. Example: wotlas.tower.org
-   *  @param server_port port on which the server listens to clients.
-   *  @param msg_packages a list of packages where we can find NetMsgBehaviour Classes.
+   *  @param serverInterface the host interface to bind to. Example: wotlas.tower.org
+   *  @param port port on which the server listens to clients.
+   *  @param packages a list of packages where we can find NetMsgBehaviour Classes.
    *  @param nbMaxSockets maximum number of sockets that can be opened on this server
    *  @param serverConfigManager config of all the servers.
    */
-    public GatewayServer( String host, int port, String packages[], int nbMaxSockets,
+    public GatewayServer( String serverInterface, int port, String packages[], int nbMaxSockets,
                           ServerConfigManager serverConfigManager ) {
-       super( host, port, packages );
+       super( serverInterface, port, packages );
        setMaximumOpenedSockets( nbMaxSockets );
 
        this.serverConfigManager = serverConfigManager;
@@ -77,38 +77,22 @@ public class GatewayServer extends NetServer implements ErrorCodeList {
     * @param key a string given by the client to identify itself. The key should be
     *        equal to "AccountServerPlease!".
     */
-    public void accessControl( NetConnection connection, String key )
-    {
-       // The key is there to prevent wrong connections
+    public void accessControl( NetConnection connection, String key ) {
 
-          if( key.equals("GatewayServerPlease!") )
-          {
+       // The key is there to prevent wrong connections
+          if( key.equals("GatewayServerPlease!") ) {
             // ok, let's create an AccountTransaction for the operation.
                AccountTransaction transaction = new AccountTransaction(
                                                 AccountTransaction.TRANSACTION_ACCOUNT_RECEIVER );
 
             // we set his message context to his player...
                connection.setContext( transaction );
-               connection.setConnectionListener( transaction );
+               connection.addConnectionListener( transaction );
 
             // welcome on board...
                acceptClient( connection );
                Debug.signal( Debug.NOTICE, null, "Gateway Server is receiving an account...");
           }
-/*          if( key.startsWith("isThereAnAccountNamed:") )
-          {
-              String primaryKey = key.substring( key.indexOf(':')+1, key.length() );
-              
-           // does this client exists ?
-              AccountManager manager = DataManager.getDefaultDataManager().getAccountManager();
-
-              if( manager.checkAccountName( primaryKey ) )
-                  refuseClient( connection, primaryKey+":found" ); // yes the client exists
-              else {
-                  Debug.signal( Debug.WARNING, "The account searched ("+primaryKey+") was not found." );
-                  refuseClient( connection, primaryKey+":not found");
-              }
-          } */
           else {
             // NO VALID KEY
                Debug.signal( Debug.NOTICE, this, "Someone tried to connect with a bad key : "+key);
@@ -173,7 +157,7 @@ public class GatewayServer extends NetServer implements ErrorCodeList {
           }
 
           Debug.signal( Debug.NOTICE, null, "Gateway server reached. Starting transaction for "+accountPrimaryKey+".");
-          connection.setConnectionListener( transaction );
+          connection.addConnectionListener( transaction );
 
        // STEP 4 - Wait for the result (10s max)
           return transaction.transfertAccount( accountPrimaryKey, 10000, ServerDirector.getServerID() );

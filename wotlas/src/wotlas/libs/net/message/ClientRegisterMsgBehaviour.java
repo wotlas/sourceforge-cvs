@@ -36,8 +36,8 @@ import wotlas.utils.Debug;
  * @see wotlas.libs.net.message.ClientRegisterMessage
  */
 
-public class ClientRegisterMsgBehaviour extends ClientRegisterMessage implements NetMessageBehaviour
-{
+public class ClientRegisterMsgBehaviour extends ClientRegisterMessage implements NetMessageBehaviour {
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
@@ -61,10 +61,8 @@ public class ClientRegisterMsgBehaviour extends ClientRegisterMessage implements
      	// this message is the first one sent by a client 
      	// when he establishes a new connection. Arrived on the server
         // we check that we have the same NetEngineVersion.
-           if( netEngineVersion != NetEngineVersion.VERSION )
-           {
-                if( netEngineVersion > NetEngineVersion.VERSION )
-                {
+           if( netEngineVersion != NetEngineVersion.VERSION ) {
+                if( netEngineVersion > NetEngineVersion.VERSION ) {
                      entry.getConnection().queueMessage(
                            new ServerErrorMessage( NetErrorCodeList.ERR_BAD_LIB_VERSION,
                                                    "The Server Network Engine Version is old : "
@@ -72,22 +70,21 @@ public class ClientRegisterMsgBehaviour extends ClientRegisterMessage implements
                                                    + ". Please Signal it ! You have version "
                                                    + netEngineVersion ) );
 
-                     entry.getConnection().closeConnection();
+                     entry.getConnection().close();
 
                      Debug.signal( Debug.WARNING, this,
                                      "Client tried to connect with a more recent network engine version :"
                                       +netEngineVersion+". This server has version "
                                       +NetEngineVersion.VERSION );
                 }
-                else
-                {
+                else {
                        entry.getConnection().queueMessage(
                            new ServerErrorMessage( NetErrorCodeList.ERR_BAD_LIB_VERSION,
                                                    "You have an old version of the Wotlas Network Engine (v"
                                                         + netEngineVersion + "). Please update to v"
                                                         + NetEngineVersion.VERSION ) );
 
-                       entry.getConnection().closeConnection();
+                       entry.getConnection().close();
 
                        Debug.signal( Debug.WARNING, this,
                                      "Client tried to connect with an old version of the network engine (v"

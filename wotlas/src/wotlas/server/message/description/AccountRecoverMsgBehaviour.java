@@ -24,7 +24,7 @@ import java.io.IOException;
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.common.message.description.*;
 import wotlas.server.PlayerImpl;
-import wotlas.server.GameServer;
+import wotlas.server.ServerDirector;
 
 /**
  * Associated behaviour to the AccountRecoverMessage...
@@ -55,7 +55,7 @@ public class AccountRecoverMsgBehaviour extends AccountRecoverMessage implements
            PlayerImpl player = (PlayerImpl) sessionContext;
            
         // We send player's profile
-           player.sendMessage( new YourAccountDataMessage( primaryKey, player.getPlayerName(), GameServer.getServerID() ) );
+           player.sendMessage( new YourAccountDataMessage( primaryKey, player.getPlayerName(), ServerDirector.getServerID() ) );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -42,7 +42,7 @@ import java.net.*;
  * @see wotlas.server.PersistenceManager
  */
 
-public class ServerDirector implements Runnable, NetServerErrorListener {
+public class ServerDirector implements Runnable, NetServerListener {
 
  /*------------------------------------------------------------------------------------*/
 
@@ -236,6 +236,9 @@ public class ServerDirector implements Runnable, NetServerErrorListener {
 
         // STEP 7 - Start of the GameServer, AccountServer & GatewayServer !
            Debug.signal( Debug.NOTICE, null, "Starting Game server, Account server & Gateway server..." );
+
+           serverDirector = new ServerDirector();
+           serverManager.getGameServer().addServerListener( serverDirector );
            serverManager.start();
 
         // STEP 8 - We generate new keys for special characters
@@ -269,9 +272,6 @@ public class ServerDirector implements Runnable, NetServerErrorListener {
 
         // STEP 10 - Everything is ok ! we enter the persistence loop
            Debug.signal( Debug.NOTICE, null, "Starting persistence thread..." );
-
-           serverDirector = new ServerDirector();
-           serverManager.getGameServer().setErrorListener( serverDirector );
            
            Thread persistenceThread = new Thread( serverDirector );
            persistenceThread.start();
@@ -393,22 +393,6 @@ public class ServerDirector implements Runnable, NetServerErrorListener {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** This method is called when an error occurs in one of the NetServer.
-   *  DEPRECATED - WILL BE REMOVED SOON
-   * @param e the exception that occured.
-   */
-     public void errorOccured( Exception e ) {
-     	if(e instanceof BindException) {
-     	   Debug.signal( Debug.NOTICE, this, "Trying to awake Persistence Thread..." );
-     	   
-     	   synchronized( this ) {
-     	     notify(); // returns immediately
-     	   }
-     	}
-     }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
    /** To get the server ID of this server.
     *
     * @return serverID
@@ -466,6 +450,27 @@ public class ServerDirector implements Runnable, NetServerErrorListener {
    }
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** This method is called when the server network interface is down.
+    * @param itf the network interface we tried which is NOT available.
+    */
+     public void serverInterfaceIsDown( String itf ) {
+          Debug.signal( Debug.NOTICE, null, "Network interface "+itf+" is down... we'll retry later.");
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** This method is called when the server network interface is Up.
+    * @param ipAddress currently used IP address
+    * @param stateChanged if true it means the interface has been re-created ( ip changed or
+    *        serverSocket has just been created ). If false it means that the interface is Up
+    *        and its state has not changed (since last check).
+    */
+     public void serverInterfaceIsUp( String ipAddress, boolean stateChanged ) {
+         if(stateChanged)
+            Debug.signal( Debug.NOTICE, null, "Network interface "+ipAddress+" is up...");
+     }
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To get our resource manager.
    *  @return our resource manager.

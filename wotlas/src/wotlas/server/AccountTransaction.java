@@ -130,7 +130,7 @@ public class AccountTransaction implements NetConnectionListener
              Debug.signal( Debug.NOTICE, this, "Created an account for the received client..." );
 
              connection.queueMessage( new AccountTrSuccessMessage() );
-             connection.closeConnection();
+             connection.close();
           }
           else {
              Debug.signal( Debug.ERROR, this, "Could'nt finish "+account.getPrimaryKey()+" account transaction." );
@@ -212,7 +212,7 @@ public class AccountTransaction implements NetConnectionListener
      	
      	 if(connection!=null) {
             connection.queueMessage( new AccountTrFailedMessage( errorMsg ) );
-            connection.closeConnection();
+            connection.close();
          }
      }
 

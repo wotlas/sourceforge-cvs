@@ -19,7 +19,6 @@
 
 package wotlas.libs.net;
 
-
 import java.net.Socket;
 import java.net.SocketException;
 import java.io.DataInputStream;
@@ -30,16 +29,12 @@ import wotlas.libs.net.message.PingMessage;
 import wotlas.libs.net.message.EndOfConnectionMessage;
 
 /** A NetReceiver waits for NetMessage to arrive on an opened socket.
- *  It decodes them and execute their associated code.
+ *  It decodes them and execute their associated NetMessageBehaviour.
  *<br>
- * There is two types of NetReceiver : synchronous (sync=true),
- *                                     asynchronous (sync=false)
- *<p>
- * In the first case a thread is automatically started by the constructor.
- *<p>
- * In the second case, no thread is started. The user has to call
- * the pleaseReceiveAllMessagesNow() method regularly to allow the
- * NetReceiver to extract messages.
+ * There are two types of NetReceiver : asynchronous (sync=false), synchronous (sync=true).
+ * In the first case a thread is automatically started and will automatically process
+ * received messages. In the second case, no thread is started. The user'll have to call
+ * the receiveAllMessages() method regularly to allow the NetReceiver to process messages.
  *
  * @author Aldiss
  * @see wotlas.libs.net.NetMessageFactory
@@ -72,7 +67,7 @@ public class NetReceiver extends NetThread {
         private Object sessionContext;
 
     /** For the synchronous NetReceiver : 
-     *  maximum number of messages to process per user call ( pleaseReceiveAllMessagesNow() ).
+     *  maximum number of messages to process per user call ( receiveAllMessages() ).
      */
         private int maxMsg;
 
@@ -96,8 +91,7 @@ public class NetReceiver extends NetThread {
      * @exception IOException if the socket wasn't already connected.
      */
       public NetReceiver( Socket socket, NetConnection connection, boolean sync,
-                          Object sessionContext, int bufferSize ) throws IOException
-      {
+                          Object sessionContext, int bufferSize ) throws IOException {
           super( socket );
           this.sync = sync;
           this.sessionContext = sessionContext;
@@ -113,45 +107,35 @@ public class NetReceiver extends NetThread {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Do we have to send back ping messages ?
-   * @param sendBack set to true to automatically send back ping messages.
-   */
-      public void sendBackPingMessages( boolean sendBack ) {
-          sendBackPingMessages = sendBack;
-      }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
   /** Method for the async NetReceiver.
    *  Never call this method it's done automatically.
    */
-    public void run()
-    {
+    public void run() {
         if(sync)
            return;   // we have nothing to do here
 
-        try
-        {
-           do
-           {
-             // we wait for message super class name.
+        try{
+           do{
+             // we wait for message to arrive and read its message class name.
                 String msgSuperClassName = inStream.readUTF();
 
              // we reconstruct the message and execute its associated code.
                 try{
                      NetMessageBehaviour msg = factory.getNewMessageInstance( msgSuperClassName );
-                     ( (NetMessage)msg ).decode( inStream );
+                     ( (NetMessage)msg ).decode( inStream ); // decode data in the message behaviour class
 
+                  // what kind of message do we have here ?
                      if(msg instanceof PingMessage) {
                      	if(sendBackPingMessages)
                            connection.queueMessage( (NetMessage)msg ); // send back the PingMessage
                         else
                            connection.receivedPingMessage( ((PingMessage) msg).getSeqID() );
                      }
-                     else if(msg instanceof EndOfConnectionMessage)
+                     else if(msg instanceof EndOfConnectionMessage) {
                         break; // end of connection
+                     }
                      else
-                        msg.doBehaviour( sessionContext );
+                        msg.doBehaviour( sessionContext ); // execute the message's behaviour code...
                 }
                 catch(ClassNotFoundException e) {
                       Debug.signal( Debug.WARNING, this, e );
@@ -159,60 +143,62 @@ public class NetReceiver extends NetThread {
                 }
            }
            while( !shouldStopThread() );
-
         }
-        catch(Exception e){
-           if(e instanceof IOException) {
-             // Socket error, connection was probably closed a little roughly...
-               Debug.signal( Debug.WARNING, this, "Connection closed : "+e.toString() );
-           }
-           else if(e instanceof SocketException) {
+        catch( SocketException se ) {
              // Socket closed a bit roughly
-               Debug.signal( Debug.WARNING, this, "Socket closed a bit roughly : "+e.toString() );
-           }
-           else
+               Debug.signal( Debug.WARNING, this, "Connection closed a bit roughly : "+se.toString() );
+        }
+        catch( IOException ioe ) {
+             // Socket error, connection was probably closed a little roughly...
+               Debug.signal( Debug.WARNING, this, "Connection closed : "+ioe.toString() );
+        }
+        catch( Exception e ){
+             // Real error !
                Debug.signal( Debug.ERROR, this, e ); // serious error while processing message
         }
 
      // we ask the NetConnection to perform some cleanup
      // and signal that the connection was closed ( connectionListener )
-        connection.closeConnection();
+        connection.close();
         inStream=null;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Method to call in a case of a sync NetReceiver. We stop to process messages in 
+  /** To process all the received messages.
+   *  This is the method to call in a case of a sync NetReceiver. We stop to process messages in 
    *  either cases : (1) there is no more messages,
    *                 (2) the maxMsg limit has been reached.
    */
-     public void pleaseReceiveAllMessagesNow()
-     {
+     public void receiveAllMessages() {
         if(!sync)
            return;   // we have nothing to do here
 
         int msgCounter=0;
 
-        try
-        {
-           while( inStream.available()!=0 && msgCounter<maxMsg )
-           {
-             // we wait for message super class name.
+        try{
+           while( inStream.available()!=0 && msgCounter<maxMsg ) {
+             // 1 - we wait for message to arrive and read its message class name.
                 String msgSuperClassName = inStream.readUTF();
 
-             // we reconstruct the message and execute its associated code.
+             // 2 - we reconstruct the message and execute its associated code.
                 try{
                      NetMessageBehaviour msg = factory.getNewMessageInstance( msgSuperClassName );
-                     ( (NetMessage)msg ).decode( inStream );
+                     ( (NetMessage)msg ).decode( inStream ); // decode data in the message behaviour class
 
-                     if(msg instanceof PingMessage) {
-                     	if(sendBackPingMessages)
-                           connection.queueMessage( (NetMessage)msg ); // send back the PingMessage
-                        else
-                           connection.receivedPingMessage( ((PingMessage) msg).getSeqID() );
+                  // what kind of message do we have here ?
+                     if( msg instanceof PingMessage ) {
+                         if( sendBackPingMessages )
+                             connection.queueMessage( (NetMessage)msg ); // send back the PingMessage
+                         else
+                             connection.receivedPingMessage( ((PingMessage) msg).getSeqID() );
+                     }
+                     else if( msg instanceof EndOfConnectionMessage ) {
+                        connection.close();
+                        break; // end of connection
                      }
                      else
-                        msg.doBehaviour( sessionContext );
+                        msg.doBehaviour( sessionContext ); // execute the message's behaviour code...
                 }
                 catch(ClassNotFoundException e) {                     
                       Debug.signal( Debug.WARNING, this, e );
@@ -222,26 +208,28 @@ public class NetReceiver extends NetThread {
 
               msgCounter++;
            }
+        }
+        catch(IOException ioe){
+           // Socket error, connection was probably closed a little roughly...
+              Debug.signal( Debug.WARNING, this, ioe );
 
+           // we ask the NetConnection to perform some cleanup
+           // and signal that the connection was closed ( connectionListener )
+              connection.close();
         }
         catch(Exception e){
-           if(e instanceof IOException) {
-             // Socket error, connection was probably closed a little roughly...
-               Debug.signal( Debug.WARNING, this, e );
-           }
-           else
-               Debug.signal( Debug.ERROR, this, e ); // serious error while processing message
+           // serious error while processing message
+              Debug.signal( Debug.ERROR, this, e );
 
-         // we ask the NetConnection to perform some cleanup
-         // and signal that the connection was closed ( connectionListener )
-            connection.closeConnection();
+           // we ask the NetConnection to perform some cleanup
+           // and signal that the connection was closed ( connectionListener )
+              connection.close();
         }
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To set the maximum number of messages to process per user call.
-   *
    * @param maxMsg maximum number of messages
    */
      public void setMaxMessageLimitPerUserCall( int maxMsg ) {
@@ -251,7 +239,6 @@ public class NetReceiver extends NetThread {
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To get the maximum number of messages to process per user call.
-   *
    * @return the maximum number of messages
    */
      public int getMaxMessageLimitPerUserCall() {
@@ -260,7 +247,8 @@ public class NetReceiver extends NetThread {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To set the current sessionContext.
+  /** To set the current sessionContext. This is the object that we'll give to message
+   *  behaviours when we'll have to call the doBehaviour() method on them.
    *
    * @param sessionContext the new sessionContext.
    */
@@ -278,7 +266,7 @@ public class NetReceiver extends NetThread {
    *
    * @exception IOException if something goes wrong
    */
-     public void waitForAMessageToArrive() throws IOException{
+     public void waitForMessage() throws IOException{
         if(!sync)
            return;
 
@@ -301,6 +289,15 @@ public class NetReceiver extends NetThread {
      public boolean isSynchronous() {
          return sync;
      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Do we have to send back ping messages ?
+   * @param sendBack set to true to automatically send back ping messages.
+   */
+      public void sendBackPingMessages( boolean sendBack ) {
+          sendBackPingMessages = sendBack;
+      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

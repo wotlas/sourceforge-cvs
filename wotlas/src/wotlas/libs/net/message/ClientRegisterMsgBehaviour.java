@@ -24,6 +24,7 @@ import java.io.IOException;
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.libs.net.NetServerEntry;
 import wotlas.libs.net.NetEngineVersion;
+import wotlas.libs.net.NetErrorCodeList;
 
 import wotlas.utils.Debug;
 
@@ -65,7 +66,8 @@ public class ClientRegisterMsgBehaviour extends ClientRegisterMessage implements
                 if( netEngineVersion > NetEngineVersion.VERSION )
                 {
                      entry.getPersonality().queueMessage(
-                           new ServerErrorMessage( "The Server Network Engine Version is old : "
+                           new ServerErrorMessage( NetErrorCodeList.ERR_BAD_LIB_VERSION,
+                                                   "The Server Network Engine Version is old : "
                                                    + NetEngineVersion.VERSION
                                                    + ". Please Signal it ! You have version "
                                                    + netEngineVersion ) );
@@ -80,7 +82,8 @@ public class ClientRegisterMsgBehaviour extends ClientRegisterMessage implements
                 else
                 {
                        entry.getPersonality().queueMessage(
-                           new ServerErrorMessage( "You have an old version of the Wotlas Network Engine (v"
+                           new ServerErrorMessage( NetErrorCodeList.ERR_BAD_LIB_VERSION,
+                                                   "You have an old version of the Wotlas Network Engine (v"
                                                         + netEngineVersion + "). Please update to v"
                                                         + NetEngineVersion.VERSION ) );
 

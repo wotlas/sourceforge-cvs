@@ -188,6 +188,10 @@ System.out.println("TAB number:"+tabbedPane.getTabCount());
                 tabbedPane.remove(i);
 System.out.println("tab removed");
             }
+            else {
+                ( (JChatRoom) tabbedPane.getComponentAt(i) ).removeAllPlayers();
+System.out.println("DEFAULT CHAT player list reseted");
+            }
         }
 
 

@@ -291,7 +291,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   public void showDebug(boolean value) {
     SHOW_DEBUG = value;
   }
-  
+
  /*------------------------------------------------------------------------------------*/
   
   /** To get the hashtable players
@@ -402,7 +402,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
     Debug.signal( Debug.NOTICE, null, "DataManager not connected anymore to GameServer" );
-
+    
+    showWarningMessage("Connection to Server lost ! Re-connect to the game...");
+    
+    gDirector.removeAllDrawables();
+    
+    ClientManager.getDefaultClientManager().start(1);
+    
   }
 
   /** Use this method to send a NetMessage to the server.
@@ -445,6 +451,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   public void showInterface() {
     Debug.signal( Debug.NOTICE, null, "DataManager::ShowInterface");
 
+    if (imageLib !=null) {
+      // All data have alreay been initialized
+      // => there was a disconnexion and player has resumed the game
+      resumeInterface();
+      return;
+    }
+    
     // 0 - Create Image Library
     imageDBHome = databasePath + File.separator + IMAGE_LIBRARY;
     try {
@@ -482,20 +495,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     if (SHOW_DEBUG)
         System.out.println("POSITION set to x:"+myPlayer.getX()+" y:"+myPlayer.getY()+" location is "+location);
 
-// ALDISS
-    // 3 - Create the drawable reference
-/*    location.setWorldMapID(0);
-    location.setTownMapID(0);
-    location.setInteriorMapID(-1);
-    location.setBuildingID(-1);
-    location.setRoomID(-1);
-    //myPlayer.setX(70);
-    myPlayer.setX(31);
-    //myPlayer.setY(640);
-    myPlayer.setY(759);
-    //myPlayer.setPosition(new ScreenPoint(70,640));
-    myPlayer.setPosition(new ScreenPoint(31,759));
-*/
     players = new Hashtable();
     
     // 4 - Create AStar
@@ -554,6 +553,44 @@ System.out.println("Frame show");
        sendMessage(new AllDataLeftPleaseMessage());
   }
 
+  /** Resume play in case of server deconnexion
+   */
+  public void resumeInterface() {
+    Debug.signal( Debug.NOTICE, null, "DataManager::ResumeInterface");
+    
+    // Retrieve player's informations
+    try {
+      synchronized(startGameLock) {
+        personality.queueMessage(new MyPlayerDataPleaseMessage());
+        startGameLock.wait(CONNECTION_TIMEOUT);
+      }
+    } catch (InterruptedException ie) {
+      showWarningMessage("Cannot retreive your informations from the Game Server !");
+      Debug.exit();
+    }
+  
+  // RAJOUTER UNE ERREUR CRITIQUE SI PAS DE DONNEES
+
+    myPlayer.setIsMaster( true );   // this player is controlled by the user.
+
+    // Retreive player's location
+    WotlasLocation location = myPlayer.getLocation();
+    if (SHOW_DEBUG)
+        System.out.println("POSITION set to x:"+myPlayer.getX()+" y:"+myPlayer.getY()+" location is "+location);
+
+    players = new Hashtable();
+    
+     // Init map display
+    changeMapData();
+    
+    addPlayer(myPlayer);
+
+    // We can now ask for eventual remaining data
+    // This step should have been done in the current MapData.init() but it was not
+    // the cas because our DataManager thread was not started...
+    sendMessage(new AllDataLeftPleaseMessage());
+  }
+  
  /*------------------------------------------------------------------------------------*/
 
   /** Main loop to tick the graphics director every 10ms

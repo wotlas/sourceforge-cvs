@@ -217,7 +217,7 @@ public class FileTools
            BufferedReader reader = new BufferedReader( new InputStreamReader(url.openStream() ));
 
            while ((line = reader.readLine()) != null)
-                  textFile = textFile.append(line);
+                  textFile = textFile.append(line+"\n");
 
            reader.close();
            return textFile.toString();

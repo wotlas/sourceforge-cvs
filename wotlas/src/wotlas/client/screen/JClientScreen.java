@@ -118,7 +118,7 @@ public class JClientScreen extends JFrame
     addWindowListener( new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
         System.out.println("See you soon!");
-        mapPanel.exit();
+        DataManager.getDefaultDataManager().exit();
       }
     });
   }
@@ -167,12 +167,16 @@ public class JClientScreen extends JFrame
 
       // *** Chat Panel ***
 
-      JScrollPane myChatPanel = new JScrollPane(chatPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+      /*JScrollPane myChatPanel = new JScrollPane(chatPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
       //myChatPanel.setMinimumSize(new Dimension(leftWidth, mainHeight-northHeight-gameHeight));
       myChatPanel.setMinimumSize(new Dimension(leftWidth, chatMinHeight));
 
       JSplitPane leftPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mapPanel, myChatPanel);
       //JSplitPane leftPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, gDirector, myChatPanel);
+      */
+      
+      JSplitPane leftPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mapPanel, chatPanel);
+      
 
       leftPanel.setOneTouchExpandable(true);
       leftPanel.setDividerLocation(gameHeight);

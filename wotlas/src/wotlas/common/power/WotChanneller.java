@@ -26,6 +26,7 @@ import wotlas.common.universe.*;
  *
  * @author Chris
  * @see wotlas.common.Player
+ * @see wotlas.common.power.Weave
  * @see wotlas.libs.graphics2D.Drawable
  */
 
@@ -33,30 +34,30 @@ public interface WotChanneller
 { 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-    /** To get a list of Talents usable by this Channeller.</P>
+    /** To get a list of Weaves usable by this Channeller.</P>
      * Not modifiable directly, it is generated each time this method is called.
      *
-     * @return an array of the Strings, the names of the powers.
+     * @return an array of the Strings, the names of the weaves.
      */
-    public String[] getPowerList();
+    public String[] getWeaveList();
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-    /** Adds a Power to this Channeller's list
+    /** Adds a Weave to this Channeller's list
      *
-     * @param powerName the name of the new power to be added.
+     * @param weaveName the name of the new Weave to be added.
      * @return success status (true if successful)
      */
-    public boolean addPower( String powerName );
+    public boolean addWeave( String weaveName );
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-    /** To get a Power
+    /** To get a Weave
      *
-     * @param powerName the name of the Power (see the list produced by getPowerList())
-     * @return the Power
+     * @param weaveName the name of the Power (see the list produced by getPowerList())
+     * @return the Weave
      */
-    public Power getPower( String powerName );
+    public Weave getWeave( String weaveName );
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

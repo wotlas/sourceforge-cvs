@@ -26,25 +26,25 @@ import wotlas.libs.graphics2D.*;
 import java.io.*;
 import java.awt.Color;
 
-/** Generic Wotlas Power. Each Channeller object possess a collection of Power objects for their amusement.
+/** Generic Wotlas Weave. Each Channeller object possess a collection (HashMap in the default implementation) of Weave objects for their amusement.
  *
  * @author Chris
- * @see wotlas.common.power.Power
+ * @see wotlas.common.power.Channeller
  * @see wotlas.libs.graphics2D.Drawable
  */
 
-public abstract class Power {
+public abstract class Weave {
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
     /** Constructor
      */
-    public Power() {
+    public Weave() {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-    /** to get the name of the power
+    /** to get the name of the Weave
      */
     public String getName() {
 	return this.name;
@@ -54,16 +54,16 @@ public abstract class Power {
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-    /** Where all the magic happens, this version is for simple powers that require
+    /** Where all the magic happens, this version is for simple weaves that require
      * no target
-     * @param Playter the channeller
+     * @param Player the channeller
      * @return success status
      */
     public abstract boolean channel( Player channeller );
 
     /** Alternative channel() method - this one requires a Character as a target
      *
-     * @param channellerr the channeller Player
+     * @param channeller the channeller Player
      * @param target the target Player
      * @return success status
      */
@@ -71,7 +71,7 @@ public abstract class Power {
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-    /** To get a Drawable for the effect of this power, returns null on the server-side
+    /** To get a Drawable for the effect of this weave, returns null on the server-side
      *  or if no visual effect is required.
      * 
      * Can this be animated?

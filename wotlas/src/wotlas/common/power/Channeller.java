@@ -31,6 +31,7 @@ import wotlas.utils.Debug;
  *
  * @author Chris
  * @see wotlas.common.Player
+ * @see wotlas.common.power.Weave
  * @see wotlas.libs.graphics2D.Drawable
  */
 
@@ -38,15 +39,15 @@ public abstract class Channeller
 {
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-    /** Storage for the list of Powers
+    /** Storage for the list of Weaves usable by this Channeller
      */
-    private HashMap powerList = new HashMap();
+    private HashMap weaveList = new HashMap();
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-    /** Storage for the full list of Powers
+    /** Storage for the full list of Weaves
      */
-    private HashMap fullPowerList = new HashMap();
+    private HashMap fullWeaveList = new HashMap();
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -67,25 +68,25 @@ public abstract class Channeller
      */
     public Channeller() {
 
-	/** Load the available Power classes
+	/** Load the available Weave classes
 	 * ASSUMING NOT IN JAR FILE
 	 */
-	File powersFiles[] = new File( "wotlas/common/power/Powers" ).listFiles();
+	File weavesFiles[] = new File( "wotlas/common/power/Weaves" ).listFiles();
 
-	if( powersFiles==null || powersFiles.length==0 ) {
-	    Debug.signal( Debug.WARNING, this, "No Powers found in wotlas/common/power/Powers!" );
+	if( weavesFiles==null || weavesFiles.length==0 ) {
+	    Debug.signal( Debug.WARNING, this, "No Weaves found in wotlas/common/power/Weaves!" );
 	    return;
 	}
 
-	for (int i=0; i< powersFiles.length; i++ ) {
+	for (int i=0; i< weavesFiles.length; i++ ) {
 
-	    if( !powersFiles[i].isFile() || !powersFiles[i].getName().endsWith(".class") )
+	    if( !weavesFiles[i].isFile() || !weavesFiles[i].getName().endsWith(".class") )
 		continue;
 
 	    // Load the class
 	    try{
-		String name = powersFiles[i].getName();
-		Class cl = Class.forName("wotlas.common.power.Powers." 
+		String name = weavesFiles[i].getName();
+		Class cl = Class.forName("wotlas.common.power.Weaves." 
 					 + name.substring( 0, name.lastIndexOf(".class") ) );
 
 		if (cl==null || cl.isInterface())
@@ -93,10 +94,10 @@ public abstract class Channeller
 
 		Object o = cl.newInstance();
 
-		if( o==null || !(o instanceof Power) )
+		if( o==null || !(o instanceof Weave) )
 		    continue;
-	    // Ok, we have a valid Power class.
-		fullPowerList.put( ((Power) o).getName(), (Power) o );
+	    // Ok, we have a valid Weave class.
+		fullWeaveList.put( ((Weave) o).getName(), (Weave) o );
 	    }
 	    catch( Exception e ) {
 		Debug.signal( Debug.WARNING, this, e );
@@ -107,41 +108,41 @@ public abstract class Channeller
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-    /** To get a list of Talents usable by this Channeller.</P>
+    /** To get a list of Weaves usable by this Channeller.</P>
      * Not modifiable directly, it is generated each time this method is called.
      *
-     * @return an array of the Strings, the names of the powers.
+     * @return an array of the Strings, the names of the weaves.
      */
-    public String[] getPowerList() {
-	return (String[] ) powerList.keySet().toArray();
+    public String[] getWeaveList() {
+	return (String[] ) weaveList.keySet().toArray();
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-    /** Add a power to the Channeller's list
+    /** Add a weave to the Channeller's list
      *
-     * @param powerName the name of the new power to be added.
+     * @param weaveName the name of the new weave to be added.
      * @return success status
      */
-    public boolean addPower( String powerName ) {
-	if ( !(fullPowerList.containsKey(powerName)) ) {
+    public boolean addWeave( String weaveName ) {
+	if ( !(fullWeaveList.containsKey(weaveName)) ) {
 	     return false;
 	}
 	else {
-	    powerList.put(powerName, fullPowerList.get(powerName) );
+	    weaveList.put(weaveName, fullWeaveList.get(weaveName) );
 	    return true;
 	}
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-    /** To get a Power
+    /** To get a Weave
      *
-     * @param powerName the name of the Power (see the list produced by getPowerList())
+     * @param weaveName the name of the Power (see the list produced by getPowerList())
      * @return the Power
      */
-    public Power getPower( String powerName ) {
-	return (Power) powerList.get(powerName);
+    public Weave getWeave( String weaveName ) {
+	return (Weave) weaveList.get(weaveName);
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

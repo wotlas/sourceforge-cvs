@@ -1,5 +1,5 @@
-CHANGES BETWEEN V1.2.1 AND V1.2.2
----------------------------------
+CHANGES BETWEEN V1.2.1 AND V1.2.2 (3 April 2002)
+------------------------------------------------
 
  - all the wotlas resources are now gathered in a same directory ( default is ../base ).
  - the wotlas server, client & server utilities ( register & setup ) are now completely independent
@@ -30,7 +30,11 @@ CHANGES BETWEEN V1.2.1 AND V1.2.2
    by CTRL+C or any system signal (SIGTERM, SIGKILL).
  - Added a new chat button to insert images in the chat via the IMG HTML tag.
  - Added automatic info to Away messages : last connection date.
- - Corrected bugs in the chat player name list.
+ - Corrected bugs in the chat player name list. The off line players are now displayed in gray.
+ - Added player name completion. Just enter the first letter of a name and hit TAB, one or more times.
+ - Added a HTML Macro plug-in (thanks to fred for the idea). Macros can be used in the chat, Away Plug-in.
+ - Added pure rotation movements to enable players to turn on themselves. You have to maintain the left mouse
+   button pressed and move the cursor to the left or right...
 
 
 CHANGES BETWEEN V1.2 AND V1.2.1 (19 March 2002)

@@ -409,7 +409,7 @@ public class PathFollower implements MovementComposer {
 
            PathUpdateMovementMessage msg = (PathUpdateMovementMessage) updateMessage;
 
-/*  SIMPLE UPDATE : WE FORCE THE NEW POSITION
+/* METHOD 1 : SIMPLE UPDATE : WE FORCE THE NEW POSITION
 
            xPosition = (float)msg.srcPoint.x;
            yPosition = (float)msg.srcPoint.y;
@@ -438,7 +438,7 @@ public class PathFollower implements MovementComposer {
            }
 */
 
-/*  ADVANCED UPDATE : WE TEST THE NEW POSITION */
+/* METHOD 2 : ADVANCED UPDATE : WE TEST THE NEW POSITION */
 
            if (!AStarDouble.isInitialized()) {
              // We just save the data
@@ -606,7 +606,11 @@ public class PathFollower implements MovementComposer {
                              new Point( endPosition.x, endPosition.y ) );
 
             if( path==null ) {
-                stopMovement();
+            	if( walkingAlongPath )
+                    stopMovement(); // a message is sent : we were moving...
+                else
+                    resetMovement(); // no message sent : we were already still...
+
                 return; // no movement
             }
 

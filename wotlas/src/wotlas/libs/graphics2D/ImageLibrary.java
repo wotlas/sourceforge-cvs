@@ -481,6 +481,25 @@ public class ImageLibrary {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To get an image's dimension. IMPORTANT: We suppose the image is in the database
+   *  (except if it's a JIT image).
+   *
+   * @param imId image identifier
+   * @return dimension
+   * @exception ImageLibraryException if the imId is invalid.
+   */
+   public Dimension getDimension( ImageIdentifier imId )
+   throws ImageLibraryException {
+
+      BufferedImage bufIm = getImage( imId );
+      if( bufIm==null )
+          return new Dimension(-1,-1);
+
+      return new Dimension( bufIm.getWidth(null), bufIm.getHeight(null) );
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** For Animations. We return the number of images of the specified ImageIdentifier's
    *  directory. Animation objects call this method to initialize.
    *

@@ -361,7 +361,7 @@ public class Building extends ScreenRectangle
       return buildingExits[0]; // default
    }
    
-   /** Returns the buildingExit (MapExit) that is on the side given by the specified angle.
+  /** Returns the buildingExit (MapExit) that is on the side given by the specified angle.
    * @param a angle which should represent the direction by which the player hits this TownMap zone.
    * @return the appropriate MapExit, null if there are no MapExits.
    */

@@ -27,6 +27,8 @@ import wotlas.utils.*;
 import wotlas.libs.net.*;
 import wotlas.libs.wizard.*;
 
+import wotlas.common.objects.inventories.Inventory;
+
 import java.lang.reflect.*;
 import java.util.Properties;
 
@@ -410,6 +412,11 @@ public class AccountBuilder implements NetConnectionListener
         account.setOriginalServerID( ServerDirector.getServerID() );
         account.setLastConnectionTimeNow();
         player.setPrimaryKey( account.getAccountName() );
+
+        Inventory inventory = player.getWotCharacter().createInventory();
+        ServerObjectManager objectManager = new ServerObjectManager();
+        objectManager.setInventory( inventory );
+        player.setObjectManager( objectManager );
 
      // 2 - We add the account to the game server
         if( accountManager.checkAccountName( account.getAccountName() ) )

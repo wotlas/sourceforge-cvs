@@ -27,6 +27,8 @@ import wotlas.utils.Debug;
 import wotlas.utils.FileTools;
 import wotlas.utils.Tools;
 
+import wotlas.common.objects.inventories.Inventory;
+
 import java.io.File;
 
 import java.util.HashMap;
@@ -51,6 +53,11 @@ public class AccountManager {
     public final static String CLIENT_PROFILE = "profile.cfg";
     public final static String PLAYER_PREFIX  = "player-save-";
     public final static String PLAYER_SUFFIX  = ".cfg";
+
+  /** Inventory file name format ( I changed the suffix to be sure to don't mess with the player saves )
+   */
+    public final static String INVENTORY_PREFIX  = "inventory-save-";
+    public final static String INVENTORY_SUFFIX  = ".ifg";
 
    /** Maximum number of save in a client account. If this number is reached we delete
     *  the oldest entry.
@@ -329,6 +336,31 @@ public class AccountManager {
                 Debug.signal(Debug.ERROR,this,"Failed to load "+latest+" for player "+accounts[i].getPrimaryKey() );
                 accounts[i] = null;
              }
+
+          // we now search for the latest saved inventory file.
+             latest = FileTools.findSave( rManager.listFiles( accountList[i], INVENTORY_SUFFIX ),
+                                                 INVENTORY_PREFIX, INVENTORY_SUFFIX, true );
+
+          // have we found the latest saved inventory file ?
+             if( latest==null ) {
+              // nope, then it's an invalid account, we ignore it...
+                 Debug.signal( Debug.ERROR, this, "Failed to load account's inventory: "+ accountList[i] );
+                 accounts[i] = null;
+                 continue;
+             }
+
+             Inventory inventory = (Inventory) rManager.loadObject( latest );
+
+             if(inventory!=null) {
+              // Aldiss : we create a new ServerObjectManager and give it its inventory
+                 ServerObjectManager objManager = new ServerObjectManager();
+                 player.setObjectManager( objManager );
+                 objManager.setInventory( inventory );
+             }
+             else {
+                Debug.signal(Debug.ERROR,this,"Failed to load "+latest+" inventory for player "+accounts[i].getPrimaryKey() );
+                accounts[i] = null;
+             }
         }
 
       return accounts;
@@ -353,6 +385,15 @@ public class AccountManager {
           return false;
       }
 
+    // Aldiss : we save the player's inventory
+      if( !rManager.saveObject( account.getPlayer().getObjectManager().getInventory(),
+                                    accountHome + account.getAccountName() + File.separator
+                                    +INVENTORY_PREFIX+Tools.getLexicalDate()+INVENTORY_SUFFIX ) ) {
+          Debug.signal( Debug.ERROR, this, "Failed to save account inventory: "
+                            + accountHome + account.getAccountName() );
+          return false;
+      }
+
    // ok, the save went ok... do we have to erase the oldest file ?
       String accountFiles[] = rManager.listFiles( accountHome + account.getAccountName(),
                                                   PLAYER_SUFFIX );
@@ -363,12 +404,24 @@ public class AccountManager {
 
         // have we found the latest saved file ?
            if( oldest!=null ) {
-                 	
-               if( oldest.endsWith(PLAYER_PREFIX+Tools.getLexicalDate()+PLAYER_SUFFIX) )
-                   return true;  // it's the file we've just saved, so we don't delete it
+             // is it the file we've just saved, (if so we won't delete it, otherwise we will)
+               if( oldest.endsWith(PLAYER_PREFIX+Tools.getLexicalDate()+PLAYER_SUFFIX)
+                   || new File( oldest ).delete() ) {
 
-               if( new File( oldest ).delete() )
-                   return true;
+                   accountFiles = rManager.listFiles( accountHome + account.getAccountName(),
+                                                      INVENTORY_SUFFIX );
+
+                   oldest = FileTools.findSave( accountFiles, INVENTORY_PREFIX, INVENTORY_SUFFIX, false );
+
+                // have we found the latest saved inventory ?
+                   if( oldest!=null ) {
+                    // is it the file we've just saved, (if so we won't delete it, otherwise we will)
+                       if( oldest.endsWith(INVENTORY_PREFIX+Tools.getLexicalDate()+INVENTORY_SUFFIX)
+                           || new File( oldest ).delete() ) {
+                           return true;
+                       }
+                   }
+               }
            }
                       
            Debug.signal( Debug.WARNING, this, "Failed to find old account entry : "

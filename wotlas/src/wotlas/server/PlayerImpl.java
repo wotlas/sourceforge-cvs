@@ -84,11 +84,7 @@ public class PlayerImpl implements Player, NetConnectionListener {
    /** WotCharacter Class
     */
        protected WotCharacter wotCharacter;
-   
-   /** Object manager
-    */
-  	   transient private ServerObjectManager objectManager;   
-   
+      
    /** Player state
     */
        protected PlayerState playerState = new PlayerState();
@@ -106,6 +102,10 @@ public class PlayerImpl implements Player, NetConnectionListener {
        protected long lastDisconnectedTime;
 
  /*------------------------------------------------------------------------------------*/
+
+   /** Object manager ( possesses the player's inventory )
+    */
+       transient protected ServerObjectManager objectManager;
 
    /** Our NetConnection, useful if we want to send messages !
     */

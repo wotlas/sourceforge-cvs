@@ -68,11 +68,15 @@ public class TextDrawable extends Drawable {
 
    /** Text width / 2
     */
-     int demiWidthText=0;
+     private int demiWidthText=0;
 
    /** Text height
     */
-     int heightText=0;
+     private int heightText=0;
+
+   /** Life time of text.
+    */
+     private int lifeTime;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -134,6 +138,7 @@ public class TextDrawable extends Drawable {
         setColor(color);
         this.priority = priority;
         this.timeLimit = System.currentTimeMillis()+lifeTime;
+        this.lifeTime = lifeTime;
         useAntialiasing(true);
     }
 
@@ -230,8 +235,6 @@ public class TextDrawable extends Drawable {
           gc.setFont(font);
         }
 
-        //gc.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f ) );
-
         if(text!=null)
          {
           if (recalculate) {
@@ -244,14 +247,16 @@ public class TextDrawable extends Drawable {
             recalculate = false;
           }
 
-          gc.drawString(text, r.x-screen.x+(r.width/2)-demiWidthText, r.y-screen.y-2);
+         // transparent rectangle
+            gc.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.35f ) );
+            gc.setColor(Color.white);
+            gc.fillRect(r.x-screen.x+(r.width/2)-demiWidthText,r.y-screen.y-heightText,2*demiWidthText+2,heightText);
+            gc.setComposite( AlphaComposite.SrcOver ); // suppressing alpha
 
-          gc.setColor(Color.black);
-          gc.draw3DRect(r.x-screen.x+(r.width/2)-demiWidthText,r.y-screen.y-heightText,2*demiWidthText+2,heightText,true);
+         // drawing text...
+            gc.setColor(color);
+            gc.drawString(text, r.x-screen.x+(r.width/2)-demiWidthText, r.y-screen.y-2);
          }
-
-        // restore
-           //gc.setComposite( AlphaComposite.SrcOver );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -278,6 +283,24 @@ public class TextDrawable extends Drawable {
             return false;
         return true;
      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Returns true if the text is still displayed on screen
+    */
+   public boolean isLive() {
+        if( timeLimit-System.currentTimeMillis() >0 )
+            return false;
+        return true;   	
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To reset the current time limit of display.
+   */
+   public void resetTimeLimit(){
+        timeLimit = System.currentTimeMillis()+lifeTime;
+   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

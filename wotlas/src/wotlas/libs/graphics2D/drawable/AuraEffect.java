@@ -78,6 +78,10 @@ public class AuraEffect extends Drawable {
     */
      private int lifeTime;
 
+   /** To tell if the aura is disappearing or not ...
+    */
+     private boolean isDisappearing;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
@@ -102,11 +106,11 @@ public class AuraEffect extends Drawable {
      this.dataSupplier = dataSupplier;
      this.lifeTime = lifeTime;
      this.timeLimit = System.currentTimeMillis()+lifeTime;
+     isDisappearing = false;
+     alpha=0.0f;
 
      if(hasAnimation)
         sprAnim = new Animation( image );
-
-     useAntialiasing(true);
     }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -118,6 +122,7 @@ public class AuraEffect extends Drawable {
   {
    this.alpha = f;
    this.timeLimit = System.currentTimeMillis()+lifeTime;
+   isDisappearing = false;
   }
 
 
@@ -194,7 +199,10 @@ public class AuraEffect extends Drawable {
           r.y = dataSupplier.getY()+h/2-r.height/2;
         }
 
-       if(alpha<0.4f) alpha+=0.01f;
+       if(alpha<0.4f && !isDisappearing)
+          alpha+=0.01f;
+       else if(alpha>0.01 && isDisappearing)
+          alpha-=0.01f;
 
        angle -= 0.15;
 
@@ -202,11 +210,24 @@ public class AuraEffect extends Drawable {
             return true;
         }
 
-        if( timeLimit-System.currentTimeMillis() <0 )
+        if( !isDisappearing && timeLimit-System.currentTimeMillis() <0) {
+            isDisappearing = true;
+            return true;
+        }else if( isDisappearing && alpha<=0.01 ) {
             return false;
+        }
         return true;
-
      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Returns true if the Aura is still displayed on screen
+    */
+   public boolean isLive() {
+        if( isDisappearing && alpha<=0.01 )
+            return false;
+        return true;   	
+   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

@@ -190,11 +190,11 @@ public class WorldMapData implements MapData
     }
 
     //   - We show some informations on the screen
-    String[] strTemp = { myPlayer.getFullPlayerName(), myPlayer.getPlayerName() };
+    String[] strTemp = { myPlayer.getFullPlayerName() };
     MultiLineText mltPlayerName = new MultiLineText(strTemp, 10, 10, Color.black, 15.0f, "Lblack.ttf", ImageLibRef.TEXT_PRIORITY, MultiLineText.LEFT_ALIGNMENT);
     gDirector.addDrawable(mltPlayerName);
     
-    String[] strTemp2 = { worldMap.getFullName(), worldMap.getShortName() };
+    String[] strTemp2 = { worldMap.getFullName() };
     MultiLineText mltLocationName = new MultiLineText(strTemp2, gDirector.getWidth()-10, 10, Color.black, 15.0f, "Lblack.ttf", ImageLibRef.TEXT_PRIORITY, MultiLineText.RIGHT_ALIGNMENT);
     gDirector.addDrawable(mltLocationName);
 

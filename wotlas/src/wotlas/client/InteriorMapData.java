@@ -245,11 +245,11 @@ System.out.println("Player init visual properties");
 
 
     //   - We show some informations on the screen
-    String[] strTemp = { myPlayer.getFullPlayerName(), myPlayer.getPlayerName() };
+    String[] strTemp = { myPlayer.getFullPlayerName() };
     MultiLineText mltPlayerName = new MultiLineText(strTemp, 10, 10, Color.black, 15.0f, "Lblack.ttf", ImageLibRef.TEXT_PRIORITY, MultiLineText.LEFT_ALIGNMENT);
     gDirector.addDrawable(mltPlayerName);
     
-    String[] strTemp2 = { room.getFullName(), room.getShortName() };
+    String[] strTemp2 = { room.getFullName() };
     mltLocationName = new MultiLineText(strTemp2, gDirector.getWidth()-10, 10, Color.black, 15.0f, "Lblack.ttf", ImageLibRef.TEXT_PRIORITY, MultiLineText.RIGHT_ALIGNMENT);
     gDirector.addDrawable(mltLocationName);
 
@@ -345,7 +345,7 @@ System.out.println("NOTIFYING");
           System.out.println("Adding a new player : " + myPlayer + "to room : " + room);
 //        room.addPlayer( myPlayer );
         //dataManager.getInfosPanel().setLocation(room.getFullName());
-        String[] strTemp = {room.getFullName(), room.getShortName()};
+        String[] strTemp = { room.getFullName() };
         mltLocationName.setText(strTemp);
         if (SHOW_DEBUG)
           System.out.print("Move to another room : " + newRoomID + " -> " + room.getFullName());

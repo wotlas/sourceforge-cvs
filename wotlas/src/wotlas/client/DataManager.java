@@ -183,7 +183,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   private JInfosPanel infosPanel;
   private JMapPanel mapPanel;
   private JChatPanel chatPanel;
-  private JPreviewPanel previewPanel;
+  private JOptionsPanel optionsPanel;
   private JPlayerPanel playerPanel;
   private JLogPanel logPanel;
 
@@ -268,8 +268,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
   /** To get JPreviewPanel.
    */
-  public JPreviewPanel getPreviewPanel() {
-    return previewPanel;
+  public JOptionsPanel getOptionsPanel() {
+    return optionsPanel;
   }
 
   /** To get JPlayerPanel.
@@ -496,13 +496,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     infosPanel = new JInfosPanel(myPlayer);
     mapPanel = new JMapPanel(gDirector, this);
     chatPanel = new JChatPanel();
-    previewPanel = new JPreviewPanel();
+    optionsPanel = new JOptionsPanel();
     playerPanel = new JPlayerPanel();
     logPanel = new JLogPanel();    
 
 System.out.println("Displaying window");
     // 8 - Create main Frame
-    mFrame = new JClientScreen(infosPanel, mapPanel, chatPanel, previewPanel, playerPanel, logPanel);
+    mFrame = new JClientScreen(infosPanel, mapPanel, chatPanel, optionsPanel, playerPanel, logPanel);
 System.out.println("JCLient created");
     mFrame.init();
 System.out.println("End of init");    

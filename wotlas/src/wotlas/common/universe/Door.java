@@ -19,6 +19,9 @@
  
 package wotlas.common.universe;
 
+import java.awt.Rectangle;
+
+import wotlas.common.*;
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
  
@@ -30,6 +33,12 @@ import wotlas.libs.graphics2D.drawable.*;
 
 public class Door
 {
+ /*------------------------------------------------------------------------------------*/
+
+   /** Max square distance from which the player can open/close this door.
+    */
+     public static final int MAX_ACTION_DIST = 2500;
+
  /*------------------------------------------------------------------------------------*/
 
    /** Does this Door has a Lock ?
@@ -48,6 +57,10 @@ public class Door
     */
      private byte doorType;
 
+   /** Door Variation Angle (in radians).
+    */
+     private float variationAngle;
+
    /** Points out which Door image to use.
     */
      private ImageIdentifier doorImage;
@@ -56,7 +69,7 @@ public class Door
 
    /** Door drawable to use...
     */
-   // transient private DoorDrawable doorDrawable;
+     transient private DoorDrawable doorDrawable;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -70,12 +83,13 @@ public class Door
 
   /** To construct a Door with no lock.
    */
-   public Door(int x, int y, byte doorType, ImageIdentifier doorImage ) {
+   public Door(int x, int y, float variationAngle, byte doorType, ImageIdentifier doorImage ) {
          hasLock = false;
          this.x =x;
          this.y =y;
          this.doorType =doorType;
          this.doorImage = doorImage;
+         this.variationAngle = variationAngle;
    }
 
  /*------------------------------------------------------------------------------------*/  
@@ -122,23 +136,40 @@ public class Door
      	this.doorImage = doorImage;
      }
 
+     public void setVariationAngle (float varAngle) {
+     	this.variationAngle = varAngle;
+     }
+
+     public float getVariationAngle() {
+        return variationAngle;
+     }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To clean this door : erases the associated DoorDrawable.
+    */
+     public void clean(){
+     	doorDrawable = null;
+     }
+
  /*------------------------------------------------------------------------------------*/  
 
    /** To get the Door Drawable to add to the GraphicsDirector.
     * @return DoorDrawable corresponding to this room.
     */
      public Drawable getDoorDrawable() {
-      	 if( ImageLibrary.getDefaultImageLibrary() == null )
-      	     return null;
+           if( ImageLibrary.getDefaultImageLibrary() == null )
+      	       return null;
 
-       //  if(doorDrawable!=null)
-       //     return (Drawable) doorDrawable;
+           if(doorDrawable!=null)
+              return (Drawable) doorDrawable;
 
-       // Door Drawable creation
-       // doorDrawable = new DoorDrawable( x, y, doorType,
-       //                                  doorImage, ImageLibRef.DOOR_PRIORITY );
-       // doorDrawable.useAntialiasing(true);
-          return null; // tmp
+       //  Door Drawable creation
+           doorDrawable = new DoorDrawable( x, y, 0.0f, variationAngle, doorType,
+                                            doorImage, ImageLibRef.DOOR_PRIORITY );
+           doorDrawable.useAntialiasing(true);
+           doorDrawable.setOwner( this ); // we are the owner of this door draw...
+           return doorDrawable;
      }
 
  /*------------------------------------------------------------------------------------*/
@@ -146,27 +177,67 @@ public class Door
    /** To open the door...
     * @param from direction from where the door is opened (see DoorDrawable).
     */
-     public void openDoor( byte from ) {
-      /*
+     public void open() {
          if( getDoorDrawable()==null )
              return;
 
-         doorDrawable.openDoor( from );
-       */
+         doorDrawable.open();
+     }
+
+ /*------------------------------------------------------------------------------------*/  
+
+   /** To close the door...
+    * @param from direction from where the door is opened (see DoorDrawable).
+    */
+     public void close() {
+         if( getDoorDrawable()==null )
+             return;
+
+         doorDrawable.close();
      }
 
  /*------------------------------------------------------------------------------------*/  
 
    /** To test if the door is opened...
     */
-     public boolean isDoorOpened() {
-     	// if( getDoorDrawable()!=null )
-     	//     return doorDrawable.isDoorOpened();
-        // else
+     public boolean isOpened() {
+     	   if( getDoorDrawable()!=null )
+     	       return doorDrawable.isOpened();
+           else
                return true;
      }
 
  /*------------------------------------------------------------------------------------*/
+
+   /** To test if the door is displayed on screen...
+    */
+     public boolean isDisplayed() {
+           return doorDrawable!=null;
+     }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To check if the player is near this door...
+    * @param true if the player is near the door.
+    */
+     public boolean isPlayerNear( Rectangle playerRectangle ) {
+       if( doorDrawable==null )
+           return false;
+
+       int xpc = playerRectangle.x + playerRectangle.width/2;
+       int ypc = playerRectangle.y + playerRectangle.height/2;
+
+       int xdc = doorDrawable.getX() + doorDrawable.getWidth()/2;
+       int ydc = doorDrawable.getY() + doorDrawable.getHeight()/2;
+
+       if( (xdc-xpc)*(xdc-xpc)+(ydc-ypc)*(ydc-ypc) <= MAX_ACTION_DIST )
+           return true;
+
+       return false;
+     }
+
+ /*------------------------------------------------------------------------------------*/
+
 }
 
         

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.universe;
 
 import wotlas.utils.*;
@@ -137,32 +137,6 @@ public class RoomLink extends ScreenRectangle
     public boolean equals( RoomLink other ) {
         return toRectangle().equals( other.toRectangle() );
     }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-   /** To open the door...
-    * @param playerRect represents the rectangle of the player
-    */
-     public void openDoor(Rectangle playerRect ) {
-      /*
-         if( door==null || door.getDoorDrawable()==null )
-             return;
-             
-          byte doorType = door.getDoorType();
-
-          if( door.getDoorType()==DoorDrawable.VERTICAL_TOP ||
-              if(playerRect.x<x+width/2)
-                     doorDrawable.openDoor(DoorDrawable.FROM_LEFT);
-              else
-                     doorDrawable.openDoor(DoorDrawable.FROM_RIGHT);
-          } else {
-              if(playerRect.y<y+height/2)
-                     doorDrawable.openDoor(DoorDrawable.FROM_TOP);
-              else
-                     doorDrawable.openDoor(DoorDrawable.FROM_BOTTOM);
-          }
-       */
-     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

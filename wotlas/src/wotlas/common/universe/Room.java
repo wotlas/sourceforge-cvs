@@ -457,6 +457,37 @@ public class Room
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** To get a list of the doors of this room.
+    * @return array of Doors ( never returns null ).
+    */
+     public Door[] getDoors(){
+        if(roomLinks==null)
+           return new Door[0];
+
+        // 1 - how many doors are there ?
+           int nb = 0;
+
+           for( int i=0; i<roomLinks.length; i++ )
+                if( roomLinks[i].getDoor()!=null ) nb++; 
+          
+        // 2 - Create our array
+           Door doors[] = new Door[nb];
+           
+           if(nb==0) return doors;
+
+           nb=0;
+
+           for( int i=0; i<roomLinks.length; i++ )
+                if( roomLinks[i].getDoor()!=null ) {
+                    doors[nb] = roomLinks[i].getDoor();
+                    nb++;
+                }
+
+          return doors;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** String Info.
    */
     public String toString(){

@@ -40,7 +40,7 @@ public abstract class MagicalObject extends UsefulObject
 	  
   /** The powers involved in the magical action. THE CLASS POWER DOES NOT EXIST.
    */
-   	  private Power[] powersInvolved;
+   	  private String[]/*Power[]*/ powersInvolved;
 	  
 	  
  /*------------------------------------------------------------------------------------*/
@@ -49,7 +49,7 @@ public abstract class MagicalObject extends UsefulObject
    * @param magicEffect The Weave produced
    * @param powersInvolved The Powers involved
    */
-   public MagicalObject(Weave magicEffect,PowerList powersInvolved)
+   public MagicalObject(Weave magicEffect,String[]/*Power[]*/ powersInvolved)
    {
    	super();
 	this.magicEffect=magicEffect;
@@ -70,7 +70,7 @@ public abstract class MagicalObject extends UsefulObject
   /** Get the powers involved in the magical effect.
    * @return powersInvolved
    */  					
-   	public Power /*[] makes javadoc crash - is it allowed ? */ getPowersInvolved()
+   	public String[]/*Power[]*/ getPowersInvolved()
 	{
 	 return this.powersInvolved;
 	}																	

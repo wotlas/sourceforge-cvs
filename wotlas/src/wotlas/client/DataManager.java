@@ -187,14 +187,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   private JPlayerPanel playerPanel;
   private JLogPanel logPanel;
 
-  /** player's name
-   */
-  private MultiLineText mltPlayerName;
-
-  /** Wotlas location name
-   */
-  private MultiLineText mltLocationName;
-
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
@@ -256,26 +248,38 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     return myMapData;
   }
   
+  /** To get JInfosPanel.
+   */
   public JInfosPanel getInfosPanel() {
     return infosPanel;
   }
 
+  /** To get JMapPanel.
+   */
   public JMapPanel getMapPanel() {
     return mapPanel;
   }
 
+  /** To get JChatPanel.
+   */
   public JChatPanel getChatPanel() {
     return chatPanel;
   }
 
+  /** To get JPreviewPanel.
+   */
   public JPreviewPanel getPreviewPanel() {
     return previewPanel;
   }
 
+  /** To get JPlayerPanel.
+   */
   public JPlayerPanel getPlayerPanel() {
     return playerPanel;
   }
 
+  /** To get JLogPanel.
+   */
   public JLogPanel getLogPanel() {
     return logPanel;
   }
@@ -494,7 +498,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     chatPanel = new JChatPanel();
     previewPanel = new JPreviewPanel();
     playerPanel = new JPlayerPanel();
-    logPanel = new JLogPanel();
+    logPanel = new JLogPanel();    
+
 System.out.println("Displaying window");
     // 8 - Create main Frame
     mFrame = new JClientScreen(infosPanel, mapPanel, chatPanel, previewPanel, playerPanel, logPanel);
@@ -588,7 +593,6 @@ System.out.println("Frame show");
       if (circleLife < CIRCLE_LIFETIME) {
         circleLife++;
       } else {
-        Debug.signal( Debug.NOTICE, this, "destroy circle");
         gDirector.removeDrawable(circle);
         circle = null;
         circleLife = 0;
@@ -639,7 +643,7 @@ System.out.println("Frame show");
 
            TextDrawable textDrawable = new TextDrawable( selectedPlayer.getFullPlayerName(),
                                                          selectedPlayer.getDrawable(), Color.black,
-                                                         12.0f, "Lblack.ttf",
+                                                         13.0f, "Lblack.ttf",
                                                          ImageLibRef.TEXT_PRIORITY, 5000 );
            gDirector.addDrawable(textDrawable);
 

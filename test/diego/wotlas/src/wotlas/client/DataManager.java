@@ -760,36 +760,45 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Tick Action. We propagate the tick on the players & GraphicsDirector.
-   */
+    /** Tick Action. We propagate the tick on the players & GraphicsDirector.
+    */
     public void tick() {
 
-    // I - Update myPlayer's location
-       myMapData.locationUpdate(myPlayer);
+        // I - Update myPlayer's location
+        myMapData.locationUpdate(myPlayer);
      
-    // II - Update players drawings    
-       synchronized(players) {
-          Iterator it = players.values().iterator();
+        // II - Update players drawings    
+        synchronized(players) {
+            Iterator it = players.values().iterator();
 
-          while( it.hasNext() )
-              ( (PlayerImpl) it.next() ).tick();
+            while( it.hasNext() )
+                ( (PlayerImpl) it.next() ).tick();
+        }
+        
+        ScreenObject item = null;
+        synchronized(screenObjects) {
+            Iterator it = screenObjects.values().iterator();
+            while( it.hasNext() )
+                item = (ScreenObject) it.next();
+                if( item instanceof PlayerOnTheScreen )
+                    ((PlayerImpl)((PlayerOnTheScreen)item).getPlayer()).tick();
        }
 
-       if( circle!=null )
-           circle.tick();
+        if( circle!=null )
+            circle.tick();
 
-    // III - Graphics Director update & redraw
-       if( clientScreen.getState()==Frame.ICONIFIED )
-          Tools.waitTime(400); // we reduce our tick rate... and don't refresh the screen
-       else
-          gDirector.tick(); // game screen update
+        // III - Graphics Director update & redraw
+        if( clientScreen.getState()==Frame.ICONIFIED )
+            Tools.waitTime(400); // we reduce our tick rate... and don't refresh the screen
+        else
+            gDirector.tick(); // game screen update
 
-    // IV - Sync Messages Execution
-       NetMessageBehaviour syncMessages[] = syncMessageQueue.pullMessages();
+        // IV - Sync Messages Execution
+        NetMessageBehaviour syncMessages[] = syncMessageQueue.pullMessages();
        
-       for( int i=0; i<syncMessages.length; i++)
+        for( int i=0; i<syncMessages.length; i++)
             syncMessages[i].doBehaviour( this );
-   }
+    }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -875,8 +884,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    // We move the player to that location.
       Rectangle screen = gDirector.getScreenRectangle();
 
-      synchronized( players ) {
-          myPlayer.moveTo( new Point( e.getX() + (int)screen.getX(),
+      synchronized( players ) { //!?!?!? why? : wahy syncr playERS to move playER ?
+      myPlayer.moveTo( new Point( e.getX() + (int)screen.getX(),
                                       e.getY() + (int)screen.getY() ), worldManager );
       }
 

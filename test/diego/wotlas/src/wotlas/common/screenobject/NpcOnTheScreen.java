@@ -24,9 +24,9 @@ import wotlas.common.action.*;
 import wotlas.common.universe.*;
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
-import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.graphics2D.filter.*;
 import wotlas.common.environment.*;
+import wotlas.server.ServerDirector;
 
 import java.awt.Rectangle;
 
@@ -36,11 +36,12 @@ import java.awt.Rectangle;
  */
 public class NpcOnTheScreen extends ScreenObject {
 
-    public NpcOnTheScreen(int x,int y,String key) {
-        this.primaryKey = key;
+    public NpcOnTheScreen(int x,int y, String name) {
         this.x = x;
         this.y = y;
-        this.loc = loc;
+        this.primaryKey = ""+ServerDirector.GenUniqueKeyId();
+        this.name = name;
+        this.loc = null;
     }
     
     /** To get a Drawable for this character. This should not be used on the
@@ -83,6 +84,7 @@ public class NpcOnTheScreen extends ScreenObject {
     }
         
     public void setLocation(WotlasLocation loc) {
+        this.loc = loc;
     }
     
     public byte getTargetType() {

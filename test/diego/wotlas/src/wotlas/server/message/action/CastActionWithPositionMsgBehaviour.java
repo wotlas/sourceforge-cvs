@@ -61,9 +61,7 @@ public class CastActionWithPositionMsgBehaviour extends CastActionWithPositionMe
         PlayerImpl caster = (PlayerImpl) sessionContext;
         
         // we should cast <id>, at the <x,y> of <player>
-        System.out.println("casting action id:"+idOfAction+" at x,y:"+x+","+y+" at "
-        +caster.getLocation().toString()+" range:"+targetRange );
-
+        
         ScreenObject target = null;
         if( targetKey != "" )
             target = (ScreenObject) caster.getMyTileMap().getMessageRouter().getScreenObject( targetKey );

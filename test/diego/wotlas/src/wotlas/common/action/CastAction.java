@@ -84,13 +84,13 @@ public class CastAction extends UserAction {
         ,"Summon monster","Summon any monster anywhere!"
         , (byte)(1<<TARGET_TYPE_GROUND), TARGET_RANGE_SAME_MAP
         , 0, 0 
-        , new Summon( "mostriciattolo" ) );
+        , new Summon( "mobdef1-name" ) );
         
         castActions[CAST_ADMIN_CREATE] = new CastAction( CAST_ADMIN_CREATE
         ,"Create item","Create item anywhere!"
         , (byte)(1<<TARGET_TYPE_GROUND), TARGET_RANGE_SAME_MAP
         , 0, 0 
-        , new Create( "oggettino" ) );
+        , new Create( "oggdef1-name" ) );
         
     }
 

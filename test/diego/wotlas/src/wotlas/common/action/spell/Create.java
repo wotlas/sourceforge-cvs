@@ -8,15 +8,15 @@ import wotlas.common.router.*;
 
 public class Create extends Spell {
 
-    String itemKey;
+    String name;
 
-    public Create(String itemKey) {
-        this.itemKey = itemKey;
+    public Create(String name) {
+        this.name = name;
     }
         
     public void CastToMap(WotlasLocation loc, int x, int y) {
         TileMap map = ServerDirector.getDataManager().getWorldManager().getTileMap(loc);
-        System.out.println("create :"+itemKey);
-        map.getMessageRouter().addScreenObject( new ItemOnTheScreen(x,y,itemKey) );
+        // System.out.println("create :"+itemKey);
+        map.getMessageRouter().addScreenObject( new ItemOnTheScreen(x,y,name) );
     }
 }

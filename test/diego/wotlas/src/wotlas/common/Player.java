@@ -19,6 +19,8 @@
 
 package wotlas.common;
 
+import wotlas.common.screenobject.*;
+
 import wotlas.common.character.*;
 import wotlas.common.universe.*;
 import wotlas.common.movement.*;
@@ -264,4 +266,5 @@ public interface Player extends PreciseLocationOwner
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+    public PlayerOnTheScreen getScreenObject();
 }

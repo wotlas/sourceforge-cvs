@@ -16,47 +16,50 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.message.description;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.*;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.screenobject.*;
-import wotlas.common.Player;
-
+import wotlas.common.universe.*;
 
 /** 
- * The message the GameServer sends to tell us to add a screenObjects... (Message Sent by Server).
+ * To ask the client to remove screenObject data (Message Sent by Server).
  *
- * @author Aldiss, Petrus, Diego
+ * @author Aldiss, Diego
  */
 
-public class AddScreenObjectToTileMapMessage extends NetMessage
-{
-    
-    protected ScreenObject item;
-    
+public class RemoveScreenObjectFromTileMapMessage extends NetMessage {
+
  /*------------------------------------------------------------------------------------*/
 
-    /** Constructor. Just initializes the message category and type.
-    */
-    public AddScreenObjectToTileMapMessage() {
-        super();
-    }
+  /** Primary Key
+   */
+    protected String primaryKey;
+  
+  /** WotlasLocation
+   */
+    protected WotlasLocation location;
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Constructor. Just initializes the message category and type.
+   */
+     public RemoveScreenObjectFromTileMapMessage() {
+          super();
+     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-    /** Constructor with the ScreenObject object.
-    *
-    * @param item ScreenObject to send
-    */
-    public AddScreenObjectToTileMapMessage( ScreenObject item) {
-        super();
-        this.item = item;
+  /** Constructor with Player's primaryKey.
+   */
+     public RemoveScreenObjectFromTileMapMessage(String primaryKey, WotlasLocation location) {
+          super();
+          this.primaryKey = primaryKey;
+          this.location = new WotlasLocation(location);
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -68,11 +71,15 @@ public class AddScreenObjectToTileMapMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void encode( DataOutputStream ostream ) throws IOException {
-         try{
-            new ObjectOutputStream(ostream).writeObject( item ); 
-         } catch (Exception e) {
-            System.out.println("diego: error, should still decide how to manage this error");
-         }
+
+         ostream.writeUTF( primaryKey );
+
+         ostream.writeInt( location.getWorldMapID() );
+         ostream.writeInt( location.getTownMapID() );
+         ostream.writeInt( location.getBuildingID() );
+         ostream.writeInt( location.getInteriorMapID() );
+         ostream.writeInt( location.getRoomID() );
+         ostream.writeInt( location.getTileMapID() );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -84,11 +91,17 @@ public class AddScreenObjectToTileMapMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void decode( DataInputStream istream ) throws IOException {
-         try {
-             item = (ScreenObject) new ObjectInputStream(istream).readObject();             
-         } catch (Exception e) {
-             System.out.println(" diego: error, should still decide how to manage this error");
-         }
+
+         primaryKey = istream.readUTF();
+
+         location = new WotlasLocation();
+
+         location.setWorldMapID( istream.readInt() );
+         location.setTownMapID( istream.readInt() );
+         location.setBuildingID( istream.readInt() );
+         location.setInteriorMapID( istream.readInt() );
+         location.setRoomID( istream.readInt() );
+         location.setTileMapID( istream.readInt() );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -71,8 +71,8 @@ public class AddScreenObjectToTileMapMsgBehaviour extends AddScreenObjectToTileM
         WotlasLocation myLocation = myPlayer.getLocation();
         TileMap myTileMap = myPlayer.getMyTileMap();
 
-        if( myLocation.getWorldMapID()!=item.getLocation().getWorldMapID()
-        || myLocation.getTileMapID()!=item.getLocation().getTileMapID() ){
+        if( myLocation.getWorldMapID() != item.getLocation().getWorldMapID()
+        || myLocation.getTileMapID() != item.getLocation().getTileMapID() ){
                Debug.signal( Debug.WARNING, this, "Received message with far location" );
                return;
         }

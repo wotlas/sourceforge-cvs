@@ -22,12 +22,14 @@ package wotlas.common.message.description;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.*;
 
 import java.util.*;
 
 import wotlas.libs.net.NetMessage;
 import wotlas.common.Player;
 import wotlas.common.universe.*;
+import wotlas.common.screenobject.*;
 
 
 /** 
@@ -41,13 +43,13 @@ public class TileMapPlayerDataMessage extends PlayerDataMessage
 {
  /*------------------------------------------------------------------------------------*/
 
-  /** Player reference.
+  /** SHOULD BE SCREENOBJECTS reference.
    */
      private Player myPlayer;
 
-  /** Players.
+  /** ScreenObjects
    */
-     protected Hashtable players;
+     protected Hashtable screenObjects;
 
   /** Wotlas Location
    */
@@ -69,14 +71,12 @@ public class TileMapPlayerDataMessage extends PlayerDataMessage
    *
    * @param location WotlasLocation from which the player's list comes from.
    * @param myPlayer our player.
-   * @param players our players.
    */
      public TileMapPlayerDataMessage( TileMap tileMap, Player myPlayer ) {
          super();
          this.myPlayer = myPlayer;
-         this.otherPlayer = myPlayer;
          this.location = tileMap.getLocation();
-         this.players = tileMap.getMessageRouter().getPlayers();
+         this.screenObjects = tileMap.getMessageRouter().getScreenObjects();
          this.publicInfoOnly = true;
      }
 
@@ -98,20 +98,25 @@ public class TileMapPlayerDataMessage extends PlayerDataMessage
          ostream.writeInt( location.getRoomID() );
          ostream.writeInt( location.getTileMapID() );
 
-      // Players
-         synchronized( players ) {
-            if( players.containsKey( myPlayer.getPrimaryKey() ) )
-                ostream.writeInt( players.size()-1 );
+      // screenObjects
+         synchronized( screenObjects ) {
+            if( screenObjects.containsKey( myPlayer.getPrimaryKey() ) )
+                ostream.writeInt( screenObjects.size()-1 );
             else
-                ostream.writeInt( players.size() );
+                ostream.writeInt( screenObjects.size() );
 
-            Iterator it = players.values().iterator();
+            Iterator it = screenObjects.values().iterator();
 
+            ScreenObject item = null;
             while( it.hasNext() ) {
-            	player = (Player) it.next();
+            	item = (ScreenObject) it.next();
 
-                if( myPlayer!=player )
-                    super.encode( ostream );
+                if( myPlayer.getPrimaryKey() != item.getPrimaryKey() )
+                    try{
+                        new ObjectOutputStream(ostream).writeObject( item ); 
+                    } catch (Exception e) {
+                        System.out.println("diego: error, should still decide how to manage this error");
+                    }
             }
          }
      }
@@ -136,21 +141,26 @@ public class TileMapPlayerDataMessage extends PlayerDataMessage
             location.setRoomID( istream.readInt() );
             location.setTileMapID( istream.readInt() );
 
-         // Players
-            int nbPlayers = istream.readInt();
+         // items : screeObjects to show.
+            int nbItems = istream.readInt();
             
-            if(nbPlayers>0)
-               players = new Hashtable((int)(nbPlayers*1.6));
+            if(nbItems>0)
+               screenObjects = new Hashtable((int)(nbItems*1.6));
             else {
-               players = new Hashtable();
+               screenObjects = new Hashtable();
                return;
             }
 
-            for( int i=0; i<nbPlayers; i++ ) {
-                 super.decode( istream );
-                 players.put( player.getPrimaryKey(), player );
-            }
-     }
+            ScreenObject item = null;
+            for( int i=0; i<nbItems; i++ ) {
+                try {
+                    item = (ScreenObject) new ObjectInputStream(istream).readObject();             
+                    screenObjects.put( item.getPrimaryKey(), item );
+                } catch (Exception e) {
+                     System.out.println(" diego: error, should still decide how to manage this error");
+                }
+        }
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

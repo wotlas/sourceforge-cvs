@@ -129,6 +129,8 @@ public class ServerDirector implements Runnable, NetServerListener {
    /** Show debug information ?
     */
       public static boolean SHOW_DEBUG = false;
+      
+      static private long genUniqueKeyId;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -682,4 +684,7 @@ public class ServerDirector implements Runnable, NetServerListener {
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+     static synchronized public String GenUniqueKeyId() {
+         return System.currentTimeMillis()+""+genUniqueKeyId++;
+     }
 }

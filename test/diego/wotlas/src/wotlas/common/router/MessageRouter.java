@@ -121,6 +121,15 @@ public abstract class MessageRouter {
          return true;
      }
 
+     public boolean removeScreenObject( ScreenObject item ) {
+         if( !screenObjects.containsKey( item.getPrimaryKey() ) ) {
+             Debug.signal(Debug.WARNING, this, "Remove failed : screenObject not found." );
+             return false;
+         }
+         
+         screenObjects.remove( item.getPrimaryKey());
+         return true;
+     }
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To remove all the players of this group. The default implementation of this method
@@ -130,6 +139,13 @@ public abstract class MessageRouter {
          players.clear();
      }
 
+   /** To remove all the players,nps,item of this group. The default implementation of this method
+    *  just removes WITHOUT sending any messages.
+    */
+     public void removeAllScreenObjects() {
+         players.clear();
+     }
+     
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To move a player from this group to another.
@@ -157,6 +173,9 @@ public abstract class MessageRouter {
          return players;
      }
 
+     public Hashtable getScreenObjects() {
+         return screenObjects;
+     }
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To find a player by its primary key. We search in our local group. MessageRouters

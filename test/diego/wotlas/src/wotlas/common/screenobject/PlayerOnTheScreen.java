@@ -24,7 +24,6 @@ import wotlas.common.action.*;
 import wotlas.common.universe.*;
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
-import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.graphics2D.filter.*;
 import wotlas.common.environment.*;
 
@@ -38,10 +37,10 @@ public class PlayerOnTheScreen extends ScreenObject {
 
     transient private Player player;
     
-    public PlayerOnTheScreen(int x,int y,Player player) {
-        this.x = x;
-        this.y = y;
+    public PlayerOnTheScreen(Player player) {
         this.player = player;
+        this.x = player.getX();
+        this.y = player.getY();
         this.loc = player.getLocation();
         this.primaryKey = player.getPrimaryKey();
     }

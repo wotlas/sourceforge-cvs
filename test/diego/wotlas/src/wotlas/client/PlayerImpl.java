@@ -19,6 +19,7 @@
 
 package wotlas.client;
 
+import wotlas.common.screenobject.*;
 import wotlas.common.character.*;
 import wotlas.common.chat.*;
 import wotlas.common.universe.*;
@@ -48,137 +49,137 @@ import java.util.Hashtable;
 
 /** Class of a Wotlas Player.
  *
- * @author Petrus, Aldiss, Elann
+ * @author Petrus, Aldiss, Elann, Diego
  * @see wotlas.common.Player
  */
 
 public class PlayerImpl implements Player, SpriteDataSupplier,FakeSpriteDataSupplier, Tickable {
 
-  /** Period between the display of two away messages for ONE player.
-   */
-  public final static long AWAY_MSG_DISPLAY_PERIOD = 1000*20;
+    /** Period between the display of two away messages for ONE player.
+    */
+    public final static long AWAY_MSG_DISPLAY_PERIOD = 1000*20;
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Player's primary key (the key)
-   */
-  private String primaryKey;
+    /** Player's primary key (the key)
+    */
+    private String primaryKey;
 
-  /** Player location
-   */
-  private WotlasLocation location;
+    /** Player location
+    */
+    private WotlasLocation location;
 
-  /** Player name
-   */
-  private String playerName;
+    /** Player name
+    */
+    private String playerName;
 
-  /** Player full name
-   */
-  private String fullPlayerName;
+    /** Player full name
+    */
+    private String fullPlayerName;
 
-  /** Player character's past
-   */
-  private String playerPast;
+    /** Player character's past
+    */
+    private String playerPast;
 
-  /** Player away message.
-   */
-  private String playerAwayMessage;
+    /** Player away message.
+    */
+    private String playerAwayMessage;
 
-  /** Wotlas Character
-   */
-  private BasicChar wotCharacter;
+    /** Wotlas Character
+    */
+    private BasicChar wotCharacter;
   
-  /** Object manager
-   */
-  private ClientObjectManager objectManager;
+    /** Object manager
+    */
+    private ClientObjectManager objectManager;
   
-  /** Player state
-   */
-  transient private PlayerState playerState = new PlayerState();
+    /** Player state
+    */
+    transient private PlayerState playerState = new PlayerState();
   
-  /** Current Chat PrimaryKey : the chat we are currently connected to.
-   */
-  private String currentChatPrimaryKey = ChatRoom.DEFAULT_CHAT; // everlasting chat set as default
+    /** Current Chat PrimaryKey : the chat we are currently connected to.
+    */
+    private String currentChatPrimaryKey = ChatRoom.DEFAULT_CHAT; // everlasting chat set as default
 
-  /** Time stamp for the away message : we don't display the away messages when they
-   *  are asked during the AWAY_MSG_DISPLAY_PERIOD.
-   */
-  transient private long playerAwayMsgTimeStamp;
+    /** Time stamp for the away message : we don't display the away messages when they
+    *  are asked during the AWAY_MSG_DISPLAY_PERIOD.
+    */
+    transient private long playerAwayMsgTimeStamp;
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Player's PathFollower for movements...
-   */
-  private MovementComposer movementComposer = (MovementComposer) new PathFollower();
+    /** Player's PathFollower for movements...
+    */
+    private MovementComposer movementComposer = (MovementComposer) new PathFollower();
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Our animation.
-   */
-  private Animation animation;
+    /** Our animation.
+    */
+    private Animation animation;
 
-  /** Our brightness filter.
-   */
-  private BrightnessFilter brightnessFilter;
+    /** Our brightness filter.
+    */
+    private BrightnessFilter brightnessFilter;
   
-  /** Our sprite.
-   */
-  private Sprite sprite;
+    /** Our sprite.
+    */
+    private Sprite sprite;
 
-  /** Our textDrawable
-   */
-  private TextDrawable textDrawable;
+    /** Our textDrawable
+    */
+    private TextDrawable textDrawable;
 
-  /** Our wave arc drawable to show our player talking.
-   */
-  private WaveArcDrawable waveDrawable;
+    /** Our wave arc drawable to show our player talking.
+    */
+    private WaveArcDrawable waveDrawable;
 
-  /** To get the player name to display on the left of the screen
-   */
-  private MultiLineText gameScreenFullPlayerName;
+    /** To get the player name to display on the left of the screen
+    */
+    private MultiLineText gameScreenFullPlayerName;
 
- /** Our current TileMap ( if we are in a TileMap, null otherwise )
-  */
-  private TileMap myTileMap;
+    /** Our current TileMap ( if we are in a TileMap, null otherwise )
+    */
+    private TileMap myTileMap;
   
- /** Our current Room ( if we are in a Room, null otherwise )
-  */
-  private Room myRoom;
+    /** Our current Room ( if we are in a Room, null otherwise )
+    */
+    private Room myRoom;
 
-  /** True if player is moving.
-   */
-  private boolean isMoving = false;
+    /** True if player is moving.
+    */
+    private boolean isMoving = false;
 
-  /** True if this player is controlled by the client.
-   */
-  private boolean isMaster = false;
+    /** True if this player is controlled by the client.
+    */
+    private boolean isMaster = false;
 
-  /** Is this player representing a client that is connected to the game ?
-   */
-  private boolean isConnectedToGame = false; 
+    /** Is this player representing a client that is connected to the game ?
+    */
+    private boolean isConnectedToGame = false; 
 
-  /** SyncID for client & server. See the getter of this field for explanation.
-   * This field is an array and not a byte because we want to be able to
-   * synchronize the code that uses it.
-   */
-  private byte syncID[] = new byte[1];
-
- /*------------------------------------------------------------------------------------*/
-
-  /** Locks
-   */
-  private byte trajectoryLock[] = new byte[0];
-  private byte xLock[] = new byte[0];
-  private byte yLock[] = new byte[0];
-  private byte angleLock[] = new byte[0];
-  private byte imageLock[] = new byte[0];
+    /** SyncID for client & server. See the getter of this field for explanation.
+    * This field is an array and not a byte because we want to be able to
+    * synchronize the code that uses it.
+    */
+    private byte syncID[] = new byte[1];
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Constructor
-   */
-  public PlayerImpl() {
-  }
+    /** Locks
+    */
+    private byte trajectoryLock[] = new byte[0];
+    private byte xLock[] = new byte[0];
+    private byte yLock[] = new byte[0];
+    private byte angleLock[] = new byte[0];
+    private byte imageLock[] = new byte[0];
+
+ /*------------------------------------------------------------------------------------*/
+
+    /** Constructor
+    */
+    public PlayerImpl() {
+    }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -188,7 +189,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier,FakeSpriteDataSupp
     public void init() {
         if(!getLocation().isTileMap())  {
             //Debug.signal( Debug.NOTICE, null, "PlayerImpl::init");
-            animation = new Animation( wotCharacter.getImage(location),
+            animation = new Animation( wotCharacter.getImage(getLocation()),
                                ClientDirector.getDataManager().getImageLibrary() );
             sprite = (Sprite) wotCharacter.getDrawable(this);
             brightnessFilter = new BrightnessFilter();
@@ -227,275 +228,273 @@ public class PlayerImpl implements Player, SpriteDataSupplier,FakeSpriteDataSupp
 
  /*------------------------------------------------------------------------------------*/
 
-  /** To get the player location.
-   *
-   *  @return player WotlasLocation
-   */
-  public WotlasLocation getLocation() {
-    return location;
-  }
+    /** To get the player location.
+    *
+    *  @return player WotlasLocation
+    */
+    public WotlasLocation getLocation() {
+        return location;
+    }
 
-  /** To set the player location.
-   *
-   *  @param new player WotlasLocation
-   */
+    /** To set the player location.
+    *
+    *  @param new player WotlasLocation
+    */
     public void setLocation(WotlasLocation myLocation) {
         location = myLocation;
-
-        if ( location.isRoom() )
-            myRoom = ClientDirector.getDataManager().getWorldManager().getRoom( location );
+        
+        if ( myLocation.isRoom() )
+            myRoom = ClientDirector.getDataManager().getWorldManager().getRoom( myLocation );
         else
             myRoom = null;
-        if ( location.isTileMap() )
-            myTileMap = ClientDirector.getDataManager().getWorldManager().getTileMap( location );
+        if ( myLocation.isTileMap() )
+            myTileMap = ClientDirector.getDataManager().getWorldManager().getTileMap( myLocation );
         else
             myTileMap = null;
     }
 
  /*------------------------------------------------------------------------------------*/
 
- /** To get the player name ( short name )
-  *
-  *  @return player name
-  */
-  public String getPlayerName() {
-    return playerName;
-  }
+    /** To get the player name ( short name )
+    *
+    *  @return player name
+    */
+    public String getPlayerName() {
+        return playerName;
+    }
 
-  /** To set the player's name ( short name )
-   *
-   *  @param player name
-   */
-  public void setPlayerName(String playerName) {
-    this.playerName = playerName;
-  }
+    /** To set the player's name ( short name )
+    *
+    *  @param player name
+    */
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
+    }
 
  /*------------------------------------------------------------------------------------*/
 
-  /** To get the player's full name.
-   *
-   *  @param the key of player who requested player's full name
-   *  @return player full name ( should contain the player name )
-   */
-  public String getFullPlayerName(Player otherPlayer) {
-    return fullPlayerName;
-  }
+    /** To get the player's full name.
+    *
+    *  @param the key of player who requested player's full name
+    *  @return player full name ( should contain the player name )
+    */
+    public String getFullPlayerName(Player otherPlayer) {
+        return fullPlayerName;
+    }
 
-  public String getFullPlayerName() {
-    return fullPlayerName;
-  }
+    public String getFullPlayerName() {
+        return fullPlayerName;
+    }
   
-  /** To set the player's full name.
-   *
-   *  @param player full name ( should contain the player name )
-   */
-  public void setFullPlayerName(String fullPlayerName) {
-    this.fullPlayerName = fullPlayerName;
+    /** To set the player's full name.
+    *
+    *  @param player full name ( should contain the player name )
+    */
+    public void setFullPlayerName(String fullPlayerName) {
+        this.fullPlayerName = fullPlayerName;
 
-       if( textDrawable!=null )
-           textDrawable.setText(fullPlayerName);
+        if( textDrawable!=null )
+            textDrawable.setText(fullPlayerName);
 
-       if( gameScreenFullPlayerName!=null ) {
-           String[] strTemp = { fullPlayerName };
-           gameScreenFullPlayerName.setText(strTemp);
-       }
-  }
+        if( gameScreenFullPlayerName!=null ) {
+            String[] strTemp = { fullPlayerName };
+            gameScreenFullPlayerName.setText(strTemp);
+        }
+    }
 
  /*------------------------------------------------------------------------------------*/
  
   /*** Player implementation ***/
 
-  /** To get the player primary Key ( account name )
-   *
-   *  @return player primary key
-   */
-  public String getPrimaryKey() {
-    return primaryKey;
-  }
+    /** To get the player primary Key ( account name )
+    *
+    *  @return player primary key
+    */
+    public String getPrimaryKey() {
+        return primaryKey;
+    }
 
-  /** To set the player's primary key.
-   *
-   *  @param primary key
-   */
-  public void setPrimaryKey(String primaryKey) {
-    this.primaryKey = primaryKey;
-  }
+    /** To set the player's primary key.
+    *
+    *  @param primary key
+    */
+    public void setPrimaryKey(String primaryKey) {
+        this.primaryKey = primaryKey;
+    }
 
-  /** To get the player's character.
-   *
-   *  @return player character
-   */
-  public BasicChar getBasicChar() {
-    return wotCharacter;
-  }
+    /** To get the player's character.
+    *
+    *  @return player character
+    */
+    public BasicChar getBasicChar() {
+        return wotCharacter;
+    }
 
-  /** To set the player's character.
-   *
-   *  @return WotCharacter player character
-   */
-  public void setBasicChar(BasicChar wotCharacter) {
-    this.wotCharacter = wotCharacter;
-  }
+    /** To set the player's character.
+    *
+    *  @return WotCharacter player character
+    */
+    public void setBasicChar(BasicChar wotCharacter) {
+        this.wotCharacter = wotCharacter;
+    }
 
   
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To get the player's object manager
+    /** To get the player's object manager
     *
     *  @return player object manager
     */
-      public ObjectManager getObjectManager()
-	  {
-	   return objectManager;
-	  }
+    public ObjectManager getObjectManager(){
+        return objectManager;
+    }
 
-   /** To set the player's object manager.
+    /** To set the player's object manager.
     *
     *  @param objectManager player object manager
     */
-      public void setObjectManager( ObjectManager objectManager )
-	  {
-	   this.objectManager=(ClientObjectManager)objectManager;
-	  }  
+    public void setObjectManager( ObjectManager objectManager ){
+        this.objectManager=(ClientObjectManager)objectManager;
+    }  
   
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To get the player character past.
+    /** To get the player character past.
     *
     *  @return player past
     */
-      public String getPlayerPast() {
-      	 if( playerPast==null ) {
-      	    // we ask for the player's past
-      	     sendMessage( new PlayerPastMessage( primaryKey, "") );
-      	     playerPast="loading...";
-      	     return playerPast;
-      	 }
+    public String getPlayerPast() {
+        if( playerPast==null ) {
+            // we ask for the player's past
+      	    sendMessage( new PlayerPastMessage( primaryKey, "") );
+      	    playerPast="loading...";
+      	    return playerPast;
+      	}
       	
-         return playerPast;
-      }
+        return playerPast;
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To set the player's past.
+    /** To set the player's past.
     *
     *  @param playerPast past
     */
-      public void setPlayerPast( String playerPast ) {
-           this.playerPast = playerPast;
-      }
+    public void setPlayerPast( String playerPast ) {
+        this.playerPast = playerPast;
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To get the player away message.
+    /** To get the player away message.
     *
     *  @return player away Message
     */
-      public String getPlayerAwayMessage() {
-      	     if(isConnectedToGame && this!=ClientDirector.getDataManager().getMyPlayer())
-      	        return null;
+    public String getPlayerAwayMessage() {
+        if(isConnectedToGame && this!=ClientDirector.getDataManager().getMyPlayer())
+            return null;
 
-             if(playerAwayMessage==null)
-                sendMessage( new PlayerAwayMessage( primaryKey, "") );
+        if(playerAwayMessage==null)
+            sendMessage( new PlayerAwayMessage( primaryKey, "") );
 
-             return playerAwayMessage;
-      }
+        return playerAwayMessage;
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Can we display the Away Message ? (method for the DataManager)
+    /** Can we display the Away Message ? (method for the DataManager)
     */
-      public boolean canDisplayAwayMessage() {
-             long now = System.currentTimeMillis();
+    public boolean canDisplayAwayMessage() {
+        long now = System.currentTimeMillis();
 
-             if( playerAwayMsgTimeStamp+AWAY_MSG_DISPLAY_PERIOD < now ) {
-                playerAwayMsgTimeStamp = now;
-                return true;
-             }
+        if( playerAwayMsgTimeStamp+AWAY_MSG_DISPLAY_PERIOD < now ) {
+            playerAwayMsgTimeStamp = now;
+            return true;
+        }
 
-             return false;
-      }
+        return false;
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To set the player's away message.
+    /** To set the player's away message.
     *
     *  @param playerAwayMessage msg
     */
-      public void setPlayerAwayMessage( String playerAwayMessage ){
-      	this.playerAwayMessage = playerAwayMessage;
-      }
+    public void setPlayerAwayMessage( String playerAwayMessage ){
+        this.playerAwayMessage = playerAwayMessage;
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 /*** SpriteDataSupplier implementation ***/
 
-  /** To get the X image position.
-   *
-   * @return x image coordinate
-   */
-  public int getX() {
-    synchronized( xLock ) {
-      return (int) movementComposer.getXPosition();
+    /** To get the X image position.
+    *
+    * @return x image coordinate
+    */
+    public int getX() {
+        synchronized( xLock ) {
+        return (int) movementComposer.getXPosition();
+        }
     }
-  }
 
-  /** To get the Y image position.
-   *
-   * @return y image cordinate
-   */
-  public int getY() {
-    synchronized( yLock ) {
-      return (int) movementComposer.getYPosition();
+    /** To get the Y image position.
+    *
+    * @return y image cordinate
+    */
+    public int getY() {
+        synchronized( yLock ) {
+        return (int) movementComposer.getYPosition();
+        }
     }
-  }
 
-  /** To get the image identifier to use.
-   *
-   * @return image identifier.
-   */
-  public ImageIdentifier getImageIdentifier() {
-    synchronized( imageLock ) {
-      return animation.getCurrentImage();
+    /** To get the image identifier to use.
+    *
+    * @return image identifier.
+    */
+    public ImageIdentifier getImageIdentifier() {
+        synchronized( imageLock ) {
+        return animation.getCurrentImage();
+        }
     }
-  }
 
-  /** To get the eventual rotation angle. 0 means no rotation.
-   *
-   * @return angle in radians.
-   */
-  public double getAngle() {
-    synchronized( angleLock ) {
-      return movementComposer.getOrientationAngle();
+    /** To get the eventual rotation angle. 0 means no rotation.
+    *
+    * @return angle in radians.
+    */
+    public double getAngle() {
+        synchronized( angleLock ) {
+        return movementComposer.getOrientationAngle();
+        }
     }
-  }
 
-  /** To get the X factor for scaling... 1.0 means no X scaling
-   *
-   * @return X scale factor
-   */
-  public double getScaleX() {
-    return 1.0;
-  }
+    /** To get the X factor for scaling... 1.0 means no X scaling
+    *
+    * @return X scale factor
+    */
+    public double getScaleX() {
+        return 1.0;
+    }
 
-  /** To get the Y factor for scaling... 1.0 means no Y scaling
-   *
-   * @return Y scale factor
-   */
-  public double getScaleY() {
-    return 1.0;
-  }
+    /** To get the Y factor for scaling... 1.0 means no Y scaling
+    *
+    * @return Y scale factor
+    */
+    public double getScaleY() {
+        return 1.0;
+    }
 
-  /** To get the image's transparency ( 0.0 means invisible, 1.0 means fully visible ).
-   *
-   * @return alpha
-   */
-  public float getAlpha() {
-    if( isConnectedToGame )
-        return 1.0f;
-    else
-        return 0.5f;
-  }
+    /** To get the image's transparency ( 0.0 means invisible, 1.0 means fully visible ).
+    *
+    * @return alpha
+    */
+    public float getAlpha() {
+        if( isConnectedToGame )
+            return 1.0f;
+        else
+            return 0.5f;
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -817,15 +816,18 @@ public class PlayerImpl implements Player, SpriteDataSupplier,FakeSpriteDataSupp
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To set the synchronization ID. See the getter for an explanation on this ID.
+    /** To set the synchronization ID. See the getter for an explanation on this ID.
     *  @param syncID new syncID
     */
-      public void setSyncID(byte syncID){
+    public void setSyncID(byte syncID){
       	synchronized( this.syncID ) {
-           this.syncID[0] = syncID;
+            this.syncID[0] = syncID;
         }
-      }
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+    public PlayerOnTheScreen getScreenObject() {
+        return new PlayerOnTheScreen( this );
+    }
 }

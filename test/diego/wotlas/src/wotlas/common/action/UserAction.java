@@ -102,14 +102,14 @@ public abstract class UserAction implements SendObjectReady {
     
     public boolean isValidTarget(byte targetType, byte range) {
         if( !MaskTools.isSet(maskTarget,targetType) ){
-            System.out.println(" type is not valid  ");
+            // System.out.println(" type is not valid  ");
             return false;
         }
         if( targetRange < range ){
-            System.out.println(" range is not valid  ");
+            // System.out.println(" range is not valid  ");
             return false;
         }
-        System.out.println(" action is valid");
+        // System.out.println(" action is valid");
         return true;
     }
     

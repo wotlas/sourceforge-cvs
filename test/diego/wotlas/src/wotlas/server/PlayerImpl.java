@@ -19,6 +19,8 @@
 
 package wotlas.server;
 
+import wotlas.common.screenobject.*;
+
 import wotlas.common.character.*;
 import wotlas.common.chat.*;
 import wotlas.common.movement.*;
@@ -1003,5 +1005,9 @@ public class PlayerImpl implements Player, NetConnectionListener,BackupReady {
    */
     public int ExternalizeGetVersion(){
         return 1;
+    }
+    
+    public PlayerOnTheScreen getScreenObject() {
+        return new PlayerOnTheScreen( this );
     }
 }

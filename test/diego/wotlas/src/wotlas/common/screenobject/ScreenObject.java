@@ -25,7 +25,6 @@ import wotlas.common.universe.*;
 import wotlas.libs.persistence.*;
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
-import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.graphics2D.filter.*;
 import wotlas.common.environment.*;
 
@@ -47,7 +46,7 @@ public abstract class ScreenObject implements FakeSpriteDataSupplier, SendObject
     protected int x,y;
     protected WotlasLocation loc;
     protected String primaryKey;
-
+    protected String name;
 
  /*---------------all the abstract functions to implement------------------------------*/
 
@@ -82,7 +81,11 @@ public abstract class ScreenObject implements FakeSpriteDataSupplier, SendObject
     public String getPrimaryKey() {
         return primaryKey;
     }
-    
+
+    public String getName() {
+        return name;
+    }
+
     /** To get the X image position.
     *
     * @return x image cordinate
@@ -104,6 +107,11 @@ public abstract class ScreenObject implements FakeSpriteDataSupplier, SendObject
         this.y = y;
     }
     
+    // Check it.....
+    public void cleanVisualProperties(GraphicsDirector gDirector) {
+        gDirector.removeDrawable( getDrawable() );
+    }
+    
     /* - - - - - - - - - - - - - - Send object by the net- - - - - - - - - - - - - - - - -*/
     
     /** id version of data, used in serialized persistance.
@@ -118,8 +126,9 @@ public abstract class ScreenObject implements FakeSpriteDataSupplier, SendObject
         objectOutput.writeInt( x );
         objectOutput.writeInt( y );
         objectOutput.writeObject( primaryKey );
+        objectOutput.writeObject( loc );
     }
-    
+
     public void readObject(java.io.ObjectInputStream objectInput)
     throws java.io.IOException, java.lang.ClassNotFoundException {
         int IdTmp = objectInput.readInt();
@@ -127,6 +136,7 @@ public abstract class ScreenObject implements FakeSpriteDataSupplier, SendObject
             x = objectInput.readInt();
             y = objectInput.readInt();
             primaryKey = ( String ) objectInput.readObject();
+            loc = ( WotlasLocation ) objectInput.readObject();
         } else {
             // to do.... when new version
         }

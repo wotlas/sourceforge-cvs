@@ -8,15 +8,15 @@ import wotlas.common.router.*;
 
 public class Summon extends Spell {
 
-    String npcKey;
+    String name;
 
-    public Summon(String npcKey) {
-        this.npcKey = npcKey;
+    public Summon(String name) {
+        this.name = name;
     }
         
     public void CastToMap(WotlasLocation loc, int x, int y) {
         TileMap map = ServerDirector.getDataManager().getWorldManager().getTileMap(loc);
-        System.out.println("summon :"+npcKey);
-        map.getMessageRouter().addScreenObject( new NpcOnTheScreen(x,y,npcKey) );
+        // System.out.println("summon :"+npcKey);
+        map.getMessageRouter().addScreenObject( new NpcOnTheScreen(x,y,name) );
     }
 }

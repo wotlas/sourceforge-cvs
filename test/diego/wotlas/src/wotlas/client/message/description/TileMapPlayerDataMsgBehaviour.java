@@ -28,12 +28,13 @@ import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.common.message.description.*;
 import wotlas.common.universe.*;
 import wotlas.common.Player;
+import wotlas.common.screenobject.*;
 import wotlas.client.*;
 
 /**
  * Associated behaviour to the PathUpdateMovementMessage...
  *
- * @author Aldiss
+ * @author Aldiss, Diego
  */
 
 public class TileMapPlayerDataMsgBehaviour extends TileMapPlayerDataMessage implements NetMessageBehaviour
@@ -99,23 +100,21 @@ public class TileMapPlayerDataMsgBehaviour extends TileMapPlayerDataMessage impl
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To merge our players the DataManager's hashtable...
+  /** To merge our screenObjects the DataManager's hashtable...
    */
     private void merge( DataManager dataManager ) {
-    	Hashtable dest = dataManager.getPlayers();
-
+        Hashtable dest = dataManager.getScreenObjects();
     	synchronized( dest ) {
-            Iterator it = players.values().iterator();
+            Iterator it = screenObjects.values().iterator();
 
             while( it.hasNext() ) {
-                PlayerImpl playerImpl = (PlayerImpl) it.next();
-            	
-            	if( dest.containsKey( playerImpl.getPrimaryKey() ) )
-            	    continue;
+                ScreenObject item = (ScreenObject ) it.next();
 
-                dest.put( playerImpl.getPrimaryKey(), playerImpl );
-                playerImpl.init();
-                playerImpl.initVisualProperties(dataManager.getGraphicsDirector());
+            	if( dest.containsKey( item.getPrimaryKey() ) )
+                    continue;
+                
+                dest.put( item.getPrimaryKey(), item );
+                dataManager.getGraphicsDirector().addDrawable(item.getDrawable());
             }
     	}
     }

@@ -101,88 +101,89 @@ public class TileMapData implements MapData {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** To init the display<br>
-   * - load background and mask images<br>
-   * - init the AStar algorithm
-   * - init the Graphics Director
-   * - show the other images (shadows, buildings, towns...)
-   */
-  public void initDisplay(PlayerImpl myPlayer, DataManager dataManager ) {
-    this.dataManager = dataManager;
+    /** To init the display<br>
+    * - load background and mask images<br>
+    * - init the AStar algorithm
+    * - init the Graphics Director
+    * - show the other images (shadows, buildings, towns...)
+    */
+    public void initDisplay(PlayerImpl myPlayer, DataManager dataManager ) {
+        this.dataManager = dataManager;
   
-    if (DataManager.SHOW_DEBUG)
-      System.out.println("-- initDisplay in TileMapData --");
-    
-    GraphicsDirector gDirector = dataManager.getGraphicsDirector();
+        if (DataManager.SHOW_DEBUG)
+          System.out.println("-- initDisplay in TileMapData --");
 
-    // 0 - Some inits...
-    myPlayer.init();
+        GraphicsDirector gDirector = dataManager.getGraphicsDirector();
 
-    // 1 - We load the TileMap
-    WotlasLocation location = myPlayer.getLocation();
+        // 0 - Some inits...
+        myPlayer.init();
 
-    currentTileMapID = location.getTileMapID();
+        // 1 - We load the TileMap
+        WotlasLocation location = myPlayer.getLocation();
 
-    TileMap tileMap = dataManager.getWorldManager().getTileMap(location);
-    tileMap.initGraphicSet( gDirector );
-    EnvironmentManager.initGraphics( gDirector );
+        currentTileMapID = location.getTileMapID();
 
-      if (SHOW_DEBUG) {
-         System.out.println("TileMap");
-         System.out.println("\tfullName = "  + tileMap.getFullName());
-         System.out.println("\tshortName = " + tileMap.getShortName());
-      }
+        TileMap tileMap = dataManager.getWorldManager().getTileMap(location);
+        tileMap.initGraphicSet( gDirector );
+        EnvironmentManager.initGraphics( gDirector );
 
-    dataManager.getClientScreen().getChatPanel().changeMainJChatRoom(tileMap.getShortName());
+        if (SHOW_DEBUG) {
+            System.out.println("TileMap");
+            System.out.println("\tfullName = "  + tileMap.getFullName());
+            System.out.println("\tshortName = " + tileMap.getShortName());
+        }
 
-    dataManager.addPlayer(myPlayer);
+        dataManager.getClientScreen().getChatPanel().changeMainJChatRoom(tileMap.getShortName());
 
-    // 2 - We set player's position if his position is incorrect
+        dataManager.addPlayer(myPlayer); // should be changed
+        // dataManager.addScreenObjects(myPlayer.getScreenObject()); // should be changed
 
-    // 3 - preInit the GraphicsDirector : reset it...
-//    gDirector.preTileMapInitWithPlayer( myPlayer.getBasicChar().getDrawableForTileMaps(myPlayer),tileMap.getMapFullSize() );
-    gDirector.preTileMapInitWithPlayer( myPlayer.getDrawable(),tileMap.getMapFullSize() );
+        // 2 - We set player's position if his position is incorrect
 
-    // 4 - We load the background tile and create the background
-    tileMap.drawAllLayer( gDirector );
+        // 3 - preInit the GraphicsDirector : reset it...
+        //    gDirector.preTileMapInitWithPlayer( myPlayer.getBasicChar().getDrawableForTileMaps(myPlayer),tileMap.getMapFullSize() );
+        gDirector.preTileMapInitWithPlayer( myPlayer.getDrawable(),tileMap.getMapFullSize() );
 
-    // 5 - We load the mask
+        // 4 - We load the background tile and create the background
+        tileMap.drawAllLayer( gDirector );
 
-    // 6 - We initialize the AStar algo
-    // myPlayer.getMovementComposer().setMovementMask( tileMap.getManager().getMapMask()
-    // , 5, 1 );
-    myPlayer.getMovementComposer().setMovementMask( tileMap.getManager().getMapMask()
-    , tileMap.getMapTileDim().height, 1 );  
-    myPlayer.getMovementComposer().resetMovement();
+        // 5 - We load the mask
 
-    gDirector.tileMapInit( tileMap.getMapFullSize() );
+        // 6 - We initialize the AStar algo
+        // myPlayer.getMovementComposer().setMovementMask( tileMap.getManager().getMapMask()
+        // , 5, 1 );
+        myPlayer.getMovementComposer().setMovementMask( tileMap.getManager().getMapMask()
+        , tileMap.getMapTileDim().height, 1 );  
+        myPlayer.getMovementComposer().resetMovement();
 
-    // 7 - We add buildings' images
+        gDirector.tileMapInit( tileMap.getMapFullSize() );
 
-    // 8 - We add MapExits' images
-    MapExit[] mapExits = tileMap.getManager().getMapExits();
-    if (mapExits!= null) {
-        if (SHOW_DEBUG)
-            System.out.println("\tDrawing MapExits");
-        for (int i=0; i<mapExits.length; i++) 
-            dataManager.drawScreenRectangle(mapExits[i].toRectangle(), Color.yellow);
+        // 7 - We add buildings' images
+
+        // 8 - We add MapExits' images
+        MapExit[] mapExits = tileMap.getManager().getMapExits();
+        if (mapExits!= null) {
+            if (SHOW_DEBUG)
+                System.out.println("\tDrawing MapExits");
+            for (int i=0; i<mapExits.length; i++) 
+                dataManager.drawScreenRectangle(mapExits[i].toRectangle(), Color.yellow);
+        }
+
+        // 9 - We show some informations on the screen
+        gDirector.addDrawable(myPlayer.getGameScreenFullPlayerName());
+
+        String[] strTemp2 = { tileMap.getFullName() };
+        MultiLineText mltLocationName = new MultiLineText(strTemp2, 10, 10, Color.black, 15.0f, "Lucida Blackletter", ImageLibRef.TEXT_PRIORITY, MultiLineText.RIGHT_ALIGNMENT);
+        gDirector.addDrawable(mltLocationName);
+
+        // 10 - We play music
+        String midiFile = tileMap.getMusicName();
+        if (midiFile != null)
+            SoundLibrary.getMusicPlayer().playMusic( midiFile );
+
+        // 11 - We retrieve eventual remaining data
+        dataManager.sendMessage(new AllDataLeftPleaseMessage());
     }
-
-    // 9 - We show some informations on the screen
-    gDirector.addDrawable(myPlayer.getGameScreenFullPlayerName());
-
-    String[] strTemp2 = { tileMap.getFullName() };
-    MultiLineText mltLocationName = new MultiLineText(strTemp2, 10, 10, Color.black, 15.0f, "Lucida Blackletter", ImageLibRef.TEXT_PRIORITY, MultiLineText.RIGHT_ALIGNMENT);
-    gDirector.addDrawable(mltLocationName);
-
-    // 10 - We play music
-    String midiFile = tileMap.getMusicName();
-    if (midiFile != null)
-      SoundLibrary.getMusicPlayer().playMusic( midiFile );
-
-    // 11 - We retrieve eventual remaining data
-    dataManager.sendMessage(new AllDataLeftPleaseMessage());
-  }
 
   /** To init the display editor<br>
    * - load background and mask images<br>
@@ -230,6 +231,7 @@ public class TileMapData implements MapData {
             Debug.signal( Debug.NOTICE, null, "LOCATION HAS CHANGED in TileMapData");
 
             dataManager.getPlayers().clear();
+            dataManager.getScreenObjects().clear();
             dataManager.cleanInteriorMapData();
             dataManager.getClientScreen().getChatPanel().reset();
             dataManager.changeMapData();

@@ -70,7 +70,7 @@ public class MultiGroupMessageRouterForTileMap extends MessageRouter {
     * @param location location this MessageRouter is linked to.
     * @param wManager WorldManager of the application.
     */
-     public void init( WotlasLocation location, WorldManager wManager ) {
+     public void init(WotlasLocation location, WorldManager wManager) {
 
          // 1 - We get our tileMap
             if( !location.isTileMap()) {
@@ -97,94 +97,65 @@ public class MultiGroupMessageRouterForTileMap extends MessageRouter {
     * @return true if the player was added successfully, false if an error occured.
     */
      public boolean addPlayer( Player player ) {
-
-       // 1 - We add this player to our list & don't care if it's already in there
-          players.put( player.getPrimaryKey(), player );
-          player.setLocation( thisTileMap.getLocation() ); // update player location
-
-          if(!player.isConnectedToGame())
-             return true; // no need to advertise if the player is not connected
-
-       // 2 - We advertise our presence to other players in the LOCAL map
-          AddPlayerToTileMapMessage aMsg = new AddPlayerToTileMapMessage( null, player );
-
-          synchronized( players ) {
-              Iterator it = players.values().iterator();
-              	 
-              while( it.hasNext() ) {
-                  Player p = (Player) it.next();
-
-                  if(p!=player) {
-                     aMsg.setOtherPlayer(p); // needed for the LieManager to know who is
-                     p.sendMessage( aMsg );  // asking for the player's name....
-                  }
-             }
-          }
-
-       // 4 - We send DOORS & PLAYERS data to the added player
-          player.sendMessage( new TileMapPlayerDataMessage( thisTileMap, player ) );
-
-              // player.sendMessage( new DoorsStateMessage( nearRooms[i] ) );
-
-       // 5 - We send CHAT DATA to the added player
-          updateChatInformation( (PlayerImpl) player );
-          
-          return true;
-
-        /*** END OF ADDPLAYER ***/
+        return addScreenObject(player.getScreenObject());
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To update the local chat information for a player. We update the state of the
+    /** To update the local chat information for a player. We update the state of the
     *  player
     */
-     protected void updateChatInformation( PlayerImpl player ) {
+    protected void updateChatInformation( PlayerImpl player ) {
 
-       // 1 - and signal our player to default chat room...
-          sendMessage( new AddPlayerToChatRoomMessage( player.getPrimaryKey(), ChatRoom.DEFAULT_CHAT ),
+        // 1 - and signal our player to default chat room...
+        sendMessage( new AddPlayerToChatRoomMessage( player.getPrimaryKey(), ChatRoom.DEFAULT_CHAT ),
                        player );
 
-       // 2 - We send CHAT data to the added player
-       //     ( list of the players of the default chat room )
-          player.sendMessage( new SetCurrentChatRoomMessage( ChatRoom.DEFAULT_CHAT, players ) );
+        // 2 - We send CHAT data to the added player
+        //     ( list of the players of the default chat room )
+        SetCurrentChatRoomMessage msg = new SetCurrentChatRoomMessage();
+        msg.SetToUseScreenObjects(ChatRoom.DEFAULT_CHAT, players );
+        player.sendMessage( msg );
 
-       // 3 - We seek for a valid chatList if any...
-          synchronized( players ) {
-             Iterator it = players.values().iterator();
+        // 3 - We seek for a valid chatList if any...
+        synchronized( screenObjects ) {
+            Iterator it = screenObjects.values().iterator();
 
-             while( it.hasNext() ) {
-             	 PlayerImpl p = (PlayerImpl) it.next();
+            Object tmpObject;
+            while( it.hasNext() ) {
+                tmpObject = it.next();
+                if( tmpObject instanceof PlayerOnTheScreen ){
+                    PlayerImpl p = (PlayerImpl)( (PlayerOnTheScreen) tmpObject ).getPlayer();
+                    if(tmpObject != player && p.isConnectedToGame() ) {
+                        ChatList chatList = p.getChatList();
 
-                 if(p!=player && p.isConnectedToGame() ) {
-                    ChatList chatList = p.getChatList();
-
-                    if( chatList!=null ) {
-                    	player.setChatList( chatList );
-                    	break;
+                        if( chatList!=null ) {
+                            player.setChatList( chatList );
+                            break;
+                        }
                     }
-                 }
-             }
-          }
+                }
+            }
+        }
 
-          ChatList myChatList = player.getChatList();
+        ChatList myChatList = player.getChatList();
 
-          if( myChatList == null )
-              return; // no chats in the room
+        if( myChatList == null )
+            return; // no chats in the room
 
-       // 4 - We send the CHAT ROOMS available to our client...
-          Hashtable chatRooms = myChatList.getChatRooms();
+        // 4 - We send the CHAT ROOMS available to our client...
+        Hashtable chatRooms = myChatList.getChatRooms();
 
-          synchronized( chatRooms ) {
-              Iterator it = chatRooms.values().iterator();
+        synchronized( chatRooms ) {
+            Iterator it = chatRooms.values().iterator();
 
-              while( it.hasNext() ) {
-                  ChatRoom cRoom = (ChatRoom) it.next();
-                  player.sendMessage( new ChatRoomCreatedMessage( cRoom.getPrimaryKey(),
+            while( it.hasNext() ) {
+                ChatRoom cRoom = (ChatRoom) it.next();
+                player.sendMessage( new ChatRoomCreatedMessage( cRoom.getPrimaryKey(),
                                            cRoom.getName(), cRoom.getCreatorPrimaryKey() ) );
-             }
-          }
-     }
+            }
+        }
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -197,44 +168,57 @@ public class MultiGroupMessageRouterForTileMap extends MessageRouter {
     * @return true if the player was removed successfully, false if an error occured.
     */
      public boolean removePlayer( Player player ) {
+          return removeScreenObject( player.getScreenObject() );
+     }
 
-       // 1 - We remove this player from our list
-          if( !super.removePlayer(player) )
-              return false; // non-existent player
+   /** To remove a player from this group.
+    *
+    *  Call this method when a player is removed from the map. If the player is arriving
+    *  from another room call movePlayer.
+    *
+    * @param player player to remove
+    * @return true if the player was removed successfully, false if an error occured.
+    */
+    public boolean removeScreenObject( ScreenObject item ) {
 
-       // 2 - We send remove messages to local & near players
-          sendMessage( new RemovePlayerFromTileMapMessage( player.getPrimaryKey(), thisTileMap.getLocation() ),
+        // 1 - We remove this item from our list
+        if( !super.removeScreenObject(item) )
+            return false; // non-existent player
+
+        // 2 - We send remove messages to local & near players
+        sendMessage( new RemoveScreenObjectFromTileMapMessage( item.getPrimaryKey(), thisTileMap.getLocation() ),
                         null,
                         EXTENDED_GROUP );
 
-       // 3 - Remove from the chat
-          PlayerImpl playerImpl = (PlayerImpl) player;
-       
-          if( !playerImpl.getCurrentChatPrimaryKey().equals( ChatRoom.DEFAULT_CHAT ) ) {
-              RemPlayerFromChatRoomMsgBehaviour remPlayerFromChat
-                   = new RemPlayerFromChatRoomMsgBehaviour( player.getPrimaryKey(),
-                                        playerImpl.getCurrentChatPrimaryKey() );
+        // 3 - Remove from the chat if player
+        if( item instanceof PlayerOnTheScreen ){
+            PlayerImpl p = (PlayerImpl)( (PlayerOnTheScreen) item ).getPlayer();
+            Player player = ( (PlayerOnTheScreen) item ).getPlayer();
+            if( !p.getCurrentChatPrimaryKey().equals( ChatRoom.DEFAULT_CHAT ) ) {
+                RemPlayerFromChatRoomMsgBehaviour remPlayerFromChat
+                    = new RemPlayerFromChatRoomMsgBehaviour( player.getPrimaryKey(),
+                                        p.getCurrentChatPrimaryKey() );
 
-              try{
-                 remPlayerFromChat.doBehaviour( player );
-              }catch( Exception e ) {
-                 Debug.signal( Debug.ERROR, this, e );
-                 playerImpl.setCurrentChatPrimaryKey( ChatRoom.DEFAULT_CHAT );
-              }
-          }
-          else
-              sendMessage( new RemPlayerFromChatRoomMessage( player.getPrimaryKey(), ChatRoom.DEFAULT_CHAT ) );
-
-          return true;
+                try{
+                    remPlayerFromChat.doBehaviour( player );
+                }catch( Exception e ) {
+                    Debug.signal( Debug.ERROR, this, e );
+                    p.setCurrentChatPrimaryKey( ChatRoom.DEFAULT_CHAT );
+                }
+            }
+            else
+                sendMessage( new RemPlayerFromChatRoomMessage( player.getPrimaryKey(), ChatRoom.DEFAULT_CHAT ) );
+        }
+        return true;
      }
-
+     
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To remove all the players of this group. The default implementation of this method
     *  just removes all the players WITHOUT sending any messages.
     */
      public void removeAllPlayers() {
-         super.removeAllPlayers();
+         super.removeAllScreenObjects();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -246,8 +230,7 @@ public class MultiGroupMessageRouterForTileMap extends MessageRouter {
     * @return null if not found, the player otherwise
     */
      public Player getPlayer( String primaryKey ) {
-           Player p = (Player) players.get( primaryKey );
-           
+           // Player p = (Player) players.get( primaryKey );
            return null; // not found
      }
 
@@ -258,87 +241,8 @@ public class MultiGroupMessageRouterForTileMap extends MessageRouter {
     * @param player player to move
     * @return true if the player was moved successfully, false if an error occured.
     */
-     public boolean movePlayer( Player player, WotlasLocation targetLocation ) {
+     public boolean movePlayer(Player player, WotlasLocation targetLocation) {
         return false;
-/*
-       // 1 - We remove the player from our router...
-          if( !super.removePlayer(player) )
-              return false; // non-existent player
-
-       // 2 - Check the target tilemap...
-          int targetTileMapID = targetLocation.getTileMapID();
-          TileMap targetTileMap = null;
-
-          for( int i=0; i<nearRooms.length; i++ )
-               if( nearRooms[i].getRoomID()==targetRoomID ) {
-                   targetRoom = nearRooms[i];
-                   break;
-               }
-
-          if(targetRoom==null) {
-             Debug.signal( Debug.ERROR, this, "Target room not found !" );
-             return false;
-          }
-
-       // 3 - Send approriate Remove messages
-          RemovePlayerFromRoomMessage rMsg = new RemovePlayerFromRoomMessage( 
-                                           player.getPrimaryKey(), player.getLocation() );
-
-          for( int i=0; i<nearRooms.length; i++ )
-               if( nearRooms[i].getRoomID()!=targetRoomID )
-                   nearRooms[i].getMessageRouter().sendMessage(rMsg);
-
-          sendMessage( new RemPlayerFromChatRoomMessage( player.getPrimaryKey(), ChatRoom.DEFAULT_CHAT ) );
-
-       // 4 - Send appropriate Location changes & Messages
-          player.setLocation( targetRoom.getLocation() );
-          targetRoom.getMessageRouter().getPlayers().put(player.getPrimaryKey(),player);
-
-          LocationChangeMessage lMsg = new LocationChangeMessage( player.getPrimaryKey(),
-                                           player.getLocation(), 0, 0, 0.0f );
-
-          sendMessage( lMsg ); // to this room
-          targetRoom.getMessageRouter().sendMessage( lMsg, player ); // to the target room
-
-       // 5 - We ask the moved player to clean his ghosts
-          player.sendMessage( new CleanGhostsMessage( player.getPrimaryKey(), player.getLocation() ) );
-
-       // 6 - Send appropriate Add Player Messages
-       //     to the neighbours of the target room where we are now
-       //     We also send remaining Players & Doors Messages to our player
-          AddPlayerToRoomMessage aMsg = new AddPlayerToRoomMessage( null, player );
-
-          if(targetRoom.getRoomLinks()!=null)
-            for( int i=0; i<targetRoom.getRoomLinks().length; i++ ) {
-               Room otherRoom = targetRoom.getRoomLinks()[i].getRoom1();
-
-               if( otherRoom==targetRoom )
-                   otherRoom = targetRoom.getRoomLinks()[i].getRoom2();
-
-               if( otherRoom==thisRoom )
-                   continue;
-
-               player.sendMessage( new DoorsStateMessage( otherRoom ) );
-               player.sendMessage( new RoomPlayerDataMessage( otherRoom, player ) );
-
-               Hashtable otherPlayers = otherRoom.getMessageRouter().getPlayers();
-
-               synchronized( otherPlayers ) {
-                  Iterator it = otherPlayers.values().iterator();
-              	 
-                  while( it.hasNext() ) {
-                      Player p = (Player) it.next();
-                      aMsg.setOtherPlayer(p); // needed for the LieManager to know who is
-                      p.sendMessage( aMsg );  // asking for the player's name....
-                  }
-               }
-            }
-
-       // 7 - We send CHAT DATA to the added player
-          ( (MultiGroupMessageRouter) targetRoom.getMessageRouter() ).updateChatInformation( (PlayerImpl) player );
-
-          return true;
-*/
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -351,23 +255,26 @@ public class MultiGroupMessageRouterForTileMap extends MessageRouter {
     *  @param groupOption gives the groups to send the message to. See the constants
     *         defined in this class : LOCAL_GROUP, EXTENDED_GROUP, EXC_EXTENDED_GROUP
     */
-     public void sendMessages( NetMessage msg[], Player exceptThisPlayer, byte groupOption ) {
-
+     public void sendMessages(NetMessage[] msg, Player exceptThisPlayer, byte groupOption) {
         if( groupOption!=EXC_EXTENDED_GROUP ) {
-          // We send the messages to the local group.
-             synchronized( players ) {
-                Iterator it = players.values().iterator();
+        // We send the messages to the local group.
+            synchronized( screenObjects ) {
+                Iterator it = screenObjects.values().iterator();
 
-                 while( it.hasNext() ) {
-                    Player p = (Player) it.next();
-
-                    if( p!=exceptThisPlayer )
-                       for( int i=0; i< msg.length; i++ )
-                            p.sendMessage( msg[i] );
-                 }
-             }
+                Object tmpObject;
+                while( it.hasNext() ) {
+                    tmpObject = it.next();
+                    if( tmpObject instanceof PlayerOnTheScreen ){
+                        Player p = ( (PlayerOnTheScreen) tmpObject ).getPlayer();
+                        if(p!=exceptThisPlayer) {
+                            for( int i=0; i< msg.length; i++ )
+                                p.sendMessage( msg[i] );
+                        }
+                    }
+                }
+            }
         }
-     }
+    }
 
  /* - - - - - - - - - - -screen object manipulation - - - - - - - - - - - - - - -*/
 
@@ -387,16 +294,6 @@ public class MultiGroupMessageRouterForTileMap extends MessageRouter {
         if(!item.isConnectedToGame())
             return true; // no need to advertise if the player is not connected
 
-        // solo per ora, finche non levo addplayer
-        AddScreenObjectToTileMapMessage uno = new AddScreenObjectToTileMapMessage( item );
-        synchronized( players ) {
-            Iterator it = players.values().iterator();
-            while( it.hasNext() ) {
-                Player p = (Player) it.next();
-                p.sendMessage( uno );  // asking for the player's name....
-            }
-        }
-
         // 2 - We advertise our presence to the other players in the LOCAL map
         //   and to the npc-> but not with message for npc.
         AddScreenObjectToTileMapMessage aMsg = new AddScreenObjectToTileMapMessage( item );
@@ -407,7 +304,7 @@ public class MultiGroupMessageRouterForTileMap extends MessageRouter {
             while( it.hasNext() ) {
                 tmpObject = it.next();
                 if( tmpObject instanceof PlayerOnTheScreen ){
-                    Player p = ( (PlayerOnTheScreen) it.next() ).getPlayer();
+                    Player p = ( (PlayerOnTheScreen) tmpObject ).getPlayer();
                     if(tmpObject!=item) {
                         // needed for the LieManager to know who is
                         //aMsg.setOtherPlayer(p);

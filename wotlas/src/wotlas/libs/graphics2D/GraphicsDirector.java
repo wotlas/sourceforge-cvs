@@ -300,6 +300,8 @@ public class GraphicsDirector extends JPanel {
    * @param dr drawable to remove.
    */
    public void removeDrawable( Drawable dr ) {
+    	if(dr==null) return;
+
         synchronized( drawables ) {
             drawables.resetIterator();
 

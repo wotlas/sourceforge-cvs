@@ -557,7 +557,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
       input = input.substring(0, lastIndex+1);
       e = getPlayers(currentPrimaryKey).elements();
     }
-/*    
+
     String playerKey;
     for (; e.hasMoreElements() ;) {
       playerKey = ((PlayerState) e.nextElement()).fullName;
@@ -566,7 +566,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
         return input + playerKey;
       }
     }
-  */  
+
     // no player found
     e = getPlayers(currentPrimaryKey).elements();
     return input + autoName;

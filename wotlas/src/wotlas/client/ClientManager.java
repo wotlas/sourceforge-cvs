@@ -194,6 +194,9 @@ public class ClientManager
     final JButton b_cancel;
     final JButton b_delProfile;
 
+    final JTable profilesTable;
+    final JTable serversTable ;
+    
     indexScreen = state;
 
     switch(state)
@@ -291,7 +294,17 @@ public class ClientManager
       // Creates a table of profiles
       // data
       ProfileConfigListTableModel profileConfigListTabModel = new ProfileConfigListTableModel(profileConfigList, serverConfigList);
-      JTable profilesTable = new JTable(profileConfigListTabModel);
+      profilesTable = new JTable(profileConfigListTabModel) {
+        public String getToolTipText(MouseEvent event) {   
+          if (getSelectedRow() > -1) {
+            currentServerConfig = serverConfigList.ServerConfigAt(getSelectedRow());            
+            String str = currentServerConfig.getServerName() + " : " + currentServerConfig.getDescription() + " .";
+            return str;
+          } else {
+            return null;
+          }
+        }         
+      };      
       profilesTable.setDefaultRenderer(Object.class, new ATableCellRenderer());
       profilesTable.setBackground(Color.white);
       profilesTable.setForeground(Color.black);
@@ -300,7 +313,7 @@ public class ClientManager
       profilesTable.setRowHeight(24);
       // selection
       profilesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-      ListSelectionModel rowProfilesSM = profilesTable.getSelectionModel();
+      ListSelectionModel rowProfilesSM = profilesTable.getSelectionModel();      
       rowProfilesSM.addListSelectionListener(new ListSelectionListener()
       {
         public void valueChanged(ListSelectionEvent e)
@@ -310,9 +323,11 @@ public class ClientManager
           ListSelectionModel lsm = (ListSelectionModel) e.getSource();
           if (lsm.isSelectionEmpty()) {
             //no rows are selected
-          } else {
-            int selectedRow = lsm.getMinSelectionIndex();
+          } else {                        
+            int selectedRow = lsm.getMinSelectionIndex();            
             //selectedRow is selected
+            //currentServerConfig = serverConfigList.ServerConfigAt(selectedRow);
+            //profilesTable.setToolTipText(currentServerConfig.getDescription());
             currentProfileConfig = profileConfigList.getProfiles()[selectedRow];
             b_ok.setEnabled(true);
             b_delProfile.setEnabled(true);
@@ -321,6 +336,7 @@ public class ClientManager
       });
       // show table
       scrollPane = new JScrollPane(profilesTable);
+      profilesTable.setPreferredScrollableViewportSize(new Dimension(0, 100));
       scrollPane.getViewport().setBackground(Color.white);
       JScrollBar jsb_01 = scrollPane.getVerticalScrollBar();      
       leftPanel.add(scrollPane);
@@ -370,7 +386,7 @@ public class ClientManager
       leftPanel = new JPanel();
       leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
       rightPanel = new JPanel();
-      rightPanel.setLayout(new FlowLayout(FlowLayout.CENTER, screenIntro.getRightWidth(), 10));
+      //rightPanel.setLayout(new FlowLayout(FlowLayout.CENTER, screenIntro.getRightWidth(), 10));
 
       // Create buttons
       b_ok = new JButton(im_okup);
@@ -531,7 +547,7 @@ public class ClientManager
       // Creates a table of servers
       // data
       ServerConfigListTableModel serverConfigListTabModel = new ServerConfigListTableModel(serverConfigList);
-      JTable serversTable = new JTable(serverConfigListTabModel);
+      serversTable = new JTable(serverConfigListTabModel);
       serversTable.setDefaultRenderer(Object.class, new ATableCellRenderer());
       serversTable.setBackground(Color.white);
       serversTable.setForeground(Color.black);
@@ -544,16 +560,17 @@ public class ClientManager
       rowServerSM.addListSelectionListener(new ListSelectionListener()
       {
         public void valueChanged(ListSelectionEvent e)
-        {
+        {          
           //Ignore extra messages.
-          if (e.getValueIsAdjusting()) return;
+          if (e.getValueIsAdjusting()) return;          
           ListSelectionModel lsm = (ListSelectionModel) e.getSource();
           if (lsm.isSelectionEmpty()) {
             //no rows are selected
-          } else {
-            int selectedRow = lsm.getMinSelectionIndex();
-            //selectedRow is selected
+          } else {            
+            int selectedRow = lsm.getMinSelectionIndex();               
+            //selectedRow is selected            
             currentServerConfig = serverConfigList.ServerConfigAt(selectedRow);
+            //serversTable.setToolTipText(currentServerConfig.getDescription());
             currentProfileConfig.setOriginalServerID(currentServerConfig.getServerID());
             currentProfileConfig.setServerID(currentServerConfig.getServerID());
             b_ok.setEnabled(true);
@@ -562,6 +579,7 @@ public class ClientManager
       });
       // show table      
       scrollPane = new JScrollPane(serversTable);
+      serversTable.setPreferredScrollableViewportSize(new Dimension(0, 100));
       scrollPane.getViewport().setBackground(Color.white);      
       leftPanel.add(scrollPane);
 

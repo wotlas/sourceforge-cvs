@@ -22,13 +22,14 @@ package wotlas.utils;
 
 /** A list that implements the same methods as a java.utils.Vector
  *  WITH the difference that you can only remove elements from the head
- *  or the tail.
- *<br>
- *  The "remove" methods are optimized for these operations.
- *<br>
- * IMPORTANT: the methods below are not synchronized.
+ *  or the tail ( We optimized these operations by implementing defered
+ *  destruction ).
+ * <br><p>
+ * <b>Important</b>: The <i>List</i> methods are not synchronized.
+ * <br><p>
+ * <b>Known use</b>: A* pathfindig algorithm (see {@link wotlas.libs.pathfinding.AStar A*} )
  *
- * @author Aldiss
+ * @author Aldiss, Petrus
  */
 
 public class List

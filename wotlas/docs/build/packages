@@ -3,13 +3,17 @@ wotlas.libs.net.message
 wotlas.libs.net.personality
 wotlas.libs.pathfinding
 wotlas.libs.persistence
+wotlas.libs.log
 wotlas.libs.graphics2D
 wotlas.libs.graphics2D.drawable
 wotlas.libs.graphics2D.policy
+wotlas.libs.graphics2D.filter
+wotlas.libs.graphics2D.filter.color
 wotlas.common.universe
 wotlas.common
 wotlas.common.message
 wotlas.common.message.account
+wotlas.common.character
 wotlas.server
 wotlas.server.setup
 wotlas.server.message.account

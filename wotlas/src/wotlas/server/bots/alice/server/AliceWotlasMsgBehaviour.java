@@ -21,7 +21,7 @@ package wotlas.server.bots.alice.server;
 
 import wotlas.libs.net.NetMessageBehaviour;
 
-import wotlas.server.bots.alice.AliceWOTLAS;
+import wotlas.server.bots.alice.server.AliceWOTLAS;
 import wotlas.server.bots.alice.AliceWotlasMessage;
 
 /**

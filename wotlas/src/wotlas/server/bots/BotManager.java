@@ -274,7 +274,6 @@ public class BotManager {
     *  to tell the bots that its state has changed.
     */
      public void refreshBotState() {
-System.out.println("REFRESHING BOT STATE");
           synchronized( accountManager ) {
              Iterator it = accountManager.getIterator();
 

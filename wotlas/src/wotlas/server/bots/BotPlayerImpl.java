@@ -113,11 +113,6 @@ public class BotPlayerImpl extends PlayerImpl implements BotPlayer {
     */
       public boolean isConnectedToGame() {
          BotChatService chatService = ServerDirector.getDataManager().getBotManager().getBotChatService();
-
-if(chatService!=null)
-System.out.println(""+primaryKey+" BOOT asked connected state : "+chatService.isAvailable() );
-else
-System.out.println(""+primaryKey+" BOOT asked connected state : NO CHAT SERVICE" );
          
          if( chatService!=null && chatService.isAvailable() )
              return true;
@@ -142,7 +137,7 @@ System.out.println(""+primaryKey+" BOOT asked connected state : NO CHAT SERVICE"
                isConnected = !isConnected;
                Debug.signal(Debug.WARNING, this, "Bad 'isConnected' value avoided...");
             }
-System.out.println("Updating Bot State !!!!! "+primaryKey);
+
          // if it's a transition from connected to not connected we
          // reset our state
             if( !isConnected ) {

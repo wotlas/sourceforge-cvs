@@ -112,6 +112,13 @@ public interface WotCharacter
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** Returns the fanfare sound of this character class.
+   *  @return fanfare sound file name
+   */
+     public String getFanfareSound();
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** To put the WotCharacter's data on the network stream. You don't need
    * to invoke this method yourself, it's done automatically.
    *

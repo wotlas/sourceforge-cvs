@@ -102,6 +102,7 @@ public class FanfareChatCommand implements ChatCommand
 
        // We make sure the voice level is on shouting
        // So that the sound command is sent to everybody near
+          response.setMessage( "/fanfare "+player.getWotCharacter().getFanfareSound() );
           response.setVoiceSoundLevel( ChatRoom.SHOUTING_VOICE_LEVEL );
           return false; // we let the message continue its way...
       }

@@ -62,7 +62,8 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
     public void doBehaviour( Object sessionContext ) {
        // The sessionContext is here a DataManager.
           DataManager dataManager = (DataManager) sessionContext;
-          PlayerImpl player = dataManager.getMyPlayer();          
+          PlayerImpl player = dataManager.getMyPlayer();
+          boolean fanfare = false;
           
        // Return of a command ?
           if (message.startsWith("/cmd:")) {
@@ -74,9 +75,14 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
              message = "/me rings a bell...";
              SoundLibrary.getSoundLibrary().playSound("bell.wav");
           }
-          else if( message.equals("/FANFARE") ) {
+          else if( message.startsWith("/FANFARE") ) {             
+             int index = message.indexOf(' ');
+             if(index<0 || index==message.length()-1) return;
+
+             String soundFileName = message.substring(index+1,message.length()).toLowerCase();
+             SoundLibrary.getSoundLibrary().playSound(soundFileName);
              message = "/me sounds the fanfare !";
-             SoundLibrary.getSoundLibrary().playSound("fanfare.wav");
+             fanfare=true;
           }
           else if( message.equals("/KNOCK") ) {
              message = "/me knocks at the door...";
@@ -94,6 +100,8 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
           if( sender==null )
               Debug.signal( Debug.WARNING, this, "Couldnot find the sender of this message : "+senderPrimaryKey);
           else {
+              if(sender.getWotCharacter() instanceof DarkOne && fanfare)
+                 return;
               dataManager.addWaveDrawable(sender);
               senderFullName = sender.getFullPlayerName();
           }

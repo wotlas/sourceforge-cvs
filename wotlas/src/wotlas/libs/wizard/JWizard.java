@@ -99,6 +99,10 @@ public abstract class JWizard extends JFrame {
   private ImageIcon im_nextup, im_nextdo, im_nextun;
   private ImageIcon im_previousup, im_previousdo, im_previousun;
 
+  /** Wizard Image
+   */
+  private Image wizardImage;
+
  /*------------------------------------------------------------------------------------*/
 
   /*** ABSTRACT METHODS ***/
@@ -125,22 +129,56 @@ public abstract class JWizard extends JFrame {
 
       stepFactory = new JWizardStepFactory();
 
-      setSize(width,height);
+      setSize(width+100,height);
       setBackground(Color.white);
       setIconImage(Toolkit.getDefaultToolkit().getImage( GUI_IMAGES_PATH+"icon.gif" ));
 
+      JPanel wizardPanel = new JPanel();
+      wizardPanel.setBackground(Color.white);
+      wizardPanel.setAlignmentX(LEFT_ALIGNMENT);
+      getContentPane().add(wizardPanel, BorderLayout.CENTER);
+
       titlePanel = new JPanel(new GridLayout(1,1,5,5));
       titlePanel.setBackground(Color.white);
+      titlePanel.setAlignmentX(LEFT_ALIGNMENT);
+      titlePanel.setPreferredSize( new Dimension(width-10,24) );
+
       t_title = new ALabel(title);
-      t_title.setFont(new Font("Serif",Font.PLAIN,18) );
+      t_title.setFont(new Font("Serif",Font.PLAIN, 18) );
+      t_title.setAlignmentX(LEFT_ALIGNMENT);
       titlePanel.add(t_title);
-      getContentPane().add(titlePanel, BorderLayout.NORTH);
+      wizardPanel.add(titlePanel, BorderLayout.NORTH);
 
       mainPanel = new JPanel(new GridLayout(1,1));
       mainPanel.setBackground(Color.yellow);
-      getContentPane().add(mainPanel, BorderLayout.CENTER);
+      mainPanel.setPreferredSize( new Dimension(width,height-110) );
+      wizardPanel.add(mainPanel, BorderLayout.CENTER);
 
-      buttonsPanel = new JPanel();
+   // We load the wizard image
+      MediaTracker mediaTracker = new MediaTracker(this);
+      wizardImage  = getToolkit().getImage("../base/gui/wizard.jpg");
+      mediaTracker.addImage(wizardImage,0);
+
+      try{
+            mediaTracker.waitForAll(); // wait for all images to be in memory
+      }
+      catch(InterruptedException e){
+            e.printStackTrace();
+      }
+
+      JPanel leftPanel = new JPanel() {
+      	  public void paintComponent(Graphics g) {
+      	     g.drawImage( wizardImage, 0, 0, 100, getHeight(), this );
+      	  }
+      };
+
+      leftPanel.setPreferredSize( new Dimension(100,height) );
+      leftPanel.setMinimumSize( new Dimension(100,height) );
+      leftPanel.setMaximumSize( new Dimension(100,height) );
+      getContentPane().add( leftPanel, BorderLayout.WEST );
+
+
+      buttonsPanel = new JPanel(new GridLayout(1,4,0,5));
       buttonsPanel.setBackground(Color.white);
 
     // *** Load images of buttons
@@ -246,15 +284,17 @@ public abstract class JWizard extends JFrame {
         });
 
     // *** Add the buttons to buttonsPanel ***
-      buttonsPanel.add(b_cancel);
       buttonsPanel.add(b_previous);
+      buttonsPanel.add(new JLabel(" "));
+      buttonsPanel.add(b_cancel);
       buttonsPanel.add(b_next);
+      buttonsPanel.setPreferredSize( new Dimension(width-10,45) );
 
     // *** Add buttonsPanel ***
       JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
       southPanel.setBackground(Color.white);
       southPanel.add(buttonsPanel);
-      getContentPane().add(southPanel, BorderLayout.SOUTH);
+      wizardPanel.add(southPanel, BorderLayout.SOUTH);
 
     // *** Window listener
       addWindowListener( new WindowAdapter() {

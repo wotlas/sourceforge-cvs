@@ -20,6 +20,7 @@
 package wotlas.client.screen;
 
 import wotlas.client.*;
+import wotlas.client.screen.plugin.MacroPlugIn;
 
 import wotlas.common.chat.*;
 import wotlas.common.character.*;
@@ -44,8 +45,7 @@ import java.util.Hashtable;
  * @author Petrus, MasterBob
  */
 
-public class JChatPanel extends JPanel implements MouseListener, ActionListener
-{
+public class JChatPanel extends JPanel implements MouseListener, ActionListener {
 
  /*------------------------------------------------------------------------------------*/
 
@@ -218,6 +218,17 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
    */
   public void setInputBoxText(String text) {
     inputBox.setText(text);
+  }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To set the input box text and send the message
+   *
+   * @param text the new text of input box
+   */
+  public void sendChatMessage(String text) {
+    inputBox.setText(text);
+    okAction();
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -494,10 +505,16 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     if(message.length()==0)
       return;
 
-    if(message.length()>ChatRoom.MAXIMUM_MESSAGE_SIZE)
-       message = message.substring(0,ChatRoom.MAXIMUM_MESSAGE_SIZE-4) +"...";
-
     messageHistory.add(message);
+
+    // We get the MacroPlugIn and process the chat message with it.
+       MacroPlugIn macroPlugIn = (MacroPlugIn) ClientDirector.getDataManager().getClientScreen().getPlayerPanel().getPlugIn("Macro");
+
+       if(macroPlugIn!=null)
+          message = macroPlugIn.processMacros( message );
+
+       if(message.length()>ChatRoom.MAXIMUM_MESSAGE_SIZE)
+          message = message.substring(0,ChatRoom.MAXIMUM_MESSAGE_SIZE-4) +"...";
 
     // II - Any Shortcuts ?
     if (message.startsWith("/whisper")) {
@@ -729,7 +746,7 @@ class NoFocusInputVerifier extends InputVerifier {
  * Private class to prevent loss of focus of a JComponent
  */
 class NoFocusJTextField extends JTextField {
-  /** Override this method and return true if your JComponent manages focus    
+  /** Override this method and return true if your JComponent manages focus
    */
   public boolean isManagingFocus() {
     // return true to inform focus manager that component is managing focus changes

@@ -89,7 +89,9 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
     */
      public static final String WOTLAS_JAR_ROOT_DOCS_DIR = "/docs/help";
 
-   /** Tells in which dir we can store external files.
+   /** Tells in which dir we can store external files. This directory will be created in the
+    *  directory where the JAR is stored. See the wotlasJarExternalDir member field for the
+    *  complete path.
     */
      public static final String WOTLAS_JAR_EXTERNAL_DIR = "base-ext";  // must be different from other root dirs
 
@@ -166,9 +168,14 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
     */
      private boolean inServerJar;
 
-   /** Current Jar Name.
+   /** Current Jar Name with full path.
     */
      private String jarName;
+
+   /** Where we store external resources. This path is absolute and points out the JAR directory
+    *  plus WOTLAS_JAR_EXTERNAL_DIR directory.
+    */
+     private String wotlasJarExternalDir;
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -189,6 +196,8 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
                 basePath = DEFAULT_BASE_PATH;
                 return;
            }
+
+           wotlasJarExternalDir = getJarDir()+WOTLAS_JAR_EXTERNAL_DIR; // creation of an absolute path to our external resources
 
         // Are we in a client JAR File ?
            if( jarName.indexOf(WOTLAS_CLIENT_JAR) >= 0 ) {
@@ -283,6 +292,23 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** Returns the absolute path to the directory where this JAR is stored. Please retrieve
+    *  the JAR name before calling this method. The path we return ends with a "/".
+    */
+      protected String getJarDir() {
+           if(jarName==null)
+              return null;
+              
+           int index= jarName.lastIndexOf("/");  // always a "/" because the Jar path is found via an URL
+
+           if( index<0 )
+               return null;
+
+           return jarName.substring(0,index+1);
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
    /** Repares the class path with the eventually missing current jar name.
     */
       protected void repairClassPath() {
@@ -297,13 +323,13 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To tell if a path point out on an external resource of a JAR.
-    *  We just compare the beginning of the file to the WOTLAS_JAR_EXTERNAL_DIR
+    *  We just compare the beginning of the file to the wotlasJarExternalDir field.
     *
     * @param pathName path to analyze
     * @return true if this is an external resource, false otherwise
     */
      public boolean isExternal( String pathName ) {
-        if( pathName.startsWith( WOTLAS_JAR_EXTERNAL_DIR ) )
+        if( pathName.startsWith( wotlasJarExternalDir ) )
             return true;
         return false;
      }
@@ -355,10 +381,11 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
     *  the directory returned is the same that would be returned by getResourceDir()
     *
     * @param dirName directory name of the resource directory
+    * @return path ending with a "/"
     */
      protected String getExternalResourceDir( String dirName ) {
      	 if( inJar )
-     	     return WOTLAS_JAR_EXTERNAL_DIR+"/"+dirName+"/";
+     	     return wotlasJarExternalDir+"/"+dirName+"/";
          return basePath+File.separator+dirName+File.separator;
      }
 
@@ -467,7 +494,7 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
      	 if( inClientJar )
      	     return WOTLAS_JAR_ROOT_RESOURCE_DIR+"/"+UNIVERSE_DATA_DIR+"/";
          else if( inServerJar )
-     	     return WOTLAS_JAR_EXTERNAL_DIR+"/"+UNIVERSE_DATA_DIR+"/";
+     	     return wotlasJarExternalDir+"/"+UNIVERSE_DATA_DIR+"/";
 
          return basePath+File.separator+UNIVERSE_DATA_DIR+File.separator;
      }

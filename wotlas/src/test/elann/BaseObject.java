@@ -54,8 +54,12 @@ public class BaseObject
    
   /** Object's weight - used for endurance and max load. Perhaps negative weight should mean unmovable.
    */
-     private short weight;
+     private short objectWeight;
 	  
+  /** Object's size - used for max load.
+   */
+     private short objectSize;
+
   /** The level(s) required to use this object. - THE CLASS LEVEL/LEVELLIST DOES NOT EXIST ! 
    */
 	 private LevelList requiredLevels;													
@@ -73,7 +77,7 @@ public class BaseObject
 		
   /* ------- Constructor - TO DO ----- */		
 		
-  /* ------- Getters / Setters --------- */
+  /* ------- Getters / Setters - still missing some - boring :-( --------- */
 	
   /** Return the name of the class of the object (like Sword, Axe, ...)
   	  @return className
@@ -111,13 +115,23 @@ public class BaseObject
   /** Returns the weight of the object.
   	  @return the object's weight
    */
-    public short getObjectWeight() { return this.weight; }
+    public short getObjectWeight() { return this.objectWeight; }
 
   /** Sets the weight of the object.
   	  @param weight the object's weight
    */
-    public void setObjectWeight(short weight) { this.weight=weight; }
+    public void setObjectWeight(short weight) { this.objectWeight=weight; }
 
+	
+  /** Returns the size of the object.
+  	  @return the object's size
+   */
+    public short getObjectSize() { return this.objectSize; }
+
+  /** Sets the size of the object.
+  	  @param size the object's size
+   */
+    public void setObjectSize(short size) { this.objectSize=size; }
 	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

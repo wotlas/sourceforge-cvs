@@ -1,1 +1,1 @@
-javadoc *.java -d javadoc -author
+javadoc *.java -d javadoc -author -nodeprecated -windowtitle "Object Management System"

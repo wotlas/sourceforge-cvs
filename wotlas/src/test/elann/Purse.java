@@ -24,6 +24,7 @@ package wotlas.common.object;
  * 
  * @author Elann
  * @see wotlas.common.object.ContainerObject
+ * @see wotlas.common.object.ValuedObject
  */
 
 public class Purse extends ContainerObject
@@ -31,6 +32,7 @@ public class Purse extends ContainerObject
 
  /*------------------------------------------------------------------------------------*/
 
+  private ValuedObject content;
  
  /*------------------------------------------------------------------------------------*/
 
@@ -44,6 +46,44 @@ public class Purse extends ContainerObject
    this.objectName="standard purse";	  // to modify -> player name ?
   }
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Add a valued object to the purse.
+   * @param o the object to add
+   */
+    public void addObject(ValuedObject o)
+	{
+	 super.addObject(o);
+	}
+
+  /** Remove a valued object from the purse.
+   * @param o the object to remove. Can be found by getObjectByName() or getObjectAt()
+   */
+    public void removeObject(ValuedObject o)
+	{
+	 super.removeObject(o);
+	}	
+	
+  /** Retrieve a valued object from the purse. This method does not check validity.
+   * @param pos the position of the valued object in the container
+   * @return the valued object required 
+   */
+   	public ValuedObject getObjectAt(short pos) throws ArrayIndexOutOfBoundsException
+	{
+	 return (ValuedObject)super.getObjectAt(pos);
+	}
+
+  /** Retrieve a valued object from the purse by name.
+   * @param name the name of the object wanted
+   * @return the object required 
+   */
+	public ValuedObject getObjectByName(String name) // dnk if useful - Code first C later
+	{
+	 return (ValuedObject)super.getObjectByName(name);
+	}
+
+	
+ /*------------------------------------------------------------------------------------*/
+	
  
 }
 

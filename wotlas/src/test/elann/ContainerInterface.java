@@ -40,11 +40,16 @@ public interface ContainerInterface
    */
    	public void addObject(BaseObject o);
 	
+  /** Remove an object from the container.
+   * @param o the object to remove. Can be found by getObjectByName() or getObjectAt()
+   */
+    public void removeObject(BaseObject o);
+	
   /** Retrieve an object from the container.
    * @param pos the position of the object in the container
    * @return the object required 
    */
-   	public BaseObject getObjectAt(short pos);
+   	public BaseObject getObjectAt(short pos) throws ArrayIndexOutOfBoundsException;
 	
   /** Retrieve an object from the container by name.
    * @param name the name of the object wanted

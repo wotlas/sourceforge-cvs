@@ -69,17 +69,69 @@ public class ContainerObject extends BaseObject implements ContainerInterface
 	 for (int i=0;i<quantity;i++)
 	 	 content[i].discard();
 		 
-	 content=null;			  	 		 // must ask if it's correct to write this
-	 content=new BaseObject[capacity]; 	 // or if there is another way to do that.
+	 content=new BaseObject[capacity];
 	}
+	
+  /** Returns the first available cell in an array. Warning : may be out of bounds. The caller must check.
+   */
+   private short findFirstFree(Object[] tab)
+   {
+    for(int i=0;i<tab.length && tab[i]!=null;i++);
+	
+	return i;
+   }
 	
   /** Add an object to the container.
    * @param o the object to add
    */
     public void addObject(BaseObject o)
 	{
-	 // to do
+	 if (quantity<capacity) 
+	 	content[findFirstFree(content)]=o;
+	 else  	  // may throw something. Must see with implementors
+	 	 return;
+		 	
+	 quantity++;
+	}
+	
+  /** Remove an object from the container.
+   * @param o the object to remove. Can be found by getObjectByName() or getObjectAt()
+   */
+    public void removeObject(BaseObject o)
+	{
+	 int i=0;
+	 while (i<capacity && content[i]!=o)
+	 	   i++;
+		   
+	 if (i>=capacity)  	  // may throw something. Must see with implementors
+	  	return;
+		
+	 content[i]=null;
+	}	
+ 
+  /** Retrieve an object from the container. This method does not check validity.
+   * @param pos the position of the object in the container
+   * @return the object required 
+   */
+   	public BaseObject getObjectAt(short pos) throws ArrayIndexOutOfBoundsException
+	{
+	 return content[pos];
+	}
+ 
+  /** Retrieve an object from the container by name.
+   * @param name the name of the object wanted
+   * @return the object required 
+   */
+	public BaseObject getObjectByName(String name) // dnk if useful - Code first C later
+	{
+	 int i=0;
+	 while (i<capacity && content[i]!=o)
+	 	   i++;
+		   
+	 if (i>=capacity)
+	  	return null;
+		
+	 return content[i];
 	}
  
 }
-

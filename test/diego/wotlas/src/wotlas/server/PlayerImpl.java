@@ -1006,8 +1006,9 @@ public class PlayerImpl implements Player, NetConnectionListener,BackupReady {
     public int ExternalizeGetVersion(){
         return 1;
     }
-    
+        
     public PlayerOnTheScreen getScreenObject() {
-        return new PlayerOnTheScreen( this );
+        short[] indexOfImage = { (short)0 , (short)0 };
+        return new PlayerOnTheScreen( this, indexOfImage );
     }
 }

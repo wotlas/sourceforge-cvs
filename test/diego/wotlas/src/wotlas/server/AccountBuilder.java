@@ -20,6 +20,7 @@
 package wotlas.server;
 
 import wotlas.common.character.*;
+import wotlas.common.character.roguelike.*;
 import wotlas.common.universe.*;
 import wotlas.common.message.account.*;
 import wotlas.utils.*;
@@ -56,8 +57,6 @@ import java.util.Properties;
  * @author Aldiss, Diego
  * @see wotlas.server.AccountServer
  */
-
-
 public class AccountBuilder implements NetConnectionListener
 {
  /*------------------------------------------------------------------------------------*/
@@ -538,10 +537,10 @@ public class AccountBuilder implements NetConnectionListener
         if(wotCharacter==null)
            throw new AccountException("No character created !");
 
-        if( ! (wotCharacter instanceof Human)  )
+        if( ! (wotCharacter instanceof wotlas.common.character.Human)  )
            throw new AccountException("Your character is not Human !");
 
-        Human human = (Human) wotCharacter;
+        wotlas.common.character.Human human = (wotlas.common.character.Human) wotCharacter;
         human.setHairColor(data);
 
       // 2 - check that it was set        
@@ -699,6 +698,61 @@ public class AccountBuilder implements NetConnectionListener
          return str.toString();
      }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ /* - - - - - - - - - - -ROGUE LIKE SECTION - - - - - - - - - - - - - - - - - - - - - -*/
 
+    /** Method called to set the race in roguelike environment
+    */
+    public void setRLikeCharacterRace( String data ) throws AccountException {
+        
+        data = data.toUpperCase().trim();
+        
+        // 1 - Select Race
+        String className="wotlas.common.character.roguelike.";
+
+        if(data.equals("HUMAN"))
+           className += "Human";
+        else if(data.equals("DWARF"))
+           className += "Dwarf";
+        else
+           throw new AccountException("Unknown character race !");
+
+        // 2 - Create Instance
+        Object obj = Tools.getInstance( className );
+
+        if( obj==null || !(obj instanceof RLikeCharacter) )
+           throw new AccountException("Error during character class creation !");
+
+        // 3 - Set the player's character
+        BasicChar rlCharacter = (BasicChar) obj;
+     	player.setBasicChar( rlCharacter );
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ 
+    public void setRLikeCharacterClass( String data ) throws AccountException {
+        
+        data = data.toUpperCase().trim();
+        
+        // 1 - Select class
+        String className="wotlas.common.character.roguelike.";
+
+        if(data.equals("WARRIOR"))
+           className += "Warrior";
+        else if(data.equals("WIZARD"))
+           className += "Wizard";
+        else
+           throw new AccountException("Unknown character class !");
+
+        // 2 - Create Instance
+        Object obj = Tools.getInstance( className );
+
+        if( obj==null || !(obj instanceof RLikeClass) )
+           throw new AccountException("Error during character class creation !");
+
+        // 3 - Set the player's character
+        RLikeClass rlClass = (RLikeClass) obj;
+     	( (RLikeCharacter) player.getBasicChar() ).setClass(rlClass);
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

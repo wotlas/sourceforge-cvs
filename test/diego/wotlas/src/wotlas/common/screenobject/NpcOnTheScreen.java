@@ -30,8 +30,11 @@ import wotlas.server.ServerDirector;
 import wotlas.common.movement.ScreenObjectPathFollower;
 import wotlas.common.router.*;
 import wotlas.common.movement.MovementComposer;
+import wotlas.common.action.*;
 
 import java.awt.Rectangle;
+import java.awt.Color;
+import java.awt.color.*;
 
 /** 
  *
@@ -43,7 +46,7 @@ public class NpcOnTheScreen extends ScreenObject {
     transient private MessageRouter routerMsg;
     transient private byte trajectoryLock[] = new byte[0];
     
-    public NpcOnTheScreen(int x,int y, String name,MessageRouter routerMsg) {
+    public NpcOnTheScreen(int x,int y, String name,short[] indexOfImage,MessageRouter routerMsg) {
         this.x = x;
         this.y = y;
         this.primaryKey = ""+ServerDirector.GenUniqueKeyId();
@@ -51,6 +54,8 @@ public class NpcOnTheScreen extends ScreenObject {
         this.loc = null;
         this.routerMsg = routerMsg;
         this.speed = 35.0f;  // Default human speed ( 60pixel/s = 2m/s )
+        this.indexOfImage = indexOfImage;
+        this.color = Color.red;
     }
     
     /** To get a Drawable for this character. This should not be used on the
@@ -66,17 +71,9 @@ public class NpcOnTheScreen extends ScreenObject {
     public Drawable getDrawable() {
         if(memImage!=null)
             return (Drawable) memImage;
-        int imageNr = 0;
-        switch( EnvironmentManager.whtGraphicSetIs() ){
-            case EnvironmentManager.GRAPHICS_SET_ROGUE:
-                imageNr = 2;
-                break;
-            default:
-                imageNr = EnvironmentManager.getDefaultNpcImageNr();
-        }
         memImage = new FakeSprite( this, ImageLibRef.PLAYER_PRIORITY
         , EnvironmentManager.getServerEnvironment().getGraphics(EnvironmentManager.SET_OF_NPC
-        )[2], imageNr  );
+        )[indexOfImage[0]], indexOfImage[1] );
         return (Drawable) memImage;
     }
     
@@ -107,6 +104,11 @@ public class NpcOnTheScreen extends ScreenObject {
 
     public void init(GraphicsDirector gDirector) {
         gDirector.addDrawable( getDrawable() );
+
+        if(true)
+            gDirector.addDrawable( new TextDrawable( getName(), getDrawable(), getColor()
+        ,13.0f, "Lucida Blackletter", ImageLibRef.TEXT_PRIORITY, -1));
+
         trajectoryLock = new byte[0];
         movementComposer = new ScreenObjectPathFollower(x,y,0);
         movementComposer.init( this );

@@ -28,8 +28,11 @@ import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.graphics2D.filter.*;
 import wotlas.common.environment.*;
 import wotlas.common.movement.MovementComposer;
+import wotlas.common.action.*;
 
 import java.awt.Rectangle;
+import java.awt.Color;
+import java.awt.color.*;
 
 /**  ScreenObject :
  * This object is created by the server, then it's sended to the client
@@ -50,6 +53,8 @@ public abstract class ScreenObject implements FakeSpriteDataSupplier, SendObject
     protected String primaryKey;
     protected String name;
     protected float speed;
+    transient protected Color color;
+    protected short[] indexOfImage;
 
     /** SyncID for client & server. See the getter of this field for explanation.
     * This field is an array and not a byte because we want to be able to
@@ -149,6 +154,10 @@ public abstract class ScreenObject implements FakeSpriteDataSupplier, SendObject
         return isServerSide;
     }
     
+    public Color getColor() {
+        return color;
+    }
+    
     /* - - - - - - - - - - - - - - Send object by the net- - - - - - - - - - - - - - - - -*/
     
     /** id version of data, used in serialized persistance.
@@ -164,7 +173,11 @@ public abstract class ScreenObject implements FakeSpriteDataSupplier, SendObject
         objectOutput.writeInt( y );
         objectOutput.writeObject( primaryKey );
         objectOutput.writeObject( loc );
-        objectOutput.writeFloat( speed );
+        if( getTargetType() != UserAction.TARGET_TYPE_ITEM )
+            objectOutput.writeFloat( speed );
+        // objectOutput.writeObject( color );
+        objectOutput.writeObject( name );
+        objectOutput.writeObject( indexOfImage );
     }
 
     public void readObject(java.io.ObjectInputStream objectInput)
@@ -175,7 +188,11 @@ public abstract class ScreenObject implements FakeSpriteDataSupplier, SendObject
             y = objectInput.readInt();
             primaryKey = ( String ) objectInput.readObject();
             loc = ( WotlasLocation ) objectInput.readObject();
-            speed = objectInput.readFloat();
+            if( getTargetType() != UserAction.TARGET_TYPE_ITEM )
+                speed = objectInput.readFloat();
+            // color = ( Color ) objectInput.readObject();
+            name = ( String ) objectInput.readObject();
+            indexOfImage = ( short[] ) objectInput.readObject();
         } else {
             // to do.... when new version
         }

@@ -76,10 +76,11 @@ public abstract class CharData implements BackupReady {
     final static public short CLASSES_WOT_WOLF_BROTHER= 6;
     final static public short CLASSES_WOT_AIEL_WARRIOR= 7;
     final static public short CLASSES_RL_WARRIOR      = 8;
+    final static public short CLASSES_RL_WIZARD       = 9;
     
     final static public String[] CLASSES_NAMES = {
         "NULL","Wot:Aes Sedai","Wot:Warder","Wot:Children of the Light","Wot:Ashaman"
-        ,"Wot:Dark One","Wot:Wolf Brother","Wot:Aiel Warrior","Rl:Warrior" };
+        ,"Wot:Dark One","Wot:Wolf Brother","Wot:Aiel Warrior","Rl:Warrior","Rl:Wizard" };
     
     /* spells and items, will point to this constant to maniupulate data flags*/
     final static public int FLAG_INVISIBLE = 0;
@@ -130,8 +131,8 @@ public abstract class CharData implements BackupReady {
     final static public int ATTR_THIRSTY      = 27;
     final static public int ATTR_LAST_ATTR    = 28;
 
-    final static public String[] ATTR_NAMES = { "Exp","Gold","Classes","Levels"
-    ,"Hp","Str","Int","Wis","Con","Dex","Cha","Mana","x","x","x","Mov"
+    final static public String[] ATTR_NAMES = { "DONT USE","DONT USE","DONT USE","DONT USE"
+    ,"Hp","Str","Int","Wis","Con","Dex","Cha","Mana","DONT USE","DONT USE","DONT USE","Mov"
     ,"Age","Weight","Height","Ac","Thac0","Hit","Dam","Sav. Mind","Sav. Reflex"
     ,"Sav. Const","Hunger","Thirsty"};
     

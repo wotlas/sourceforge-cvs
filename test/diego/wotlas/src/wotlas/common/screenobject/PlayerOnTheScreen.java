@@ -28,8 +28,11 @@ import wotlas.libs.graphics2D.filter.*;
 import wotlas.common.environment.*;
 import wotlas.common.movement.ScreenObjectPathFollower;
 import wotlas.common.movement.MovementComposer;
+import wotlas.common.action.*;
 
 import java.awt.Rectangle;
+import java.awt.Color;
+import java.awt.color.*;
 
 /** 
  *
@@ -41,13 +44,16 @@ public class PlayerOnTheScreen extends ScreenObject {
     transient private ScreenObjectPathFollower movementComposer;    
     transient private byte trajectoryLock[] = new byte[0];
     
-    public PlayerOnTheScreen(Player player) {
+    public PlayerOnTheScreen(Player player, short[] indexOfImage) {
         this.player = player;
         this.x = player.getX();
         this.y = player.getY();
         this.loc = player.getLocation();
         this.primaryKey = player.getPrimaryKey();
+        this.name = player.getPlayerName();
         this.speed = player.getBasicChar().getSpeed( player.getLocation() );
+        this.indexOfImage = indexOfImage;
+        this.color = Color.blue;
     }
     
     /** To get a Drawable for this character. This should not be used on the
@@ -63,20 +69,10 @@ public class PlayerOnTheScreen extends ScreenObject {
     public Drawable getDrawable() {
         if(memImage!=null)
             return (Drawable) memImage;
-        int imageNr = 0;
-        switch( EnvironmentManager.whtGraphicSetIs() ){
-            case EnvironmentManager.GRAPHICS_SET_ROGUE:
-                imageNr = 7;
-                break;
-            default:
-                imageNr = EnvironmentManager.getDefaultNpcImageNr();
-        }
         memImage = new FakeSprite( this, ImageLibRef.PLAYER_PRIORITY
         , EnvironmentManager.getServerEnvironment().getGraphics(EnvironmentManager.SET_OF_NPC
-        )[2], imageNr  );
+        )[indexOfImage[0]], indexOfImage[1] );
         return (Drawable) memImage;
-        // cant do this if i dont know the player data : and i dont know it on the client side
-        // return player.getBasicChar().getDrawable(player);
     }
     
     /** To get the image identifier to use.
@@ -109,6 +105,11 @@ public class PlayerOnTheScreen extends ScreenObject {
 
     public void init(GraphicsDirector gDirector) {
         gDirector.addDrawable( getDrawable() );
+
+        if(true)
+            gDirector.addDrawable( new TextDrawable( getName(), getDrawable(), getColor()
+        ,13.0f, "Lucida Blackletter", ImageLibRef.TEXT_PRIORITY, -1));
+
         trajectoryLock = new byte[0];
         movementComposer = new ScreenObjectPathFollower(x,y,0);
         movementComposer.init( this );        

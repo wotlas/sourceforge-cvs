@@ -1117,6 +1117,43 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
                 System.out.println("Action aborted.....");
             }
         }
+        else if( commandRequest == COMMAND_NOTHING 
+        && myPlayer.getLocation().isTileMap() 
+        && object instanceof PlayerImpl ) {
+            // We get the InfoPlugIn
+            InfoPlugIn infoPanel = (InfoPlugIn) clientScreen.getPlayerPanel().getPlugIn("Info");
+
+            if(infoPanel==null) {
+                Debug.signal(Debug.ERROR,this,"InfoPlugIn not found !");
+       	        return true;
+            }
+
+            // We erase the previous selection circle
+            if (circle!=null) {
+                gDirector.removeDrawable(circle);
+                circle=null;
+            }
+
+            // Deselect ?
+            if ( isLeftClick ) {
+                gDirector.addDrawable(myPlayer.getTextDrawable());
+//              gDirector.addDrawable(selectedPlayer.getBasicChar().getAura());
+                selectedPlayer=null;
+                if(infoPanel!=null) infoPanel.reset();
+                return true;
+            }
+            // Select
+            circle = new CircleDrawable( myPlayer.getDrawable(), 20,
+                                       myPlayer.getBasicChar().getColor(), true,
+                                       ImageLibRef.AURA_PRIORITY );
+            gDirector.addDrawable(circle);
+            gDirector.addDrawable(myPlayer.getTextDrawable());
+            if(!selectedPlayer.getLocation().isTileMap())
+                gDirector.addDrawable(selectedPlayer.getBasicChar().getAura());
+            if(infoPanel!=null)
+                infoPanel.setPlayerInfo( myPlayer );
+             return true;
+        }
         else if( object instanceof PlayerImpl ) {
           // We display selection and player info
              String previouslySelectedPlayerKey = "";

@@ -37,10 +37,15 @@ import wotlas.common.environment.*;
 import wotlas.common.universe.*;
 import wotlas.common.action.*;
 
+import wotlas.libs.npc.*;
+
 import java.awt.Frame;
 import java.io.File;
 import java.util.Properties;
 import java.net.*;
+
+import org.python.util.PythonInterpreter;
+import org.python.core.*; 
 
 /** The MAIN server class. It starts the PersistenceManager, the ServerManager
  *  and the DataManager. So got it ? yeah, it's the boss on the server side...
@@ -131,6 +136,8 @@ public class ServerDirector implements Runnable, NetServerListener {
       public static boolean SHOW_DEBUG = false;
       
       static private long genUniqueKeyId;
+      
+      static public PythonInterpreter interp;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -142,7 +149,6 @@ public class ServerDirector implements Runnable, NetServerListener {
         /*  first of all Manage the Preloader for WorldGenerator*/
         WorldManager.PRELOADER_STATUS = PreloaderEnabled.LOAD_SERVER_DATA;
         UserAction.InitAllActions();
-
         // STEP 0 - We parse the command line options
         boolean isDaemon = false;
         boolean displayAdminGUI = false;
@@ -273,28 +279,40 @@ public class ServerDirector implements Runnable, NetServerListener {
               return; // we just display the admin GUI, we don't start the server.
            }
 
-        // STEP 4 - We ask the ServerManager to get ready
+        // STEP 4 - Loading Jython
+           try {
+              interp = new PythonInterpreter();
+           } catch (Exception e) {
+              e.printStackTrace();
+           }
+           Debug.signal( Debug.NOTICE, null, "Jython loaded..." );
+           
+        // STEP 5 - We ask the ServerManager to get ready
            serverManager = new ServerManager(resourceManager);
            Debug.signal( Debug.NOTICE, null, "Server Manager created..." );
 
-        // STEP 5 - We ask the DataManager to load the worlds & client accounts
+        // STEP 6 - We ask the DataManager to load the worlds & client accounts
            dataManager = new DataManager(resourceManager);
            dataManager.init( serverProperties );
 
-        // STEP 6 - Sound Library for alerts... (we only create a sound player)
+        // STEP 7 - Loading Npc Definition
+           NpcDefinition.LoadNpcDef();
+           Debug.signal( Debug.NOTICE, null, "Npc Definition loaded..." );
+
+        // STEP 8 - Sound Library for alerts... (we only create a sound player)
            SoundLibrary.createSoundLibrary( serverProperties, null, resourceManager );
 
-        // STEP 7 - Start of the GameServer, AccountServer & GatewayServer !
+        // STEP 9 - Start of the GameServer, AccountServer & GatewayServer !
            Debug.signal( Debug.NOTICE, null, "Starting Game server, Account server & Gateway server..." );
 
            serverDirector = new ServerDirector();
            serverManager.getGameServer().addServerListener( serverDirector );
            serverManager.start();
 
-        // STEP 8 - We generate new keys for special characters
+        // STEP 10 - We generate new keys for special characters
            updateKeys();
 
-        // STEP 9 - Adding Shutdown Hook
+        // STEP 11 - Adding Shutdown Hook
            shutdownThread = new Thread() {
            	public void run() {
            	   immediatePersistenceThreadStop = true;
@@ -320,7 +338,7 @@ public class ServerDirector implements Runnable, NetServerListener {
 
            Runtime.getRuntime().addShutdownHook(shutdownThread);
 
-        // STEP 10 - Everything is ok ! we enter the persistence loop
+        // STEP 12 - Everything is ok ! we enter the persistence loop
            Debug.signal( Debug.NOTICE, null, "Starting persistence thread..." );
            
            Thread persistenceThread = new Thread( serverDirector );

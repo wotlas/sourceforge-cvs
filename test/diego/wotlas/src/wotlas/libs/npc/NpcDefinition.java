@@ -19,61 +19,46 @@
 
 package wotlas.libs.npc;
 
-import wotlas.common.universe.*;
-import wotlas.common.*;
-import wotlas.libs.persistence.*;
-
-import wotlas.libs.graphics2D.*;
-import wotlas.libs.graphics2D.drawable.*;
-import wotlas.utils.Debug;
 import wotlas.common.environment.*;
+import wotlas.server.ServerDirector;
+import wotlas.common.character.*;
+import wotlas.common.*;
 
-import java.awt.image.BufferedImage;
-import java.awt.Rectangle;
-import java.awt.*;
-
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
+
+import org.python.util.PythonInterpreter;
+import org.python.core.*;
 
 /**  Npc Definitions
   *
   * @author Diego
  */
-public abstract class NpcDefinition implements BackupReady {
-
-    /** id used in Serialized interface.
-     */
-    private static final long serialVersionUID = 556565L;
+public class NpcDefinition {
     
- /*------------------------------------------------------------------------------------*/
-
-    String name;
+    static protected final String NPC_SCRIPTS_FILE = "npc_def.txt";
     
+    public static Hashtable npcDef;
     
-    
-    /** Returns the speed of this npc
-    *
-    *  @param playerLocation player current location
-    *  @return speed in pixel/s
-    */
-    abstract public float getSpeed( WotlasLocation playerLocation );
+ /*------------------------------------------------------------------------------------*/    
 
-     /** return enviroment type : Actually are RogueLike or Wheel of Time
-      *
-      */
-    abstract public byte getEnvironment();
-
-    /** To get a Drawable for this character. This should not be used on the
-    *  server side. This drawable is only used in tilemaps and is still in beta.
-    * it doesnt support animations actually, however it will support the
-    * change of the image from the datasupplier, to let the users change their
-    * images (polymorth, disguise and so on)
-    *
-    * @param player the player to chain the drawable to. If a XXXDataSupplier is needed
-    *               we sets it to this player object.
-    * @return a Drawable for this character.
-    */
-    abstract public Drawable getDrawableForTileMaps( Player player );
-
+    static public void LoadNpcDef() {
+    // throws PyException {
+        npcDef = new Hashtable(10);
+        PythonInterpreter interp = ServerDirector.interp;
+        try{
+            BufferedReader tmp;
+            tmp = new BufferedReader( new FileReader( ServerDirector.getResourceManager(
+            ).getScriptsDataDir()+NPC_SCRIPTS_FILE ) );
+            String parse = null;
+            while( tmp.ready() ){
+                parse = tmp.readLine();
+                if(parse.length() > 1)
+                    interp.exec( parse );
+            }
+            tmp.close();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }

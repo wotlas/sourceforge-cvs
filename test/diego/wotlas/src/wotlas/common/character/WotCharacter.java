@@ -73,13 +73,13 @@ public abstract class WotCharacter extends BasicChar {
         this.charAttributes[ATTR_HP][CharData.IDX_ACTUAL] = 10;
     }
 
-     /**
-      * return data to show in plugin panel attributesPlugin
-      * it's the same for all wotlas classes, 
-      * change for Rogue Like classes, and 
-      * any other diffent environment class.
-      */
-    public int[] showMaskCharAttributes(){ 
+    /**
+    * return data to show in plugin panel attributesPlugin
+    * it's the same for all wotlas classes, 
+    * change for Rogue Like classes, and 
+    * any other diffent environment class.
+    */
+    public int[] showMaskCharAttributes(){
         int[] tmp = new int[ATTR_LAST_ATTR];
         tmp = MaskTools.set( tmp, ATTR_STR );
         tmp = MaskTools.set( tmp, ATTR_INT );

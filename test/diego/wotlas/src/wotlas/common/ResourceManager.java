@@ -166,11 +166,11 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
     */
      public static final String RLIKE_ENVIRONMENT_DIR = "roguelike";
 
-   /** directory to store the definitions file of Npc 
+   /** directory to store the definitions file of Npc and Items
     */
-     public static final String NPC_DEFINITION_DIR = "npcdef";
+     public static final String SCRIPTS_DEFINITION_DIR = "scripts";
 
-   /** directory to store the definitions file of Npc 
+   /** directory to store the backup of universe made by editor
     */
      public static final String EDITOR_BACKUP_DIR = "editorbackup";
 
@@ -496,16 +496,16 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /**  To get the npc definition 
+   /**  To get the npc and items definition 
     */
-     public String getNpcDataDir() {
+     public String getScriptsDataDir() {
      	 if( inJar )
      	     return getResourceDir( ENVIRONMENTS_DIR
              +"/"+EnvironmentManager.getEnvDir()
-             +"/"+NPC_DEFINITION_DIR );
+             +"/"+SCRIPTS_DEFINITION_DIR+"/" );
      	 return getResourceDir( ENVIRONMENTS_DIR
          +File.separator+EnvironmentManager.getEnvDir()
-         +File.separator+NPC_DEFINITION_DIR );
+         +File.separator+SCRIPTS_DEFINITION_DIR+File.separator );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -598,7 +598,9 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
    /** To get the Wizard Steps Directory.
     */
      public String getWizardStepsDir() {
-     	 return getResourceDir( WIZARD_STEPS_DIR );
+     	 return getResourceDir( ENVIRONMENTS_DIR
+         +"/"+EnvironmentManager.getEnvDir()
+         +"/"+WIZARD_STEPS_DIR );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

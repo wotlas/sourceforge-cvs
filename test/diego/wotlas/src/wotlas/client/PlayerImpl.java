@@ -826,8 +826,8 @@ public class PlayerImpl implements Player, SpriteDataSupplier,FakeSpriteDataSupp
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-    public PlayerOnTheScreen getScreenObject() {
-        return new PlayerOnTheScreen( this );
-    }
+ 
+   public PlayerOnTheScreen getScreenObject() {
+        return null;
+   }
 }

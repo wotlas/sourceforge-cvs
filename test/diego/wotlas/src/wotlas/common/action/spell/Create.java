@@ -17,6 +17,7 @@ public class Create extends Spell {
     public void CastToMap(WotlasLocation loc, int x, int y) {
         TileMap map = ServerDirector.getDataManager().getWorldManager().getTileMap(loc);
         // System.out.println("create :"+itemKey);
-        map.getMessageRouter().addScreenObject( new ItemOnTheScreen(x,y,name) );
+        short[] picture = {2,2};
+        map.getMessageRouter().addScreenObject( new ItemOnTheScreen(x,y,name,picture) );
     }
 }

@@ -20,19 +20,20 @@
 package wotlas.libs.npc;
 
 import wotlas.common.character.*;
+import wotlas.common.character.roguelike.*;
 import wotlas.common.environment.*;
 
 /**  Npc 
   *
   * @author Diego
  */
-abstract public class Npc {
+public class RLikeNpc extends Npc {
 
-    protected BasicChar basicChar;
-    
-    abstract public byte getEnvironment();
-    
-    public BasicChar getBasicChar() {
-        return basicChar;
+    public void RLikeNpc( RLikeCharacter value ){
+        this.basicChar = value;
+    }
+
+    public byte getEnvironment() {
+        return EnvironmentManager.ENVIRONMENT_ROGUE_LIKE;
     }
 }

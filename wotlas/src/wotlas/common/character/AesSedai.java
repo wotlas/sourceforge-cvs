@@ -298,6 +298,47 @@ public class AesSedai extends Female {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To get the WotCharacter community name.
+   * @return the name of the community.
+   */
+     public String getCommunityName() {
+     	return "Aes Sedai";
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the rank of this WotCharacter in his/her community.
+   * @return the rank of this wotcharacter in his/her community.
+   */
+     public String getCharacterRank() {
+          switch( aesSedaiStatus ) {
+              case AES_NOVICE :
+                   return "Novice";
+              case AES_ACCEPTED :
+                   return "Accepted";
+              case AES_BROWN_AJAH :
+                   return "Brown Ajah";
+              case AES_WHITE_AJAH:
+                   return "White Ajah";
+              case AES_BLUE_AJAH :
+                   return "Blue Ajah";
+              case AES_GREEN_AJAH :
+                   return "Green Ajah";
+              case AES_RED_AJAH :
+                   return "Red Ajah";
+              case AES_GRAY_AJAH :
+                   return "Gray Ajah";
+              case AES_YELLOW_AJAH :
+                   return "Yellow Ajah";
+              case AES_AMYRLIN :
+                   return "Amyrlin";
+          }
+
+        return "Unknown";
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** Returns an image for this character.
    *
    *  @param playerLocation player current location

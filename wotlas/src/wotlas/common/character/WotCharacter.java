@@ -80,6 +80,20 @@ public interface WotCharacter
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To get the WotCharacter community name.
+   * @return the name of the community.
+   */
+     public String getCommunityName();
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the rank of this WotCharacter in his/her community.
+   * @return the rank of this wotcharacter in his/her community.
+   */
+     public String getCharacterRank();
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** To put the WotCharacter's data on the network stream. You don't need
    * to invoke this method yourself, it's done automatically.
    *

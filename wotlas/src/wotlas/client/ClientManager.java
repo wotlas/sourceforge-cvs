@@ -168,6 +168,10 @@ public class ClientManager
   public ProfileConfigList getProfileConfigList() {
     return profileConfigList;
   }
+  
+  public ProfileConfig getCurrentProfileConfig() {
+    return currentProfileConfig;
+  }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -226,29 +230,29 @@ public class ClientManager
       screenIntro.setTitle("Wotlas - Account selection...");
 
       // Load images of buttons
-      im_cancelup    = new ImageIcon("..\\base\\gui\\cancel-up.gif");
-      im_canceldo    = new ImageIcon("..\\base\\gui\\cancel-do.gif");
-      im_cancelun    = new ImageIcon("..\\base\\gui\\cancel-un.gif");
-      im_okup    = new ImageIcon("..\\base\\gui\\ok-up.gif");
-      im_okdo    = new ImageIcon("..\\base\\gui\\ok-do.gif");
-      im_okun    = new ImageIcon("..\\base\\gui\\ok-un.gif");
-      im_recoverup = new ImageIcon("..\\base\\gui\\recover-up.gif");
-      im_recoverdo = new ImageIcon("..\\base\\gui\\recover-do.gif");
-      im_recoverun = new ImageIcon("..\\base\\gui\\recover-un.gif");
-      im_delup    = new ImageIcon("..\\base\\gui\\delete-up.gif");
-      im_deldo    = new ImageIcon("..\\base\\gui\\delete-do.gif");
-      im_delun    = new ImageIcon("..\\base\\gui\\delete-un.gif");
-      im_exitup   = new ImageIcon("..\\base\\gui\\exit-up.gif");
-      im_exitdo   = new ImageIcon("..\\base\\gui\\exit-do.gif");      
-      im_loadup   = new ImageIcon("..\\base\\gui\\load-up.gif");
-      im_loaddo   = new ImageIcon("..\\base\\gui\\load-do.gif");
-      im_loadun   = new ImageIcon("..\\base\\gui\\load-un.gif");
-      im_newup    = new ImageIcon("..\\base\\gui\\new-up.gif");
-      im_newdo    = new ImageIcon("..\\base\\gui\\new-do.gif");
-      im_aboutup  = new ImageIcon("..\\base\\gui\\about-up.gif");
-      im_aboutdo  = new ImageIcon("..\\base\\gui\\about-do.gif");
-      im_helpup  = new ImageIcon("..\\base\\gui\\help-up.gif");
-      im_helpdo  = new ImageIcon("..\\base\\gui\\help-do.gif");
+      im_cancelup    = new ImageIcon("../base/gui/cancel-up.gif");
+      im_canceldo    = new ImageIcon("../base/gui/cancel-do.gif");
+      im_cancelun    = new ImageIcon("../base/gui/cancel-un.gif");
+      im_okup    = new ImageIcon("../base/gui/ok-up.gif");
+      im_okdo    = new ImageIcon("../base/gui/ok-do.gif");
+      im_okun    = new ImageIcon("../base/gui/ok-un.gif");
+      im_recoverup = new ImageIcon("../base/gui/recover-up.gif");
+      im_recoverdo = new ImageIcon("../base/gui/recover-do.gif");
+      im_recoverun = new ImageIcon("../base/gui/recover-un.gif");
+      im_delup    = new ImageIcon("../base/gui/delete-up.gif");
+      im_deldo    = new ImageIcon("../base/gui/delete-do.gif");
+      im_delun    = new ImageIcon("../base/gui/delete-un.gif");
+      im_exitup   = new ImageIcon("../base/gui/exit-up.gif");
+      im_exitdo   = new ImageIcon("../base/gui/exit-do.gif");      
+      im_loadup   = new ImageIcon("../base/gui/load-up.gif");
+      im_loaddo   = new ImageIcon("../base/gui/load-do.gif");
+      im_loadun   = new ImageIcon("../base/gui/load-un.gif");
+      im_newup    = new ImageIcon("../base/gui/new-up.gif");
+      im_newdo    = new ImageIcon("../base/gui/new-do.gif");
+      im_aboutup  = new ImageIcon("../base/gui/about-up.gif");
+      im_aboutdo  = new ImageIcon("../base/gui/about-do.gif");
+      im_helpup  = new ImageIcon("../base/gui/help-up.gif");
+      im_helpdo  = new ImageIcon("../base/gui/help-do.gif");
 
       // Test if an account exists
       if (profileConfigList==null) {
@@ -335,11 +339,11 @@ public class ClientManager
 
       // *** Left JPanel ***
 
-      imgLabel1 = new JLabel(new ImageIcon("..\\base\\gui\\welcome-title.jpg"));
+      imgLabel1 = new JLabel(new ImageIcon("../base/gui/welcome-title.jpg"));
       imgLabel1.setAlignmentX(Component.CENTER_ALIGNMENT);
       leftPanel.add(imgLabel1);
 
-      imgLabel2 = new JLabel(new ImageIcon("..\\base\\gui\\choose.gif"));
+      imgLabel2 = new JLabel(new ImageIcon("../base/gui/choose.gif"));
       imgLabel2.setAlignmentX(Component.CENTER_ALIGNMENT);
       leftPanel.add(imgLabel2);
 
@@ -502,8 +506,8 @@ public class ClientManager
         mainPanel_01.setBackground(Color.white);
         JPanel formPanel_01_left = new JPanel(new GridLayout(2,1,5,5));
           formPanel_01_left.setBackground(Color.white);
-          formPanel_01_left.add(new JLabel(new ImageIcon("..\\base\\gui\\enter-password.gif")));
-          formPanel_01_left.add(new JLabel(new ImageIcon("..\\base\\gui\\your-key.gif")));
+          formPanel_01_left.add(new JLabel(new ImageIcon("../base/gui/enter-password.gif")));
+          formPanel_01_left.add(new JLabel(new ImageIcon("../base/gui/your-key.gif")));
         mainPanel_01.add(formPanel_01_left);
         JPanel formPanel_01_right = new JPanel(new GridLayout(2,1,5,10));
           formPanel_01_right.setBackground(Color.white);
@@ -609,7 +613,7 @@ public class ClientManager
 
       // *** Left JPanel ***
 
-      imgLabel1 = new JLabel(new ImageIcon("..\\base\\gui\\complete-info.gif"));
+      imgLabel1 = new JLabel(new ImageIcon("../base/gui/complete-info.gif"));
       imgLabel1.setAlignmentX(Component.CENTER_ALIGNMENT);
       leftPanel.add(imgLabel1);
 
@@ -620,18 +624,18 @@ public class ClientManager
         mainPanel_10.setBackground(Color.white);
         JPanel formPanel_10 = new JPanel(new GridLayout(3,2,5,5));
           formPanel_10.setBackground(Color.white);
-          formPanel_10.add(new JLabel(new ImageIcon("..\\base\\gui\\login.gif")));
+          formPanel_10.add(new JLabel(new ImageIcon("../base/gui/login.gif")));
           atf_login = new ATextField(10);
           atf_login.setSelectionColor(Color.lightGray);
           atf_login.setSelectedTextColor(Color.white);
           formPanel_10.add(atf_login);
-          formPanel_10.add(new JLabel(new ImageIcon("..\\base\\gui\\password.gif")));
+          formPanel_10.add(new JLabel(new ImageIcon("../base/gui/password.gif")));
           pfield1 = new APasswordField(10);
           pfield1.setFont(f.deriveFont(18f));
           pfield1.setSelectionColor(Color.lightGray);
           pfield1.setSelectedTextColor(Color.white);
           formPanel_10.add(pfield1);
-          formPanel_10.add(new JLabel(new ImageIcon("..\\base\\gui\\password.gif")));
+          formPanel_10.add(new JLabel(new ImageIcon("../base/gui/password.gif")));
           pfield2 = new APasswordField(10);
           pfield2.setFont(f.deriveFont(18f));
           pfield2.setSelectionColor(Color.lightGray);
@@ -642,7 +646,7 @@ public class ClientManager
 
       leftPanel.add(Box.createRigidArea(new Dimension(0,10)));
 
-      imgLabel2 = new JLabel(new ImageIcon("..\\base\\gui\\choose-server.gif"));
+      imgLabel2 = new JLabel(new ImageIcon("../base/gui/choose-server.gif"));
       imgLabel2.setAlignmentX(Component.CENTER_ALIGNMENT);
       leftPanel.add(imgLabel2);
 

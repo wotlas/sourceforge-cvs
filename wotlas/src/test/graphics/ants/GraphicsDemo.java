@@ -1,7 +1,3 @@
-/*
- * Continuum Ants Demo.
- * Copyright (C) 2001 - FT R&D /DTL/ASR
- */
 
 package test.graphics.ants;
 

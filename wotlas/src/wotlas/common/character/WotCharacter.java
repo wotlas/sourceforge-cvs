@@ -47,18 +47,26 @@ public interface WotCharacter
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Returns an image for this character.
-   *
    *  @return image identifier of this character.
    */
      public ImageIdentifier getImage();
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-/**
-   Drawable getAura();
-   
-   Drawable getToolTipText()
-*/
+  /** Return the character's shadow. Important: a character Drawable MUST have been created
+   *  previously ( via a getDrawable call ). You don't want to create a shadow with no
+   *  character, do you ?
+   *  @return character's Shadow Drawable.
+   */
+     public Drawable getShadow();
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Return the character's aura.
+   *  @return character's Aura Drawable.
+   */     
+     public Drawable getAura();
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To put the WotCharacter's data on the network stream. You don't need

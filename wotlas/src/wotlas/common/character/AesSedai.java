@@ -62,6 +62,10 @@ public class AesSedai extends Female {
    */
     transient private Sprite aesSedaiSprite;
 
+  /** Current Shadow.
+   */
+    transient private ShadowSprite aesSedaiShadowSprite;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Getters & Setters for persistence
@@ -78,6 +82,9 @@ public class AesSedai extends Female {
 
    /** To get a Drawable for this character. This is can not be used on the
     *  server side : if no ImageLibrary has been created we return null.
+    *
+    *  The returned Drawable is unique : we always return the same drawable per
+    *  AesSedai instance.
     *
     * @param player the player to chain the drawable to. If a XXXDataSupplier is needed
     *               we sets it to this player object.
@@ -127,7 +134,6 @@ public class AesSedai extends Female {
                       break;
           }
 
-
       // 2 - Hair Color
           switch( aesSedaiStatus ) {
               case BALD :
@@ -154,6 +160,41 @@ public class AesSedai extends Female {
          aesSedaiSprite.setDynamicImageFilter( filter );
          return aesSedaiSprite;
       }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Return the character's shadow. Important: a character Drawable MUST have been created
+   *  previously ( via a getDrawable call ). You don't want to create a shadow with no
+   *  character, do you ?
+   *
+   *  @return character's Shadow Drawable.
+   */
+     public Drawable getShadow(){
+      	 if( ImageLibrary.getDefaultImageLibrary() == null )
+      	     return null;
+
+         if(aesSedaiShadowSprite!=null)
+             return (Drawable) aesSedaiShadowSprite; 
+
+      // Shadow Creation
+         aesSedaiShadowSprite = new ShadowSprite( aesSedaiSprite.getDataSupplier(),
+                                                  new ImageIdentifier(
+                                                       ImageLibRef.PLAYERS_CATEGORY,
+                                                       ImageLibRef.PLAYER_SHADOW_IMAGES_SET,
+                                                       ImageLibRef.AES_SEDAI_WALK_SHADOW_ACTION ),
+                                                  ImageLibRef.SHADOW_PRIORITY, 4, 4 );
+
+          return aesSedaiShadowSprite;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Return the character's aura.
+   *  @return character's Aura Drawable.
+   */     
+     public Drawable getAura(){
+     	return null;
+     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

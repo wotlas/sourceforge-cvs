@@ -35,7 +35,8 @@ LIBS_PACKAGES2 = wotlas/libs/graphics2D \
 COMMON_PACKAGES = wotlas/common \
                   wotlas/common/universe \
                   wotlas/common/message \
-                  wotlas/common/message/account
+                  wotlas/common/message/account \
+                  wotlas/common/character
 
 SERVER_PACKAGES = wotlas/server \
                   wotlas/server/setup \

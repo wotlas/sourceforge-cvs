@@ -68,6 +68,11 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
             chatRoom.appendText("<font color='brown'><i> ** [" + senderFullName + "] " + message.substring(5) + " ** </i></font>");
             return;
           }
+          else if(message.startsWith("/find:")) {
+            JChatRoom chatRoom = dataManager.getChatPanel().getJChatRoom(chatRoomPrimaryKey);
+            chatRoom.appendText("<font color='brown'><i>"+message.substring(6)+".</i></font>");
+            return;
+          }
             
        // We get the sender of this message
           Hashtable players = dataManager.getPlayers();
@@ -83,7 +88,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
             message = "<font color='blue'><i>" + senderFullName + " " + message.substring(3) + "</i></font>";
           } else {
             // We add sender name
-            message = "["+senderFullName+"] " + message;          
+            message = "["+senderFullName+"] " + message;
           }
            
        // We display the message

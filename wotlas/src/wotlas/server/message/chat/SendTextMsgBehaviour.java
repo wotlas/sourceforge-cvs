@@ -67,32 +67,80 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
           message = message.substring( 0, ChatRoom.MAXIMUM_MESSAGE_SIZE-4)+"...";
 
        Hashtable players = null;
-       WotlasLocation myLocation = player.getLocation(); 
+       WotlasLocation myLocation = player.getLocation();
 
-    // 0.1 - test shortcut
-       if (message.startsWith("/msg:") && !message.endsWith(":")) {
-         message = message.substring(5);
-         int index = message.indexOf(':');
+    // 0.1 - test shortcut/commands...
+       if(message.charAt(0)=='/') {
 
-         if(index<0) {
-            message = "/msg:" +message+" <font color='red'>ERROR: bad format</font>";
-            player.sendMessage(this);
-            return;
-         }
+          if (message.startsWith("/msg:")) {
+              message = message.substring(5);
+              int index = message.indexOf(':');
 
-         String key = message.substring(0,index);
-         message = "/msg:" + message.substring(index);
+              if(index<0 || message.endsWith(":")) {
+                 message = "/msg:" +message+" <font color='red'>ERROR: bad format</font>";
+                 player.sendMessage(this);
+                 return;
+              }
 
-         GameAccount account = DataManager.getDefaultDataManager().getAccountManager().getAccount(key);
-        
-         if(account==null) {
-            message = "/msg:"+message+" <font color='red'>ERROR: unknown player</font>";
-            player.sendMessage(this);
-            return;
-         }
+              String key = message.substring(0,index);
+              message = "/msg:" + message.substring(index);
 
-         account.getPlayer().sendMessage(this);                            
-       } 
+              GameAccount account = DataManager.getDefaultDataManager().getAccountManager().getAccount(key);
+         
+              if(account==null) {
+                 message = "/msg:"+message+" <font color='red'>ERROR: unknown player</font>";
+                 player.sendMessage(this);
+                 return;
+              }
+
+              account.getPlayer().sendMessage(this);
+              player.sendMessage(this);
+              return;
+          }
+          else if(message.startsWith("/find:")) {
+
+              message = message.substring(6);
+
+              if(message.length()==0) {
+                 message = "/find: <font color='red'>ERROR: no key entered</font>";
+                 player.sendMessage(this);
+                 return;
+              }
+
+              GameAccount account = DataManager.getDefaultDataManager().getAccountManager().getAccount(message);
+         
+              if(account==null) {
+                 message = "/find: <font color='red'>ERROR: unknown player</font>";
+                 player.sendMessage(this);
+                 return;
+              }
+
+              message = "/find:"+account.getPlayer().getFullPlayerName()+" found in ";
+              WotlasLocation flocation = account.getPlayer().getLocation();
+
+              if( flocation.isRoom() ) {
+                  Room r = DataManager.getDefaultDataManager().getWorldManager().getRoom(flocation);
+                  if(r!=null)
+                     message += r.getFullName();
+              }
+              else if( flocation.isTown() ) {
+                  TownMap t = DataManager.getDefaultDataManager().getWorldManager().getTownMap(flocation);
+                  if(t!=null)
+                     message += t.getFullName();
+              }
+              else if( flocation.isWorld() ) {
+                  WorldMap w = DataManager.getDefaultDataManager().getWorldManager().getWorldMap(flocation);
+                  if(w!=null)
+                     message += w.getFullName();
+              }
+              else {
+              	  message += "#error: bad location! "+flocation;
+              }
+
+              player.sendMessage(this);
+              return;
+          }
+       }
              
     // 1 - We send the message back to the user.
        if( chatRoomPrimaryKey.equals(player.getCurrentChatPrimaryKey()) ) {

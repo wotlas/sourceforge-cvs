@@ -254,7 +254,15 @@ public class InteriorMapData implements MapData
 
     //  - We add eventual doors...
       Room rooms[] = imap.getRooms();
+      
+        // Init doors state
+        for( int r=0; r<rooms.length; r++ ) {
+             Door doors[] = rooms[r].getDoors();
+             for( int d=0; d<doors.length; d++ )
+                doors[d].clean();
+        }
 
+        // Display doors
         for( int r=0; r<rooms.length; r++ ) {
              Door doors[] = rooms[r].getDoors();
            

@@ -75,11 +75,6 @@ public class DoorStateMsgBehaviour extends DoorStateMessage implements NetMessag
           Room currentRoom = player.getMyRoom();
           Room targetRoom = null;
 
-          if( currentRoom==null ) {
-              Debug.signal( Debug.ERROR, this, "Error could not get current room ! "+player.getLocation() );
-              return;
-          }
-
        // update Door
           RoomLink roomLink = currentRoom.getRoomLink( roomLinkID );
           Door door = null;
@@ -103,41 +98,8 @@ public class DoorStateMsgBehaviour extends DoorStateMessage implements NetMessag
           if( targetRoom==currentRoom )
               targetRoom = roomLink.getRoom2();
 
-          for( int i=0; i<currentRoom.getRoomLinks().length; i++ ) {
-               Room otherRoom = currentRoom.getRoomLinks()[i].getRoom1();
-                   
-               if( otherRoom==currentRoom )
-                   otherRoom = currentRoom.getRoomLinks()[i].getRoom2();
-
-               Hashtable players = otherRoom.getPlayers();
-
-                  synchronized( players ) {
-                     Iterator it = players.values().iterator();
-              	 
-                        while( it.hasNext() ) {
-                            PlayerImpl p = (PlayerImpl)it.next();
-                            p.sendMessage( this );
-              	        }
-                  }
-          }
-          
-          for( int i=0; i<targetRoom.getRoomLinks().length; i++ ) {
-               Room otherRoom = targetRoom.getRoomLinks()[i].getRoom1();
-
-               if( otherRoom==targetRoom )
-                   otherRoom = targetRoom.getRoomLinks()[i].getRoom2();
-
-               Hashtable players = otherRoom.getPlayers();
-
-                  synchronized( players ) {
-                     Iterator it = players.values().iterator();
-              	 
-                        while( it.hasNext() ) {
-                            PlayerImpl p = (PlayerImpl)it.next();
-                            p.sendMessage( this );
-              	        }
-                  }
-          }
+          player.sendMessageToNearRooms( currentRoom, this, false );
+          player.sendMessageToNearRooms( targetRoom, this, false );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

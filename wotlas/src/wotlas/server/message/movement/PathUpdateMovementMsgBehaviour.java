@@ -71,58 +71,25 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
               return;
            }
 
+
        // 1 - We update our player
           player.getMovementComposer().setUpdate( (MovementUpdateMessage)this );
+
        
        // 2 - We send the update to other players
+       // ... in the current Room & other rooms near me
           if( !player.getLocation().isRoom() )
               return; // nothing to do for world & towns...
 
           Room room = player.getMyRoom();
 
-          if( room==null ) {
-              Debug.signal( Debug.CRITICAL, this, "No current Room for player"+primaryKey+"! "+player.getLocation() );
-              return;
-          }
+          player.sendMessageToRoom( room, this, true );
+          player.sendMessageToNearRooms( room, this, false );
 
-       // 2.1 - ... in the current Room
-          Hashtable players = room.getPlayers();
-
-          synchronized( players ) {
-               Iterator it = players.values().iterator();
-                 
-                while( it.hasNext() ) {
-                    PlayerImpl p = (PlayerImpl)it.next();
-                    if(p!=player)
-                       p.sendMessage( this );
-                }
-          }
-
-       // 2.2 - ... and other rooms
-          if(room.getRoomLinks()!=null)              
-             for( int i=0; i<room.getRoomLinks().length; i++ ) {
-                  Room otherRoom = room.getRoomLinks()[i].getRoom1();
-                   
-                  if( otherRoom==room )
-                      otherRoom = room.getRoomLinks()[i].getRoom2();
-
-                  players = otherRoom.getPlayers();
-
-                  synchronized( players ) {
-                      Iterator it = players.values().iterator();
-                 
-                      while( it.hasNext() ) {
-                          PlayerImpl p = (PlayerImpl)it.next();
-                          p.sendMessage( this );
-                      }
-                  }
-             }
 
        // 3 - Chat selection/quit
           ChatList chatList = player.getChatList();
-                
-          if( chatList==null )
-              return; // nothing to do
+          if( chatList==null )  return; // nothing to do
 
           if( isMoving ) {
              // chat reset
@@ -149,7 +116,7 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
           }
           else {
              // chat selection, we search for the closest player
-                players = room.getPlayers();
+                Hashtable players = room.getPlayers();
                 ChatRoom chatRoom = null;
 
                 synchronized( players ) {
@@ -193,24 +160,12 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
              // New chat selected !
                 player.sendMessage( new SetCurrentChatRoomMessage( chatRoom.getPrimaryKey(), chatRoom.getPlayers() ) );
 
-             // We advertise our presence
-
-  /*** Well, if we don't want to : a player could be a plain member of a chat only
-       when he speaks the first time
-
-       just put in comment lines the code below :
-   ***/
-                players = chatRoom.getPlayers();
-                AddPlayerToChatRoomMessage aMsg = new AddPlayerToChatRoomMessage( primaryKey, player.getFullPlayerName(), chatRoom.getPrimaryKey() );
-             
-                synchronized( players ) {
-                    Iterator it = players.values().iterator();
-                    
-                    while( it.hasNext() ) {
-                    	PlayerImpl p = (PlayerImpl) it.next();
-                    	p.sendMessage( aMsg );
-                    }
-                }
+             // A player is a plain member of a chat only
+             // when he speaks the first time, but his/her name appear
+             // in the chatters's list.
+             // So, we advertise our presence
+                chatRoom.sendMessageToChatRoom(
+                   new AddPlayerToChatRoomMessage( primaryKey, player.getFullPlayerName(), chatRoom.getPrimaryKey() ) );
           }
 
        // end !

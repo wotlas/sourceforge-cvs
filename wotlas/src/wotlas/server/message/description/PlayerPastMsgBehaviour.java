@@ -68,11 +68,6 @@ public class PlayerPastMsgBehaviour extends PlayerPastMessage implements NetMess
        // we search for the player in our current room
           Room currentRoom = player.getMyRoom();
 
-          if( currentRoom==null ) {
-              Debug.signal( Debug.ERROR, this, "Error could not get current room ! "+player.getLocation() );
-              return;
-          }
-
           Hashtable players = currentRoom.getPlayers();
           PlayerImpl searchedPlayer = null;
 

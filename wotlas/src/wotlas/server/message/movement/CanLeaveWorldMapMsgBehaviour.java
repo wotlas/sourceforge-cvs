@@ -114,9 +114,11 @@ public class CanLeaveWorldMapMsgBehaviour extends CanLeaveWorldMapMessage implem
                    TownMap targetTownMap = wManager.getTownMap( location );
                    if( targetTownMap==null ) {
                        sendError( player, "Target Town not found ! "+location );
-                       synchronized( players ) {
+
+                     // reverting to old location
+                        synchronized( players ) {
                             players.put( primaryKey, player );
-                       }
+                        }
                        return;
                    }
 

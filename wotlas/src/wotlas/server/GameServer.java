@@ -97,6 +97,9 @@ public class GameServer extends NetServer
             // we set his message context to his player...
                personality.setContext( account.getPlayer() );
                personality.setConnectionListener( account.getPlayer() );
+               
+            // We will send back ping messages if we receive them
+               personality.sendBackPingMessages( true );
 
             // welcome on board...
                acceptClient( personality );

@@ -108,10 +108,12 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
   
                  if( targetWorld==null  ) {
                      sendError( player, "Target World not found !"+location );
-                     synchronized( players ) {
+
+                   // reverting to old location
+                      synchronized( players ) {
                           players.put( primaryKey, player );
-                     }
-                   return;
+                      }
+                    return;
                  }
 
                  players = targetWorld.getPlayers();
@@ -160,9 +162,11 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
                    Room targetRoom = wManager.getRoom( location );
                    if( targetRoom==null ) {
                        sendError( player, "Target Room not found ! " +location );
-                       synchronized( players ) {
-                            players.put( primaryKey, player );
-                       }
+
+                     // reverting to old location
+                        synchronized( players ) {
+                             players.put( primaryKey, player );
+                        }
                        return;
                    }
 

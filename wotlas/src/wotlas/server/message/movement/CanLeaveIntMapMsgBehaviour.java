@@ -130,6 +130,8 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
 
                if( error ) {
                    sendError( player, "Target Room not found !"+location );
+                   
+                   // reverting to old location
                      synchronized( players ) {
                           players.put( primaryKey, player );
                      }
@@ -153,37 +155,8 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
             // 5 - SENDING REMOVE_PLAYER_MSG TO OTHER PLAYERS
                RemovePlayerFromRoomMessage rMsg = new RemovePlayerFromRoomMessage(primaryKey, oldLocation );
 
-               players = currentRoom.getPlayers();
-
-                synchronized( players ) {
-                   Iterator it = players.values().iterator();
-              	 
-                   while( it.hasNext() ) {
-                        PlayerImpl p = (PlayerImpl)it.next();
-                        p.sendMessage( rMsg );
-              	   }
-                }
-
-               if(currentRoom.getRoomLinks()==null) return;
-
-               for( int j=0; j<currentRoom.getRoomLinks().length; j++ ) {
-                  Room otherRoom = currentRoom.getRoomLinks()[j].getRoom1();
-  
-                  if( otherRoom==currentRoom )
-                      otherRoom = currentRoom.getRoomLinks()[j].getRoom2();
-
-                  players = otherRoom.getPlayers();
-
-                  synchronized( players ) {
-                      Iterator it = players.values().iterator();
-              	 
-                        while( it.hasNext() ) {
-                            PlayerImpl p = (PlayerImpl)it.next();
-                            p.sendMessage( rMsg );
-              	        }
-                  }
-               }
-
+               player.sendMessageToRoom( currentRoom, rMsg, false );
+               player.sendMessageToNearRooms( currentRoom, rMsg, false ); 
                return;
           }
 

@@ -90,11 +90,6 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
           Room currentRoom = player.getMyRoom();
           Room targetRoom = null;
 
-          if( currentRoom==null ) {
-              sendError( player, "Error could not get current room ! "+player.getLocation() );
-              return;
-          }
-
           if( currentRoom.getRoomID()==location.getRoomID() )
               mapEnter=true; // we have just entered the map
 
@@ -127,28 +122,9 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
            
        // 2 - We send REMOVE player messages
           if(!mapEnter) {
-             RemovePlayerFromRoomMessage rMsg = new RemovePlayerFromRoomMessage(primaryKey, player.getLocation() );
-
-             for( int i=0; i<currentRoom.getRoomLinks().length; i++ ) {
-                  Room otherRoom = currentRoom.getRoomLinks()[i].getRoom1();
-  
-                  if( otherRoom==currentRoom )
-                      otherRoom = currentRoom.getRoomLinks()[i].getRoom2();
-
-                  if( otherRoom==targetRoom )
-                      continue;
-
-                  Hashtable players = otherRoom.getPlayers();
-
-                  synchronized( players ) {
-                     Iterator it = players.values().iterator();
-              	 
-                        while( it.hasNext() ) {
-                            PlayerImpl p = (PlayerImpl)it.next();
-                            p.sendMessage( rMsg );
-              	        }
-                  }
-             }
+             player.sendMessageToNearRooms( currentRoom,
+                         new RemovePlayerFromRoomMessage(primaryKey, player.getLocation() ),
+                         false );
 
              Hashtable players = currentRoom.getPlayers();
  
@@ -229,21 +205,10 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
             }
 
        // 5 - We send a RemovePlayerFromChatMsg if not in the mapEnter state
-          if( !mapEnter ) {
-              players = currentRoom.getPlayers();
-
-              RemPlayerFromChatRoomMessage rpMsg =
-                 new RemPlayerFromChatRoomMessage( player.getPrimaryKey(), ChatRoom.DEFAULT_CHAT );
-
-              synchronized( players ) {
-                  Iterator it = players.values().iterator();
-              	 
-                  while( it.hasNext() ) {
-                       PlayerImpl p = (PlayerImpl)it.next();
-                       p.sendMessage( rpMsg );
-                  }
-              }
-          }
+          if( !mapEnter )
+              player.sendMessageToRoom( currentRoom,
+                   new RemPlayerFromChatRoomMessage( player.getPrimaryKey(), ChatRoom.DEFAULT_CHAT ),
+                   false );
 
        // 5(bis) - Send the player of the default chat room to our player
           player.sendMessage( new SetCurrentChatRoomMessage( ChatRoom.DEFAULT_CHAT, targetRoom.getPlayers() ) );

@@ -19,6 +19,8 @@
 
 package wotlas.client.screen;
 
+import wotlas.client.DataManager;
+
 import wotlas.utils.Debug;
 
 import javax.swing.*;
@@ -53,7 +55,7 @@ public class ScreenIntro extends JFrame
     //setDefaultCloseOperation(EXIT_ON_CLOSE);
     addWindowListener( new WindowAdapter() {
       public void windowClosing(WindowEvent e) {
-        Debug.exit();
+        DataManager.getDefaultDataManager().exit();        
       }
     });
   }

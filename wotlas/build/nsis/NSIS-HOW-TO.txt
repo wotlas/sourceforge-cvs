@@ -14,5 +14,9 @@ To rebuild the wotlas-client package for Windows just :
 
   3 - copy lib/wotlas-client.jar in this directory.
 
-  4 - right click on the wotlas-client.nsi and click on 'Compile'
+  4 - copy the documentation :
+      cp wotlas/docs/help/images   --> wotlas/build/NIS/help/images
+      cp wotlas/docs/help/release-client.html   --> wotlas/build/NIS/help/release-client.html
+
+  5 - right click on the wotlas-client.nsi and click on 'Compile'
 

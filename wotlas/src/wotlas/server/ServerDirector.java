@@ -105,6 +105,8 @@ class ServerDirector implements Runnable
    */
      public static void main( String argv[] )
      {
+           Debug.displayExceptionStack( false );
+
         // Parse command line arguments
            int i=0;
            String arg;

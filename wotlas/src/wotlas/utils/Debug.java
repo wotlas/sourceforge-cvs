@@ -171,9 +171,18 @@ public class Debug
   /** To exit properly.
    */
      static public void exit() {
-       // nothing special here, for now.
-       // We'll close our log properly here...
+       // We close our printStream ( can be a log so we do things properly )
+          out.close();
           System.exit(1);
+     }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To set the PrintStream for this Debug Utility.
+   *  @param out PrintStream to use.
+   */
+     static public void setPrintStream( PrintStream out ) {
+     	 Debug.out = out;
      }
 
  /*------------------------------------------------------------------------------------*/

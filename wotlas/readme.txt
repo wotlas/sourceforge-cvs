@@ -5,9 +5,11 @@ This directory contains:
     |
     |-- src : wotlas source code
     |
-    |-- docs: user documentation
+    |-- docs: user documentation, apis javadoc
     |
+    |-- classes: compiled classes
     |
+    |-- build: to build wotlas
 
 
 Source Packages
@@ -34,7 +36,7 @@ Source Packages
      |      |      |---
      |      |
      |      |
-     |      |
+     |      |--- libs : different libraries
      |      |
      |      |
      |      |--- utils : tools

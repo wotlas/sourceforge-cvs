@@ -124,6 +124,24 @@ public abstract class Drawable {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To get the current x position of the drawable.
+   * @return current x
+   */
+     public int getX() {
+         return r.x;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the current y position of the drawable.
+   * @return current y
+   */
+     public int getY() {
+         return r.y;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** To get the current width of the drawable.
    * @return current width
    */

@@ -217,7 +217,7 @@ public class WotlasLocation
     * @return true if it points out a town.
     */
     public boolean isTown() {
-        if( buildingID<0 )
+        if( (townMapID>=0) && (buildingID<0) )
             return true;
        return false;
     }
@@ -248,4 +248,12 @@ public class WotlasLocation
 
  /*------------------------------------------------------------------------------------*/
 
+  /** String Info.
+   */
+    public String toString(){      
+         return " " + worldMapID + " " + townMapID + " " + buildingID + " " + interiorMapID + " " + roomID;            
+    }
+
+ /*------------------------------------------------------------------------------------*/
+ 
 }

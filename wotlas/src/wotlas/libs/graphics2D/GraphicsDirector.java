@@ -146,13 +146,14 @@ public class GraphicsDirector extends JPanel {
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-  
+
   /** Our customized repaint method
    */
     public void repaint() {      
        if(lockPaint==null) return;
-       
-       synchronized( lockPaint ) {
+paint( getGraphics() );
+//super.repaint();
+/*       synchronized( lockPaint ) {
 
           if(paintThread!=null) {
               if(isLocked) return; // already a thread waiting
@@ -162,7 +163,7 @@ public class GraphicsDirector extends JPanel {
                  lockPaint.wait( 200 );
               }catch( Exception e ) {}
               
-              isLocked=false;
+              if(!isLocked) return;
           }
 
           paintThread =new Thread() {
@@ -171,6 +172,7 @@ public class GraphicsDirector extends JPanel {
                     GraphicsDirector.this.paint( GraphicsDirector.this.getGraphics() );
 
                     synchronized( lockPaint ) {
+              isLocked=false;
                     	lockPaint.notifyAll();
                     }
                 }catch( Exception e ) {
@@ -181,8 +183,8 @@ public class GraphicsDirector extends JPanel {
 
        }
 
-       paintThread.start();       
-   }
+       paintThread.start();
+  */  }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

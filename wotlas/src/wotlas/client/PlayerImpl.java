@@ -230,6 +230,14 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   public WotCharacter getWotCharacter() {
     return wotCharacter;
   }
+  
+  /** To set the player's character.
+   *
+   *  @return WotCharacter player character
+   */
+  public void setWotCharacter(WotCharacter wotCharacter) {
+    this.wotCharacter = wotCharacter;
+  }
 
  /*------------------------------------------------------------------------------------*/
 

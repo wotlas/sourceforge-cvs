@@ -26,7 +26,7 @@ import java.awt.geom.*;
 
 /** Represents the shadow of a Sprite. This is an animated shadow. It must have the
  *  same number of images in its animation as its associated Sprite. The shadow alpha
- *  is set to 25%.
+ *  is initially set to 25%.
  *
  * @author MasterBob, Aldiss
  * @see wotlas.libs.graphics2D.drawable.Sprite
@@ -48,6 +48,10 @@ public class ShadowSprite extends Drawable {
    */
      private int deltaX, deltaY;
 
+  /** Shadow Alpha
+   */
+     private float shadowAlpha;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. The anchor point for rotations is the center of the shadow sprite.
@@ -68,8 +72,18 @@ public class ShadowSprite extends Drawable {
         this.shadowImage = shadowImage;
         this.deltaX = deltaX;
         this.deltaY = deltaY;
+        shadowAlpha = 0.25f;
 
         tick();
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To change the shadow's alpha component.
+   * @param shadowAlpha new shadow alpha component, default was 25% of visibility.
+   */
+    public void setShadowAlpha( float shadowAlpha ) {
+    	this.shadowAlpha = shadowAlpha;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -108,7 +122,7 @@ public class ShadowSprite extends Drawable {
          }
 
       // 3 - Alpha
-         gc.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.25f ) );
+         gc.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, shadowAlpha ) );
 
       // 4 - image display
          if( affTr==null ) {

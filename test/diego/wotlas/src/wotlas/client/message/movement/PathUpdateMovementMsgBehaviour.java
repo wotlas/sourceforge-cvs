@@ -70,7 +70,6 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
               Debug.signal( Debug.ERROR, this, "Can't set data for master player !" );
               return;
            }
-
        
        // We search for the "primaryKey" owner among the players around the master player's rooms
           if( player.getLocation().isRoom() )
@@ -95,7 +94,31 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
                 System.out.println("Movement NOOOT updated for "+primaryKey);
               }
           }
+           
+          if( player.getLocation().isTileMap() )
+          {
+              Player playerToUpdate = null;
 
+           // Search in Current TileMap
+              Hashtable players = dataManager.getPlayers();
+     
+              synchronized( players ) {
+              	 playerToUpdate = (Player) players.get( primaryKey );
+              }
+
+              if(playerToUpdate!=null && playerToUpdate.getPrimaryKey().equals(primaryKey) ) {
+                 if (DataManager.SHOW_DEBUG)
+                     System.out.println("Movement successfully updated for "+primaryKey);
+                 playerToUpdate.getMovementComposer().setUpdate( (MovementUpdateMessage)this );
+                 return; // success !
+              }
+              else {
+                if (DataManager.SHOW_DEBUG)
+                System.out.println("Movement NOOOT updated for "+primaryKey);
+              }
+          }
+
+          System.out.println("Movement NOOOT updated for "+primaryKey+" I've DONE NOTHING!");
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

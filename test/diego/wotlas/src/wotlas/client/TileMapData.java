@@ -140,8 +140,8 @@ public class TileMapData implements MapData {
     // 2 - We set player's position if his position is incorrect
 
     // 3 - preInit the GraphicsDirector : reset it...
-    gDirector.preTileMapInitWithPlayer( myPlayer.getBasicChar().getDrawableForTileMaps(myPlayer),tileMap.getMapFullSize() );
-    // gDirector.preTileMapInitWithPlayer( myPlayer.getDrawable(),tileMap.getMapFullSize() );
+//    gDirector.preTileMapInitWithPlayer( myPlayer.getBasicChar().getDrawableForTileMaps(myPlayer),tileMap.getMapFullSize() );
+    gDirector.preTileMapInitWithPlayer( myPlayer.getDrawable(),tileMap.getMapFullSize() );
 
     // 4 - We load the background tile and create the background
     tileMap.drawAllLayer( gDirector );
@@ -242,10 +242,9 @@ public class TileMapData implements MapData {
         Point destination = myPlayer.getEndPosition();
         MapExit mapExit = tileMap.isIntersectingMapExit( destination.x,
                                                         destination.y,
-                                                        myPlayer.getCurrentRectangleForTiles()
-//                                                        myPlayer.getCurrentRectangle()
+                                                        myPlayer.getCurrentRectangle()
                                                         );
-    
+
         if ( mapExit!=null ) {
             // Ok, we are going to a world map...
             if (SHOW_DEBUG)

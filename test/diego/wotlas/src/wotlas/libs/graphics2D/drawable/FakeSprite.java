@@ -159,6 +159,7 @@ public class FakeSprite extends Drawable implements DrawableOwner {
     * @return Object owner of this drawable : the given SpriteDataSupplier.
     */
      public Object getOwner() {
-        return (Object) "diego:i must complete this";
+         return (Object) dataSupplier;
+ //      return (Object) "diego:should supply getOwner to FakeSprite.";
      }
 }

@@ -153,11 +153,12 @@ public class PlayerDataMessage extends NetMessage
          updateMsg.encode( ostream );
 
       // Wotlas Character Data
+         //  if(!publicInfoOnly){
          ostream.writeUTF( player.getBasicChar().getClass().getName() );
          try{
-             new ObjectOutputStream(ostream).writeObject( player.getBasicChar() ); // call to encode character's data
+            new ObjectOutputStream(ostream).writeObject( player.getBasicChar() ); // call to encode character's data
          } catch (Exception e) {
-             System.out.println(" diego: error, should still decide how to manage this error");
+            System.out.println(" diego: error, should still decide how to manage this error");
          }
      }
 

@@ -35,6 +35,17 @@ import java.awt.Color;
  *
  * @author Diego
  *
+ *
+ * this should be used by npc +/-
+ * this means every stat[][] should be some like:
+ * stat[2][attributes]
+ * sta[0] = npc_Def
+ * stat[1] = npc 
+ *
+ *
+ *
+ *
+ *
  * Let's make some example on how data should be used:
  *
  * . 0 should usually means data is not set (es for skills)

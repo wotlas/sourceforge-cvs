@@ -38,28 +38,25 @@ import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.Iterator;
 
-/** A message router for Rooms which follows a 1-near step policy.
+/** A message router for TileMaps which follows a 1-near step policy.
+ * 
  *
- * @author Aldiss
+ * @author Aldiss, Diego
  */
 
-public class MultiGroupMessageRouter extends MessageRouter {
+public class MultiGroupMessageRouterForTileMap extends MessageRouter {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Our near Rooms (the list does not contain our Room).
+   /** Our Map.
     */
-     protected Room nearRooms[];
-
-   /** Our Room.
-    */
-     protected Room thisRoom;
+     protected TileMap thisTileMap;
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** Constructor. Just creates internals.
     */
-     public MultiGroupMessageRouter() {
+     public MultiGroupMessageRouterForTileMap() {
          super();
      }
 
@@ -72,53 +69,18 @@ public class MultiGroupMessageRouter extends MessageRouter {
     */
      public void init( WotlasLocation location, WorldManager wManager ) {
 
-         // 1 - We get our Room.
-            if( !location.isRoom()) {
-               Debug.signal(Debug.FAILURE, this, "Location is not a Room ! Can't init router !" );
+         // 1 - We get our tileMap
+            if( !location.isTileMap()) {
+               Debug.signal(Debug.FAILURE, this, "Location is not a TileMap ! Can't init router !" );
                return;
             }
 
-            thisRoom = wManager.getRoom( location );
+            thisTileMap = wManager.getTileMap( location );
 
-            if( thisRoom==null ) {
-               Debug.signal(Debug.FAILURE, this, "Room not found ! Can't init router !" );
+            if( thisTileMap==null ) {
+               Debug.signal(Debug.FAILURE, this, "TileMap not found ! Can't init router !" );
                return;
             }
-
-         // 2 - We create a list of the rooms near ours.
-            if( thisRoom.getRoomLinks()==null || thisRoom.getRoomLinks().length==0 ) {
-            	nearRooms = new Room[0]; // this way no need to test for nearRooms nullity...
-            	return;
-            }
-
-            HashMap tempRoomList = new HashMap(10);
-
-            for( int i=0; i<thisRoom.getRoomLinks().length; i++ ) {
-                 Room otherRoom = thisRoom.getRoomLinks()[i].getRoom1();
-  
-                 if( otherRoom==thisRoom ) {
-                     otherRoom = thisRoom.getRoomLinks()[i].getRoom2();
-                     if( otherRoom==thisRoom ) continue;
-                 }
-
-                 if( otherRoom==null ) continue;
-
-               // ok do we have this room in our list ?
-                 if( !tempRoomList.containsKey(""+otherRoom.getRoomID()) )
-                     tempRoomList.put( ""+otherRoom.getRoomID(), otherRoom );
-            }
-
-            nearRooms = new Room[tempRoomList.size()];
-
-            Iterator it = tempRoomList.values().iterator();
-            int counter = 0;
-
-              while( it.hasNext() ) {
-                  nearRooms[counter] = (Room) it.next();
-                  counter++;
-              }
-
-            tempRoomList.clear(); // let's help the garbage collector...
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -126,7 +88,7 @@ public class MultiGroupMessageRouter extends MessageRouter {
    /** To add a player to this group. We update its location.
     *
     *  Call this method when a player is added to the map. If the player is arriving from
-    *  another room call movePlayer.
+    *  another map call movePlayer.
     *
     * @param player player to add
     * @return true if the player was added successfully, false if an error occured.
@@ -135,13 +97,13 @@ public class MultiGroupMessageRouter extends MessageRouter {
 
        // 1 - We add this player to our list & don't care if it's already in there
           players.put( player.getPrimaryKey(), player );
-          player.setLocation( thisRoom.getLocation() ); // update player location
+          player.setLocation( thisTileMap.getLocation() ); // update player location
 
           if(!player.isConnectedToGame())
              return true; // no need to advertise if the player is not connected
 
-       // 2 - We advertise our presence to other players in the LOCAL room
-          AddPlayerToRoomMessage aMsg = new AddPlayerToRoomMessage( null, player );
+       // 2 - We advertise our presence to other players in the LOCAL map
+          AddPlayerToTileMapMessage aMsg = new AddPlayerToTileMapMessage( null, player );
 
           synchronized( players ) {
               Iterator it = players.values().iterator();
@@ -156,28 +118,10 @@ public class MultiGroupMessageRouter extends MessageRouter {
              }
           }
 
-       // 3 - We advertise our presence to other players of the 1 step-NEAR rooms
-          for( int i=0; i<nearRooms.length; i++ ) {
-              Hashtable otherPlayers = nearRooms[i].getMessageRouter().getPlayers();
-
-              synchronized( otherPlayers ) {
-                 Iterator it = otherPlayers.values().iterator();
-              	 
-                 while( it.hasNext() ) {
-                     Player p = (Player) it.next();
-                     aMsg.setOtherPlayer(p); // needed for the LieManager to know who is
-                     p.sendMessage( aMsg );  // asking for the player's name....
-              	 }
-              }
-          }
-
        // 4 - We send DOORS & PLAYERS data to the added player
-          player.sendMessage( new RoomPlayerDataMessage( thisRoom, player ) );
+          player.sendMessage( new TileMapPlayerDataMessage( thisTileMap, player ) );
 
-          for( int i=0; i<nearRooms.length; i++ ) {
-              player.sendMessage( new DoorsStateMessage( nearRooms[i] ) );
-              player.sendMessage( new RoomPlayerDataMessage( nearRooms[i], player ) );
-          }
+              // player.sendMessage( new DoorsStateMessage( nearRooms[i] ) );
 
        // 5 - We send CHAT DATA to the added player
           updateChatInformation( (PlayerImpl) player );
@@ -256,7 +200,7 @@ public class MultiGroupMessageRouter extends MessageRouter {
               return false; // non-existent player
 
        // 2 - We send remove messages to local & near players
-          sendMessage( new RemovePlayerFromRoomMessage( player.getPrimaryKey(), thisRoom.getLocation() ),
+          sendMessage( new RemovePlayerFromTileMapMessage( player.getPrimaryKey(), thisTileMap.getLocation() ),
                         null,
                         EXTENDED_GROUP );
 
@@ -300,17 +244,6 @@ public class MultiGroupMessageRouter extends MessageRouter {
     */
      public Player getPlayer( String primaryKey ) {
            Player p = (Player) players.get( primaryKey );
-
-           if(p!=null)
-             return p;
-        
-        // we extend the search to near rooms
-           for( int i=0; i<nearRooms.length; i++ ) {
-                p = (Player) nearRooms[i].getMessageRouter().getPlayers().get( primaryKey );
-        
-                if(p!=null)
-                   return p;
-           }
            
            return null; // not found
      }
@@ -323,14 +256,15 @@ public class MultiGroupMessageRouter extends MessageRouter {
     * @return true if the player was moved successfully, false if an error occured.
     */
      public boolean movePlayer( Player player, WotlasLocation targetLocation ) {
-
+        return false;
+/*
        // 1 - We remove the player from our router...
           if( !super.removePlayer(player) )
               return false; // non-existent player
 
-       // 2 - Check the target room...
-          int targetRoomID = targetLocation.getRoomID();
-          Room targetRoom = null;
+       // 2 - Check the target tilemap...
+          int targetTileMapID = targetLocation.getTileMapID();
+          TileMap targetTileMap = null;
 
           for( int i=0; i<nearRooms.length; i++ )
                if( nearRooms[i].getRoomID()==targetRoomID ) {
@@ -401,6 +335,7 @@ public class MultiGroupMessageRouter extends MessageRouter {
           ( (MultiGroupMessageRouter) targetRoom.getMessageRouter() ).updateChatInformation( (PlayerImpl) player );
 
           return true;
+*/
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -428,12 +363,6 @@ public class MultiGroupMessageRouter extends MessageRouter {
                             p.sendMessage( msg[i] );
                  }
              }
-        }
-
-        if( groupOption!=LOCAL_GROUP ) {
-          // We send the messages to near groups.
-             for( int i=0; i<nearRooms.length; i++ )
-                  nearRooms[i].getMessageRouter().sendMessages( msg, exceptThisPlayer, LOCAL_GROUP );
         }
      }
 

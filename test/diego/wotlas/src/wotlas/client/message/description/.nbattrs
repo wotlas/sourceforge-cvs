@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE attributes PUBLIC "-//NetBeans//DTD DefaultAttributes 1.0//EN" "http://www.netbeans.org/dtds/attributes-1_0.dtd">
 <attributes version="1.0">
+    <fileobject name="RemovePlayerFromTileMapMsgBehaviour.java">
+        <attr name="class_dependency_wotlas.libs.net.NetMessageBehaviour" stringvalue="RemovePlayerFromTileMapMsgBehaviour"/>
+    </fileobject>
+    <fileobject name="AddPlayerToRoomMsgBehaviour.java">
+        <attr name="class_dependency_wotlas.libs.net.NetMessageBehaviour" stringvalue="AddPlayerToRoomMsgBehaviour"/>
+        <attr name="class_dependency_wotlas.common.message.description.AddPlayerToRoomMessage" stringvalue="AddPlayerToRoomMsgBehaviour"/>
+    </fileobject>
+    <fileobject name="AddPlayerToTileMapMsgBehaviour.java">
+        <attr name="class_dependency_wotlas.libs.net.NetMessageBehaviour" stringvalue="AddPlayerToTileMapMsgBehaviour"/>
+        <attr name="class_dependency_wotlas.common.message.description.AddPlayerToTileMapMessage" stringvalue="AddPlayerToTileMapMsgBehaviour"/>
+    </fileobject>
+    <fileobject name="TileMapPlayerDataMsgBehaviour.java">
+        <attr name="class_dependency_wotlas.common.message.description.TileMapPlayerDataMessage" stringvalue="TileMapPlayerDataMsgBehaviour"/>
+        <attr name="class_dependency_wotlas.libs.net.NetMessageBehaviour" stringvalue="TileMapPlayerDataMsgBehaviour"/>
+    </fileobject>
 </attributes>

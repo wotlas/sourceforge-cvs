@@ -80,63 +80,65 @@ public class GroupOfGraphics implements BackupReady {
      *
      */
     static public GroupOfGraphics[] DEMO_SET = {
-    new  GroupOfGraphics( (byte)0, TileMap.PIXEL_50, TileMap.TILE, "tilemaps-cat-3/openmap-set-1/basic_tile-0/grass-0.png" )
-    ,new GroupOfGraphics( (byte)1, TileMap.PIXEL_50, TileMap.TILE, "tilemaps-cat-3/openmap-set-1/add_tile-1/little_road-10.png" )
-    ,new GroupOfGraphics( (byte)2, TileMap.PIXEL_50, TileMap.TILE, "tilemaps-cat-3/openmap-set-1/add_tile-1/water-4.png" )
-    ,new GroupOfGraphics( (byte)3, TileMap.PIXEL_50, TileMap.TILE, "tilemaps-cat-3/fakeiso-set-0/floor-set-0/fix-5.png" )
-    ,new GroupOfGraphics( (byte)4, TileMap.PIXEL_50, TileMap.TILE, "tilemaps-cat-3/fakeiso-set-0/carpet-set-2/carpet-2.png" )
-    ,new GroupOfGraphics( (byte)5, TileMap.PIXEL_80X40, TileMap.WALLX, "tilemaps-cat-3/fakeiso-set-0/wall-set-1/fix_wallwoodX6-20.png" )
-    ,new GroupOfGraphics( (byte)6, TileMap.PIXEL_40X80, TileMap.WALLY, "tilemaps-cat-3/fakeiso-set-0/wall-set-1/fix_wallwoodY6-31.png" )
-    ,new GroupOfGraphics( (byte)7, TileMap.PIXEL_80X40, TileMap.WALLX, "tilemaps-cat-3/fakeiso-set-0/wall-set-1/fix_wallwoodX3-3.png" )
-    ,new GroupOfGraphics( (byte)8, TileMap.PIXEL_40X80, TileMap.WALLY, "tilemaps-cat-3/fakeiso-set-0/wall-set-1/fix_wallwoodY3-11.png" )
-    ,new GroupOfGraphics( (byte)9, TileMap.PIXEL_70X35, TileMap.TILE, "tilemaps-cat-3/fakeiso-set-0/door-set-3/door-x-0.png" )
+    new  GroupOfGraphics( (byte)0, TileMap.PIXEL_50, TileMap.TILE, "tilemaps-cat-3/openmap-set-1/basic_tile-0/grass-0.png", TileMap.TILE_FREE )
+    ,new GroupOfGraphics( (byte)1, TileMap.PIXEL_50, TileMap.TILE, "tilemaps-cat-3/openmap-set-1/add_tile-1/little_road-10.png", TileMap.TILE_FREE )
+    ,new GroupOfGraphics( (byte)2, TileMap.PIXEL_50, TileMap.TILE, "tilemaps-cat-3/openmap-set-1/add_tile-1/water-4.png", TileMap.TILE_FREE )
+    ,new GroupOfGraphics( (byte)3, TileMap.PIXEL_50, TileMap.TILE, "tilemaps-cat-3/fakeiso-set-0/floor-set-0/fix-5.png", TileMap.TILE_FREE )
+    ,new GroupOfGraphics( (byte)4, TileMap.PIXEL_50, TileMap.TILE, "tilemaps-cat-3/fakeiso-set-0/carpet-set-2/carpet-2.png", TileMap.TILE_FREE )
+    ,new GroupOfGraphics( (byte)5, TileMap.PIXEL_80X40, TileMap.WALLX, "tilemaps-cat-3/fakeiso-set-0/wall-set-1/fix_wallwoodX6-20.png", TileMap.TILE_FREE )
+    ,new GroupOfGraphics( (byte)6, TileMap.PIXEL_40X80, TileMap.WALLY, "tilemaps-cat-3/fakeiso-set-0/wall-set-1/fix_wallwoodY6-31.png", TileMap.TILE_FREE )
+    ,new GroupOfGraphics( (byte)7, TileMap.PIXEL_80X40, TileMap.WALLX, "tilemaps-cat-3/fakeiso-set-0/wall-set-1/fix_wallwoodX3-3.png", TileMap.TILE_FREE )
+    ,new GroupOfGraphics( (byte)8, TileMap.PIXEL_40X80, TileMap.WALLY, "tilemaps-cat-3/fakeiso-set-0/wall-set-1/fix_wallwoodY3-11.png", TileMap.TILE_FREE )
+    ,new GroupOfGraphics( (byte)9, TileMap.PIXEL_70X35, TileMap.TILE, "tilemaps-cat-3/fakeiso-set-0/door-set-3/door-x-0.png", TileMap.TILE_FREE )
     };
 
     static public GroupOfGraphics[] ROGUE_SET = {
-//    static public GroupOfGraphics[] ROGUE_FLOOR_SET = {
-    new GroupOfGraphics( (byte)0, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_edging132-4.png" )
-    ,new GroupOfGraphics( (byte)1, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_edging232-5.png" )
-    ,new GroupOfGraphics( (byte)2, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_edging332-6.png" )
-    ,new GroupOfGraphics( (byte)3, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_extra132-8.png" )
-    ,new GroupOfGraphics( (byte)4, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_features32-9.png" )
-    ,new GroupOfGraphics( (byte)5, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_grounds32-11.png" )
-    ,new GroupOfGraphics( (byte)6, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/onlygrounds32bit-30.png" )
+    new GroupOfGraphics( (byte)0, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/ground-0/onlygrounds-0.png", TileMap.TILE_FREE )
+    ,new GroupOfGraphics( (byte)1, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/ground-0/tree-1.png", TileMap.TILE_NOT_FREE )
+    ,new GroupOfGraphics( (byte)2, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/ground-0/roads-2.png", TileMap.TILE_FREE )
+    ,new GroupOfGraphics( (byte)3, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/ground-0/roads2-3.png", TileMap.TILE_FREE )
+    ,new GroupOfGraphics( (byte)4, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/ground-0/mixwater-4.png", TileMap.TILE_NOT_FREE )
+    ,new GroupOfGraphics( (byte)5, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/ground-0/dungeons-5.png", TileMap.TILE_NOT_FREE )
+    ,new GroupOfGraphics( (byte)6, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/ground-0/strange-6.png", TileMap.TILE_FREE )
+    ,new GroupOfGraphics( (byte)7, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/ground-0/wall-7.png", TileMap.TILE_NOT_FREE )
     };
-
+/*
     static public GroupOfGraphics[] ROGUE_SET_ISO = {
-    new GroupOfGraphics( (byte)0, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_iso32-13.png" )
+    new GroupOfGraphics( (byte)0, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/ground/dg_iso32-13.png" )
     }; 
-
+*/
     static public GroupOfGraphics[] ROGUE_NPC_SET = {
-    new GroupOfGraphics( (byte)0, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_classm32-1.png" )
-    ,new GroupOfGraphics( (byte)1, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_dragon32-2.png" )
-    ,new GroupOfGraphics( (byte)2, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg-dungeon32-3.png" )
-    ,new GroupOfGraphics( (byte)3, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_humans32-12.png" )
-    ,new GroupOfGraphics( (byte)4, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_monster132-17.png" )
-    ,new GroupOfGraphics( (byte)5, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_monster232-18.png" )
-    ,new GroupOfGraphics( (byte)6, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_monster332-19.png" )
-    ,new GroupOfGraphics( (byte)7, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_monster432-20.png" )
-    ,new GroupOfGraphics( (byte)8, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_monster532-21.png" )
-    ,new GroupOfGraphics( (byte)9, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_monster632-22.png" )
-    ,new GroupOfGraphics( (byte)10, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_monster732-23.png" )
-    ,new GroupOfGraphics( (byte)11, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_people32-24.png" )
-    ,new GroupOfGraphics( (byte)12, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_undead32-26.png" )
-    ,new GroupOfGraphics( (byte)13, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_uniques32-27.png" )
+    new GroupOfGraphics( (byte)0, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/npc-1/classes-0.png", TileMap.TILE_NOT_FREE )
+    ,new GroupOfGraphics( (byte)1, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/npc-1/dg_dragon32-1.png", TileMap.TILE_NOT_FREE )
+    ,new GroupOfGraphics( (byte)2, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/npc-1/dg_humans32-2.png", TileMap.TILE_NOT_FREE )
+    ,new GroupOfGraphics( (byte)3, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/npc-1/dg_monster132-3.png", TileMap.TILE_NOT_FREE )
+    ,new GroupOfGraphics( (byte)4, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/npc-1/dg_monster232-4.png", TileMap.TILE_NOT_FREE )
+    ,new GroupOfGraphics( (byte)5, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/npc-1/dg_monster332-5.png", TileMap.TILE_NOT_FREE )
+    ,new GroupOfGraphics( (byte)6, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/npc-1/dg_monster432-6.png", TileMap.TILE_NOT_FREE )
+    ,new GroupOfGraphics( (byte)7, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/npc-1/dg_monster532-7.png", TileMap.TILE_NOT_FREE )
+    ,new GroupOfGraphics( (byte)8, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/npc-1/dg_monster632-8.png", TileMap.TILE_NOT_FREE )
+    ,new GroupOfGraphics( (byte)9, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/npc-1/dg_monster732-9.png", TileMap.TILE_NOT_FREE )
+    ,new GroupOfGraphics( (byte)10, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/npc-1/dg_people32-10.png", TileMap.TILE_NOT_FREE )
+    ,new GroupOfGraphics( (byte)11, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/npc-1/dg_undead32-11.png", TileMap.TILE_NOT_FREE )
+    ,new GroupOfGraphics( (byte)12, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/npc-1/dg_uniques32-12.png", TileMap.TILE_NOT_FREE )
     };
     
     static public GroupOfGraphics[] ROGUE_EFFECT_SET = {
-    new GroupOfGraphics( (byte)0, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_effects32-7.png" )
+    new GroupOfGraphics( (byte)0, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/effects-2/dg_effects32-0.png", TileMap.TILE_FREE )
     };
     
     static public GroupOfGraphics[] ROGUE_ITEM_SET = {
-    new  GroupOfGraphics( (byte)0, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_armor32-0.png" )
-    ,new GroupOfGraphics( (byte)1, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_jewls32-14.png" )
-    ,new GroupOfGraphics( (byte)2, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_magic32-15.png" )
-    ,new GroupOfGraphics( (byte)3, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_potions32-25.png" )
-    ,new GroupOfGraphics( (byte)4, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_wands32-28.png" )
-    ,new GroupOfGraphics( (byte)5, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_weapons32-29.png" )
-    ,new GroupOfGraphics( (byte)6, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_food32-10.png" )
-    ,new GroupOfGraphics( (byte)7, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/dg_misc32-16.png" )
+    new  GroupOfGraphics( (byte)0, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/item-3/dg_armor32-0.png", TileMap.TILE_FREE )
+    ,new GroupOfGraphics( (byte)1, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/item-3/dg_weapons32-1.png", TileMap.TILE_FREE )
+    ,new GroupOfGraphics( (byte)2, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/item-3/dg_wands32-2.png", TileMap.TILE_FREE )
+    ,new GroupOfGraphics( (byte)3, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/item-3/dg_potions32-3.png", TileMap.TILE_FREE )
+    ,new GroupOfGraphics( (byte)4, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/item-3/dg_books32-4.png", TileMap.TILE_FREE )
+    ,new GroupOfGraphics( (byte)5, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/item-3/dg_jewls32-5.png", TileMap.TILE_FREE )
+    ,new GroupOfGraphics( (byte)6, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/item-3/dg_food32-6.png", TileMap.TILE_FREE )
+    ,new GroupOfGraphics( (byte)7, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/item-3/dg_misc32-7.png", TileMap.TILE_FREE )
+    ,new GroupOfGraphics( (byte)8, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/item-3/fountains-8.png", TileMap.TILE_FREE )
+    ,new GroupOfGraphics( (byte)9, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/item-3/doors-9.png", TileMap.TILE_FREE )
+    ,new GroupOfGraphics( (byte)10, TileMap.PIXEL_32, TileMap.TILE, "tilemaps-cat-3/angband-rougue-library-2/item-3/system-10.png", TileMap.TILE_FREE )
     }; 
 
     /*------------------------------------------------------------------------------------*/
@@ -144,6 +146,9 @@ public class GroupOfGraphics implements BackupReady {
     /**  <Id> this Id it's used from the TileMap data
      */
     private byte Id;
+    /**  ...............
+     */
+    private boolean freeWalk;
     /**  ...............
      */
     private byte tileType;
@@ -166,10 +171,12 @@ public class GroupOfGraphics implements BackupReady {
 
     /** create the object, read class description
      */
-    public GroupOfGraphics( byte Id, Dimension tileDim, byte tileType, String tileImageSet ) {
+    public GroupOfGraphics( byte Id, Dimension tileDim, byte tileType
+    , String tileImageSet, boolean freeWalk ) {
         this.Id = Id;
         this.tileDim = tileDim;
         this.tileType = tileType;
+        this.freeWalk = freeWalk;
         this.tileImageSet = tileImageSet;
     }
     
@@ -205,6 +212,7 @@ public class GroupOfGraphics implements BackupReady {
         objectOutput.writeObject( tileDim );
         objectOutput.writeByte( tileType );
         objectOutput.writeObject( tileImageSet );
+        objectOutput.writeBoolean( freeWalk );
     }
     
  /*------------------------------------------------------------------------------------*/
@@ -219,6 +227,7 @@ public class GroupOfGraphics implements BackupReady {
             tileDim = ( Dimension ) objectInput.readObject();
             tileType =  objectInput.readByte();
             tileImageSet = ( String ) objectInput.readObject();
+            freeWalk =  objectInput.readBoolean();
         } else {
             // to do.... when new version
         }
@@ -379,5 +388,9 @@ public class GroupOfGraphics implements BackupReady {
         for( int index=0; index < groupOfGraphics.length; index++ )
             groupOfGraphics[index].init( gDirector );
         return ;
+    }
+    
+    public boolean getFreeStatus(){
+        return freeWalk;
     }
 }

@@ -598,7 +598,10 @@ public class EditorDataManager extends Thread implements Tickable, Menu2DListene
             EditTile.workingOnThisTileMap.getManager().getMapBackGroundData(
             )[x][y][1] = (byte) EditorPlugIn.selectedGroupImgNr;
             EditTile.workingOnThisTileMap.getManager().getMapMask(
-            )[x][y] = EditorPlugIn.selectedIsFree;
+            )[x][y] = GroupOfGraphics.ROGUE_SET[EditorPlugIn.selectedGroup
+            ].getFreeStatus();
+//            EditTile.workingOnThisTileMap.getManager().getMapMask(
+//            )[x][y] = EditorPlugIn.selectedIsFree;
             EditorPlugIn.AddIt(x,y);
         }
     }

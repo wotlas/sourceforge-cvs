@@ -119,17 +119,35 @@ public class ChildrenOfTheLight extends Male {
     *               we sets it to this player object.
     * @return a Drawable for this character.
     */
-      public Drawable getDrawable( Player player ) {
+    public Drawable getDrawable( Player player ) {
+        if( !player.getLocation().isTileMap() ){
+             if(childrenSprite!=null)
+                 return (Drawable) childrenSprite;
 
-         if(childrenSprite!=null)
-             return (Drawable) childrenSprite;
+           // 1 - Sprite Creation + Filter
+              childrenSprite = new Sprite( (SpriteDataSupplier) player, ImageLibRef.PLAYER_PRIORITY );
+              childrenSprite.useAntialiasing(true);
+              updateColorFilter();
+             return childrenSprite;
+        }
+        else {
+            if(fakeSprite!=null)
+                return (Drawable) fakeSprite;
+            int imageNr = 0;
+            switch( EnvironmentManager.whtGraphicSetIs() ){
+                case EnvironmentManager.GRAPHICS_SET_ROGUE:
+                    imageNr = 0;
+                    break;
+                default:
+                    imageNr = EnvironmentManager.getDefaultNpcImageNr();
+            }
 
-       // 1 - Sprite Creation + Filter
-          childrenSprite = new Sprite( (SpriteDataSupplier) player, ImageLibRef.PLAYER_PRIORITY );
-          childrenSprite.useAntialiasing(true);
-          updateColorFilter();
-         return childrenSprite;
-      }
+            fakeSprite = new FakeSprite( (SpriteDataSupplier) player, ImageLibRef.PLAYER_PRIORITY
+            , EnvironmentManager.getServerEnvironment().getGraphics(EnvironmentManager.SET_OF_NPC
+            )[ EnvironmentManager.getDefaultPlayerImage() ], imageNr  );
+            return fakeSprite;
+        }
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -397,32 +415,4 @@ public class ChildrenOfTheLight extends Male {
     */
     transient private FakeSprite fakeSprite;
     
-   /** To get a Drawable for this character. This should not be used on the
-    *  server side. This drawable is only used in tilemaps and is still in beta.
-    * it doesnt support animations actually, however it will support the
-    * change of the image from the datasupplier, to let the users change their
-    * images (polymorth, disguise and so on)
-    *
-    * @param player the player to chain the drawable to. If a XXXDataSupplier is needed
-    *               we sets it to this player object.
-    * @return a Drawable for this character.
-    */
-    public Drawable getDrawableForTileMaps( Player player ) {
-        if(fakeSprite!=null)
-            return (Drawable) fakeSprite;
-        
-        int imageNr = 0;
-        switch( EnvironmentManager.whtGraphicSetIs() ){
-            case EnvironmentManager.GRAPHICS_SET_ROGUE:
-                imageNr = 0;
-                break;
-            default:
-                imageNr = EnvironmentManager.getDefaultNpcImageNr();
-        }
-        
-        fakeSprite = new FakeSprite( (SpriteDataSupplier) player, ImageLibRef.PLAYER_PRIORITY
-        , EnvironmentManager.getServerEnvironment().getGraphics(EnvironmentManager.SET_OF_NPC
-        )[ EnvironmentManager.getDefaultPlayerImage() ], imageNr  );
-        return fakeSprite;
-    }
 }

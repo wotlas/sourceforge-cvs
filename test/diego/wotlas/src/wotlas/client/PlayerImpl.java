@@ -137,6 +137,10 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
    */
   private MultiLineText gameScreenFullPlayerName;
 
+ /** Our current TileMap ( if we are in a TileMap, null otherwise )
+  */
+  private TileMap myTileMap;
+  
  /** Our current Room ( if we are in a Room, null otherwise )
   */
   private Room myRoom;
@@ -182,12 +186,14 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
   *  the game data has been loaded.
   */
   public void init() {
+    if(!getLocation().isTileMap())  {
     //Debug.signal( Debug.NOTICE, null, "PlayerImpl::init");
-    animation = new Animation( wotCharacter.getImage(location),
+        animation = new Animation( wotCharacter.getImage(location),
                                ClientDirector.getDataManager().getImageLibrary() );
-    sprite = (Sprite) wotCharacter.getDrawable(this);
-    brightnessFilter = new BrightnessFilter();
-    sprite.setDynamicImageFilter(brightnessFilter);
+        sprite = (Sprite) wotCharacter.getDrawable(this);
+        brightnessFilter = new BrightnessFilter();
+        sprite.setDynamicImageFilter(brightnessFilter);
+    }
     movementComposer.init( this );
   }
 
@@ -196,11 +202,16 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
    */
   public void initVisualProperties(GraphicsDirector gDirector) {
 
-    if(isMaster)
-      gDirector.addDrawable(wotCharacter.getShadow()); // Drawable has already been added
+    if(!getLocation().isTileMap()){
+        if(isMaster)
+            gDirector.addDrawable(wotCharacter.getShadow()); // Drawable has already been added
+        else {
+          gDirector.addDrawable(wotCharacter.getDrawable(this));
+          gDirector.addDrawable(wotCharacter.getShadow());
+        }
+    }
     else {
-      gDirector.addDrawable(wotCharacter.getDrawable(this));
-      gDirector.addDrawable(wotCharacter.getShadow());
+          gDirector.addDrawable(wotCharacter.getDrawable(this));
     }
   }
 
@@ -209,7 +220,8 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
   public void cleanVisualProperties(GraphicsDirector gDirector) {
     if (!isMaster) {
       gDirector.removeDrawable(wotCharacter.getDrawable(this));
-      gDirector.removeDrawable(wotCharacter.getShadow());
+      if(!getLocation().isTileMap())
+        gDirector.removeDrawable(wotCharacter.getShadow());
     }
   }
 
@@ -227,14 +239,18 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
    *
    *  @param new player WotlasLocation
    */
-  public void setLocation(WotlasLocation myLocation) {
-    location = myLocation;
+    public void setLocation(WotlasLocation myLocation) {
+        location = myLocation;
 
-    if ( location.isRoom() )
-      myRoom = ClientDirector.getDataManager().getWorldManager().getRoom( location );
-    else
-      myRoom = null;
-  }
+        if ( location.isRoom() )
+            myRoom = ClientDirector.getDataManager().getWorldManager().getRoom( location );
+        else
+            myRoom = null;
+        if ( location.isTileMap() )
+            myTileMap = ClientDirector.getDataManager().getWorldManager().getTileMap( location );
+        else
+            myTileMap = null;
+    }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -582,17 +598,10 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
   }
 
   /** To get player's rectangle (to test intersection)
-   * it's used in world/town/interior/rooms sprites
+   * it's used in world/town/interior/rooms/tilemaps sprites
    */
   public Rectangle getCurrentRectangle() {
     return wotCharacter.getDrawable(this).getRectangle();
-  }
-
-  /** To get player's rectangle (to test intersection)
-   * it's used in tilemaps with fakesprite
-   */
-  public Rectangle getCurrentRectangleForTiles() {
-    return wotCharacter.getDrawableForTileMaps(this).getRectangle();
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -672,6 +681,15 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
    */
     public Room getMyRoom() {
       return myRoom;
+    }
+
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the player's current TileMap ( if we are in a TileMap ).
+    * @return current TileMap, null if we are not in a tileMap.
+   */
+    public TileMap getMyTileMap() {
+      return myTileMap;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -82,13 +82,13 @@ public class WorldGenerator {
         tileMap.selectGraphicSet( EnvironmentManager.GRAPHICS_SET_ROGUE );
 
         TileManagerFlat manager = new TileManagerFlat(  tileMap );
-        manager.setMap( 20, 20, TileMap.PIXEL_32, (byte)6, (byte)44 );
-        manager.setMapPoint(3,2,2,79,TileMap.TILE_NOT_FREE);
-        manager.setMapPoint(4,2,2,78,TileMap.TILE_NOT_FREE);
-        manager.setMapPoint(5,2,2,78,TileMap.TILE_NOT_FREE);
-        manager.setMapPoint(6,2,2,79,TileMap.TILE_NOT_FREE);
-        manager.setMapPoint(5,3,2,79,TileMap.TILE_NOT_FREE);
-        manager.setMapPoint(6,3,2,79,TileMap.TILE_NOT_FREE);
+        manager.setMap( 20, 20, TileMap.PIXEL_32, (byte)0, (byte)44 );
+        manager.setMapPoint(3,2,1,4,TileMap.TILE_NOT_FREE);
+        manager.setMapPoint(4,2,1,4,TileMap.TILE_NOT_FREE);
+        manager.setMapPoint(5,2,1,4,TileMap.TILE_NOT_FREE);
+        manager.setMapPoint(6,2,1,4,TileMap.TILE_NOT_FREE);
+        manager.setMapPoint(5,3,1,4,TileMap.TILE_NOT_FREE);
+        manager.setMapPoint(6,3,1,4,TileMap.TILE_NOT_FREE);
         tileMap.setManager( (TileMapManager)manager );
 
         MapExit mapExit1 = null;

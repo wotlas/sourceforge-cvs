@@ -123,6 +123,10 @@ public class PlayerImpl implements Player, NetConnectionListener,BackupReady {
     */
        transient protected Room myRoom;
 
+   /** Our current TileMap ( if we are in a TileMap, null otherwise )
+    */
+       transient protected TileMap myTileMap;
+
    /** SyncID for client & server. See the getter of this field for explanation.
     * This field is an array and not a byte because we want to be able to
     * synchronize the code that uses it.
@@ -131,7 +135,7 @@ public class PlayerImpl implements Player, NetConnectionListener,BackupReady {
 
  /*------------------------------------------------------------------------------------*/
 
-   /** Player ChatRooms : is the list of the current room.
+   /** Player ChatRooms : is the list of the current chat room.
     */
        transient protected ChatList chatList;
 
@@ -315,6 +319,13 @@ public class PlayerImpl implements Player, NetConnectionListener,BackupReady {
              	 if( location.isRoom() )
               	     Debug.signal( Debug.CRITICAL, this, "Room not found !!! location is:"+location );
                  myRoom = null;
+             }
+             if( location.isTileMap() && ServerDirector.getDataManager()!=null )
+                 myTileMap = ServerDirector.getDataManager().getWorldManager().getTileMap( location );
+             else {
+             	 if( location.isTileMap() )
+              	     Debug.signal( Debug.CRITICAL, this, "TileMap not found !!! location is:"+location );
+                 myTileMap = null;
              }
 
           // Current Chat set to default
@@ -524,11 +535,22 @@ public class PlayerImpl implements Player, NetConnectionListener,BackupReady {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** To get the player's current TileMap ( if we are in a TileMap ).
+    * @return current TileMap, null if we are not in a tileMap.
+    */
+      public TileMap getMyTileMap() {
+        return myTileMap;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
    /** To get our Message router.
     */
       public MessageRouter getMessageRouter() {
           if(myRoom!=null)
              return myRoom.getMessageRouter();
+          if(myTileMap!=null)
+             return myTileMap.getMessageRouter();
 
           if( location.isWorld() ) {
               WorldMap world = ServerDirector.getDataManager().getWorldManager().getWorldMap(location);
@@ -739,6 +761,21 @@ public class PlayerImpl implements Player, NetConnectionListener,BackupReady {
                  }
              }
 
+             // We signal our connection to players in the game
+             if(location.isTileMap()) {
+                 if(myTileMap==null) {
+                    Debug.signal( Debug.ERROR, this, "Player "+primaryKey+" has an incoherent location state");
+                    return;
+                 }
+
+               // are we present in this TileMap already ?
+                 if( myTileMap.getMessageRouter().getPlayer(primaryKey)!=null ) {
+                   // We send an update to players near us...                      
+                      PlayerConnectedToGameMessage pMsg = new PlayerConnectedToGameMessage(primaryKey,true);
+                      myTileMap.getMessageRouter().sendMessage( pMsg, this, MessageRouter.EXTENDED_GROUP );
+                 }
+             }
+
              Debug.signal(Debug.NOTICE,null,"Connection opened for player "+playerName+" at "+Tools.getLexicalTime());
      }
 
@@ -805,8 +842,21 @@ public class PlayerImpl implements Player, NetConnectionListener,BackupReady {
                  return;
             }
             else if(location.isTileMap()) {
+
               // no movement saved on tileMap...
                  movementComposer.resetMovement();
+
+              // We send an update to players near us...
+                 NetMessage msg[] = new NetMessage[2];
+                 msg[0] = (NetMessage) movementComposer.getUpdate();
+                 msg[1] = (NetMessage) new PlayerConnectedToGameMessage(primaryKey,false);
+
+                 if(myTileMap==null) {
+                    Debug.signal( Debug.ERROR, this, "Player "+primaryKey+" has an incoherent location state");
+                    return;
+                 }
+
+                 myTileMap.getMessageRouter().sendMessages( msg, this, MessageRouter.EXTENDED_GROUP );
                  return;
             }
      }

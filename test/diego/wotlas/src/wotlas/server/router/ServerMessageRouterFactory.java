@@ -81,9 +81,9 @@ public class ServerMessageRouterFactory implements MessageRouterFactory {
     * @param tMap TileMap the router is for...
     * @return a MessageRouter to use for this map
     */
-     public MessageRouter createMsgRouterForTileMap( TileMap tMap, WorldManager wManager ) {
-        MessageRouter mr = new SingleGroupMessageRouter();
-        mr.init( tMap.getLocation(), wManager );
+     public MessageRouter createMsgRouterForTileMap( TileMap tiMap, WorldManager wManager ) {
+        MessageRouter mr = new MultiGroupMessageRouterForTileMap();
+        mr.init( tiMap.getLocation(), wManager );
         return mr;
      }
 

@@ -4,13 +4,14 @@
     <fileobject name="PlayerImpl.java">
         <attr name="class_dependency_wotlas.libs.net.NetConnectionListener" stringvalue="PlayerImpl"/>
         <attr name="class_dependency_wotlas.common.Player" stringvalue="PlayerImpl"/>
+        <attr name="class_dependency_wotlas.libs.persistence.BackupReady" stringvalue="PlayerImpl"/>
+    </fileobject>
+    <fileobject name="AccountBuilder.java">
+        <attr name="class_dependency_wotlas.libs.net.NetConnectionListener" stringvalue="AccountBuilder"/>
     </fileobject>
     <fileobject name="ServerDirector.java">
         <attr name="class_dependency_wotlas.libs.net.NetServerListener" stringvalue="ServerDirector"/>
         <attr name="class_dependency_java.lang.Runnable" stringvalue="ServerDirector"/>
-    </fileobject>
-    <fileobject name="AccountBuilder.java">
-        <attr name="class_dependency_wotlas.libs.net.NetConnectionListener" stringvalue="AccountBuilder"/>
     </fileobject>
     <fileobject name="LieManager.java">
         <attr name="class_dependency_wotlas.libs.persistence.BackupReady" stringvalue="LieManager"/>

@@ -37,7 +37,11 @@ import wotlas.server.message.chat.*;
 /**
  * Associated behaviour to the PathUpdateMovementMessage...
  *
- * @author Aldiss
+ * @author Aldiss, Diego
+ *
+ *  the movement updates are sended to everyone in a room
+ *  i need it too for tilemaps, and i will need it too for npc movements.
+ *
  */
 
 public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage implements NetMessageBehaviour {
@@ -75,10 +79,11 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
 
        // 1 - We update our player
           player.getMovementComposer().setUpdate( (MovementUpdateMessage)this );
-       
+
        // 2 - We send the update to other players
-       // ... in the current Room & other rooms near me
-          if( !player.getLocation().isRoom() )
+       // ... in the current room/tilemap & other rooms near me
+          if( !player.getLocation().isRoom()
+          && !player.getLocation().isTileMap())
               return; // nothing to do for worlds & towns...
 
           MessageRouter mRouter = player.getMessageRouter();
@@ -191,4 +196,3 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

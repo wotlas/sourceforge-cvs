@@ -524,6 +524,7 @@ public class EditorPlugIn extends JPanelPlugIn {
         TileNotFree.setBackground(new java.awt.Color(255, 255, 255));
         TileNotFree.setSelected(true);
         TileNotFree.setText("Not Free");
+        TileNotFree.setEnabled(false);
         TileNotFree.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 TileNotFreeActionPerformed(evt);
@@ -745,7 +746,6 @@ public class EditorPlugIn extends JPanelPlugIn {
         jPanel24.setBorder(new javax.swing.border.EtchedBorder());
         jLabel27.setForeground(new java.awt.Color(255, 0, 255));
         jLabel27.setText("<html>\n<body>\n<p>\n<p>         Export/Import ONLY data\n<p>\n<p>               of this map<p>\n<p>\n<p>\n</body>\n</html>");
-        jLabel27.setToolTipText("null");
         jPanel24.add(jLabel27, java.awt.BorderLayout.CENTER);
 
         ExportBackground.setText("Export");
@@ -809,6 +809,7 @@ public class EditorPlugIn extends JPanelPlugIn {
 
     private void ImportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ImportAllActionPerformed
         // Add your handling code here:
+        RefreshData();
     }//GEN-LAST:event_ImportAllActionPerformed
 
     private void ExportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExportAllActionPerformed
@@ -836,7 +837,8 @@ public class EditorPlugIn extends JPanelPlugIn {
             JOptionPane.showMessageDialog( EditTile.getDataManager().getScreen(), "Missing import file!" 
             ,"Warning" , JOptionPane.WARNING_MESSAGE );
             return;
-        }            
+        }
+        RefreshData();
     }//GEN-LAST:event_ImportBackgroundActionPerformed
 
     private void ExportBackgroundActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExportBackgroundActionPerformed
@@ -1028,9 +1030,8 @@ public class EditorPlugIn extends JPanelPlugIn {
         manager.setMap( gotDimX, gotDimY, TileMap.PIXEL_32,  (byte)6, (byte)basicTileSelect.getSelectedIndex() );
         destination.setManager( (TileMapManager)manager );
         EditTile.workingOnThisTileMap = destination;
-        ShowTileMapData();
-        SetListExitMod();
         EditTile.getDataManager().myMapData.initDisplayEditor( EditTile.getDataManager(), EditTile.workingOnThisTileMap.getLocation() );
+        RefreshData();
     }//GEN-LAST:event_buttonNewActionPerformed
 
     private void buttonRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRefreshActionPerformed
@@ -1215,8 +1216,7 @@ public class EditorPlugIn extends JPanelPlugIn {
         WotlasLocation location = new WotlasLocation();
         location.WotlasLocationChangeToTileMap(0);
         EditTile.workingOnThisTileMap = EditTile.getDataManager().getWorldManager().getTileMap( location );
-        ShowTileMapData();
-        SetListExitMod();
+        RefreshData();
         addListMapsForExitPan();
         return true; // this plug-in always works...
     }
@@ -1456,8 +1456,7 @@ public class EditorPlugIn extends JPanelPlugIn {
                     EditTile.getDataManager().myMapData.initDisplayEditor( EditTile.getDataManager()
                     , EditTile.workingOnThisTileMap.getLocation() );
 
-                    ShowTileMapData();
-                    SetListExitMod();
+                    RefreshData();
                     
                 } else {
                     // .....
@@ -1598,5 +1597,10 @@ public class EditorPlugIn extends JPanelPlugIn {
         // DataMapTileSize.setText();
         DataBasicSetId.setText( "" + EditTile.workingOnThisTileMap.getManager().getBasicFloorId() );
         DataBasicSetIdNr.setText( "" + EditTile.workingOnThisTileMap.getManager().getBasicFloorNr() );
+    }
+    
+    public void RefreshData(){
+        ShowTileMapData();
+        SetListExitMod();
     }
 }

@@ -1011,7 +1011,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
                                        ImageLibRef.AURA_PRIORITY );
              gDirector.addDrawable(circle);
              gDirector.addDrawable(selectedPlayer.getTextDrawable());
-             gDirector.addDrawable(selectedPlayer.getBasicChar().getAura());
+             if(!selectedPlayer.getLocation().isTileMap())
+                gDirector.addDrawable(selectedPlayer.getBasicChar().getAura());
 
              if(infoPanel!=null)
                 infoPanel.setPlayerInfo( selectedPlayer );

@@ -730,6 +730,7 @@
                     </Property>
                     <Property name="selected" type="boolean" value="true"/>
                     <Property name="text" type="java.lang.String" value="Not Free"/>
+                    <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
 
                   <Events>
@@ -1273,7 +1274,6 @@
                           <Color blue="ff" green="0" red="ff" type="rgb"/>
                         </Property>
                         <Property name="text" type="java.lang.String" value="&lt;html&gt;&#xa;&lt;body&gt;&#xa;&lt;p&gt;&#xa;&lt;p&gt;         Export/Import ONLY data&#xa;&lt;p&gt;&#xa;&lt;p&gt;               of this map&lt;p&gt;&#xa;&lt;p&gt;&#xa;&lt;p&gt;&#xa;&lt;/body&gt;&#xa;&lt;/html&gt;"/>
-                        <Property name="toolTipText" type="java.lang.String" value="null"/>
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">

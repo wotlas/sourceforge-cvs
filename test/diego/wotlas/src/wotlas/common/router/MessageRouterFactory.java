@@ -68,7 +68,7 @@ public interface MessageRouterFactory {
     * @param tMap TileMap the router is for...
     * @return a MessageRouter to use for this map
     */
-     public MessageRouter createMsgRouterForTileMap( TileMap tMap, WorldManager wManager );
+     public MessageRouter createMsgRouterForTileMap( TileMap tiMap, WorldManager wManager );
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

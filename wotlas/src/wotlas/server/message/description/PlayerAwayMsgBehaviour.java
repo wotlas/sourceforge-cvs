@@ -81,10 +81,15 @@ public class PlayerAwayMsgBehaviour extends PlayerAwayMessage implements NetMess
           PlayerImpl searchedPlayer = null;
 
           searchedPlayer = (PlayerImpl) players.get( primaryKey );
-
+          Calendar lastTime = Calendar.getInstance();
+          lastTime.setTime(new Date(searchedPlayer.getLastDisconnectedTime()));
+          
+          String awayMsg = "I was last connected on " +  Tools.getLexicalDate(lastTime)+ "<br>";          
+          awayMsg += searchedPlayer.getPlayerAwayMessage();         
+          
             if( searchedPlayer!=null ) {
               // player found !
-                 player.sendMessage( new PlayerAwayMessage( primaryKey, searchedPlayer.getPlayerAwayMessage() ) );
+                 player.sendMessage( new PlayerAwayMessage( primaryKey, awayMsg ) );
                  return;
             }
 
@@ -105,7 +110,7 @@ public class PlayerAwayMsgBehaviour extends PlayerAwayMessage implements NetMess
 
                if( searchedPlayer!=null ) {
               	 // player found !
-              	    player.sendMessage( new PlayerAwayMessage( primaryKey, searchedPlayer.getPlayerAwayMessage() ) );
+              	    player.sendMessage( new PlayerAwayMessage( primaryKey, awayMsg ) );
               	    return;
                }
           }

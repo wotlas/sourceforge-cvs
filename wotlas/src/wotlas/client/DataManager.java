@@ -328,13 +328,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   public String getSelectedPlayerKey() {
     if (selectedPlayer!=null)
       return selectedPlayer.getPrimaryKey();
-    return "";
+    return null;
   }
   
   /** To remove the circle
    */
   public void removeCircle() {
-    gDirector.removeDrawable(circle);    
+    gDirector.removeDrawable(circle);
     circle = null;
   }
  /*------------------------------------------------------------------------------------*/
@@ -657,7 +657,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
     delay = 20;
     if ( os.equals("Windows 2000") ) {
-      delay = 25;
+      delay = 30;
     }
 
     Object lock = new Object();

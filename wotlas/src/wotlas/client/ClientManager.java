@@ -898,7 +898,7 @@ public class ClientManager
             DataManager dataManager = DataManager.getDefaultDataManager();
             dataManager.setCurrentProfileConfig(currentProfileConfig);
 
-             // screenIntro.hide();
+            screenIntro.hide();
             
             JAccountConnectionDialog jaconnect = new JAccountConnectionDialog( screenIntro,
                        currentServerConfig.getServerName(), currentServerConfig.getAccountServerPort(),
@@ -908,6 +908,7 @@ public class ClientManager
               Debug.signal( Debug.NOTICE, null, "ClientManager connected to AccountServer");
             } else {
               Debug.signal( Debug.NOTICE, null, "ClientManager ejected from AccountServer");
+              screenIntro.show(); // line added by Aldiss
               return;
             }
 

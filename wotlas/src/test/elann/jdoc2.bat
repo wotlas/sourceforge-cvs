@@ -12,17 +12,16 @@ set verbose=
 
 rem The main title
 rem ==============
-set windowtitle="Object Management System"
+set windowtitle="Knowledge Management System"
 
 rem The destination directory
 rem =========================
-set dir=OMSdoc
+set dir=KMSdoc
 
 rem The source files
 rem No line breaks
 rem ==============
-set src=objects\*.java objects\armors\*.java objects\containers\*.java objects\interfaces\*.java objects\inventories\*.java objects\magicals\*.java objects\usefuls\*.java objects\valueds\*.java objects\weapons\*.java
-
+set src=knowledges\*.java
 
 rem The command line
 rem ================

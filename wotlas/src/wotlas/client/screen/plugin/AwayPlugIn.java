@@ -22,7 +22,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import wotlas.utils.*;
-import wotlas.utils.aswing.*;
+import wotlas.libs.aswing.*;
 
 import wotlas.common.*;
 import wotlas.common.message.description.PlayerAwayMessage;
@@ -89,7 +89,7 @@ public class AwayPlugIn extends JPanelPlugIn {
 
         savePastButton.addActionListener(new ActionListener() {
             public void actionPerformed (ActionEvent e) {
-                PlayerImpl player = ClientDirector.getDataManager().getMyPlayer();
+                PlayerImpl p = ClientDirector.getDataManager().getMyPlayer();
 
                 String awayMessage = playerTextArea.getText();
                 
@@ -101,8 +101,8 @@ public class AwayPlugIn extends JPanelPlugIn {
                    playerTextArea.setText(awayMessage);
                 }
                 
-                if( player.getPlayerAwayMessage()!=null &&
-                    player.getPlayerAwayMessage().equals(awayMessage) )
+                if( p.getPlayerAwayMessage()!=null &&
+                    p.getPlayerAwayMessage().equals(awayMessage) )
                    return;
 
                 if(awayMessage.length()>400) {
@@ -110,8 +110,8 @@ public class AwayPlugIn extends JPanelPlugIn {
                    playerTextArea.setText(awayMessage);
                 }
 
-                player.setPlayerAwayMessage( awayMessage );
-                player.sendMessage( new PlayerAwayMessage( player.getPrimaryKey(), awayMessage ) );
+                p.setPlayerAwayMessage( awayMessage );
+                p.sendMessage( new PlayerAwayMessage( p.getPrimaryKey(), awayMessage ) );
             }
         });
 

@@ -21,7 +21,6 @@ package wotlas.libs.graphics2D.menu;
 
 import wotlas.libs.graphics2D.*;
 import java.awt.*;
-import java.io.*;
 import java.util.*;
 import java.awt.font.*;
 import java.awt.geom.*;

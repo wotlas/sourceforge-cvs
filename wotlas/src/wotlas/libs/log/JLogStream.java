@@ -59,28 +59,38 @@ public class JLogStream extends LogStream {
  /*------------------------------------------------------------------------------------*/
 
    /** Constructor with file name. The log is saved to disk every 3 minutes.
-    *  Example : new JLogStream( frame, "client.log", "back.jpg", "../data/gui" );<br>
+    *  Example : new JLogStream( frame, "client.log", "back.jpg", rLocator );<br>
     *
-    *  The "back.jpg" image given in the example is taken from "../data/gui".
+    *  The "back.jpg" image given in the example is given by the resource locator.
     *
     * @param owner frame parent
     * @param logFileName log file to create or use if already existing.
-    * @param imageName image to display. The image is taken from the guiImagesPath.
-    * @param guiImagesPath path to the gui images.
+    * @param imageName image to display. The image are located using the rLocator.
+    * @param rLocator interface giving access to the images to use for the JLogWindow
+    *        AND JCroppedWindow.
     * @exception FileNotFoundException if we cannot use or create the given log file.
     */
      public JLogStream( Frame owner, String logFileName, String imageFileName,
-                        String guiImagesPath )
+                        LogResourceLocator rLocator )
      throws FileNotFoundException {
           super( logFileName, false, 180*1000 );
 
             if(imageFileName.indexOf("dark")<0)
-               dialog = new JCroppedWindow( owner, "Wotlas Log Window", false, guiImagesPath );
+               dialog = new JCroppedWindow( owner, "Wotlas Log Window", false, rLocator );
             else
-               dialog = new JCroppedWindow( owner, "Wotlas Log Window", true, guiImagesPath );
+               dialog = new JCroppedWindow( owner, "Wotlas Log Window", true, rLocator );
 
        // 1 - image panel
-          image = dialog.loadImage( guiImagesPath+File.separator+imageFileName );
+          image = rLocator.getGuiImage( imageFileName );
+
+          MediaTracker tracker = new MediaTracker(dialog);
+          tracker.addImage( image, 0 );
+
+          try{
+              tracker.waitForID(0);
+          }catch(InterruptedException e) {
+               e.printStackTrace();
+          }
 
           JPanel imPanel = new JPanel( true ) {
                 public void paint( Graphics g ) {

@@ -20,7 +20,7 @@
 package wotlas.libs.wizard.step;
 
 import wotlas.libs.wizard.*;
-import wotlas.utils.aswing.*;
+import wotlas.libs.aswing.*;
 
 import java.awt.*;
 import java.awt.event.*;

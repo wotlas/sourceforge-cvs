@@ -22,7 +22,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import wotlas.utils.*;
-import wotlas.utils.aswing.*;
+import wotlas.libs.aswing.*;
 
 import wotlas.common.*;
 import wotlas.common.message.description.PlayerPastMessage;
@@ -159,11 +159,11 @@ public class InfoPlugIn extends JPanelPlugIn {
                 savePastButton.addActionListener(new ActionListener() {
                     public void actionPerformed (ActionEvent e) {                    	
                         savePastButton.setEnabled(false);
-                        PlayerImpl player = ClientDirector.getDataManager().getMyPlayer();
-                    	player.setPlayerPast( playerTextArea.getText() );
-                        player.sendMessage( new PlayerPastMessage( player.getPrimaryKey(), player.getPlayerPast() ) );
+                        PlayerImpl p = ClientDirector.getDataManager().getMyPlayer();
+                    	p.setPlayerPast( playerTextArea.getText() );
+                        p.sendMessage( new PlayerPastMessage( p.getPrimaryKey(), p.getPlayerPast() ) );
                         InfoPlugIn.this.reset();
-                        setPlayerInfo( player );
+                        setPlayerInfo( p );
                     }
                 });
 

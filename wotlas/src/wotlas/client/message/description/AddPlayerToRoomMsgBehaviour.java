@@ -91,7 +91,7 @@ public class AddPlayerToRoomMsgBehaviour extends AddPlayerToRoomMessage implemen
                	       players.put( player.getPrimaryKey(), player );
                	       ((PlayerImpl)player).init();
                	       ((PlayerImpl)player).initVisualProperties(dataManager.getGraphicsDirector());
-                       SoundLibrary.getSoundLibrary().playSound("human-steps.wav");
+                       SoundLibrary.getSoundPlayer().playSound("human-steps.wav");
                	  }
                }
 
@@ -115,7 +115,7 @@ public class AddPlayerToRoomMsgBehaviour extends AddPlayerToRoomMessage implemen
                	           players.put( player.getPrimaryKey(), player );
                            ((PlayerImpl)player).init();
                            ((PlayerImpl)player).initVisualProperties(dataManager.getGraphicsDirector());
-                           SoundLibrary.getSoundLibrary().playSound("human-steps.wav");
+                           SoundLibrary.getSoundPlayer().playSound("human-steps.wav");
                        }
                     }
 

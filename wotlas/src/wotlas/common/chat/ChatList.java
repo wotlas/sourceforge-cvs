@@ -20,10 +20,8 @@
 package wotlas.common.chat;
 
 import wotlas.common.Player;
-import wotlas.common.universe.*;
 
-import java.io.*;
-import java.util.*;
+import java.util.Hashtable;
 
 /** Interface of a Chat.
  *

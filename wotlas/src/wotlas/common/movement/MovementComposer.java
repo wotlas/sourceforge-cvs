@@ -23,7 +23,6 @@ import wotlas.common.message.movement.*;
 import wotlas.common.*;
 
 import java.awt.Point;
-import java.io.*;
 
 
 /** An interface representing a generic player movement.

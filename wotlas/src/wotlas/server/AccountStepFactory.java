@@ -39,9 +39,9 @@ public class AccountStepFactory {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Name of the Wizard home in the database.
+  /** Suffix of the wizard files.
    */
-    public static final String WIZARD_HOME = "wizard";
+    public static final String WIZARD_SUFFIX = ".wiz";
 
   /** Name of the first step to be started by the AccountBuilder. This step must always
    *  exist.
@@ -65,31 +65,36 @@ public class AccountStepFactory {
    public AccountStepFactory( ResourceManager rManager ) {
          staticStepParameters = new Hashtable(20);
 
-         String accountWizardHome = rManager.getBase(WIZARD_HOME);
+         String accountWizardHome = rManager.getWizardStepsDir();
 
       // We load all the step parameters in our hashtable
-         File list[] = new File(accountWizardHome).listFiles();
-         
-         if(list==null) {
-            Debug.signal(Debug.CRITICAL,this,"Failed to load account wizard steps !");
-            return;
-         }
+         String list[] = rManager.listFiles( accountWizardHome, WIZARD_SUFFIX );
 
          int nbSteps=0;
 
          for( int i=0; i<list.length; i++ ) {
-            if(!list[i].isFile() || !list[i].getName().endsWith(".wiz") )
-               continue;
             
-            JWizardStepParameters parameters = JWizardStepParameters.loadFromFile(
-                                  accountWizardHome+File.separator+list[i].getName() );
+            JWizardStepParameters parameters = JWizardStepParameters.loadFromStream(
+                                               rManager.getFileStream( list[i] ) );
 
             if(parameters==null) {
-               Debug.signal(Debug.ERROR,this,"Failed to load wizard step "+list[i].getName());
+               Debug.signal(Debug.ERROR,this,"Failed to load wizard step "+list[i]);
                continue;
-            }            
+            }
 
-            staticStepParameters.put( list[i].getName(), parameters );
+            String name = list[i];
+            int index = list[i].lastIndexOf( File.separator );
+
+            if(index<0) {
+               index = list[i].lastIndexOf( "/" );
+
+               if(index>0)
+                  name = name.substring( index+1, name.length() );
+            }
+            else
+               name = name.substring( index+File.separator.length(), name.length() );
+            
+            staticStepParameters.put( name, parameters );
             nbSteps++;
          }
 

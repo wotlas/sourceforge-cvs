@@ -86,19 +86,17 @@ public class AielWarrior extends Male {
 
  /*------------------------------------------------------------------------------------*/
 
-   /** To get a Drawable for this character. This is can not be used on the
-    *  server side : if no ImageLibrary has been created we return null.
+   /** To get a Drawable for this character. This should not be used on the
+    *  server side.
     *
     *  The returned Drawable is unique : we always return the same drawable per
     *  AesSedai instance.
     *
     * @param player the player to chain the drawable to. If a XXXDataSupplier is needed
     *               we sets it to this player object.
-    * @return a Drawable for this character, null if no ImageLibrary is present.
+    * @return a Drawable for this character
     */
       public Drawable getDrawable( Player player ) {
-         if( ImageLibrary.getDefaultImageLibrary() == null )
-             return null;
 
          if(aielSprite!=null)
              return (Drawable) aielSprite;
@@ -130,8 +128,6 @@ public class AielWarrior extends Male {
    *  @return character's Shadow Drawable.
    */
      public Drawable getShadow(){
-         if( ImageLibrary.getDefaultImageLibrary() == null )
-             return null;
 
          if(aielShadowSprite!=null)
              return (Drawable) aielShadowSprite;
@@ -153,8 +149,6 @@ public class AielWarrior extends Male {
    *  @return character's Aura Drawable.
    */
      public Drawable getAura(){
-         if( ImageLibrary.getDefaultImageLibrary() == null )
-             return null;
 
          if(aielAuraEffect!=null) {
              if(aielAuraEffect.isLive()) {

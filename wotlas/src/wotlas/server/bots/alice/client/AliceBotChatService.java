@@ -27,7 +27,7 @@ import wotlas.libs.net.*;
 import wotlas.common.Player;
 
 import wotlas.utils.Debug;
-import wotlas.utils.PropertiesConfigFile;
+import wotlas.common.PropertiesConfigFile;
 
 import java.util.Properties;
 import javax.swing.Timer;

@@ -40,9 +40,9 @@ import wotlas.libs.net.*;
 import wotlas.libs.net.utils.NetQueue;
 import wotlas.libs.persistence.*;
 import wotlas.libs.sound.SoundLibrary;
+import wotlas.libs.aswing.*;
 
 import wotlas.utils.*;
-import wotlas.utils.aswing.AProgressMonitor;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -447,11 +447,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        pMonitor.setProgress("Loading Shared Images...",0);
 
     // 1 - Create Image Library
-       String imageDBHome = ClientDirector.getResourceManager().getBase( IMAGE_LIBRARY );
-       String fontsHome = ClientDirector.getResourceManager().getBase( "fonts" );
-
        try {
-          imageLib = ImageLibrary.createImageLibrary( imageDBHome, fontsHome );
+          imageLib = new ImageLibrary( ClientDirector.getResourceManager() );
        }
        catch( Exception ex ) {
           Debug.signal(Debug.FAILURE, this, ex );
@@ -463,15 +460,15 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     // 2 - Set Client Configuration Choices
        ClientConfiguration clientConfiguration = ClientDirector.getClientConfiguration();
     
-       SoundLibrary.getSoundLibrary().setNoMusic(clientConfiguration.getNoMusic());
+       SoundLibrary.getMusicPlayer().setNoMusicState(clientConfiguration.getNoMusic());
 
        if( clientConfiguration.getMusicVolume()>0 )
-          SoundLibrary.getSoundLibrary().setMusicVolume((short) clientConfiguration.getMusicVolume());
+          SoundLibrary.getMusicPlayer().setMusicVolume((short) clientConfiguration.getMusicVolume());
 
-       SoundLibrary.getSoundLibrary().setNoSound(clientConfiguration.getNoSound());
+       SoundLibrary.getSoundPlayer().setNoSoundState(clientConfiguration.getNoSound());
 
        if(clientConfiguration.getSoundVolume()>0)
-         SoundLibrary.getSoundLibrary().setSoundVolume((short) clientConfiguration.getSoundVolume());
+         SoundLibrary.getSoundPlayer().setSoundVolume((short) clientConfiguration.getSoundVolume());
 
        pMonitor.setProgress("Creating 2D Engine...",15);
     
@@ -499,12 +496,12 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        if(SHOW_DEBUG)
           System.out.println("JClientScreen created");
 
-       pMonitor.setProgress("Loading Player Data...",30);
+       pMonitor.setProgress("Loading Player Data from Server...",30);
 
     // 5 - We retrieve our player's own data
        myPlayer = null;
 
-       waitForConnection(10000); // 10s max...
+       waitForConnection(30000); // 30s max...
 
        try {
          synchronized(startGameLock) {
@@ -600,10 +597,10 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        clientScreen.getMapPanel().updateGraphicsDirector(gDirector);
 
     // 2 - Retrieve player's informations
-       pMonitor.setProgress("Loading Player Data...",30);
+       pMonitor.setProgress("Loading Player Data from Server...",30);
        myPlayer = null;
 
-       waitForConnection(10000); // 10s max...
+       waitForConnection(30000); // 30s max...
 
        try {
          synchronized(startGameLock) {
@@ -769,7 +766,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** To ear a warning beep
    */
     public void playerWarningBeep() {
-         SoundLibrary.getSoundLibrary().playSound("bell.wav");
+         SoundLibrary.getSoundPlayer().playSound("bell.wav");
     }
 
  /*------------------------------------------------------------------------------------*/
@@ -1107,6 +1104,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         }
 
        ClientDirector.getClientConfiguration().save();
+       SoundLibrary.clear();
        Debug.exit();
     }
 

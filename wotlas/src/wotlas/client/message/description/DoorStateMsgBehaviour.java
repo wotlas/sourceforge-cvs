@@ -87,11 +87,11 @@ public class DoorStateMsgBehaviour extends DoorStateMessage implements NetMessag
            }
            
            if( isOpened ) {
-               SoundLibrary.getSoundLibrary().playSound("door-open.wav");
+               SoundLibrary.getSoundPlayer().playSound("door-open.wav");
                door.open();
            }
            else {
-               SoundLibrary.getSoundLibrary().playSound("door-close.wav");
+               SoundLibrary.getSoundPlayer().playSound("door-close.wav");
                door.close();
            }
      }

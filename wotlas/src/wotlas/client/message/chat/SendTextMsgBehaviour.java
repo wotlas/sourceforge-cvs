@@ -74,20 +74,20 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
           }
           else if( message.equals("/BELL") ) {
              message = "/me rings a bell...";
-             SoundLibrary.getSoundLibrary().playSound("bell.wav");
+             SoundLibrary.getSoundPlayer().playSound("bell.wav");
           }
           else if( message.startsWith("/FANFARE") ) {             
              int index = message.indexOf(' ');
              if(index<0 || index==message.length()-1) return;
 
              String soundFileName = message.substring(index+1,message.length()).toLowerCase();
-             SoundLibrary.getSoundLibrary().playSound(soundFileName);
+             SoundLibrary.getSoundPlayer().playSound(soundFileName);
              message = "/me sounds the fanfare !";
              fanfare=true;
           }
           else if( message.equals("/KNOCK") ) {
              message = "/me knocks at the door...";
-             SoundLibrary.getSoundLibrary().playSound("knock.wav");
+             SoundLibrary.getSoundPlayer().playSound("knock.wav");
           }
 
 

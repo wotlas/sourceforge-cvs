@@ -445,9 +445,12 @@ public class JWizardStepParameters {
     * @param path full path to the file containing the JWizardStepParameters.
     * @return null if the file could not be loaded.
     */
-    public static JWizardStepParameters loadFromFile( String path ) {
+    public static JWizardStepParameters loadFromStream( InputStream istream ) {
+      if(istream==null)
+         return null;
+
       try{
-          return (JWizardStepParameters) PropertiesConverter.load( path );
+          return (JWizardStepParameters) PropertiesConverter.load( istream );
       }
       catch( Exception pe ) {
           Debug.signal( Debug.ERROR, null, "Failed to load file: "+pe.getMessage() );

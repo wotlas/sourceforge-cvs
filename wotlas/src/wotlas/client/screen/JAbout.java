@@ -193,7 +193,7 @@ public class JAbout extends JCroppedWindow implements ActionListener {
   */
     public JAbout(Frame owner) {
 
-         super(owner,"About", ClientDirector.getResourceManager().getBase("gui") );
+         super(owner,"About", ClientDirector.getResourceManager() );
          setFont("Lucida Blackletter");
          calculTextWidth();
          c_text = new Color(40,50,60);
@@ -202,7 +202,7 @@ public class JAbout extends JCroppedWindow implements ActionListener {
 
          y0 = DRAWZONE_HEIGHT;  // y0 initialisation on j_drawzone's screen bottom
 
-         this.setImage("gui/about.jpg","gui/about-back.jpg");
+         this.setImage("about.jpg","about-back.jpg");
 
       // Frame properties
          getContentPane().setLayout(new BoxLayout(getContentPane(),BoxLayout.X_AXIS));
@@ -326,9 +326,7 @@ public class JAbout extends JCroppedWindow implements ActionListener {
          addWindowListener( new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
               	timer.stop();
-
-                if( SoundLibrary.getSoundLibrary()!=null )
-                    SoundLibrary.getSoundLibrary().stopMusic();
+                SoundLibrary.getMusicPlayer().stopMusic();
             }
         });
       // some additional j_drawzone properties
@@ -357,16 +355,14 @@ public class JAbout extends JCroppedWindow implements ActionListener {
               	timer.stop();
                 dispose();
 
-                if( SoundLibrary.getSoundLibrary()!=null )
-                    SoundLibrary.getSoundLibrary().stopMusic();
+                SoundLibrary.getMusicPlayer().stopMusic();
               }
             });
          
          SwingTools.centerComponent( this );
          setVisible(true);
 
-         if( SoundLibrary.getSoundLibrary()!=null )
-             SoundLibrary.getSoundLibrary().playMusic("credits.mid");
+         SoundLibrary.getMusicPlayer().playMusic("credits.mid");
 
       // Timer init
          timer = new javax.swing.Timer(20,this);
@@ -379,8 +375,8 @@ public class JAbout extends JCroppedWindow implements ActionListener {
    public void setImage(String imageBack, String imageBack2) {
      // MediaTracker for efficient image loading.
      MediaTracker mediaTracker = new MediaTracker(this);
-     back  = ClientDirector.getResourceManager().getBaseImage(imageBack);
-     back2 = ClientDirector.getResourceManager().getBaseImage(imageBack2);
+     back  = ClientDirector.getResourceManager().getGuiImage(imageBack);
+     back2 = ClientDirector.getResourceManager().getGuiImage(imageBack2);
      mediaTracker.addImage(back,0);
      mediaTracker.addImage(back2,1);
 

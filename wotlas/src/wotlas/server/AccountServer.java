@@ -23,6 +23,7 @@ import wotlas.libs.net.NetServer;
 import wotlas.libs.net.NetPersonality;
 
 import wotlas.common.ErrorCodeList;
+import wotlas.common.ResourceManager;
 
 import wotlas.utils.Debug;
 import wotlas.utils.FileTools;
@@ -42,8 +43,8 @@ import java.util.Properties;
  * @see wotlas.server.AccountBuilder
  */
 
-public class AccountServer extends NetServer implements ErrorCodeList
-{
+public class AccountServer extends NetServer implements ErrorCodeList {
+
  /*------------------------------------------------------------------------------------*/
 
    /** Static Link to Account Server Config File.
@@ -81,22 +82,24 @@ public class AccountServer extends NetServer implements ErrorCodeList
            Debug.exit();
         }
 
+        ResourceManager rManager = ServerDirector.getResourceManager();
+
      // we load the clientCounter from the ACCOUNT_CONFIG
-        Properties props = FileTools.loadPropertiesFile(
-                   ServerDirector.getResourceManager().getConfig(ACCOUNT_CONFIG) );
+        Properties props = rManager.loadProperties( rManager.getExternalConfigsDir()+ACCOUNT_CONFIG );
 
         if(props==null) {
            // file not found, we create one...
               Debug.signal( Debug.WARNING, this, "Could not find file: "
-                            +ServerDirector.getResourceManager().getConfig(ACCOUNT_CONFIG)
+                            +rManager.getExternalConfigsDir()+ACCOUNT_CONFIG
                             +"\n   Creating a new "+ACCOUNT_CONFIG+" file..." );
 
               props = new Properties();
               props.setProperty( "clientCounter", "0" );
               clientCounter=0;
               
-              if( !FileTools.savePropertiesFile( props,
-                       ServerDirector.getResourceManager().getConfig(ACCOUNT_CONFIG), "Do not remove or modify this file !") ){
+              if( !rManager.saveProperties( props,
+                                            rManager.getExternalConfigsDir()+ACCOUNT_CONFIG,
+                                            "Do not remove or modify this file !") ){
                   Debug.signal( Debug.FAILURE, this,"Cannot create or get "+ACCOUNT_CONFIG+" file!");
                   Debug.exit();
               }
@@ -206,9 +209,12 @@ public class AccountServer extends NetServer implements ErrorCodeList
       // save this state in config/accountServer.cfg
          Properties props = new Properties();
          props.setProperty( "clientCounter", ""+clientCounter );
+
+         ResourceManager rManager = ServerDirector.getResourceManager();
               
-         if( !FileTools.savePropertiesFile( props,
-                   ServerDirector.getResourceManager().getConfig(ACCOUNT_CONFIG), "Do not remove or modify this file !") ){
+         if( !rManager.saveProperties( props,
+                                       rManager.getExternalConfigsDir()+ACCOUNT_CONFIG,
+                                       "Do not remove or modify this file !") ){
              Debug.signal( Debug.CRITICAL, this,"Cannot save clientCounter (="
                            +clientCounter+") to "+ACCOUNT_CONFIG+" file!");
          }

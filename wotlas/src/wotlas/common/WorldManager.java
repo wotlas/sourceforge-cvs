@@ -20,21 +20,18 @@
 package wotlas.common;
 
 import wotlas.common.universe.*;
-import wotlas.common.Player;
-import wotlas.common.ResourceManager;
 import wotlas.common.router.*;
 
-import wotlas.libs.persistence.*;
 import wotlas.utils.Debug;
 
-import java.io.*;
+import java.io.File;
 
 
  /** A WorldManager provides all the methods needed to handle & manage the game world
   *  from its root.<p><br>
   *
   *  This class IS NOT directly persistent. The WorldMap instances are made persistent
-  *  by calling save() & load() methods. The files are saved separatly.
+  *  by calling saveUniverse() & loadUniverse() methods. The files are saved separatly.
   *  This is why a WorldManager is not directly persistent : we don't want to save
   *  all its data in one huge file.
   *
@@ -49,7 +46,6 @@ public class WorldManager {
 
   /** Game Universe Name Format
    */
-    public final static String UNIVERSE_HOME    = "universe";
     public final static String DEFAULT_UNIVERSE = "default";
     public final static String UNIVERSE_PREFIX  = "universe-save-";
     public final static String UNIVERSE_SUFFIX  = "";
@@ -65,7 +61,7 @@ public class WorldManager {
    */
     protected WorldMap[] worldMaps;
 
-  /** Our resource manager/
+  /** Our resource manager.
    */
     protected ResourceManager rManager;
 
@@ -105,6 +101,53 @@ public class WorldManager {
     public WorldManager( WorldMap worldMaps[], ResourceManager rManager ) {
          this.rManager = rManager;
          this.worldMaps = worldMaps;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To initialize this whole universe ( it rebuilds shortcuts ). This method calls
+   *  recursively the init() method of the WorldMaps, TownMaps, buildings, interiorMaps
+   *  and rooms.
+   *
+   *  IMPORTANT: You must ONLY call this method ONE time when ALL the world data has been
+   *  loaded...
+   */
+   protected void init() {
+
+    // 1 - any data ?
+       if(worldMaps==null) {
+          Debug.signal(Debug.WARNING, this, "Universe inits failed: No WorldMaps.");
+          return;
+       }
+
+    // 2 - we transmit the init() call
+       for( int i=0; i<worldMaps.length; i++ )
+            if( worldMaps[i]!=null )
+                worldMaps[i].init();
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To init this worldmap for message routing. We create an appropriate message router
+   *  for the world/towns/rooms via the provided factory. This method should be called once
+   *  on the WorldManager at start-up. It's your job to create the factory.
+   *
+   *  If you don't call this method you won't be able to manage message routing among
+   *  the different locations.
+   *
+   * @param msgRouterFactory our router factory for MessageRouter creation.
+   */
+    public void initMessageRouting( MessageRouterFactory msgRouterFactory ){
+     // 1 - any data ?
+        if(worldMaps==null) {
+           Debug.signal(Debug.WARNING, this, "Universe routing inits failed: No WorldMaps.");
+           return;
+        }
+
+     // 2 - we transmit the initMessageRouting() call
+        for( int i=0; i<worldMaps.length; i++ )
+             if( worldMaps[i]!=null )
+                 worldMaps[i].initMessageRouting( msgRouterFactory, this );
     }
 
  /*------------------------------------------------------------------------------------*/
@@ -370,53 +413,6 @@ public class WorldManager {
         return -1;
    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To initialize this whole universe ( it rebuilds shortcuts ). This method calls
-   *  recursively the init() method of the WorldMaps, TownMaps, buildings, interiorMaps
-   *  and rooms.
-   *
-   *  IMPORTANT: You must ONLY call this method ONE time when ALL the world data has been
-   *  loaded...
-   */
-   protected void init() {
-
-    // 1 - any data ?
-       if(worldMaps==null) {
-          Debug.signal(Debug.WARNING, this, "Universe inits failed: No WorldMaps.");
-          return;
-       }
-
-    // 2 - we transmit the init() call
-       for( int i=0; i<worldMaps.length; i++ )
-            if( worldMaps[i]!=null )
-                worldMaps[i].init();
-   }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To init this worldmap for message routing. We create an appropriate message router
-   *  for the world/towns/rooms via the provided factory. This method should be called once
-   *  on the WorldManager at start-up. It's your job to create the factory.
-   *
-   *  If you don't call this method you won't be able to manage message routing among
-   *  the different locations.
-   *
-   * @param msgRouterFactory our router factory for MessageRouter creation.
-   */
-    public void initMessageRouting( MessageRouterFactory msgRouterFactory ){
-     // 1 - any data ?
-        if(worldMaps==null) {
-           Debug.signal(Debug.WARNING, this, "Universe routing inits failed: No WorldMaps.");
-           return;
-        }
-
-     // 2 - we transmit the initMessageRouting() call
-        for( int i=0; i<worldMaps.length; i++ )
-             if( worldMaps[i]!=null )
-                 worldMaps[i].initMessageRouting( msgRouterFactory, this );
-    }
-
  /*------------------------------------------------------------------------------------*/
 
   /** To load the local game universe.
@@ -426,128 +422,100 @@ public class WorldManager {
    public void loadUniverse( boolean loadDefault ) {
       int worldCount=0, townCount=0, buildingCount=0, mapCount=0;
 
-      String universeHome =  rManager.getBase(UNIVERSE_HOME);
+      String universeHome =  rManager.getUniverseDataDir()+DEFAULT_UNIVERSE+"/";
 
     /*** STEP 1 - WE LOAD LOCATIONS (default data) ***/
 
-     // We search for the latest save...
-     //   String latest = FileTools.findSave( universeHome, UNIVERSE_PREFIX, UNIVERSE_SUFFIX, true );
-        String latest = null;
-
-        if( latest==null )
-            latest = DEFAULT_UNIVERSE;
-
-        universeHome += File.separator + latest;
-        File worldSaveList[] = new File( universeHome ).listFiles();
-
-        if( worldSaveList==null ) {
-            Debug.signal( Debug.ERROR, null, "No universe data found in: " + universeHome );
-            return;
-        }
+      String worldList[] = rManager.listUniverseDirectories( universeHome );
+      Debug.signal( Debug.NOTICE, null, "Loading Universe Data from :"+universeHome );
+      worldMaps = null;
 
      // ok, here we go ! we load all the worlds we can find...
-        Debug.signal( Debug.NOTICE, null, "Loading Universe Data from :"+universeHome );
-        worldMaps = null;
+        for( int w=0; w<worldList.length; w++ ) {
 
-        for( int w=0; w<worldSaveList.length; w++ )
-        {
-           if( !worldSaveList[w].isDirectory() )
-               continue;
+          // we load the world object
+             WorldMap world = (WorldMap) rManager.loadObject( worldList[w] + WORLD_FILE );
 
-           try
-           {
-             // we load the world object
-                String worldHome =  universeHome + File.separator + worldSaveList[w].getName();
+             if( world==null ) {
+                 Debug.signal(Debug.WARNING, this, "Failed to load World : "+worldList[w]);
+                 continue;
+             }
 
-                if( ! new File(worldHome + File.separator + WORLD_FILE).exists() ) {
-                    Debug.signal(Debug.WARNING, this, "Found Empty World directory : "+worldHome);
-                    continue;
-                }
+             if(worldMaps == null) {
+                worldMaps = new WorldMap[world.getWorldMapID()+1];
+             }
+             else if( worldMaps.length <= world.getWorldMapID() ) {
+                WorldMap[] myWorldMaps = new WorldMap[world.getWorldMapID()+1];
+                System.arraycopy( worldMaps, 0, myWorldMaps, 0, worldMaps.length );
+                worldMaps = myWorldMaps;
+             }
 
-                WorldMap world = (WorldMap) PropertiesConverter.load( worldHome + File.separator
-                                                                 + WORLD_FILE );
+             worldMaps[world.getWorldMapID()] = world;
+             worldCount++;
 
-                if (worldMaps == null) {
-                    worldMaps = new WorldMap[world.getWorldMapID()+1];
-                }
-                else if( worldMaps.length <= world.getWorldMapID() ) {
-                    WorldMap[] myWorldMaps = new WorldMap[world.getWorldMapID()+1];
-                    System.arraycopy( worldMaps, 0, myWorldMaps, 0, worldMaps.length );
-                    worldMaps = myWorldMaps;
-                }
+          // we load all the towns of this world
+             String townList[] = rManager.listUniverseDirectories( worldList[w] );
 
-                worldMaps[world.getWorldMapID()] = world;
-                worldCount++;
+             for( int t=0; t<townList.length; t++ ) {
 
-             // we load all the towns of this world
-                File townSaveList[] = new File( worldHome ).listFiles();
+               // we load the town objects
+                  TownMap town = (TownMap) rManager.loadObject( townList[t] + TOWN_FILE );
 
-                for( int t=0; t<townSaveList.length; t++ )
-                {
-                    if( townSaveList[t].getName().equals(WORLD_FILE) || !townSaveList[t].isDirectory())
-                        continue;
+                  if( town==null ) {
+                      Debug.signal(Debug.WARNING, this, "Failed to load Town : "+townList[t]);
+                      continue;
+                  }
 
-                 // we load the town objects
-                    String townHome =  worldHome + File.separator + townSaveList[t].getName();
+                  world.addTownMap( town );
+                  townCount++;
 
-                    TownMap town = (TownMap) PropertiesConverter.load( townHome + File.separator
-                                                                       + TOWN_FILE );
-                    world.addTownMap( town );
-                    townCount++;
+               // we load all this town's buildings
+                  String buildingList[] = rManager.listUniverseDirectories( townList[t] );
 
-                 // we load all this town's buildings
-                    File buildingSaveList[] = new File( townHome ).listFiles();
-
-                    for( int b=0; b<buildingSaveList.length; b++ )
-                    {
-                        if( buildingSaveList[b].getName().equals(TOWN_FILE) || !buildingSaveList[b].isDirectory() )
-                            continue;
+                  for( int b=0; b<buildingList.length; b++ ) {
 
                      // we load the building objects
-                        String buildingHome =  townHome + File.separator + buildingSaveList[b].getName();
+                        Building building = (Building) rManager.loadObject( buildingList[b] + BUILDING_FILE );
 
-                        Building building = (Building) PropertiesConverter.load( buildingHome + File.separator
-                                                                         + BUILDING_FILE );
+                        if( building==null ) {
+                            Debug.signal(Debug.WARNING, this, "Failed to load building : "+buildingList[b]);
+                            continue;
+                        }
+
                         town.addBuilding( building );
                         buildingCount++;
 
                      // we load all this building's maps
-                        File mapsSaveList[] = new File( buildingHome ).listFiles();
+                        String mapList[] = rManager.listUniverseFiles( buildingList[b], MAP_SUFFIX );
 
-                        for( int m=0; m<mapsSaveList.length; m++ )
-                        {
-                          if( mapsSaveList[m].getName().equals(BUILDING_FILE)
-                              || mapsSaveList[m].isDirectory()
-                              || !mapsSaveList[m].getName().endsWith(MAP_SUFFIX) )
-                            continue;
+                        for( int m=0; m<mapList.length; m++ ) {
+                            if( mapList[m].equals( buildingList[b]+BUILDING_FILE ) )
+                                continue;
 
-                         // we load the building objects
-                            String mapName =  buildingHome + File.separator + mapsSaveList[m].getName();
+                         // we load the map objects
+                            InteriorMap map = (InteriorMap) rManager.loadObject( mapList[m] );
 
-                            InteriorMap map = (InteriorMap) PropertiesConverter.load( mapName );
+                            if( map==null ) {
+                                Debug.signal(Debug.WARNING, this, "Failed to load map : "+mapList[m]);
+                                continue;
+                            }
+
                             building.addInteriorMap( map );
                             mapCount++;
                         }
-                    }
-                }
-           }
-           catch( PersistenceException pe ) {
-              Debug.signal( Debug.FAILURE, this, "Failed to load world: "
-                            + universeHome + File.separator
-                            + worldSaveList[w].getName() +"\n Message:"+pe.getMessage() );
-              Debug.exit();
-           }
+                  }
+             }
         }
+
+       Debug.signal( Debug.NOTICE, null, "World Manager loaded "+worldCount+" worlds, "+townCount+" towns, "
+                    +buildingCount+" buildings, "+mapCount+" maps." );
 
     /*** STEP 2 - WE LOAD OBJECTS (latest data) ***/
      //   String latest = FileTools.findSave( universeHome+File.separator+OBJECTS_HOME,
      //                                       OBJECTS_PREFIX, OBJECTS_SUFFIX, true );
-
-      Debug.signal( Debug.NOTICE, null, "World Manager loaded "+worldCount+" worlds, "+townCount+" towns, "
-                    +buildingCount+" buildings, "+mapCount+" maps." );
                     
     /*** STEP 3 - WE INIT THE WORLD ***/
-      init();
+       init();
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -560,121 +528,103 @@ public class WorldManager {
    public boolean saveUniverse( boolean isDefault ) {
 
      int worldCount=0, townCount=0, buildingCount=0, mapCount=0;
-     boolean failed = false;
 
    /*** STEP 1 - We only have to save location data if they are to be saved as default ***/
-   	
-   // which home ?
-      String universeHome = null;
-     
-      if( isDefault ) {
-        universeHome = rManager.getBase(UNIVERSE_HOME+File.separator+DEFAULT_UNIVERSE);
-        //  else
-        //    universeHome = databasePath+File.separator+UNIVERSE_HOME+File.separator
-        //                    +UNIVERSE_PREFIX+Tools.getLexicalDate()+UNIVERSE_SUFFIX;
 
-     // We create this directory...
-        new File(universeHome).mkdir();
+     if( isDefault ) {
 
-     // ok, here we go ! we load all the worlds we can find...
+        String universeHome = rManager.getUniverseDataDir()+DEFAULT_UNIVERSE+"/";
+
+     // We create this directory... (we expect that the directory is outside the JAR)
+        new File(universeHome).mkdirs();
+
+     // ok, here we go ! we save all our world data...
         Debug.signal( Debug.NOTICE, this, "Saving Universe Data to :"+universeHome );
 
-        for( int w=0; w<worldMaps.length; w++ )
-        {
-           if( worldMaps[w]==null )
-               continue;
+        for( int w=0; w<worldMaps.length; w++ ) {
+             if( worldMaps[w]==null ) continue;
+    
+          // we create the world directory
+             String worldHome =  universeHome + worldMaps[w].getShortName() + "/";
+             new File(worldHome).mkdir();
 
-           try
-           {
-             // we create the world directory
-                String worldHome =  universeHome + File.separator + worldMaps[w].getShortName();
-                new File(worldHome).mkdir();
+          // we save the world object
+             if( !rManager.saveObject( worldMaps[w], worldHome + WORLD_FILE ) ) {
+                 Debug.signal(Debug.ERROR,this,"Failed to save world : "+worldHome );
+                 continue;
+             }
 
-             // we save the world object
-                PropertiesConverter.save( worldMaps[w], worldHome + File.separator + WORLD_FILE );
-                worldCount++;
+             worldCount++;
 
-             // we save all the towns of this world
-                TownMap towns[] = worldMaps[w].getTownMaps();
+          // we save all the towns of this world
+             TownMap towns[] = worldMaps[w].getTownMaps();
+             if( towns == null ) continue;
 
-                if( towns == null )
-                    continue;
+             for( int t=0; t<towns.length; t++ ) {
+                  if( towns[t]==null ) continue;
 
-                for( int t=0; t<towns.length; t++ )
-                {
-                    if( towns[t]==null )
-                        continue;
+               // we save the town object
+                  String townHome =  worldHome + towns[t].getShortName()+"/";
+                  new File(townHome).mkdir();
 
-                 // we load the town objects
-                    String townHome =  worldHome + File.separator + towns[t].getShortName();
-                    new File(townHome).mkdir();
+                  if( !rManager.saveObject( towns[t], townHome + TOWN_FILE ) ) {
+                      Debug.signal(Debug.ERROR,this,"Failed to save town : "+townHome );
+                      continue;
+                  }
 
-                    PropertiesConverter.save( towns[t], townHome + File.separator + TOWN_FILE );
-                    townCount++;
+                  townCount++;
 
-                 // we save all this town's buildings
-                    Building buildings[] = towns[t].getBuildings();
+               // we save all this town's buildings
+                  Building buildings[] = towns[t].getBuildings();
+                  if( buildings==null ) continue;
 
-                    if( buildings==null )
-                        continue;
+                  for( int b=0; b<buildings.length; b++ ) {
+                       if( buildings[b]==null ) continue;
 
-                    for( int b=0; b<buildings.length; b++ )
-                    {
-                        if( buildings[b]==null )
-                            continue;
+                    // we save the building objects
+                       String buildingHome =  townHome + buildings[b].getShortName() + "/";
+                       new File(buildingHome).mkdir();
 
-                     // we load the building objects
-                        String buildingHome =  townHome + File.separator + buildings[b].getShortName();
-                        new File(buildingHome).mkdir();
+                       if( !rManager.saveObject( buildings[b], buildingHome + BUILDING_FILE ) ) {
+                           Debug.signal(Debug.ERROR,this,"Failed to save building : "+buildingHome );
+                           continue;
+                       }
 
-                        PropertiesConverter.save( buildings[b], buildingHome + File.separator + BUILDING_FILE );
-                        buildingCount++;
+                       buildingCount++;
 
-                     // we save all this building's maps
-                        InteriorMap interiorMaps[] = buildings[b].getInteriorMaps();
+                    // we save all this building's maps
+                       InteriorMap interiorMaps[] = buildings[b].getInteriorMaps();
+                       if( interiorMaps==null ) continue;
 
-                        if( interiorMaps==null )
-                            continue;
+                       for( int m=0; m<interiorMaps.length; m++ ) {
+                            if( interiorMaps[m]==null ) continue;
 
-                        for( int m=0; m<interiorMaps.length; m++ )
-                        {
-                          if( interiorMaps[m]==null )
-                             continue;
+                         // we save the maps
+                            String mapName =  buildingHome + interiorMaps[m].getShortName() + MAP_SUFFIX;
 
-                         // we load the building objects
-                            String mapName =  buildingHome + File.separator
-                                              + interiorMaps[m].getShortName() + MAP_SUFFIX;
+                            if( !rManager.saveObject( interiorMaps[m], mapName ) ) {
+                                Debug.signal(Debug.ERROR,this,"Failed to save map : "+mapName );
+                                continue;
+                            }
 
-                            PropertiesConverter.save( interiorMaps[m], mapName );
                             mapCount++;
-                        }
-                    }
-                }
-           }
-           catch( PersistenceException pe ) {
-              failed = true;
-
-              Debug.signal( Debug.CRITICAL, this, "Failed to save world: "
-                            + universeHome + File.separator
-                            + worldMaps[w].getShortName() +"\n Message:"+pe.getMessage() );
-           }
+                       }
+                  }
+             }
         }
-
-      }
+     }
 
     /*** STEP 2 - WE SAVE OBJECTS DATA ***/
 
-      if(isDefault) {
-      }
 
 
     /*** STEP 3 - Print some stats for control ***/
-      if(isDefault)
+     if(isDefault)
          Debug.signal( Debug.NOTICE, this, "Saved "+worldCount+" worlds, "+townCount+" towns, "
                        +buildingCount+" buildings, "+mapCount+" maps." );
 
-      return !failed;
-   }
+     return true;
+  }
 
  /*------------------------------------------------------------------------------------*/
 

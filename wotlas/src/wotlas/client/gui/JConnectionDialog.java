@@ -20,7 +20,7 @@
 package wotlas.client.gui;
 
 import wotlas.libs.net.*;
-import wotlas.utils.aswing.*;
+import wotlas.libs.aswing.*;
 import wotlas.utils.Debug;
 import wotlas.utils.SwingTools;
 import wotlas.utils.Tools;
@@ -230,7 +230,7 @@ public abstract class JConnectionDialog extends JDialog implements Runnable {
         Runnable runnable = new Runnable() {
            public void run() {
               new AInfoDialog( frame, ferror, true,
-              ClientDirector.getResourceManager().getBase("gui") );
+              ClientDirector.getResourceManager() );
            }
         };
 

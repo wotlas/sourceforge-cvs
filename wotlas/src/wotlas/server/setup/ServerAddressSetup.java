@@ -26,7 +26,7 @@ import wotlas.libs.graphics2D.FontFactory;
 import wotlas.utils.*;
 
 import wotlas.utils.Debug;
-import wotlas.utils.aswing.*;
+import wotlas.libs.aswing.*;
 
 import wotlas.libs.log.*;
 
@@ -46,32 +46,25 @@ public class ServerAddressSetup extends JWizard {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Database Config.
-   */
-    private final static String DEFAULT_BASE_PATH = "../base";
-
   /** Setup Command Line Help
    */
     public final static String SETUP_COMMAND_LINE_HELP =
             "Usage: ServerAddressSetup -[help|base <path>]\n\n"
            +"Examples : \n"
            +"  ServerAddressSetup -base ../base : sets the data location.\n\n"
-           +"If the -base option is not set we search for data in "+DEFAULT_BASE_PATH
+           +"If the -base option is not set we search for data in "
+           +ResourceManager.DEFAULT_BASE_PATH
            +"\n\n";
-
-  /** Format of the server log name.
-   */
-    public final static String SERVER_LOGS = "logs";
-
-  /** Format of the configs path name
-   */
-    public final static String SERVER_CONFIGS = "configs";
 
  /*------------------------------------------------------------------------------------*/
 
+   /** Our resource Manager
+    */
+     private static ResourceManager rManager;
+
    /** Our base path.
     */
-     private static String basePath = DEFAULT_BASE_PATH;
+     private static String basePath;
 
    /** Our serverID
     */
@@ -99,7 +92,7 @@ public class ServerAddressSetup extends JWizard {
    */
     public ServerAddressSetup() {
          super("Server Address Setup",
-               basePath+File.separator+"gui",
+               rManager,
                FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter").deriveFont(18f),
                470,550);
 
@@ -212,7 +205,7 @@ public class ServerAddressSetup extends JWizard {
            JLabel label1 = new JLabel("Select/Enter your Internet address or DNS name (do not enter both) :");
            label1.setAlignmentX(LEFT_ALIGNMENT);
 
-           String lastIP = FileTools.loadTextFromFile( serverAddressFile );
+           String lastIP = rManager.loadText( serverAddressFile );
 
            if(lastIP==null) lastIP="0.0.0.0";
 
@@ -369,7 +362,7 @@ public class ServerAddressSetup extends JWizard {
        	      remoteServersProperties.setProperty( "tranfer.fileTransferOptions", c_options.getSelectedItem().toString() );
        	      remoteServersProperties.setProperty( "transfer.fileTransferWorkingDir", c_workdir.getSelectedItem().toString() );
 
-              if( !FileTools.saveTextToFile( serverAddressFile, t_ipAddress.getText() ) ) {
+              if( !rManager.saveText( serverAddressFile, t_ipAddress.getText() ) ) {
                   JOptionPane.showMessageDialog( null, "Failed to save IP address to\n"+serverAddressFile,
                                                         "Error", JOptionPane.ERROR_MESSAGE);
                   return false;
@@ -611,8 +604,8 @@ public class ServerAddressSetup extends JWizard {
    */
     static public void main( String argv[] ) {
 
-        // STEP 1 - We parse the command line options
-           basePath = DEFAULT_BASE_PATH;
+        // STEP 0 - We parse the command line options
+           basePath = ResourceManager.DEFAULT_BASE_PATH;
            Debug.displayExceptionStack( true );
 
            for( int i=0; i<argv.length; i++ ) {
@@ -637,11 +630,17 @@ public class ServerAddressSetup extends JWizard {
               }
            }
 
+        // STEP 1 - Creation of the ResourceManager
+           rManager = new ResourceManager();
+
+           if( !rManager.inJar() )
+               rManager.setBasePath(basePath);
+
         // STEP 2 - Log Creation
            try {
               Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(),
-                basePath+File.separator+SERVER_LOGS+File.separator+"server-setup.log",
-                "log-title-dark.jpg", basePath+File.separator+"gui" ) );
+                                    rManager.getExternalLogsDir()+"server-setup.log",
+                                    "log-title-dark.jpg", rManager ) );
            } catch( java.io.FileNotFoundException e ) {
               e.printStackTrace();
               Debug.exit();
@@ -649,20 +648,19 @@ public class ServerAddressSetup extends JWizard {
 
            Debug.signal(Debug.NOTICE,null,"Starting Server Address Setup...");
 
-           serverProperties = new ServerPropertiesFile(basePath+File.separator+SERVER_CONFIGS);
-           remoteServersProperties = new RemoteServersPropertiesFile(basePath+File.separator+SERVER_CONFIGS);
+           serverProperties = new ServerPropertiesFile(rManager);
+           remoteServersProperties = new RemoteServersPropertiesFile(rManager);
 
            serverID = serverProperties.getIntegerProperty("init.serverID");
            Debug.signal( Debug.NOTICE, null, "Current Default Server ID is : "+serverID );
 
-           serverAddressFile = basePath
-                               +File.separator+ServerConfigManager.SERVERS_HOME
-                               +File.separator+ServerConfigManager.SERVERS_PREFIX
+           serverAddressFile = rManager.getExternalServerConfigsDir()
+                               +ServerConfigManager.SERVERS_PREFIX
                                +serverID+ServerConfigManager.SERVERS_SUFFIX
                                +ServerConfigManager.SERVERS_ADDRESS_SUFFIX;
 
          // STEP 3 - Creation of our Font Factory
-           FontFactory.createDefaultFontFactory( basePath+ File.separator + "fonts" );
+           FontFactory.createDefaultFontFactory( rManager );
            Debug.signal( Debug.NOTICE, null, "Font factory created..." );
 
          // STEP 4 - Start the wizard

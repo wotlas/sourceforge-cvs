@@ -37,12 +37,12 @@ public interface WotCharacter
 {
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To get a Drawable for this character. This is can not be used on the
-    *  server side : if no ImageLibrary has been created we return null.
+   /** To get a Drawable for this character. This should not be used on the
+    *  server side.
     *
     * @param player the player to chain the drawable to. If a XXXDataSupplier is needed
     *               we sets it to this player object.
-    * @return a Drawable for this character, null if no ImageLibrary is present.
+    * @return a Drawable for this character.
     */
       public Drawable getDrawable( Player player );
 

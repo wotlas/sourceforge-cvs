@@ -25,14 +25,12 @@ import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.persistence.*;
 import wotlas.libs.sound.*;
 
-import wotlas.utils.aswing.*;
+import wotlas.libs.aswing.*;
 import wotlas.utils.*;
 import wotlas.utils.SwingTools;
 
 import java.awt.*;
 import java.awt.event.*;
-
-import java.io.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -59,31 +57,31 @@ public class JConfigurationDlg extends JDialog {
   /** To get the music volume.
    */
     public short getMusicVolume() {
-        return SoundLibrary.getSoundLibrary().getMusicVolume();
+        return SoundLibrary.getMusicPlayer().getMusicVolume();
     }
-  
+
   /** To set the music volume.
    */
     public void setMusicVolume(short musicVolume) {
-       if ((musicVolume>-1) && (musicVolume<SoundLibrary.MAX_MUSIC_VOLUME))
-           musicVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_MUSIC_VOLUME, musicVolume);
+       if ((musicVolume>-1) && (musicVolume<100))
+           musicVolLevel = new JSlider(JSlider.HORIZONTAL, 0, 100, musicVolume);
        else
-           musicVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_MUSIC_VOLUME, SoundLibrary.MAX_MUSIC_VOLUME/2);
+           musicVolLevel = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
     }
   
   /** To get the sound volume.
    */
     public short getSoundVolume() {
-       return SoundLibrary.getSoundLibrary().getSoundVolume();
+       return SoundLibrary.getSoundPlayer().getSoundVolume();
     }
   
   /** To set the sound volume.
    */
     public void setSoundVolume(short soundVolume) {    
-      if ((soundVolume>-1) && (soundVolume<=SoundLibrary.MAX_SOUND_VOLUME))
-         soundVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_SOUND_VOLUME, soundVolume);
+      if ((soundVolume>-1) && (soundVolume<=100))
+         soundVolLevel = new JSlider(JSlider.HORIZONTAL, 0, 100, soundVolume);
       else
-         soundVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_SOUND_VOLUME, SoundLibrary.MAX_SOUND_VOLUME/2);
+         soundVolLevel = new JSlider(JSlider.HORIZONTAL, 0, 100, 50 );
     }
     
  /*------------------------------------------------------------------------------------*/
@@ -96,10 +94,10 @@ public class JConfigurationDlg extends JDialog {
 
       ClientConfiguration clientConfiguration = ClientDirector.getClientConfiguration();
 
-      musicVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_MUSIC_VOLUME,
+      musicVolLevel = new JSlider(JSlider.HORIZONTAL, 0, 100,
                                   (short)clientConfiguration.getMusicVolume());
 
-      soundVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_SOUND_VOLUME,
+      soundVolLevel = new JSlider(JSlider.HORIZONTAL, 0, 100,
                                   (short)clientConfiguration.getSoundVolume());
 
       cButton = new JCheckBox("High details for player name display.");
@@ -161,35 +159,36 @@ public class JConfigurationDlg extends JDialog {
      b_ok.addActionListener(new ActionListener() {
        public void actionPerformed (ActionEvent e) {
 
-        ClientConfiguration clientConfiguration = ClientDirector.getClientConfiguration();
+        ClientConfiguration clientConfig = ClientDirector.getClientConfiguration();
 
-        clientConfiguration.setMusicVolume((short) musicVolLevel.getValue());
-        clientConfiguration.setSoundVolume((short) soundVolLevel.getValue());
-        SoundLibrary.getSoundLibrary().setSoundVolume((short) soundVolLevel.getValue());
+        clientConfig.setMusicVolume((short) musicVolLevel.getValue());
+        clientConfig.setSoundVolume((short) soundVolLevel.getValue());
+        SoundLibrary.getSoundPlayer().setSoundVolume((short) soundVolLevel.getValue());
+        SoundLibrary.getMusicPlayer().setMusicVolume((short) musicVolLevel.getValue());
 
-        clientConfiguration.setNoMusic((musicVolLevel.getValue()==0));
-        SoundLibrary.getSoundLibrary().setNoMusic(clientConfiguration.getNoMusic());
+        clientConfig.setNoMusic((musicVolLevel.getValue()==0));
+        SoundLibrary.getMusicPlayer().setNoMusicState(clientConfig.getNoMusic());
 
-        clientConfiguration.setNoSound((soundVolLevel.getValue()==0));
-        SoundLibrary.getSoundLibrary().setNoSound(clientConfiguration.getNoSound());
+        clientConfig.setNoSound((soundVolLevel.getValue()==0));
+        SoundLibrary.getSoundPlayer().setNoSoundState(clientConfig.getNoSound());
 
-        clientConfiguration.setHighDetails(cButton.isSelected());
-        clientConfiguration.setRememberPasswords(savePassButton.isSelected());
+        clientConfig.setHighDetails(cButton.isSelected());
+        clientConfig.setRememberPasswords(savePassButton.isSelected());
 
-        if( clientConfiguration.getCenterScreenPolicy()!=policyButton.isSelected() 
-            || clientConfiguration.getUseHardwareAcceleration()!=hardwareButton.isSelected() )
+        if( clientConfig.getCenterScreenPolicy()!=policyButton.isSelected() 
+            || clientConfig.getUseHardwareAcceleration()!=hardwareButton.isSelected() )
             JOptionPane.showMessageDialog( null, "You've modified the behaviour of the 2D graphics engine.\n"
                                                 +"If you are connected to the game you'll need to reconnect\n"
                                                 +"to let the changes apply.",
                                                  "Information", JOptionPane.INFORMATION_MESSAGE);
 
-        clientConfiguration.setCenterScreenPolicy(policyButton.isSelected());
-        clientConfiguration.setUseHardwareAcceleration(hardwareButton.isSelected());
+        clientConfig.setCenterScreenPolicy(policyButton.isSelected());
+        clientConfig.setUseHardwareAcceleration(hardwareButton.isSelected());
 
-        if( clientConfiguration.getDisplayLogWindow()!=logButton.isSelected() )
+        if( clientConfig.getDisplayLogWindow()!=logButton.isSelected() )
             ClientDirector.getLogStream().setVisible( logButton.isSelected() );
 
-        clientConfiguration.setDisplayLogWindow(logButton.isSelected());
+        clientConfig.setDisplayLogWindow(logButton.isSelected());
 
         ClientDirector.getClientConfiguration().save();
         dispose();
@@ -333,7 +332,7 @@ public class JConfigurationDlg extends JDialog {
     /** Invoked when volume is changed.
      */
     public void stateChanged(ChangeEvent e) {
-      SoundLibrary.getSoundLibrary().setMusicVolume((short) musicVolLevel.getValue());
+      SoundLibrary.getMusicPlayer().setMusicVolume((short) musicVolLevel.getValue());
     }
   }
 

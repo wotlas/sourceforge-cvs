@@ -19,7 +19,7 @@
 
 package wotlas.libs.wizard;
 
-
+import java.io.FileInputStream;
 import java.util.Hashtable;
 
 
@@ -149,9 +149,21 @@ public class JWizardStepFactory {
    *  @return the wanted JWizardStep instance, null if we failed to retrieve/build it.
    */
    public JWizardStep getJWizardStepFromFile( String parametersFile ) {
-       JWizardStepParameters parameters = JWizardStepParameters.loadFromFile( parametersFile );
 
-       if(parameters==null) return null; // load failed
+       FileInputStream fis = null;
+
+       try{
+         fis = new FileInputStream(parametersFile);
+       }
+       catch( Exception e ) {
+       	 e.printStackTrace();
+       	 return null;
+       }
+
+       JWizardStepParameters parameters = JWizardStepParameters.loadFromStream( fis );
+
+       if(parameters==null)
+          return null; // load failed
 
        return getJWizardStep(parameters);
    }

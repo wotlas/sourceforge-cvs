@@ -27,7 +27,7 @@ package wotlas.common;
  *   - provide start-up information for the ServerManager or for the client side.<br>
  *
  *   - provide server information to export to a central web server
- *     ( http://light-and-shadow.org for instance ). This central server registers
+ *     ( http://wotlas.net for instance ). This central server registers
  *     game servers and publish a up-to-date list of active servers. Wotlas Client Software
  *     can then download this list and display it to the user.<br><p>
  *
@@ -119,7 +119,7 @@ public class ServerConfig
    *  Data is loaded by the PersistenceManager.
    */
      public ServerConfig() {
-        serverSymbolicName = new String("My Wotlas Server");
+        serverSymbolicName = new String("Wotlas Server");
         serverName = null;
         serverID = 0;
         accountServerPort = 25500;
@@ -129,7 +129,7 @@ public class ServerConfig
         maxNumberOfAccountConnections = 20;
         maxNumberOfGatewayConnections = 20;
         description = new String("Enter a description for your server...");
-        location = new String("France ? USA ? Germany ? England ?");
+        location = new String("France / USA / Germany / England / ...");
         adminEmail = new String("myAdress@foobar.net");
         lastUpdateTime=0;
         

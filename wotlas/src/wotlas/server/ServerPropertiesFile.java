@@ -19,10 +19,9 @@
 
 package wotlas.server;
 
-import java.io.File;
-
+import wotlas.common.ResourceManager;
+import wotlas.common.PropertiesConfigFile;
 import wotlas.utils.Debug;
-import wotlas.utils.PropertiesConfigFile;
 
 /** Represents the 'server.cfg' properties file. We check that its content is valid.
  *
@@ -40,17 +39,12 @@ public class ServerPropertiesFile extends PropertiesConfigFile {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Constructor with the full file path to config files ( "../src/config" for example).
+   /** Constructor with our resource manager.
     *
-    * @param configFilePath file path to config files.
+    * @param rManager our resource manager
     */
-    public ServerPropertiesFile( String configFilePath ) {
-    	super( configFilePath+File.separator+SERVER_CONFIG );
-
-        if( !isValid("init.helpPath") ) {
-            Debug.signal( Debug.FAILURE, this, "init.helpPath property not set in "+SERVER_CONFIG+" !" );
-            Debug.exit();
-        }
+    public ServerPropertiesFile( ResourceManager rManager ) {
+    	super( rManager, SERVER_CONFIG );
 
         if( !isValidInteger("init.persistencePeriod") ) {
             Debug.signal( Debug.FAILURE, this, "The given persistence period is not a valid integer ! (in "+SERVER_CONFIG+")" );

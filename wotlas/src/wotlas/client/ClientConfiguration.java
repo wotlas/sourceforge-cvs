@@ -20,7 +20,7 @@
 package wotlas.client;
 
 import wotlas.libs.sound.*;
-import wotlas.libs.persistence.*;
+import wotlas.common.ResourceManager;
 import wotlas.utils.Debug;
 
 import java.io.*;
@@ -44,11 +44,11 @@ public class ClientConfiguration {
 
   /** music volume.
    */
-  private short musicVolume = SoundLibrary.MAX_MUSIC_VOLUME/2;
+  private short musicVolume = 50;
 
   /** sound volume.
    */
-  private short soundVolume = SoundLibrary.MAX_SOUND_VOLUME;
+  private short soundVolume = 100;
 
   /** true if no music.
    */
@@ -250,13 +250,15 @@ public class ClientConfiguration {
 
   /** To save this client configuration.
    */
-     public void save() {
-        try{
-           PropertiesConverter.save(this, ClientDirector.getResourceManager().getConfig(CLIENT_CONFIG_FILENAME) );
+     public boolean save() {
+     	ResourceManager rManager = ClientDirector.getResourceManager();
+     	
+        if( !rManager.saveObject(this, rManager.getExternalConfigsDir()+CLIENT_CONFIG_FILENAME ) ) {
+            Debug.signal( Debug.ERROR, null, "Failed to save client configuration.");
+            return false;
         }
-        catch (PersistenceException pe) {
-           Debug.signal( Debug.ERROR, null, "Failed to save client configuration : " + pe.getMessage() );
-        }
+        
+        return true;
      }
 
  /*------------------------------------------------------------------------------------*/ 
@@ -264,20 +266,19 @@ public class ClientConfiguration {
   /** To load the default client configuration.
    */
      public static ClientConfiguration load() {
-       String fileName = ClientDirector.getResourceManager().getConfig(CLIENT_CONFIG_FILENAME);
+     	ResourceManager rManager = ClientDirector.getResourceManager();
+        String fileName = rManager.getExternalConfigsDir()+CLIENT_CONFIG_FILENAME;
+        ClientConfiguration cfg = null;
 
-       try {
-         if(new File(fileName).exists())
-            return (ClientConfiguration) PropertiesConverter.load(fileName);
-         else {
+         if( new File(fileName).exists() )
+            cfg = (ClientConfiguration) rManager.loadObject(fileName);
+
+         if(cfg==null) {
             Debug.signal( Debug.ERROR, null, "Failed to load client configuration. Creating a new one." );
             return new ClientConfiguration();
          }
-       }
-       catch (PersistenceException pe) {
-           Debug.signal( Debug.ERROR, null, "Failed to load client configuration : " + pe.getMessage()+". Creating a new one." );
-           return new ClientConfiguration();
-       }
+
+         return cfg;
     }
 
  /*------------------------------------------------------------------------------------*/ 

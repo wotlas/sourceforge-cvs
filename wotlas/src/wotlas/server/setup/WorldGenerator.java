@@ -47,10 +47,6 @@ public class WorldGenerator {
 
            float halfPI = (float)(Math.PI/2);
 
-        // STEP 1 - We load the database path. Where is the data ?
-           String databasePath = "../base";
-
-
         // STEP 2 - WORLD CREATION : RANDLAND
            WorldMap worldMaps[] = new WorldMap[1];
 
@@ -2427,7 +2423,7 @@ public class WorldGenerator {
              rooms[8].addRoomLink( rooms[5].getRoomLinks()[0] );
 
         // STEP XX - We save this simple universe.
-           ResourceManager rManager = new ResourceManager(databasePath,"","","");
+           ResourceManager rManager = new ResourceManager();
            WorldManager wManager = new WorldManager( worldMaps, rManager );
 
            if( wManager.saveUniverse( true ) )

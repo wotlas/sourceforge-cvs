@@ -21,8 +21,6 @@ package wotlas.libs.graphics2D.drawable;
 
 import wotlas.libs.graphics2D.*;
 import java.awt.*;
-import java.lang.*;
-import java.io.*;
 import java.util.*;
 import java.awt.font.*;
 

@@ -149,10 +149,10 @@ public class WorldMapData implements MapData {
        ImageIdentifier mapMaskID = gDirector.getImageLibrary().getImageIdentifier( backgroundImageID, "mask" );
 
        if(mapMaskID!=null) {
-          File maskFile = gDirector.getImageLibrary().getImageFile( mapMaskID );
+          String maskFile = gDirector.getImageLibrary().getImageFile( mapMaskID );
           
           if(maskFile!=null)
-             bufIm = ImageLibrary.loadBufferedImage( maskFile.getPath(), BufferedImage.TYPE_INT_ARGB );
+             bufIm = gDirector.getImageLibrary().loadBufferedImage( maskFile, BufferedImage.TYPE_INT_ARGB );
        }
 
        if(bufIm==null) {
@@ -210,7 +210,7 @@ public class WorldMapData implements MapData {
     String midiFile = worldMap.getMusicName();
 
     if (midiFile != null)
-      SoundLibrary.getSoundLibrary().playMusic( midiFile );
+      SoundLibrary.getMusicPlayer().playMusic( midiFile );
 
     // 10 - We retrieve eventual remaining data...
        dataManager.sendMessage(new AllDataLeftPleaseMessage());

@@ -20,10 +20,7 @@
 package wotlas.common;
 
 import wotlas.utils.*;
-import wotlas.libs.persistence.*;
-
 import java.io.File;
-import java.io.IOException;
 
 import java.awt.*;
 import javax.swing.*;
@@ -42,7 +39,6 @@ public class ServerConfigManager {
 
    /** Format of the Server Config File Names
     */
-       public final static String SERVERS_HOME = "servers";
        public final static String SERVERS_PREFIX = "server-";
        public final static String SERVERS_SUFFIX = ".cfg";
        public final static String SERVERS_ADDRESS_SUFFIX = ".adr"; // this suffix is added after the
@@ -55,14 +51,14 @@ public class ServerConfigManager {
     *  If a server becomes unreachable then we check if its UPDATE_PERIOD has been reached
     *  if true we check for a new address.
     */
-       public final long UPDATE_PERIOD = 1000*60*10;  // every five minutes
+       public final long UPDATE_PERIOD = 1000*60*5;  // every five minutes
 
 
    /** Update period for the server table... (in ms). This is a straight cache mode.
     *  Each time the serverTable is accessed we check its lastServerTableUpdateTime
     *  and compare it to this period...
     */
-       public final long UPDATE_TABLE_PERIOD = 1000*3600*6;  // every 6 hours
+       public final long UPDATE_TABLE_PERIOD = 1000*3600*4;  // every 4 hours
 
  /*------------------------------------------------------------------------------------*/
 
@@ -230,8 +226,9 @@ public class ServerConfigManager {
                       }
 
                       String newAdr = FileTools.getTextFileFromURL( fileURL+SERVERS_ADDRESS_SUFFIX );
+                      newAdr = checkAddressFormat(newAdr);
 
-                      if( newAdr==null ) {
+                      if( newAdr.length()==0 ) {
                           Debug.signal( Debug.CRITICAL, this, "Failed to get new Server "+config.getServerID()+" address. Reverting to previous one.");
                           return;
                       }
@@ -357,8 +354,9 @@ public class ServerConfigManager {
                  }
 
                  String newAdr = FileTools.getTextFileFromURL( fileURL+SERVERS_ADDRESS_SUFFIX );
+                 newAdr = checkAddressFormat( newAdr );
 
-                 if( newAdr==null ) {
+                 if( newAdr.length()==0 ) {
                      Debug.signal( Debug.ERROR, this, "Failed to get new Server "+serverID+" address. Reverting to previous one.");
                      continue;
                  }
@@ -506,8 +504,9 @@ public class ServerConfigManager {
 
      // We load the address file
         String newAdr = FileTools.getTextFileFromURL( fileURL+SERVERS_ADDRESS_SUFFIX );
+        newAdr = checkAddressFormat(newAdr); // we check the format
 
-        if( newAdr==null ) {
+        if( newAdr.length()==0 ) {
             Debug.signal( Debug.ERROR, this, "Failed to get new Server "+currentConfig.getServerID()+" address. Reverting to previous one.");
             return null;
         }
@@ -516,6 +515,32 @@ public class ServerConfigManager {
             Debug.signal(Debug.ERROR,this,"For some reason we failed to save the new address...");
 
         return newAdr; // new address the user can try...
+    }
+
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Check the format of a DNS name or IP address.
+   *  @param adr address to check
+   *  @return the address without any ending special chars.
+   */
+    public String checkAddressFormat( String adr ) {
+    	 if(adr==null)
+    	    return "";
+    	
+      // We search for bad chars at the end of the file.
+      // the end chars must be either letters (end of a domain name fr, com, net etc...)
+      // or numbers (end of an IP address).
+         adr = adr.trim();
+
+         for( int i=adr.length()-1; i!=0; i-- ) {
+              char c = adr.charAt(i);
+              
+              if( ('a'<=c && c<='z') || ('A'<=c && c<='Z') ||
+                  ('0'<=c && c<='9') || c=='.' )
+                  return adr.substring(0,i+1);
+         }
+         
+         return ""; // not a valid address !!!
     }
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -531,29 +556,21 @@ public class ServerConfigManager {
    */
    public ServerConfig loadServerConfig( int serverID ) {
 
-      String serverFile = rManager.getBase( SERVERS_HOME+File.separator
-                            +SERVERS_PREFIX+serverID+SERVERS_SUFFIX );
+        String serverFile = rManager.getExternalServerConfigsDir()
+                                      +SERVERS_PREFIX+serverID+SERVERS_SUFFIX;
 
-      try{
-          ServerConfig config = (ServerConfig) PropertiesConverter.load( serverFile );
-          String serverName = FileTools.loadTextFromFile( serverFile+SERVERS_ADDRESS_SUFFIX );
-          
-          if( serverName==null )
-             throw new IOException("no "+serverFile+SERVERS_ADDRESS_SUFFIX+" file found !");
-          
-          if( serverName.indexOf('\n')>0 )
-              serverName = serverName.substring(0,serverName.indexOf('\n'));
+        ServerConfig config = (ServerConfig) rManager.loadObject( serverFile );
+        String serverAdr = rManager.loadText( serverFile+SERVERS_ADDRESS_SUFFIX );
+        serverAdr = checkAddressFormat( serverAdr );
 
-          if(serverName.length()==0)
-             throw new IOException("empty "+serverFile+SERVERS_ADDRESS_SUFFIX+" file !");
+        if( config==null || serverAdr.length()==0 ) {
+            Debug.signal( Debug.ERROR, this, "Failed to load server config: "
+                                   +"no valid server config"+serverID+" files found !");
+            return null;
+        }
           
-          config.setServerName( serverName.trim() );
-          return config;
-      }
-      catch( Exception pe ) {
-          Debug.signal( Debug.ERROR, this, "Failed to load server config: "+pe.getMessage() );
-          return null;
-      }
+        config.setServerName( serverAdr );
+        return config;
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -565,22 +582,17 @@ public class ServerConfigManager {
    */
    public boolean saveServerConfig( ServerConfig serverConfig ) {
 
-      String serverFile = rManager.getBase( SERVERS_HOME+File.separator
-                            +SERVERS_PREFIX+serverConfig.getServerID()+SERVERS_SUFFIX );
+        String serverFile = rManager.getExternalServerConfigsDir()
+                            +SERVERS_PREFIX+serverConfig.getServerID()+SERVERS_SUFFIX;
 
-      try{
-          PropertiesConverter.save( serverConfig, serverFile );
+        if( !rManager.saveObject( serverConfig, serverFile ) || ( serverConfig.getServerName()!=null &&
+            !rManager.saveText( serverFile+SERVERS_ADDRESS_SUFFIX, serverConfig.getServerName() ) ) ) {
+            Debug.signal( Debug.ERROR, this, "Failed to save server config: "
+                         +"couldn't save "+serverFile+SERVERS_ADDRESS_SUFFIX+" file !");
+            return false;
+        }
 
-          if( serverConfig.getServerName()!=null
-              && !FileTools.saveTextToFile( serverFile+SERVERS_ADDRESS_SUFFIX, serverConfig.getServerName() ) )
-              throw new IOException("couldn't save "+serverFile+SERVERS_ADDRESS_SUFFIX+" file !");
-
-          return true;
-      }
-      catch( Exception pe ) {
-          Debug.signal( Debug.ERROR, this, "Failed to save server config: "+pe.getMessage() );
-          return false;
-      }
+       return true;
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -596,34 +608,37 @@ public class ServerConfigManager {
    */
    public boolean updateServerConfig( String newConfigText, String newAdrText, ServerConfig oldServerConfig ) {
 
-      String serverFile = rManager.getBase(SERVERS_HOME+File.separator
-                            +SERVERS_PREFIX+oldServerConfig.getServerID()+SERVERS_SUFFIX );
+        String serverFile = rManager.getExternalServerConfigsDir()
+                              +SERVERS_PREFIX+oldServerConfig.getServerID()+SERVERS_SUFFIX;
 
-      try{
-          if( newConfigText!=null && !FileTools.saveTextToFile( serverFile, newConfigText ) )
-             throw new IOException("failed to save "+serverFile+" file !");
+        if( newConfigText!=null && !rManager.saveText( serverFile, newConfigText ) ) {
+            Debug.signal( Debug.ERROR, this, "Failed to update server config: "
+                                              +"failed to save "+serverFile+" file !");
+            return false;
+        }
 
-          if( !FileTools.saveTextToFile( serverFile+SERVERS_ADDRESS_SUFFIX, newAdrText ) )
-             throw new IOException("failed to save "+serverFile+SERVERS_ADDRESS_SUFFIX+" file !");
+        if( !rManager.saveText( serverFile+SERVERS_ADDRESS_SUFFIX, newAdrText ) ) {
+            Debug.signal( Debug.ERROR, this, "Failed to update server config: "
+                                   +"failed to save "+serverFile+SERVERS_ADDRESS_SUFFIX+" file !");
+            return false;
+        }
 
-        // We load the newly saved config...
-          if( newConfigText!=null ) {
-              ServerConfig newConfig = (ServerConfig) PropertiesConverter.load( serverFile );
+     // We load the newly saved config...
+        if( newConfigText!=null ) {
+            ServerConfig newConfig = (ServerConfig) rManager.loadObject( serverFile );
 
-              if( newConfig.getServerID()!= oldServerConfig.getServerID() )
-                  throw new IOException("new Config was not saved: it hasn't the expected Server ID !");
+            if( newConfig.getServerID()!= oldServerConfig.getServerID() ) {
+                Debug.signal( Debug.ERROR, this, "Failed to update server config: "
+                            +"new Config was not saved: it hasn't the expected Server ID !");
+                saveServerConfig( oldServerConfig );
+                return false;
+            }
 
-              newConfig.setServerName( newAdrText );
-              oldServerConfig.update( newConfig );
-          }
-          else
-              oldServerConfig.setServerName( newAdrText );
-      }
-      catch( Exception pe ) {
-          Debug.signal( Debug.ERROR, this, "Failed to update server config: "+pe.getMessage() );
-          saveServerConfig( oldServerConfig );
-          return false; // Save Failed, we revert to previous config
-      }
+            newConfig.setServerName( newAdrText );
+            oldServerConfig.update( newConfig );
+        }
+        else
+            oldServerConfig.setServerName( newAdrText );
 
       return true;
    }
@@ -639,25 +654,25 @@ public class ServerConfigManager {
    */
    public ServerConfig createServerConfig( String newConfigText, String newAdrText, int serverID ) {
 
-      String serverFile = rManager.getBase( SERVERS_HOME+File.separator
-                            +SERVERS_PREFIX+serverID+SERVERS_SUFFIX );
+        String serverFile = rManager.getExternalServerConfigsDir()
+                                            +SERVERS_PREFIX+serverID+SERVERS_SUFFIX;
 
-      File serversHomeDir = new File( rManager.getBase(SERVERS_HOME) );
+        File serversHomeDir = new File( rManager.getExternalServerConfigsDir() );
 
-      if(!serversHomeDir.exists()) {
-      	 serversHomeDir.mkdir();
-      	 Debug.signal(Debug.WARNING,this,"Server Home created...");
-      }
+        if(!serversHomeDir.exists()) {
+            serversHomeDir.mkdir();
+            Debug.signal(Debug.WARNING,this,"Server configs dir was not found. Created dir...");
+        }
 
-      if( !FileTools.saveTextToFile( serverFile, newConfigText ) )
-          return null; // Save Failed
+        if( !rManager.saveText( serverFile, newConfigText ) )
+            return null; // Save Failed
 
-      if( !FileTools.saveTextToFile( serverFile+SERVERS_ADDRESS_SUFFIX, newAdrText ) ) {
-          new File(serverFile).delete();
-          return null; // Save Failed
-      }
+        if( !rManager.saveText( serverFile+SERVERS_ADDRESS_SUFFIX, newAdrText ) ) {
+            new File(serverFile).delete();
+            return null; // Save Failed
+        }
 
-      return loadServerConfig(serverID); // We load the newly saved config...
+        return loadServerConfig(serverID); // We load the newly saved config...
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -669,13 +684,13 @@ public class ServerConfigManager {
    */
    public ServerConfig[] loadServerConfigs() {
 
-      String serversHome = rManager.getBase( SERVERS_HOME );
+      String serversHome = rManager.getExternalServerConfigsDir();
 
       File serversHomeDir = new File(serversHome);
 
       if(!serversHomeDir.exists()) {
       	 serversHomeDir.mkdir();
-      	 Debug.signal(Debug.WARNING,this,"Server Home created... no server files found.");
+      	 Debug.signal(Debug.WARNING,this,"Server configs dir was not found. Created dir...");
       	 return null;
       }
 
@@ -700,37 +715,31 @@ public class ServerConfigManager {
         ServerConfig configList[] = new ServerConfig[nbFiles];
         int index=0;
 
-      try {
-
         for( int i=0; i<configFileList.length; i++ )
            if(configFileList[i].isFile() && configFileList[i].getName().endsWith(SERVERS_SUFFIX) ){
 
-               String serverFile = serversHome + File.separator + configFileList[i].getName();
+               String serverFile = serversHome + configFileList[i].getName();
+               configList[index] = (ServerConfig) rManager.loadObject( serverFile );
 
-               configList[index] = (ServerConfig) PropertiesConverter.load( serverFile );
+               if(configList[index]==null) {
+                  Debug.signal(Debug.ERROR, this, "Failed to load "+serverFile);
+                  index++;
+                  continue;
+               }
 
-               String serverName = FileTools.loadTextFromFile( serverFile+SERVERS_ADDRESS_SUFFIX );
+               String serverName = rManager.loadText( serverFile+SERVERS_ADDRESS_SUFFIX );
+               serverName = checkAddressFormat(serverName);
 
-               if( serverName==null )
-                   throw new IOException("no "+serverFile+SERVERS_ADDRESS_SUFFIX+" file found !");
+               if( serverName.length()==0 )
+                   Debug.signal( Debug.ERROR, this, "Failed to load server config: no"
+                                 +serverFile+SERVERS_ADDRESS_SUFFIX+" file found !");
 
-               if( serverName.indexOf('\n')>0 )
-                   serverName = serverName.substring(0,serverName.indexOf('\n'));
-
-               if(serverName.length()==0)
-                   throw new IOException("empty "+serverFile+SERVERS_ADDRESS_SUFFIX+" file !");
-
-               configList[index].setServerName( serverName.trim() );
+               configList[index].setServerName( serverName );
                configList[index].clearLastUpdateTime(); // clear timestamp set by this operation
                index++;
            }
-      }
-      catch( Exception pe ) {
-          Debug.signal( Debug.ERROR, this, "Failed to load server config: "+pe.getMessage() );
-          return null;
-      }
 
-     return configList;
+        return configList;
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

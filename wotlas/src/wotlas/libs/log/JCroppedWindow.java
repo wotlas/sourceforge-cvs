@@ -78,9 +78,10 @@ public class JCroppedWindow extends JWindow{
    *
    * @param owner frame owner
    * @param title window title, set to "" if you want none
+   * @param rLocator interface giving access to the images to use for our window.
    */
-   public JCroppedWindow( Frame owner, String title, String guiImagesPath ) {
-        this(owner,title,false,guiImagesPath);
+   public JCroppedWindow( Frame owner, String title, LogResourceLocator rLocator  ) {
+        this(owner,title,false,rLocator);
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -91,24 +92,36 @@ public class JCroppedWindow extends JWindow{
    * @param title window title, set to "" if you want none
    * @param useDarkMenuBar which images do we use for the menu bar : light images or
    *        dark images.
+   * @param rLocator interface giving access to the images to use for our window.
    */
-   public JCroppedWindow( Frame owner, String title, boolean useDarkMenuBar, String guiImagesPath ) {
+   public JCroppedWindow( Frame owner, String title, boolean useDarkMenuBar, LogResourceLocator rLocator ) {
         super( owner );
         this.title = title;
         this.useDarkMenuBar = useDarkMenuBar;
-        guiImagesPath = guiImagesPath + File.separator;
 
      // We load the images
         if(useDarkMenuBar) {
-           leftBar = loadImage( guiImagesPath+"left-bar-dark.gif" );
-           middleBar = loadImage( guiImagesPath+"middle-bar-dark.gif" );
-           rightBar = loadImage( guiImagesPath+"right-bar-dark.gif" );
+           leftBar = rLocator.getGuiImage( "left-bar-dark.gif" );
+           middleBar = rLocator.getGuiImage( "middle-bar-dark.gif" );
+           rightBar = rLocator.getGuiImage( "right-bar-dark.gif" );
         }
         else {
-           leftBar = loadImage( guiImagesPath+"left-bar.gif" );
-           middleBar = loadImage( guiImagesPath+"middle-bar.gif" );
-           rightBar = loadImage( guiImagesPath+"right-bar.gif" );
+           leftBar = rLocator.getGuiImage( "left-bar.gif" );
+           middleBar = rLocator.getGuiImage( "middle-bar.gif" );
+           rightBar = rLocator.getGuiImage( "right-bar.gif" );
         }
+
+        MediaTracker tracker = new MediaTracker(this);
+ 
+         tracker.addImage(leftBar,0);
+         tracker.addImage(middleBar,1);
+         tracker.addImage(rightBar,2);
+
+         try{
+               tracker.waitForAll();
+         }catch(InterruptedException e) {
+               e.printStackTrace();
+         }
 
      // Font
         titleFont = new Font( "Dialog", Font.PLAIN, 11 );
@@ -401,29 +414,6 @@ public class JCroppedWindow extends JWindow{
     public void setResizable( boolean resizable ) {
     	this.resizable = resizable;
     }
-
- /*------------------------------------------------------------------------------------*/
-
-  /** To load an image given its name. We don't check for any name format, we just try
-   *  to load the image.
-   *
-   * @param the path to the image
-   * @return the loaded image...
-   */
-    public Image loadImage( String path ) {
-       Image im;
-       MediaTracker tracker = new MediaTracker(this);
-
-         im = Toolkit.getDefaultToolkit().getImage(path);
-         tracker.addImage(im,0);
-
-         try{
-               tracker.waitForID(0);
-         }
-         catch(InterruptedException e) { e.printStackTrace(); }
-
-       return im;
-  }
 
  /*------------------------------------------------------------------------------------*/
 

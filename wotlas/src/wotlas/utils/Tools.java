@@ -479,5 +479,130 @@ public class Tools {
 
  /*------------------------------------------------------------------------------------*/ 
 
+   /** Returns true if we have the given jar name in our classpath.
+    * @param jarName jar file name, such as "wotlas.jar"
+    * @return true if the JAR is in the classpath, false if not
+    */
+     public static boolean hasJar( String jarName ) {
+     	   jarName = jarName.toLowerCase();
+           StringTokenizer tokenizer = new StringTokenizer(System.getProperty("java.class.path", "."),
+                                              System.getProperty("path.separator", ";"));
+
+           while( tokenizer.hasMoreTokens() ) {
+              String directory = tokenizer.nextToken().toLowerCase();
+              
+              if( directory.equals(jarName) )
+                  return true;
+           }
+
+           return false; // not found
+     }
+
+ /*------------------------------------------------------------------------------------*/
+
+    /**
+     *  Returns all the files that are in the given jar, have in the specified path and
+     *  have the given extension. IF you don't specify an extension (ext==null)
+     *  we search for directories not files. In any case we don't recurse between
+     *  eventual sub-directories.
+     *
+     *  @param jarName jar file to analyze
+     *  @param dirPath path to search "base/gui/chat" for example.
+     *  @param ext extension of the files to list : ".gif" for example.
+     *  @return the pathes of the files found, an empty array otherwise
+     */
+     public static String[] listFilesInJar(String jarName, String dirPath, String ext ) {
+
+        // 1 - Prepare the search
+        //     If the classpath is not found we'll search in the current '.' directory
+           StringTokenizer tokenizer = new StringTokenizer(System.getProperty("java.class.path", "."),
+                                              System.getProperty("path.separator", ";"));
+
+           dirPath = subString( dirPath, "\\", "/" ); // jar uses "/" separator
+
+           if(!dirPath.endsWith("/"))
+              dirPath = dirPath + "/";
+
+           jarName = jarName.toLowerCase();
+
+           if( !hasJar( jarName ) )
+               return new String[0]; // jar not found
+
+        // 2 - We analyze our JAR file
+           JarFile jar = null;
+
+           try {
+               jar = new JarFile(jarName);
+           }
+           catch (IOException e) {
+               Debug.signal(Debug.ERROR, null, "JAR not found " + jarName +" msg:"+e);
+               return new String[0];
+           }
+
+           Enumeration entries =  jar.entries();
+           Vector list = new Vector(10);
+
+           if(entries==null)
+               return new String[0]; // empty Jar file
+
+           while(entries.hasMoreElements()) {
+                 JarEntry entry = (JarEntry) entries.nextElement();
+
+                 if(ext==null) {
+                     if(!entry.isDirectory())
+                        continue;
+
+                     String name = entry.getName();
+
+                     if(!name.endsWith("/"))
+                          name = name + "/";
+
+                     int index = name.indexOf(dirPath);
+                     if(index<0) continue; // entry not in our dir
+
+                   // immediate sub-directory ? must be only one "/" after the dirPath
+                     index += dirPath.length();
+                     
+                     if(index>=name.length()-1 )
+                        continue; // this is our dirPath entry in the JAR
+
+                     index = name.indexOf("/", index);
+                     
+                     if( index<0 || index<name.length()-1 )
+                        continue; // error, or not an immediate sub-directory
+
+                     list.addElement(name);
+                 }
+                 else if( entry.getName().endsWith(ext) ) {
+                     if(entry.isDirectory())
+                        continue;
+
+                     String name = entry.getName();
+
+                     int index = name.indexOf(dirPath);
+                     if(index<0) continue; // entry not in our dir
+
+                   // immediate sub-directory ? must be no "/" after the dirPath
+                     index += dirPath.length();
+
+                     if(index>=name.length()-1 )
+                        continue; // not a valid entry
+
+                     index = name.indexOf("/", index);
+
+                     if( index>=0 )
+                        continue; // not an immediate file...
+
+                     list.addElement(name);
+                 }
+           }
+
+        // 2 - Return the results...
+           String toReturn[] = {};
+           return (String[]) list.toArray( toReturn );
+    }
+
+ /*------------------------------------------------------------------------------------*/ 
+
 }
 

@@ -22,7 +22,7 @@ package wotlas.client.screen;
 import wotlas.libs.net.*;
 import wotlas.utils.Debug;
 import wotlas.utils.Tools;
-import wotlas.utils.aswing.*;
+import wotlas.libs.aswing.*;
 
 import wotlas.common.ErrorCodeList;
 
@@ -95,7 +95,7 @@ public class JDeleteAccountDialog extends JConnectionDialog
         Runnable runnable = new Runnable() {
            public void run() {
               new AInfoDialog( ourFrame, ferror, true,
-                               ClientDirector.getResourceManager().getBase("gui") );
+                               ClientDirector.getResourceManager() );
            }
         };
 

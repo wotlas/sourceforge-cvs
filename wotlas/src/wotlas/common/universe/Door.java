@@ -204,8 +204,7 @@ public class Door
     * @return DoorDrawable corresponding to this room.
     */
      public Drawable getDoorDrawable() {
-           if( ImageLibrary.getDefaultImageLibrary() == null 
-               || !AStarDouble.isInitialized() )
+           if( !AStarDouble.isInitialized() )
       	       return null;
 
            if(doorDrawable!=null)
@@ -234,7 +233,7 @@ public class Door
    /** To open the door...
     */
      public synchronized void open() {
-         if( getDoorDrawable()==null ) {
+         if( doorDrawable==null ) {
              isOpened = true;
              return;
          }
@@ -248,7 +247,7 @@ public class Door
    /** To close the door...
     */
      public synchronized void close() {
-         if( getDoorDrawable()==null ) {
+         if( doorDrawable==null ) {
              isOpened = false;
              return;
          }
@@ -262,7 +261,7 @@ public class Door
    /** To open the door without any animation...
     */
      public synchronized void setOpened() {
-         if( getDoorDrawable()==null ) {
+         if( doorDrawable==null ) {
              isOpened = true;
              return;
          }
@@ -276,7 +275,7 @@ public class Door
    /** To close the door without any animation...
     */
      public synchronized void setClosed() {
-         if( getDoorDrawable()==null ) {
+         if( doorDrawable==null ) {
              isOpened = false;
              return;
          }
@@ -290,7 +289,7 @@ public class Door
    /** To test if the door is opened...
     */
      public boolean isOpened() {
-     	   if( getDoorDrawable()!=null )
+     	   if( doorDrawable!=null )
      	       return doorDrawable.isOpened();
            else
                return isOpened;

@@ -191,7 +191,7 @@ public class GraphicsDirector extends JPanel {
 
        paint( getGraphics() );
 
-// SOLUTION 2 : (gives better performance but is unstable on slow computers)
+// SOLUTION 2 : (gives better performance but is not stable on slow computers)
 /*
        synchronized( lockPaint ) {
 
@@ -372,6 +372,8 @@ public class GraphicsDirector extends JPanel {
    *  Never call repaint on the graphics director, call tick() !
    */
     public void tick() {
+         if(screen==null)
+            return;
       
       // 1 - We update our screen dimension.
          synchronized( drawables ) {

@@ -21,8 +21,6 @@
 package wotlas.client;
 
 import wotlas.common.*;
-import wotlas.libs.persistence.*;
-
 import wotlas.utils.Debug;
 
 import java.io.File;
@@ -219,37 +217,38 @@ public class ProfileConfigList {
    *
    * @return client's ProfileConfigList
    */
-  public static ProfileConfigList load() {
-    try {
-      return (ProfileConfigList) PropertiesConverter.load( ClientDirector.getResourceManager().getConfig(CLIENT_PROFILES) );
+    public static ProfileConfigList load() {
+
+     	ResourceManager rManager = ClientDirector.getResourceManager();
+        String fileName = rManager.getExternalConfigsDir()+CLIENT_PROFILES;
+
+        return (ProfileConfigList) rManager.loadObject(fileName);
     }
-    catch (PersistenceException pe) {
-      Debug.signal( Debug.ERROR, null, "Failed to load client's profiles config: " + pe.getMessage() );
-      return null;
-    }
-  }
 
  /*------------------------------------------------------------------------------------*/
 
   /** Saves the client's profiles config to "client-profiles.cfg"
    * @return true in case of success, false if an error occured.
    */
-  public boolean save() {
-     try {
+    public boolean save() {
        if(!ClientManager.getRememberPasswords())
            ProfileConfig.setPasswordAccess(false);
 
-       PropertiesConverter.save(this, ClientDirector.getResourceManager().getConfig(CLIENT_PROFILES) );
+     	ResourceManager rManager = ClientDirector.getResourceManager();
+     	
+        if( !rManager.saveObject(this, rManager.getExternalConfigsDir()+CLIENT_PROFILES ) ) {
+            Debug.signal( Debug.ERROR, null, "Failed to save client's profiles.");
 
-       if(!ClientManager.getRememberPasswords())
-          ProfileConfig.setPasswordAccess(true);
+            if(!ClientManager.getRememberPasswords())
+                ProfileConfig.setPasswordAccess(true);
+
+            return false;
+        }
+
+        if(!ClientManager.getRememberPasswords())
+           ProfileConfig.setPasswordAccess(true);
 
       return true;
-    }
-    catch (PersistenceException pe) {
-      Debug.signal( Debug.ERROR, this, "Failed to save client's profiles config: " + pe.getMessage() );
-      return false;
-    }
   }
 
  /*------------------------------------------------------------------------------------*/

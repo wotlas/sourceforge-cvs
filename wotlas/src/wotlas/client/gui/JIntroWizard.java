@@ -63,7 +63,7 @@ public class JIntroWizard extends JFrame {
     public JIntroWizard() {
         super("Wotlas Client");
         setBackground(Color.white);
-        setIconImage(ClientDirector.getResourceManager().getBaseImage("gui/icon.gif"));
+        setIconImage(ClientDirector.getResourceManager().getGuiImage("icon.gif"));
         setGUI();
 
         setSize( width, height );

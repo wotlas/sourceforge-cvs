@@ -22,7 +22,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import wotlas.utils.*;
-import wotlas.utils.aswing.*;
+import wotlas.libs.aswing.*;
 
 import wotlas.common.*;
 import wotlas.common.message.description.CreateFakeNameMessage;

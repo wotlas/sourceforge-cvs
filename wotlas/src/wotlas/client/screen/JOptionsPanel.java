@@ -20,8 +20,9 @@
 package wotlas.client.screen;
 
 import wotlas.utils.*;
-import wotlas.utils.aswing.*;
+import wotlas.libs.aswing.*;
 import wotlas.client.*;
+import wotlas.client.gui.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -91,9 +92,9 @@ public class JOptionsPanel extends JPanel implements MouseListener
     b_help.addActionListener(new ActionListener() {
       public void actionPerformed (ActionEvent e) {
         new JHTMLWindow( ClientDirector.getDataManager().getClientScreen(), "Help",
-                         ClientDirector.getResourceManager().getHelp("index.html"),
+                         ClientDirector.getResourceManager().getHelpDocsDir()+"index.html",
                          640, 340, false,
-                         ClientDirector.getResourceManager().getBase("gui") );
+                         ClientDirector.getResourceManager() );
       }
     });
     innerPanel.add(b_help);
@@ -102,7 +103,7 @@ public class JOptionsPanel extends JPanel implements MouseListener
 
   // We load the image
      MediaTracker mediaTracker = new MediaTracker(this);
-     menu  = ClientDirector.getResourceManager().getBaseImage("gui/menu.jpg");
+     menu  = ClientDirector.getResourceManager().getGuiImage("menu.jpg");
      mediaTracker.addImage(menu,0);
 
          try{

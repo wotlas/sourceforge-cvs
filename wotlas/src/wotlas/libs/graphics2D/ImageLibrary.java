@@ -24,7 +24,7 @@ import java.awt.image.*;
 import java.io.*;
 
 /** An ImageLibrary manages shared images ( i.e. used by more than
- *  one object ). It also proposes static methods for image loading.
+ *  one object ).
  *
  *  <p>It relies on a image database that is loaded into memory at creation time.
  *  The database must have the following structure:</p>
@@ -128,7 +128,7 @@ public class ImageLibrary {
    */
      protected static boolean ignoreBadFormatEntries = true;
 
-   /** Our Default ImageLibrary.
+   /** Our Default ImageLibrary. (avoid its use, prefer a simple "new ImageLibrary" )
     */
      protected static ImageLibrary defaultImageLibrary;
 
@@ -138,6 +138,11 @@ public class ImageLibrary {
    */
      protected ImageLibDir rootDir;
 
+  /** Resource locator for easier use of this library when resources are in
+   *  JAR files or need special access (security/network).
+   */
+     protected ImageResourceLocator resourceLocator;
+
  /*------------------------------------------------------------------------------------*/
   
   /** Do we have to display db entries with bad format ?
@@ -145,19 +150,20 @@ public class ImageLibrary {
    * @param ignore if false we warn about disk entries of the ImageLibrary that
    *        have a bad format (exceptions are thrown).
    */
-   public static void ignoreBadFormatEntries( boolean ignore ) {
+    public static void ignoreBadFormatEntries( boolean ignore ) {
           ignoreBadFormatEntries = ignore;
-   }
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor with the image database path. We load all the images in memory.
+  /** Constructor with the image database path.
+   *  Use this constructor if your image library is on your local file system.
    *
    * @param imageDataBasePath the path to the image database.
    * @exception ImageLibraryException if an error occurs while loading the images.
    */
-   protected ImageLibrary( String imageDataBasePath )
-   throws ImageLibraryException {
+    public ImageLibrary( String imageDataBasePath )
+    throws ImageLibraryException {
 
        // 1 - Check DataBase
           File homeDir = new File(imageDataBasePath);
@@ -165,14 +171,41 @@ public class ImageLibrary {
           if( !homeDir.isDirectory() || !homeDir.exists() )
              throw new ImageLibraryException("Image DataBase Not found : "+imageDataBasePath
                                     +" is not a valid directory.");
+
        // We create the database structure (recursive creation)
-          rootDir = new ImageLibDir( homeDir, null );
+          this.resourceLocator = new SimpleImageResourceLocator(imageDataBasePath);
+          rootDir = new ImageLibDir( imageDataBasePath, null );
 
        // We load the images of the database structure
           int loadedImages = rootDir.initImageLoad();
-         
-          if(DEBUG_MODE) System.out.println("Notice: ImageLibrary created with "+loadedImages+" images.");
-   }
+
+          if(DEBUG_MODE)
+             System.out.println("Notice: ImageLibrary created with "+loadedImages+" images.");
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Constructor with the image resource locator.
+   *  Use this constructor if the images are in a zip/jar file or need special
+   *  access (security/network). You just need to develop the methods of the
+   *  ImageResourceLocator interface.
+   *
+   * @param resourceLocator an interface that provides access to resources.
+   * @exception ImageLibraryException if an error occurs while loading the images.
+   */
+    public ImageLibrary( ImageResourceLocator resourceLocator )
+    throws ImageLibraryException {
+
+       // We create the database structure (recursive creation)
+          this.resourceLocator = resourceLocator;
+          rootDir = new ImageLibDir( resourceLocator.getImageLibraryDir(), null );
+
+       // We load the images of the database structure
+          int loadedImages = rootDir.initImageLoad();
+
+          if(DEBUG_MODE)
+             System.out.println("Notice: ImageLibrary created with "+loadedImages+" images.");
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -180,15 +213,13 @@ public class ImageLibrary {
    *
    * @return the default image databasepath.
    */
-   public String getImageDataBasePath() {
-         return rootDir.dir.getPath();
-   }
+    public String getImageDataBasePath() {
+          return resourceLocator.getImageLibraryDir();
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Creates an ImageLibrary or returned the previously created one ( with its associated
-   *  font factory if there is not one already). We load all the images from the specified
-   *  image database.<p>
+  /** Creates an ImageLibrary or returned the previously created one.
    *
    *  <p>To manually load directories/images which parent directories have the format
    *  "-XX-jit" or "-XX-exc" you can use the loadImage() method.<br>
@@ -200,19 +231,14 @@ public class ImageLibrary {
    *  at zero and increment with no jumps between numbers.
    *
    * @param imageDataBasePath the path to the image database.
-   * @param userFontPath the path where user fonts are stored (ex: lucida.ttf).
    * @return the created (or previously created) image library.
    * @exception ImageLibraryException if an error occurs while loading the images.
    */
-   public static ImageLibrary createImageLibrary( String imageDataBasePath, String userFontPath )
+   public static ImageLibrary createImageLibrary( String imageDataBasePath )
    throws ImageLibraryException {
 
          if( defaultImageLibrary==null ) {
-           // 1 - Create default image library
-              defaultImageLibrary = new ImageLibrary( imageDataBasePath );
-
-           // 2 - Create a default font factory
-              FontFactory.createDefaultFontFactory( userFontPath );
+             defaultImageLibrary = new ImageLibrary( imageDataBasePath );
          }
          return defaultImageLibrary;
    }
@@ -260,7 +286,7 @@ public class ImageLibrary {
      // We try to load the image ( must be a JIT image ).
         if( dir.dirOption!=ImageLibDir.OPT_JIT ) {
             if(DEBUG_MODE)
-               System.out.println("ERROR: Trying to load an image that is not in a JIT directory : "+imId);
+               System.out.println("ERROR: Trying to load an image which is not in a JIT directory : "+imId);
             return null; // directory has no "Just in Time" option we return null;
         }
 
@@ -544,18 +570,27 @@ public class ImageLibrary {
            }
 
         // we search among the images we have.
-           File imageFiles[] = dir.dir.listFiles();
+           String imageFiles[] = resourceLocator.listFiles( dir.dir );
            if( imageFiles==null ) return null;
 
            for( int l=0; l<imageFiles.length; l++ ) {
-             if( imageFiles[l].isDirectory())
-                 continue;
 
-             int id = getImageID( imageFiles[l].getName() );
+             int id = getImageID( imageFiles[l] );
              if( id<0 ) continue; // not a valid image file
 
+            // we try to get the last part of the file path (file name)
+             int index = imageFiles[l].lastIndexOf("/");
+
+             if( index < 0 )
+                 index = imageFiles[l].lastIndexOf(File.separator);
+
+             String fileName = imageFiles[l];
+
+             if( index >0 )
+                 fileName = fileName.substring( index, fileName.length() );
+
             // Is it the image we wanted ?
-               if( imageFiles[l].getName().indexOf( keyword ) >=0 ) {
+               if( fileName.indexOf( keyword ) >=0 ) {
                    ImageIdentifier result = new ImageIdentifier( imDirectory );
                    result.imageId = (short) id;
                    return result;
@@ -570,11 +605,13 @@ public class ImageLibrary {
   /** To get the File object that represents an ImageIdentifier of our database.
    *  We don't load any images, just return the associated File object.
    *
+   *  This is a utility method which is not used in the ImageLibrary class.
+   *
    * @param imId complete image identifier representing an image of the database.
-   * @return if found, the complete File path to the image on disk, null otherwise.
+   * @return if found, the complete path to the image on disk, null otherwise.
    * @exception ImageLibraryException if the imId is invalid.
    */
-   public File getImageFile( ImageIdentifier imId )
+   public String getImageFile( ImageIdentifier imId )
    throws ImageLibraryException {
 
            ImageLibDir dir = rootDir;
@@ -589,14 +626,12 @@ public class ImageLibrary {
            }
 
         // we search among the images we have.
-           File imageFiles[] = dir.dir.listFiles();
+           String imageFiles[] = resourceLocator.listFiles( dir.dir );
            if( imageFiles==null ) return null;
 
            for( int l=0; l<imageFiles.length; l++ ) {
-             if( imageFiles[l].isDirectory())
-                 continue;
 
-             int id = getImageID( imageFiles[l].getName() );
+             int id = getImageID( imageFiles[l] );
              if( id<0 ) continue; // not a valid image file
 
             // Is it the image we wanted ?
@@ -619,6 +654,12 @@ public class ImageLibrary {
 
        String name = dirName.toLowerCase();
        String s_val = null;
+
+       if(name.endsWith("/"))
+          name = name.substring(0,name.length()-1);
+       else if( name.endsWith(File.separator) )
+          name = name.substring(0,name.length()-File.separator.length());
+
 
     // 1 - we retrieve the substring
        if(name.endsWith("-jit")||name.endsWith("-exc")) {
@@ -658,12 +699,6 @@ public class ImageLibrary {
        String name = imageName.toLowerCase();
 
     // 1 - we retrieve the substring
-    
-       // To support any image extension we only check the '.' existence
-    
-       //if( !name.endsWith(".jpg") && !name.endsWith(".gif") )
-       //    return -1; // bad format
-
        int lastPoint = name.lastIndexOf('.');
        if(lastPoint<2) return -1; // error: invalid index
 
@@ -686,7 +721,7 @@ public class ImageLibrary {
    * @param path directory path where to search
    * @param idToFind <number> part of the format to find.
    * @return directory name that has the given ID, null if not found
-   */
+   *
    static protected String getDirectoryNameFromID( String path, int idToFind ) {
 
       File list[] = new File(path).listFiles();
@@ -702,7 +737,7 @@ public class ImageLibrary {
 
       return null; // not found
    }
-
+*/
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To load an image given its name. We don't check for any name format, we just try
@@ -711,20 +746,22 @@ public class ImageLibrary {
    * @param the path to the image
    * @return the loaded image...
    */
-    static public Image loadImage( String path ) {
+    public Image loadImage( String path ) {
        Image im;
        MediaTracker tracker = new MediaTracker(new Label());
 
-         im = Toolkit.getDefaultToolkit().getImage(path);
+         im = resourceLocator.getLibraryImage( path );
          tracker.addImage(im,0);
 
          try{
-               tracker.waitForID(0);
+              tracker.waitForID(0);
          }
-         catch(InterruptedException e) { e.printStackTrace(); }
+         catch(InterruptedException e) {
+              e.printStackTrace();
+         }
 
        return im;
-  }
+   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -736,11 +773,11 @@ public class ImageLibrary {
    *
    * @param path the path to the images
    * @return the loaded images... null if there are none
-   */
+   *
     static public Image[] loadImages( String path ) {
     	return loadImages( new File(path) );
     }
-
+*/
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To load all the images of a directory. The image name must follow the format :
@@ -751,7 +788,7 @@ public class ImageLibrary {
    *
    * @param path the path to the images
    * @return the loaded images... null if there are none
-   */
+   *
     static public Image[] loadImages( File path ) {
       File list[] = path.listFiles();
       
@@ -793,7 +830,7 @@ public class ImageLibrary {
           
        return im;
     }
-
+*/
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To load an image and transform it into a ARGB buffered image.
@@ -801,7 +838,7 @@ public class ImageLibrary {
    * @param the path to the image
    * @return the loaded buffered image...
    */
-    static public BufferedImage loadBufferedImage( String path ) {
+    public BufferedImage loadBufferedImage( String path ) {
     	return loadBufferedImage( path, BufferedImage.TYPE_INT_ARGB );
     }
 
@@ -812,7 +849,7 @@ public class ImageLibrary {
    * @param the path to the image
    * @return the loaded buffered image...
    */
-    static public BufferedImage loadBufferedImage( String path, int imageType ) {
+    public BufferedImage loadBufferedImage( String path, int imageType ) {
      // We load the image.
         Image im = loadImage( path );
         
@@ -835,11 +872,11 @@ public class ImageLibrary {
    *
    * @param path the path to the images
    * @return the loaded images transformed into buffered images...
-   */
+   *
     static public BufferedImage[] loadBufferedImages( String path ) {
         return loadBufferedImages( new File(path) );
     }
-
+*/
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To load all the images of a directory. The image name must follow the format :
@@ -851,7 +888,7 @@ public class ImageLibrary {
    * @param path the path to the images
    * @return the loaded images transformed into buffered images... a 0 length array if
    *         there are no images. We never return null.
-   */
+   *
     static public BufferedImage[] loadBufferedImages( File path ) {
      // We load all the images.
         Image im[] = loadImages( path );
@@ -882,7 +919,7 @@ public class ImageLibrary {
 
      return bufIm;
   }
-
+*/
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To find an image with a given index ( filename format is <name>-<index>.<jpg | gif | *>)
@@ -894,19 +931,17 @@ public class ImageLibrary {
    *        it's the type of the image we are going to create.
    * @return null if the image is not found
    */
-    static public BufferedImage findImageIn( File imageFiles[], int imageIndex, int imageType ){
-       if(imageFiles==null) return null;
+    public BufferedImage findImageIn( String imageNames[], int imageIndex, int imageType ){
+       if(imageNames==null) return null;
 
-       for( int l=0; l<imageFiles.length; l++ ) {
-             if( imageFiles[l].isDirectory() )
-                 continue;
+       for( int l=0; l<imageNames.length; l++ ) {
 
-             int id = getImageID( imageFiles[l].getName() );
+             int id = getImageID( imageNames[l] );
              if(id<0) continue;
 
           // Is it the image we wanted ?
              if( id == imageIndex )
-                 return loadBufferedImage( imageFiles[l].getPath(), imageType );
+                 return loadBufferedImage( imageNames[l], imageType );
        }
 
        return null;  // not found
@@ -938,9 +973,9 @@ public class ImageLibrary {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Directory File representation.
+  /** Directory File Path.
    */
-    protected File dir;
+    protected String dir;
 
   /** Directory Option (OPT_NONE, OPT_JIT, OPT_EXC).
    */
@@ -961,82 +996,90 @@ public class ImageLibrary {
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Constructor.
-   * @param dir file representing the directory of this ImageLibDir object.
+   * @param dir path representing the directory of this ImageLibDir object.
    * @param parentDir parent directory, null if this is the root directory
    * @exception ImageLibraryException if ignoreBadFormatEntries=false and the image db has bad entries.
    */
-    public ImageLibDir( File dir, ImageLibDir parentDir )
+    public ImageLibDir( String dir, ImageLibDir parentDir )
     throws ImageLibraryException {
 
         this.dir = dir;
         this.parentDir = parentDir;
 
+        String options = dir.toLowerCase();
+
+        if(options.endsWith("/"))
+           options = options.substring(0,options.length()-1);
+        else if( options.endsWith(File.separator) )
+           options = options.substring(0,options.length()-File.separator.length());
+
       // 1 - We get the eventual option of this directory
-         if( dir.getName().endsWith("-jit") )
+         if( options.endsWith("-jit") )
              dirOption = OPT_JIT;
-         else if( dir.getName().endsWith("-exc") )
+         else if( options.endsWith("-exc") )
              dirOption = OPT_EXC;
          else if( parentDir!=null && parentDir.dirOption==OPT_JIT )
              dirOption = OPT_JIT;  // this option is always propagated to sub-directories.
          else
              dirOption = OPT_NONE;
+
        
       // 2 - Is there a child structure to create ?
-         File childs[] = dir.listFiles();
+         String childDirNames[] = resourceLocator.listDirectories(dir);
+         int nbChildDirs = 0;
 
-         if(childs==null) {
-            // Empty directory
-               if(DEBUG_MODE) System.out.println("WARNING: Empty directory found ( "+dir+" )");
-       
-               childDirs = new ImageLibDir[0];
-               images = new BufferedImage[0];
-               return;
+         if( childDirNames==null )
+             childDirNames = new String[0];
+
+         for( int c=0; c<childDirNames.length; c++ ) {
+              int id = ImageLibrary.getDirectoryID( childDirNames[c] );
+
+              if( id<0 ) {
+                  if( ignoreBadFormatEntries ) {
+                      if(DEBUG_MODE)
+                         System.out.println("ERROR: ImageLibrary directory has a bad format : "+childDirNames[c]);
+                  }
+                  else
+                      throw new ImageLibraryException("ImageLibrary directory has a bad format : "+childDirNames[c]);
+              }
+              else if( id>=nbChildDirs )
+                      nbChildDirs = id+1;
          }
 
-      // 3 - We check the child structure
-         int nbChildDirs = 0;
+         childDirs = new ImageLibDir[nbChildDirs];
+
+
+      // 3 - is there images in this directory
          int nbImages = 0;
+         String imageNames[] = resourceLocator.listFiles(dir);
 
-         for( int c=0; c<childs.length; c++ )
-            if( childs[c].isDirectory() ) {
-              // CHILD DIRECTORIES
-                int id = ImageLibrary.getDirectoryID(childs[c].getName());
+         if( imageNames==null )
+             imageNames = new String[0];
 
-                if( id<0 ) {
-                    if( ignoreBadFormatEntries ) {
-                        if(DEBUG_MODE) System.out.println("ERROR: ImageLibrary directory has a bad format : "+childs[c]);
-                    }
-                    else
-                        throw new ImageLibraryException("ImageLibrary directory has a bad format : "+childs[c]);
-                }
-                else if( id>=nbChildDirs )
-                        nbChildDirs = id+1;
-            }
-            else {
-              // IMAGES OF THIS DIRECTORY
-                int id = ImageLibrary.getImageID(childs[c].getName());
+         for( int c=0; c<imageNames.length; c++ ) {
+              int id = ImageLibrary.getImageID( imageNames[c] );
 
-                if( id<0 ) {
-                    if( ignoreBadFormatEntries )
-                        if(DEBUG_MODE) System.out.println("ERROR: ImageLibrary image has a bad format : "+childs[c]);
-                    else
-                        throw new ImageLibraryException("ImageLibrary image has a bad format : "+childs[c]);
-                }
-                else if( id>=nbImages )
-                        nbImages = id+1;
-            }
+              if( id<0 ) {
+                  if( ignoreBadFormatEntries )
+                      if(DEBUG_MODE)
+                         System.out.println("ERROR: ImageLibrary image name has a bad format : "+imageNames[c]);
+                  else
+                      throw new ImageLibraryException("ImageLibrary image name has a bad format : "+imageNames[c]);
+              }
+              else if( id>=nbImages )
+                  nbImages = id+1;
+         }
 
-       // 4 - We can now create our child structure. Images will be loaded later.
-          childDirs = new ImageLibDir[nbChildDirs];
-          images = new BufferedImage[nbImages];
+         images = new BufferedImage[nbImages];
 
-          for( int c=0; c<childs.length; c++ )
-            if( childs[c].isDirectory() ) {
+
+      // 4 - We can now create our child structure. Images will be loaded later.
+         for( int c=0; c<childDirNames.length; c++ ) {
              // We recursively construct the child structure
-                int id = ImageLibrary.getDirectoryID(childs[c].getName());
+                int id = ImageLibrary.getDirectoryID( childDirNames[c] );
                 if( id<0 ) continue;
 
-                childDirs[id] = new ImageLibDir( childs[c], this );
+                childDirs[id] = new ImageLibDir( childDirNames[c], this );
             }
     }
 
@@ -1054,16 +1097,25 @@ public class ImageLibrary {
              return 0;
 
          if(images.length!=0) {
-            images = loadBufferedImages( dir );
+            String imageNames[] = resourceLocator.listFiles(dir);
 
-            for(int i=0; i<images.length; i++ )
-                if(images[i]!=null) loaded++;
+            for( int c=0; c<imageNames.length; c++ ) {
+                 int id = ImageLibrary.getImageID( imageNames[c] );
+
+                 if(id<0)
+                    continue;
+
+                 images[id] = loadBufferedImage( imageNames[c] );
+
+                 if(images[id]!=null)
+                    loaded++;
+            }
          }
 
       // Child directories init propagation
          for( int i=0; i<childDirs.length; i++ )
               loaded += childDirs[i].initImageLoad();
-         
+
          return loaded;
     }
 
@@ -1084,7 +1136,12 @@ public class ImageLibrary {
     *  @return the image we just loaded.
     */
     public BufferedImage loadImage( int index ) {
-           images[index] = findImageIn( dir.listFiles(), index, BufferedImage.TYPE_INT_ARGB );
+           if(images.length==0)
+              return null;
+
+           if(images[index]==null)
+              images[index] = findImageIn( resourceLocator.listFiles(dir), index, BufferedImage.TYPE_INT_ARGB );
+
            return images[index];
     }
 
@@ -1100,10 +1157,19 @@ public class ImageLibrary {
          int loaded = 0;
 
          if(images.length!=0) {
-            images = loadBufferedImages( dir );
+            String imageNames[] = resourceLocator.listFiles(dir);
 
-            for(int i=0; i<images.length; i++ )
-                if(images[i]!=null) loaded++;
+            for( int c=0; c<imageNames.length; c++ ) {
+                 int id = ImageLibrary.getImageID( imageNames[c] );
+
+                 if(id<0)
+                    continue;
+
+                 images[id] = loadBufferedImage( imageNames[c] );
+
+                 if(images[id]!=null)
+                    loaded++;
+            }
          }
 
       // Child directories load propagation ( by init() call )

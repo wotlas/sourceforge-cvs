@@ -25,6 +25,7 @@ import wotlas.utils.FileTools;
 
 import wotlas.libs.log.*;
 import wotlas.libs.net.*;
+import wotlas.libs.sound.SoundLibrary;
 
 import wotlas.common.*;
 import wotlas.common.RemoteServersPropertiesFile;
@@ -45,10 +46,6 @@ public class ServerDirector implements Runnable, NetServerErrorListener {
 
  /*------------------------------------------------------------------------------------*/
 
-   /** Default location where are stored base data.
-    */
-      public final static String DEFAULT_BASE_PATH = "../base";
-
    /** Server Command Line Help
     */
       public final static String SERVER_COMMAND_LINE_HELP =
@@ -57,18 +54,14 @@ public class ServerDirector implements Runnable, NetServerErrorListener {
            +"  ServerDirector -daemon       : the server will display nothing.\n"
            +"  ServerDirector -erroronly    : the server will only print errors.\n"
            +"  ServerDirector -base ../base : sets the data location.\n\n"
-           +"If the -base option is not set we search for data in "+DEFAULT_BASE_PATH
+           +"If the -base option is not set we search for data in "
+           +ResourceManager.DEFAULT_BASE_PATH
            +"\n\n";
 
    /** Format of the server log name.
     */
-      public final static String SERVER_LOGS = "logs";
       public final static String SERVER_LOG_PREFIX = "wot-server-";
       public final static String SERVER_LOG_SUFFIX = ".log";
-
-   /** Format of the configs path name
-    */
-      public final static String SERVER_CONFIGS = "configs";
 
  /*------------------------------------------------------------------------------------*/
 
@@ -129,7 +122,7 @@ public class ServerDirector implements Runnable, NetServerErrorListener {
 
         // STEP 0 - We parse the command line options
            boolean isDaemon = false;
-           String basePath = DEFAULT_BASE_PATH;
+           String basePath = ResourceManager.DEFAULT_BASE_PATH;
            Debug.displayExceptionStack( false );
 
            for( int i=0; i<argv.length; i++ ) {
@@ -186,17 +179,24 @@ public class ServerDirector implements Runnable, NetServerErrorListener {
               }
            }
 
-        // STEP 1 - We create a LogStream to save our Debug messages to disk.
+        // STEP 1 - Creation of the ResourceManager
+           resourceManager = new ResourceManager();
+
+           if( !resourceManager.inJar() )
+               resourceManager.setBasePath(basePath);
+
+
+        // STEP 2 - We create a LogStream to save our Debug messages to disk.
            try{
                if(isDaemon) {
                	// We don't print the Debug messages on System.err
-                  Debug.setPrintStream( new DaemonLogStream( basePath+File.separator+SERVER_LOGS
-                           +File.separator+SERVER_LOG_PREFIX+System.currentTimeMillis()+SERVER_LOG_SUFFIX ) );
+                  Debug.setPrintStream( new DaemonLogStream( resourceManager.getExternalLogsDir()
+                           +SERVER_LOG_PREFIX+System.currentTimeMillis()+SERVER_LOG_SUFFIX ) );
                }
                else {
                	// We also print the Debug messages on System.err
-                  Debug.setPrintStream( new ServerLogStream( basePath+File.separator+SERVER_LOGS
-                           +File.separator+SERVER_LOG_PREFIX+System.currentTimeMillis()+SERVER_LOG_SUFFIX ) );
+                  Debug.setPrintStream( new ServerLogStream( resourceManager.getExternalLogsDir()
+                           +SERVER_LOG_PREFIX+System.currentTimeMillis()+SERVER_LOG_SUFFIX ) );
                }
            }
            catch( java.io.FileNotFoundException e ) {
@@ -204,31 +204,24 @@ public class ServerDirector implements Runnable, NetServerErrorListener {
                return;
            }
 
-
-        // STEP 2 - We control the VM version and load our vital config files.
-
+        // STEP 3 - We control the VM version and load our vital config files.
            if( !Tools.javaVersionHigherThan( "1.3.0" ) )
                Debug.exit();
 
-           Debug.signal( Debug.NOTICE, null, "*-----------------------------------*" );
-           Debug.signal( Debug.NOTICE, null, "|   Wheel Of Time - Light & Shadow  |" );
-           Debug.signal( Debug.NOTICE, null, "|  Copyright (C) 2001 - WOTLAS Team |" );
-           Debug.signal( Debug.NOTICE, null, "|           Server v1.2.3           |" );
-           Debug.signal( Debug.NOTICE, null, "*-----------------------------------*\n");
+           Debug.signal( Debug.NOTICE, null, "*-------------------------------------*" );
+           Debug.signal( Debug.NOTICE, null, "|    Wheel Of Time - Light & Shadow   |" );
+           Debug.signal( Debug.NOTICE, null, "| Copyright (C) 2001-2002 WOTLAS Team |" );
+           Debug.signal( Debug.NOTICE, null, "*-------------------------------------*\n");
 
+           Debug.signal( Debug.NOTICE, null, "Code version       : "+resourceManager.WOTLAS_VERSION );
 
-           serverProperties = new ServerPropertiesFile(basePath+File.separator+SERVER_CONFIGS);
-           Debug.signal( Debug.NOTICE, null, "Data directory     : "+basePath );
+           if( !resourceManager.inJar() )
+              Debug.signal( Debug.NOTICE, null, "Data directory     : "+basePath );
+           else
+              Debug.signal( Debug.NOTICE, null, "Data directory     : JAR File" );
 
-           remoteServersProperties = new RemoteServersPropertiesFile(basePath+File.separator+SERVER_CONFIGS);
-
-
-        // STEP 3 - Creation of the ResourceManager
-           resourceManager = new ResourceManager( basePath,
-                                             basePath+File.separator+SERVER_CONFIGS,
-                                             serverProperties.getProperty("init.helpPath"),
-                                             basePath+File.separator+SERVER_LOGS
-                                         );
+           serverProperties = new ServerPropertiesFile(resourceManager);
+           remoteServersProperties = new RemoteServersPropertiesFile(resourceManager);
 
         // STEP 4 - We ask the ServerManager to get ready
            serverManager = new ServerManager(resourceManager);
@@ -238,14 +231,17 @@ public class ServerDirector implements Runnable, NetServerErrorListener {
            dataManager = new DataManager(resourceManager);
            dataManager.init( serverProperties );
 
-        // STEP 6 - Start of the GameServer, AccountServer & GatewayServer !
+        // STEP 6 - Sound Library for alerts... (we only create a sound player)
+           SoundLibrary.createSoundLibrary( serverProperties, null, resourceManager );
+
+        // STEP 7 - Start of the GameServer, AccountServer & GatewayServer !
            Debug.signal( Debug.NOTICE, null, "Starting Game server, Account server & Gateway server..." );
            serverManager.start();
 
-        // STEP 7 - We generate new keys for special characters
+        // STEP 8 - We generate new keys for special characters
            updateKeys();
 
-        // STEP 8 - Adding Shutdown Hook
+        // STEP 9 - Adding Shutdown Hook
            shutdownThread = new Thread() {
            	public void run() {
            	   immediatePersistenceThreadStop = true;
@@ -262,6 +258,7 @@ public class ServerDirector implements Runnable, NetServerErrorListener {
                    serverManager.closeAllConnections();
                    dataManager.shutdown(true);
                    serverManager.shutdown();
+                   SoundLibrary.clear();
 
                    Debug.signal(Debug.CRITICAL,null,"Data Saved. Exiting.");
                    Debug.flushPrintStream();
@@ -270,8 +267,7 @@ public class ServerDirector implements Runnable, NetServerErrorListener {
 
            Runtime.getRuntime().addShutdownHook(shutdownThread);
 
-
-        // STEP 9 - Everything is ok ! we enter the persistence loop
+        // STEP 10 - Everything is ok ! we enter the persistence loop
            Debug.signal( Debug.NOTICE, null, "Starting persistence thread..." );
 
            serverDirector = new ServerDirector();
@@ -279,7 +275,6 @@ public class ServerDirector implements Runnable, NetServerErrorListener {
            
            Thread persistenceThread = new Thread( serverDirector );
            persistenceThread.start();
-
 
         // If we are in "daemon" mode the only way to stop the server is via signals.
         // Otherwise we wait 2s and wait for a key to be pressed to shutdown...

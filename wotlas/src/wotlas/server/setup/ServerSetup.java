@@ -22,7 +22,7 @@ package wotlas.server.setup;
 import wotlas.common.*;
 import wotlas.server.*;
 import wotlas.utils.*;
-import wotlas.utils.aswing.*;
+import wotlas.libs.aswing.*;
 
 import wotlas.libs.wizard.*;
 import wotlas.libs.wizard.step.*;
@@ -47,30 +47,18 @@ public class ServerSetup extends JWizard {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Database Config.
-   */
-    private final static String DEFAULT_BASE_PATH = "../base";
-
   /** Setup Command Line Help
    */
     public final static String SETUP_COMMAND_LINE_HELP =
             "Usage: ServerSetup -[help|base <path>]\n\n"
            +"Examples : \n"
            +"  ServerSetup -base ../base : sets the data location.\n\n"
-           +"If the -base option is not set we search for data in "+DEFAULT_BASE_PATH
+           +"If the -base option is not set we search for data in "+ResourceManager.DEFAULT_BASE_PATH
            +"\n\n";
-
-  /** Format of the server log name.
-   */
-    public final static String SERVER_LOGS = "logs";
-
-  /** Format of the configs path name
-   */
-    public final static String SERVER_CONFIGS = "configs";
 
  /*------------------------------------------------------------------------------------*/
 
-   /** Towns Name & initial position
+   /** Towns Name & initial position - TEMP will be replaced by a more oo...
     */
     public final static String TOWNS_NAME[] = {
           "Near Tar Valon",
@@ -102,7 +90,11 @@ public class ServerSetup extends JWizard {
 
    /** Our base path.
     */
-     private static String basePath = DEFAULT_BASE_PATH;
+     private static String basePath;
+
+   /** ResourceManager
+    */
+     private static ResourceManager rManager;
 
    /** Our serverID
     */
@@ -126,7 +118,7 @@ public class ServerSetup extends JWizard {
    */
     public ServerSetup() {
          super("Server Config",
-               basePath+File.separator+"gui",
+               rManager,
                FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter").deriveFont(18f),
                470,450);
          setLocation(200,100);
@@ -536,7 +528,6 @@ public class ServerSetup extends JWizard {
            Debug.setLevel( Debug.CRITICAL );
            Debug.displayExceptionStack( false );
 
-           ResourceManager rManager = new ResourceManager(basePath,"","","");
            serverConfigManager = new ServerConfigManager( rManager );
            config = serverConfigManager.loadServerConfig( serverID );
 
@@ -751,13 +742,12 @@ public class ServerSetup extends JWizard {
                                            +" You can now start your server. Because your server is"
                                            +" local you don't need to use the setup program.");
 
-             FileTools.saveTextToFile( basePath
-                                       +File.separator+"servers"+File.separator
-                                       +"server-0.cfg.adr", "localhost" );
+             rManager.saveText( rManager.getExternalServerConfigsDir()+"server-0.cfg.adr", "localhost" );
           } else {
              param.setProperty("init.info0", "\n      Your server config has been successfully saved.\n\n"
                                            +"      You must now send it to the wotlas manager : just"
-                                           +" attach the \""+basePath+"/servers/server-"+serverID+".cfg\" file"
+                                           +" attach the \""+rManager.getExternalServerConfigsDir()
+                                           +"server-"+serverID+".cfg\" file"
                                            +" to a mail and send it to the address "
                                            +serverProperties.getProperty("info.remoteServerAdminEmail","")
                                            +". You will then receive the up- to-date universe data and be"
@@ -814,8 +804,8 @@ public class ServerSetup extends JWizard {
    */
     static public void main( String argv[] ) {
 
-        // STEP 1 - We parse the command line options
-           basePath = DEFAULT_BASE_PATH;
+        // STEP 0 - We parse the command line options
+           basePath = ResourceManager.DEFAULT_BASE_PATH;
            Debug.displayExceptionStack( true );
 
            for( int i=0; i<argv.length; i++ ) {
@@ -840,11 +830,17 @@ public class ServerSetup extends JWizard {
               }
            }
 
+        // STEP 1 - Creation of the ResourceManager
+           rManager = new ResourceManager();
+
+           if( !rManager.inJar() )
+               rManager.setBasePath(basePath);
+
         // STEP 2 - Log Creation
            try {
               Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(),
-                basePath+File.separator+SERVER_LOGS+File.separator+"register-setup.log",
-                "log-title-dark.jpg", basePath+File.separator+"gui" ) );
+                                    rManager.getExternalLogsDir()+"register-setup.log",
+                                    "log-title-dark.jpg", rManager ) );
            } catch( java.io.FileNotFoundException e ) {
               e.printStackTrace();
               Debug.exit();
@@ -852,19 +848,17 @@ public class ServerSetup extends JWizard {
 
            Debug.signal(Debug.NOTICE,null,"Starting Register Setup...");
 
-
-           serverProperties = new ServerPropertiesFile(basePath+File.separator+SERVER_CONFIGS);
-           remoteServersProperties = new RemoteServersPropertiesFile(basePath+File.separator+SERVER_CONFIGS);
+           serverProperties = new ServerPropertiesFile(rManager);
+           remoteServersProperties = new RemoteServersPropertiesFile(rManager);
 
            serverID = serverProperties.getIntegerProperty("init.serverID");
            Debug.signal( Debug.NOTICE, null, "Current Default Server ID is : "+serverID );
 
-           serverConfigPrefixPath = basePath
-                               +File.separator+ServerConfigManager.SERVERS_HOME
-                               +File.separator+ServerConfigManager.SERVERS_PREFIX;
+           serverConfigPrefixPath = rManager.getExternalServerConfigsDir()
+                               +ServerConfigManager.SERVERS_PREFIX;
 
          // STEP 3 - Creation of our Font Factory
-           FontFactory.createDefaultFontFactory( basePath+File.separator+"fonts" );
+           FontFactory.createDefaultFontFactory( rManager );
            Debug.signal( Debug.NOTICE, null, "Font factory created..." );
 
          // STEP 4 - Start the wizard

@@ -39,30 +39,9 @@ public class ServerMapSetup extends WorldTree {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Database Relative Path.
-   */
-    private final static String DATABASE_PATH = "../base";
-
   /** Our worldMaps...
    */
     private static WorldManager wManager;
-
-  /** Static Init.
-   */    
-    static{
-     // STEP 0 - Log Creation
-        try {
-           Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(),
-                   DATABASE_PATH+File.separator+"logs/server-map-setup.log",
-                   "log-title-dark.jpg", DATABASE_PATH+File.separator+"gui" ) );
-        } catch( java.io.FileNotFoundException e ) {
-           e.printStackTrace();
-           Debug.exit();
-        }
-
-        ResourceManager rManager = new ResourceManager(DATABASE_PATH, "", "", "" );
-        wManager = new WorldManager(rManager,true);
-    }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -151,7 +130,22 @@ public class ServerMapSetup extends WorldTree {
    */
     static public void main( String argv[] ) {
           Debug.signal(Debug.NOTICE,null,"Starting Server Map Setup...");
-          new ServerMapSetup(wManager);
+
+        // STEP 1 - Creation of the ResourceManager
+           ResourceManager rManager = new ResourceManager();
+
+        // STEP 2 - Log Creation
+           try {
+              Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(),
+                                    rManager.getExternalLogsDir()+"server-map-setup.log",
+                                    "log-title-dark.jpg", rManager ) );
+           } catch( java.io.FileNotFoundException e ) {
+              e.printStackTrace();
+              Debug.exit();
+           }
+
+           wManager = new WorldManager(rManager,true);
+           new ServerMapSetup(wManager);
     }
 
  /*------------------------------------------------------------------------------------*/

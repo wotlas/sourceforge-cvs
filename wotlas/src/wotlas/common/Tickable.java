@@ -25,8 +25,7 @@ package wotlas.common;
  *  fields and so on... 
  *
  *  In Wotlas the client side works with a tick implementation but does not have a synchronous
- *  behaviour ( network operations and awt events are still asynchronous ). We use the "tickable"
- *  approach as it is a convenient way to design periodic tasks.
+ *  behaviour ( network operations and awt events are still asynchronous ).
  *
  * @author Aldiss
  */

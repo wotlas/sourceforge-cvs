@@ -24,7 +24,7 @@ import java.awt.event.*;
 import java.io.File;
 
 import wotlas.utils.*;
-import wotlas.utils.aswing.*;
+import wotlas.libs.aswing.*;
 
 import wotlas.libs.persistence.*;
 import wotlas.common.*;
@@ -46,7 +46,7 @@ public class MacroPlugIn extends JPanelPlugIn {
   
   /** The name of the client macros config file.
    */
-    private final static String MACROS_PREFIX = "macros"+File.separator+"macro-";
+    private final static String MACROS_PREFIX = "macro-";
     private final static String MACROS_SUFFIX = ".cfg";
 
   /** Max Number of macros the user can create.
@@ -486,23 +486,20 @@ public class MacroPlugIn extends JPanelPlugIn {
    *  @return the loaded macros list, an empty array if no config file was found
    */
     public String[] load() {
-         String fileName = ClientDirector.getResourceManager().getConfig(
-                           MACROS_PREFIX
+         ResourceManager rManager = ClientDirector.getResourceManager();
+         String fileName = rManager.getExternalMacrosDir()
+                           +MACROS_PREFIX
                            +ClientDirector.getDataManager().getMyPlayer().getPrimaryKey()
-                           +MACROS_SUFFIX );
+                           +MACROS_SUFFIX;
 
-         try{
             if( new File(fileName).exists() ) {
-                MacrosList list = (MacrosList) PropertiesConverter.load(fileName);
-                return list.getMacros();
-            }
-            else
-                Debug.signal( Debug.NOTICE, null, "No macros config found..." );
-         }
-         catch (PersistenceException pe) {
-            Debug.signal( Debug.ERROR, null, "Failed to load macros config : " + pe.getMessage() );
-         }
+                MacrosList list = (MacrosList) rManager.loadObject(fileName);
 
+                if(list!=null)
+                   return list.getMacros();
+            }
+
+         Debug.signal( Debug.NOTICE, null, "No macros config found..." );
          String listStr[] = new String[1];
          listStr[0] = "";
          return listStr;
@@ -515,20 +512,18 @@ public class MacroPlugIn extends JPanelPlugIn {
    * @return true if the save succeeded, false otherwise
    */
     public boolean save(String[] macros) {
+    	ResourceManager rManager = ClientDirector.getResourceManager();
         MacrosList list = new MacrosList();
         list.setMacros(macros);
        
-         try{
-             PropertiesConverter.save(list, ClientDirector.getResourceManager().getConfig(
-                           MACROS_PREFIX
+        if( rManager.saveObject(list, rManager.getExternalMacrosDir()
+                           +MACROS_PREFIX
                            +ClientDirector.getDataManager().getMyPlayer().getPrimaryKey()
-                           +MACROS_SUFFIX ) );
+                           +MACROS_SUFFIX ) )
              return true;
-         }
-         catch (PersistenceException pe) {
-             Debug.signal( Debug.ERROR, this, "Failed to save macros : " + pe.getMessage() );
-             return false;
-         }
+
+        Debug.signal( Debug.ERROR, this, "Failed to save macros.");
+        return false;
     }
 
  /*------------------------------------------------------------------------------------*/

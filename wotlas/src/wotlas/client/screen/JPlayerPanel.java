@@ -68,8 +68,7 @@ public class JPlayerPanel extends JPanel implements MouseListener {
           Class classes[] = null;
         
           try{
-              //classes = Tools.getImplementorsOf("wotlas.client.screen.JPanelPlugIn", null );
-              String packages[] = {this.getClass().getPackage().getName()+".plugin"};
+              String packages[] = { "wotlas.client.screen.plugin" };
               classes = Tools.getImplementorsOf("wotlas.client.screen.JPanelPlugIn", packages);
           }
           catch( ClassNotFoundException e ) {
@@ -85,6 +84,26 @@ public class JPlayerPanel extends JPanel implements MouseListener {
               return;
           }
 
+          if(classes==null || classes.length==0) {
+             // we retry in the plug-in package (this is neede dif we are not in a jar file)
+                try{
+                    String packageName[] = { "wotlas.client.screen.plugin" };
+
+                    classes = Tools.getImplementorsOf("wotlas.client.screen.JPanelPlugIn", packageName );
+                }
+                catch( ClassNotFoundException e ) {
+                    Debug.signal(Debug.CRITICAL, this, e );
+                    return;
+                }
+                catch( SecurityException e ) {
+                    Debug.signal(Debug.CRITICAL, this, e );
+                    return;
+                }
+                catch( RuntimeException e ) {
+                    Debug.signal(Debug.ERROR, this, e );
+                    return;
+                }
+          }
 
           for( int i=0; i<classes.length; i++ ) {
 

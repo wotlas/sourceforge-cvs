@@ -46,11 +46,6 @@ public class ClientDirector {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Default location where are stored config files ( 'client.cfg',
-   *  'remote-servers.cfg', etc...).
-   */
-    public final static String DEFAULT_BASE_PATH = "../base";
-
   /** Server Command Line Help
    */
     public final static String CLIENT_COMMAND_LINE_HELP =
@@ -58,17 +53,13 @@ public class ClientDirector {
            +"Examples : \n"
            +"  ClientDirector -classic      : displays the classic log window.\n"
            +"  ClientDirector -base ../base : sets the data location.\n\n"
-           +"If the -base option is not set we search for configs in "+DEFAULT_BASE_PATH
+           +"If the -base option is not set we search for configs in "
+           +ResourceManager.DEFAULT_BASE_PATH
            +"\n\n";
 
   /** Name of the client log file.
    */
-    public final static String CLIENT_LOGS = "logs";
     public final static String CLIENT_LOG_NAME = "wot-client.log";
-
-  /** Format of the configs path name
-   */
-    public final static String CLIENT_CONFIGS = "configs";
 
  /*------------------------------------------------------------------------------------*/
 
@@ -115,7 +106,7 @@ public class ClientDirector {
 
     // STEP 0 - We parse the command line options
        boolean classicLogWindow = false;
-       String basePath = DEFAULT_BASE_PATH;
+       String basePath = ResourceManager.DEFAULT_BASE_PATH;
        Debug.displayExceptionStack( true );
 
        for( int i=0; i<argv.length; i++ ) {
@@ -147,18 +138,22 @@ public class ClientDirector {
             }
        }
 
-    // STEP 1 - Start a JLogStream to display our Debug messages
+    // STEP 1 - Creation of the ResourceManager
+       resourceManager = new ResourceManager();
+       
+       if( !resourceManager.inJar() )
+           resourceManager.setBasePath(basePath);
+
+    // STEP 2 - Start a JLogStream to display our Debug messages
        try {
-            if(!classicLogWindow) {
+            if(!classicLogWindow)
                logStream = new JLogStream( new javax.swing.JFrame(),
-                     basePath+File.separator+CLIENT_LOGS+File.separator+CLIENT_LOG_NAME,
-                     "log-title.jpg", basePath+File.separator+"gui" );
-            }
-            else {
-               logStream =  new JLogStream( new javax.swing.JFrame(),
-                     basePath+File.separator+CLIENT_LOGS+File.separator+CLIENT_LOG_NAME,
-                     "log-title-dark.jpg", basePath+File.separator+"gui" );
-            }
+                                           resourceManager.getExternalLogsDir()+CLIENT_LOG_NAME,
+                                           "log-title.jpg", resourceManager );
+            else
+               logStream = new JLogStream( new javax.swing.JFrame(),
+                                           resourceManager.getExternalLogsDir()+CLIENT_LOG_NAME,
+                                           "log-title-dark.jpg", resourceManager );
 
             Debug.setPrintStream( logStream );
        }
@@ -170,31 +165,28 @@ public class ClientDirector {
        if(SHOW_DEBUG)
           System.out.println("Log created.");
 
-    // STEP 2 - We control the VM version and load our vital config files.
+
+    // STEP 3 - We control the VM version and load our vital config files.
        Debug.signal( Debug.NOTICE, null, "*-------------------------------------*" );
        Debug.signal( Debug.NOTICE, null, "|    Wheel Of Time - Light & Shadow   |" );
        Debug.signal( Debug.NOTICE, null, "| Copyright (C) 2001-2002 WOTLAS Team |" );
        Debug.signal( Debug.NOTICE, null, "*-------------------------------------*\n");
 
+       Debug.signal( Debug.NOTICE, null, "Code version       : "+resourceManager.WOTLAS_VERSION );
 
-       clientProperties = new ClientPropertiesFile(basePath+File.separator+CLIENT_CONFIGS);
-       Debug.signal( Debug.NOTICE, null, "Data directory     : "+basePath );
+       if( !resourceManager.inJar() )
+           Debug.signal( Debug.NOTICE, null, "Data directory     : "+basePath );
+        else
+           Debug.signal( Debug.NOTICE, null, "Data directory     : JAR File" );
 
-       remoteServersProperties = new RemoteServersPropertiesFile(basePath+File.separator+CLIENT_CONFIGS);
-
-
-    // STEP 3 - Creation of the ResourceManager
-       resourceManager = new ResourceManager( basePath,
-                                          basePath+File.separator+CLIENT_CONFIGS,
-                                          clientProperties.getProperty("init.helpPath"),
-                                          basePath+File.separator+CLIENT_LOGS
-                                      );
+       clientProperties = new ClientPropertiesFile( resourceManager );
+       remoteServersProperties = new RemoteServersPropertiesFile( resourceManager );
 
     // STEP 4 - Creation of Sound Library
-       SoundLibrary.createSoundLibrary( basePath );
+       SoundLibrary.createSoundLibrary( clientProperties, resourceManager, resourceManager );
 
     // STEP 5 - Creation of our Font Factory
-       FontFactory.createDefaultFontFactory( resourceManager.getBase("fonts") );
+       FontFactory.createDefaultFontFactory( resourceManager );
        Debug.signal( Debug.NOTICE, null, "Font Factory created..." );
 
     // STEP 6 - We load the client configuration. There is always a config returned.

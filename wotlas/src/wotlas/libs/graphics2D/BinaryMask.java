@@ -54,12 +54,12 @@ public class BinaryMask
   }
  
  /*------------------------------------------------------------------------------------*/
-  
+
   /** To create a mask
    *
    * @param path image path
    * @return the created mask
-   */
+   *
   static public boolean[][] create(String path) {
     BufferedImage maskBuffImg = ImageLibrary.loadBufferedImage(path);
     return create(maskBuffImg);

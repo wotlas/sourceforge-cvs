@@ -23,6 +23,7 @@ import java.io.*;
 import java.net.*;
 
 import java.util.Properties;
+import java.util.Vector;
 
 /** Various useful tools to manipulate files...
  *
@@ -34,10 +35,10 @@ public class FileTools
  /*------------------------------------------------------------------------------------*/
 
   /** Finds the file/directory having the highest (or lowest) name (lexical order) in the
-   * specified directory. The file/directory must have the XXXsometingYYY format, where
+   * specified directory. The file/directory must have the XXXsomethingYYY format, where
    * is XXX is the "beg" parameter and YYY the "end" parameter.<br><p>
    *
-   *  For example if the "/home/test" directory contains :<br><p>
+   *  For example if the String list[] contains :<br><p>
    *
    *  ah-ah.cfg <br>
    *  save-2001-09-01.cfg <br>
@@ -45,46 +46,80 @@ public class FileTools
    *  save-2001-09-03.cfg <br>
    *  zzz-zzz.dat <br><p>
    *
-   *  the call findSave( "/home/test", "save-",".cfg", true) will return "save-2001-03.cfg".
-   *  the call findSave( "/home/test", "save-",".cfg", false) will return "save-2001-01.cfg".
+   *  the call findSave( list, "save-",".cfg", true) will return "save-2001-09-03.cfg".
+   *  the call findSave( list, "save-",".cfg", false) will return "save-2001-09-01.cfg".
    *
    *  Note that in the example we paid attention to the file names : no "9" but "09" to keep
    *  a useful lexical order.
    *
-   * @param path directory to inspect.
+   * @param list list of file names to inspect
    * @param beg  file name prefix.
    * @param end file name suffix.
    * @param latest latest or oldest save ?
    * @return file name with the highest or lowest lexical order and matching the specified format.
    */
-   static public String findSave( String path, String beg, String end, boolean latest )
-   {
-       File fileList[] = new File( path ).listFiles();
+   static public String findSave( String list[], String beg, String end, boolean latest ) {
+       if( list==null )
+           return null;
 
        int index = -1;
 
-       if( fileList==null )
-           return null;
+       for( int i=0; i<list.length; i++ ) {
 
-       for( int i=0; i<fileList.length; i++ )
-       {
-          if( !fileList[i].getName().startsWith(beg) || !fileList[i].getName().endsWith(end) )
+         // 1 - We get the last part of the name ( if "bob/alice.cfg" we keep "alice.cfg" )
+            String name = list[i];
+            int ind = list[i].lastIndexOf( File.separator );
+
+            if(ind<0) {
+               ind = list[i].lastIndexOf( "/" );
+
+               if(ind>0)
+                  name = name.substring( ind+1, name.length() );
+            }
+            else
+               name = name.substring( ind+File.separator.length(), name.length() );
+
+         // 2 - We try to match the format
+            if( !name.startsWith(beg) || !name.endsWith(end) )
                continue;
 
-          if( index==-1 )
-              index = i;
-          else{
-             int compare = fileList[i].getName().compareTo( fileList[index].getName() );
+         // 3 - We compare the names
+            if( index==-1 )
+                index = i;
+            else{
+                int compare = list[i].compareTo( list[index] );
 
-             if( ( latest && compare>0 ) || ( !latest && compare<0 ) )
-                  index = i;
-          }
+                if( ( latest && compare>0 ) || ( !latest && compare<0 ) )
+                    index = i;
+            }
        }
 
        if( index==-1 )
            return null;
        else
-           return fileList[index].getName();
+           return list[index];
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To load a simple properties file...
+   *
+   * @param inStream an input stream
+   * @return properties file
+   */
+   static public Properties loadPropertiesFromStream( InputStream inStream )
+   {
+      try {
+         BufferedInputStream is = new BufferedInputStream( inStream );
+         Properties props = new Properties();
+         props.load( is );
+
+         return props;
+      }
+      catch(Exception e) {
+         Debug.signal(Debug.WARNING, null, e);
+         return null;
+      }
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -212,6 +247,42 @@ public class FileTools
 
  /*------------------------------------------------------------------------------------*/
 
+   /** Loads the text from the stream.
+    * @param is an inputstream
+    * @return a string representing the text file on success, null on failure
+    */
+   public static String loadTextFromStream( InputStream is )
+   {
+     StringBuffer text = new StringBuffer("");
+     String tmp;
+     boolean firstLine = true;
+
+      try
+      {
+        BufferedReader r_in = new BufferedReader( new InputStreamReader(is) );
+
+         while( (tmp = r_in.readLine())!=null ) {
+               if(!firstLine)
+                  text.append("\n");
+               else
+                  firstLine=false;
+
+               text.append(tmp);
+         }
+
+         r_in.close();
+      }
+      catch(IOException e) {
+         Debug.signal( Debug.ERROR, null, "Error: "+e );
+         return null;
+      }
+
+      return text.toString();
+   }
+
+
+ /*------------------------------------------------------------------------------------*/
+
   /** To read a distant file represented by an URL.
    * @param urlName string representing an url
    * @return the loaded text file or null if an error occured.
@@ -274,6 +345,65 @@ public class FileTools
             return newConfig.toString();
 
     }
+
+ /*------------------------------------------------------------------------------------*/
+
+ /** To list the files from a disk's directory (only the files, not dirs...),  we filter
+  *  the files that have the specified extension.
+  *
+  * @param dirName directory to use as root for our search
+  * @param ext extension of the files to find (enter "" to get all the files)
+  * @return files path name found ( on one level, we don't extend the search
+  *         to sub-directories ). If no files are found we return an empty array.
+  */
+   public static String[] listFiles( String dirName, String ext ) {
+       File flist[] = new File(dirName).listFiles();
+
+       if(flist==null)
+          return new String[0];
+
+       Vector list = new Vector(20);
+
+       for( int i=0; i<flist.length; i++ ) {
+            if( flist[i].isDirectory() || !flist[i].getName().endsWith(ext) )
+                continue;
+
+            list.addElement( flist[i].getPath() );
+       }
+
+       String toReturn[] = {};
+       return (String[]) list.toArray( toReturn );
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+ /** To list the sub-dirs from a disk's directory.
+  *
+  * @param dirName directory to use as root for our search
+  * @return dirs name found ( on one level, we don't extend the search
+  *         to sub-directories ). If no dirs are found we return an empty array.
+  */
+   public static String[] listDirs( String dirName ) {
+       File flist[] = new File(dirName).listFiles();
+
+       if(flist==null)
+          return new String[0];
+
+       Vector list = new Vector(10);
+
+       for( int i=0; i<flist.length; i++ ) {
+            if( !flist[i].isDirectory() )
+                continue;
+
+            if( flist[i].getPath().endsWith(File.separator) )
+                list.addElement( flist[i].getPath() );
+            else
+                list.addElement( flist[i].getPath()+File.separator );
+       }
+
+       String toReturn[] = {};
+       return (String[]) list.toArray( toReturn );
+   }
 
  /*------------------------------------------------------------------------------------*/
 

@@ -102,7 +102,7 @@ public class JClientScreen extends JFrame {
           }
        });
 
-      setIconImage(ClientDirector.getResourceManager().getBaseImage("gui/icon.gif"));
+      setIconImage(ClientDirector.getResourceManager().getGuiImage("icon.gif"));
    }
 
  /*------------------------------------------------------------------------------------*/

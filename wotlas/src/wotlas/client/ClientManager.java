@@ -34,7 +34,7 @@ import wotlas.libs.sound.SoundLibrary;
 import wotlas.libs.wizard.*;
 
 import wotlas.utils.*;
-import wotlas.utils.aswing.*;
+import wotlas.libs.aswing.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -290,7 +290,7 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                                                  "Warning", JOptionPane.WARNING_MESSAGE);
         else  // Wotlas News
             new JHTMLWindow( this, "Wotlas News", ClientDirector.getRemoteServerConfigHomeURL()+"news.html",
-                             320, 400, false, ClientDirector.getResourceManager().getBase("gui") );
+                             320, 400, false, ClientDirector.getResourceManager() );
 
          // Load images of buttons
         im_cancelup    = ClientDirector.getResourceManager().getImageIcon("cancel-up.gif");
@@ -335,9 +335,7 @@ public class ClientManager extends JIntroWizard implements ActionListener {
      case MAIN_SCREEN:
 
        setTitle("Wotlas - Account selection...");
-
-       if( SoundLibrary.getSoundLibrary()!=null )
-          SoundLibrary.getSoundLibrary().stopMusic();
+       SoundLibrary.getMusicPlayer().stopMusic();
 
       // Create panels
        leftPanel = new JPanel();
@@ -528,9 +526,9 @@ public class ClientManager extends JIntroWizard implements ActionListener {
       b_help.addActionListener(new ActionListener() {
           public void actionPerformed (ActionEvent e) {
              new JHTMLWindow( ClientManager.this, "Help",
-                 ClientDirector.getResourceManager().getHelp("index.html"),
+                 ClientDirector.getResourceManager().getHelpDocsDir()+"index.html",
                  640, 340, false,
-                 ClientDirector.getResourceManager().getBase("gui") );
+                 ClientDirector.getResourceManager() );
           }
         }
       );
@@ -983,6 +981,11 @@ public class ClientManager extends JIntroWizard implements ActionListener {
     case ACCOUNT_INFO_SCREEN:
 
       setTitle("Wotlas - Account creation...");
+
+      if( currentProfileConfig==null ) {
+          start(MAIN_SCREEN);
+          break;
+      }
 
       // Set the appropriate server config.
       currentServerConfig = serverConfigManager.getServerConfig(currentProfileConfig.getServerID());

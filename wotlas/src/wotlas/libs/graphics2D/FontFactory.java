@@ -54,6 +54,21 @@ public class FontFactory {
    */
      protected String userFontPath;
 
+  /** Optional font resource locator to tell us where to take fonts.
+   */
+     protected FontResourceLocator resourceLocator;
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To create the default factory.
+   * @param userFontPath where the user fonts are stored
+   */
+    public static FontFactory createDefaultFontFactory( FontResourceLocator resourceLocator ) {
+    	if(defaultFontFactory==null)
+    	   defaultFontFactory = new FontFactory(resourceLocator);
+    	return defaultFontFactory;
+    }
+
  /*------------------------------------------------------------------------------------*/
 
   /** To create the default factory.
@@ -72,6 +87,17 @@ public class FontFactory {
    */
     public static FontFactory getDefaultFontFactory() {
     	return defaultFontFactory;
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Constructor with font resource locator.
+   * @param resourceLocator to get access to fonts
+   */
+    protected FontFactory( FontResourceLocator resourceLocator ) {
+    	fonts = new Hashtable(5);
+        this.resourceLocator = resourceLocator;
+        init();
     }
 
  /*------------------------------------------------------------------------------------*/
@@ -146,19 +172,37 @@ public class FontFactory {
    * @param fontFileName font file name in the user directory.
    */
     protected Font loadUserFont( String fontFileName ) {
-      try {
-         File file = new File(userFontPath+File.separator+fontFileName);
-         FileInputStream fis = new FileInputStream(file);
-         return Font.createFont(Font.TRUETYPE_FONT, fis);
-      }
-      catch (Exception e) {
-      	 e.printStackTrace();
 
-         if(DEBUG_MODE)
-            System.out.println("Failed to load font from file : "+fontFileName);
+         if(resourceLocator==null) {
+            try {
+                File file = new File(userFontPath+File.separator+fontFileName);
+                FileInputStream fis = new FileInputStream(file);
+                return Font.createFont(Font.TRUETYPE_FONT, fis);
+            }
+            catch (Exception e) {
+      	        e.printStackTrace();
 
-         return null;
-      }
+                if(DEBUG_MODE)
+                   System.out.println("Failed to load font from file : "+fontFileName);
+
+                return null;
+            }
+         }
+         else {
+            InputStream is = resourceLocator.getFontStream(fontFileName);
+            if(is==null) return null;
+            try{
+                return Font.createFont(Font.TRUETYPE_FONT, is);
+            }
+            catch (Exception e) {
+      	        e.printStackTrace();
+
+                if(DEBUG_MODE)
+                   System.out.println("Failed to load font from file : "+fontFileName);
+
+                return null;
+            }
+         }
     }
 
  /*------------------------------------------------------------------------------------*/

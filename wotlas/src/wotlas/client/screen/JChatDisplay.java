@@ -50,10 +50,6 @@ public class JChatDisplay extends LogStream {
    */
     public final static String CHAT_LOG_SUFFIX = ".html";
 
-  /** Smiley Home.
-   */
-    public final static String SMILEYS_HOME = "gui"+File.separator+"chat"+File.separator;
-
   /** The smileys we recognize :
    */
     public final static String SMILEYS[][] = {
@@ -131,7 +127,8 @@ public class JChatDisplay extends LogStream {
    * @param chatRoom chatRoom associated to this JChatDisplay
    */
     public JChatDisplay(ChatRoom chatRoom) throws FileNotFoundException {
-         super( ClientDirector.getResourceManager().getLog( chatRoom.getPrimaryKey() + CHAT_LOG_SUFFIX),
+         super( ClientDirector.getResourceManager().getExternalLogsDir()
+                +chatRoom.getPrimaryKey() + CHAT_LOG_SUFFIX,
                 true, 60*1000 );
 
          msg_number = 0;
@@ -171,7 +168,7 @@ public class JChatDisplay extends LogStream {
        }
 
     // Search for smileys
-       String smileysHome = ClientDirector.getResourceManager().getBase(SMILEYS_HOME);
+       String smileysHome = ClientDirector.getResourceManager().getGuiSmileysDir();
 
        for( int i=0; i<SMILEYS.length; i++ ) {
        	  int pos=0, posD=0;
@@ -205,7 +202,7 @@ public class JChatDisplay extends LogStream {
 
        for( int i=0; i<SOUNDS.length; i++ )
           if( text.indexOf(SOUNDS[i][0])>=0 ) {
-              SoundLibrary.getSoundLibrary().playSound(SOUNDS[i][1]);
+              SoundLibrary.getSoundPlayer().playSound(SOUNDS[i][1]);
               break;
           }
 

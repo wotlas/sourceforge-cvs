@@ -32,8 +32,8 @@ import wotlas.libs.sound.SoundLibrary;
  * @author Aldiss
  */
 
-public class ServerChatCommand implements ChatCommand
-{
+public class ServerChatCommand implements ChatCommand {
+
  /*------------------------------------------------------------------------------------*/
 
    /** Returns the first part of the chat command. For example if your chat command
@@ -97,7 +97,7 @@ public class ServerChatCommand implements ChatCommand
           ServerConfig ourConfig = ServerDirector.getServerManager().getServerConfig();
 
           if(message.equals("/server bell")) {
-               SoundLibrary.createSoundLibrary("../base").playSound("server.wav");
+               SoundLibrary.getSoundPlayer().playSound("server.wav");
                Debug.signal(Debug.NOTICE,null,""+player.getFullPlayerName()+" is ringing this server...");
 
                response.setMessage( "/cmd:You are ringing server <b> "+ourConfig.getServerSymbolicName()

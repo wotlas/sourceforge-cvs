@@ -19,10 +19,7 @@
 
 package wotlas.common;
 
-import java.io.File;
-
 import wotlas.utils.Debug;
-import wotlas.utils.PropertiesConfigFile;
 
 /** Represents the 'remote-servers.cfg' properties file. We check that its content is valid.
  *
@@ -41,12 +38,12 @@ public class RemoteServersPropertiesFile extends PropertiesConfigFile {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Constructor with the full file path to config files ( "../src/config" for example).
+   /** Constructor with our resource manager.
     *
-    * @param configFilePath file path to config files.
+    * @param rManager our resource manager
     */
-    public RemoteServersPropertiesFile( String configFilePath ) {
-    	super( configFilePath+File.separator+REMOTE_SERVERS_CONFIG );
+    public RemoteServersPropertiesFile( ResourceManager rManager ) {
+    	super( rManager, REMOTE_SERVERS_CONFIG );
 
         if( !isValid("info.remoteServerHomeURL") ) {
             Debug.signal( Debug.FAILURE, this, "info.remoteServerHomeURL property not set in "+REMOTE_SERVERS_CONFIG+" !" );

@@ -20,6 +20,7 @@
 package wotlas.client.screen;
 
 import wotlas.client.*;
+import wotlas.client.gui.*;
 import wotlas.client.screen.JAccountConnectionDialog;
 
 import wotlas.common.ServerConfig;
@@ -35,12 +36,10 @@ import wotlas.libs.net.NetPersonality;
 import wotlas.libs.graphics2D.FontFactory;
 
 import wotlas.utils.*;
-import wotlas.utils.aswing.*;
+import wotlas.libs.aswing.*;
 
 import java.awt.*;
 import java.awt.event.*;
-
-import java.io.File;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -98,7 +97,7 @@ public class JAccountCreationWizard extends JWizard {
    */
    public JAccountCreationWizard() {
      super("Account creation wizard",
-           ClientDirector.getResourceManager().getBase("gui"),
+           ClientDirector.getResourceManager(),
            FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter").deriveFont(18f),
            460,460);
 
@@ -213,7 +212,7 @@ public class JAccountCreationWizard extends JWizard {
             if(htmlDescr==null)
                htmlDescr = new JHTMLWindow( ClientDirector.getClientManager(), "Wotlas Server",
                            "text:"+currentServerConfig.toHTML(), 350, 250, false,
-                           ClientDirector.getResourceManager().getBase("gui") );
+                           ClientDirector.getResourceManager() );
             else {
                htmlDescr.setText( currentServerConfig.toHTML() );
                if( !htmlDescr.isShowing() ) htmlDescr.show();

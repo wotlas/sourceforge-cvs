@@ -19,10 +19,9 @@
 
 package wotlas.client;
 
-import java.io.File;
-
+import wotlas.common.ResourceManager;
+import wotlas.common.PropertiesConfigFile;
 import wotlas.utils.Debug;
-import wotlas.utils.PropertiesConfigFile;
 
 /** Represents the 'client.cfg' properties file. We check that its content is valid.
  *
@@ -40,20 +39,14 @@ public class ClientPropertiesFile extends PropertiesConfigFile {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Constructor with the full file path to config files ( "../src/config" for example).
+   /** Constructor with our resource manager.
     *
-    * @param configFilePath file path to config files.
+    * @param rManager our resource manager
     */
-    public ClientPropertiesFile( String configFilePath ) {
-    	super( configFilePath+File.separator+CLIENT_CONFIG );
+    public ClientPropertiesFile( ResourceManager rManager ) {
+    	super( rManager, CLIENT_CONFIG );
 
-        if( !isValid("init.helpPath") ) {
-            Debug.signal( Debug.FAILURE, this, "init.helpPath property not set in "+CLIENT_CONFIG+" !" );
-            Debug.exit();
-        }
-
-        Debug.signal( Debug.NOTICE, null, "Client properties loaded successfully :" );
-        Debug.signal( Debug.NOTICE, null, "Help directory     : "+getProperty("init.helpPath") );
+        Debug.signal( Debug.NOTICE, null, "Client properties loaded successfully." );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -83,6 +83,23 @@ public class ChildrenOfTheLight extends Male {
    /** Constructor
     */
     public ChildrenOfTheLight() {
+        InitCharData();
+        InitWotData();
+
+        classes[0] = CLASSES_WOT_CHILDREN_OF_THE_LIGHT;
+        
+        this.charAttributes[this.ATTR_STR][this.IDX_ACTUAL] = 10;
+        this.charAttributes[this.ATTR_STR][this.IDX_MAX]    = 10;
+        this.charAttributes[this.ATTR_INT][this.IDX_ACTUAL] = 10;
+        this.charAttributes[this.ATTR_INT][this.IDX_MAX]    = 10;
+        this.charAttributes[this.ATTR_WIS][this.IDX_ACTUAL] = 10;
+        this.charAttributes[this.ATTR_WIS][this.IDX_MAX]    = 10;
+        this.charAttributes[this.ATTR_CON][this.IDX_ACTUAL] = 10;
+        this.charAttributes[this.ATTR_CON][this.IDX_MAX]    = 10;
+        this.charAttributes[this.ATTR_DEX][this.IDX_ACTUAL] = 10;
+        this.charAttributes[this.ATTR_DEX][this.IDX_MAX]    = 10;
+        this.charAttributes[this.ATTR_CHA][this.IDX_ACTUAL] = 10;
+        this.charAttributes[this.ATTR_CHA][this.IDX_MAX]    = 10;
     }
 
  /*------------------------------------------------------------------------------------*/

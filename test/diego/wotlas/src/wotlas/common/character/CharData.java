@@ -26,6 +26,8 @@ import wotlas.libs.graphics2D.*;
 import wotlas.libs.persistence.*;
 import wotlas.common.objects.inventories.*;
 
+import wotlas.utils.*;
+
 import java.io.*;
 import java.awt.Color;
 
@@ -50,6 +52,24 @@ public abstract class CharData implements BackupReady {
      */
     private static final long serialVersionUID = 556565L;
 
+    /* index for array of data [x][2] */
+    final static public int IDX_MAX     = 0;
+    final static public int IDX_ACTUAL  = 1;
+
+    /* list of all the classes */
+    final static public int CLASSES_WOT_AES_SEDAI   = 1;
+    final static public int CLASSES_WOT_WARDER      = 2;
+    final static public int CLASSES_WOT_CHILDREN_OF_THE_LIGHT = 3;
+    final static public int CLASSES_WOT_ASHAMAN     = 4;
+    final static public int CLASSES_WOT_DARK_ONE    = 5;
+    final static public int CLASSES_WOT_WOLF_BROTHER= 6;
+    final static public int CLASSES_WOT_AIEL_WARRIOR= 7;
+    final static public int CLASSES_RL_WARRIOR      = 8;
+    
+    final static public String[] CLASSES_NAMES = {
+        "NULL","Wot:Aes Sedai","Wot:Warder","Wot:Children of the Light","Wot:Ashaman"
+        ,"Wot:Dark One","Wot:Wolf Brother","Wot:Aiel Warrior","Rl:Warrior" };
+    
     /* spells and items, will point to this constant to maniupulate data flags*/
     final static public int FLAG_INVISIBLE = 0;
     final static public int FLAG_PARALIZED = 1;
@@ -102,7 +122,7 @@ public abstract class CharData implements BackupReady {
     */
     public short[][] charAttributes;
 
-    public byte[] levels;
+    public byte[][] levels;
     public short[] classes;
     public long[] gold;
     public long[] exp;
@@ -128,10 +148,10 @@ public abstract class CharData implements BackupReady {
     */
     public boolean[] charFlags;
 
-    public void initCharData(){
+    protected void InitCharData(){
         maskCharAttributes = new int[2];
         charAttributes = new short[ATTR_LAST_ATTR][2];
-        levels = new byte[1];
+        levels = new byte[1][2];
         classes = new short[1];
         gold = new long[2];
         exp = new long[2];
@@ -193,7 +213,7 @@ public abstract class CharData implements BackupReady {
         if( IdTmp == ExternalizeGetVersion() ){
             maskCharAttributes = ( int[] ) objectInput.readObject();
             charAttributes = ( short[][] ) objectInput.readObject();
-            levels = ( byte[] ) objectInput.readObject();
+            levels = ( byte[][] ) objectInput.readObject();
             classes = ( short[] ) objectInput.readObject();
             gold = ( long[] ) objectInput.readObject();
             exp = ( long[] ) objectInput.readObject();
@@ -218,12 +238,8 @@ public abstract class CharData implements BackupReady {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** write object data to stream on the net.
-   */
-    
     public void writeObject(java.io.ObjectOutputStream objectOutput)
     throws java.io.IOException {
-        System.out.println(" diego: i waz wrote");
         objectOutput.writeInt( ExternalizeGetVersion() );
         objectOutput.writeObject( maskCharAttributes );
         objectOutput.writeObject( charAttributes );
@@ -239,18 +255,13 @@ public abstract class CharData implements BackupReady {
         objectOutput.writeObject( charFlags );
     }
     
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** read object data from stream on the net.
-   */
     public void readObject(java.io.ObjectInputStream objectInput)
     throws java.io.IOException, java.lang.ClassNotFoundException {
-        System.out.println(" diego: i waz read");
         int IdTmp = objectInput.readInt();
         if( IdTmp == ExternalizeGetVersion() ){
             maskCharAttributes = ( int[] ) objectInput.readObject();
             charAttributes = ( short[][] ) objectInput.readObject();
-            levels = ( byte[] ) objectInput.readObject();
+            levels = ( byte[][] ) objectInput.readObject();
             classes = ( short[] ) objectInput.readObject();
             gold = ( long[] ) objectInput.readObject();
             exp = ( long[] ) objectInput.readObject();

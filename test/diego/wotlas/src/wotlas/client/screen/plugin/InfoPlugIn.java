@@ -28,12 +28,13 @@ import wotlas.common.*;
 import wotlas.common.message.description.PlayerPastMessage;
 import wotlas.client.*;
 import wotlas.client.screen.*;
+import wotlas.common.character.*;
 
 
 /** Plug In that shows information on the selected player and enables the
  *  local player to set his/her past.
  *
- * @author MasterBob
+ * @author MasterBob, Diego
  */
 
 public class InfoPlugIn extends JPanelPlugIn {
@@ -132,7 +133,13 @@ public class InfoPlugIn extends JPanelPlugIn {
   /** To set the player info given a player.
    */
     public void setPlayerInfo( Player player ) {
+        if( player.getBasicChar().getEnvironment() == BasicChar.ENVIRONMENT_WOT )
+            ;
+        else
+            setWotPlayerInfo( player );
+    }
 
+    public void setWotPlayerInfo( Player player ) {
       if( player==ClientDirector.getDataManager().getMyPlayer() ) {
 
        // Is there a valid past ?

@@ -83,7 +83,24 @@ public class AielWarrior extends Male {
    /** Constructor
     */
     public AielWarrior() {
-    }
+        InitCharData();
+        InitWotData();
+
+        classes[0] = CLASSES_WOT_AIEL_WARRIOR;
+        
+        this.charAttributes[this.ATTR_STR][this.IDX_ACTUAL] = 10;
+        this.charAttributes[this.ATTR_STR][this.IDX_MAX]    = 10;
+        this.charAttributes[this.ATTR_INT][this.IDX_ACTUAL] = 10;
+        this.charAttributes[this.ATTR_INT][this.IDX_MAX]    = 10;
+        this.charAttributes[this.ATTR_WIS][this.IDX_ACTUAL] = 10;
+        this.charAttributes[this.ATTR_WIS][this.IDX_MAX]    = 10;
+        this.charAttributes[this.ATTR_CON][this.IDX_ACTUAL] = 10;
+        this.charAttributes[this.ATTR_CON][this.IDX_MAX]    = 10;
+        this.charAttributes[this.ATTR_DEX][this.IDX_ACTUAL] = 10;
+        this.charAttributes[this.ATTR_DEX][this.IDX_MAX]    = 10;
+        this.charAttributes[this.ATTR_CHA][this.IDX_ACTUAL] = 10;
+        this.charAttributes[this.ATTR_CHA][this.IDX_MAX]    = 10;
+     }
 
  /*------------------------------------------------------------------------------------*/
 

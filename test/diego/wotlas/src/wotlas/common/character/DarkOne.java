@@ -47,6 +47,27 @@ public class DarkOne extends WotCharacter {
    */
     transient private ShadowSprite doShadowSprite;
 
+   /** Constructor
+    */
+    public DarkOne() {
+        InitCharData();
+        InitWotData();
+
+        classes[0] = CLASSES_WOT_DARK_ONE;
+        
+        this.charAttributes[this.ATTR_STR][this.IDX_ACTUAL] = 10;
+        this.charAttributes[this.ATTR_STR][this.IDX_MAX]    = 10;
+        this.charAttributes[this.ATTR_INT][this.IDX_ACTUAL] = 10;
+        this.charAttributes[this.ATTR_INT][this.IDX_MAX]    = 10;
+        this.charAttributes[this.ATTR_WIS][this.IDX_ACTUAL] = 10;
+        this.charAttributes[this.ATTR_WIS][this.IDX_MAX]    = 10;
+        this.charAttributes[this.ATTR_CON][this.IDX_ACTUAL] = 10;
+        this.charAttributes[this.ATTR_CON][this.IDX_MAX]    = 10;
+        this.charAttributes[this.ATTR_DEX][this.IDX_ACTUAL] = 10;
+        this.charAttributes[this.ATTR_DEX][this.IDX_MAX]    = 10;
+        this.charAttributes[this.ATTR_CHA][this.IDX_ACTUAL] = 10;
+        this.charAttributes[this.ATTR_CHA][this.IDX_MAX]    = 10;
+     }    
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To get a Drawable for this character. This should not be used on the

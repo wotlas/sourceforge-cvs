@@ -38,6 +38,9 @@ import java.awt.Color;
 
 public abstract class BasicChar extends CharData {
 
+    public static final byte ENVIRONMENT_WOT        = 1;
+    public static final byte ENVIRONMENT_ROGUE_LIKE = 2;
+    
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To get a Drawable for this character. This should not be used on the
@@ -120,4 +123,17 @@ public abstract class BasicChar extends CharData {
      public abstract Drawable getAura();
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+     /**
+      * return data to show in plugin panel attributesPlugin
+      * it's the same for all wotlas classes, 
+      * change for Rogue Like classes, and 
+      * any other diffent environment class.
+      */
+     public abstract String getAttributesText();
+
+     /** return enviroment type : Actually are RogueLike or Wheel of Time
+      *
+      */
+     public abstract byte getEnvironment();
 }

@@ -29,6 +29,7 @@ import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.graphics2D.filter.*;
 
+import wotlas.utils.*;
 
 /** An Aes Sedai character.
  *
@@ -111,6 +112,23 @@ public class AesSedai extends Female {
    /** Constructor
     */
     public AesSedai() {
+        InitCharData();
+        InitWotData();
+
+        classes[0] = CLASSES_WOT_AES_SEDAI;
+        
+        this.charAttributes[this.ATTR_STR][this.IDX_ACTUAL] = 10;
+        this.charAttributes[this.ATTR_STR][this.IDX_MAX]    = 10;
+        this.charAttributes[this.ATTR_INT][this.IDX_ACTUAL] = 10;
+        this.charAttributes[this.ATTR_INT][this.IDX_MAX]    = 10;
+        this.charAttributes[this.ATTR_WIS][this.IDX_ACTUAL] = 10;
+        this.charAttributes[this.ATTR_WIS][this.IDX_MAX]    = 10;
+        this.charAttributes[this.ATTR_CON][this.IDX_ACTUAL] = 10;
+        this.charAttributes[this.ATTR_CON][this.IDX_MAX]    = 10;
+        this.charAttributes[this.ATTR_DEX][this.IDX_ACTUAL] = 10;
+        this.charAttributes[this.ATTR_DEX][this.IDX_MAX]    = 10;
+        this.charAttributes[this.ATTR_CHA][this.IDX_ACTUAL] = 10;
+        this.charAttributes[this.ATTR_CHA][this.IDX_MAX]    = 10;
     }
 
  /*------------------------------------------------------------------------------------*/
@@ -445,8 +463,6 @@ public class AesSedai extends Female {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** write object data to a stream to send data.
-   */
     public void writeObject(java.io.ObjectOutputStream objectOutput)
     throws java.io.IOException {
         objectOutput.writeInt( ExternalizeGetVersion() );
@@ -455,10 +471,6 @@ public class AesSedai extends Female {
         objectOutput.writeBoolean( blackAjah );
     }
     
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** read object data from a stream to recive data.
-   */
     public void readObject(java.io.ObjectInputStream objectInput)
     throws java.io.IOException, java.lang.ClassNotFoundException {
         int IdTmp = objectInput.readInt();

@@ -38,4 +38,34 @@ import java.awt.Color;
 
 public abstract class WotCharacter extends BasicChar {
 
+     /**
+      * return data to show in plugin panel attributesPlugin
+      * it's the same for all wotlas classes, 
+      * change for Rogue Like classes, and 
+      * any other diffent environment class.
+      */
+    public String getAttributesText() {
+        return " Str : "+this.charAttributes[this.ATTR_STR][this.IDX_ACTUAL]+"\n"
+        +" Int : "+this.charAttributes[this.ATTR_INT][this.IDX_ACTUAL]+"\n"
+        +" Wis : "+this.charAttributes[this.ATTR_WIS][this.IDX_ACTUAL]+"\n"
+        +" Con : "+this.charAttributes[this.ATTR_CON][this.IDX_ACTUAL]+"\n"
+        +" Dex : "+this.charAttributes[this.ATTR_DEX][this.IDX_ACTUAL]+"\n"
+        +" Cha : "+this.charAttributes[this.ATTR_CHA][this.IDX_ACTUAL]+"\n" ;
+    }
+
+    /** return enviroment type : Actually are RogueLike or Wheel of Time
+     *
+     */
+    public byte getEnvironment() {
+        return ENVIRONMENT_WOT;
+    }
+
+    public void InitWotData(){
+        levels[0][IDX_MAX] = 1;
+        levels[0][IDX_ACTUAL] = 1;
+        gold[IDX_MAX] = 100;
+        gold[IDX_ACTUAL] = 100;
+        exp[IDX_MAX] = 1;
+        exp[IDX_ACTUAL] = 1;
+    }
 }

@@ -52,4 +52,25 @@ public abstract class RLikeCharacter extends BasicChar {
         charFlags = new boolean[FLAG_LAST_FLAG];
     }
 */
+     /**
+      * return data to show in plugin panel attributesPlugin
+      * it's the same for all wotlas classes, 
+      * change for Rogue Like classes, and 
+      * any other diffent environment class.
+      */
+     public String getAttributesText() {
+          return " Str : "+this.charAttributes[this.ATTR_STR]+"\n"
+          +" Int : "+this.charAttributes[this.ATTR_INT]+"\n"
+          +" Wis : "+this.charAttributes[this.ATTR_WIS]+"\n"
+          +" Con : "+this.charAttributes[this.ATTR_CON]+"\n"
+          +" Dex : "+this.charAttributes[this.ATTR_DEX]+"\n"
+          +" Cha : "+this.charAttributes[this.ATTR_CHA]+"\n" ;
+     }
+     
+     /** return enviroment type : Actually are RogueLike or Wheel of Time
+      *
+      */
+     public byte getEnvironment() {
+         return ENVIRONMENT_ROGUE_LIKE;
+     }
 }

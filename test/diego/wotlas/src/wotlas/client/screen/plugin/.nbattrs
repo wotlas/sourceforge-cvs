@@ -7,4 +7,7 @@
     <fileobject name="InventoryPlugIn.java">
         <attr name="class_dependency_wotlas.client.screen.JPanelPlugIn" stringvalue="InventoryPlugIn"/>
     </fileobject>
+    <fileobject name="AttributesPlugIn.java">
+        <attr name="class_dependency_wotlas.client.screen.JPanelPlugIn" stringvalue="AttributesPlugIn"/>
+    </fileobject>
 </attributes>

@@ -182,15 +182,22 @@ public class FileTools
     */
    public static String loadTextFromFile( String filename )
    {
-     String text = new String("");
+     StringBuffer text = new StringBuffer("");
      String tmp;
+     boolean firstLine = true;
 
       try
       {
         BufferedReader r_in = new BufferedReader( new FileReader(filename));
 
-         while( (tmp = r_in.readLine())!=null )
-               text = text.concat(tmp.concat("\n"));
+         while( (tmp = r_in.readLine())!=null ) {
+               if(!firstLine)
+                  text.append("\n");
+               else
+                  firstLine=false;
+
+               text.append(tmp);
+         }
 
          r_in.close();
       }
@@ -198,8 +205,8 @@ public class FileTools
          Debug.signal( Debug.ERROR, null, "Error: "+e );
          text = null;
       }
-   
-      return text;
+
+      return text.toString();
    }
 
 

@@ -1,18 +1,24 @@
 <HTML>
-<HEAD>
-<TITLE>Persistence package</TITLE>
-</HEAD>
 <BODY>
-<H1>Allows to save and restore objects in "dot-properties" files</H1>
-<H2>Usage</H2>
-<H3>public static void save(Object object, String name) throws PersistenceException</H3>
-Save the <I>object</I> in the file which path is <I>name</I><P>
-<H3>public static void save(Object object, OutputStream os) throws PersistenceException</H3>
-Save the <I>object</I> in the <I>os</I> OutputStream<P>
-<H3>public static Object load(String name) throws PersistenceException</H3>
-Return the <I>Object</I> loaded from the file which path is <I>name</I><P>
-<H3>public static Object load(InputStream is) throws PersistenceException</H3>
+<h1>Persistence Engine : allows you to save/restore objects in/from "dot-properties" files. </h1><br>
+See the package's full description for more details.
+
+<h2>Usage:</h2>
+
+<pre>
+public static void save(Object object, String name) throws PersistenceException
+Save the <I>object</I> in the file which path is <I>name</I>
+
+public static void save(Object object, OutputStream os) throws PersistenceException
+Save the <I>object</I> in the <I>os</I> OutputStream
+
+public static Object load(String name) throws PersistenceException
+Return the <I>Object</I> loaded from the file which path is <I>name</I>
+
+public static Object load(InputStream is) throws PersistenceException
 Return the <I>Object</I> loaded from the <I>is</I> OutputStream<P>
+</pre><br>
+
 <H2>Known limitations</H2>
 To be saved/loaded, a property should have a public getter and setter and should not be transient:</P>
 If the field is xxx, setXxx() and getXxx() should be public.<P>

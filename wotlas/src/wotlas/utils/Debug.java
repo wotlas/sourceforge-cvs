@@ -27,8 +27,8 @@ import java.io.PrintStream;
  * @author Aldiss
  */
 
-public class Debug
-{
+public class Debug {
+
  /*------------------------------------------------------------------------------------*/
 
     /** 
@@ -127,9 +127,16 @@ public class Debug
      * @param e exception raised.
      */
        public synchronized static void signal( byte code, Object src_obj, Exception e ) {
-          signal( code, src_obj, e.getMessage() );
+          if(e!=null) {
+             if(e.getMessage()!=null)
+                signal( code, src_obj, e.getMessage() );
+             else
+                signal( code, src_obj, e.toString() );
+          }
+          else
+             signal( code, src_obj, "<null exception>" );
 
-          if( displayExceptionStack )
+          if( displayExceptionStack && e!=null )
               out.println( "EXCEPTION STACK: "+getStackTrace(e) );
        }
 

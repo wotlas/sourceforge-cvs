@@ -68,6 +68,10 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
   /** Button to leave the chatRoom
    */
   JButton b_leaveChatRoom;
+  
+  /** TextField where player writes messages
+   */
+  JTextField inputBox;
  
  /*------------------------------------------------------------------------------------*/  
  
@@ -103,7 +107,15 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     // SOUTH
     JPanel bottomChat = new JPanel(false);
     bottomChat.setLayout(new BorderLayout());
-    JTextField inputBox = new JTextField();
+    inputBox = new JTextField();
+    inputBox.getCaret().setVisible(true);
+    inputBox.addKeyListener(new KeyAdapter()
+      {
+        public void keyReleased(KeyEvent e) {
+          if ( e.getKeyCode()==KeyEvent.VK_ENTER )
+            okAction();
+          }
+	    });
     bottomChat.add("Center", inputBox);
     JSlider chatLevel = new JSlider(JSlider.HORIZONTAL, 0, 2, CHAT_SPEAK);
     chatLevel.setMajorTickSpacing(1);
@@ -137,6 +149,14 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     addChatRoom(chat3);
     
     removeChatRoom("chat-2");
+  }
+
+ /*------------------------------------------------------------------------------------*/  
+
+  /** To get current ChatRoom primaryKey
+   */
+  public String getMyChatRoomID() {
+    return tabbedPane.getSelectedComponent().getName();
   }
 
  /*------------------------------------------------------------------------------------*/  
@@ -231,7 +251,23 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
   }
 
  /*------------------------------------------------------------------------------------*/ 
- 
+
+  /** action when the user wants to send a message
+   */
+  private void okAction() {
+    String message = inputBox.getText();
+
+    if (message.length()==0)
+      return;
+
+    DataManager.getDefaultDataManager().sendMessage(new SendPublicTxtMessage( getMyChatRoomID(), message ) );
+
+    // entry reset
+    inputBox.setText("");
+  }
+
+ /*------------------------------------------------------------------------------------*/ 
+
   /** Called when an action is performed.
    */
   public void actionPerformed(ActionEvent e) {

@@ -77,7 +77,13 @@ public class GameServer extends NetServer
 
           if( account==null ) {
                Debug.signal( Debug.NOTICE, this, "A client tried to connect on a non-existent account.");
-               refuseClient( personality, "This account doesnot exist on this server" );
+               refuseClient( personality, "This account does not exist on this server" );
+               return;
+          }
+          
+          if( account.getPlayer().isConnectedToGame() ) {
+               Debug.signal( Debug.ERROR, this, "A client tried to connect twice to the game server.");
+               refuseClient( personality, "This account is already connected on this server" );
                return;
           }
 

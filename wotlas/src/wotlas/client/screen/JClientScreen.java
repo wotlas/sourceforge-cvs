@@ -143,8 +143,8 @@ public class JClientScreen extends JFrame
 
       // *** Preview Panel ***
 
-      previewPanel.setPreferredSize(new Dimension(mainWidth-leftWidth, thumbHeight));
-      rightPanel.add(previewPanel);
+      //previewPanel.setPreferredSize(new Dimension(mainWidth-leftWidth, thumbHeight));
+      //rightPanel.add(previewPanel);
 
       // *** Player Panel ***
 

@@ -19,6 +19,7 @@
 
 package wotlas.client;
 
+import wotlas.common.character.*;
 import wotlas.common.Player;
 
 import wotlas.common.universe.*;
@@ -149,5 +150,13 @@ public class PlayerImpl implements Player
   }
   
  /*------------------------------------------------------------------------------------*/
-  
+
+  /** To get the player's character.
+   *
+   *  @return player character
+   */
+  public WotCharacter getWotCharacter() {
+    return null; // for now
+  }
+
 }

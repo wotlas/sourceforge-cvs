@@ -267,14 +267,23 @@ public class InteriorMapData implements MapData
 
         // Init doors state
         for( int r=0; r<rooms.length; r++ ) {
+             if(rooms[r]==null) continue;
+        
              Door doors[] = rooms[r].getDoors();
+             
+             if(doors==null) continue;
+             
              for( int d=0; d<doors.length; d++ )
                 doors[d].clean();
         }
 
         // Display doors
         for( int r=0; r<rooms.length; r++ ) {
+             if(rooms[r]==null) continue;
+
              Door doors[] = rooms[r].getDoors();
+
+             if(doors==null) continue;
 
              for( int d=0; d<doors.length; d++ )
                   if( !doors[d].isDisplayed() ) {

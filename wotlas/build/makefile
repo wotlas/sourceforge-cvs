@@ -30,12 +30,15 @@ LIBS_PACKAGES  = wotlas/libs/net \
 
 COMMON_PACKAGES = wotlas/common \
                   wotlas/common/universe \
-                  wotlas/common/message
+                  wotlas/common/message \
+                  wotlas/common/message/account
 
 SERVER_PACKAGES = wotlas/server \
-                  wotlas/server/setup
+                  wotlas/server/setup \
+                  wotlas/server/message/account
 
-CLIENT_PACKAGES = 
+CLIENT_PACKAGES = wotlas/client \
+                  wotlas/client/message/account
 
 
 ##########################################################################

@@ -22,6 +22,7 @@ package wotlas.libs.log;
 import wotlas.utils.SwingTools;
 import wotlas.client.gui.JCroppedWindow;
 import wotlas.libs.graphics2D.ImageLibrary;
+import wotlas.utils.Tools;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -94,7 +95,7 @@ public class JLogStream extends LogStream
           dialog.setBackground( Color.white );
 
        // 2 - log text area
-          logArea = new JTextArea();
+          logArea = new JTextArea("Starting Wotlas...\n");
           logArea.setFont( new Font( "Monospaced", Font.PLAIN, 10 ) );
           logArea.setForeground( new Color( 100,100,100 ) );
           logArea.setPreferredSize( new Dimension( image.getWidth(null), 80 ) );
@@ -119,6 +120,7 @@ public class JLogStream extends LogStream
           dialog.pack();
           SwingTools.centerComponent( dialog );
           dialog.show();
+          Tools.waitTime(2000);
      }
 
  /*------------------------------------------------------------------------------------*/
@@ -129,8 +131,7 @@ public class JLogStream extends LogStream
    * @param x text just printed to log.
    */
     protected void printedText( String x ) {
-
-        if(logArea==null || dialog==null || !dialog.isShowing() || x==null || x.length()==0 )
+        if(logArea==null || dialog==null || !logArea.isShowing() || x==null || x.length()==0 )
            return;
 
     // how many lines in this message ?
@@ -139,7 +140,10 @@ public class JLogStream extends LogStream
 
        do{
           nbLines++;
-          cur = x.indexOf( "\n", cur )+1;
+          cur = x.indexOf( "\n", cur );
+          
+          if(cur<0) break;
+          cur++;
        }while( cur>0 );
 
     // too much messages displayed ?
@@ -156,13 +160,14 @@ public class JLogStream extends LogStream
                 break;
        }
 
-       logArea.append( x+"\n" );
-       logArea.setPreferredSize( new Dimension( image.getWidth(null), numberOfMsg*15 ) );
+        if(logArea.isShowing()){
+           logArea.append( x+"\n" );
+           logArea.setPreferredSize( new Dimension( image.getWidth(dialog), numberOfMsg*15 ) );
+        }
 
      // we want the scrollbars to move when some text is added...
-        if(dialog.isShowing())
+        if(logArea.isShowing())
            logArea.setCaretPosition( logArea.getText().length() );
-
     }
 
  /*------------------------------------------------------------------------------------*/

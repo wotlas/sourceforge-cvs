@@ -18,10 +18,15 @@
  */
 
 package wotlas.client.screen;
- 
-import javax.swing.*;
+
+import wotlas.client.PlayerImpl;
+
+import wotlas.utils.ALabel;
+
 import java.awt.*;
 import java.awt.event.*;
+
+import javax.swing.*;
 
 /** JPanel to show informations of the player
  *
@@ -30,9 +35,53 @@ import java.awt.event.*;
 
 public class JInfosPanel extends JPanel
 {
-  public JInfosPanel() {
+
+  /** Player's short name
+   */
+  private ALabel lbl_playerName;
+  
+  /** Player's full name
+   */
+  private ALabel lbl_fullPlayerName;
+  
+  /** Player's location
+   */
+  private ALabel lbl_location;  
+  
+ /*------------------------------------------------------------------------------------*/
+
+  public JInfosPanel(PlayerImpl player) {
     super();
-    JLabel label1 = new JLabel("Infos panel...");
-    add(label1);
+    JPanel panel = new JPanel();
+    panel.setOpaque(false);
+    lbl_playerName = new ALabel("(" + player.getPlayerName() + ")");
+    lbl_fullPlayerName = new ALabel(player.getFullPlayerName());    
+    lbl_location = new ALabel();   
+    panel.add(lbl_fullPlayerName);
+    panel.add(lbl_playerName);
+    add(panel);
   }
+
+ /*------------------------------------------------------------------------------------*/
+ 
+  /** Set player's short name
+   */
+  public void setPlayerName(String playerName) {
+    lbl_playerName.setText("(" + playerName + ")");
+  }
+  
+  /** Set player's full name
+   */
+  public void setFullPlayerName(String fullPlayerName) {
+    lbl_fullPlayerName.setText(fullPlayerName);
+  }
+  
+  /** Set player's location
+   */
+  public void setLocation(String location) {
+    lbl_location.setText(location);
+  }
+ 
+ /*------------------------------------------------------------------------------------*/
+ 
 }

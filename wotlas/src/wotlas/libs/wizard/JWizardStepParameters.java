@@ -290,10 +290,8 @@ public class JWizardStepParameters {
          }
       }
       
-      ostream.writeBoolean(isPrevButtonEnabled);
-      System.out.println(isPrevButtonEnabled);
-      ostream.writeBoolean(isNextButtonEnabled);
-      System.out.println(isNextButtonEnabled);
+      ostream.writeBoolean(isPrevButtonEnabled);      
+      ostream.writeBoolean(isNextButtonEnabled);      
       ostream.writeBoolean(isLastStep);
       
    }
@@ -327,10 +325,8 @@ public class JWizardStepParameters {
          }
       }
       
-      isPrevButtonEnabled = istream.readBoolean();
-      System.out.println(isPrevButtonEnabled);
-      isNextButtonEnabled = istream.readBoolean();
-      System.out.println(isNextButtonEnabled);
+      isPrevButtonEnabled = istream.readBoolean();      
+      isNextButtonEnabled = istream.readBoolean();      
       isLastStep = istream.readBoolean();
    }
 

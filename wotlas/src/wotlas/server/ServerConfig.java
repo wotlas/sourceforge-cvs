@@ -19,7 +19,6 @@
 
 package wotlas.server;
 <COMPLETE>
-<ADD MAXGAMECONNECTIONS,MAXACCOUNTCONNECTIONS,MAXGATEWAYCONNECTIONS>
 
 /** A ServerConfig contains all the basic information of a server : name, ports, etc...
  *<p>
@@ -64,6 +63,18 @@ class ServerConfig
    /** Port for the GatewayServer. There is no restriction on this number.
     */
       private int gatewayServerPort;
+
+   /** Maximum Number of Connections on the Game Server.
+    */
+      private int maxNumberOfGameConnections;
+
+   /** Maximum Number of Connections on the Account Server.
+    */
+      private int maxNumberOfAccountConnections;
+
+   /** Maximum Number of Connections on the Gateway Server.
+    */
+      private int maxNumberOfGatewayConnections;
 
    /** A description of the content of this server : towns, guilds, etc ...
     */
@@ -185,6 +196,66 @@ class ServerConfig
     */
       public void setGatewayServerPort(  int gatewayServerPort ) {
          this.gatewayServerPort = gatewayServerPort;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the maximum number of game connections.
+    *
+    * @param maxNumberOfGameConnections to set
+    */
+      public void setMaxNumberOfGameConnections(  int maxNumberOfGameConnections ) {
+         this.maxNumberOfGameConnections = maxNumberOfGameConnections;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the maximum number of account connections.
+    *
+    * @param maxNumberOfAccountConnections to set
+    */
+      public void setMaxNumberOfAccountConnections(  int maxNumberOfAccountConnections ) {
+         this.maxNumberOfAccountConnections = maxNumberOfAccountConnections;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the maximum number of gateway connections.
+    *
+    * @param maxNumberOfGatewayConnections to set
+    */
+      public void setMaxNumberOfGatewayConnections(  int maxNumberOfGatewayConnections ) {
+         this.maxNumberOfGatewayConnections = maxNumberOfGatewayConnections;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the maximum number of account connections.
+    *
+    * @return maxNumberOfAccountConnections
+    */
+      public int getMaxNumberOfAccountConnections() {
+         return maxNumberOfAccountConnections;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the maximum number of game connections.
+    *
+    * @return maxNumberOfGameConnections
+    */
+      public int getMaxNumberOfGameConnections() {
+         return maxNumberOfGameConnections;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the maximum number of gateway connections.
+    *
+    * @return maxNumberOfGatewayConnections
+    */
+      public int getMaxNumberOfGatewayConnections() {
+         return maxNumberOfGatewayConnections;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

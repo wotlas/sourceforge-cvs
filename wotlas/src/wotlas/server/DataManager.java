@@ -19,7 +19,7 @@
 
 package wotlas.server;
 <COMPLETE>
-<GETTER SETTER ACCOUNT MANAGER & WORLDMANAGER>
+
 
 /** A DataManager manages Game Data. It possesses a WorldManager & AccountManager.
  *
@@ -95,6 +95,26 @@ class DataManager
    */
    public static DataManager getDefaultDataManager() {
          return dataManager;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the world manager.
+   *
+   * @return the world manager.
+   */
+   public WorldManager getWorldManager() {
+         return worldManager;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get account manager.
+   *
+   * @return the account manager.
+   */
+   public AccountManager getAccountManager() {
+         return accountManager;
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

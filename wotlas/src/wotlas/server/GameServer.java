@@ -19,7 +19,7 @@
 
 package wotlas.server;
 <COMPLETE>
-<UPDATE POSSIBILITY>
+<GAME CODE UPDATE POSSIBILITY>
 
 import wotlas.libs.net.NetServer;
 import wotlas.libs.net.NetPersonality;

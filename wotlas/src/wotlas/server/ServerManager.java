@@ -21,8 +21,7 @@ package wotlas.server;
 <COMPLETE>
 <PACKAGE NAMES (FOR SERVERS) TO COMPLETE>
 <PERSISTENCE CORRECT>
-<SET MAXSOCKS AS SERVERCONFIG>
-<GETTER & SETTER FOR SERVER>
+
 
  /** A Server Manager manages three servers : A GameServer, a AccountServer and
   *  a GatewayServer. The parameters for these servers are gathered in config/server.cfg.
@@ -73,7 +72,7 @@ public class ServerManager
           PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
           
            try{
-              pm.loadObject( config, "config/server.cfg" );
+              pm.loadServerConfig();
            }
            catch( PersistenceException pe ) {
                Debug.signal( Debug.FAILURE, this, pe );
@@ -87,17 +86,18 @@ public class ServerManager
                                              config.getAccountServerPort(),
                                              account_packages );
 
-          accountServer.setMaximumOpenedSockets( 20 );
+          accountServer.setMaximumOpenedSockets( config.getMaxNumberOfAccountConnections() );
 
        // 3 - We create the GameServer
           String game_packages[] = { "wotlas.server.message.description",
-                                     "wotlas.server.message.movement" };
+                                     "wotlas.server.message.movement",
+                                     "wotlas.server.message.chat" };
 
           gameServer = new GameServer( config.getServerName(),
                                        config.getGameServerPort(),
                                        game_packages );
 
-          gameServer.setMaximumOpenedSockets( 110 );
+          gameServer.setMaximumOpenedSockets( config.getMaxNumberOfGameConnections() );
 
        // 4 - We create the GatewayServer
           String gateway_packages[] = { "wotlas.server.message.gateway" };
@@ -106,7 +106,7 @@ public class ServerManager
                                              config.getGatewayServerPort(),
                                              gateway_packages );
 
-          gatewayServer.setMaximumOpenedSockets( 20 );
+          gatewayServer.setMaximumOpenedSockets( config.getMaxNumberOfGatewayConnections() );
 
        // Everything is ready on the network side...
    }
@@ -133,6 +133,36 @@ public class ServerManager
    */
    public static ServerManager getDefaultServerManager() {
          return serverManager;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the GameServer.
+   *
+   * @return the game server.
+   */
+   public GameServer getGameServer() {
+         return gameServer;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the AccountServer.
+   *
+   * @return the account server.
+   */
+   public AccountServer getAccountServer() {
+         return acountServer;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the GatewayServer.
+   *
+   * @return the gateway server.
+   */
+   public GatewayServer getGatewayServer() {
+         return gatewayServer;
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -56,7 +56,7 @@ public class LiePanel extends JPanel
     super();
     this.setLayout(new BorderLayout());
 
-    ATextArea ta_infos = new ATextArea("You can lie on your name: you can create and use up to 5 fake names... but be careful, once you have created a fake name, you cannot change it");
+    ATextArea ta_infos = new ATextArea("You can lie on your name: you can create and use up to 5 fake names... but be careful, once you have created a fake name, you cannot change it.");
     ta_infos.setLineWrap(true);
     ta_infos.setWrapStyleWord(true);
     ta_infos.setEditable(false);
@@ -108,9 +108,20 @@ public class LiePanel extends JPanel
     
       saveNameButton.addActionListener(new ActionListener() {
         public void actionPerformed (ActionEvent e) {                    	
-          PlayerImpl player = DataManager.getDefaultDataManager().getMyPlayer();                 
-          System.out.println("CreateFakeName " + a_newFakeName.getText());
-          player.sendMessage( new CreateFakeNameMessage(a_newFakeName.getText()) );
+          int size = a_newFakeName.getText().trim().length();
+          
+          if(size<5) {
+             JOptionPane.showMessageDialog( null, "Your fake name should have more than 4 letters !", "Error", JOptionPane.ERROR_MESSAGE);
+             return;
+          }
+
+          if(size>30) {
+             JOptionPane.showMessageDialog( null, "Your fake name should have less than 30 letters !", "Error", JOptionPane.ERROR_MESSAGE);
+             return;
+          } 
+
+          PlayerImpl player = DataManager.getDefaultDataManager().getMyPlayer();
+          player.sendMessage( new CreateFakeNameMessage(a_newFakeName.getText().trim()) );
           a_newFakeName.setText("");
         }
       });

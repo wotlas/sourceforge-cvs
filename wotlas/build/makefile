@@ -32,7 +32,8 @@ COMMON_PACKAGES = wotlas/common \
                   wotlas/common/universe \
                   wotlas/common/message
 
-SERVER_PACKAGES = wotlas/server
+SERVER_PACKAGES = wotlas/server \
+                  wotlas/server/setup
 
 CLIENT_PACKAGES = 
 

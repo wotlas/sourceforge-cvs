@@ -373,6 +373,8 @@ public class ClientManager
       profilesTable.setSelectionBackground(Color.lightGray);
       profilesTable.setSelectionForeground(Color.white);
       profilesTable.setRowHeight(24);
+      profilesTable.getColumnModel().getColumn(2).setPreferredWidth(-1);
+
       // selection
       profilesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       ListSelectionModel rowProfilesSM = profilesTable.getSelectionModel();
@@ -672,6 +674,7 @@ public class ClientManager
       serversTable.setSelectionBackground(Color.lightGray);
       serversTable.setSelectionForeground(Color.white);
       serversTable.setRowHeight(24);
+      serversTable.getColumnModel().getColumn(2).setPreferredWidth(-1);
       // selection
       serversTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       ListSelectionModel rowServerSM = serversTable.getSelectionModel();

@@ -461,6 +461,7 @@ public class ImageLibrary {
 
   /** To load an image from an "action" directory. The "set" directory must end with the
    *  "-exc". If there are other "action" directories already loaded, we first unload them.
+   *  The image loaded is of the type ARGB.
    *
    *  If the given image has already been loaded, we return immediately.
    *
@@ -468,6 +469,21 @@ public class ImageLibrary {
    * @exception IOException if something goes wrong
    */
    public void loadImageIndex( ImageIdentifier imID ) throws IOException{
+        loadImageIndex( imID, BufferedImage.TYPE_INT_ARGB );
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To load an image from an "action" directory. The "set" directory must end with the
+   *  "-exc". If there are other "action" directories already loaded, we first unload them.
+   *
+   *  If the given image has already been loaded, we return immediately.
+   *
+   * @param imID image identifier pointing to an imageSet.
+   * @param imType the image type. Must be on of the BufferedImage.TYPE_XXXX like TYPE_INT_ARGB
+   * @exception IOException if something goes wrong
+   */
+   public void loadImageIndex( ImageIdentifier imID, int imType ) throws IOException{
 
        if( images[imID.imageCategory][imID.imageSet][imID.imageAction] != null &&
            images[imID.imageCategory][imID.imageSet][imID.imageAction][imID.imageIndex] != null )
@@ -502,7 +518,7 @@ public class ImageLibrary {
            images[imID.imageCategory][imID.imageSet][imID.imageAction] = new BufferedImage[index.length];
 
        images[imID.imageCategory][imID.imageSet][imID.imageAction][imID.imageIndex]
-                                  = findImageIn( index, imID.imageIndex, BufferedImage.TYPE_INT_ARGB );
+                                  = findImageIn( index, imID.imageIndex, imType );
        nbImagesLoaded=0;
    }
 

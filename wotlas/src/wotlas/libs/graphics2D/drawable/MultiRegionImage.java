@@ -23,6 +23,7 @@ import wotlas.utils.Debug;
 
 import wotlas.libs.graphics2D.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /** 
  *  A MultiRegionImage is especially useful for HUGE background images that can't be
@@ -248,7 +249,7 @@ public class MultiRegionImage extends Drawable {
                   image[i][j].imageIndex = (short) (nbRegionX*j+i);
                   
                   try{
-                     imLib.loadImageIndex( image[i][j] );  // load
+                     imLib.loadImageIndex( image[i][j], BufferedImage.TYPE_INT_RGB );
                   }
                   catch( java.io.IOException e ) {
                      Debug.signal( Debug.ERROR, this, "Failed to load image "+e);

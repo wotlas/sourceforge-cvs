@@ -11,7 +11,7 @@
 # On Unix gnu make should find your sh automatically. 
 #
 
-SHELL=c:\\command.com
+# SHELL=c:\\command.com
 
 
 # PACKAGES
@@ -28,7 +28,8 @@ LIBS_PACKAGES  = wotlas/libs/net \
                  wotlas/libs/net/personality \
                  wotlas/libs/pathfinding \
                  wotlas/libs/persistence \
-                 wotlas/libs/wizard
+                 wotlas/libs/wizard \
+                 wotlas/libs/wizard/step
 
 LIBS_PACKAGES2 = wotlas/libs/graphics2D \
                  wotlas/libs/graphics2D/policy \

@@ -46,6 +46,8 @@ CLIENT_PACKAGES = wotlas/client \
                   wotlas/client/message/account \
                   wotlas/client/gui
 
+GRAPHICS_DEMO_PACKAGE = test/graphics/ants
+
 ##########################################################################
 
 CLASSDIR = ../classes
@@ -65,6 +67,8 @@ SRC_COMMON = $(foreach dir,$(COMMON_PACKAGES),$(SRCDIR)/$(dir)/*.java)
 SRC_SERVER = $(foreach dir,$(SERVER_PACKAGES),$(SRCDIR)/$(dir)/*.java)
 
 SRC_CLIENT = $(foreach dir,$(CLIENT_PACKAGES),$(SRCDIR)/$(dir)/*.java)
+
+SRC_GRDEMO = $(foreach dir,$(GRAPHICS_DEMO_PACKAGE),$(SRCDIR)/$(dir)/*.java)
 
 
 # And we compile it all
@@ -88,5 +92,7 @@ server:
 client:
 	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_CLIENT)
 
+grdemo:
+	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_GRDEMO)
 
 ##########################################################################

@@ -187,7 +187,7 @@ public class GraphicPingPanel extends JPanel implements NetPingListener
             dManager.getMyPlayer().getMovementComposer().resetMovement();
             pleaseWait = new JPleaseWait( dManager.getClientScreen() );
         }
-        else if(pleaseWait!=null) {
+        else if(ping!=PING_FAILED && pleaseWait!=null) {
             pleaseWait.dispose();
             pleaseWait = null;
         }
@@ -199,7 +199,7 @@ public class GraphicPingPanel extends JPanel implements NetPingListener
    */
      class JPleaseWait extends JDialog {
      	public JPleaseWait( Frame frame ){
-     	    super( frame, "Network Connection", true );
+     	    super( frame, "Network Connection", false );
      	    getContentPane().add( new JLabel("No response from server. Please Wait..."), BorderLayout.CENTER );
      	    pack();
      	    SwingTools.centerComponent( this );

@@ -241,9 +241,6 @@ public abstract class NetPersonality
      	  if( my_netsender==null ||  my_netreceiver==null )
      	      return;
      	  
-          if( listener!=null )
-              listener.connectionClosed( this );
-
        // no more message handling
           my_netreceiver.stopThread();
 
@@ -264,6 +261,9 @@ public abstract class NetPersonality
                pingThread.stopThread();
             }
 
+          if( listener!=null )
+              listener.connectionClosed( this );
+
           my_netsender = null;
           my_netreceiver = null;
           listener=null;
@@ -276,6 +276,9 @@ public abstract class NetPersonality
    * @param pListener the object that will receive ping information.
    */
     public void setPingListener( NetPingListener pListener ) {
+
+        if(pListener==null)
+           return;
 
     	if( pingLock!=null )
             synchronized( pingLock ) {
@@ -294,6 +297,19 @@ public abstract class NetPersonality
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To remove the current ping listener (if any) for this network connection.
+   */
+    public void removePingListener() {
+    	if( pingLock!=null )
+            synchronized( pingLock ) {
+                if( pingThread==null ) return; // No longer living net connnection
+
+    	        pingThread.pListener = null;
+            }
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** Called by the NetReceiver when it receives a PingMessage (if not in SendBack mode).
    * @param sequenceID ping message's sequence ID.
    */
@@ -307,13 +323,18 @@ public abstract class NetPersonality
 
            pingThread.lastPingValue = (int)(System.currentTimeMillis()-pingThread.lastPingT0);
            pingThread.pingReceivedBack = true;
-           pingThread.pListener.pingComputed( pingThread.lastPingValue );
+
+           if(pingThread.pListener!=null)
+              pingThread.pListener.pingComputed( pingThread.lastPingValue );
        }
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To use 
+  /** To set that this network connection must answer or not to ping messages.
+   *  This option is not compatible with the setPingListener() method.
+   *  You must choose between send back ping messages and compute the ping info.
+   *  @param sendBack set to true if you want to send back ping messages.
    */
     public synchronized void sendBackPingMessages( boolean sendBack ) {
 
@@ -328,7 +349,7 @@ public abstract class NetPersonality
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** A Thread that send PingMessages and manages the ping info.
-   *  It is created when a NetPingListener is set and lives as long as the network
+   *  It is created when a NetPingListener is first set and lives as long as the network
    *  connection does.
    */
     private class PingThread extends Thread {
@@ -392,7 +413,8 @@ public abstract class NetPersonality
                         // if there is still no answer we declare the message lost
                            if( !pingReceivedBack ) {
                                lastPingValue = NetPingListener.PING_FAILED;
-                               pListener.pingComputed( lastPingValue );
+                               if(pListener!=null)
+                                  pListener.pingComputed( lastPingValue );
                            }
                      }
 
@@ -403,8 +425,11 @@ public abstract class NetPersonality
 
          // Advertise the end of this connection
             synchronized( pingLock ) {
-               pListener.pingComputed( NetPingListener.PING_CONNECTION_CLOSED );
-               pListener = null;
+               if(pListener!=null){
+                  pListener.pingComputed( NetPingListener.PING_CONNECTION_CLOSED );
+                  pListener = null;
+               }
+
                pingThread = null;
             }
          }

@@ -202,6 +202,19 @@ public abstract class NetPersonality
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To remove the specified network listener.
+   * @param listener listener to remove.
+   */
+     public void removeConnectionListener( NetConnectionListener listener ) {
+         if( listener==null )
+             return;
+
+         if( this.listener == listener )
+             this.listener = null;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** Asks the NetSender to send all his queued messages now. It's typically the method
    *  you use in case of a USER_AGGREGATION NetSender.
    */

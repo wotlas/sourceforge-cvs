@@ -33,39 +33,46 @@ import wotlas.libs.net.NetMessage;
  * @author Petrus
  */
 
-public class ChatRoomCreationMessage extends NetMessage
-{
+public class ChatRoomCreationMessage extends NetMessage {
  
  /*------------------------------------------------------------------------------------*/
  
   /** Name of the ChatRoom
    */
-  protected String name;
+    protected String name;
   
   /** ID of the player who created the ChatRoom
    */
-  protected String creatorPrimaryKey;
-  
-  /** Location where the ChatRoom was created
-   */
-  protected WotlasLocation location;
-  
+    protected String creatorPrimaryKey; 
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. Just initializes the message category and type.
    */
-  public ChatRoomCreationMessage() {
-    super();
-  }
+    public ChatRoomCreationMessage() {
+      super();
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
   
   /** Constructor with parameters.
+   * @deprecated SHOULD BE UPDATED ON THE CLIENT'S SIDE
    */
-  public ChatRoomCreationMessage(String name, String creatorPrimaryKey, WotlasLocation location) {
-    super();
-    this.name = name;
-    this.creatorPrimaryKey = creatorPrimaryKey;
-    this.location = location;
-  }
+    public ChatRoomCreationMessage(String name, String creatorPrimaryKey, WotlasLocation location) {
+      super();
+      this.name = name;
+      this.creatorPrimaryKey = creatorPrimaryKey;
+    }
+  
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Constructor with parameters.
+   */
+    public ChatRoomCreationMessage(String name, String creatorPrimaryKey) {
+       super();
+       this.name = name;
+       this.creatorPrimaryKey = creatorPrimaryKey;
+    }
   
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -75,18 +82,17 @@ public class ChatRoomCreationMessage extends NetMessage
    * @param ostream data stream where to put your data (see java.io.DataOutputStream)
    * @exception IOException if the stream has been closed or is corrupted.
    */
-  public void encode( DataOutputStream ostream ) throws IOException {
-    ostream.writeUTF( name );
-    
-    ostream.writeUTF( creatorPrimaryKey );
-    
-    ostream.writeInt( location.getWorldMapID() );
-    ostream.writeInt( location.getTownMapID() );
-    ostream.writeInt( location.getBuildingID() );
-    ostream.writeInt( location.getInteriorMapID() );
-    ostream.writeInt( location.getRoomID() );
-    
-  }  
+    public void encode( DataOutputStream ostream ) throws IOException {
+       ostream.writeUTF( name );
+       ostream.writeUTF( creatorPrimaryKey );
+
+    // DEPRECATED : TO REMOVE FOR THE NEXT CLIENT VERSION
+       ostream.writeInt( 0 );
+       ostream.writeInt( 0 );
+       ostream.writeInt( 0 );
+       ostream.writeInt( 0 );
+       ostream.writeInt( 0 );    
+    }
     
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -96,18 +102,16 @@ public class ChatRoomCreationMessage extends NetMessage
    * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
    * @exception IOException if the stream has been closed or is corrupted.
    */
-  public void decode( DataInputStream istream ) throws IOException {
-    name = istream.readUTF();
-    
-    creatorPrimaryKey = istream.readUTF();
-    
-    WotlasLocation wotLoc = new WotlasLocation();
-    wotLoc.setWorldMapID( istream.readInt() );
-    wotLoc.setTownMapID( istream.readInt() );
-    wotLoc.setBuildingID( istream.readInt() );
-    wotLoc.setInteriorMapID( istream.readInt() );
-    wotLoc.setRoomID( istream.readInt() );
+    public void decode( DataInputStream istream ) throws IOException {
+       name = istream.readUTF();
+       creatorPrimaryKey = istream.readUTF();
 
+    // DEPRECATED : TO REMOVE FOR THE NEXT CLIENT VERSION
+       istream.readInt();
+       istream.readInt();
+       istream.readInt();
+       istream.readInt();
+       istream.readInt();
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

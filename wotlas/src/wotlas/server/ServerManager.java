@@ -21,9 +21,12 @@ package wotlas.server;
 
 import wotlas.common.*;
 import wotlas.utils.Debug;
+import wotlas.common.message.account.WarningMessage;
+
+import java.util.Iterator;
 
  /** A Server Manager manages three servers : A GameServer, a AccountServer and
-  *  a GatewayServer..
+  *  a GatewayServer.
   *
   * @author Aldiss
   * @see wotlas.server.GameServer
@@ -119,6 +122,80 @@ public class ServerManager {
        accountServer.start();
        gatewayServer.start();
    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Shutdown the 3 servers.
+   */
+   public synchronized void shutdown() {
+
+     // 1 - We stop the servers
+       Debug.signal( Debug.NOTICE, null, "Shuting down servers..." );
+       gameServer.stopServer();
+       accountServer.stopServer();
+       gatewayServer.stopServer();
+
+     // 2 - We perform some clean up
+       gameServer = null;
+       accountServer = null;
+       gatewayServer = null;
+       ourConfig = null;
+       configs = null;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To lock the access to servers.
+   */
+   public void lockServers() {
+       gameServer.setServerLock( true );
+       accountServer.setServerLock( true );
+       gatewayServer.setServerLock( true );
+
+       Debug.signal(Debug.NOTICE,null,"ServerManager locked access to local servers...");
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To unlock the access to servers.
+   */
+   public void unlockServers() {
+       gameServer.setServerLock( false );
+       accountServer.setServerLock( false );
+       gatewayServer.setServerLock( false );
+
+       Debug.signal(Debug.NOTICE,null,"ServerManager unlocked access to local servers...");
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To send a warning message to all connected players.
+   */
+    public void sendWarningMessage( String text ) {
+
+       synchronized( ServerDirector.getDataManager().getAccountManager() ) {
+           Iterator it = ServerDirector.getDataManager().getAccountManager().getIterator();
+
+           WarningMessage msg = new WarningMessage( text );
+
+           while( it.hasNext() )
+              ( (GameAccount) it.next() ).getPlayer().sendMessage( msg );
+       }
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To close all the connections on the servers.
+   */
+    public void closeAllConnections() {
+
+       synchronized( ServerDirector.getDataManager().getAccountManager() ) {
+           Iterator it = ServerDirector.getDataManager().getAccountManager().getIterator();
+
+           while( it.hasNext() )
+              ( (GameAccount) it.next() ).getPlayer().closeConnection();
+       }
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

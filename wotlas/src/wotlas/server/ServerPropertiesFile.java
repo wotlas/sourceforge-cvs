@@ -62,6 +62,11 @@ public class ServerPropertiesFile extends PropertiesConfigFile {
             Debug.exit();
         }
 
+        if( !isValid("init.botChatServiceClass") ) {
+            Debug.signal( Debug.FAILURE, this, "init.botChatServiceClass property not set in "+SERVER_CONFIG+" !" );
+            Debug.exit();
+        }
+
         Debug.signal( Debug.NOTICE, null, "Server properties loaded successfully :" );
         Debug.signal( Debug.NOTICE, null, "Server ID set to   : "+getProperty("init.serverID") );
         Debug.signal( Debug.NOTICE, null, "Persistence period : "+getProperty("init.persistencePeriod")+" hours" );

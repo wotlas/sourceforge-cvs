@@ -45,10 +45,26 @@ public class ChatRoomCreationMsgBehaviour extends ChatRoomCreationMessage implem
 
  /*------------------------------------------------------------------------------------*/
 
+   /** Is it a bot's default chat room we want to create ?
+    */
+     private boolean isBotChatRoom;
+
+ /*------------------------------------------------------------------------------------*/
+
   /** Constructor.
    */
     public ChatRoomCreationMsgBehaviour() {
        super();
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Constructor with parameters for bots. The isBotChatRoom parameter tells if this
+   *  chat room is the default chat room of a bot.
+   */
+    public ChatRoomCreationMsgBehaviour( String name, String creatorPrimaryKey, boolean isBotChatRoom ) {
+        super( name, creatorPrimaryKey );
+        this.isBotChatRoom = isBotChatRoom;
     }
 
  /*------------------------------------------------------------------------------------*/
@@ -114,7 +130,8 @@ public class ChatRoomCreationMsgBehaviour extends ChatRoomCreationMessage implem
            	}
            }
 
-           if(chatList.getNumberOfChatRooms() > ChatRoom.MAXIMUM_CHATROOMS_PER_ROOM )
+           if( chatList.getNumberOfChatRooms() > ChatRoom.MAXIMUM_CHATROOMS_PER_ROOM 
+               && !isBotChatRoom )
               return; // can't add ChatRoom : too many already !
 
            chatList.addChatRoom( chatRoom );

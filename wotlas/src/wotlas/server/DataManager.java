@@ -19,12 +19,15 @@
 
 package wotlas.server;
 
+
+import wotlas.utils.Debug;
 import wotlas.common.*;
 import wotlas.server.router.*;
 import wotlas.server.chat.ChatCommandProcessor;
+import wotlas.server.bots.BotManager;
 
 import java.util.Iterator;
-
+import java.util.Properties;
 
 /** A DataManager manages Game Data. It possesses a WorldManager & AccountManager.
  *
@@ -48,6 +51,10 @@ public class DataManager {
     */
       private ChatCommandProcessor chatCommandProcessor;
 
+   /** Our BotManager
+    */
+      private BotManager botManager;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. Loads the world data and player accounts.
@@ -66,36 +73,87 @@ public class DataManager {
 
        // 4 - Creation of the Chat Command Processor.
           chatCommandProcessor = new ChatCommandProcessor();
+
+       // 5 - Creation of the Bot Manager
+          botManager = new BotManager( accountManager );
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Final init. We add our players to the world when everything's ready.
    */
-   public void init() {
+   public void init(Properties serverProperties) {
 
-       // 0 - Load accounts
+       // 1 - Load accounts
           accountManager.init();
 
-       // 1 - We initialize the WorldManager with the Players ( Players are
+       // 2 - We initialize the WorldManager with the Players ( Players are
        // located on Maps, it's our game organization... ).
           Iterator it = accountManager.getIterator();
 
           while( it.hasNext() ) {
-          	 GameAccount account = (GameAccount) it.next();
-          	 if( !account.getIsDeadAccount() )
+                 GameAccount account = (GameAccount) it.next();
+                 if( !account.getIsDeadAccount() )
                      worldManager.addPlayerToUniverse( account.getPlayer() );
           }
 
-       // 2 - We initialize the player objects that we just placed in the world.
+       // 3 - We initialize the player objects that we just placed in the world.
           it = accountManager.getIterator();
 
           while( it.hasNext() )
                  ( (GameAccount) it.next() ).getPlayer().init();
 
-       // 3 - Init of the Chat Command Processor.
+       // 4 - Init of the Chat Command Processor.
           chatCommandProcessor.init();
+
+       // 5 - We initialize our bot manager
+          if( !botManager.init( serverProperties ) ) {
+             Debug.signal( Debug.CRITICAL, this, "Failed to init Bot Manager..." );
+             Debug.exit();
+          }
    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To shutdown this datamanager.
+   * @param saveData do we have to save all the persistent data before shutting down ?
+   */
+    public synchronized void shutdown( boolean saveData ) {
+      // 1 - save data ?
+        if(saveData) save();
+      
+      // 2 - Clean - up
+        botManager.shutdown();
+        botManager = null;
+    	worldManager = null;
+
+    	accountManager.clear();
+    	accountManager = null;
+
+        chatCommandProcessor = null;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To save all the persistent data of this datamanager.
+   */
+    public void save() {
+      // 1 - We save the accounts
+         synchronized( accountManager ) {
+             Iterator it = accountManager.getIterator();
+
+             while( it.hasNext() )
+                 accountManager.saveAccount( (GameAccount) it.next() );
+         }
+
+         Debug.signal( Debug.NOTICE, null, "Saved player data..." );
+
+      // 2 - We save the world data
+         if( !worldManager.saveUniverse(false) )
+             Debug.signal( Debug.WARNING, null, "Failed to save world data..." );
+         else
+             Debug.signal( Debug.NOTICE, null, "Saved world data..." );
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -128,5 +186,16 @@ public class DataManager {
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the bot manager.
+   *
+   * @return the bot manager.
+   */
+   public BotManager getBotManager() {
+         return botManager;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }
 

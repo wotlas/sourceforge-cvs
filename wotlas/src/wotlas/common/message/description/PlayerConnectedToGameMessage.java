@@ -91,5 +91,22 @@ public class PlayerConnectedToGameMessage extends NetMessage
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the "connected to game" info.
+    */
+      public boolean getIsConnectedToGame() {
+      	return isConnectedToGame;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the player's primary key.
+    */
+      public String getPrimaryKey() {
+      	return primaryKey;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }
 

@@ -20,6 +20,7 @@
 package wotlas.server.router;
 
 import wotlas.server.PlayerImpl;
+import wotlas.server.message.chat.*;
 
 import wotlas.common.*;
 import wotlas.common.universe.*;
@@ -260,7 +261,22 @@ public class MultiGroupMessageRouter extends MessageRouter {
                         EXTENDED_GROUP );
 
        // 3 - Remove from the chat
-          sendMessage( new RemPlayerFromChatRoomMessage( player.getPrimaryKey(), ChatRoom.DEFAULT_CHAT ) );
+          PlayerImpl playerImpl = (PlayerImpl) player;
+       
+          if( !playerImpl.getCurrentChatPrimaryKey().equals( ChatRoom.DEFAULT_CHAT ) ) {
+              RemPlayerFromChatRoomMsgBehaviour remPlayerFromChat
+                   = new RemPlayerFromChatRoomMsgBehaviour( player.getPrimaryKey(),
+                                        playerImpl.getCurrentChatPrimaryKey() );
+
+              try{
+                 remPlayerFromChat.doBehaviour( player );
+              }catch( Exception e ) {
+                 Debug.signal( Debug.ERROR, this, e );
+                 playerImpl.setCurrentChatPrimaryKey( ChatRoom.DEFAULT_CHAT );
+              }
+          }
+          else
+              sendMessage( new RemPlayerFromChatRoomMessage( player.getPrimaryKey(), ChatRoom.DEFAULT_CHAT ) );
 
           return true;
      }

@@ -79,8 +79,11 @@ public class RemPlayerFromChatRoomMsgBehaviour extends RemPlayerFromChatRoomMess
        }
 
     // 1 - Set player Chat membership to defaults
+       if( chatRoomPrimaryKey.equals( ChatRoom.DEFAULT_CHAT ) )
+           return; // nothing to do
+
        player.setCurrentChatPrimaryKey( ChatRoom.DEFAULT_CHAT );
-       player.setIsChatMember(false);
+       player.setIsChatMember(true);
 
     // 2 - We suppress our entry in the chatList
        ChatList chatList = player.getChatList();

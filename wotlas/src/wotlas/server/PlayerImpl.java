@@ -26,6 +26,7 @@ import wotlas.common.router.*;
 import wotlas.common.message.chat.SendTextMessage;
 import wotlas.server.message.chat.*;
 
+
 import wotlas.libs.net.NetConnectionListener;
 import wotlas.libs.net.NetPersonality;
 import wotlas.libs.net.NetMessage;
@@ -54,95 +55,91 @@ public class PlayerImpl implements Player, NetConnectionListener {
    /** Period between two focus sounds. Focus sounds can be send by players two draw
     *  attention.
     */
-      private static final int FOCUS_SOUND_PERIOD = 1000*10; // 10s between two sounds
+      protected static final int FOCUS_SOUND_PERIOD = 1000*10; // 10s between two sounds
 
  /*------------------------------------------------------------------------------------*/
 
    /** Player's primary key (usually the client account name)
     */
-       private String primaryKey;
+       protected String primaryKey;
 
    /** Player location
     */
-       private WotlasLocation location;
+       protected WotlasLocation location;
 
-   /** Player name (nickname)
+   /** Player name ( in fact it's nickname... the full name is managed by the LieManager)
     */
-       private String playerName;
-
-   /** Player full name (player can lie)
-    */
-       transient String fullPlayerName;
+       protected String playerName;
 
    /** Player character's past
     */
-       private String playerPast;
+       protected String playerPast;
 
    /** Player away message.
     */
-       private String playerAwayMessage;
+       protected String playerAwayMessage;
 
    /** WotCharacter Class
     */
-       private WotCharacter wotCharacter;
+       protected WotCharacter wotCharacter;
 
    /** Movement Composer
     */
-       private MovementComposer movementComposer = (MovementComposer) new PathFollower();
+       protected MovementComposer movementComposer = (MovementComposer) new PathFollower();
    
    /** Lie Manager
     */
-       private LieManager lieManager = new LieManager();
+       protected LieManager lieManager = new LieManager();
        
    /** Last time player disconnected (in days)
     */
-       private long lastDisconnectedTime;
+       protected long lastDisconnectedTime;
 
  /*------------------------------------------------------------------------------------*/
 
    /** Our NetPersonality, useful if we want to send messages !
     */
-       transient private NetPersonality personality;
+       transient protected NetPersonality personality;
 
    /** Our current Room ( if we are in a Room, null otherwise )
     */
-       transient private Room myRoom;
+       transient protected Room myRoom;
 
    /** SyncID for client & server. See the getter of this field for explanation.
     * This field is an array and not a byte because we want to be able to
     * synchronize the code that uses it.
     */
-       transient private byte syncID[] = new byte[1];
+       transient protected byte syncID[] = new byte[1];
 
  /*------------------------------------------------------------------------------------*/
 
    /** Player ChatRooms : is the list of the current room.
     */
-       transient private ChatList chatList;
+       transient protected ChatList chatList;
 
    /** Current Chat PrimaryKey : the chat we are currently looking.
     */
-       transient private String currentChatPrimaryKey = ChatRoom.DEFAULT_CHAT; // everlasting chat set as default
+       transient protected String currentChatPrimaryKey = ChatRoom.DEFAULT_CHAT; // everlasting chat set as default
 
    /** are we a member of this chat ? or just eavesdropping ?
     */
-       transient private boolean isChatMember = true; //always member on default chat.
+       transient protected boolean isChatMember = true; //always member on default chat.
 
    /** Last time this player was grant the possibility to send a focus sound to players.
     *
     *  The period between two focus sound is set by the static FOCUS_SOUND_PERIOD.
     */
-       transient private long focusSoundTimeStamp;
+       transient protected long focusSoundTimeStamp;
 
  /*------------------------------------------------------------------------------------*/
 
    /** Personality Lock
     */
-       transient private byte personalityLock[] = new byte[0];
+       transient protected byte personalityLock[] = new byte[0];
 
    /** ChatList Lock
     */
-       transient private byte chatListLock[] = new byte[0];
+       transient protected byte chatListLock[] = new byte[0];
 
  /*------------------------------------------------------------------------------------*/
 
@@ -160,6 +157,31 @@ public class PlayerImpl implements Player, NetConnectionListener {
       public void init() {
          movementComposer.init( this );
          setLocation( location );
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** If you call this method all the local data will be replaced by the given
+    *  player's one.
+    */
+      public void clone( PlayerImpl playerToClone ) {
+
+         setLocation( playerToClone.getLocation() );
+         setPlayerName( playerToClone.getPlayerName() );
+         setPrimaryKey( playerToClone.getPrimaryKey() );
+
+         setPlayerPast( playerToClone.getPlayerPast() );
+         setPlayerAwayMessage( playerToClone.getPlayerAwayMessage() );
+
+         setMovementComposer( playerToClone.getMovementComposer() );
+         movementComposer.init( this );
+
+         setWotCharacter( playerToClone.getWotCharacter() );
+         setLieManager( playerToClone.getLieManager() );
+
+         setChatList( playerToClone.getChatList() );
+         setCurrentChatPrimaryKey( playerToClone.getCurrentChatPrimaryKey() );
+         setIsChatMember( playerToClone.isChatMember() );
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -386,7 +408,6 @@ public class PlayerImpl implements Player, NetConnectionListener {
     *  @param player full name ( should contain the player name )
     */
       public void setFullPlayerName( String fullPlayerName ) {
-          this.fullPlayerName = fullPlayerName;
           lieManager.setFullPlayerName(fullPlayerName);          
       }
 
@@ -616,7 +637,7 @@ public class PlayerImpl implements Player, NetConnectionListener {
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To set if this player is connected to the game. (not used on this server side )
-    * @param true if the player is in the game, false if the client is not connected.
+    * @param isConnected true if the player is in the game, false if the client is not connected.
     */
       public void setIsConnectedToGame( boolean isConnected ) {
       	// no external update possible on the server side !
@@ -789,6 +810,18 @@ public class PlayerImpl implements Player, NetConnectionListener {
         }
 
        return false; // grant rejected
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Redirects the network listener. USE WITH CARE !! should be only used by the
+   *  BotFactory.
+   */
+    public void removeConnectionListener() {
+             synchronized( personalityLock ) {
+                if( personality!=null )
+                    personality.removeConnectionListener(this);
+             }
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

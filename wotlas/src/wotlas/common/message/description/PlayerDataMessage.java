@@ -78,7 +78,6 @@ public class PlayerDataMessage extends NetMessage
          super();
          this.player = player;
          this.publicInfoOnly = publicInfoOnly;
-//         this.otherPlayerKey = player.getPrimaryKey();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -94,7 +93,6 @@ public class PlayerDataMessage extends NetMessage
          this.player = player;
          this.publicInfoOnly = publicInfoOnly;
          this.playerClass = playerClass;
-//         this.otherPlayerKey = player.getPrimaryKey();
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -152,7 +150,6 @@ public class PlayerDataMessage extends NetMessage
       // Wotlas Character Data
          ostream.writeUTF( player.getWotCharacter().getClass().getName() );
          player.getWotCharacter().encode( ostream, publicInfoOnly ); // call to encode character's data
-
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

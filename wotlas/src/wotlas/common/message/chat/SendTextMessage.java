@@ -120,6 +120,22 @@ public class SendTextMessage extends NetMessage
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the message for this chat message...
+   */
+   public String getMessage() {
+      return message;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get chatRoomPrimaryKey for this chat message...
+   */
+   public String getChatRoomPrimaryKey() {
+      return chatRoomPrimaryKey;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
   /** To get the voice sound level of this message.
    */

@@ -55,6 +55,7 @@ public interface ErrorCodeList extends NetErrorCodeList
     public final static short ERR_WRONG_KEY         = 205;  // the client gave a wrong key for this server
     public final static short ERR_ALREADY_CONNECTED = 206;  // someone is already connected to this account
     public final static short ERR_DEAD_ACCOUNT      = 207;  // if the player of the account has been killed in the game
+    public final static short ERR_BOT_ACCOUNT       = 208;  // the account is a bot's one
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

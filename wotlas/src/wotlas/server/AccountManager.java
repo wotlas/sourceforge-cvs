@@ -78,7 +78,7 @@ public class AccountManager {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To load the client Accounts.
+  /** To init & load the client Accounts.
    */
      public void init() {
        int nbAccounts=0,nbAccountsLoaded=0;
@@ -101,6 +101,16 @@ public class AccountManager {
                    }
 
           Debug.signal( Debug.NOTICE, null, "AccountManager loaded "+nbAccountsLoaded+" accounts." );
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Erases all the possessed data.
+   */
+     public void clear() {
+     	accounts.clear();
+     	accounts = null;
+     	rManager = null;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

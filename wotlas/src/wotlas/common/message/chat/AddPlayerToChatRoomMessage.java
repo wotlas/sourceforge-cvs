@@ -91,5 +91,21 @@ public class AddPlayerToChatRoomMessage extends NetMessage
   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the chat room primary key associated to this message
+   */
+   public String getChatRoomPrimaryKey() {
+      return chatRoomPrimaryKey;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the primary key of the player entering this chat room
+   */
+   public String getSenderPrimaryKey() {
+      return senderPrimaryKey;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
 }

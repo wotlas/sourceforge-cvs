@@ -61,18 +61,101 @@ public class WorldManager
    * @param id worldMapID
    * @return corresponding worldMap, null if ID does not exist.
    */
-   public WorldMap getWorldMapByID( int id ) {
+   public WorldMap getWorldMapFromID( int id ) {
         if(worldMaps==null) {
            Debug.signal( Debug.ERROR, this, "No World data available." );
    	   return null;
    	}
 
    	if(id>=worldMaps.length || id<0) {
-           Debug.signal( Debug.ERROR, this, "getWorldMapByID : Bad world ID "+id );
+           Debug.signal( Debug.ERROR, this, "getWorldMapFromID : Bad world ID "+id );
    	   return null;
    	}
    	
         return worldMaps[id];
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To Get a World from a Wotlas location.
+   *
+   * @param location wotlas location
+   * @return corresponding worldMap, null if ID does not exist.
+   */
+   public WorldMap getWorldMap( WotlasLocation location ) {
+        return getWorldMapFromID( location.getWorldMapID() );
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To Get a Town from a WotlasLocation. IMPORTANT: we assume the WotlasLocation object
+   *  points out at least a townMap...
+   *
+   * @param location wotlas location
+   * @return corresponding townMap, null if the map does not exist.
+   */
+   public TownMap getTownMap( WotlasLocation location ) {
+
+        WorldMap wMap = getWorldMapFromID( location.getWorldMapID() );
+
+        if(wMap==null)
+    	   return null;
+
+        return wMap.getTownMapFromID( location.getTownMapID() );
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To Get a Building from a WotlasLocation. IMPORTANT: we assume the
+   *  WotlasLocation object points out at least a building...
+   *
+   * @param location wotlas location
+   * @return corresponding building, null if the map does not exist.
+   */
+   public Building getBuilding( WotlasLocation location ) {
+
+        TownMap tMap = getTownMap( location );
+
+        if(tMap==null)
+    	   return null;
+
+        return tMap.getBuildingFromID( location.getBuildingID() );
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To Get an InteriorMap from a WotlasLocation. IMPORTANT: we assume the
+   *  WotlasLocation object points out at least an interiorMap...
+   *
+   * @param location wotlas location
+   * @return corresponding interiorMap, null if the map does not exist.
+   */
+   public InteriorMap getInteriorMap( WotlasLocation location ) {
+
+        Building bMap = getBuilding( location );
+
+        if(bMap==null)
+    	   return null;
+
+        return bMap.getInteriorMapFromID( location.getInteriorMapID() );
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To Get a Room from a WotlasLocation. IMPORTANT: we assume the
+   *  WotlasLocation object points out a room...
+   *
+   * @param location wotlas location
+   * @return corresponding Room, null if the map does not exist.
+   */
+   public Room getRoom( WotlasLocation location ) {
+
+        InteriorMap iMap = getInteriorMap( location );
+
+        if(iMap==null)
+    	   return null;
+
+        return iMap.getRoomFromID( location.getRoomID() );
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -135,7 +218,7 @@ public class WorldManager
          }
 
       // does this world exists ?
-         WorldMap world = getWorldMapByID( location.getWorldMapID() );
+         WorldMap world = getWorldMapFromID( location.getWorldMapID() );
 
          if( world==null ) {
              Debug.signal( Debug.ERROR, this, "Player "+player.toString()+" has bad location.");
@@ -151,7 +234,7 @@ public class WorldManager
          }
          else{
           // does this town exists ?
-             TownMap town = world.getTownMapByID( location.getTownMapID() );
+             TownMap town = world.getTownMapFromID( location.getTownMapID() );
 
              if(town==null)  {
                 Debug.signal( Debug.ERROR, this, "Player "+player.toString()+" has bad location." );
@@ -167,7 +250,7 @@ public class WorldManager
              else if( location.isRoom() )
              {
                 // does this building exists ?
-                   Building building = town.getBuildingByID( location.getBuildingID() );
+                   Building building = town.getBuildingFromID( location.getBuildingID() );
 
                    if(building==null)  {
                       Debug.signal( Debug.ERROR, this, "Player "+player.toString()+" has bad location." );
@@ -175,7 +258,7 @@ public class WorldManager
                    }
 
                 // does this interiorMap exists ?
-                   InteriorMap map = building.getInteriorMapByID( location.getInteriorMapID() );
+                   InteriorMap map = building.getInteriorMapFromID( location.getInteriorMapID() );
 
                    if(map==null)  {
                       Debug.signal( Debug.ERROR, this, "Player "+player.toString()+" has bad location." );
@@ -183,7 +266,7 @@ public class WorldManager
                    }
          
                 // does this room exists ?
-                   Room room = map.getRoomByID( location.getRoomID() );
+                   Room room = map.getRoomFromID( location.getRoomID() );
 
                    if(room==null)  {
                       Debug.signal( Debug.ERROR, this, "Player "+player.toString()+" has bad location." );

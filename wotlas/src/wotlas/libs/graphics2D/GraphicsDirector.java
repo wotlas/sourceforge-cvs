@@ -150,7 +150,7 @@ public class GraphicsDirector extends JPanel {
 
           if(paintThread!=null)
               try{
-                 lockPaint.wait( 200 );
+                 lockPaint.wait( 100 );
               }catch( Exception e ) {}
 
           paintThread =new Thread() {
@@ -188,15 +188,11 @@ public class GraphicsDirector extends JPanel {
    * @param gc graphics object.
    */
     public void paint(Graphics gc) {      
-         if(gc==null) return;
+         if(gc==null || getHeight()<=0 || getWidth()<=0) return;
 
        // double-buffer init
-         if (backBufferImage == null)
+         if (backBufferImage == null  || getWidth() != backBufferImage.getWidth(this) || getHeight() != backBufferImage.getHeight(this))
              backBufferImage = createImage(getWidth(),getHeight());
-                  
-         if (getWidth() != backBufferImage.getWidth(this) || getHeight() != backBufferImage.getHeight(this)) {            
-            return;         
-         }
 
          Graphics backBufferGraphics = backBufferImage.getGraphics();
 
@@ -252,7 +248,9 @@ public class GraphicsDirector extends JPanel {
    *
    * @param dr drawable to add.
    */
-    public synchronized void addDrawable( Drawable dr ) {
+    public void addDrawable( Drawable dr ) {
+    	if(dr==null) return;
+    	
         synchronized( drawables ) {
             drawables.resetIterator();
 
@@ -291,7 +289,7 @@ public class GraphicsDirector extends JPanel {
 
   /** To remove all the drawables.
    */
-    public synchronized void removeAllDrawables() {
+    public void removeAllDrawables() {
         synchronized( drawables ) {
            drawables.clear();
            refDrawable = null;
@@ -304,18 +302,7 @@ public class GraphicsDirector extends JPanel {
   /** The tick method updates our screen position, drawables and repaint the whole thing.
    *  Never call repaint on the graphics director, call tick() !
    */
-    public void tick() {            
-
-      if (backBufferImage==null)
-        return;
-      
-      if (getHeight()==0)
-        return;
-          
-      synchronized(backBufferImage) {
-        if (getWidth() != backBufferImage.getWidth(this) || getHeight() != backBufferImage.getHeight(this))
-          backBufferImage = createImage(getWidth(),getHeight());
-      }
+    public void tick() {
       
       // 1 - We update our screen dimension.
          synchronized( drawables ) {
@@ -324,7 +311,8 @@ public class GraphicsDirector extends JPanel {
          }
 
       // 2 - We update our WindowPolicy
-         windowPolicy.tick();
+         if( getWidth()>0 && getHeight()>0 )
+             windowPolicy.tick();
       
       // 3 - We tick all our sprites
          synchronized( drawables ) {

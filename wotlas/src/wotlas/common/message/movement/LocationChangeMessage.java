@@ -45,6 +45,14 @@ public class LocationChangeMessage extends NetMessage
    */
     protected WotlasLocation location;
 
+  /** x position on new location
+   */
+    protected int x;
+
+  /** y position on new location
+   */
+    protected int y;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. Just initializes the message category and type.
@@ -79,6 +87,9 @@ public class LocationChangeMessage extends NetMessage
          ostream.writeInt( location.getBuildingID() );
          ostream.writeInt( location.getInteriorMapID() );
          ostream.writeInt( location.getRoomID() );
+
+         ostream.writeInt( x );
+         ostream.writeInt( y );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -100,6 +111,9 @@ public class LocationChangeMessage extends NetMessage
          location.setBuildingID( istream.readInt() );
          location.setInteriorMapID( istream.readInt() );
          location.setRoomID( istream.readInt() );
+
+         x = istream.readInt();
+         y = istream.readInt();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

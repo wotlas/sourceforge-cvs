@@ -28,7 +28,7 @@ import java.util.Iterator;
  * @see wotlas.server.GameServer
  */
 
-class DataManager
+public class DataManager
 {
  /*------------------------------------------------------------------------------------*/
  

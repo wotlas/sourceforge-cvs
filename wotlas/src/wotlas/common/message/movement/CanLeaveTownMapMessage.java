@@ -48,10 +48,12 @@ public class CanLeaveTownMapMessage extends LocationChangeMessage
 
   /** Constructor with Player's primaryKey & location.
    */
-     public CanLeaveTownMapMessage(String primaryKey, WotlasLocation location) {
+     public CanLeaveTownMapMessage(String primaryKey, WotlasLocation location, int x, int y) {
           this();
           this.primaryKey = primaryKey;
-          this.location = new WotlasLocation(location);
+          this.location = location;
+          this.x = x;
+          this.y = y;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -195,7 +195,7 @@ public class PlayerImpl implements Player, NetConnectionListener
     *  @return player WotlasLocation
     */
       public WotlasLocation getLocation(){
-          return location;
+          return new WotlasLocation(location);
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -265,7 +265,7 @@ public class ImageLibrary {
               return bufIm; // success !
         }
         catch( Exception e ) {
-       	   throw new ImageLibraryException(""+e);
+       	   throw new ImageLibraryException(""+e+" in "+imId);
         }
 
      // We try to load the image ( must be a JIT image ).

@@ -25,8 +25,9 @@ import java.awt.image.BufferedImage;
 
 
 /** A small utility to create a mask from an grayscale image<br>
- * 255 => white<br>
- * 0 => black<br>
+ * -128 => white<br>
+ *  127 => black<br>
+ *    0 => do nothing
  *
  * @author Petrus
  */
@@ -40,14 +41,14 @@ public class GrayMask
    * @param buffImg a buffered image
    * @return the created mask
    */
-  static public short[][] create(BufferedImage buffImg) {
+  static public byte[][] create(BufferedImage buffImg) {
     int imgWidth = buffImg.getWidth();
     int imgHeight = buffImg.getHeight();
-    short[][] mask = new short[imgWidth][imgHeight];
+    byte[][] mask = new byte[imgWidth][imgHeight];
 
     for (int j=0; j<imgHeight; j++) {
       for (int i=0; i<imgWidth; i++) {        
-        mask[i][j] = (short) (buffImg.getRGB(i, j) & 0xff); // Get the blue color        
+        mask[i][j] = (byte) ((buffImg.getRGB(i, j) & 0xff)-128); // Get the blue color        
       }      
     }
     return mask;
@@ -60,7 +61,7 @@ public class GrayMask
    * @param path image path
    * @return the created mask
    */
-  static public short[][] create(String path) {
+  static public byte[][] create(String path) {
     BufferedImage maskBuffImg = ImageLibrary.loadBufferedImage(path);
     return create(maskBuffImg);
   } 

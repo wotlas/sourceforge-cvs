@@ -37,7 +37,7 @@ public class BrightnessFilter implements DynamicImageFilter {
 
    /** Color Type couples (source & target) for our color change.
     */
-      static private short[][] brightnessMask;
+      static private byte[][] brightnessMask;
             
       static private int tilesize;
       
@@ -54,12 +54,12 @@ public class BrightnessFilter implements DynamicImageFilter {
      
           if( srcIm==null ) return null;
      
+       // 1 - New Buffered Image
+          if(brightnessMask==null || brightness==0)
+              return srcIm;
+          
           int width = srcIm.getWidth();
           int height = srcIm.getHeight();
-
-       // 1 - New Buffered Image
-          if(brightnessMask==null)
-              return srcIm;
        
           BufferedImage dstIm = new BufferedImage( width, height, BufferedImage.TYPE_INT_ARGB );
 
@@ -78,7 +78,7 @@ public class BrightnessFilter implements DynamicImageFilter {
     * m_brightnessMask the gray scale brightness mask
     * m_tilesize cell size of the mask (in pixels)
     */
-     static public void setBrightnessMask(short[][] m_brightnessMask, int m_tilesize){
+     static public void setBrightnessMask(byte[][] m_brightnessMask, int m_tilesize){
           brightnessMask = m_brightnessMask;
           tilesize = m_tilesize;
      }
@@ -90,7 +90,7 @@ public class BrightnessFilter implements DynamicImageFilter {
     */          
      public void setBrightness(float x, float y) {
         if (brightnessMask!=null)
-            brightness = ((float) brightnessMask[(int) (x/tilesize)][(int) (y/tilesize)]-127)/255;
+            brightness = ((float) brightnessMask[(int) (x/tilesize)][(int) (y/tilesize)])/255;
      }
      
 

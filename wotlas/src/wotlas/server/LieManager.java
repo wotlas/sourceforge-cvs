@@ -49,12 +49,12 @@ public class LieManager
   /** when we leave an TownMap, we forget all players
    * that we met less than MEET_CHANGEINTERIORMAP times
    */
-  public final static int MEET_CHANGETOWNMAP = 50;
+  public final static int MEET_CHANGETOWNMAP = 90;
   
   /** when we leave an WorldMap, we forget all players
    * that we met less than MEET_CHANGEINTERIORMAP times
    */
-  public final static int MEET_CHANGEWORLDMAP = 60;
+  public final static int MEET_CHANGEWORLDMAP = 100;
   
   /** Simple meet (weight 2)
    */
@@ -70,6 +70,14 @@ public class LieManager
    */
   public final static int FORGET_INTERIORMAP = 5;
   
+  /** Number of meetsNumber to forget when player leave an interiormap
+   */
+  public final static int FORGET_TOWNMAP = 10;
+  
+  /** Number of meetsNumber to forget when player leave an interiormap
+   */
+  public final static int FORGET_WORLDMAP = 20;
+  
   /** Number of meetsNumber to forget when player has not connected for a long time
    */
   public final static int FORGET_RECONNECT_LONG = 40;
@@ -77,7 +85,6 @@ public class LieManager
   /** Number of meetsNumber to forget when player reconnect
    */
   public final static int FORGET_RECONNECT = 2;
-  
   
  /*------------------------------------------------------------------------------------*/
   

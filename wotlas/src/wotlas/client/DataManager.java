@@ -23,6 +23,8 @@
 // - mettre un lock sur le circle
 // - modifier le point d'insertion dans InteriorMap : récupérer les coordonnées du joueur
 
+// - remettre players
+
 package wotlas.client;
 
 import wotlas.client.gui.*;
@@ -145,7 +147,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
   /** List of players
    */
-  //private HashMap players;
+  private Hashtable players;
 
   /** Circle selection
    */
@@ -278,6 +280,14 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     return logPanel;
   }
 
+ /*------------------------------------------------------------------------------------*/
+  
+  /** To get the hashtable players
+   */
+  public Hashtable getPlayers() {
+    return players;
+  }
+ 
  /*------------------------------------------------------------------------------------*/
 
   /** To set the current profileConfig<br>
@@ -544,12 +554,16 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
   public void tick() {
 
-    //myPlayer.tick();
+    // Update myPlayer's location
     myMapData.locationUpdate(myPlayer);
+    
+    // Update players drawings
     Hashtable players = myMapData.getPlayers(myPlayer);
-    Iterator it = players.values().iterator();
-    while( it.hasNext() ) {
-      ( (PlayerImpl) it.next() ).tick();
+    synchronized( players) {
+      Iterator it = players.values().iterator();
+      while( it.hasNext() ) {
+        ( (PlayerImpl) it.next() ).tick();
+      }
     }
 
     if (circle != null) {
@@ -624,20 +638,43 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       System.out.println("Showing debug informations");
     }
     SHOW_DEBUG = !SHOW_DEBUG;
+    
+    /*
+    NetMessage toto = new TotoMessage();
+       
+    if ( myPlayer.getLocation().isRoom() ) {
+      // Current Room    
+      Room room = player.getMyRoom();                    
+      if ( room==null ) return;     
+      Hashtable players = room.getPlayers();            
+      synchronized( players ) {
+        Iterator it = players.values().iterator();               
+        PlayerImpl p;
+        while ( it.hasNext() ) {
+          p = (PlayerImpl) it.next();
+          p.sendMessage( toto );          
+        }
+      }
 
-    /*PlayerImpl newPlayer;
-    Rectangle screen = gDirector.getScreenRectangle();
-
-    if (SHOW_DEBUG)
-      System.out.println("playerImpl creation : ");
-
-    newPlayer = new PlayerImpl();
-    newPlayer.init();
-    newPlayer.setX(e.getX() + (int)screen.getX());
-    newPlayer.setY(e.getY() + (int)screen.getY());
-    gDirector.addDrawable(newPlayer.getDrawable());
-
-    addPlayer(newPlayer);
+      // Other rooms      
+      if ( room.getRoomLinks()==null ) return;
+      Room otherRoom;
+      for( int i=0; i<room.getRoomLinks().length; i++ ) {
+        otherRoom = room.getRoomLinks()[i].getRoom1();
+        if ( otherRoom==room )
+          otherRoom = room.getRoomLinks()[i].getRoom2();
+          
+        players = otherRoom.getPlayers();
+        synchronized( players ) {
+          Iterator it = players.values().iterator();
+          PlayerImpl p;
+          while ( it.hasNext() ) {
+            p = (PlayerImpl)it.next();
+            p.sendMessage( toto );
+          }
+        }
+      }
+    }
     */
   }
 
@@ -648,18 +685,18 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    *
    * @player the player to add
    */
-  /*public synchronized void addPlayer(PlayerImpl player) {
+  public synchronized void addPlayer(PlayerImpl player) {
     players.put( player.getPrimaryKey(), player );
-  }*/
+  }
 
   /** To remove a player
    *
    * @player the player to remove
    */
-  /*public synchronized boolean removePlayer(PlayerImpl player) {
+  public synchronized boolean removePlayer(PlayerImpl player) {
     players.remove(player.getPrimaryKey());
     return true;
-  }*/
+  }
 
   /** To set our player<br>
    * (called by client.message.description.YourPlayerDataMsgBehaviour)

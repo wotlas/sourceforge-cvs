@@ -246,7 +246,7 @@ public class NetMessageFactory
               throw new ClassNotFoundException("Bad Message Category:"+msg_category);
 
          if( msg_type<0 || msg_class[msg_category].length<msg_type)
-              throw new ClassNotFoundException("Bad Message Type:"+msg_type);
+              throw new ClassNotFoundException("Bad Message Type ("+msg_type+") for category "+msg_category);
 
          
          return (NetMessageBehaviour) msg_class[msg_category][msg_type].newInstance();

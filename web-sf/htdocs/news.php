@@ -55,7 +55,7 @@ Click <a href="overview.html">here</a> for an overview of the Wotlas project.
 	for ($i=1;$i<$start;$i++)
 		mysql_fetch_array($result);	
 	
-	while (($lin=mysql_fetch_array($result)) && ($i<$end))
+	while (($lin=mysql_fetch_array($result)) && ($i<=$end))
 		{	
 	 		echo "\n<blockquote>";
 	 		echo "\n<img src=\"images/button.gif\" width=14 height=14 align=absmiddle> <b><font size=3>";
@@ -70,14 +70,26 @@ Click <a href="overview.html">here</a> for an overview of the Wotlas project.
 			$i++;
 		}
 	
-	echo "<center>";		
-	if ($nb>10)
+	echo "<center>";
+	// must modify to manage the case > 10 but < 20		
+	if ($nb>=10)
 	{
-	 if ($start>10)
-	 	echo "<a href=news.php?start=".($start-10).">10 next news</a> - <a href=news.php?start=".($start+10).">10 previous news</a>";
+	 if ($start>=10)
+	 {
+	 	echo "<a href=news.php?start=".($start-10).">10 next news</a>";
+		if ($end<$nb)
+			echo " - <a href=news.php?start=".($start+10).">10 previous news</a>";
+	 }
 	 else
-		echo "<a href=news.php?start=0>10 last news</a> - <a href=news.php?start=10>10 previous news</a>";
+	 {
+		echo "<a href=news.php?start=0>10 latest news</a>";
+		if ($end<$nb)
+			echo " - <a href=news.php?start=10>10 previous news</a>";
+	 }
 	}		
+	
+	 
+	 
 	echo "</center>";
 	
 	mysql_free_result($result);

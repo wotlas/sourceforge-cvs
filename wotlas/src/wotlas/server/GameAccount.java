@@ -368,6 +368,9 @@ public class GameAccount
 
        PlayerDataMessage playerEncoder = new PlayerDataMessage( player, false );
        playerEncoder.encode( ostream );
+
+      // Lie Manager is sent separately...
+       player.getLieManager().encode(ostream);
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -391,6 +394,10 @@ public class GameAccount
        PlayerDataMessage playerDecoder = new PlayerDataMessage( player, false, "wotlas.server.PlayerImpl" );
        playerDecoder.decode( istream );
        player = (PlayerImpl) playerDecoder.getPlayer();
+
+      // LieManager re-creation. The LieManager is associated to the player via the decode method
+       LieManager lieManager = new LieManager();
+       lieManager.decode(ostream,player);
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

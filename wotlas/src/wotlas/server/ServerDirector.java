@@ -435,5 +435,14 @@ public class ServerDirector implements Runnable, NetServerErrorListener
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To get server properties.
+   * @return server properties
+   */
+   public static Properties getServerProperties() {
+      return properties;
+   }
+
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }
 

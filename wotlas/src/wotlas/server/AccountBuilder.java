@@ -28,7 +28,7 @@ import wotlas.libs.net.*;
 import wotlas.libs.wizard.*;
 
 import java.lang.reflect.*;
-
+import java.util.Properties;
 
 /** An AccountBuilder helps the creation of a GameAccount for a client. Here is
  *  how it works :<p><br>
@@ -64,16 +64,14 @@ public class AccountBuilder implements NetConnectionListener
     */
      private GameAccount account;
 
-
    /** The Player Data associated to this GameAccount
     */
      private PlayerImpl player;
 
-
    /** Personality of our client.
     */
      private NetPersonality personality;
- 
+
    /** Our Account Server
     */
      private AccountServer accountServer;
@@ -284,6 +282,10 @@ public class AccountBuilder implements NetConnectionListener
             params[0] = data;
             m.invoke(this,params);
             return true;
+        }
+        catch( InvocationTargetException ite ) {
+            sendStepError("Error : "+ite.getTargetException().getMessage());
+            return false;
         }
         catch( Exception ex ) {
             Debug.signal(Debug.ERROR,this,ex);
@@ -574,7 +576,9 @@ public class AccountBuilder implements NetConnectionListener
     */
      public void setSpecialCharacter( String data ) throws AccountException {
 
-        if(data.equals("shaitan")) {
+        Properties props = ServerDirector.getServerProperties();
+
+        if( data.equals( props.getProperty("key.shaitan","shaitan") ) ) {
           // We create a great lord of the dark...
              player.setWotCharacter(new DarkOne());
 
@@ -587,12 +591,12 @@ public class AccountBuilder implements NetConnectionListener
              player.setX(50);
              player.setY(100);
         }
-        else if(data.equals("amyrlin")) {
+        else if(data.equals( props.getProperty("key.amyrlin","amyrlin") )) {
           // We create an Amyrlin...
              player.setWotCharacter(new AesSedai());
              player.getWotCharacter().setCharacterRank("Amyrlin");
         }
-        else if(data.equals("chronicles")) {
+        else if(data.equals( props.getProperty("key.chronicles","chronicles") )) {
           // We create a Keeper of chronicles...
              player.setWotCharacter(new AesSedai());
              player.getWotCharacter().setCharacterRank("Keeper Of Chronicles");
@@ -620,4 +624,22 @@ public class AccountBuilder implements NetConnectionListener
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the player account summary.
+    */
+     public String getAccountSummary() throws AccountException {
+
+         StringBuffer str = new StringBuffer("");
+         str.append("        Player Name  \t:  ");
+         str.append( player.getFullPlayerName() );
+         str.append("\n        Player Class \t:  ");
+         str.append( player.getWotCharacter().getCommunityName() );
+         str.append("\n        Player Rank  \t:  ");
+         str.append( player.getWotCharacter().getCharacterRank() );
+
+         return str.toString();
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }

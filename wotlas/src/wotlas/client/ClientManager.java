@@ -509,6 +509,14 @@ public class ClientManager
           formPanel_01_right.setBackground(Color.white);
           pfield1 = new APasswordField(10);
           pfield1.setFont(f.deriveFont(18f));
+          
+          pfield1.addKeyListener(new KeyAdapter() {
+            public void keyReleased(KeyEvent e) {
+            if ( e.getKeyCode()==KeyEvent.VK_ENTER )
+              b_ok.doClick();
+            }
+          });
+          
           formPanel_01_right.add(pfield1);
           formPanel_01_right.add(new ALabel(currentProfileConfig.getKey()));
         mainPanel_01.add(formPanel_01_right);

@@ -224,5 +224,14 @@ public class NetMessageFactory
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** Delete current factory.
+   */
+     public void deleteFactory() {
+     	msg_factory = null;
+     	msg_class =null;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }
 

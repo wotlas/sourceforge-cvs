@@ -31,6 +31,8 @@ import java.awt.event.*;
  * which can be persistent or sent on a stream.
  *
  * To subclass this class, you'll need to define onShow(), onNext() and onPrevious().
+ * Note also that your subclass NEEDS to define a public constructor that takes no
+ * parameters.
  *
  * @author Petrus, Aldiss
  * @see wotlas.libs.wizard.JWizard

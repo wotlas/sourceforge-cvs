@@ -68,9 +68,10 @@ public class JWizardStepParameters {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Empty Constructor for persistence.
+  /** Empty Constructor. Sets default values, no step class and an empty title.
    */
    public JWizardStepParameters() {
+   	this(null," ",false,null);
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -340,7 +341,7 @@ public class JWizardStepParameters {
              }
 
      // We create a new entry...
-        String newProperties[][] = new String[stepProperties.length][2];
+        String newProperties[][] = new String[stepProperties.length+1][2];
         
         for( int i=0; i<stepProperties.length; i++ ) {
              newProperties[i][0] = stepProperties[i][0];

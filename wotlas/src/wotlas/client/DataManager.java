@@ -455,13 +455,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
     // 6 - Init map display
     changeMapData();
-    /*if (location.isWorld())
-      initWorldMapDisplay(location);
-    else if (location.isTown())
-      initTownMapDisplay(location);
-    else if (location.isRoom())
-      initInteriorMapDisplay(location);
-    */
 
     // 8 - Create main Frame
     mFrame = new JClientScreen(infosPanel, mapPanel, chatPanel, previewPanel, playerPanel, logPanel);
@@ -520,6 +513,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   public void tick() {
 
     myPlayer.tick();
+    //System.out.print("myPlayer::angle = ");
+    //System.out.println(myPlayer.getAngle()*180/Math.PI);
     myMapData.locationUpdate(myPlayer);
 
     if (circle != null) {
@@ -636,7 +631,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
   public void onRightClicJMapPanel(MouseEvent e) {
     if (SHOW_DEBUG) {
-      System.out.println("Hiding debug informations");
+      System.out.println("Hiding debug informations");      
     } else {
       System.out.println("Showing debug informations");
     }
@@ -689,19 +684,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
  /*------------------------------------------------------------------------------------*/
 
-  /** To update player's location
+  /** To change type of MapData
    */
-  /*public void locationUpdate() {
-    // we call the right method whether the player is on
-    // a TownMap, a WorldMap or in a Room.
-    if ( myPlayer.getLocation().isRoom() )
-      roomLocationUpdate();
-    else if ( myPlayer.getLocation().isTown() )
-      townLocationUpdate();
-    else if ( myPlayer.getLocation().isWorld() )
-      worldLocationUpdate();
-  }*/
-
   public void changeMapData() {
     if ( myPlayer.getLocation().isRoom() ) {
       myMapData = new InteriorMapData();
@@ -717,55 +701,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   
  /*------------------------------------------------------------------------------------*/
 
-  /** Update player's location if he is in a room map
-   */
-  public void roomLocationUpdate() {
-    ;
-  }
-
- /*------------------------------------------------------------------------------------*/
-
-  /** Update player's location if he is in a town map
-   */
-  public void townLocationUpdate() {
-    ;
-  }
-
- /*------------------------------------------------------------------------------------*/
-
-  /** To update player's location if he is in a world map
-   */
-  public void worldLocationUpdate() {
-    ;
-  }
-
- /*------------------------------------------------------------------------------------*/
-
-  /** To init InteriorMap
-   */
-  public void initInteriorMapDisplay(WotlasLocation location) {
-    ;
-  }
-
- /*------------------------------------------------------------------------------------*/
-
-  /** To init TownMap
-   */
-  public void initTownMapDisplay(WotlasLocation location) {
-    ;
-  }
-
- /*------------------------------------------------------------------------------------*/
-
-  /** To init WorldMap
-   */
-  public void initWorldMapDisplay(WotlasLocation location) {    
-    ;
-  }
-
- /*------------------------------------------------------------------------------------*/
-
-  /** suppress drawables, shadows, data
+  /** To suppress drawables, shadows, data
    */
   public void cleanInteriorMapData() {
     gDirector.removeAllDrawables();
@@ -794,4 +730,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
  /*------------------------------------------------------------------------------------*/
 
+  /** To close the client
+   */
+  public void exit() {
+    if (gDirector!=null)
+      gDirector.removeAllDrawables();
+    //closeConnection();
+    Debug.exit();
+  }
+  
 }

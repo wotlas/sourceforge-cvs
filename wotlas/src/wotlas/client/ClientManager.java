@@ -382,6 +382,12 @@ public class ClientManager
       b_delProfile.setEnabled(false);
       rightPanel.add(b_delProfile);
 
+      b_exitProfile.addActionListener(new ActionListener() {
+          public void actionPerformed (ActionEvent e) {
+            DataManager.getDefaultDataManager().exit();
+          }
+        }
+      );
       rightPanel.add(b_exitProfile);
       
       // *** Adding the panels ***

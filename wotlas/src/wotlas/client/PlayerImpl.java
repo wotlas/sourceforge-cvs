@@ -371,7 +371,15 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   /** Tick
    */
   public void tick() {    
-    if (indexTrajectory == trajectory.size()) {
+    if (indexTrajectory < trajectory.size()) {
+      Point newPosition = (Point) trajectory.elementAt(indexTrajectory);
+      x = newPosition.x*10;
+      y = newPosition.y*10;
+      animation.tick();
+      sprite.tick();
+      indexTrajectory++;
+    }
+    /*if (indexTrajectory == trajectory.size()) {
       reverse = true;
       indexTrajectory--;
     }
@@ -394,7 +402,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
       animation.tick();
       sprite.tick();
       indexTrajectory--;
-    }            
+    }*/            
   }
 
  /*------------------------------------------------------------------------------------*/

@@ -21,7 +21,6 @@ package wotlas.libs.net.message;
 
 import wotlas.libs.net.NetMessageBehaviour;
 
-
 /** 
  * Associated behaviour to the ServerWelcomeMessage...
  *

@@ -77,6 +77,12 @@ public class ServerAddressSetup extends JWizard {
          super("Server Address Setup",470,550);
          setLocation(200,100);
 
+         if(serverID==0)
+            JOptionPane.showMessageDialog( null, "Your server ID is 0 ('localhost'). This setup program is only"
+                                                +"\nfor servers that need to publish their IP on the Internet.",
+                                                "Warning", JOptionPane.WARNING_MESSAGE);
+
+
        // We display first step
           try{
                init( AddressWizardStep.getStaticParameters() );
@@ -128,7 +134,7 @@ public class ServerAddressSetup extends JWizard {
        public static JWizardStepParameters getStaticParameters() {
           JWizardStepParameters param = new JWizardStepParameters( 
                           "wotlas.server.setup.ServerAddressSetup$AddressWizardStep",
-                          "Step 1/2 - Address Setup" );
+                          "Server Address Setup" );
 
           param.setIsPrevButtonEnabled(false);
           param.setIsDynamic(true); // we don't want the step to be buffered, we want its data
@@ -387,7 +393,7 @@ public class ServerAddressSetup extends JWizard {
        public static JWizardStepParameters getStaticParameters() {
           JWizardStepParameters param = new JWizardStepParameters( 
                           "wotlas.server.setup.ServerAddressSetup$TransferWizardStep",
-                          "Step 2/2 - Config Transfer" );
+                          "Server Config Transfer" );
 
           param.setIsLastStep(true);
           return param;

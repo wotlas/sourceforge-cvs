@@ -155,7 +155,8 @@ public class ServerSetup extends JWizard {
           param.setIsPrevButtonEnabled(false);
           param.setIsDynamic(true);
 
-          param.setProperty("init.info0", "this wizard...");
+          param.setProperty("init.info0", "\n\n\n       This wizard will help you configure your wotlas"
+                                         +" server. Click on 'next' to continue.");
           return param;
        }
 
@@ -224,17 +225,19 @@ public class ServerSetup extends JWizard {
 
           param.setProperty("init.nbChoices", "4");
 
-          param.setProperty("init.choice0", "Public Server");
-          param.setProperty("init.info0", "Public wotlas server, to join the....");
+          param.setProperty("init.choice0", "Create a public wotlas server.");
+          param.setProperty("init.info0", "      With this option your server will be added to the list of our public Internet servers.\n");
 
-          param.setProperty("init.choice1", "Private Server");
-          param.setProperty("init.info1", "Private wotlas server, to join the....");
+          param.setProperty("init.choice1", "Create a private wotlas server.");
+          param.setProperty("init.info1", "      With this option you can choose which wotlas network you want to join for your server ( "
+                                         +"with the wotlas manager package everyone can create his/her own wotlas network ).");
 
-          param.setProperty("init.choice2", "Local Server");
-          param.setProperty("init.info2", "Local wotlas server, to join the....");
+          param.setProperty("init.choice2", "Create a local server.");
+          param.setProperty("init.info2", "      With this option your server will remain local to your computer. It will not be published on the Internet. "
+                                         +"This is a fast & easy solution for running a server locally and perform some tests.");
 
-          param.setProperty("init.choice3", "Update server config");
-          param.setProperty("init.info3", "To update your server's config...");
+          param.setProperty("init.choice3", "Update your server's config.");
+          param.setProperty("init.info3", "      Choose this option if you want to edit/view your previously created server config.\n");
           return param;
        }
 
@@ -319,7 +322,10 @@ public class ServerSetup extends JWizard {
 
           param.setProperty("init.label0", "Enter your server ID :");
 
-          param.setProperty("init.info0", "To obtain a valid server Id...");
+          param.setProperty("init.info0", "\n      To obtain a valid server Id you should contact this address : "
+                                         +""+serverProperties.getProperty("REMOTE_SERVER_ADMIN_EMAIL","")
+                                         +". Just send a mail to that address and ask for an Id."
+                                         +" Once you have your Id enter it here and click on 'next'.");
           return param;
        }
 
@@ -389,18 +395,20 @@ public class ServerSetup extends JWizard {
        public static JWizardStepParameters getStaticParameters() {
           JWizardStepParameters param = new JWizardStepParameters(
                           "wotlas.server.setup.ServerSetup$PrivateServerWizardStep",
-                          "Private Server" );
+                          "Private Wotlas Network" );
 
           param.setIsPrevButtonEnabled(true);
           param.setIsDynamic(true);
 
-          param.setProperty("init.label0", "Enter the private server url :");
+          param.setProperty("init.label0", "Wotlas web server's URL:");
           param.setProperty("init.text0", serverProperties.getProperty("REMOTE_SERVER_CONFIG_HOME_URL","") );
 
-          param.setProperty("init.label1", "Enter the private server email :");
+          param.setProperty("init.label1", "Wotlas manager's email:");
           param.setProperty("init.text1", serverProperties.getProperty("REMOTE_SERVER_ADMIN_EMAIL","") );
 
-          param.setProperty("init.info0", "We need this info to be able to contact...");
+          param.setProperty("init.info0", "\n      We need this information to know how to contact a specified"
+                                         +" wotlas network. If you don't know them please refer to the"
+                                         +" web site where you downloaded this package.");
           return param;
        }
 
@@ -490,7 +498,7 @@ public class ServerSetup extends JWizard {
                           "Edit your Server's Config" );
 
           param.setIsPrevButtonEnabled(true);
-          param.setIsDynamic(false);
+          param.setIsDynamic(true);
           return param;
        }
 
@@ -540,6 +548,7 @@ public class ServerSetup extends JWizard {
         // III - Swing components
            JPanel sconfPanel = new JPanel(new GridLayout(24,1,10,10));
            sconfPanel.setBackground(Color.white);
+           sconfPanel.setPreferredSize(new Dimension(350,800));
            setLayout( new BorderLayout() );
 
          // Server Symbolic Name
@@ -628,7 +637,7 @@ public class ServerSetup extends JWizard {
 
          // ScrollPane to wrap the main panel
             JScrollPane scrollPane =  new JScrollPane( sconfPanel );
-            scrollPane.setBorder(BorderFactory.createEmptyBorder(10,20,0,20));
+            scrollPane.setBorder(BorderFactory.createEmptyBorder(10,15,0,15));
             scrollPane.setBackground(Color.white);
             add( scrollPane, BorderLayout.CENTER );
        }
@@ -752,13 +761,23 @@ public class ServerSetup extends JWizard {
           param.setIsLastStep(true);
           param.setIsDynamic(true);
 
-          if(serverID==0)
-             param.setProperty("init.info0", "Your server config has been successfully saved."
-                                           +" Start the setup program to set your server IP."
-                                           +" You may then start your local server");
-          else
-             param.setProperty("init.info0", "Your server config has been successfully saved."
-                                           +" You must now send...");
+          if(serverID==0) {
+             param.setProperty("init.info0", "\n      Your server config has been successfully saved."
+                                           +" You can now start your server. Because your server is"
+                                           +" local you don't need to use the setup program.");
+
+             FileTools.saveTextToFile( databasePath+File.separator+"servers"+File.separator
+                                       +"server-0.cfg.adr", "localhost" );
+          } else {
+             param.setProperty("init.info0", "\n      Your server config has been successfully saved.\n\n"
+                                           +"      You must now send it to the wotlas manager : just"
+                                           +" attach the \"base/servers/server-"+serverID+".cfg\" file"
+                                           +" to a mail and send it to the address "
+                                           +serverProperties.getProperty("REMOTE_SERVER_ADMIN_EMAIL","")
+                                           +". You will then receive the up- to-date universe data and be"
+                                           +" able to start your server." );
+          }
+
           return param;
        }
 

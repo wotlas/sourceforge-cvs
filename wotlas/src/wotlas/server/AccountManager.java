@@ -359,7 +359,11 @@ public class AccountManager {
              }
              else {
                 Debug.signal(Debug.ERROR,this,"Failed to load "+latest+" inventory for player "+accounts[i].getPrimaryKey() );
-                accounts[i] = null;
+//                accounts[i] = null;
+                // Petrus : if no inventory found : create a new one
+                ServerObjectManager objManager = new ServerObjectManager();
+                player.setObjectManager( objManager );
+                objManager.setInventory( new Inventory());
              }
         }
 

@@ -127,14 +127,29 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   public void init() {
     Debug.signal( Debug.NOTICE, null, "PlayerImpl::init");
     animation = new Animation(wotCharacter.getImage(location));
-    sprite = (Sprite) wotCharacter.getDrawable(this);
+    sprite = (Sprite) wotCharacter.getDrawable(this);    
+    
   }
 
-  /** Called after graphicsDirector's init
-   * to add some visual effects to the player
+  /** Called after graphicsDirector's init to add some visual effects to the master player
+   * or to show other players
    */
   public void initVisualProperties(GraphicsDirector gDirector) {
-    gDirector.addDrawable(wotCharacter.getShadow());
+    if (isMaster) {
+      gDirector.addDrawable(wotCharacter.getShadow());
+    } else {
+      gDirector.addDrawable(wotCharacter.getDrawable(this));
+      gDirector.addDrawable(wotCharacter.getShadow());
+    }
+  }
+
+  /** To remove player from the screen
+   */
+  public void cleanVisualProperties(GraphicsDirector gDirector) {
+    if (!isMaster) {
+      gDirector.removeDrawable(wotCharacter.getDrawable(this));
+      gDirector.removeDrawable(wotCharacter.getShadow());
+    }    
   }
 
  /*------------------------------------------------------------------------------------*/

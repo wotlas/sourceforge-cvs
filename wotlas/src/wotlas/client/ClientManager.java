@@ -189,6 +189,7 @@ public class ClientManager
     final JTextField tfield1;
     final ATextField atf_login;
     final JPasswordField pfield1;
+    final JPasswordField pfield2;
 
     final JButton b_ok;
     final JButton b_cancel;
@@ -523,7 +524,7 @@ public class ClientManager
       JPanel mainPanel_10 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         mainPanel_10.setAlignmentX(Component.CENTER_ALIGNMENT);
         mainPanel_10.setBackground(Color.white);
-        JPanel formPanel_10 = new JPanel(new GridLayout(2,2,5,5));
+        JPanel formPanel_10 = new JPanel(new GridLayout(3,2,5,5));
           formPanel_10.setBackground(Color.white);
           formPanel_10.add(new JLabel(new ImageIcon("..\\base\\gui\\login.gif")));
           atf_login = new ATextField(10);
@@ -536,6 +537,12 @@ public class ClientManager
           pfield1.setSelectionColor(Color.lightGray);
           pfield1.setSelectedTextColor(Color.white);
           formPanel_10.add(pfield1);
+          formPanel_10.add(new JLabel(new ImageIcon("..\\base\\gui\\password.gif")));
+          pfield2 = new JPasswordField(10);
+          pfield2.setFont(f.deriveFont(18f));
+          pfield2.setSelectionColor(Color.lightGray);
+          pfield2.setSelectedTextColor(Color.white);
+          formPanel_10.add(pfield2);
         mainPanel_10.add(formPanel_10);
       leftPanel.add(mainPanel_10);
 
@@ -589,15 +596,34 @@ public class ClientManager
       b_ok.setEnabled(false);
       b_ok.addActionListener(new ActionListener() {
         public void actionPerformed (ActionEvent e) {
-          char charPasswd[] = pfield1.getPassword();
-          String passwd = "";
-          if (charPasswd.length < 6) {
+          // Verify the fields
+          if (atf_login.getText().length() == 0) {
+            JOptionPane.showMessageDialog( screenIntro, "Login cannot be empty !", "New Login", JOptionPane.ERROR_MESSAGE);
+            return;
+          }          
+          char charPasswd1[] = pfield1.getPassword();          
+          char charPasswd2[] = pfield2.getPassword();          
+          if ( (charPasswd1.length < 4) || (charPasswd2.length < 4) ) {
             JOptionPane.showMessageDialog( screenIntro, "Password mut have at least 5 characters !", "New Password", JOptionPane.ERROR_MESSAGE);
-
+            return;
           } else {
-            b_ok.setEnabled(false);
-            for (int i=0; i<charPasswd.length; i++) {
-              passwd += charPasswd[i];
+            //b_ok.setEnabled(false);
+            String passwd = "";            
+            if (charPasswd1.length != charPasswd2.length) {
+              JOptionPane.showMessageDialog( screenIntro, "Password are not identical", "New Password", JOptionPane.ERROR_MESSAGE);
+              pfield1.setText("");
+              pfield2.setText("");
+              return;
+            }            
+            
+            for (int i=0; i<charPasswd1.length; i++) {
+              if (charPasswd1[i] != charPasswd2[i]) {
+                JOptionPane.showMessageDialog( screenIntro, "Password are not identical", "New Password", JOptionPane.ERROR_MESSAGE);
+                pfield1.setText("");
+                pfield2.setText("");
+                return;
+              }   
+              passwd += charPasswd1[i];
             }
 
             // Account creation
@@ -613,9 +639,6 @@ public class ClientManager
             JAccountConnectionDialog jaconnect = new JAccountConnectionDialog( screenIntro,
                        currentServerConfig.getServerName(), currentServerConfig.getAccountServerPort(),
                        dataManager);
-
-
-
 
             if ( jaconnect.hasSucceeded() ) {
               Debug.signal( Debug.NOTICE, null, "ClientManager connected to AccountServer");

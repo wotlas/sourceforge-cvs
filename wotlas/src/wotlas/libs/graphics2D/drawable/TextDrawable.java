@@ -82,6 +82,7 @@ public class TextDrawable extends Drawable {
      private int heightText=0;
 
    /** Life time of text.
+    * If -1 we have infinite life. The TextDrawable must be removed manually.
     */
      private int lifeTime;
 
@@ -309,6 +310,10 @@ public class TextDrawable extends Drawable {
           r.y = refDrawable.getY();
         }
 
+        // persistent TextDrawable
+        if (lifeTime==-1)
+          return true;
+        
         if( timeLimit<0 ) {
             return true;
         }
@@ -323,6 +328,10 @@ public class TextDrawable extends Drawable {
    /** Returns true if the text is still displayed on screen
     */
    public boolean isLive() {
+        // persistent TextDrawable
+        if (lifeTime==-1)
+          return true;
+          
         if( timeLimit-System.currentTimeMillis() <0 )
             return false;
         return true;   	

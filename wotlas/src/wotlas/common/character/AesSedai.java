@@ -67,6 +67,10 @@ public class AesSedai extends Female {
    */
     transient private ShadowSprite aesSedaiShadowSprite;
 
+  /** ColorImageFilter for InteriorMap Sprites.
+   */
+    transient private ColorImageFilter filter;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Getters & Setters for persistence
@@ -101,7 +105,7 @@ public class AesSedai extends Female {
        // 1 - Sprite Creation + Filter
           aesSedaiSprite = new Sprite( (SpriteDataSupplier) player, ImageLibRef.PLAYER_PRIORITY );
 
-          ColorImageFilter filter = new ColorImageFilter();
+          filter = new ColorImageFilter();
 
           switch( aesSedaiStatus ) {
               case AES_NOVICE :
@@ -208,10 +212,15 @@ public class AesSedai extends Female {
 
          ImageIdentifier imID = super.getImage(playerLocation);
 
-         if( imID==null ) // We return the default Aes Sedai Sprite...
-             return new ImageIdentifier( ImageLibRef.PLAYERS_CATEGORY ,
-                                         ImageLibRef.AES_SEDAI_SET ,
-                                         ImageLibRef.AES_BLUE_GOLDH_WALKING_ACTION );
+         if( imID==null ) {
+              if(aesSedaiSprite!=null)
+                 aesSedaiSprite.setDynamicImageFilter(filter);
+
+           // We return the default Aes Sedai Sprite...
+              return new ImageIdentifier( ImageLibRef.PLAYERS_CATEGORY ,
+                                          ImageLibRef.AES_SEDAI_SET ,
+                                          ImageLibRef.AES_BLUE_GOLDH_WALKING_ACTION );
+         }
 
          if(aesSedaiSprite!=null)
             aesSedaiSprite.setDynamicImageFilter( null ); // no filter for player small image

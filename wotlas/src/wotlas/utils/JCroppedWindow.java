@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package wotlas.client.gui;
+package wotlas.utils;
 
 import wotlas.libs.graphics2D.ImageLibrary;
 
@@ -330,7 +330,7 @@ public class JCroppedWindow extends JWindow{
  /*------------------------------------------------------------------------------------*/
 
  /** MAIN
-  */
+  *
   public static void main( String argv[] ) {
        JCroppedWindow win = new JCroppedWindow( new Frame(), "Wotlas" );
        
@@ -344,7 +344,7 @@ public class JCroppedWindow extends JWindow{
        win.pack();
        win.show();
   }
-
+  */
  /*------------------------------------------------------------------------------------*/
 
 }

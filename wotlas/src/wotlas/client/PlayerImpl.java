@@ -541,6 +541,18 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     chatRooms.remove(chatRoom.getPrimaryKey() );
     return true;
   }
+  
+  /** To get currentChatRoom
+   */
+  public ChatRoom getMyChatRoom() {
+    String chatRoomID = DataManager.getDefaultDataManager().getChatPanel().getMyChatRoomID();
+    if ( !chatRooms.containsKey(chatRoomID) ) {
+      Debug.signal( Debug.CRITICAL, this, "ChatRoom key " + chatRoomID
+                      + " not found in " + this );
+      return null;
+    }
+    return (ChatRoom) chatRooms.get(chatRoomID);
+  }
 
  /*------------------------------------------------------------------------------------*/  
  

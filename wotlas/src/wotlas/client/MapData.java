@@ -49,14 +49,14 @@ public interface MapData
   /** To get changeMap lock<br>
    * called by client.message.movement.YourCanLeaveMsgBehaviour
    */  
-  public Object getChangeMapLock();
+  //public Object getChangeMapLock();
   
  /*------------------------------------------------------------------------------------*/
   
   /** canChangeMap is set to true if player can change its MapData<br>
    * called by wotlas.client.message.YouCanLeaveMapMessage
    */
-  public void canChangeMapLocation( boolean canChangeMap );
+  //public void canChangeMapLocation( boolean canChangeMap );
  
  /*------------------------------------------------------------------------------------*/
  
@@ -84,7 +84,7 @@ public interface MapData
   /** To update the graphicsDirector's drawables
    */
   public void tick();
-
+  
  /*------------------------------------------------------------------------------------*/
  
 }

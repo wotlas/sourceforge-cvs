@@ -352,7 +352,7 @@ public class AesSedai extends Female {
               if(aesSedaiSprite!=null && filter!=null)
                  aesSedaiSprite.setDynamicImageFilter(filter);
 
-           // We return the default Aes Sedai Sprite...
+           // We return the default Aes Sedai Image...
               return new ImageIdentifier( ImageLibRef.PLAYERS_CATEGORY ,
                                           ImageLibRef.AES_SEDAI_SET ,
                                           ImageLibRef.AES_BLUE_GOLDH_WALKING_ACTION );

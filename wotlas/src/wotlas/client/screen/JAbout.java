@@ -22,6 +22,8 @@ package wotlas.client.screen;
 import wotlas.utils.*;
 import wotlas.libs.graphics2D.*;
 
+import wotlas.libs.sound.SoundLibrary;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -36,7 +38,7 @@ import java.awt.geom.*;
  *  @author  Aldiss, MasterBob
  */
 
-public class JAbout extends JDialog implements ActionListener
+public class JAbout extends JCroppedWindow implements ActionListener
 {
  // back= about.jpg, back2=about-back.jpg
   private Image back, back2;
@@ -68,7 +70,7 @@ public class JAbout extends JDialog implements ActionListener
   	" Wheel of Time",
   	"---",
   	" Light and Shadow",
-  	"v1.1.2 - January 2002",
+  	"v1.2 - February 2002",
   	" ",
   	" ",
   	" Project Management",
@@ -116,10 +118,14 @@ public class JAbout extends JDialog implements ActionListener
         " ",
         "SourceForge.net",
         " ",
+        "www.vgmusic.com",
+        " ",
+        " ",
         " ",
         " ",
         " ",
         "No sprites were hurt during the game.",
+        " ",
         " ",
         " ",
         " ",
@@ -130,7 +136,9 @@ public class JAbout extends JDialog implements ActionListener
         " ",
         " ",
         " ",
+        " ",
         "Wotlas will return in 'Bugs are forever'",
+        " ",
         " ",
         " ",
         " ",
@@ -174,7 +182,7 @@ public class JAbout extends JDialog implements ActionListener
 
          y0 = DRAWZONE_HEIGHT;  // y0 initialisation on j_drawzone's screen bottom
 
-       this.setImage("about.jpg","about-back.jpg");
+         this.setImage("about.jpg","about-back.jpg");
 
       // Frame properties
          getContentPane().setLayout(new BoxLayout(getContentPane(),BoxLayout.X_AXIS));
@@ -183,8 +191,7 @@ public class JAbout extends JDialog implements ActionListener
          setBackground(Color.black);
 
       // Jpanel where we draw the background image
-          JPanel jp = new JPanel()
-          {
+          JPanel jp = new JPanel() {
              public void paintComponent(Graphics g){
                 g.drawImage(back,0,0,this);
              }
@@ -258,7 +265,7 @@ public class JAbout extends JDialog implements ActionListener
                           // text's shadow
                            offScreen.setColor(c_shadow);
                            offScreen.drawString( text[i],
-                                 (DRAWZONE_WIDTH -textWidth[i])/2 +1,
+                                 (DRAWZONE_WIDTH -textWidth[i]+2)/2,
                                  base_y +1);
 
                           // text
@@ -289,12 +296,22 @@ public class JAbout extends JDialog implements ActionListener
              }
 
 	     public void repaint() {
-		paint(getGraphics());
+	     	Graphics gc = getGraphics();
+                if(gc!=null)
+                   paint(gc);
 	     }
 
           }; /// END OF J_DRAWZONE PANEL DEFINITION
 
 
+         addWindowListener( new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+              	timer.stop();
+
+                if( SoundLibrary.getSoundLibrary()!=null )
+                    SoundLibrary.getSoundLibrary().stopMusic();
+            }
+        });
       // some additional j_drawzone properties
          j_drawzone.setLayout(new BoxLayout(j_drawzone,BoxLayout.X_AXIS));
          j_drawzone.setOpaque(true);
@@ -330,14 +347,20 @@ public class JAbout extends JDialog implements ActionListener
               public void actionPerformed (ActionEvent e) {
               	timer.stop();
                 dispose();
+
+                if( SoundLibrary.getSoundLibrary()!=null )
+                    SoundLibrary.getSoundLibrary().stopMusic();
               }
             });
          
          SwingTools.centerComponent( this );
          setVisible(true);
 
+         if( SoundLibrary.getSoundLibrary()!=null )
+             SoundLibrary.getSoundLibrary().playMusic("credits.mid");
+
       // Timer init
-         timer = new javax.swing.Timer(20,this);
+         timer = new javax.swing.Timer(30,this);
          timer.start();
   }
 

@@ -46,6 +46,9 @@ public class JCroppedWindow extends JWindow{
   // User Mouse Listener
      private MouseListener userMouseListener;
 
+  // User Mouse Listener
+     private MouseMotionListener userMouseMotionListener;
+
   // left mouse button pressed ?
      private boolean leftButtonPressed;
 
@@ -58,6 +61,9 @@ public class JCroppedWindow extends JWindow{
 
      private boolean updatedSize, updatedLocation;
      private int newX, newY, newW, newH;
+
+  // resizable window ?
+     private boolean  resizable;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -91,6 +97,8 @@ public class JCroppedWindow extends JWindow{
         resizingFromRight = false;
         movingWindow = false;
 
+        resizable = true;
+
      // Our Mouse Adapter        
         super.addMouseListener( new MouseAdapter() {
  
@@ -105,12 +113,12 @@ public class JCroppedWindow extends JWindow{
 
             public void mouseEntered(MouseEvent e) {
                  if(userMouseListener!=null)
-                    userMouseListener.mouseClicked(e);
+                    userMouseListener.mouseEntered(e);
             }
 
             public void mouseExited(MouseEvent e) {
                  if(userMouseListener!=null)
-                    userMouseListener.mouseClicked(e);
+                    userMouseListener.mouseExited(e);
             }
 
             public void mousePressed(MouseEvent e) {
@@ -138,16 +146,16 @@ public class JCroppedWindow extends JWindow{
                 resizingFromLeft = false;
                 resizingFromRight = false;
 
-                if( e.getY() < 3 )
+                if( (e.getY() < 3) && resizable )
                     resizingFromTop = true;
-                else if( e.getY() > JCroppedWindow.this.getHeight()-5 )
+                else if( (e.getY() > JCroppedWindow.this.getHeight()-5)  && resizable )
                     resizingFromBottom = true;
-                else if( e.getY() < middleBar.getHeight(null)+2 )
-                    movingWindow = true;
+//                else if( e.getY() < middleBar.getHeight(null)+2 )
+//                    movingWindow = true;
 
-                if( !movingWindow && e.getX() < 5 )
+                if( !movingWindow && e.getX() < 5  && resizable )
                     resizingFromLeft = true;
-                else if( !movingWindow && e.getX() > JCroppedWindow.this.getWidth()-5 )
+                else if( !movingWindow && (e.getX() > JCroppedWindow.this.getWidth()-5)  && resizable )
                     resizingFromRight = true;
 
                 if(userMouseListener!=null)
@@ -158,9 +166,9 @@ public class JCroppedWindow extends JWindow{
                 if(movingWindow) {
                     newX += e.getX()-iniX;
                     newY += e.getY()-iniY;
-                    updatedLocation=true;
+//                    updatedLocation=true;
                 }
-                else{                
+                else{
                   if(resizingFromTop) {
                     newY += e.getY()-iniY;
                     updatedLocation=true;
@@ -223,6 +231,27 @@ public class JCroppedWindow extends JWindow{
         });
 
 
+     // Our Mouse Motion Adapter
+        super.addMouseMotionListener( new MouseMotionAdapter() {
+
+            public void mouseDragged(MouseEvent e) {
+
+                if(!resizingFromTop && !resizingFromBottom && !resizingFromLeft && !resizingFromRight)
+                   JCroppedWindow.this.setLocation( JCroppedWindow.this.getX()+e.getX()-iniX,
+                                                    JCroppedWindow.this.getY()+e.getY()-iniY );
+
+                if(userMouseMotionListener!=null)
+                   userMouseMotionListener.mouseDragged(e);
+            }
+
+            public void mouseMoved(MouseEvent e) {
+                 if(userMouseMotionListener!=null)
+                    userMouseMotionListener.mouseMoved(e);
+            }
+
+        });
+
+
      // Default components
         super.setContentPane( new JPanel( true ) );
      
@@ -258,6 +287,14 @@ public class JCroppedWindow extends JWindow{
     */
    public void addMouseListener(MouseListener l) {
         userMouseListener = l;
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To add a MouseMotionListener to this JWindow.
+    */
+   public void addMouseMotionListener(MouseMotionListener l) {
+        userMouseMotionListener = l;
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -325,6 +362,15 @@ public class JCroppedWindow extends JWindow{
               // 4 - Right Bar image
                  g.drawImage( rightBar, getWidth()-rightBar.getWidth(null), 0, this );
             }
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To tell if this window is resizable.
+    *  @param resizable set to true if you want to be able to resize this window (default).
+    */
+    public void setResizable( boolean resizable ) {
+    	this.resizable = resizable;
     }
 
  /*------------------------------------------------------------------------------------*/

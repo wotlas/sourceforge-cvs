@@ -93,8 +93,8 @@ public class ServerConfig
    *  Data is loaded by the PersistenceManager.
    */
      public ServerConfig() {
-        serverName = new String("nope");
-        serverID = -1;
+        serverName = new String("localhost");
+        serverID = 0;
         accountServerPort = 25500;
         gameServerPort = 26500;
         gatewayServerPort = 27500;

@@ -16,15 +16,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
+ 
 package wotlas.client.message.account;
 
 import java.io.IOException;
+import javax.swing.*;
 
-import wotlas.client.DataManager;
-
-import wotlas.common.message.account.*;
 import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.common.message.account.*;
+import wotlas.libs.wizard.JWizard;
+import wotlas.client.*;
+
+import wotlas.utils.Debug;
 
 /**
  * Associated behaviour to the StepErrorMessage...
@@ -36,39 +39,35 @@ public class StepErrorMsgBehaviour extends StepErrorMessage implements NetMessag
 {
  /*------------------------------------------------------------------------------------*/
 
-   /** To tell if this message is to be invoked later or not.
-    */
-     private boolean invokeLater = true;
-
- /*------------------------------------------------------------------------------------*/
-
   /** Constructor.
    */
-  public StepErrorMsgBehaviour() {
-    super();
-  }
+     public StepErrorMsgBehaviour() {
+          super();
+     }
 
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Associated code to this Message...
    *
    * @param sessionContext an object giving specific access to other objects needed to process
    *        this message.
    */
-  public void doBehaviour( Object sessionContext ) {
-      //DataManager dataManager = (DataManager) sessionContext;
-      DataManager dataManager = DataManager.getDefaultDataManager();
+     public void doBehaviour( Object sessionContext ) {
 
-       if( invokeLater ) {
-           invokeLater = false;
-           dataManager.invokeLater( this );
-           return;
-       }
+        // the sessionContext is here a JWizard
+           final JWizard wizard = (JWizard) sessionContext;
 
-      dataManager.showWarningMessage(info);
-  }
+           Runnable runnable = new Runnable() {
+              public void run() {
+                 JOptionPane.showMessageDialog( wizard, info, "Warning message!", JOptionPane.WARNING_MESSAGE);
+              }
+           };
 
- /*------------------------------------------------------------------------------------*/
+           wizard.awakeCurrentStep();
+           SwingUtilities.invokeLater( runnable );
+           Debug.signal(Debug.ERROR,null,"Step Error : "+info);
+     }
 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
 

@@ -147,6 +147,4 @@ public class EditMenu extends Menu2DManager {
         emptyMenu.setItemEnabled( "empty", false );
         return emptyMenu;
      }
-
- /*------------------------------------------------------------------------------------*/
 }

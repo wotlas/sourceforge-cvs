@@ -68,6 +68,7 @@ public class WorldGenerator {
            tileMaps[0] = tileMap;
 
            tileMap.setTileMapID(0);
+           tileMap.setAreaName("");
            tileMap.setFullName("Mishra");
            tileMap.setShortName("mishra");
            tileMap.setInsertionPoint( new ScreenPoint(10,10) );
@@ -91,6 +92,7 @@ public class WorldGenerator {
            tileMaps[1] = tileMap;
 
            tileMap.setTileMapID(1);
+           tileMap.setAreaName("");
            tileMap.setFullName("Rak Timin");
            tileMap.setShortName("raktimin");
            tileMap.setInsertionPoint( new ScreenPoint(10,10) );

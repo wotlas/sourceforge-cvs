@@ -59,6 +59,8 @@ public class WorldManager {
     public final static String TILEMAP_FILE     = "tilemap.bin";
     public final static String TOWN_DIR_EXT     = ".town";
     public final static String TILEMAP_DIR_EXT  = ".tilemap";
+    public final static String AREA_EXT      = ".area";
+    public final static String TILEMAP_EXT      = ".bin";
 
     public final static String DEFAULT_UNIVERSE_OBJECTS  = "objects";
     public final static String INVENTORY_PREFIX  = "room-inventory-";
@@ -553,28 +555,39 @@ public class WorldManager {
                   }
              }
              
-             // managing tile maps :
-             // we load all the tilemap of this world
+             // managing tile maps : PART I
+             // we load all the tilemap of this world that are cities on the map
              String tileMapList[] = rManager.listUniverseDirectories( worldList[w], TILEMAP_DIR_EXT );
-
              for( int t=0; t<tileMapList.length; t++ ) {
-
                // we load the tileMap objects
                   TileMap tileMap = (TileMap) rManager.RestoreObject( tileMapList[t] + TILEMAP_FILE );
-
                   if( tileMap==null ) {
                       Debug.signal(Debug.WARNING, this, "Failed to load TileMap : "+tileMapList[t]);
                       continue;
                   }
-
                   world.addTileMap( tileMap );
                   tileMapCount++;
+             }
+             // managing tile maps : PART II
+             // we load all the tilemap of this world that saved in .area directory
+             String areaMapList[] = rManager.listUniverseDirectories( worldList[w], AREA_EXT);
+             for( int index=0; index<areaMapList.length; index++ ) {
+                  String insideAreaTileMapList[] = rManager.listUniverseFiles( areaMapList[index], TILEMAP_EXT );
+                  for( int index2=0; index2<insideAreaTileMapList.length; index2++ ) {
+                      TileMap tileMap = (TileMap) rManager.RestoreObject( insideAreaTileMapList[index2] );
+                      if( tileMap==null ) {
+                          Debug.signal(Debug.WARNING, this, "Failed to load TileMap : "+insideAreaTileMapList[index2]);
+                          continue;
+                      }
+                      world.addTileMap( tileMap );
+                      tileMapCount++;
+                  }
              }
 
         }
 
        Debug.signal( Debug.NOTICE, null, "World Manager loaded "+worldCount+" worlds, "+townCount+" towns, "
-                    +buildingCount+" buildings, "+mapCount+" maps. TileMap : "+tileMapCount );
+                    +buildingCount+" buildings, "+mapCount+" maps ans "+tileMapCount+" TileMaps.");
 
     /*** STEP 2 - WE LOAD OBJECTS (latest data) ***/
       int roomInventoryCount = 0;
@@ -681,12 +694,23 @@ public class WorldManager {
              if( tileMaps != null ) {
              for( int t=0; t<tileMaps.length; t++ ) {
                   if( tileMaps[t]==null ) continue;
-                       // we save the town object
-                      String tileMapHome =  worldHome + tileMaps[t].getShortName() + TILEMAP_DIR_EXT +"/";
-                      new File(tileMapHome).mkdir();
-                      if( !rManager.BackupObject( tileMaps[t], tileMapHome + TILEMAP_FILE ) ) {
-                          Debug.signal(Debug.ERROR,this,"Failed to save tileMap : "+tileMapHome );
-                        continue;
+                       // we save the tilemap object
+                      if( tileMaps[t].getAreaName().length() <= 0 ){
+                          String tileMapHome =  worldHome + tileMaps[t].getShortName() + TILEMAP_DIR_EXT +"/";
+                          new File(tileMapHome).mkdir();
+                          if( !rManager.BackupObject( tileMaps[t], tileMapHome + TILEMAP_FILE ) ) {
+                              Debug.signal(Debug.ERROR,this,"Failed to save tileMap : "+tileMapHome );
+                              continue;
+                          }
+                      }
+                      else{
+                          String areaOfTile =  worldHome + tileMaps[t].getAreaName() + WorldManager.AREA_EXT + "/";
+                          new File(areaOfTile).mkdir();
+                          if( !rManager.BackupObject( tileMaps[t], areaOfTile
+                          + tileMaps[t].getShortName() + WorldManager.TILEMAP_EXT  ) ){
+                              Debug.signal(Debug.ERROR,this,"Failed to save tileMap : "+areaOfTile );
+                              continue;
+                          }                          
                       }
                       tileMapCount++;
                   }
@@ -829,13 +853,10 @@ public class WorldManager {
     /*** STEP 3 - Print some stats for control ***/
      if(isDefault)
          Debug.signal( Debug.NOTICE, this, "Saved "+worldCount+" worlds, "+townCount+" towns, "
-                       +buildingCount+" buildings, "+mapCount+" maps." );
+                       +buildingCount+" buildings, "+mapCount+" maps, and "+tileMapCount+" tilemaps." );
      else
          Debug.signal( Debug.NOTICE, this, "Saved "+inventoryCount+" room inventories.");
 
      return true;
   }
-
- /*------------------------------------------------------------------------------------*/
-
 }

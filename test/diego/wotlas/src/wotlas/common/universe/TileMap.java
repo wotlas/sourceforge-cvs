@@ -67,6 +67,11 @@ public class TileMap extends ScreenRectangle implements WotlasMap,BackupReady {
   /** ID of the TileMap (index in the array of tilemaps in the WorldMap)
    */
     public int tileMapID;
+
+  /** Name of the area where the map should be saved 
+   * (it's a directory under the first tilemap)
+   */
+    private String areaName;
      
   /** Full name of the TileMap
    */
@@ -137,6 +142,14 @@ public class TileMap extends ScreenRectangle implements WotlasMap,BackupReady {
 
     public int getTileMapID() {
         return tileMapID;
+    }
+
+    public void setAreaName(String areaName) {
+        this.areaName = areaName;
+    }
+
+    public String getAreaName() {
+        return areaName;
     }
 
     public void setFullName(String myFullName) {
@@ -276,6 +289,7 @@ public class TileMap extends ScreenRectangle implements WotlasMap,BackupReady {
         objectOutput.writeInt( ExternalizeGetVersion() );
         super.writeExternal( objectOutput );
         objectOutput.writeInt( tileMapID );
+        objectOutput.writeObject( areaName );
         objectOutput.writeObject( fullName );
         objectOutput.writeObject( shortName );
         objectOutput.writeObject( musicName );
@@ -298,6 +312,7 @@ public class TileMap extends ScreenRectangle implements WotlasMap,BackupReady {
         if( IdTmp == ExternalizeGetVersion() ){
             super.readExternal(objectInput);
             tileMapID= objectInput.readInt();
+            areaName = ( String ) objectInput.readObject();
             fullName = ( String ) objectInput.readObject();
             shortName = ( String ) objectInput.readObject();
             musicName = ( String ) objectInput.readObject();
@@ -360,4 +375,9 @@ public class TileMap extends ScreenRectangle implements WotlasMap,BackupReady {
     public void drawAllLayer( GraphicsDirector gDirector ) {
         manager.drawAllLayer( gDirector );
     }
+    
+    public void initNewTileMap( WorldMap myWorldMap ) {
+        this.myWorldMap = myWorldMap;
+        WotlasLocation thisLocation = new WotlasLocation( myWorldMap.getWorldMapID() );
+    }        
 }

@@ -361,6 +361,27 @@ public class WorldMap implements WotlasMap {
       tileMaps[tileMap.getTileMapID()] = tileMap;        
     }
 
+  /** Add a new TileMap object to the array {@link #tileMaps tileMaps}
+   *
+   * @return a new TileMap object
+   */
+    public TileMap addNewTileMap() {
+       TileMap myTileMap = new TileMap();
+
+       if (tileMaps == null) {
+           tileMaps = new TileMap[1];
+           myTileMap.setTileMapID(0);
+           tileMaps[0] = myTileMap;
+       } else {
+    	   TileMap[] myTileMaps = new TileMap[tileMaps.length+1];
+    	   myTileMap.setTileMapID(tileMaps.length);
+    	   System.arraycopy(tileMaps, 0, myTileMaps, 0, tileMaps.length);
+    	   myTileMaps[tileMaps.length] = myTileMap;
+    	   tileMaps = myTileMaps;
+       }
+
+       return myTileMap;
+    }
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Transient fields getter & setter

@@ -188,4 +188,19 @@ public class EditTile {
     public static EditorDataManager getDataManager() {
         return editorDataManager;
     }
+    
+    static public void letsTryToSave(int index) {
+        TileMap tileMaps[] = EditTile.getDataManager().getWorldManager().getWorldMapFromID(0).getTileMaps();
+        if( tileMaps == null )
+            return;
+        if( tileMaps[index]==null ) 
+            return;
+        String universeHome = EditTile.getResourceManager().getUniverseDataDir()+WorldManager.DEFAULT_UNIVERSE+"/";
+        String worldHome =  universeHome + EditTile.getDataManager().getWorldManager().getWorldMapFromID(0).getShortName() + "/";
+        String areaOfTile =  worldHome + tileMaps[index].getAreaName() + WorldManager.AREA_EXT + "/";
+        new File(areaOfTile).mkdir();
+        if( !EditTile.getResourceManager().BackupObject( tileMaps[index], areaOfTile
+        + tileMaps[index].getShortName() + WorldManager.TILEMAP_EXT  ) )
+            Debug.signal(Debug.ERROR,null,"Failed to save tileMap : "+areaOfTile );
+    }
 }

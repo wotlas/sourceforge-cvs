@@ -80,7 +80,9 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
               while ( it.hasNext() ) {
                 onlinePlayer = (PlayerImpl) it.next();
                 message += "<br>" + onlinePlayer.getPlayerName() + " <i> ( " + onlinePlayer.getPrimaryKey() + " )</i>";
-              }                        
+              }     
+              player.sendMessage(this);
+              return;                   
           } else if (message.equals("/blackajah") && voiceSoundLevel==ChatRoom.SHOUTING_VOICE_LEVEL) {
 
               WotCharacter wotC = player.getWotCharacter();

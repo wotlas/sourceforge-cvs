@@ -34,6 +34,7 @@ import wotlas.common.message.account.*;
 import wotlas.common.message.description.*;
 import wotlas.common.Player;
 import wotlas.common.Tickable;
+import wotlas.common.universe.*;
 
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
@@ -56,6 +57,7 @@ import java.awt.image.BufferedImage;
 import java.awt.MediaTracker;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.*;
 
@@ -79,12 +81,12 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
   /** size of a mask's cell (in pixels)
    */
-  public final static int TILE_SIZE = 10;
+  public final static int TILE_SIZE = 5;
 
   /** TIMEOUT to the Account Server
    */
   private static final int CONNECTION_TIMEOUT = 5000;
-  
+
   /** Number of tick before destroying the circle
    */
   private static final int CIRCLE_LIFETIME = 20;
@@ -137,15 +139,15 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** Circle selection
    */
   private CircleDrawable circle;
-  
+
   /** Number of tick since circle creation
    */
   private int circleLife = 0;
-  
+
   /** Circle Lock
    */
   private byte circleLock[] = new byte[1];
-  
+
   /** Our ImageLibrary.
    */
   private ImageLibrary imageLib;
@@ -254,25 +256,25 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         ; // Do nothing
       }
       */
-      
+
       JAccountWizard host = new JAccountWizard(personality);
       wotlas.utils.SwingTools.centerComponent(host);
       host.init();
-      host.start();      
-      
+      host.start();
+
       if (personality==null) {
         Debug.signal( Debug.ERROR, this, "Connection closed by AccountServer" );
         return;
       }
 
       Debug.signal( Debug.NOTICE, null, "New account created !" );
-            
+
       /*
       try {
         wait( 1000 );
       } catch(Exception e){
         ; // Do nothing
-      }      
+      }
       */
 
       return;
@@ -328,13 +330,24 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** To show the client's interface
    */
   public void showInterface() {
+    System.out.println("DataManager::ShowInterface");
+
+    // 0 - Image Library Creation
+    String imageDBHome = databasePath + File.separator + IMAGE_LIBRARY;
+    try {
+      imageLib = ImageLibrary.createImageLibrary(imageDBHome);
+    } catch( java.io.IOException ioe ) {
+      ioe.printStackTrace();
+      Debug.exit();
+    }
 
     // Create Graphics Director
-    System.out.println("Creating gDirector");
     gDirector = new GraphicsDirector( new LimitWindowPolicy() );
+    ImageIdentifier backgroundImageID = null;  // background image ( town, interiorMap, etc ... )
+    Drawable background = null;
 
-    System.out.println("Retreiving player's informations");
-    // Retreive player's informations
+    // 1 - Retreive player's informations
+    myPlayer = new PlayerImpl();
     try {
       synchronized(startGameLock) {
         personality.queueMessage(new MyPlayerDataPleaseMessage());
@@ -345,53 +358,120 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       Debug.exit();
     }
 
-    Debug.signal( Debug.NOTICE, null, myPlayer.getFullPlayerName() );
-    // Background
-    ImageIdentifier groundImId = new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
-                                           (short) 2,
-                                           (short) 0);
-    // Image Library Creation
-    try {
-      imageLib = ImageLibrary.createImageLibrary(databasePath+File.separator+IMAGE_LIBRARY);
-      imageLib.loadImageAction( groundImId );
-    } catch( java.io.IOException ioe ) {
-      ioe.printStackTrace();
-      Debug.exit();
-    }
+    // Retreive player's location
+    WotlasLocation location = myPlayer.getLocation();
+    System.out.println("\tmyPlayer.location = " + location);
+    System.out.println("\tlocation.worldMapID = " + location.getWorldMapID());
+    System.out.println("\tlocation.townMapID = " + location.getTownMapID());
+    System.out.println("\tlocation.buildingID = " + location.getWorldMapID());
 
-    // We create a "MotionlessSprite" that will represent our ground image in the GraphicsDirector.
-    MotionlessSprite groundSpr = new MotionlessSprite(
+    // 4 - Creation of the drawable reference
+    myPlayer.init();
+    System.out.println("\tmyPlayer = " + myPlayer);
+    System.out.println("\tmyPlayer.fullPlayerName = "  + myPlayer.getFullPlayerName());
+    System.out.println("\tmyPlayer.PlayerName = "      + myPlayer.getPlayerName());
+    System.out.println("\tmyPlayer.WotCharacter = "    + myPlayer.getWotCharacter());
+    System.out.println("\tmyPlayer.ImageIdentifier = " + myPlayer.getImageIdentifier());
+    System.out.println("\tmyPlayer.Drawable = "        + myPlayer.getDrawable());
+    
+  //*** World
+    //if (location.isWorld()) {
+    if (false) {
+      System.out.println("\tWorld");      
+      backgroundImageID = worldManager.getWorldMap(location).getWorldImage();
+      System.out.println("\tImageIdentifier = " + backgroundImageID);
+      
+      background = (Drawable) new MotionlessSprite(
                                             0,                        // ground x=0
                                             0,                        // ground y=0
-                                            groundImId,               // image
+                                            backgroundImageID,        // image
                                             ImageLibRef.MAP_PRIORITY, // priority
                                             false                     // no animation
                                         );
+                                        
+      myPlayer.setX(152*TILE_SIZE);
+      myPlayer.setY(16*TILE_SIZE);                                        
+    }
 
-    // Creation of AStar
+  //*** Town
+    if (location.isTown()) {
+      System.out.println("Town");
+      //System.out.println(worldManager.getTownMap(location).getFullName());
+
+    }
+
+  //*** Room
+    location.setWorldMapID(0);
+    location.setTownMapID(0);
+    location.setBuildingID(0);
+    location.setInteriorMapID(0);
+    if (location.isRoom()) {
+      System.out.println("Room");
+
+      InteriorMap imap = worldManager.getInteriorMap(location);
+      System.out.println("\troom.fullName = " + worldManager.getInteriorMap(location).getFullName());
+            
+      backgroundImageID = worldManager.getInteriorMap(location).getInteriorMapImage();
+      System.out.println("\tbackgroundImageID = " + backgroundImageID);      
+      /*backgroundImageID = new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
+                                           ImageLibRef.UNIVERSE_SET,
+                                           ImageLibRef.TARVALON_WEST_GATE_MAP_ACTION );*/
+
+      System.out.println("\tbackgorund");
+      background = (Drawable) new MultiRegionImage(
+                                                myPlayer.getDrawable(),              // our reference for image loading
+                                                650,//myPlayer.DEFAULT_PERCEPTION_RADIUS,  // perception radius
+                                                imap.getImageRegionWidth(),          // grid deltax
+                                                imap.getImageRegionHeight(),         // grid deltay
+                                                imap.getImageWidth(),                // image's total width
+                                                imap.getImageHeight(),               // image's total height
+                                                imap.getInteriorMapImage()           // base image identifier
+                                            );
+                                            
+      myPlayer.setX(90*TILE_SIZE);
+      myPlayer.setY(150*TILE_SIZE);                                            
+
+    }
+
+    // 2 - given the backgroundImageID we get the mask...
+    ImageIdentifier mapMaskID = null;
+    try {
+      mapMaskID = ImageLibrary.getImageIdentifier( backgroundImageID, imageDBHome, "mask" );
+    } catch( IOException e ) {
+      Debug.signal( Debug.CRITICAL, this, "Image Library Corrupted" );
+      Debug.exit();
+    }
+    if (mapMaskID==null) {
+      Debug.signal( Debug.CRITICAL, this, "Mask not found" );
+      Debug.exit();
+    }
+
+    // 3 - We load the mask image and create the Astar algo.
+    BufferedImage bufIm = null;
+    try {
+      bufIm = ImageLibrary.loadBufferedImage(new ImageIdentifier( mapMaskID ), imageDBHome, BufferedImage.TYPE_INT_ARGB );
+    } catch( IOException e ) {
+      e.printStackTrace();
+      return;
+    }
+    System.out.println("\tbufIm.width = " + bufIm.getWidth());
+    System.out.println("\tbufIm.height = " + bufIm.getHeight());
+    System.out.println("\tbackground.width = " + background.getWidth());
+    System.out.println("\tbackground.height = " + background.getHeight());
     aStar = new AStarDouble();
+    aStar.setMask( BinaryMask.create( bufIm ) );
+    bufIm.flush(); // free image resource
 
-    // Loading mask image
-    BufferedImage maskBuffImg = ImageLibrary.loadBufferedImage("../base/mask.gif");
+   
 
-    aStar.initMask(maskBuffImg, 80, 56);
+    // 5 - Init the GraphicsDirector
+    gDirector.init( background,               // background drawable
+                    myPlayer.getDrawable(),   // reference for screen movements
+                    new Dimension( JClientScreen.leftWidth, JClientScreen.mapHeight )   // screen default dimension
+                   );
 
-    // Creation of the drawable reference
-    myPlayer = new PlayerImpl();
-    myPlayer.init();
-    myPlayer.setX(groundSpr.getWidth()/2);
-    myPlayer.setY(groundSpr.getHeight()/2);
-    players = new HashMap();
-
-    // Init of the GraphicsDirector
-     gDirector.init(
-                      (Drawable) groundSpr,         // background drawable
-                      myPlayer.getDrawable(),   // reference for screen movements
-                      new Dimension( JClientScreen.leftWidth, JClientScreen.mapHeight )   // screen default dimension
-                    );
-
-    // Create the panels
-    JInfosPanel infosPanel = new JInfosPanel();
+    // 6 - Create the panels
+    JInfosPanel infosPanel = new JInfosPanel(myPlayer);
     JMapPanel mapPanel = new JMapPanel(gDirector, this);
     JChatPanel chatPanel = new JChatPanel();
     JPreviewPanel previewPanel = new JPreviewPanel();
@@ -404,8 +484,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     mFrame.show();
 
     // Start main loop tick
-    Debug.signal( Debug.NOTICE, null, "Beginning to tick Graphics Director" );
+    Debug.signal( Debug.NOTICE, null, "Beginning to tick Graphics Director" );    
     this.start();
+
+    // Retreive other players informations
+    players = new HashMap();
+    personality.queueMessage(new AllDataLeftPleaseMessage());
+
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -427,20 +512,19 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   public void tick() {
     myPlayer.tick();
     if (circle != null) {
-      if (circleLife < CIRCLE_LIFETIME) {        
-        circle.tick();
+      if (circleLife < CIRCLE_LIFETIME) {
         circleLife++;
       } else {
         System.out.println("destroy circle");
-        gDirector.removeDrawable(circle);        
+        gDirector.removeDrawable(circle);
         circle = null;
         circleLife = 0;
       }
-    }      
-    Iterator it = players.values().iterator();
+    }
+    /*Iterator it = players.values().iterator();
     while( it.hasNext() ) {
       ( (PlayerImpl) it.next() ).tick();
-    }
+    }*/
     gDirector.tick();
   }
 
@@ -456,27 +540,30 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
   /** Called when user left-clic on JMapPanel
    */
-  public void onLeftClicJMapPanel(MouseEvent e) {        
-    Rectangle screen = gDirector.getScreenRectangle();
-
-    Object object = gDirector.findOwner( e.getX(), e.getY());
+  public void onLeftClicJMapPanel(MouseEvent e) {
+    System.out.println("DataManager::onLeftClicJMapPanel");
     
-    if (object == null) {            
+    Rectangle screen = gDirector.getScreenRectangle();
+    
+    Object object = gDirector.findOwner( e.getX(), e.getY());
+
+    if (object == null) {
       int newX = e.getX() + (int)screen.getX();
       int newY = e.getY() + (int)screen.getY();
       myPlayer.setEndPosition(newX, newY);
       // Create the trajectory
       myPlayer.setTrajectory(aStar.findPath( new Point( myPlayer.getX()/TILE_SIZE, myPlayer.getY()/TILE_SIZE),
                                            new Point(newX/TILE_SIZE, newY/TILE_SIZE)));
+      
     } else {
       System.out.println("object.getClass().getName()" + object.getClass().getName());
       if (circle!=null) {
         gDirector.removeDrawable(circle);
         circle = null;
       }
-      circle = new CircleDrawable(myPlayer.getDrawable(), 20, Color.yellow, (short) 10);      
-      gDirector.addDrawable(circle);  
-      //circle.tick();
+      circle = new CircleDrawable(myPlayer.getDrawable(), 20, Color.yellow, (short) 10);
+      gDirector.addDrawable(circle);
+      
       //PlayerImpl player = (PlayerImpl) object;
     }
   }

@@ -22,9 +22,13 @@ package wotlas.common.chat;
 import wotlas.common.Player;
 import wotlas.common.universe.WotlasLocation;
 
+import wotlas.libs.net.NetMessage;
+
 import wotlas.utils.Debug;
 
 import java.util.Hashtable;
+import java.util.Iterator;
+
 
 /** A chat room of the Chat Engine.
  *
@@ -122,7 +126,7 @@ public class ChatRoom
   public ChatRoom() {
   }
   
- /*------------------------------------------------------------------------------------*/  
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** List of setters and getters
    */
@@ -162,7 +166,7 @@ public class ChatRoom
     return players;
   }
 
- /*------------------------------------------------------------------------------------*/  
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
   
   /** Add a player to this ChatRoom. The player must have been previously initialized.  
    *
@@ -174,7 +178,7 @@ public class ChatRoom
     return true;
   }
     
- /*------------------------------------------------------------------------------------*/  
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Removes a player from this ChatRoom.   
    *
@@ -191,14 +195,28 @@ public class ChatRoom
     return true;
   }
   
- /*------------------------------------------------------------------------------------*/  
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To send a message to the players that are in our chat room.
+   * @param msg message to send
+   */
+    public void sendMessageToChatRoom( NetMessage msg ) {
+          synchronized( players ) {
+               Iterator it = players.values().iterator();
+               
+               while( it.hasNext() )
+                    ( (Player)it.next() ).sendMessage( msg );
+          }
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** String Info.
    */
-  public String toString(){
-    return "ChatRoom : " + primaryKey;
-  }
+    public String toString(){
+      return "ChatRoom : " + primaryKey;
+    }
 
- /*------------------------------------------------------------------------------------*/  
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
 }

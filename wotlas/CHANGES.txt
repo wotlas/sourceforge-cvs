@@ -6,6 +6,15 @@
 * ( File Best Viewed in 1024x768 or above)
 *
 
+CHANGES BETWEEN V1.2.2 AND V1.2.3 (10 April 2002)
+------------------------------------------------
+
+ - Added a Message Router & Factory to make the server & client structure more clear.
+   Each location Town / World / Room has a MessageRouter attached to it. The MessageRouter is provided
+   by a factory at start-up.
+ - Thanks to the new message routing architecture, some old bugs have been fixed, especially those
+   annoying null pointer exceptions that appeared in v1.2.2 ...
+
 
 CHANGES BETWEEN V1.2.1 AND V1.2.2 (3 April 2002)
 ------------------------------------------------

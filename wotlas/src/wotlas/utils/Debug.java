@@ -70,6 +70,12 @@ public class Debug
        private static byte level = NOTICE;
 
     /**
+     * Display exception stack trace ?
+     */
+       private static boolean displayExceptionStack = true;
+
+
+    /**
      * the output stream we are going to use
      */
        private static PrintStream out = System.err;
@@ -122,6 +128,9 @@ public class Debug
      */
        public synchronized static void signal( byte code, Object src_obj, Exception e ) {
           signal( code, src_obj, e.getMessage() );
+
+          if( displayExceptionStack )
+              out.println( "EXCEPTION STACK: "+getStackTrace(e) );
        }
 
  /*------------------------------------------------------------------------------------*/
@@ -132,6 +141,16 @@ public class Debug
    */
      static public void setLevel( byte level ) {
        Debug.level=level;
+     }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To set/unset the display of exception stack trace.
+   *
+   * @param display set to true if you want to see exception stack trace.
+   */
+     static public void displayExceptionStack( boolean display ) {
+       Debug.displayExceptionStack=display;
      }
 
  /*------------------------------------------------------------------------------------*/

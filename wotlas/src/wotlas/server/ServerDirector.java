@@ -132,6 +132,10 @@ public class ServerDirector implements Runnable, NetServerErrorListener
                      SHOW_DEBUG = true;
                      Debug.displayExceptionStack( true );
                  }
+                 else if (arg.equals("-erroronly")) {
+                     Debug.displayExceptionStack( false );
+                     Debug.setLevel(Debug.ERROR);
+                 }
            }
 
         // STEP 0 - Start a ServerLogStream to save our Debug messages           

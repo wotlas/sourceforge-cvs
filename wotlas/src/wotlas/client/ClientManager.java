@@ -647,6 +647,7 @@ public class ClientManager
 
             JGameConnectionDialog jgconnect = new JGameConnectionDialog( screenIntro,
                     currentServerConfig.getServerName(), currentServerConfig.getGameServerPort(),
+                    currentServerConfig.getServerID(),
                     currentProfileConfig.getLogin(), passwd, currentProfileConfig.getLocalClientID(),
                     currentProfileConfig.getOriginalServerID(), DataManager.getDefaultDataManager());
 
@@ -769,6 +770,7 @@ public class ClientManager
 
             JDeleteAccountDialog jdconnect = new JDeleteAccountDialog( screenIntro,
                     currentServerConfig.getServerName(), currentServerConfig.getAccountServerPort(),
+                    currentServerConfig.getServerID(),
                     currentProfileConfig.getLogin()+"-"+
                     currentProfileConfig.getOriginalServerID()+"-"+
                     currentProfileConfig.getLocalClientID(), passwd );
@@ -910,6 +912,7 @@ public class ClientManager
 
             JGameConnectionDialog jgconnect = new JGameConnectionDialog( screenIntro,
                     currentServerConfig.getServerName(), currentServerConfig.getGameServerPort(),
+                    currentServerConfig.getServerID(),
                     currentProfileConfig.getLogin(), new String(charPasswd), currentProfileConfig.getLocalClientID(),
                     currentProfileConfig.getOriginalServerID(), DataManager.getDefaultDataManager());
 
@@ -1129,7 +1132,7 @@ public class ClientManager
             
             JAccountConnectionDialog jaconnect = new JAccountConnectionDialog( screenIntro,
                        currentServerConfig.getServerName(), currentServerConfig.getAccountServerPort(),
-                       dataManager);
+                       currentServerConfig.getServerID(), dataManager);
 
             if ( jaconnect.hasSucceeded() ) {
               Debug.signal( Debug.NOTICE, null, "ClientManager connected to AccountServer");
@@ -1220,6 +1223,7 @@ public class ClientManager
         public void actionPerformed (ActionEvent e) {       
             JGameConnectionDialog jgconnect = new JGameConnectionDialog( screenIntro,
               currentServerConfig.getServerName(), currentServerConfig.getGameServerPort(),
+              currentServerConfig.getServerID(),
               currentProfileConfig.getLogin(), currentProfileConfig.getPassword(),
               currentProfileConfig.getLocalClientID(), currentProfileConfig.getOriginalServerID(),
               DataManager.getDefaultDataManager());

@@ -181,7 +181,7 @@ public class ServerSetup extends JFrame
          }
 
       // Main JPanel
-         JPanel mainPanel = new JPanel(new GridLayout(26,1,10,10));
+         JPanel mainPanel = new JPanel(new GridLayout(24,1,10,10));
 
       // Server Symbolic Name
          JLabel label0 = new JLabel("Server Symbolic Name :");
@@ -189,12 +189,13 @@ public class ServerSetup extends JFrame
          mainPanel.add( label0 );
          mainPanel.add( t_serverSymbolicName );
 
-      // Server Name
+      // Server Name Use Server Setup...
+      /*
          JLabel label1 = new JLabel("Server Name (IP address or DNS name):");
          t_serverName = new JTextField( config.getServerName() );
          mainPanel.add( label1 );
          mainPanel.add( t_serverName );
-
+       */
 
       // Server ID ( 0 means standalone )
          JLabel label2 = new JLabel("Server ID (0 means standalone) :");
@@ -287,7 +288,7 @@ public class ServerSetup extends JFrame
               {
                 // we save the config
                    config.setServerSymbolicName( t_serverSymbolicName.getText() );
-                   config.setServerName( t_serverName.getText() );
+                   config.setServerName( null );
                    config.setDescription( t_description.getText() );
                    config.setLocation( t_location.getText() );
                    config.setAdminEmail( t_adminEmail.getText() );

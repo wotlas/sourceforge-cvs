@@ -10,11 +10,15 @@ taper en ligne de commande : ssh -l <user> cvs.wotlas.sourceforge.net
 
 5°) Lancer WinCVS:
  - menu Create/Checkout module
- - taper . dans "Enter the module name and path on the server"
+ - taper wotlas dans "Enter the module name and path on the server"
  - une fenêtre dos s'ouvre -> rentrer son mot de passe
-C'est bon, cela devrait fonctionner !!
+ - menu Query/Query update
+Le module wotlas devrait être désormais installé...
 
-6°) Vérifier le module wotlas
+6°) Pour accéder au module test
 - menu Create/Checkout module
-- taper wotlas dans "Enter the module name and path on the server"
+- taper test dans "Enter the module name and path on the server"
 - une fenêtre dos s'ouvre -> rentrer son mot de passe
+
+7°) Faites un tour sur l'URL: 
+http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/wotlas/

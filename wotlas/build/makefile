@@ -27,7 +27,6 @@ LIBS_PACKAGES  = wotlas/libs/net \
                  wotlas/libs/net/message \
                  wotlas/libs/net/personality \
                  wotlas/libs/pathfinding \
-                 wotlas/libs/persistence \
                  wotlas/libs/wizard \
                  wotlas/libs/wizard/step
 
@@ -35,6 +34,7 @@ LIBS_PACKAGES2 = wotlas/libs/graphics2D \
                  wotlas/libs/graphics2D/policy \
                  wotlas/libs/graphics2D/drawable \
                  wotlas/libs/graphics2D/filter \
+                 wotlas/libs/persistence \
                  wotlas/libs/sound
 
 COMMON_PACKAGES = wotlas/common \
@@ -67,8 +67,6 @@ CLIENT_PACKAGES = wotlas/client \
 CLIENT_PACKAGES2 = wotlas/client/message/movement \
                    wotlas/client/message/chat
 
-GRAPHICS_DEMO_PACKAGE = test/graphics/color
-
 ##########################################################################
 
 CLASSDIR = ../classes
@@ -94,8 +92,6 @@ SRC_SERVER2 = $(foreach dir,$(SERVER_PACKAGES2),$(SRCDIR)/$(dir)/*.java)
 SRC_CLIENT = $(foreach dir,$(CLIENT_PACKAGES),$(SRCDIR)/$(dir)/*.java)
 
 SRC_CLIENT2 = $(foreach dir,$(CLIENT_PACKAGES2),$(SRCDIR)/$(dir)/*.java)
-
-SRC_GRDEMO = $(foreach dir,$(GRAPHICS_DEMO_PACKAGE),$(SRCDIR)/$(dir)/*.java)
 
 
 # And we compile it all
@@ -127,8 +123,5 @@ client:
 
 client2:
 	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_CLIENT2)
-
-grdemo:
-	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_GRDEMO)
 
 ##########################################################################

@@ -30,7 +30,7 @@ public class InteriorMap
 
   /** ID of the InteriorMap (index in the array Building.interiorMaps)
    */
-   private int InteriorMapID;
+   private int interiorMapID;
   
   /** Full name of the InteriorMap
    */
@@ -69,10 +69,10 @@ public class InteriorMap
    */  
 
   public void setInteriorMapID(int myInteriorMapID) {
-    this.InteriorMapID = myInteriorMapID;
+    this.interiorMapID = myInteriorMapID;
   }
   public int getInteriorMapID() {
-    return InteriorMapID;
+    return interiorMapID;
   }
   public void setFullName(String myFullName) {
     this.fullName = myFullName;

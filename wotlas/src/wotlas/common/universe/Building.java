@@ -36,7 +36,7 @@ public class Building
    
   /** ID of the Building
    */
-   private int BuildingID;
+   private int buildingID;
      
   /** Full name of the Building
    */
@@ -105,10 +105,10 @@ public class Building
    */
 
   public void setBuildingID(int myBuildingID) {
-    this.BuildingID = myBuildingID;
+    this.buildingID = myBuildingID;
   }
   public int getBuildingID() {
-    return BuildingID;
+    return buildingID;
   }
   public void setFullName(String myFullName) {
     this.fullName = myFullName;
@@ -159,7 +159,7 @@ public class Building
    *
    * @return a new InteriorMap object
    */
-  public InteriorMap addInteriorMap()
+  public InteriorMap addNewInteriorMap()
   {
     InteriorMap myInteriorMap = new InteriorMap();
     
@@ -176,5 +176,27 @@ public class Building
     }
     return myInteriorMap;
   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Add a InteriorMap to our array interiorMaps {@link #buildings buildings})
+   *
+   * @param building Building object to add
+   */
+   public void addInteriorMap( InteriorMap map )
+   {
+      if ( interiorMaps == null ) {
+           interiorMaps = new InteriorMap[map.getInteriorMapID()+1];
+      }
+      else if( interiorMaps.length <= map.getInteriorMapID() ) {
+         InteriorMap[] myInteriorMap = new InteriorMap[map.getInteriorMapID()+1];
+         System.arraycopy( interiorMaps, 0, myInteriorMap, 0, interiorMaps.length );
+         interiorMaps = myInteriorMap;
+      }
+
+      interiorMaps[map.getInteriorMapID()] = map;        
+   }
+
+ /*------------------------------------------------------------------------------------*/
 
 }

@@ -34,7 +34,7 @@ public class WorldMap
  
   /** ID of the World (index in the array {@link ServerProcess#worldMaps ServerProcess.worldMaps})
    */
-   private int WorldMapID;
+   private int worldMapID;
      
   /** Full name of the World
    */
@@ -65,10 +65,10 @@ public class WorldMap
    */
 
   public void setWorldMapID(int myWorldMapID) {
-    this.WorldMapID = myWorldMapID;
+    this.worldMapID = myWorldMapID;
   }
   public int getWorldMapID() {
-    return WorldMapID;
+    return worldMapID;
   }
   public void setFullName(String myFullName) {
     this.fullName = myFullName;
@@ -127,9 +127,29 @@ public class WorldMap
 
   /** Add a new TownMap object to the array {@link #townMaps townMaps}
    *
+   * @param town TownMap object to add
+   */
+   public void addTownMap( TownMap town )
+   {
+      if (townMaps == null) {
+         townMaps = new TownMap[town.getTownMapID()+1];
+      }
+      else if( townMaps.length <= town.getTownMapID() ) {
+         TownMap[] myTownMaps = new TownMap[town.getTownMapID()+1];
+         System.arraycopy( townMaps, 0, myTownMaps, 0, townMaps.length );
+         townMaps = myTownMaps;
+      }
+
+      townMaps[town.getTownMapID()] = town;        
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Add a new TownMap object to the array {@@link #townMaps townMaps}
+   *
    * @return a new TownMap object
    */
-  public TownMap addTownMap()
+  public TownMap addNewTownMap()
   {
     TownMap myTownMap = new TownMap();
   		
@@ -140,12 +160,14 @@ public class WorldMap
     } else {
     	TownMap[] myTownMaps = new TownMap[townMaps.length+1];
     	myTownMap.setTownMapID(townMaps.length);
-    	myTownMap.setFromWorldMapID(this.WorldMapID);
+    	myTownMap.setFromWorldMapID(this.worldMapID);
     	System.arraycopy(townMaps, 0, myTownMaps, 0, townMaps.length);
     	myTownMaps[townMaps.length] = myTownMap;
     	townMaps = myTownMaps;
     }
     return myTownMap;
   }
+
+ /*------------------------------------------------------------------------------------*/
 
 }

@@ -35,7 +35,7 @@ public class TownMap
  
   /** ID of the TownMap (index in the array {@link WorldMap#towns WorldMap.towns})
    */
-   private int TownMapID;
+   private int townMapID;
      
   /** Full name of the Town
    */
@@ -83,10 +83,10 @@ public class TownMap
    */
 
   public void setTownMapID(int myTownMapID) {
-    this.TownMapID = myTownMapID;
+    this.townMapID = myTownMapID;
   }
   public int getTownMapID() {
-    return TownMapID;
+    return townMapID;
   }
   public void setFullName(String myFullName) {
     this.fullName = myFullName;
@@ -127,11 +127,31 @@ public class TownMap
   
  /*------------------------------------------------------------------------------------*/
 
-  /** Adda new Building object to the array {@link #buildings buildings})
+  /** Add a new Building object to our list {@link #buildings buildings})
+   *
+   * @param building Building object to add
+   */
+   public void addBuilding( Building building )
+   {
+      if ( buildings == null ) {
+           buildings = new Building[building.getBuildingID()+1];
+      }
+      else if( buildings.length <= building.getBuildingID() ) {
+         Building[] myBuildings = new Building[building.getBuildingID()+1];
+         System.arraycopy( buildings, 0, myBuildings, 0, buildings.length );
+         buildings = myBuildings;
+      }
+
+      buildings[building.getBuildingID()] = building;        
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Add a new Building object to the array {@@link #buildings buildings})
    *
    * @return a new Building object
    */
-  public Building addBuilding()
+  public Building addNewBuilding()
   {
     Building myBuilding = new Building();
     
@@ -148,7 +168,9 @@ public class TownMap
     }    
     return myBuilding;
   }
-  
+
+ /*------------------------------------------------------------------------------------*/
+
 }
 
         

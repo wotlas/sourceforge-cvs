@@ -31,7 +31,8 @@ LIBS_PACKAGES  = wotlas/libs/net \
 LIBS_PACKAGES2 = wotlas/libs/graphics2D \
                  wotlas/libs/graphics2D/policy \
                  wotlas/libs/graphics2D/drawable \
-                 wotlas/libs/graphics2D/filter
+                 wotlas/libs/graphics2D/filter \
+                 wotlas/libs/sound
 
 COMMON_PACKAGES = wotlas/common \
                   wotlas/common/universe \

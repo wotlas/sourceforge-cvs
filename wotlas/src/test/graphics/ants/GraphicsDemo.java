@@ -39,7 +39,7 @@ public class GraphicsDemo extends JFrame implements AWTEventListener {
          
        // 1 - Image Library Creation
           try{
-             imageLib = ImageLibrary.createImageLibrary("../test/graphics/ants/graphics");
+             imageLib = ImageLibrary.createImageLibrary("../src/test/graphics/ants/graphics");
           }catch( java.io.IOException ioe ) {
               ioe.printStackTrace();
               System.exit(1);

@@ -235,7 +235,7 @@ public class NetReceiver extends NetThread
            return;
 
       // We mark the stream
-         in_stream.mark( 10 );
+         in_stream.mark( 1000 );
  
       // Wait for data...
          in_stream.readByte();

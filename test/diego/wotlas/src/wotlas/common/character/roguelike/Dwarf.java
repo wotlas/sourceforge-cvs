@@ -107,4 +107,5 @@ public class Dwarf extends RLikeCharacter {
             )[ EnvironmentManager.getDefaultPlayerImage() ], imageNr  );
             return fakeSprite;
         }
-    }}
+    }
+}

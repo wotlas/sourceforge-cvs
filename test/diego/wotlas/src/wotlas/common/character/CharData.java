@@ -310,4 +310,13 @@ public abstract class CharData implements BackupReady {
             // to do.... when new version
         }
     }
+    
+    public String getCharAttrWihDescr(int index ) {
+        return ATTR_NAMES[index]+" "+charAttributes[index][IDX_ACTUAL];
+    }
+    
+    public void setCharAttr(int index, short value ) {
+        charAttributes[index][CharData.IDX_ACTUAL] = value;
+        charAttributes[index][CharData.IDX_MAX]    = value;
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
- * Copyright (C) 2001-2002 WOTLAS Team
+ * Copyright (C) 2001-2003 WOTLAS Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -71,7 +71,7 @@ public class JAbout extends JCroppedWindow implements ActionListener {
   	" Wheel of Time",
   	"---",
   	" Light and Shadow",
-  	"v1.3 - May 2002",
+  	"v2.0 - July 2003",
   	" ",
   	" ",
   	" Wotlas Team",
@@ -87,6 +87,7 @@ public class JAbout extends JCroppedWindow implements ActionListener {
         "Valère",
         "Vasaldo",
         "Xeno Yar Litharr",
+        "Shra",
         " ",
         " Communities",
         "Felherid",
@@ -113,6 +114,7 @@ public class JAbout extends JCroppedWindow implements ActionListener {
         "Aldiss",
         "Petrus",
         "Knut Hamson",
+        "Shra",
         " ",
         " They gave us Ideas",
         "Klianwolf",
@@ -453,4 +455,3 @@ public class JAbout extends JCroppedWindow implements ActionListener {
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

@@ -119,7 +119,7 @@ public abstract class RLikeClass implements BackupReady {
         }
 
         // order 'em
-        stats =  prevStats;
+        stats =  (short[]) prevStats.clone();
         boolean choosed;
         for(int a=0; a < 6 ; a++){
             choosed = false;

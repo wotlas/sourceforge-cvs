@@ -34,11 +34,17 @@ import org.python.core.*;
   *
   * @author Diego
  */
-public class NpcDefinition {
+public class NpcDefinition implements Cloneable {
     
     static protected final String NPC_SCRIPTS_FILE = "npc_def.txt";
     
     public static Hashtable npcDef;
+    
+    
+    transient public String name;
+    transient public String[] triggers;
+    transient public int str=0;
+    transient public BasicChar basicChar;
     
  /*------------------------------------------------------------------------------------*/    
 
@@ -46,19 +52,52 @@ public class NpcDefinition {
     // throws PyException {
         npcDef = new Hashtable(10);
         PythonInterpreter interp = ServerDirector.interp;
-        try{
-            BufferedReader tmp;
-            tmp = new BufferedReader( new FileReader( ServerDirector.getResourceManager(
-            ).getScriptsDataDir()+NPC_SCRIPTS_FILE ) );
-            String parse = null;
-            while( tmp.ready() ){
-                parse = tmp.readLine();
-                if(parse.length() > 1)
-                    interp.exec( parse );
+        while(true) {
+            try {
+                BufferedReader tmp;
+                tmp = new BufferedReader( new FileReader( ServerDirector.getResourceManager(
+                ).getScriptsDataDir()+NPC_SCRIPTS_FILE ) );
+                String parse = null;
+                while( tmp.ready() ){
+                    parse = tmp.readLine();
+                    if(parse.length() > 1)
+                        interp.exec( parse );
+                }
+                tmp.close();
+                break;
+            } catch (Exception e){
+                e.printStackTrace();
             }
-            tmp.close();
-        } catch (Exception e){
-            e.printStackTrace();
+            System.out.println("......press enter to reload npc_def.txt .");
+            npcDef = new Hashtable(10);
+            try{
+                System.in.read();
+                System.in.read();
+            }catch( Exception e ) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    public NpcDefinition() {
+    }
+/*
+    public boolean isTrigger(){
+        for(int i=0; i< triggers.length;i++)
+            SimpleEmbedded.interp.exec( triggers[i] );
+        return true;
+    }
+*/
+    public NpcDefinition Clone(){
+        NpcDefinition clone = new NpcDefinition();
+        clone.name = new String(name);
+        if( triggers != null ){
+            clone.triggers = new String[triggers.length];
+            for(int i=0; i< triggers.length;i++)
+                clone.triggers[i] = new String(triggers[i]);
+        } else
+            clone.triggers = null;
+        clone.str = str;
+        return clone;
     }
 }

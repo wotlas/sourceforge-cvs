@@ -26,6 +26,7 @@ import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.persistence.*;
 import wotlas.utils.*;
+import wotlas.common.objects.inventories.*;
 
 import java.io.*;
 import java.awt.Color;
@@ -40,7 +41,6 @@ import wotlas.common.character.roguelike.*;
  * @see wotlas.common.CharData
  * @see wotlas.libs.graphics2D.Drawable
  */
-
 public abstract class RLikeCharacter extends BasicChar {
 
     /** id used in Serialized interface.
@@ -205,7 +205,8 @@ public abstract class RLikeCharacter extends BasicChar {
     }
     
     public Inventory createInventory() {
-        return null;
+        return new AesSedaiInventory();
+        // return null;
     }
 
     /** Returns the fanfare sound of this character class.

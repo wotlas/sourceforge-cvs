@@ -27,7 +27,7 @@ import wotlas.utils.*;
 
 import wotlas.libs.net.*;
 import wotlas.libs.wizard.*;
-
+import wotlas.common.environment.*;
 import wotlas.common.objects.inventories.Inventory;
 
 import java.lang.reflect.*;
@@ -242,6 +242,7 @@ public class AccountBuilder implements NetConnectionListener
                      createAccount();
                   }catch( Exception ex ) {
                      sendStepError("Failed to create account : "+ex.getMessage());
+                     ex.printStackTrace();
                   }
                  return;
            }
@@ -385,6 +386,7 @@ public class AccountBuilder implements NetConnectionListener
      private void sendStepError( String message ) {
         connection.queueMessage( new StepErrorMessage( message ) );
         Debug.signal( Debug.ERROR, this, "An error occured during account creation : "+message );
+        new Exception().printStackTrace();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -683,20 +685,34 @@ public class AccountBuilder implements NetConnectionListener
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To get the player account summary.
+    /** To get the player account summary.
     */
-     public String getAccountSummary() throws AccountException {
-
-         StringBuffer str = new StringBuffer("");
-         str.append("        Player Name  \t:  ");
-         str.append( player.getFullPlayerName() );
-         str.append("\n        Player Class \t:  ");
-         str.append( player.getBasicChar().getCommunityName() );
-         str.append("\n        Player Rank  \t:  ");
-         str.append( player.getBasicChar().getCharacterRank() );
-
-         return str.toString();
-     }
+    public String getAccountSummary() throws AccountException {
+        StringBuffer str = new StringBuffer("");
+        if( player.getBasicChar().getEnvironment() == EnvironmentManager.ENVIRONMENT_WOT ) {
+            str.append("        Player Name  \t:  ");
+            str.append( player.getFullPlayerName() );
+            str.append("\n        Player Class \t:  ");
+            str.append( player.getBasicChar().getCommunityName() );
+            str.append("\n        Player Rank  \t:  ");
+            str.append( player.getBasicChar().getCharacterRank() );
+        }
+        else if ( player.getBasicChar().getEnvironment() == EnvironmentManager.ENVIRONMENT_ROGUE_LIKE ) {
+            str.append("        Player Name  \t:  ");
+            str.append( player.getFullPlayerName() );
+            str.append( "\n        Player Class \t:  ");
+            str.append( player.getBasicChar().getCommunityName() );
+            str.append( "\n        Player Stat  \t:  ");
+            str.append( "\n                        "+player.getBasicChar().getCharAttrWihDescr(CharData.ATTR_STR) );
+            str.append( "\n                        "+player.getBasicChar().getCharAttrWihDescr(CharData.ATTR_INT) );
+            str.append( "\n                        "+player.getBasicChar().getCharAttrWihDescr(CharData.ATTR_WIS) );
+            str.append( "\n                        "+player.getBasicChar().getCharAttrWihDescr(CharData.ATTR_CON) );
+            str.append( "\n                        "+player.getBasicChar().getCharAttrWihDescr(CharData.ATTR_DEX) );
+            str.append( "\n                        "+player.getBasicChar().getCharAttrWihDescr(CharData.ATTR_CHA) );
+        }
+        return str.toString();
+        
+    }
 
  /* - - - - - - - - - - -ROGUE LIKE SECTION - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -730,28 +746,32 @@ public class AccountBuilder implements NetConnectionListener
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
     public void setRLikeCharacterClass( String data ) throws AccountException {
+        try{
+            data = data.toUpperCase().trim();
         
-        data = data.toUpperCase().trim();
-        
-        // 1 - Select class
-        String className="wotlas.common.character.roguelike.";
+            // 1 - Select class
+            String className="wotlas.common.character.roguelike.";
 
-        if(data.equals("WARRIOR"))
-           className += "Warrior";
-        else if(data.equals("WIZARD"))
-           className += "Wizard";
-        else
-           throw new AccountException("Unknown character class !");
+            if(data.equals("WARRIOR"))
+               className += "Warrior";
+            else if(data.equals("WIZARD"))
+               className += "Wizard";
+            else
+               throw new AccountException("Unknown character class !");
 
-        // 2 - Create Instance
-        Object obj = Tools.getInstance( className );
+            // 2 - Create Instance
+            Object obj = Tools.getInstance( className );
 
-        if( obj==null || !(obj instanceof RLikeClass) )
-           throw new AccountException("Error during character class creation !");
+            if( obj==null || !(obj instanceof RLikeClass) ) {
+                throw new AccountException("Error during character class creation !");
+            }
 
-        // 3 - Set the player's character
-        RLikeClass rlClass = (RLikeClass) obj;
-     	( (RLikeCharacter) player.getBasicChar() ).setClass(rlClass);
+            // 3 - Set the player's character
+            RLikeClass rlClass = (RLikeClass) obj;
+            ( (RLikeCharacter) player.getBasicChar() ).setClass(rlClass);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

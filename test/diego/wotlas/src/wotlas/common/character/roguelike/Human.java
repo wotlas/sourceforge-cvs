@@ -106,4 +106,5 @@ public class Human extends RLikeCharacter {
             )[ EnvironmentManager.getDefaultPlayerImage() ], imageNr  );
             return fakeSprite;
         }
-    }}
+    }
+}

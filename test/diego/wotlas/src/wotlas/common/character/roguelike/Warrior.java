@@ -38,29 +38,30 @@ public class Warrior extends RLikeClass {
      */
     private static final long serialVersionUID = 556565L;
     
+    public Warrior() {
+    }
+    
     public void init(RLikeCharacter myChar){
         super.init(myChar);
         myChar.classes = new short[1];
-        myChar.classes[CharData.IDX_MAX] = 1;
-        myChar.classes[CharData.IDX_ACTUAL] = 1;
+        // myChar.classes[CharData.IDX_MAX] = 1;
+        // myChar.classes[CharData.IDX_ACTUAL] = 1;
         myChar.charAttributes[CharData.ATTR_HP][CharData.IDX_MAX] += 10;
         myChar.charAttributes[CharData.ATTR_HP][CharData.IDX_ACTUAL] += 10;        
         
         short[] stats;
         stats = rollStat();
         
-        myChar.charAttributes[CharData.ATTR_STR][CharData.IDX_ACTUAL] = stats[0];
-        myChar.charAttributes[CharData.ATTR_STR][CharData.IDX_MAX]    = stats[0];
-        myChar.charAttributes[CharData.ATTR_INT][CharData.IDX_ACTUAL] = stats[4];
-        myChar.charAttributes[CharData.ATTR_INT][CharData.IDX_MAX]    = stats[4];
-        myChar.charAttributes[CharData.ATTR_WIS][CharData.IDX_ACTUAL] = stats[5];
-        myChar.charAttributes[CharData.ATTR_WIS][CharData.IDX_MAX]    = stats[5];
-        myChar.charAttributes[CharData.ATTR_CON][CharData.IDX_ACTUAL] = stats[1];
-        myChar.charAttributes[CharData.ATTR_CON][CharData.IDX_MAX]    = stats[1];
-        myChar.charAttributes[CharData.ATTR_DEX][CharData.IDX_ACTUAL] = stats[2];
-        myChar.charAttributes[CharData.ATTR_DEX][CharData.IDX_MAX]    = stats[2];
-        myChar.charAttributes[CharData.ATTR_CHA][CharData.IDX_ACTUAL] = stats[3];
-        myChar.charAttributes[CharData.ATTR_CHA][CharData.IDX_MAX]    = stats[3];
+        try {
+        myChar.setCharAttr(CharData.ATTR_STR,stats[0]);
+        myChar.setCharAttr(CharData.ATTR_INT,stats[4]);
+        myChar.setCharAttr(CharData.ATTR_WIS,stats[5]);
+        myChar.setCharAttr(CharData.ATTR_CON,stats[1]);
+        myChar.setCharAttr(CharData.ATTR_DEX,stats[2]);
+        myChar.setCharAttr(CharData.ATTR_CHA,stats[3]);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         
         //        classes[0] = CLASSES_RLIKE_WARRIOR;
     }

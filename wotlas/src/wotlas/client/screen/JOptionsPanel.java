@@ -48,8 +48,9 @@ public class JOptionsPanel extends JPanel implements MouseListener, ChangeListen
    */
   public JOptionsPanel() {
     super();
-    
+    setBackground(Color.white);
     JPanel innerPanel = new JPanel();
+    innerPanel.setOpaque(false);
     innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
     innerPanel.setBorder(BorderFactory.createEmptyBorder(3,3,5,5)); // all 10s
     
@@ -58,6 +59,7 @@ public class JOptionsPanel extends JPanel implements MouseListener, ChangeListen
 
 // Volume Panel
     JPanel vPanel = new JPanel();
+    vPanel.setOpaque(false);
     vPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
     vPanel.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));
     
@@ -69,6 +71,8 @@ public class JOptionsPanel extends JPanel implements MouseListener, ChangeListen
     vPanel.add(soundMin);
     
     volumeLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_VOLUME, SoundLibrary.MAX_VOLUME);
+    volumeLevel.setPaintTrack(false);
+    volumeLevel.setOpaque(false);
     volumeLevel.setPreferredSize(new Dimension(50,30));
     volumeLevel.addChangeListener(this);
     volumeLevel.setAlignmentY(Component.BOTTOM_ALIGNMENT);
@@ -80,6 +84,7 @@ public class JOptionsPanel extends JPanel implements MouseListener, ChangeListen
 
 // Text Quality
     JPanel qTextPanel = new JPanel();
+    qTextPanel.setOpaque(false);
     qTextPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
     qTextPanel.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
     
@@ -87,14 +92,24 @@ public class JOptionsPanel extends JPanel implements MouseListener, ChangeListen
     qTextPanel.add(qTextTitle);
     
     JCheckBox cButton = new JCheckBox();
+    cButton.setBackground(Color.white);
     cButton.setSelected(false);
     cButton.addItemListener(this);
     qTextPanel.add(cButton);
 
 // Help button
-   JButton b_help = new JButton( "Help" );
-   b_help.setPreferredSize( new Dimension(90,30) );
+    ImageIcon im_helpup  = new ImageIcon("../base/gui/help-up.gif");
+    ImageIcon im_helpdo  = new ImageIcon("../base/gui/help-do.gif");
+    JButton b_help = new JButton(im_helpup);
+    b_help.setRolloverIcon(im_helpdo);
+    b_help.setPressedIcon(im_helpdo);
+    b_help.setBorderPainted(false);
+    b_help.setContentAreaFilled(false);
+    b_help.setFocusPainted(false);      
+    //b_help.setPreferredSize( new Dimension(90,30) );
+   
     b_help.setAlignmentX(Component.CENTER_ALIGNMENT);
+    
       b_help.addActionListener(new ActionListener() {
           public void actionPerformed (ActionEvent e) {
              new JHTMLWindow( DataManager.getDefaultDataManager().getClientScreen(), "Help", "../docs/help/game-window.html", 340, 450, false );

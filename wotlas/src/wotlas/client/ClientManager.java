@@ -974,6 +974,7 @@ public class ClientManager
       serverConfigList.getLatestConfigFiles(screenIntro);
 
       // Launching Wizard
+      screenIntro.hide();
       JAccountCreationWizard accountCreationWz = new JAccountCreationWizard();
       break;
       
@@ -1204,6 +1205,7 @@ public class ClientManager
       // Create panels
       leftPanel = new JPanel();
       //leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+      leftPanel.setLayout(new GridLayout(1,1,5,5));
       rightPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, screenIntro.getRightWidth(), 10));
 
       // Create buttons

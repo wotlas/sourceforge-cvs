@@ -113,7 +113,7 @@ public class JChatRoom extends JPanel implements MouseListener
 
     add("East", listScroller);
     
-    appendText("<font color='green'><i>new chat created</i></font>");
+    appendText("<font color='green'><i>New chat created.</i></font>");
 
   }
 

@@ -71,7 +71,7 @@ public class YouCanLeaveMapMsgBehaviour extends YouCanLeaveMapMessage implements
 
 
         // SUCCESS + DEST LOCATION VALUE + NOTIFY TO ADD
-
+        // dataManager.getMapData().getChangeMapLock();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

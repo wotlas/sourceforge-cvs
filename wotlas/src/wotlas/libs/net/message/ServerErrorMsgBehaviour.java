@@ -47,7 +47,14 @@ public class ServerErrorMsgBehaviour extends ServerErrorMessage implements NetMe
    *        this message.
    */
      public void doBehaviour( Object context ) {
-     	   ((NetClient) context).setErrorMessage( error_message );
+
+          NetClient client = (NetClient) context;
+          client.setErrorMessage( error_message );
+
+       // we awake our client with an error message
+          synchronized( client ){
+             client.notify();
+          }
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

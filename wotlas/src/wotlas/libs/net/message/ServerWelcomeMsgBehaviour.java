@@ -20,6 +20,7 @@
 package wotlas.libs.net.message;
 
 import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.libs.net.NetClient;
 
 /** 
  * Associated behaviour to the ServerWelcomeMessage...
@@ -47,6 +48,13 @@ public class ServerWelcomeMsgBehaviour extends ServerWelcomeMessage implements N
    *        this message.
    */
      public void doBehaviour( Object context ) {
+
+         NetClient client = (NetClient) context;
+
+       // we awake our client with no error message
+          synchronized( client ){
+             client.notify();
+          }
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

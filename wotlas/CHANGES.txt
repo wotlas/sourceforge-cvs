@@ -6,7 +6,7 @@
 * ( File Best Viewed in 1024x768 or above)
 *
 
-CHANGES BETWEEN V1.2.2 AND V1.2.3 (10 April 2002)
+CHANGES BETWEEN V1.2.2 AND V1.2.3 (11 April 2002)
 ------------------------------------------------
 
  - Added a Message Router & Factory to make the server & client structure more clear.
@@ -14,6 +14,10 @@ CHANGES BETWEEN V1.2.2 AND V1.2.3 (10 April 2002)
    by a factory at start-up.
  - Thanks to the new message routing architecture, some old bugs have been fixed, especially those
    annoying null pointer exceptions that appeared in v1.2.2 ...
+ - fixed a bug in the server address setup utility ( setup.bat ). The password was not set for file transfer.
+ - updated pscp.exe from v0.51 to v0.52 (server side). Thus the -batch option works now...
+ - your player's nickname is now displayed again in the "Info" plug-in. The nickname of other players is still
+   not displayed.
 
 
 CHANGES BETWEEN V1.2.1 AND V1.2.2 (3 April 2002)
@@ -118,7 +122,7 @@ CHANGES BETWEEN V1.2 AND V1.1.2 (18 March 2002)
  - corrected bug in TextDrawable due to a behaviour change of Java 1.4 for Rectangle.intersects()
 
 
-CHANGES BETWEEN V1.1.2 AND V1.1.1 (20 January 2002)
+CHANGES BETWEEN V1.1.2 AND V1.1.1 (6 January 2002)
 ---------------------------------------------------
 
  - corrected some minor bugs found in wotlas v1.1.1 (MultiRegionImage & chat)
@@ -129,7 +133,7 @@ CHANGES BETWEEN V1.1.2 AND V1.1.1 (20 January 2002)
  - when you connect, a message is displayed to tell you the number of connected players
 
 
-CHANGES BETWEEN V1.1.1 AND V1.1 (20 December 2001)
+CHANGES BETWEEN V1.1.1 AND V1.1 (10 December 2001)
 --------------------------------------------------
 
  - corrected the bug of the first account window which was sent to background...
@@ -158,7 +162,9 @@ CHANGES BETWEEN V1.1 AND V1.0 (28 November 2001)
  - a "-debug" option is now available for both client and server.
 
 
+PROJECT HISTORY
+---------------
 
 V1.0 released the 20 October 2001
 
-Project started in March 2001
+Project started the 5 March 2001

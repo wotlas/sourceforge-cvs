@@ -1,3 +1,5 @@
+This is Pscp v0.52 .
+
 The program "pscp.exe" was taken from the PutTy free ssh package for windows.
 You can find the full distribution & support on the web at the following URL :
 

@@ -26,11 +26,29 @@ import wotlas.common.environment.*;
   *
   * @author Diego
  */
-abstract public class Npc {
+public class Npc {
 
-    protected BasicChar basicChar;
+    transient public int x,y;
+    transient private NpcDefinition npcDef;
+    transient private String npcDefName;
+    transient private BasicChar basicChar;
     
-    abstract public byte getEnvironment();
+    public Npc( String name, int x, int y ) {
+        try {
+            this.npcDefName = name;
+            this.npcDef = (NpcDefinition) NpcManager.npcDef.get(npcDefName);
+            this.basicChar = (BasicChar) npcDef.getBasicChar().getClass().newInstance();
+            this.basicChar.clone(npcDef.getBasicChar());
+            this.x = x;
+            this.y = y;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public String getName() {
+        return npcDef.getName();
+    }
     
     public BasicChar getBasicChar() {
         return basicChar;

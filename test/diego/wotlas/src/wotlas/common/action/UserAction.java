@@ -150,9 +150,9 @@ public abstract class UserAction implements SendObjectReady {
      * this initializa BasicAction, AbilityAction, CastAction
      *
      */
-    static public void InitAllActions() {
-        BasicAction.InitBasicActions();
-        CastAction.InitCastActions();
-        AbilityAction.InitAbilityAction();
+    static public void InitAllActions(boolean loadByServer) {
+        BasicAction.InitBasicActions(loadByServer);
+        CastAction.InitCastActions(loadByServer);
+        AbilityAction.InitAbilityAction(loadByServer);
     }
 }

@@ -544,4 +544,17 @@ public abstract class CharData implements BackupReady {
         }
         MaskTools.set(maskCharFlags,index);
     }
+
+    protected void clone( CharData o) {
+        gold = o.gold;
+        maskCharClasses = ( int[] ) o.maskCharClasses.clone();
+        charAttributes = ( short[][] ) o.charAttributes.clone();
+        levels = ( byte[][] ) o.levels.clone();
+        exp = ( long[] ) o.exp.clone();
+        maskCharSkills = (  int[]) o.maskCharSkills.clone();
+        charSkills = ( byte[] ) o.charSkills.clone();
+        maskCharKnownledge = ( int[] ) o.maskCharKnownledge.clone();
+        charKnownledge = ( boolean[] ) o.charKnownledge.clone();
+        maskCharFlags = ( int[] ) o.maskCharFlags.clone();
+    }
 }

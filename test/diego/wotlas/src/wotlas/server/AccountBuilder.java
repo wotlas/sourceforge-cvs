@@ -769,7 +769,6 @@ public class AccountBuilder implements NetConnectionListener
             // 3 - Set the player's character
             RLikeClass rlClass = (RLikeClass) obj;
             ( (RLikeCharacter) player.getBasicChar() ).setClass(rlClass);
-//            ( (RLikeCharacter) player.getBasicChar() ).init( player.getBasicChar() );
         } catch (Exception e) {
             e.printStackTrace();
         }

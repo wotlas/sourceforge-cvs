@@ -53,22 +53,11 @@ public class DarkOne extends WotCharacter {
    */
     transient private ShadowSprite doShadowSprite;
 
-   /** Constructor
+    /** Constructor
     */
     public DarkOne() {
-        InitCharData();
-        InitWotData();
-
-        setCharClass( CLASSES_WOT_DARK_ONE );
-        
-        this.setCharAttr(CharData.ATTR_STR,10);
-        this.setCharAttr(CharData.ATTR_INT,10);
-        this.setCharAttr(CharData.ATTR_WIS,10);
-        this.setCharAttr(CharData.ATTR_CON,10);
-        this.setCharAttr(CharData.ATTR_DEX,10);
-        this.setCharAttr(CharData.ATTR_CHA,10);
-
-     }    
+    }
+    
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To get a Drawable for this character. This should not be used on the
@@ -279,4 +268,19 @@ public class DarkOne extends WotCharacter {
     */
     transient private FakeSprite fakeSprite;
     
+    /** used to init vars
+     */
+    public void init() {
+        InitCharData();
+        InitWotData();
+
+        setCharClass( CLASSES_WOT_DARK_ONE );
+        
+        this.setCharAttr(CharData.ATTR_STR,10);
+        this.setCharAttr(CharData.ATTR_INT,10);
+        this.setCharAttr(CharData.ATTR_WIS,10);
+        this.setCharAttr(CharData.ATTR_CON,10);
+        this.setCharAttr(CharData.ATTR_DEX,10);
+        this.setCharAttr(CharData.ATTR_CHA,10);
+    }
 }

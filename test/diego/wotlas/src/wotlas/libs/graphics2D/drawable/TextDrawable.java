@@ -302,13 +302,15 @@ public class TextDrawable extends Drawable {
 
            if( !highQualityTextDisplay ) {
             // transparent rectangle
+               // BLOCKED BY DIEGO, ONLY TO SEE WHT HAPPEN
                gc.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.35f ) );
-               gc.setColor(color);
+               gc.setColor(Color.white);
                gc.fillRect(r.x-screen.x+(r.width/2)-demiWidthText,r.y-screen.y-heightText,2*demiWidthText+2,heightText);
                gc.setComposite( AlphaComposite.SrcOver ); // suppressing alpha
 
             // drawing text...
-               gc.setColor(Color.black);
+               gc.setColor(color);
+            //   gc.setColor(Color.black);
                gc.drawString(text, r.x-screen.x+(r.width/2)-demiWidthText, r.y-screen.y-2);
            }
            else{

@@ -108,7 +108,7 @@ public class ClientDirector {
 
         /*  first of all Manage the Preloader for ClientDirector*/
         WorldManager.PRELOADER_STATUS = PreloaderEnabled.LOAD_CLIENT_DATA;
-        UserAction.InitAllActions();
+        //wotlas.libs.graphics2D.drawable.TextDrawable.setHighQualityTextDisplay(true);
 
         // STEP 0 - We parse the command line options
         boolean classicLogWindow = false;
@@ -205,6 +205,10 @@ public class ClientDirector {
     // STEP 7 - We ask the ClientManager to get ready
        clientManager = new ClientManager( resourceManager );
        Debug.signal( Debug.NOTICE, null, "Client Manager created..." );
+
+    // STEP 7b - Loading actions
+       UserAction.InitAllActions(false);
+       Debug.signal( Debug.NOTICE, null, "Actions loaded..." );
 
     // STEP 8 - We ask the DataManager to get ready
        dataManager = new DataManager( resourceManager );

@@ -63,7 +63,7 @@ public class ItemOnTheScreen extends ScreenObject {
     public Drawable getDrawable() {
         if(memImage!=null)
             return (Drawable) memImage;
-        memImage = new FakeSprite( this, ImageLibRef.PLAYER_PRIORITY
+        memImage = new FakeSprite( this, ImageLibRef.OBJECT_PRIORITY
         , EnvironmentManager.getServerEnvironment().getGraphics(EnvironmentManager.SET_OF_ITEM
         )[indexOfImage[0]], indexOfImage[1] );
         return (Drawable) memImage;
@@ -97,8 +97,9 @@ public class ItemOnTheScreen extends ScreenObject {
         gDirector.addDrawable( getDrawable() );
 
         if(true)
-            gDirector.addDrawable( new TextDrawable( getName(), getDrawable(), getColor()
-        ,13.0f, "Lucida Blackletter", ImageLibRef.TEXT_PRIORITY, -1));
+            gDirector.addDrawable( new TextDrawable( getName().toUpperCase(), getDrawable(), getColor()
+            ,10.0f, "Dialog.plain", ImageLibRef.TEXT_PRIORITY, -1));
+//            ,13.0f, "Lucida Blackletter", ImageLibRef.TEXT_PRIORITY, -1));
 
     }
 

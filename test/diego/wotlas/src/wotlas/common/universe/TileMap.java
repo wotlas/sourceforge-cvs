@@ -28,10 +28,13 @@ import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.schedule.*;
 import wotlas.common.environment.*;
 import wotlas.editor.*;
+import wotlas.libs.npc.*;
+import wotlas.common.screenobject.*;
 
 import java.awt.Rectangle;
 import java.awt.Point;
 import java.awt.*;
+import java.util.Vector;
 
  /** A TileMap represents a TileMap in our Game Universe.
   *
@@ -68,42 +71,42 @@ public class TileMap extends PreloaderEnabled implements WotlasMap,BackupReady,S
     
     public Dimension mapTileDim;
     
-  /** ID of the TileMap (index in the array of tilemaps in the WorldMap)
-   */
+    /** ID of the TileMap (index in the array of tilemaps in the WorldMap)
+    */
     public int tileMapID;
 
-  /** Name of the area where the map should be saved 
-   * (it's a directory under the first tilemap)
-   */
+    /** Name of the area where the map should be saved 
+    * (it's a directory under the first tilemap)
+    */
     private String areaName;
      
-  /** Full name of the TileMap
-   */
+    /** Full name of the TileMap
+    */
     private String fullName;
    
-  /** Short name of the TileMap
-   */
+    /** Short name of the TileMap
+    */
     private String shortName;
 
-  /** Small Image (identifier) of this TileMap for WorldMaps.
-   */
+    /** Small Image (identifier) of this TileMap for WorldMaps.
+    */
     private ImageIdentifier smallTileMapImage;
 
-  /** value between FLAT | FAKEISO
-   */
+    /** value between FLAT | FAKEISO
+    */
     private byte mapType;
     
-  /** dimension of map
-   */
+    /** dimension of map
+    */
     private Dimension mapSize;
 
-  /** Point of insertion (teleportation, arrival)
-   * this should be in a free tile
-   */
+    /** Point of insertion (teleportation, arrival)
+    * this should be in a free tile
+    */
     private ScreenPoint insertionPoint;
 
-  /** Music Name
-   */
+    /** Music Name
+    */
     private String musicName;
     
     private byte graphicSet;
@@ -113,9 +116,13 @@ public class TileMap extends PreloaderEnabled implements WotlasMap,BackupReady,S
     */
     private transient WorldMap myWorldMap;
 
-  /** Our message router. Owns the list of players of this map (not in buildings).
-   */
+    /** Our message router. Owns the list of players of this map (not in buildings).
+    */
     private transient MessageRouter messageRouter;
+    
+    /** holds the npc on this map
+     */
+    private transient Vector npcs;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -136,6 +143,7 @@ public class TileMap extends PreloaderEnabled implements WotlasMap,BackupReady,S
     public TileMap(int x, int y, int width, int height) {
         super(x,y,width,height);
         loadStatus = PreloaderEnabled.LOAD_ALL;
+        npcs = new Vector();
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -349,6 +357,10 @@ public class TileMap extends PreloaderEnabled implements WotlasMap,BackupReady,S
                 manager.freeMapBackGroundData();
             }
             encounterSchedules = ( EncounterSchedule[] ) objectInput.readObject();
+            if( setClassPreloader == LOAD_SERVER_DATA){
+                // only needed by server data
+                npcs = new Vector();
+            }
        } else {
             // to do.... when new version
         }
@@ -516,5 +528,12 @@ public class TileMap extends PreloaderEnabled implements WotlasMap,BackupReady,S
         this.areaName = data.areaName;
         this.shortName = data.shortName;
         this.fullName = data.fullName;
+    }
+    
+    public void addNpc(Npc npc){
+        npcs.add(npc);
+        short[] picture = {2,2};
+        getMessageRouter().addScreenObject( new NpcOnTheScreen(npc.x,npc.y,npc.getName()
+        ,picture,getMessageRouter()) );
     }
 }

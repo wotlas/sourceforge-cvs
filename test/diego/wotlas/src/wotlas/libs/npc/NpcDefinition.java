@@ -22,7 +22,9 @@ package wotlas.libs.npc;
 import wotlas.common.environment.*;
 import wotlas.server.ServerDirector;
 import wotlas.common.character.*;
+import wotlas.common.character.roguelike.*;
 import wotlas.common.*;
+import wotlas.utils.*;
 
 import java.io.*;
 import java.util.*;
@@ -34,53 +36,42 @@ import org.python.core.*;
   *
   * @author Diego
  */
-public class NpcDefinition implements Cloneable {
+public class NpcDefinition  {
     
     static protected final String NPC_SCRIPTS_FILE = "npc_def.txt";
     
-    public static Hashtable npcDef;
-    
-    
-    transient public String name;
+    transient private String name="";
     transient public String[] triggers;
-    transient public int str=0;
-    transient public BasicChar basicChar;
+    transient private BasicChar basicChar;
     
  /*------------------------------------------------------------------------------------*/    
-
-    static public void LoadNpcDef() {
-    // throws PyException {
-        npcDef = new Hashtable(10);
-        PythonInterpreter interp = ServerDirector.interp;
-        while(true) {
-            try {
-                BufferedReader tmp;
-                tmp = new BufferedReader( new FileReader( ServerDirector.getResourceManager(
-                ).getScriptsDataDir()+NPC_SCRIPTS_FILE ) );
-                String parse = null;
-                while( tmp.ready() ){
-                    parse = tmp.readLine();
-                    if(parse.length() > 1)
-                        interp.exec( parse );
-                }
-                tmp.close();
-                break;
-            } catch (Exception e){
-                e.printStackTrace();
-            }
-            System.out.println("......press enter to reload npc_def.txt .");
-            npcDef = new Hashtable(10);
-            try{
-                System.in.read();
-                System.in.read();
-            }catch( Exception e ) {
-                e.printStackTrace();
-            }
-        }
-    }
-
+    /** Empty constructor
+     */
     public NpcDefinition() {
     }
+    
+    /** set the race of the npc : a WoT character class
+     * or a RLike character race class
+     */
+    public void setRace(String className) throws Exception {
+        // should throw excaption to the script loader
+        basicChar = (BasicChar) Class.forName(className).newInstance();
+        basicChar.init();
+    }
+
+    /** set the Class of the Npc it's used only for RLikeCharacters
+     * in RLike environment
+     *
+     */
+    public void setClass(String className) throws Exception {
+        // should throw excaption to the script loader
+        ((RLikeCharacter)basicChar).setClass( (RLikeClass) Class.forName(className).newInstance() );
+    }
+    
+    public void setLevel(int level) {
+        basicChar.setLevel(level);
+    }
+
 /*
     public boolean isTrigger(){
         for(int i=0; i< triggers.length;i++)
@@ -88,16 +79,23 @@ public class NpcDefinition implements Cloneable {
         return true;
     }
 */
-    public Object Clone(){
-        NpcDefinition clone = new NpcDefinition();
-        clone.name = new String(name);
-        if( triggers != null ){
-            clone.triggers = new String[triggers.length];
-            for(int i=0; i< triggers.length;i++)
-                clone.triggers[i] = new String(triggers[i]);
-        } else
-            clone.triggers = null;
-        clone.str = str;
-        return clone;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void clone(String npcName) throws Exception {
+        NpcDefinition value = (NpcDefinition) NpcManager.npcDef.get(npcName);
+        name = new String(value.name);
+        basicChar = (BasicChar) value.basicChar.getClass().newInstance();
+        basicChar.clone(value.basicChar);
+    }
+
+    public BasicChar getBasicChar() {
+        return basicChar;
     }
 }

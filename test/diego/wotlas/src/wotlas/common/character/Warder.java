@@ -110,22 +110,10 @@ public class Warder extends Male {
 
  /*------------------------------------------------------------------------------------*/
 
-   /** Constructor
+    /** Constructor
     */
     public Warder() {
-        InitCharData();
-        InitWotData();
-
-        this.setCharClass( CharData.CLASSES_WOT_WARDER );
-        
-        this.setCharAttr(CharData.ATTR_STR,10);
-        this.setCharAttr(CharData.ATTR_INT,10);
-        this.setCharAttr(CharData.ATTR_WIS,10);
-        this.setCharAttr(CharData.ATTR_CON,10);
-        this.setCharAttr(CharData.ATTR_DEX,10);
-        this.setCharAttr(CharData.ATTR_CHA,10);
-        
-     }
+    }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -524,4 +512,20 @@ public class Warder extends Male {
    /** used to store the drawable for tilemaps after creating it.
     */
     transient private FakeSprite fakeSprite;
+
+    /** used to init vars
+     */
+    public void init() {
+        InitCharData();
+        InitWotData();
+
+        this.setCharClass( CharData.CLASSES_WOT_WARDER );
+        
+        this.setCharAttr(CharData.ATTR_STR,10);
+        this.setCharAttr(CharData.ATTR_INT,10);
+        this.setCharAttr(CharData.ATTR_WIS,10);
+        this.setCharAttr(CharData.ATTR_CON,10);
+        this.setCharAttr(CharData.ATTR_DEX,10);
+        this.setCharAttr(CharData.ATTR_CHA,10);
+    }
 }

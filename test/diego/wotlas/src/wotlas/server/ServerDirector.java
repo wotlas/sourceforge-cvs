@@ -60,9 +60,9 @@ public class ServerDirector implements Runnable, NetServerListener {
 
  /*------------------------------------------------------------------------------------*/
 
-   /** Server Command Line Help
+    /** Server Command Line Help
     */
-      public final static String SERVER_COMMAND_LINE_HELP =
+    public final static String SERVER_COMMAND_LINE_HELP =
             "Usage: ServerDirector -[debug|admin|erroronly|daemon|help] -[base <path>]\n\n"
            +"Examples : \n"
            +"  ServerDirector -admin        : will display the admin GUI only.\n"
@@ -73,83 +73,87 @@ public class ServerDirector implements Runnable, NetServerListener {
            +ResourceManager.DEFAULT_BASE_PATH
            +"\n\n";
 
-   /** Format of the server log name.
+    /** Format of the server log name.
     */
-      public final static String SERVER_LOG_PREFIX = "wot-server-";
-      public final static String SERVER_LOG_SUFFIX = ".log";
+    public final static String SERVER_LOG_PREFIX = "wot-server-";
+    public final static String SERVER_LOG_SUFFIX = ".log";
 
  /*------------------------------------------------------------------------------------*/
 
-   /** Our server properties.
+    /** Our server properties.
     */
-      private static ServerPropertiesFile serverProperties;
+    private static ServerPropertiesFile serverProperties;
 
-   /** Our remote server properties.
+    /** Our remote server properties.
     */
-      private static RemoteServersPropertiesFile remoteServersProperties;
+    private static RemoteServersPropertiesFile remoteServersProperties;
 
-   /** Our resource manager
+    /** Our resource manager
     */
-      private static ResourceManager resourceManager;
+    private static ResourceManager resourceManager;
 
  /*------------------------------------------------------------------------------------*/
 
-   /** Our Server Manager.
+    /** Our Server Manager.
     */
-      private static ServerManager serverManager;
+    private static ServerManager serverManager;
 
-   /** Our Data Manager.
+    /** Our Data Manager.
     */
-      private static DataManager dataManager;
+    private static DataManager dataManager;
 
-   /** Our default ServerDirector (Peristence Thread).
+    /** Our default ServerDirector (Peristence Thread).
     */
-      private static ServerDirector serverDirector;
-
- /*------------------------------------------------------------------------------------*/
-
-   /** Shutdown Thread.
-    */
-      public static Thread shutdownThread;
-
-   /** Period for changing the keys.
-    */
-      public static byte updateKeysPeriod =0;
-
-   /** Immediate stop of persistence thread ?
-    */
-      public static boolean immediatePersistenceThreadStop = false;
-
-   /** Default password for transfer
-    */
-      private static String password;
-
-   /** To stop the persistence thread.
-    */
-      private boolean mustStop = false;
-
-   /** To tell if the server is enabled or not (network interfaces available).
-    */
-      private boolean serverEnabled = true;
-
-   /** Show debug information ?
-    */
-      public static boolean SHOW_DEBUG = false;
+    private static ServerDirector serverDirector;
       
-      static private long genUniqueKeyId;
+    /**  our defult Npc Manager
+    *   
+    */
+    private static NpcManager npcManager;
+
+ /*------------------------------------------------------------------------------------*/
+
+    /** Shutdown Thread.
+    */
+    public static Thread shutdownThread;
+
+    /** Period for changing the keys.
+    */
+    public static byte updateKeysPeriod =0;
+
+    /** Immediate stop of persistence thread ?
+    */
+    public static boolean immediatePersistenceThreadStop = false;
+
+    /** Default password for transfer
+    */
+    private static String password;
+
+    /** To stop the persistence thread.
+    */
+    private boolean mustStop = false;
+
+    /** To tell if the server is enabled or not (network interfaces available).
+    */
+    private boolean serverEnabled = true;
+
+    /** Show debug information ?
+    */
+    public static boolean SHOW_DEBUG = false;
       
-      static public PythonInterpreter interp;
+    static private long genUniqueKeyId;
+      
+    static public PythonInterpreter interp;
 
  /*------------------------------------------------------------------------------------*/
 
     /** Main Class. Starts the Wotlas Server.
     * @param argv enter -help to get some help info.
     */
-     public static void main( String argv[] ) {
+    public static void main( String argv[] ) {
 
         /*  first of all Manage the Preloader for WorldGenerator*/
         WorldManager.PRELOADER_STATUS = PreloaderEnabled.LOAD_SERVER_DATA;
-        UserAction.InitAllActions();
         // set random variable to roll dices
         initRoll();
         
@@ -220,161 +224,168 @@ public class ServerDirector implements Runnable, NetServerListener {
                    System.out.println(SERVER_COMMAND_LINE_HELP);
                    return;
               }
-           }
+        }
 
         // STEP 1 - Creation of the ResourceManager
-           resourceManager = new ResourceManager();
+        resourceManager = new ResourceManager();
 
-           if( !resourceManager.inJar() )
-               resourceManager.setBasePath(basePath);
+        if( !resourceManager.inJar() )
+            resourceManager.setBasePath(basePath);
 
 
         // STEP 2 - We create a LogStream to save our Debug messages to disk.
-           try{
-               if(isDaemon) {
-               	// We don't print the Debug messages on System.err
-                  Debug.setPrintStream( new DaemonLogStream( resourceManager.getExternalLogsDir()
-                           +SERVER_LOG_PREFIX+System.currentTimeMillis()+SERVER_LOG_SUFFIX ) );
-               }
-               else if(displayAdminGUI) {
-                  Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(),
+        try{
+            if(isDaemon) {
+                // We don't print the Debug messages on System.err
+                Debug.setPrintStream( new DaemonLogStream( resourceManager.getExternalLogsDir()
+                +SERVER_LOG_PREFIX+System.currentTimeMillis()+SERVER_LOG_SUFFIX ) );
+            }
+            else if(displayAdminGUI) {
+                Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(),
                                     resourceManager.getExternalLogsDir()+"server-setup.log",
                                     "log-title-dark.jpg", resourceManager ) );
-               }
-               else{
+            }
+            else{
                	// We also print the Debug messages on System.err
-                  Debug.setPrintStream( new ServerLogStream( resourceManager.getExternalLogsDir()
+                Debug.setPrintStream( new ServerLogStream( resourceManager.getExternalLogsDir()
                            +SERVER_LOG_PREFIX+System.currentTimeMillis()+SERVER_LOG_SUFFIX ) );
-               }
-           }
-           catch( java.io.FileNotFoundException e ) {
-               e.printStackTrace();
-               return;
-           }
+            }
+        }
+        catch( java.io.FileNotFoundException e ) {
+            e.printStackTrace();
+            return;
+        }
 
         // STEP 3 - We control the VM version and load our vital config files.
-           if( !Tools.javaVersionHigherThan( "1.3.0" ) )
-               Debug.exit();
+        if( !Tools.javaVersionHigherThan( "1.3.0" ) )
+            Debug.exit();
 
-           Debug.signal( Debug.NOTICE, null, "*----------------------------------------*" );
-           Debug.signal( Debug.NOTICE, null, "|    Wheel Of Time - Light & Shadow     |" );
-           Debug.signal( Debug.NOTICE, null, "| Copyright (C) 2001-2003 WOTLAS Team   |" );
-           Debug.signal( Debug.NOTICE, null, "*---------------------------------------*\n");
-           Debug.signal( Debug.NOTICE, null, "|     ver 2.0 is an alpha:              |" );
-           Debug.signal( Debug.NOTICE, null, "|                                       |" );
-           Debug.signal( Debug.NOTICE, null, "| Every times a new comes up u need     |" );
-           Debug.signal( Debug.NOTICE, null, "| to delete universe and home directory |" );
-           Debug.signal( Debug.NOTICE, null, "| and reload server-world-generator     |" );
-           Debug.signal( Debug.NOTICE, null, "|                            Shra       |" );
-           Debug.signal( Debug.NOTICE, null, "*---------------------------------------*" );
+        Debug.signal( Debug.NOTICE, null, "*----------------------------------------*" );
+        Debug.signal( Debug.NOTICE, null, "|    Wheel Of Time - Light & Shadow     |" );
+        Debug.signal( Debug.NOTICE, null, "| Copyright (C) 2001-2003 WOTLAS Team   |" );
+        Debug.signal( Debug.NOTICE, null, "*---------------------------------------*\n");
+        Debug.signal( Debug.NOTICE, null, "|     ver 2.0 is an alpha:              |" );
+        Debug.signal( Debug.NOTICE, null, "|                                       |" );
+        Debug.signal( Debug.NOTICE, null, "| Every times a new comes up u need     |" );
+        Debug.signal( Debug.NOTICE, null, "| to delete universe and home directory |" );
+        Debug.signal( Debug.NOTICE, null, "| and reload server-world-generator     |" );
+        Debug.signal( Debug.NOTICE, null, "|                            Shra       |" );
+        Debug.signal( Debug.NOTICE, null, "*---------------------------------------*" );
 
-           Debug.signal( Debug.NOTICE, null, "Code version       : "+resourceManager.WOTLAS_VERSION );
+        Debug.signal( Debug.NOTICE, null, "Code version       : "+resourceManager.WOTLAS_VERSION );
 
-           if( !resourceManager.inJar() )
-              Debug.signal( Debug.NOTICE, null, "Data directory     : "+basePath );
-           else
-              Debug.signal( Debug.NOTICE, null, "Data directory     : JAR File" );
+        if( !resourceManager.inJar() )
+            Debug.signal( Debug.NOTICE, null, "Data directory     : "+basePath );
+        else
+            Debug.signal( Debug.NOTICE, null, "Data directory     : JAR File" );
 
-           serverProperties = new ServerPropertiesFile(resourceManager);
-           remoteServersProperties = new RemoteServersPropertiesFile(resourceManager);
+        serverProperties = new ServerPropertiesFile(resourceManager);
+        remoteServersProperties = new RemoteServersPropertiesFile(resourceManager);
 
-           if(displayAdminGUI) {
-              ServerAdminGUI.create();
-              return; // we just display the admin GUI, we don't start the server.
-           }
+        if(displayAdminGUI) {
+            ServerAdminGUI.create();
+            return; // we just display the admin GUI, we don't start the server.
+        }
 
         // STEP 4 - Loading Jython
-           try {
-              interp = new PythonInterpreter();
-           } catch (Exception e) {
-              e.printStackTrace();
-           }
-           Debug.signal( Debug.NOTICE, null, "Jython loaded..." );
+        try {
+            interp = new PythonInterpreter();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Debug.signal( Debug.NOTICE, null, "Jython loaded..." );
            
         // STEP 5 - We ask the ServerManager to get ready
-           serverManager = new ServerManager(resourceManager);
-           Debug.signal( Debug.NOTICE, null, "Server Manager created..." );
+        serverManager = new ServerManager(resourceManager);
+        Debug.signal( Debug.NOTICE, null, "Server Manager created..." );
 
         // STEP 6 - We ask the DataManager to load the worlds & client accounts
-           dataManager = new DataManager(resourceManager);
-           dataManager.init( serverProperties );
+        dataManager = new DataManager(resourceManager);
+        dataManager.init( serverProperties );
 
         // STEP 7 - Loading Npc Definition
-           NpcDefinition.LoadNpcDef();
-           Debug.signal( Debug.NOTICE, null, "Npc Definition loaded..." );
+        npcManager = new NpcManager();
+        npcManager.init();
+        UserAction.InitAllActions(true);
+        Debug.signal( Debug.NOTICE, null, "Npc Definition,Action and Spells loaded..." );
 
         // STEP 8 - Sound Library for alerts... (we only create a sound player)
-           SoundLibrary.createSoundLibrary( serverProperties, null, resourceManager );
+        SoundLibrary.createSoundLibrary( serverProperties, null, resourceManager );
 
         // STEP 9 - Start of the GameServer, AccountServer & GatewayServer !
-           Debug.signal( Debug.NOTICE, null, "Starting Game server, Account server & Gateway server..." );
+        Debug.signal( Debug.NOTICE, null, "Starting Game server, Account server & Gateway server..." );
 
-           serverDirector = new ServerDirector();
-           serverManager.getGameServer().addServerListener( serverDirector );
-           serverManager.start();
+        serverDirector = new ServerDirector();
+        serverManager.getGameServer().addServerListener( serverDirector );
+        serverManager.start();
 
         // STEP 10 - We generate new keys for special characters
-           updateKeys();
+        updateKeys();
 
         // STEP 11 - Adding Shutdown Hook
-           shutdownThread = new Thread() {
-           	public void run() {
-           	   immediatePersistenceThreadStop = true;
-                   Debug.signal(Debug.CRITICAL,null,"Received VM Shutdown Signal.");
+        shutdownThread = new Thread() {
+            public void run() {
+                immediatePersistenceThreadStop = true;
+                Debug.signal(Debug.CRITICAL,null,"Received VM Shutdown Signal.");
 
                 // 1 - Lock servers...
-                   serverManager.lockServers();
+                serverManager.lockServers();
 
                 // 2 - We warn connected clients
-                   serverManager.sendWarningMessage( "Your server has been stopped.\n"
+                serverManager.sendWarningMessage( "Your server has been stopped.\n"
                                            +"Try to reconnect in a few minutes.");
 
                 // 3 - We close all remaining connections & save the data
-                   serverManager.closeAllConnections();
-                   dataManager.shutdown(true);
-                   serverManager.shutdown();
-                   SoundLibrary.clear();
+                serverManager.closeAllConnections();
+                dataManager.shutdown(true);
+                serverManager.shutdown();
+                SoundLibrary.clear();
 
-                   Debug.signal(Debug.CRITICAL,null,"Data Saved. Exiting.");
-                   Debug.flushPrintStream();
-           	}
-           };
+                Debug.signal(Debug.CRITICAL,null,"Data Saved. Exiting.");
+                Debug.flushPrintStream();
+            }
+        };
 
-           Runtime.getRuntime().addShutdownHook(shutdownThread);
+        Runtime.getRuntime().addShutdownHook(shutdownThread);
 
         // STEP 12 - Everything is ok ! we enter the persistence loop
-           Debug.signal( Debug.NOTICE, null, "Starting persistence thread..." );
+        Debug.signal( Debug.NOTICE, null, "Starting persistence thread..." );
            
-           Thread persistenceThread = new Thread( serverDirector );
-           persistenceThread.start();
+        Thread persistenceThread = new Thread( serverDirector );
+        persistenceThread.start();
 
-           // showing environment type
-           Debug.signal( Debug.NOTICE, null, "Server environment name : "+EnvironmentManager.getEnvironmentName()+" ." );
-           EnvironmentManager.getEnvironmentHour();
+        // STEP 13 - Show environment type
+        Debug.signal( Debug.NOTICE, null, "Server environment name : "+EnvironmentManager.getEnvironmentName()+" ." );
+        EnvironmentManager.getEnvironmentHour();
+        
+        //  STEP 14 - Running a thread to manage maps and npc inside maps.
+        Debug.signal( Debug.NOTICE, null, "Starting npc/map(encounterSchedule) thread..." );
+        npcManager.start();
            
         // If we are in "daemon" mode the only way to stop the server is via signals.
         // Otherwise we wait 2s and wait for a key to be pressed to shutdown...
-           if( !isDaemon ) {
-               Tools.waitTime( 2000 ); // 2s
-               Debug.signal( Debug.NOTICE, null, "Press <ENTER> if you want to shutdown this server." );
+        if( !isDaemon ) {
+            Tools.waitTime( 2000 ); // 2s
+            Debug.signal( Debug.NOTICE, null, "Press <ENTER> if you want to shutdown this server." );
  
-                 try{
-                     System.in.read();
-                 }catch( Exception e ) {
-                     e.printStackTrace();
-                 }
+            try{
+                System.in.read();
+            }catch( Exception e ) {
+                e.printStackTrace();
+            }
 
-               Debug.signal( Debug.NOTICE, null, "Leaving in 30s..." );
+            Debug.signal( Debug.NOTICE, null, "Leaving in 30s..." );
 
-                 try{
-                     Runtime.getRuntime().removeShutdownHook(shutdownThread);
-                 }catch(Exception e) {
-               	     return; // we couldn't remove the hook, it means the VM is already exiting
-                 }
+            try{
+                Runtime.getRuntime().removeShutdownHook(shutdownThread);
+            }catch(Exception e) {
+                return; // we couldn't remove the hook, it means the VM is already exiting
+            }
 
-               serverDirector.shutdown();
-           }
-     }
+            npcManager.shouldQuit(true);
+            serverDirector.shutdown();
+        }
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

@@ -56,7 +56,7 @@ public class AbilityAction extends UserAction {
         return true;
     }
 
-    static public void InitAbilityAction(){
+    static public void InitAbilityAction(boolean loadByServer){
         abilityActions = new AbilityAction[ABILITY_LAST_ABILITY];
         
         /*

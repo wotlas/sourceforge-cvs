@@ -63,7 +63,7 @@ public class BasicAction extends UserAction {
         return true;
     }
 
-    static public void InitBasicActions(){
+    static public void InitBasicActions(boolean loadByServer){
         basicActions = new BasicAction[BASIC_LAST_BASIC];
         
         /*

@@ -41,7 +41,7 @@ public class Warrior extends RLikeClass {
     public Warrior() {
     }
     
-    public void init(RLikeCharacter myChar){
+    public void init(RLikeCharacter myChar) {
         super.init(myChar);
         myChar.setCharClass( CharData.CLASSES_RL_WARRIOR );
         myChar.addCharAttr( CharData.ATTR_HP, 10 );
@@ -60,9 +60,8 @@ public class Warrior extends RLikeClass {
         myChar.setCharAttr( CharData.ATTR_CHA, stats[3] );
 
     }
-    
+
     public int getHitDice() {
          return 10;
-   }
-    
+    }
 }

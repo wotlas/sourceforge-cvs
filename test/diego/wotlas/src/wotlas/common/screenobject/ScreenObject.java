@@ -175,7 +175,7 @@ public abstract class ScreenObject implements FakeSpriteDataSupplier, SendObject
         objectOutput.writeObject( loc );
         if( getTargetType() != UserAction.TARGET_TYPE_ITEM )
             objectOutput.writeFloat( speed );
-        // objectOutput.writeObject( color );
+        objectOutput.writeObject( color );
         objectOutput.writeObject( name );
         objectOutput.writeObject( indexOfImage );
     }
@@ -190,7 +190,7 @@ public abstract class ScreenObject implements FakeSpriteDataSupplier, SendObject
             loc = ( WotlasLocation ) objectInput.readObject();
             if( getTargetType() != UserAction.TARGET_TYPE_ITEM )
                 speed = objectInput.readFloat();
-            // color = ( Color ) objectInput.readObject();
+            color = ( Color ) objectInput.readObject();
             name = ( String ) objectInput.readObject();
             indexOfImage = ( short[] ) objectInput.readObject();
         } else {

@@ -74,9 +74,10 @@ public class CastAction extends UserAction {
     }
     
     /* -------------static functions--------------------------------------- */
-    static public void InitCastActions(){
+    static public void InitCastActions(boolean loadByServer){
         if( castActions != null )
             return;
+        Spell.loadByServer = loadByServer;
         
         castActions = new CastAction[CAST_LAST_CAST];
         
@@ -84,7 +85,7 @@ public class CastAction extends UserAction {
         ,"Summon monster","Summon any monster anywhere!"
         , (byte)(1<<TARGET_TYPE_GROUND), TARGET_RANGE_SAME_MAP
         , 0, 0 
-        , new Summon( "mobdef1-name" ) );
+        , new Summon( "dwarf berserk" ) );
         
         castActions[CAST_ADMIN_CREATE] = new CastAction( CAST_ADMIN_CREATE
         ,"Create item","Create item anywhere!"

@@ -45,12 +45,20 @@ public class Human extends RLikeCharacter {
     transient protected float speed;
 
  /*------------------------------------------------------------------------------------*/
+    
+    /** empty constructor
+     *
+     */
     public Human() {
+    }
+    
+    /** used to init vars
+     */
+    public void init() {
         InitCharData();
         InitRLikeData();
         setCharClass( CLASSES_RL_HUMAN );
     }
-        
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Returns the speed of this character.

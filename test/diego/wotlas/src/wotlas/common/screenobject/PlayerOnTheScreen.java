@@ -107,8 +107,9 @@ public class PlayerOnTheScreen extends ScreenObject {
         gDirector.addDrawable( getDrawable() );
 
         if(true)
-            gDirector.addDrawable( new TextDrawable( getName(), getDrawable(), getColor()
-        ,13.0f, "Lucida Blackletter", ImageLibRef.TEXT_PRIORITY, -1));
+            gDirector.addDrawable( new TextDrawable( getName().toUpperCase(), getDrawable(), getColor()
+            ,10.0f, "Dialog.plain", ImageLibRef.TEXT_PRIORITY, -1));
+//            ,13.0f, "Lucida Blackletter", ImageLibRef.TEXT_PRIORITY, -1));
 
         trajectoryLock = new byte[0];
         movementComposer = new ScreenObjectPathFollower(x,y,0);

@@ -218,4 +218,11 @@ public abstract class RLikeCharacter extends BasicChar {
     public void gainLevel() {
         this.myClass.gainLevel();
     }
+    
+    public void clone(BasicChar value) throws Exception {
+        super.clone((CharData)value);
+        myClass = (RLikeClass) ((RLikeCharacter)value).myClass.getClass().newInstance();
+        myClass.clone( ((RLikeCharacter)value).myClass );
+        myClass.setMyChar(this);
+    }
 }

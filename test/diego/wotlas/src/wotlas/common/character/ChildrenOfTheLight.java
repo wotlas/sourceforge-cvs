@@ -88,18 +88,6 @@ public class ChildrenOfTheLight extends Male {
    /** Constructor
     */
     public ChildrenOfTheLight() {
-        InitCharData();
-        InitWotData();
-
-        setCharClass( CLASSES_WOT_CHILDREN_OF_THE_LIGHT );
-        
-        this.setCharAttr(CharData.ATTR_STR,10);
-        this.setCharAttr(CharData.ATTR_INT,10);
-        this.setCharAttr(CharData.ATTR_WIS,10);
-        this.setCharAttr(CharData.ATTR_CON,10);
-        this.setCharAttr(CharData.ATTR_DEX,10);
-        this.setCharAttr(CharData.ATTR_CHA,10);
-        
     }
 
  /*------------------------------------------------------------------------------------*/
@@ -410,4 +398,20 @@ public class ChildrenOfTheLight extends Male {
     */
     transient private FakeSprite fakeSprite;
     
+
+    /** used to init vars
+     */
+    public void init() {
+        InitCharData();
+        InitWotData();
+
+        setCharClass( CLASSES_WOT_CHILDREN_OF_THE_LIGHT );
+        
+        this.setCharAttr(CharData.ATTR_STR,10);
+        this.setCharAttr(CharData.ATTR_INT,10);
+        this.setCharAttr(CharData.ATTR_WIS,10);
+        this.setCharAttr(CharData.ATTR_CON,10);
+        this.setCharAttr(CharData.ATTR_DEX,10);
+        this.setCharAttr(CharData.ATTR_CHA,10);
+    }
 }

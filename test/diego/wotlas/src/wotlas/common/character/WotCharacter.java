@@ -85,4 +85,8 @@ public abstract class WotCharacter extends BasicChar {
         // add hp
         // add mana
     }
+    
+    public void clone(BasicChar value) throws Exception {
+        super.clone((CharData)value);
+    }
 }

@@ -63,5 +63,4 @@ public class Wizard extends RLikeClass {
     public int getHitDice() {
         return 4;
     }
-    
 }

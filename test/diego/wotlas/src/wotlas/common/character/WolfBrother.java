@@ -85,22 +85,10 @@ public class WolfBrother extends Male {
 
  /*------------------------------------------------------------------------------------*/
 
-   /** Constructor
+    /** Constructor
     */
     public WolfBrother() {
-        InitCharData();
-        InitWotData();
-
-        setCharClass( CLASSES_WOT_WOLF_BROTHER );
-        
-        this.setCharAttr(CharData.ATTR_STR,10);
-        this.setCharAttr(CharData.ATTR_INT,10);
-        this.setCharAttr(CharData.ATTR_WIS,10);
-        this.setCharAttr(CharData.ATTR_CON,10);
-        this.setCharAttr(CharData.ATTR_DEX,10);
-        this.setCharAttr(CharData.ATTR_CHA,10);
-
-     }
+    }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -396,4 +384,20 @@ public class WolfBrother extends Male {
    /** used to store the drawable for tilemaps after creating it.
     */
     transient private FakeSprite fakeSprite;
+    
+    /** used to init vars
+     */
+    public void init() {
+        InitCharData();
+        InitWotData();
+
+        setCharClass( CLASSES_WOT_WOLF_BROTHER );
+        
+        this.setCharAttr(CharData.ATTR_STR,10);
+        this.setCharAttr(CharData.ATTR_INT,10);
+        this.setCharAttr(CharData.ATTR_WIS,10);
+        this.setCharAttr(CharData.ATTR_CON,10);
+        this.setCharAttr(CharData.ATTR_DEX,10);
+        this.setCharAttr(CharData.ATTR_CHA,10);
+    }
 }

@@ -145,14 +145,20 @@ public abstract class BasicChar extends CharData {
     /** used to manage level gain
     */
     abstract public void gainLevel();
+    
+    /** used to init vars
+     */
+    abstract public void init();
 
     /** this class should manage the creation of a level x 
      *  npc, with all it's hp and features
      *
      *
      */
-    public void evolveToLevel(int level) {
+    public void reachLevel(int level) {
         for( int i=0; i <= level; i++ )
             gainLevel();
     }
+    
+    abstract public void clone(BasicChar value) throws Exception;
 }

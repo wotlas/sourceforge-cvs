@@ -454,13 +454,14 @@ public class PlayerImpl implements Player, NetConnectionListener,BackupReady {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To set the player's character.
+    /** To set the player's character.
     *
     *  @param wotCharacter new player character
     */
-      public void setBasicChar( BasicChar wotCharacter ) {
-         this.wotCharacter = wotCharacter;
-      }
+    public void setBasicChar( BasicChar wotCharacter ) {
+        this.wotCharacter = wotCharacter;
+        this.wotCharacter.init();
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

@@ -167,9 +167,9 @@ public class AttributesPlugIn extends JPanelPlugIn  {
         int spaceCounter = 0;
         
         // only to debug
-        for(int index = 0; index < CharData.ATTR_LAST_ATTR; index++){
-            System.out.println( " debug this : "+player.getBasicChar().getCharAttrWihDescr(index) );
-        }
+//        for(int index = 0; index < CharData.ATTR_LAST_ATTR; index++){
+//            System.out.println( " debug this : "+player.getBasicChar().getCharAttrWihDescr(index) );
+//        }
 
         for(int index = 0; index < CharData.ATTR_LAST_ATTR; index++){
             if( !MaskTools.isSet(data,index) )

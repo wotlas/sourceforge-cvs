@@ -120,7 +120,7 @@ public abstract class RLikeClass implements BackupReady {
         }
 
         // order 'em
-        stats =  (short[]) prevStats.clone();
+        stats = (short[]) prevStats.clone();
         int bestIndex;
         for(int a=0; a < 6 ; a++){
             bestIndex = 0;
@@ -145,5 +145,8 @@ public abstract class RLikeClass implements BackupReady {
     public void gainLevel() {
         short value = ServerDirector.roll( 1, getHitDice() );
         myChar.addCharAttr( CharData.ATTR_HP, value );
+    }
+    
+    public void clone(RLikeClass value) throws Exception {
     }
 }

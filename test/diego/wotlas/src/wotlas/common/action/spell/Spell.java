@@ -8,10 +8,9 @@ import wotlas.common.router.*;
 
 public abstract class Spell {
         
+    transient static public boolean loadByServer;
+
     public void CastToMap(WotlasLocation loc, int x, int y) {
         
     }
-
 }
-
-

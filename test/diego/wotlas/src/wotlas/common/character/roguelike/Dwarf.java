@@ -47,6 +47,11 @@ public class Dwarf extends RLikeCharacter {
  /*------------------------------------------------------------------------------------*/
 
     public Dwarf() {
+    }
+
+    /** used to init vars
+     */
+    public void init() {
         InitCharData();
         InitRLikeData();
         setCharClass( CLASSES_RL_DWARF );

@@ -52,30 +52,30 @@ public class DataManager
    */
    private DataManager() {
 
-       // 0 - We load all the WotlasObjects, Knowledges, etc...
-              /** Not for wotlas release 1 **/
-
-       // 1 - We create an AccountManager. Player Accounts are automatically loaded.
-              accountManager = new AccountManager();
-
-       // 2 - We create a WorldManager. Worlds data is automatically loaded.
-              worldManager = new WorldManager();
-       
-       // 3 - We initialize the WorldManager with the Players ( Players are
-       //     located on Maps, it's our game organization... ).
-              Iterator it = accountManager.getIterator();
-
-              while( it.hasNext() )
-                   worldManager.addNewPlayer( ( (GameAccount) it.next() ).getPlayer() );
-
-       // 4 - We save our instance
+       // 1 - We save our instance
           dataManager = this;
 
-       // 5 - We initialize the player objects that we just placed in the world.
-              it = accountManager.getIterator();
+       // 2 - We load all the WotlasObjects, Knowledges, etc...
+              /** Not for wotlas release 1 **/
 
-              while( it.hasNext() )
-                   ( (GameAccount) it.next() ).getPlayer().init();
+       // 3 - We create a WorldManager. Worlds data is automatically loaded.
+          worldManager = new WorldManager();
+
+       // 4 - We create an AccountManager. Player Accounts are automatically loaded.
+          accountManager = new AccountManager();
+       
+       // 5 - We initialize the WorldManager with the Players ( Players are
+       // located on Maps, it's our game organization... ).
+          Iterator it = accountManager.getIterator();
+
+          while( it.hasNext() )
+                 worldManager.addNewPlayer( ( (GameAccount) it.next() ).getPlayer() );
+
+       // 6 - We initialize the player objects that we just placed in the world.
+          it = accountManager.getIterator();
+
+          while( it.hasNext() )
+                 ( (GameAccount) it.next() ).getPlayer().init();
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

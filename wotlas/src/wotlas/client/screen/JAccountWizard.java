@@ -19,6 +19,7 @@
 
 package wotlas.client.screen;
 
+import wotlas.client.ClientManager;
 import wotlas.client.DataManager;
 import wotlas.client.gui.*;
 
@@ -51,6 +52,20 @@ public class JAccountWizard extends JWizard
    */
   public JAccountWizard(NetPersonality personality) {
     super("Account creation", 400, 400);
+    
+    // Close Window event
+    setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+    addWindowListener( new WindowAdapter() {
+      public void windowClosing( WindowEvent e ) {
+        dispose();
+        NetPersonality personality = (NetPersonality) context;
+          
+        personality.queueMessage( new CancelAccountCreationMessage() );
+        personality.closeConnection();
+        ClientManager.getDefaultClientManager().start(10);
+      }
+    });
+    
     setContext(personality);
     this.personality = personality;
   }

@@ -99,10 +99,6 @@ public class ClientManager
    */
   private Font f;
 
-  /** First Display of screen 0 ?
-   */
-  private boolean firstDisplay = true;
-
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. Attemps to load the config/client-profiles.cfg file...
@@ -222,17 +218,9 @@ public class ClientManager
       // ********************
 
       case -1:
-      //if(firstDisplay) {
-         new JHTMLWindow( screenIntro, "Wotlas News", ClientDirector.getRemoteServerConfigHomeURL()+"news.html", 320, 400, false );
-         //firstDisplay=false;
-      //}
-      indexScreen = 0;
-      state = 0;
-
-      case 0:
-      screenIntro.setTitle("Wotlas - Account selection...");
-
-      // Load images of buttons
+        new JHTMLWindow( screenIntro, "Wotlas News", ClientDirector.getRemoteServerConfigHomeURL()+"news.html", 320, 400, false );
+      
+         // Load images of buttons
       im_cancelup    = new ImageIcon("../base/gui/cancel-up.gif");
       im_canceldo    = new ImageIcon("../base/gui/cancel-do.gif");
       im_cancelun    = new ImageIcon("../base/gui/cancel-un.gif");
@@ -256,6 +244,12 @@ public class ClientManager
       im_aboutdo  = new ImageIcon("../base/gui/about-do.gif");
       im_helpup  = new ImageIcon("../base/gui/help-up.gif");
       im_helpdo  = new ImageIcon("../base/gui/help-do.gif");
+      
+        indexScreen = 0;
+        state = 0;
+
+      case 0:
+      screenIntro.setTitle("Wotlas - Account selection...");
 
       // Test if an account exists
       if (profileConfigList==null) {

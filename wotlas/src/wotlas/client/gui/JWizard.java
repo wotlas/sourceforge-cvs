@@ -19,7 +19,8 @@
 
 package wotlas.client.gui;
 
-import wotlas.client.*;
+import wotlas.client.ClientManager;
+import wotlas.client.DataManager;
 import wotlas.common.message.account.*;
 import wotlas.utils.ALabel;
 
@@ -31,7 +32,6 @@ import java.awt.event.*;
 import java.util.Vector;
 
 import javax.swing.*;
-
 
 /** A generic wizard<br>
  * the subclass must implement the method : onFinished()
@@ -83,7 +83,7 @@ public abstract class JWizard extends JFrame
 
   /** Contexte of the wizard
    */
-  private Object context;
+  protected Object context;
   
   /** pictures of buttons
    */
@@ -113,17 +113,9 @@ public abstract class JWizard extends JFrame
 
     this.context = context;
 
-   // Close Window event
-    addWindowListener( new WindowAdapter() {
-          public void windowClosing( WindowEvent e ) {
-              dispose();
-              NetPersonality personality = (NetPersonality) context;
-          
-              personality.queueMessage( new CancelAccountCreationMessage() );
-              personality.closeConnection();
-              ClientManager.getDefaultClientManager().start(10);
-          }
-    });
+    
+    
+   
 
 
     vPanels = new Vector();

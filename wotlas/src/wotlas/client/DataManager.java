@@ -412,9 +412,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     if (gDirector!=null) {
       gDirector.removeAllDrawables();
       showWarningMessage("Connection to Server lost ! Re-connect to the game...");
+      ClientManager.getDefaultClientManager().start(1);
     }
-    
-    ClientManager.getDefaultClientManager().start(1);
     
   }
 

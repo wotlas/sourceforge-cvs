@@ -549,6 +549,8 @@ public class AccountBuilder implements NetConnectionListener
    /** Method called to set the player's name.
     */
      public void setPlayerName( String data )  throws AccountException {
+     	data = data.trim();
+     	
      	if(data.length()>30)
            throw new AccountException("Your nickname should have less than 30 letters !");
      	player.setPlayerName(data);
@@ -559,6 +561,8 @@ public class AccountBuilder implements NetConnectionListener
    /** Method called to set the player's full name.
     */
      public void setFullPlayerName( String data )  throws AccountException {
+     	data = data.trim();
+
      	if(data.length()>30)
            throw new AccountException("Your full name should have less than 30 letters !");
 

@@ -30,10 +30,10 @@ import wotlas.utils.Debug;
 /** A NetSender sends NetMessage on an opened socket.
  *
  * A NetSender has three different modes :
- *
- *   (1) simply send messages as they arrive
- *   (2) aggregate messages with a timeout and max message limit.
- *   (3) wait for a user signal to send the message aggregation
+ *<br>
+ *   (1) simply send messages as they arrive. <p>
+ *   (2) aggregate messages with a timeout and max message limit. <p>
+ *   (3) wait for a user signal to send the message aggregation <p>
  *
  * @author Aldiss
  * @see wotlas.libs.net.NetMessageFactory
@@ -78,6 +78,10 @@ public class NetSender extends NetThread
      *  type and the pleaseSendAllMessagesNow() call )
      */
         private boolean stop_aggregation;
+
+    /** To signal that we a thread is locked on pleaseSendAllMessagesNow()
+      */
+        private boolean locked;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -132,6 +136,9 @@ public class NetSender extends NetThread
    */
      public void run()
      {
+     	if( sender_type == USER_AGGREGATION )  // we have nothing to do here
+     	  return;
+
         try
         {
            do
@@ -164,7 +171,8 @@ public class NetSender extends NetThread
                                {}
                             
                                tr = aggregation_timeout-System.currentTimeMillis()-t0;
-                               if(tr<5) break;
+
+                               if(tr<3) break; // aggregation end
                             }
                        }
                        else
@@ -195,7 +203,7 @@ public class NetSender extends NetThread
 
   /** To queue a message. With the SEND_IMMEDIATELY & AGGREGATE_MESSAGES NetSender
    *  we signal the new message to the thread. For the USER_AGGREGATION NetSender
-   *  use the pleaseSendMessagesNow().
+   *  use the pleaseSendMessagesNow() after your queueMessage() calls.
    *
    * @param message message to queue.
    */
@@ -217,15 +225,46 @@ public class NetSender extends NetThread
 
   /** Method to use for the USER_AGGREGATION NetSender when you want it to send
    *  the queued messages. For the AGGREGATION_MESSAGES it asks for the immediate
-   *  send of the queued messages. For the SEND_IMMEDIATELY type it does nothing.
+   *  send of the queued messages. For the SEND_IMMEDIATELY type we do nothing but
+   *  make sure that the message has been sent.
    */
-     synchronized public void pleaseSendAllMessagesNow() {
-            if( sender_type == AGGREGATE_MESSAGES ) {
+     synchronized public void pleaseSendAllMessagesNow()
+     {
+            if( sender_type == USER_AGGREGATION )
+            {
+                try{
+                    sendQueuedMessages();
+                    return;
+                }
+                catch( Exception e )
+                {
+                    if(e instanceof IOException) {
+                       // Socket error, connection was probably closed a little roughly...
+                          Debug.signal( Debug.WARNING, this, e );
+                    }
+                    else
+                          Debug.signal( Debug.ERROR, this, e ); // serious error
+
+                   closeConnection();
+                   out_stream=null;
+                }
+            }
+            else if( sender_type == AGGREGATE_MESSAGES ) {
                 stop_aggregation = true;
                 notify();
             }
-            else if( sender_type == USER_AGGREGATION )
-                notify();
+
+        // we wait until the last message is sent. The sendQueuesMessages() will notify us.
+        // (max 1s to avoid a deadlock if an Exception has been thrown in sendQueuedMessages)
+           if(nb_messages!=0) {
+              locked = true;
+ 
+              try{
+                   wait( 1000 );
+              }
+              catch( InterruptedException e )
+              {}
+           }
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -234,7 +273,7 @@ public class NetSender extends NetThread
    * 
    * @exception IOException if something goes wrong while sending this message
    */
-     private void sendQueuedMessages() throws IOException {
+     synchronized private void sendQueuedMessages() throws IOException {
        for( short i=0; i<nb_messages; i++) {
      	    if(message_list[i]==null) continue;
 
@@ -246,6 +285,12 @@ public class NetSender extends NetThread
      
         out_stream.flush();
      	nb_messages = 0;
+
+      // A notifyAll if there are threads locked on pleaseSendAllMessagesNow()
+         if(locked) {
+            locked=false;
+            notifyAll();
+         }
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -302,7 +347,7 @@ public class NetSender extends NetThread
    *
    * @return aggregation message limit
    */
-     public short setAggregationMessageLimit() {
+     public short getAggregationMessageLimit() {
          return aggregation_msg_limit;
      }
 

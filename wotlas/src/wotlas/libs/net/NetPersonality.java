@@ -150,6 +150,17 @@ public abstract class NetPersonality
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** Are we still connected ?
+    * @return true if we are, false otherwise.
+    */
+     public boolean isConnected() {
+     	  if( myNetsender==null ||  myNetreceiver==null )
+     	      return false;
+     	  return true;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** To get the NetSender.
    *
    * @return the personality's NetSender
@@ -236,11 +247,15 @@ public abstract class NetPersonality
    *  Before closing the connection we wait for the remaining messages
    *  to be sent. We then perform some clean up.
    */
-     synchronized public void closeConnection()
-     {
+     synchronized public void closeConnection() {
+
      	  if( myNetsender==null ||  myNetreceiver==null )
      	      return;
-     	  
+
+       // We send a EndOfConnection message to the other side
+          if( myNetsender!=null )
+              myNetsender.queueMessage( new EndOfConnectionMessage() );
+
        // no more message handling
           myNetreceiver.stopThread();
 
@@ -250,7 +265,7 @@ public abstract class NetPersonality
        // massive destruction
           myNetsender.stopThread();
           myNetsender.closeSocket();  // only lets the NetReceiver finish its work
-                                       // before closing
+                                      // before closing
           
           synchronized( myNetsender ) {
                 myNetsender.notify();    // we don't forget to wake up the thread !

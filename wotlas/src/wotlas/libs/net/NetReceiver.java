@@ -16,16 +16,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.libs.net;
 
 
 import java.net.Socket;
+import java.net.SocketException;
 import java.io.DataInputStream;
 import java.io.IOException;
 
 import wotlas.utils.Debug;
 import wotlas.libs.net.message.PingMessage;
+import wotlas.libs.net.message.EndOfConnectionMessage;
 
 /** A NetReceiver waits for NetMessage to arrive on an opened socket.
  *  It decodes them and execute their associated code.
@@ -44,8 +46,7 @@ import wotlas.libs.net.message.PingMessage;
  * @see wotlas.libs.net.NetThread
  */
 
-public class NetReceiver extends NetThread
-{
+public class NetReceiver extends NetThread {
 
  /*------------------------------------------------------------------------------------*/
 
@@ -147,6 +148,8 @@ public class NetReceiver extends NetThread
                         else
                            personality.receivedPingMessage( ((PingMessage) msg).getSeqID() );
                      }
+                     else if(msg instanceof EndOfConnectionMessage)
+                        break; // end of connection
                      else
                         msg.doBehaviour( sessionContext );
                 }
@@ -161,7 +164,11 @@ public class NetReceiver extends NetThread
         catch(Exception e){
            if(e instanceof IOException) {
              // Socket error, connection was probably closed a little roughly...
-               Debug.signal( Debug.WARNING, this, e );
+               Debug.signal( Debug.WARNING, this, "Connection closed : "+e.toString() );
+           }
+           else if(e instanceof SocketException) {
+             // Socket closed a bit roughly
+               Debug.signal( Debug.WARNING, this, "Socket closed a bit roughly : "+e.toString() );
            }
            else
                Debug.signal( Debug.ERROR, this, e ); // serious error while processing message

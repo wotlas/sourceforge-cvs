@@ -242,7 +242,7 @@ public class JConfigurationDlg extends JDialog
       innerPanel.setBackground(Color.white);           
       add(innerPanel);
       
-      ALabel lbl_sound = new ALabel("Sound volum");
+      ALabel lbl_sound = new ALabel("Sound Volume");
       lbl_sound.setAlignmentY(Component.CENTER_ALIGNMENT);
       innerPanel.add(lbl_sound);
       
@@ -265,7 +265,7 @@ public class JConfigurationDlg extends JDialog
         soundPanel.add(volMax);
       innerPanel.add(soundPanel);
       
-      ALabel lbl_music = new ALabel("Music volum");
+      ALabel lbl_music = new ALabel("Music Volume");
       lbl_music.setAlignmentY(Component.CENTER_ALIGNMENT);
       innerPanel.add(lbl_music);
         

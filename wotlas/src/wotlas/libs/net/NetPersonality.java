@@ -37,8 +37,7 @@ import java.net.Socket;
  *<br>
  *    - pleaseSendAllMessagesNow();
  *      Asks the NetSender to send all his queued messages now. It's typically the method
- *      you use in case of a USER_AGGREGATION NetSender or when you want to send all the
- *      remaining messages before closing a connection with the AGGREGATION_MESSAGES NetSender.
+ *      you use in case of a USER_AGGREGATION NetSender.
  *
  *<br><p>
  * Useful methods you can invoke to receive messages :
@@ -164,8 +163,7 @@ public abstract class NetPersonality
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Asks the NetSender to send all his queued messages now. It's typically the method
-   *  you use in case of a USER_AGGREGATION NetSender or when you want to send all the
-   *  remaining messages before closing a connection with the AGGREGATION_MESSAGES NetSender.
+   *  you use in case of a USER_AGGREGATION NetSender.
    */
      public void pleaseSendAllMessagesNow() {
            my_netsender.pleaseSendAllMessagesNow();
@@ -206,6 +204,8 @@ public abstract class NetPersonality
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To close this connection. Erases all the allocated resources.
+   *  Before closing the connection we wait for the remaining messages
+   *  to be sent. We then perform some clean up.
    */
      synchronized public void closeConnection()
      {
@@ -215,14 +215,20 @@ public abstract class NetPersonality
           if( listener!=null )
               listener.connectionClosed( this );
 
-          my_netsender.stopThread();
+       // no more message handling
           my_netreceiver.stopThread();
+
+       // we wait for the remaining messages to be sent
+          my_netsender.pleaseSendAllMessagesNow();
+            
+       // massive destruction
+          my_netsender.stopThread();
           my_netsender.closeSocket();  // only lets the NetReceiver finish its work
                                        // before closing
           
           synchronized( my_netsender ) {
                 my_netsender.notify();    // we don't forget to wake up the thread !
-          }
+          }                               // (the NetSender is locked when there are no msgs )
           
           my_netsender = null;
           my_netreceiver = null;

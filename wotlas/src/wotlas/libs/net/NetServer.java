@@ -171,7 +171,6 @@ abstract public class NetServer extends Thread
       protected void refuseClient( NetPersonality personality, String error_message )
       throws IOException{
               personality.queueMessage( new ServerErrorMessage( error_message ) );
-              personality.pleaseSendAllMessagesNow();
               personality.closeConnection();
       }
 

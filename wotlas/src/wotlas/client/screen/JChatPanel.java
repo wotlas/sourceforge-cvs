@@ -209,7 +209,14 @@ System.out.println("DEFAULT CHAT player list reseted");
    public boolean setCurrentJChatRoom(String primaryKey) {
     boolean found = false;
 
-    for (int i=0; i<tabbedPane.getTabCount();i++) {
+    if ( primaryKey.equals(ChatRoom.DEFAULT_CHAT) ) {
+      tabbedPane.setEnabledAt(0, true);
+      tabbedPane.setSelectedIndex(0);
+      this.currentPrimaryKey = primaryKey;
+      found = true;
+    }
+      
+    for (int i=1; i<tabbedPane.getTabCount();i++) {
       if ( tabbedPane.getComponentAt(i).getName().equals(primaryKey) ) {
            tabbedPane.setEnabledAt(i, true);
            tabbedPane.setSelectedIndex(i);
@@ -217,7 +224,7 @@ System.out.println("DEFAULT CHAT player list reseted");
            found = true;
       }
       else {
-           tabbedPane.setEnabledAt(i, false);
+           tabbedPane.setEnabledAt(i, false);           
            JChatRoom jchatRoom = (JChatRoom) tabbedPane.getComponentAt(i);
            jchatRoom.removeAllPlayers(); // we remove all the players of disabled chats...
       }

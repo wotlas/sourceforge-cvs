@@ -121,7 +121,7 @@ public class NetClient
        errorMessage = null;
        this.sessionContext = sessionContext;
 
-       // to make sure there is one...
+       // to load the eventually new packages of messages...
           NetMessageFactory.getMessageFactory().addMessagePackages( msgPackages );
 
           try

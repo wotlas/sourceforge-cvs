@@ -26,6 +26,7 @@ import wotlas.common.message.description.*;
 import wotlas.client.*;
 
 import wotlas.client.DataManager;
+import wotlas.client.PlayerImpl;
 import wotlas.common.Player;
 
 /**
@@ -55,7 +56,7 @@ public class PlayerDataMsgBehaviour extends PlayerDataMessage implements NetMess
   public void doBehaviour( Object context ) {
     System.out.println("PlayerDataMsg");
     DataManager dataManager = (DataManager) context;
-    dataManager.addPlayer( player );
+    dataManager.addPlayer( (PlayerImpl) player );
   }
 
  /*------------------------------------------------------------------------------------*/

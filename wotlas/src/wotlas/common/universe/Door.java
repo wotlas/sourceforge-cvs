@@ -135,7 +135,7 @@ public class Door
        //     return (Drawable) doorDrawable;
 
        // Door Drawable creation
-       // doorDrawable = new DoorDrawable( x, y, doorType, initialDoorAngle,
+       // doorDrawable = new DoorDrawable( x, y, doorType,
        //                                  doorImage, ImageLibRef.DOOR_PRIORITY );
        // doorDrawable.useAntialiasing(true);
           return null; // tmp
@@ -144,10 +144,15 @@ public class Door
  /*------------------------------------------------------------------------------------*/
 
    /** To open the door...
+    * @param from direction from where the door is opened (see DoorDrawable).
     */
-     public void openDoor() {
-        // if( getDoorDrawable()!=null )
-     	//     doorDrawable.openDoor();
+     public void openDoor( byte from ) {
+      /*
+         if( getDoorDrawable()==null )
+             return;
+
+         doorDrawable.openDoor( from );
+       */
      }
 
  /*------------------------------------------------------------------------------------*/  

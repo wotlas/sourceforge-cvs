@@ -25,112 +25,7 @@ import wotlas.utils.*;
 import java.awt.Rectangle;
 import java.util.Hashtable;
 
- /** A Room of an interiorMap. Here is a sample code on how to use a Room
-  *  during the player tick... all the following could be placed in the
-  *  client's DataManager :
-  *
-  *  <pre>
-  *
-  * // tells if the player could be moving to another room
-  *    private boolean couldBeMovingToAnotherRoom = false;
-  *
-  * // current RoomLink considered for intersection
-  *    private RoomLink latestRoomLink;
-  *
-  *    
-  *    public void tick() {
-  *         player.tick();
-  *         locationUpdate();
-  *    }
-  *
-  *
-  *    public void locationUpdate() {
-  *
-  *      // we call the right method whether the player is on
-  *      // a TownMap, a WorldMap or in a Room.
-  *
-  *         if( player.getWotlasLocation().isRoom() )
-  *             roomLocationUpdate();
-  *         else if ( player.getWotlasLocation().isTown() )
-  *             townLocationUpdate();
-  *         else if ( player.getWotlasLocation().isWorld() )
-  *             worldLocationUpdate();
-  *    }
-  *
-  *
-  *    public void roomLocationUpdate() {
-  *    
-  *        Room myRoom = worldManager.getRoom( player.getWotlasLocation() );
-  *
-  *     // I - ROOMLINK INTERSECTION UPDATE ( is the player moving to another room ? )
-  *
-  *        RoomLink rl = myRoom.isIntersectingRoomLink( player.getCurrentRectangle() );
-  *
-  *        if( rl!=null && !couldBeMovingToAnotherRoom ) {
-  *          // Player is intersecting a RoomLink
-  *             latestRoomLink = rl;
-  *             couldBeMovingToAnotherRoom = true;
-  *
-  *          // is there a Door ?
-  *             if( rl.getDoor()!=null ) {
-  *                 // nothing for now
-  *             }
-  *        }
-  *        else if ( couldBeMovingToAnotherRoom ) {
-  *          // ok, no intersection now, are we in an another room ?
-  *             couldBeMovingToAnotherRoom = false;
-  *
-  *             int newRoomID = myRoom.isInOtherRoom( latestRoomLink, player.getCurrentRectangle() );
-  *             
-  *             if( newRoomID>=0 ) {
-  *                // Ok, we move to this new Room
-  *                   myRoom.removePlayer( player );
-  *                   player.getWotlasLocation().setRoomID( newRoomID );
-  *                   myRoom.addPlayer( player );
-  *             }
-  *        } // End of part I
-  *
-  *
-  *     // II - MAPEXIT INTERSECTION UPDATE ( is the player moving to another map ? )
-  *        if( player.isMoving() ) {
-  *            MapExit mapExit = myRoom.isIntersectingMapExit( player.getDestX(), player.getDestY(),
-  *                                                            player.getCurrentRectangle() );
-  *
-  *            if( mapExit!=null ) {
-  *            	  // Ok, we are going to a new map...
-  *                  myRoom.removePlayer( player );
-  *                  player.setWotlasLocation( mapExit.getTargetWotlasLocation() );
-  *                  cleanInteriorMapData(); // suppress drawables, shadows, data
-  *
-  *                  switch( mapExit.getType ) {
-  *                      case mapExit.INTERIOR_MAP_EXIT :
-  *                               initInteriorMapDisplay(); // init new map
-  *                               break;
-  *
-  *                      case mapExit.TOWN_EXIT :
-  *                               initTownMapDisplay(); // init new map
-  *                               break;
-  *                  }
-  *            }
-  *        } // End of part II
-  *
-  *    }
-  *
-  *  
-  *    public void initInteriorMapDisplay( PlayerImpl player ) {
-  * 
-  *      // 1 - we load the images & init the graphicsDirector
-  *      // 2 - we init our Player, add a shadow, and start the display
-  *    }
-  *
-  *
-  *    public void initTownMapDisplay( PlayerImpl player ) {
-  * 
-  *      // 1 - we load the images & init the graphicsDirector
-  *      // 2 - we init our Player (no shadow drawable) and start the display
-  *    }
-  *
-  *  </pre>
+ /** A Room of an interiorMap. 
   *
   * @author Petrus, Aldiss
   * @see wotlas.common.universe.RoomLink
@@ -475,12 +370,6 @@ public class Room
                    otherLinks[j] = roomLinks[i];
                    break;
                }
-       }
-
-    // Verif TEEEEMMMMPPPPPP
-       for( int i=0; i<roomLinks.length; i++ ) {
-          if(roomLinks[i].getRoom1()==null || roomLinks[i].getRoom2()==null)
-             System.out.println("BAD ROOM "+roomID+" : "+roomLinks[i]);
        }
     }
 

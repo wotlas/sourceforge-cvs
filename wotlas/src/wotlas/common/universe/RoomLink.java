@@ -21,6 +21,8 @@ package wotlas.common.universe;
 
 import wotlas.utils.*;
 
+import java.awt.Rectangle;
+
  /** RoomLink class. Represents the screen zone which links two rooms.
   *  A RoomLink MUST not have a width equal to its height... A square form
   *  would not help us to determine the limit between the two rooms.
@@ -127,7 +129,7 @@ public class RoomLink extends ScreenRectangle
     return room2;
   }
 
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** Are the two RoomLinks equal ?
     *  Important : the two RoomLinks must belong to the same InteriorMap.
@@ -136,7 +138,33 @@ public class RoomLink extends ScreenRectangle
         return toRectangle().equals( other.toRectangle() );
     }
 
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To open the door...
+    * @param playerRect represents the rectangle of the player
+    */
+     public void openDoor(Rectangle playerRect ) {
+      /*
+         if( door==null || door.getDoorDrawable()==null )
+             return;
+             
+          byte doorType = door.getDoorType();
+
+          if( door.getDoorType()==DoorDrawable.VERTICAL_TOP ||
+              if(playerRect.x<x+width/2)
+                     doorDrawable.openDoor(DoorDrawable.FROM_LEFT);
+              else
+                     doorDrawable.openDoor(DoorDrawable.FROM_RIGHT);
+          } else {
+              if(playerRect.y<y+height/2)
+                     doorDrawable.openDoor(DoorDrawable.FROM_TOP);
+              else
+                     doorDrawable.openDoor(DoorDrawable.FROM_BOTTOM);
+          }
+       */
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To print this roomLink
     */
@@ -144,5 +172,5 @@ public class RoomLink extends ScreenRectangle
         return "RoomLink between room "+room1ID+" <-> "+room2ID;
     }
 
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

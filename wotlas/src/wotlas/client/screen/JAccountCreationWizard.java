@@ -21,10 +21,13 @@ package wotlas.client.screen;
 
 import wotlas.client.ClientManager;
 import wotlas.client.*;
+import wotlas.client.screen.JAccountConnectionDialog;
 
 import wotlas.common.ServerConfig;
 import wotlas.common.ServerConfigList;
 import wotlas.common.ServerConfigListTableModel;
+
+import wotlas.common.message.account.*;
 
 import wotlas.libs.wizard.*;
 import wotlas.libs.wizard.step.*;
@@ -69,6 +72,7 @@ public class JAccountCreationWizard extends wotlas.libs.wizard.JWizard
 
     // We display first step
     try {
+      //setContext();
       init( wotlas.client.screen.JAccountCreationWizard$ServerSelectionStep.getStaticParameters() );
     } catch( WizardException we ) {
       we.printStackTrace();
@@ -115,10 +119,7 @@ public class JAccountCreationWizard extends wotlas.libs.wizard.JWizard
       ClientManager clientManager = ClientManager.getDefaultClientManager();
       
       final ProfileConfig currentProfileConfig = clientManager.getCurrentProfileConfig();
-  
-      
-      
-  
+
       // JPanel inits
       JPanel stepPanel = new JPanel();
       stepPanel.setLayout(new BoxLayout(stepPanel,BoxLayout.Y_AXIS));
@@ -193,7 +194,6 @@ public class JAccountCreationWizard extends wotlas.libs.wizard.JWizard
             currentServerConfig = serverConfigList.ServerConfigAt(selectedRow);
             currentProfileConfig.setOriginalServerID(currentServerConfig.getServerID());
             currentProfileConfig.setServerID(currentServerConfig.getServerID());
-// b_ok.setEnables(true);
             
         }
       });
@@ -232,9 +232,24 @@ public class JAccountCreationWizard extends wotlas.libs.wizard.JWizard
      *  @return return true to validate the "Next" button action, false to cancel it...
      */
     protected boolean onNext(Object context, JWizard wizard) {
-      //sendMessage(new AccountCreationMessage());
-      //await();
-      return true;      
+      DataManager dataManager = DataManager.getDefaultDataManager();
+
+      JAccountConnectionDialog jaconnect = new JAccountConnectionDialog( null,
+                       currentServerConfig.getServerName(), currentServerConfig.getAccountServerPort(),
+                       currentServerConfig.getServerID(), wizard);
+
+      if ( jaconnect.hasSucceeded() ) {
+        Debug.signal( Debug.NOTICE, null, "ClientManager connected to AccountServer");
+        jaconnect.getPersonality().queueMessage(new AccountCreationMessage());
+        await();
+        
+        return true;      
+      } else {
+        Debug.signal( Debug.NOTICE, null, "ClientManager ejected from AccountServer");
+        ClientManager clientManager = ClientManager.getDefaultClientManager();
+        clientManager.getScreenIntro().show(); // line added by Aldiss
+        return false;
+      }
     }
     
     /** Called when Previous button is clicked.

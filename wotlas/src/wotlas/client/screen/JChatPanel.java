@@ -45,7 +45,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
 
  /*------------------------------------------------------------------------------------*/  
    
-  ImageIcon iconUp = new ImageIcon("..\\base\\gui\\pin.gif");
+  ImageIcon iconUp = new ImageIcon("../base/gui/pin.gif");
   
   /** Our tabbedPane
    */
@@ -85,13 +85,13 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     JToolBar chatToolbar = new JToolBar();
     chatToolbar.setFloatable(false);
         
-    b_createChatRoom = new JButton(new ImageIcon("..\\base\\gui\\chat-new.gif"));
+    b_createChatRoom = new JButton(new ImageIcon("../base/gui/chat-new.gif"));
     b_createChatRoom.setActionCommand("createChatRoom");
     b_createChatRoom.addActionListener(this);
     b_createChatRoom.setToolTipText("Create a new chat room");
     chatToolbar.add(b_createChatRoom);
     
-    b_leaveChatRoom = new JButton(new ImageIcon("..\\base\\gui\\chat-leave.gif"));
+    b_leaveChatRoom = new JButton(new ImageIcon("../base/gui/chat-leave.gif"));
     b_leaveChatRoom.setActionCommand("leaveChatRoom");
     b_leaveChatRoom.addActionListener(this);
     b_leaveChatRoom.setToolTipText("Leave the current chat room");

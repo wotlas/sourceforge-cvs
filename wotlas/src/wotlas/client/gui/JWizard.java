@@ -142,18 +142,18 @@ public abstract class JWizard extends JFrame
     buttonsPanel.setBackground(Color.white);
 
     // *** Load images of buttons
-    im_cancelup   = new ImageIcon("..\\base\\gui\\cancel-up.gif");
-    im_canceldo   = new ImageIcon("..\\base\\gui\\cancel-do.gif");
-    im_cancelun   = new ImageIcon("..\\base\\gui\\cancel-un.gif");
-    im_okup       = new ImageIcon("..\\base\\gui\\ok-up.gif");
-    im_okdo       = new ImageIcon("..\\base\\gui\\ok-do.gif");
-    im_okun       = new ImageIcon("..\\base\\gui\\ok-un.gif");
-    im_nextup     = new ImageIcon("..\\base\\gui\\next-up.gif");
-    im_nextdo     = new ImageIcon("..\\base\\gui\\next-do.gif");
-    im_nextun     = new ImageIcon("..\\base\\gui\\next-un.gif");
-    im_previousup = new ImageIcon("..\\base\\gui\\previous-up.gif");
-    im_previousdo = new ImageIcon("..\\base\\gui\\previous-do.gif");
-    im_previousun = new ImageIcon("..\\base\\gui\\previous-un.gif");
+    im_cancelup   = new ImageIcon("../base/gui/cancel-up.gif");
+    im_canceldo   = new ImageIcon("../base/gui/cancel-do.gif");
+    im_cancelun   = new ImageIcon("../base/gui/cancel-un.gif");
+    im_okup       = new ImageIcon("../base/gui/ok-up.gif");
+    im_okdo       = new ImageIcon("../base/gui/ok-do.gif");
+    im_okun       = new ImageIcon("../base/gui/ok-un.gif");
+    im_nextup     = new ImageIcon("../base/gui/next-up.gif");
+    im_nextdo     = new ImageIcon("../base/gui/next-do.gif");
+    im_nextun     = new ImageIcon("../base/gui/next-un.gif");
+    im_previousup = new ImageIcon("../base/gui/previous-up.gif");
+    im_previousdo = new ImageIcon("../base/gui/previous-do.gif");
+    im_previousun = new ImageIcon("../base/gui/previous-un.gif");
                
     // *** Previous ***
     b_previous = new JButton(im_previousup);

@@ -478,7 +478,7 @@ public class WorldGenerator {
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
                mapExit.setTargetPosition( new ScreenPoint(60,250) );
 
-               mapExit = rooms[0].addMapExit( new ScreenRectangle(30,330,380,20) );
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(20,330,400,20) );
                mapExit.setType( MapExit.BUILDING_EXIT );
                mapExit.setMapExitSide( MapExit.SOUTH );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );

@@ -96,6 +96,7 @@ public class ClientManager
   private ImageIcon im_newup, im_newdo;
   private ImageIcon im_loadup, im_loaddo, im_loadun;
   private ImageIcon im_delup, im_deldo, im_delun;
+  private ImageIcon im_exitup, im_exitdo;
 
   /** Default font
    */
@@ -195,6 +196,7 @@ public class ClientManager
     final JButton b_ok;
     final JButton b_cancel;
     final JButton b_delProfile;
+    final JButton b_exitProfile;
 
     final JTable profilesTable;
     final JTable serversTable ;
@@ -218,6 +220,8 @@ public class ClientManager
       im_delup    = new ImageIcon("..\\base\\gui\\delete-up.gif");
       im_deldo    = new ImageIcon("..\\base\\gui\\delete-do.gif");
       im_delun    = new ImageIcon("..\\base\\gui\\delete-un.gif");
+      im_exitup   = new ImageIcon("..\\base\\gui\\exit-up.gif");
+      im_exitdo   = new ImageIcon("..\\base\\gui\\exit-do.gif");      
       im_loadup   = new ImageIcon("..\\base\\gui\\load-up.gif");
       im_loaddo   = new ImageIcon("..\\base\\gui\\load-do.gif");
       im_loadun   = new ImageIcon("..\\base\\gui\\load-un.gif");
@@ -225,7 +229,7 @@ public class ClientManager
       im_newdo    = new ImageIcon("..\\base\\gui\\new-do.gif");
       im_okup     = new ImageIcon("..\\base\\gui\\ok-up.gif");
       im_okdo     = new ImageIcon("..\\base\\gui\\ok-do.gif");
-      im_okun     = new ImageIcon("..\\base\\gui\\ok-un.gif");
+      im_okun     = new ImageIcon("..\\base\\gui\\ok-un.gif");      
 
       // Test if an account exists
       if (profileConfigList==null) {
@@ -280,6 +284,13 @@ public class ClientManager
       b_delProfile.setBorderPainted(false);
       b_delProfile.setContentAreaFilled(false);
       b_delProfile.setFocusPainted(false);
+
+      b_exitProfile = new JButton(im_exitup);
+      b_exitProfile.setRolloverIcon(im_exitdo);
+      b_exitProfile.setPressedIcon(im_exitdo);      
+      b_exitProfile.setBorderPainted(false);
+      b_exitProfile.setContentAreaFilled(false);
+      b_exitProfile.setFocusPainted(false);
 
       // *** Left JPanel ***
 
@@ -371,6 +382,8 @@ public class ClientManager
       b_delProfile.setEnabled(false);
       rightPanel.add(b_delProfile);
 
+      rightPanel.add(b_exitProfile);
+      
       // *** Adding the panels ***
 
       screenIntro.setLeftPanel(leftPanel);

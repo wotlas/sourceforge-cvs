@@ -224,7 +224,7 @@ public class PathFollower implements Tickable {
      public Point getTargetPosition() {
      	if(path!=null)
            return (Point)path.elementAt( path.size()-1 );
-     	return new Point( (int)xPosition, (int)yPosition );
+     	return new Point( -100, -100 ); // out of screen point
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -20,27 +20,99 @@
 package wotlas.libs.graphics2D.filter;
 
 import wotlas.libs.graphics2D.*;
+import wotlas.libs.graphics2D.filter.color.*;
 
 import java.awt.image.*;
 import java.awt.*;
 
-/** 
+/** A DynamicImageFilter that can change the colors of a BufferefImage. You can only
+ *  change 'types' of colors : all blue pixels, all green pixels, ... many changes
+ *  can be performed at the same time as the 'addColorChange' method can be called
+ *  more than one time.
+ *
+ *  Actually this filter only works with fixed source colors and target colors. See
+ *  the addColorChange javadoc for more details.
+ *
  * @author Aldiss
- * @see wotlas.libs.graphics2D.ImageLibrary
- * @see wotlas.libs.graphics2D.ImageIdentifier
+ * @see wotlas.libs.graphics2D.DynamicImageFilter
  */
 
 public class ColorImageFilter implements DynamicImageFilter {
 
  /*------------------------------------------------------------------------------------*/
 
-   /**
+   /** Blue Color Type
     */
+      public final static ColorType blue = (ColorType) new BlueColor();
+
+   /** Green Color Type
+    */
+      public final static ColorType green = (ColorType) new GreenColor();
+
+   /** Yellow Color Type
+    */
+      public final static ColorType yellow = (ColorType) new YellowColor();
+
+   /** Red Color Type
+    */
+      public final static ColorType red = (ColorType) new RedColor();
+
+   /** Brown Color Type
+    *
+      public final static ColorType brown = (ColorType) new BrownColor();
+
+    ** Light Gray Color Type
+    *
+      public final static ColorType lightgray = (ColorType) new LightGrayColor();
+
+    ** Gray Color Type
+    *
+      public final static ColorType gray = (ColorType) new GrayColor();
+
+    ** Dark Gray Color Type
+    *
+      public final static ColorType darkgray = (ColorType) new DarkGrayColor();
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** Color Type couples (source & target) for our color change.
+    */
+      private ColorType colorChangeKey[][];
+
+ /*------------------------------------------------------------------------------------*/
+
+    /** To add a ColorChangeKey to this ColorImageFilter. How does it work ?
+     *  well, this is simple. Here is an example :
+     *
+     *  addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.green );
+     *
+     *  With this key we'll transform all the blue pixels in green pixels.
+     *
+     * @param colorSourceId source ColorType
+     * @param colorTargetId target ColorType
+     */
+      public void addColorChangeKey( ColorType colorSourceId, ColorType colorTargetId )
+      {
+         ColorType key[] = new ColorType[2];
+         key[0] = colorSourceId;
+         key[1] = colorTargetId;
+    
+         if (colorChangeKey == null) {
+             colorChangeKey = new ColorType[1][];
+             colorChangeKey[0] = key;
+         } else {
+             ColorType tmp[][] = new ColorType[colorChangeKey.length+1][];
+             System.arraycopy(colorChangeKey, 0, tmp, 0, colorChangeKey.length);
+             tmp[colorChangeKey.length] = key;
+             colorChangeKey = tmp;
+         }
+      }
 
  /*------------------------------------------------------------------------------------*/
 
    /** To create a new filtered image from an image source.
     *
+    * @param srcIm source BufferedImage we take our data from (not modified).
     * @return new BufferedImage constructed from the given image.
     */
      public BufferedImage filterImage( BufferedImage srcIm ){
@@ -51,6 +123,9 @@ public class ColorImageFilter implements DynamicImageFilter {
           int height = srcIm.getHeight();
 
        // 1 - New Buffered Image
+          if(colorChangeKey==null)
+              return srcIm;
+       
           BufferedImage dstIm = new BufferedImage( width, height, BufferedImage.TYPE_INT_ARGB );
 
        // 2 - Color Filter
@@ -63,80 +138,89 @@ public class ColorImageFilter implements DynamicImageFilter {
 
  /*------------------------------------------------------------------------------------*/
 
+    /** To filter a pixel according to our ColorChange keys...
+     *  @param argb pixel color
+     */
        private int filterPixel( int argb ) {
+
        	   short alpha = getAlpha( argb );
 
-           if( alpha == 0 ) return argb; // transparent pixel
+           if( alpha == 0 )
+               return argb; // transparent pixel
 
            short min=getRed( argb ), mid=getGreen( argb ), max=getBlue( argb ),tmp;
 
-           if( !isBlue( min, mid, max ) )
-               return argb;
-
-          // sort min, mid, max      	
-            if(min>mid) {
-               tmp = min;
-               min = mid;
-               mid = tmp;
-            }
+        // 1 - Color to remplace ?
+           byte keyID = -1;
         
-            if(max<mid) {
-               tmp = max;
-               max = mid;
-               mid = tmp;
-            }
+           for( byte i=0; i<colorChangeKey.length; i++)
+                if( colorChangeKey[i][0].isFromThisColorType( min, mid, max ) ) {
+                       keyID = i;
+                       break;
+                }
 
-            if(min>mid) {
-               tmp = min;
-               min = mid;
-               mid = tmp;
-            }
+           if(keyID==-1)
+              return argb;
 
-          return setToGreen(min, mid, max) | 0xff000000;
+        // 2 - We sort our min, mid, max luminosity components
+           if(min>mid) {
+              tmp = min;
+              min = mid;
+              mid = tmp;
+           }
+        
+           if(max<mid) {
+              tmp = max;
+              max = mid;
+              mid = tmp;
+           }
+
+           if(min>mid) {
+              tmp = min;
+              min = mid;
+              mid = tmp;
+           }
+
+       // 3 - Color replace
+          return colorChangeKey[keyID][1].setToColorType(min, mid, max) | (alpha << 24);
        }
 
  /*------------------------------------------------------------------------------------*/
 
-       private boolean isBlue( short r, short g, short b ) {
-       	     if( b > g && b > r )
-       	         return true;
-       	     return false;
-       }
-
- /*------------------------------------------------------------------------------------*/
-
-       private boolean isYellow( short r, short g, short b ) {
-       	     if( r > g && b < 70 && b<g && r-g<=30 )
-       	         return true;
-       	     return false;
-       }
-
- /*------------------------------------------------------------------------------------*/
-
-       private int setToGreen( short min, short mid, short max ) {
-             return (mid<<16) | (max<<8) | min;       	     	
-       }
-
- /*------------------------------------------------------------------------------------*/
-
+     /** To get the blue component of a argb pixel.
+      * @param argb pixel of the DirectColorModel type.
+      * @return the blue component in the [0,255] range
+      */
        private short getBlue( int argb ) {
            return (short) (argb & 0xff);
        }
 
  /*------------------------------------------------------------------------------------*/
 
+     /** To get the green component of a argb pixel.
+      * @param argb pixel of the DirectColorModel type.
+      * @return the green component in the [0,255] range
+      */
        private short getGreen( int argb ) {
           return (short) ((argb & 0xff00) >> 8 );
        }
 
  /*------------------------------------------------------------------------------------*/
 
+     /** To get the red component of a argb pixel.
+      * @param argb pixel of the DirectColorModel type.
+      * @return the red component in the [0,255] range
+      */
        private short getRed( int argb ) {
           return (short) ((argb & 0xff0000) >> 16 );
        }
 
  /*------------------------------------------------------------------------------------*/
 
+     /** To get the alpha component of a argb pixel.
+      * @param argb pixel of the DirectColorModel type.
+      * @return the alpha component in the [0,255] range
+      */
        private short getAlpha( int argb ) {
           return (short) ((argb & 0xff000000) >> 24 );
        }

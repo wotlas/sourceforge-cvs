@@ -144,12 +144,12 @@ public class TownMapData implements MapData
       e.printStackTrace();
       return;
     }
-    if (SHOW_DEBUG) {
+    /*if (SHOW_DEBUG) {
       System.out.println("\tbufIm.width = " + bufIm.getWidth());
       System.out.println("\tbufIm.height = " + bufIm.getHeight());
       System.out.println("\tbackground.width = " + background.getWidth());
       System.out.println("\tbackground.height = " + background.getHeight());
-    }
+    }*/
 
     // 5 - We initialize the AStar algo
 
@@ -174,12 +174,12 @@ public class TownMapData implements MapData
     Building buildings[] = townMap.getBuildings();
     if (buildings!=null) {
       if (SHOW_DEBUG)
-        System.out.println("\tBuildings");
+        System.out.println("\tDrawing Buildings");
       ImageIdentifier buildingImageID = null;   // building image identifier
       Drawable buildingImage = null;            // building image
       for (int i=0; i<buildings.length; i++) {
-        if (SHOW_DEBUG)
-          System.out.println("\t\tbuildings["+i+"] = " + buildings[i]);
+        /*if (SHOW_DEBUG)
+          System.out.println("\t\tbuildings["+i+"] = " + buildings[i]);*/
         buildingImageID = buildings[i].getSmallBuildingImage();
         Rectangle position = buildings[i].toRectangle();
         buildingImage = (Drawable) new MotionlessSprite( position.x,
@@ -196,9 +196,10 @@ public class TownMapData implements MapData
     if (SHOW_DEBUG) {
       MapExit[] mapExits = townMap.getMapExits();
       if (mapExits!= null) {
-        System.out.println("\tMapExit");
+        if (SHOW_DEBUG)
+          System.out.println("\tDrawing MapExits");
         for (int i=0; i<mapExits.length; i++) {
-          System.out.println("\t\tmapExits["+i+"] = " + mapExits[i]);
+          //System.out.println("\t\tmapExits["+i+"] = " + mapExits[i]);
           dataManager.drawScreenRectangle(mapExits[i].toRectangle(), Color.yellow);
         }
       }
@@ -236,9 +237,7 @@ public class TownMapData implements MapData
         System.out.println("Removing player from the map...");
       townMap.removePlayer(myPlayer);
 
-///////////////////////////// ALDISS : avant stopMoving()
       myPlayer.stopMovement();
-///////////////////////////// FIN ALDISS
 
       myPlayer.setLocation( mapExit.getTargetWotlasLocation() );
       
@@ -296,10 +295,10 @@ public class TownMapData implements MapData
       if (SHOW_DEBUG) {
         System.out.println("\t\tbuildingMap.getFullName() = " + buildingMap.getFullName());
         System.out.println("\t\tbuildingMap.getShortName() = " + buildingMap.getShortName());
-        System.out.print("\t\tmyPlayer.getAngle() = ");
-        System.out.println(myPlayer.getAngle()*180/Math.PI);
-        System.out.println("cosinus = " + Math.cos(myPlayer.getAngle()));
-        System.out.println("sinus = " + Math.sin(myPlayer.getAngle()));
+        //System.out.print("\t\tmyPlayer.getAngle() = ");
+        //System.out.println(myPlayer.getAngle()*180/Math.PI);
+        //System.out.println("cosinus = " + Math.cos(myPlayer.getAngle()));
+        //System.out.println("sinus = " + Math.sin(myPlayer.getAngle()));
       }
 
       mapExit = buildingMap.findTownMapExit( myPlayer.getAngle() );

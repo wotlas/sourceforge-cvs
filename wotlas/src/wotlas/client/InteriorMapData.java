@@ -172,12 +172,12 @@ public class InteriorMapData implements MapData
       e.printStackTrace();
       return;
     }
-    if (SHOW_DEBUG) {
+    /*if (SHOW_DEBUG) {
       System.out.println("\tbufIm.width = " + bufIm.getWidth());
       System.out.println("\tbufIm.height = " + bufIm.getHeight());
       System.out.println("\tbackground.width = " + background.getWidth());
       System.out.println("\tbackground.height = " + background.getHeight());
-    }
+    }*/
 
     // 5 - We initialize the AStar algo
 ///////////////////////////// ALDISS : changement de l'initialisation de Astar
@@ -200,9 +200,9 @@ public class InteriorMapData implements MapData
     if (SHOW_DEBUG) {
       RoomLink[] roomLinks = room.getRoomLinks();
       if (roomLinks != null) {
-        System.out.println("\tRoomLink");
+        System.out.println("\tDrawing RoomLink");
         for (int i=0; i<roomLinks.length; i++) {
-          System.out.println("\t\troomLinks["+i+"] = " + roomLinks[i]);
+          //System.out.println("\t\troomLinks["+i+"] = " + roomLinks[i]);
           dataManager.drawScreenRectangle(roomLinks[i].toRectangle(), Color.green);
         }
         roomLinks = null;
@@ -213,9 +213,9 @@ public class InteriorMapData implements MapData
     if (SHOW_DEBUG) {
       MapExit[] mapExits = room.getMapExits();
       if (mapExits!= null) {
-        System.out.println("\tMapExit");
+        System.out.println("\tDrawing MapExit");
         for (int i=0; i<mapExits.length; i++) {
-          System.out.println("\t\tmapExits["+i+"] = " + mapExits[i]);
+          //System.out.println("\t\tmapExits["+i+"] = " + mapExits[i]);
           dataManager.drawScreenRectangle(mapExits[i].toRectangle(), Color.yellow);
         }
         mapExits = null;
@@ -268,8 +268,10 @@ public class InteriorMapData implements MapData
         if (SHOW_DEBUG)
           System.out.println("Removing an existing player : " + myPlayer + "to room : " + myRoom);
         myRoom.removePlayer( myPlayer );
-        myPlayer.getLocation().setRoomID( newRoomID );
-        Room room = dataManager.getWorldManager().getRoom(myPlayer.getLocation());
+        WotlasLocation location = myPlayer.getLocation();
+        location.setRoomID( newRoomID );
+        myPlayer.setLocation(location);        
+        Room room = myPlayer.getMyRoom();
         
 /* NETMESSAGE */
         if (SHOW_DEBUG)
@@ -287,9 +289,9 @@ public class InteriorMapData implements MapData
         if (SHOW_DEBUG) {
           RoomLink[] roomLinks = room.getRoomLinks();
           if (roomLinks != null) {
-            System.out.println("\tRoomLink");
+            //System.out.println("\tDrawing RoomLink");
             for (int i=0; i<roomLinks.length; i++) {
-              System.out.println("\t\troomLinks["+i+"] = " + roomLinks[i]);
+              //System.out.println("\t\troomLinks["+i+"] = " + roomLinks[i]);
               dataManager.drawScreenRectangle(roomLinks[i].toRectangle(), Color.green);
             }
             roomLinks = null;
@@ -299,9 +301,9 @@ public class InteriorMapData implements MapData
         if (SHOW_DEBUG) {
           MapExit[] mapExits = room.getMapExits();
           if (mapExits!= null) {
-            System.out.println("\tMapExit");
+            //System.out.println("\tDrawing MapExit");
             for (int i=0; i<mapExits.length; i++) {
-              System.out.println("\t\tmapExits["+i+"] = " + mapExits[i]);
+              //System.out.println("\t\tmapExits["+i+"] = " + mapExits[i]);
               dataManager.drawScreenRectangle(mapExits[i].toRectangle(), Color.yellow);
             }
             mapExits = null;
@@ -326,11 +328,7 @@ public class InteriorMapData implements MapData
         if (SHOW_DEBUG)
           System.out.println("We are going to a new map...");
 
-///////////////////////////// ALDISS : avant la methode s'appelait stopMoving
-
         myPlayer.stopMovement();
-///////////////////////////// FIN ALDISS
-
         myRoom.removePlayer( myPlayer );
         myPlayer.setLocation( mapExit.getTargetWotlasLocation() );
         
@@ -389,8 +387,11 @@ public class InteriorMapData implements MapData
    * @param myPlayer the master player
    */
   public Hashtable getPlayers(PlayerImpl myPlayer) {
-    Room myRoom = dataManager.getWorldManager().getRoom( myPlayer.getLocation() );
-    return myRoom.getPlayers();
+    Room myRoom = myPlayer.getMyRoom();
+    if (myRoom != null)    
+      return myRoom.getPlayers();
+    else
+      return null;
   }
   
  /*------------------------------------------------------------------------------------*/

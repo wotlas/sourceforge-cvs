@@ -144,12 +144,12 @@ public class WorldMapData implements MapData
       e.printStackTrace();
       return;
     }
-    if (SHOW_DEBUG) {
+    /*if (SHOW_DEBUG) {
       System.out.println("\tbufIm.width = " + bufIm.getWidth());
       System.out.println("\tbufIm.height = " + bufIm.getHeight());
       System.out.println("\tbackground.width = " + background.getWidth());
       System.out.println("\tbackground.height = " + background.getHeight());
-    }
+    }*/
 
 ///////////////////////////// ALDISS : changement de l'initialisation de Astar
 
@@ -173,12 +173,12 @@ public class WorldMapData implements MapData
     TownMap towns[] = worldMap.getTownMaps();
     if (towns!=null) {
       if (SHOW_DEBUG)
-        System.out.println("\tTowns");
+        System.out.println("\tDrawing Towns");
       ImageIdentifier townImageID = null;   // town image identifier
       Drawable townImage = null;            // town image
       for (int i=0; i<towns.length; i++) {
-        if (SHOW_DEBUG)
-          System.out.println("\t\ttowns["+i+"] = " + towns[i]);
+        /*if (SHOW_DEBUG)
+          System.out.println("\t\ttowns["+i+"] = " + towns[i]);*/
         townImageID = towns[i].getSmallTownImage();
         Rectangle position = towns[i].toRectangle();
         townImage = (Drawable) new MotionlessSprite( position.x,
@@ -222,10 +222,7 @@ public class WorldMapData implements MapData
         System.out.println("Removing player from the map...");
       worldMap.removePlayer(myPlayer);
       
-///////////////////////////// ALDISS : changement de nom de stopMoving
-
       myPlayer.stopMovement();
-///////////////////////////// FIN ALDISS
 
       MapExit mapExit = townMap.findTownMapExit( myPlayer.getCurrentRectangle() );
 
@@ -251,6 +248,8 @@ public class WorldMapData implements MapData
       myPlayer.setPosition( new ScreenPoint(myPlayer.getX(), myPlayer.getY()) );
 
       //initTownMapDisplay(myPlayer.getLocation()); // init new map
+      if (SHOW_DEBUG)
+        System.out.println("Move to a TownMap");
       dataManager.changeMapData();
     }
   }

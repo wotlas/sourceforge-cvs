@@ -84,7 +84,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
 
   /** Current position
    */
-  private Point position;
+  //private Point position;
   
   /** End of the trajectory
    */
@@ -114,6 +114,10 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
    */
   private int y;
 
+  /** Current position
+   */
+  private float positionX, positionY;
+  
   /** our angle (in rads)
    */
   private double angleRad;
@@ -147,8 +151,9 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     animation = new Animation(wotCharacter.getImage(location));
     sprite = (Sprite) wotCharacter.getDrawable(this);        
     endPosition = new Point();
-    trajectory = new List();
-    position = new Point(x, y);
+    trajectory = new List();    
+    positionX = (float)x;
+    positionY = (float)y;
     
   }
 
@@ -346,12 +351,8 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   }
 
   public void setPosition(wotlas.utils.ScreenPoint p) {
-    if (position==null) {
-      position = new Point(p.x, p.y);
-    } else {
-      position.x = p.x;
-      position.y = p.y;
-    }
+    positionX = (float) p.x;
+    positionY = (float) p.y;
   }
   
  /*------------------------------------------------------------------------------------*/
@@ -428,8 +429,8 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   public void tick() {    
     if (turningAlongPath || walkingAlongPath) {
       updatePathMovement();
-      x = position.x;
-      y = position.y; 
+      x = (int) positionX;
+      y = (int) positionY; 
       animation.tick();     
       sprite.tick();      
       return;
@@ -502,7 +503,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
           return;
           
        long now = System.currentTimeMillis();
-       float deltaT = ( now-lastUpdateTime )/1000.0f;
+       double deltaT = ( now-lastUpdateTime )/1000.0f;
        lastUpdateTime = now;
 
       if (turningAlongPath) {
@@ -510,42 +511,34 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
            setAngle( getAngle() + angularDirection*deltaT*angularSpeed );           
 
         // End of turn ?
-        //System.out.println("Enf of turn?");
-        float deltaA = (float)( (nextAngle-getAngle())*deltaT*angularDirection);
-        //System.out.print("nextAngle = ");System.out.println(nextAngle*180/Math.PI);
-        //System.out.print("getAngle() = ");System.out.println(getAngle()*180/Math.PI);
-        //System.out.println("deltaA = " + deltaA);
-
+        double deltaA = (float)( (nextAngle-getAngle())*deltaT*angularDirection);
+        
            if( deltaA<=0 ) {
-                turningAlongPath = false;
-                //setAngle( nextAngle );
-                //System.out.println("deltaA<0");
-                setAngle(angle( new Point( (int)position.x, (int)position.y), nextPoint) );
-                //System.out.println("\tgetAngle() = " + getAngle()*180/Math.PI);
+                turningAlongPath = false;                
+                setAngle(angle( new Point( (int)positionX, (int)positionY), nextPoint) );                
            }
-           else if(deltaA>Math.PI/4) {
-            //System.out.println("no footsteps, the angle is to great, we just turn...");
-                return; // no footsteps, the angle is to great, we just turn...
-           }
-       } else {
+           else if(deltaA>Math.PI/8)
+                return; // no footsteps, the angle is to great, we just turn...          
+       } /*else {
         setAngle( angle( new Point( position.x, position.y ), nextPoint) );
-       }
+       }*/
 
     // 1 - Position Update
-       position.x += (int)( speed*deltaT*Math.cos( getAngle() ) );
-       position.y += (int)( speed*deltaT*Math.sin( getAngle() ) );
+       positionX = (float)(positionX + speed*deltaT*Math.cos( getAngle() ) );
+       positionY = (float)(positionY + speed*deltaT*Math.sin( getAngle() ) );
 
     // 2 - Have we reached the next Path Point ?
-       float deltaD = distance( new Point( (int)position.x, (int)position.y ), prevPoint ) - distance( nextPoint, prevPoint );
+       float deltaD = distance( new Point( (int)positionX, (int)positionY ), prevPoint ) - distance( nextPoint, prevPoint );
 
        if( deltaD >= 0 ) {
            pathIndex++;
         
          // 2.1 - Path Over ?
             if( pathIndex >= path.size() ) {
-                position.x = nextPoint.x;
-                position.y = nextPoint.y;
+                positionX = (float) nextPoint.x;
+                positionY = (float) nextPoint.y;
                 setAngle( nextAngle );
+                animation.reset();
 
                 walkingAlongPath=false;
                 turningAlongPath = false;
@@ -557,13 +550,10 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
             }
          
          // 2.2 - Next Point + position correction
-            prevPoint = new Point( (int)position.x, (int)position.y ); // = nextPoint
-            nextPoint = (Point) path.elementAt( pathIndex );
-            //setAngle( nextAngle );
+            prevPoint = new Point( (int)positionX, (int)positionY ); // = nextPoint
+            nextPoint = (Point) path.elementAt( pathIndex );            
             updateAngularNode();
-
-            //position.x = (int)( prevPoint.x + deltaD*Math.cos( getAngle() ) );
-            //position.y = (int)( prevPoint.y + deltaD*Math.sin( getAngle() ) );
+            
        }
 
     }
@@ -583,10 +573,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
          pathIndex = 1;
          lastUpdateTime = System.currentTimeMillis();
 
-         //prevPoint =  new Point( (int)position.x, (int)position.y );
-         
-         //prevPoint = (Point) path.elementAt(0);
-         prevPoint =  new Point( (int)position.x, (int)position.y );         
+         prevPoint =  new Point( (int)positionX, (int)positionY );         
          nextPoint = (Point) path.elementAt(pathIndex);
 
          walkingAlongPath =true;
@@ -646,18 +633,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
 
         if( getAngle() > nextAngle )
             angularDirection = -1;
-        
-        /*System.out.print("updateAngularNode::angle = ");
-        System.out.println(getAngle()*180/Math.PI);
-        System.out.print("updateAngularNode::nextAngle = ");
-        System.out.println(nextAngle*180/Math.PI);
-        */
-            
-        //test
-        /*
-        if( (nextAngle-getAngle())*angularDirection<=Math.PI/8 && distance(prevPoint,nextPoint)<10 )
-        turningAlongPath = false;
-        */
+
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -27,14 +27,13 @@ import wotlas.common.universe.*;
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
 
-import wotlas.libs.net.NetMessage;
-
 import wotlas.libs.pathfinding.*;
 
 import wotlas.utils.*;
 
 import java.awt.Point;
 import java.awt.Rectangle;
+
 
 /** Class of a Wotlas Player.
  *
@@ -93,6 +92,16 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
 
  /*------------------------------------------------------------------------------------*/
 
+///////////// ALDISS pour se faciliter la vie... la pièce courante
+
+   /** Our current Room ( if we are in a Room, null otherwise )
+    */
+       transient private Room myRoom;
+
+/////////////////
+
+ /*------------------------------------------------------------------------------------*/
+
   /** Locks
    */
   private byte trajectoryLock[] = new byte[0];
@@ -141,7 +150,14 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
    *  @param new player WotlasLocation
    */
   public void setLocation(WotlasLocation myLocation) {
-    location = myLocation;
+      location = myLocation;
+
+     ///////////// ALDISS mise à jour du champ myRoom
+      if( location.isRoom() )
+        myRoom = DataManager.getDefaultDataManager().getWorldManager().getRoom( location );
+      else
+        myRoom = null;
+     /////////////// FIN ALDISS
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -447,14 +463,16 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Use this method to send a NetMessage to the server.
-   *
-   * @param message message to send to the player.   
-   */
-     public void sendMessage( NetMessage message ) {
-        DataManager.getDefaultDataManager().sendMessage( message );             
-     }
+ ///////////////// ALDISS pour récupérer la pièce courante
 
-  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+   /** To get the player's current Room ( if we are in a Room ).
+    */
+      public Room getMyRoom() {
+      	return myRoom;
+      }
+
+ //////////////////////// FIN ALDISS
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

@@ -44,7 +44,7 @@ public class JIntroWizard extends JFrame
   private int rightWidth = 120;
   private int leftWidth = 0;
   private int height = 300;
-  private Dimension rightDimension = new Dimension(rightWidth, height);
+  private Dimension rightDimension = new Dimension(rightWidth, 0);
 
  /*------------------------------------------------------------------------------------*/
 
@@ -132,7 +132,8 @@ public class JIntroWizard extends JFrame
   /** Show the interface
    */
   public void showScreen() {  
-    //pack();
+    validate();
+    pack();    
     show();
   }
 

@@ -271,9 +271,38 @@ public class WorldMap
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Tests if the given player rectanglehas its x,y cordinates in a TownRectangle
+  /** Tests if the given player rectangle has its x,y cordinates in a TownRectangle
+   *
+   *  Here is an example how to use this method (at each game tick) :
+   *  <pre>
+   *
+   *  WorldMap wMap = worldManager.getWorld( player.getWotlasLocation() );
+   *
+   *  TownMap tMap = wMap.isEnteringTown( myPlayer.myDestX, myPlayer.myDestY,
+   *                                      myPlayer.getCurrentRectangle() );
+   *  
+   *  if( tMap != null ) {
+   *   // intersection with a TownMap, which MapExit are we using ?
+   *      MapExit mExit = tMap.findTownMapExit( myPlayer.getCurrentRectangle() );
+   *  
+   *   // ok, we have the TownMap => we know which image to display, buildings, etc...
+   *   //     we have the MapExit => we know where to insert our player on the
+   *   //                            TownMap, it's done the following way :
+   *
+   *      myPlayer.setX( mExit.getX() + mExit.getWidth()/2 );
+   *      myPlayer.setY( mExit.getY() + mExit.getHeight()/2 );
+   *
+   *  </pre>
+   *  Yes, we set our player on the middle of the MapExit. Refer to the TownMap
+   *  findTownMapExit() javadoc for more details on this method.
+   *
+   * @param destX destination x position of the player movement ( endPoint of path )
+   * @param destY destination y position of the player movement ( endPoint of path )
+   * @param rCurrent rectangle containing the player's current position, width & height
+   * @return the TownMap the player is heading to (if he has reached it, or if there
+   *         are any), null if none.
    */
-     public MapExit isEnteringTown( int destX, int destY, Rectangle rCurrent ) {
+     public TownMap isEnteringTown( int destX, int destY, Rectangle rCurrent ) {
         if(townMaps==null)
            return null;
 
@@ -281,7 +310,7 @@ public class WorldMap
              Rectangle townRect = townMaps[i].toRectangle();
 
              if( townRect.contains( destX, destY ) && townRect.intersects( rCurrent ) )
-                 return townMaps[i].findTownMapExit( rCurrent );
+                 return townMaps[i]; // town reached
         }
 
         return null;

@@ -351,9 +351,24 @@ public class TownMap extends ScreenRectangle
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Returns the MapExit that is on the side given by the specified point.
-   * @param a point which is out of the MapExit ScreenRectangle and should represent
-   *        the direction by which the player hits this TownMap zone.
+  /** Returns the MapExit that is on the side given by the specified rectangle.
+   *  It's an helper for you : if your player is on a WorldMap and wants to go inside
+   *  a TownMap use this method to retrieve a valid MapExit and get an insertion point.
+   *
+   *  The MapExit is in fact a ScreenRectangle and the so called "insertion point"
+   *  should be the center of this ScreenRectangle.
+   * 
+   *  Compute it this way :
+   *  <pre>
+   *      MapExit mExit = tMap.findTownMapExit( myPlayer.getCurrentRectangle() );
+   *  
+   *      myPlayer.setX( mExit.getX() + mExit.getWidth()/2 );
+   *      myPlayer.setY( mExit.getY() + mExit.getHeight()/2 );
+   * </pre>
+   *
+   * @param rCurrent rectangle containing the player's current position, width & height
+   *        the rectangle position can be anything BUT it should represent in some
+   *        way the direction by which the player hits this TownMap zone.
    * @return the appropriate MapExit, null if there are no MapExits.
    */
    public MapExit findTownMapExit( Rectangle fromPosition ) {

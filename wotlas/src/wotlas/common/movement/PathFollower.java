@@ -516,8 +516,8 @@ public class PathFollower implements MovementComposer {
                         }
                     }
                 }
-                else if( !msg.isMoving && (int)xPosition==msg.srcPoint.x
-                         && (int)yPosition==msg.srcPoint.y ) {
+                else if( !msg.isMoving && Math.abs(xPosition-msg.srcPoint.x)<=1
+                         && Math.abs(yPosition-msg.srcPoint.y)<=1 ) {
                     // we turn on ourself
                        turningAlongPath = true;
                        useEndingOrientationValue = true;
@@ -533,8 +533,7 @@ public class PathFollower implements MovementComposer {
                        if( orientationAngle > nextAngle )
                            angularDirection = -1;
 
-                       pathIndex=0;
-                       path=new List();
+                       path=null;
                 }
                 else
                     takeUpdate = true;
@@ -609,6 +608,7 @@ public class PathFollower implements MovementComposer {
 
     // 2 - Orientation update
        if (turningAlongPath) {
+
         // Orientation update
            orientationAngle += angularDirection*deltaT*angularSpeed;
 
@@ -616,8 +616,9 @@ public class PathFollower implements MovementComposer {
            double deltaA = (nextAngle-orientationAngle)*angularDirection;
 
            if( deltaA<=0 ) {
-                if(useEndingOrientationValue && pathIndex >= path.size()) {
-                   stopMovement(); // recreated trajectory ending by a rotation...
+                if(useEndingOrientationValue &&
+                   ( path==null || pathIndex >= path.size() ) ) {
+                   resetMovement(); // recreated trajectory ending by a rotation...
                    return;
                 }
 
@@ -626,6 +627,9 @@ public class PathFollower implements MovementComposer {
            }
            else if(deltaA>Math.PI/8)
                 return; // no footsteps, the angle is to great, we just turn...
+
+           if( path==null )
+               return; // no path to follow we just have to turn on ourself
        }
 
     // 3 - Position Update

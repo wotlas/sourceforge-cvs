@@ -117,7 +117,7 @@ public class JAbout extends JDialog implements ActionListener
         " ",
         " ",
         " ",
-        "Thank you for playing to wotlas...",
+        "Thank you for playing wotlas...",
         " ",
         " ",
     };

@@ -23,6 +23,7 @@ import wotlas.client.gui.*;
 import wotlas.client.screen.*;
 
 import wotlas.common.message.account.*;
+import wotlas.common.message.description.*;
 import wotlas.common.ServerConfig;
 import wotlas.common.ServerConfigList;
 import wotlas.common.ServerConfigListTableModel;
@@ -850,8 +851,7 @@ public class ClientManager
               //profileConfigList.addProfile(currentProfileConfig);
               //PersistenceManager.getDefaultPersistenceManager().saveProfilesConfig(profileConfigList);
               
-              
-              //jgconnect.getPersonality().queueMessage(new AccountRecoverMessage( atf_key.getText()) );
+              jgconnect.getPersonality().queueMessage(new AccountRecoverMessage( atf_key.getText()) );
               
               start(100);
             } else {

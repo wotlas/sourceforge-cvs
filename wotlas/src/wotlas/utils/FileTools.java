@@ -20,6 +20,7 @@
 package wotlas.utils;
 
 import java.io.*;
+import java.net.*;
 
 import java.util.Properties;
 
@@ -201,6 +202,31 @@ public class FileTools
       return text;	
    }
 
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To read a distant file represented by an URL.
+   * @param urlName string representing an url
+   * @return the loaded text file or null if an error occured.
+   */
+    public static String getTextFileFromURL( String urlName ) {
+       try{
+           StringBuffer textFile = new StringBuffer("");
+           String line = null;
+           URL url = new URL(urlName);
+           BufferedReader reader = new BufferedReader( new InputStreamReader(url.openStream() ));
+
+           while ((line = reader.readLine()) != null)
+                  textFile = textFile.append(line);
+
+           reader.close();
+           return textFile.toString();
+       }catch( Exception e ) {
+       	   Debug.signal( Debug.ERROR, null, "Failed to open "+urlName+", exception "+e );
+           return null;
+       }
+
+    }
  /*------------------------------------------------------------------------------------*/
 
 }

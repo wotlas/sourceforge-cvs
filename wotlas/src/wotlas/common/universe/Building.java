@@ -34,6 +34,10 @@ import java.awt.Point;
 public class Building extends ScreenRectangle
 {
  /*------------------------------------------------------------------------------------*/
+
+ /** True if we show debug informations
+   */
+  public static boolean SHOW_DEBUG = true;
    
   /** ID of the Building
    */
@@ -284,9 +288,9 @@ public class Building extends ScreenRectangle
                   continue;
                
                for( int j=0; j<rooms.length; j++ )
-                    if( rooms[i]!=null )
+                    if( rooms[j]!=null )
                     {
-                       MapExit exits[] = rooms[i].getMapExits();
+                       MapExit exits[] = rooms[j].getMapExits();
                     
                        if(exits==null)
                           continue;
@@ -369,28 +373,41 @@ public class Building extends ScreenRectangle
       if(buildingExits.length==1)
          return buildingExits[0];
    
+      if (SHOW_DEBUG) {
+        System.out.print("fromAngle = ");
+        System.out.println(fromAngle*180/Math.PI);
+        System.out.print("cosinus = " + Math.cos(fromAngle));
+        System.out.println(" , sinus = " + Math.sin(fromAngle));
+      }
+      
       for(int i=0; i<buildingExits.length; i++ ) {
-        if ( (fromAngle>Math.PI/2) && (fromAngle<-Math.PI/2 ) ) {
+        if ( Math.cos(fromAngle)>0.708 )
           // West
-         if( buildingExits[i].getMapExitSide()==MapExit.WEST )
+          if( buildingExits[i].getMapExitSide()==MapExit.WEST )
              return buildingExits[i];
-        } else {
-          // East
-         if( buildingExits[i].getMapExitSide()==MapExit.EAST )
-             return buildingExits[i];
-        }
         
-        if (fromAngle<0) {
+        if ( Math.cos(fromAngle)<-0.708 )        
+          // East
+          if( buildingExits[i].getMapExitSide()==MapExit.EAST )
+             return buildingExits[i];
+        
+        
+        if (Math.sin(fromAngle)>0.7)
           // North
-         if( buildingExits[i].getMapExitSide()==MapExit.NORTH )
+          if( buildingExits[i].getMapExitSide()==MapExit.NORTH )
              return buildingExits[i];
-        } else {
+        
+        if (Math.sin(fromAngle)<0.7)
           // South
-         if( buildingExits[i].getMapExitSide()==MapExit.SOUTH )
+          if( buildingExits[i].getMapExitSide()==MapExit.SOUTH )
              return buildingExits[i];
-        }
+        
       }
    
+      if (SHOW_DEBUG) {
+        System.out.print("default ");
+        System.out.println(Math.cos(fromAngle)+0.7);
+      }
       return buildingExits[0]; // default
    }
 

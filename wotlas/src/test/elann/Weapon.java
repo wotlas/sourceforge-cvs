@@ -95,23 +95,40 @@ public abstract class Weapon extends BaseObject
     public abstract short alternativeAttack(Character target);
 
 	
- /* ---------------------- Getters ----------------- */	
+ /* ----------------- Getters/Setters ----------------- */	
 
   /** Returns the state of the weapon - string version
     * @return a state string
     */
 	public String getState() { return stateList[this.state]; } // should check for size violation
 
+  /** Sets the state of the weapon - int version
+    * @param state the state value
+    */
+	public void setState(short state) { this.state=state; }
+	
+	
   /** Returns the minimum damage inflicted by the weapon
     * @return damageMin
     */
 	public short getDamageMin() { return this.damageMin; }
 
+  /** Sets the minimum damage inflicted by the weapon
+    * @param damageMin the new damage min
+    */
+	public void setDamageMin(short damageMin) { this.damageMin=damageMin; }
+
+	
   /** Returns the maximum damage inflicted by the weapon
     * @return damageMax
     */
 	public short getDamageMax() { return this.damageMax; }
 
+  /** Sets the maximum damage inflicted by the weapon
+    * @param damageMax the new damage max
+    */
+	public void setDamageMax(short damageMax) { this.damageMax=damageMax; }
+	
 	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

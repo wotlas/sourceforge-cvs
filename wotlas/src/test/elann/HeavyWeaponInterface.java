@@ -35,11 +35,11 @@ public interface HeavyWeaponInterface
 
   /** Sheathes the weapon. The weapon can no longer be used without being unsheathed first but it'll escape casual look. 
    */
-    public void Sheathe();
+    public void sheathe();
 
   /** Unsheathes the weapon. The weapon is ready to strike. It is plainly visible.
    */
-    public void Unsheathe();
+    public void unsheathe();
 
 	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

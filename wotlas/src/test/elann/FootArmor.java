@@ -20,45 +20,22 @@
 package wotlas.common.object;
 
 /** 
- * The base interface for all repairable objects.
+ * The foot armor class.
  * 
  * @author Elann
  * @see wotlas.common.object.BaseObject
+ * @see wotlas.common.object.ArmorInterface
  */
 
-public interface RepairInterface
+public class FootArmor extends Armor implements ArmorInterface
 {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Get the object's state
-   * @return state
-   */ 				
-   	public short getState();
-	
-  /** Sets the object's state
-   * @param state the new state
-   */ 				
-   	public void setState(short state);
-
-  /** Get the knowledge needed to repair.
-   * @return knowledge needed
-   */ 																		
-    public KnowledgeList getKnowledge();
-	
-  /** Get the materials needed to repair.
-   * @return material list
-   */
-    public MaterialList getMaterial();
  
-  /** Repair the object.
-   * @param repairer the Character that repairs the object. May be the owner or not.
-   */
-    public void repair(Character repairer);
-	
-	 
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ /*------------------------------------------------------------------------------------*/
 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ 
 }
 

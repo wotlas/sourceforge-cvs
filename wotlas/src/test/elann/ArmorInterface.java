@@ -31,10 +31,16 @@ public interface ArmorInterface
 
  /*------------------------------------------------------------------------------------*/
 
+ 
   /** Get the armor's defense points
    * @return defense
    */ 				
    	public short getDefense(); 																		
+
+  /** Sets the defense of the armor.
+    * @param defense the new defense
+    */
+	public void setDefense(short defense);
  
   /** Puts on the armor.
    */

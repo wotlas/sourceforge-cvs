@@ -20,43 +20,32 @@
 package wotlas.common.object;
 
 /** 
- * The base interface for all repairable objects.
+ * The light weapon class. All the weapons within this class can be hidden in clothes.
  * 
  * @author Elann
- * @see wotlas.common.object.BaseObject
+ * @see wotlas.common.object.Weapon
+ * @see wotlas.common.object.RepairInterface
  */
 
-public interface RepairInterface
+public class LightWeapon extends Weapon implements RepairInterface
 {
+
+ /** The weapon's position
+  */
+  private boolean equipped;
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Get the object's state
-   * @return state
-   */ 				
-   	public short getState();
-	
-  /** Sets the object's state
-   * @param state the new state
-   */ 				
-   	public void setState(short state);
 
-  /** Get the knowledge needed to repair.
-   * @return knowledge needed
-   */ 																		
-    public KnowledgeList getKnowledge();
-	
-  /** Get the materials needed to repair.
-   * @return material list
+  /** Equips the weapon. The weapon is ready to use but plainly visible.
+   * @param hand the hand in which it will be put 
    */
-    public MaterialList getMaterial();
- 
-  /** Repair the object.
-   * @param repairer the Character that repairs the object. May be the owner or not.
-   */
-    public void repair(Character repairer);
+    public void equip(String hand);
 	
-	 
+  /** Hide the weapon. The weapon cannot be used but is not visible even to curious look.
+   * @param position the place to hide the weapon - can be R/L sleeve, belt, R/L boot
+   */
+    public void hide(String position);
 	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

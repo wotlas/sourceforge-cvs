@@ -20,43 +20,26 @@
 package wotlas.common.object;
 
 /** 
- * The base interface for all repairable objects.
+ * The distant weapon class. All the weapons within this class can shoot at a distance.
  * 
  * @author Elann
  * @see wotlas.common.object.BaseObject
+ * @see wotlas.common.object.DistantWeaponInterface
  */
 
-public interface RepairInterface
+public class DistantWeapon extends BaseObject implements DistantWeaponInterface
 {
+
+ /** The weapon status.
+  */
+  private boolean armed,aimed;
+  
+ /** The weapon's ammo. The damage inflicted depends of this.
+  */
+  private Ammo ammo; 
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Get the object's state
-   * @return state
-   */ 				
-   	public short getState();
-	
-  /** Sets the object's state
-   * @param state the new state
-   */ 				
-   	public void setState(short state);
-
-  /** Get the knowledge needed to repair.
-   * @return knowledge needed
-   */ 																		
-    public KnowledgeList getKnowledge();
-	
-  /** Get the materials needed to repair.
-   * @return material list
-   */
-    public MaterialList getMaterial();
- 
-  /** Repair the object.
-   * @param repairer the Character that repairs the object. May be the owner or not.
-   */
-    public void repair(Character repairer);
-	
-	 
 	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

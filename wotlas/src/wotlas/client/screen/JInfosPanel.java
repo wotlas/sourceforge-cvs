@@ -59,6 +59,7 @@ public class JInfosPanel extends JPanel
     lbl_location = new ALabel();   
     panel.add(lbl_fullPlayerName);
     panel.add(lbl_playerName);
+    panel.add(lbl_location);
     add(panel);
   }
 
@@ -79,7 +80,7 @@ public class JInfosPanel extends JPanel
   /** Set player's location
    */
   public void setLocation(String location) {
-    lbl_location.setText(location);
+    lbl_location.setText(" - " + location);
   }
  
  /*------------------------------------------------------------------------------------*/

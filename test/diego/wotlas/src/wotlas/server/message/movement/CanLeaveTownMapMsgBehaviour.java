@@ -151,6 +151,7 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
                    int targetServerID = building.getServerID();
 
                    if( targetServerID!=ServerDirector.getServerID() ) {
+                       
                      // ok ! we must transfer this account to another server !!   
                        GatewayServer gateway = ServerDirector.getServerManager().getGatewayServer();
 

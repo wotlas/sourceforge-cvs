@@ -24,6 +24,7 @@ import wotlas.common.universe.*;
 import wotlas.common.objects.inventories.Inventory;
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.persistence.*;
+import wotlas.utils.*;
 
 import java.io.*;
 import java.awt.Color;
@@ -36,36 +37,6 @@ import java.awt.Color;
  */
 
 public abstract class RLikeCharacter extends BasicChar {
-/*
-    public void init(){
-        maskCharAttributes = new int[ATTR_LAST_ATTR];
-        charAttributes = new short[ATTR_LAST_ATTR][2];
-        levels = new byte[1];
-        classes = new classes[1];
-        gold = new long[2];
-        exp = new long[2];
-        maskCharSkills = new int[SKILL_LAST_SKILL];
-        charSkills = new byte[SKILL_LAST_SKILL];
-        maskCharKnownledge = new int[KNOW_LAST_KNOWN];
-        charKnownledge = new boolean[KNOW_LAST_KNOWN];
-        maskCharFlags = new int[FLAG_LAST_FLAG];
-        charFlags = new boolean[FLAG_LAST_FLAG];
-    }
-*/
-     /**
-      * return data to show in plugin panel attributesPlugin
-      * it's the same for all wotlas classes, 
-      * change for Rogue Like classes, and 
-      * any other diffent environment class.
-      */
-     public String getAttributesText() {
-          return " Str : "+this.charAttributes[this.ATTR_STR]+"\n"
-          +" Int : "+this.charAttributes[this.ATTR_INT]+"\n"
-          +" Wis : "+this.charAttributes[this.ATTR_WIS]+"\n"
-          +" Con : "+this.charAttributes[this.ATTR_CON]+"\n"
-          +" Dex : "+this.charAttributes[this.ATTR_DEX]+"\n"
-          +" Cha : "+this.charAttributes[this.ATTR_CHA]+"\n" ;
-     }
      
      /** return enviroment type : Actually are RogueLike or Wheel of Time
       *
@@ -73,4 +44,25 @@ public abstract class RLikeCharacter extends BasicChar {
      public byte getEnvironment() {
          return ENVIRONMENT_ROGUE_LIKE;
      }
+     
+          /**
+      * return data to show in plugin panel attributesPlugin
+      * it's the same for all wotlas classes, 
+      * change for Rogue Like classes, and 
+      * any other diffent environment class.
+      */
+    public int[] showMaskCharAttributes(){ 
+        int[] tmp = new int[ATTR_LAST_ATTR];
+        tmp = MaskTools.set( tmp, ATTR_STR );
+        tmp = MaskTools.set( tmp, ATTR_INT );
+        tmp = MaskTools.set( tmp, ATTR_WIS );
+        tmp = MaskTools.set( tmp, ATTR_CON );
+        tmp = MaskTools.set( tmp, ATTR_DEX );
+        tmp = MaskTools.set( tmp, ATTR_CHA );
+        tmp = MaskTools.set( tmp, ATTR_HUNGER );
+        tmp = MaskTools.set( tmp, ATTR_THIRSTY );
+        tmp = MaskTools.set( tmp, ATTR_MANA );
+        tmp = MaskTools.set( tmp, ATTR_HP );
+        return tmp;
+    }
 }

@@ -57,14 +57,14 @@ public abstract class CharData implements BackupReady {
     final static public int IDX_ACTUAL  = 1;
 
     /* list of all the classes */
-    final static public int CLASSES_WOT_AES_SEDAI   = 1;
-    final static public int CLASSES_WOT_WARDER      = 2;
-    final static public int CLASSES_WOT_CHILDREN_OF_THE_LIGHT = 3;
-    final static public int CLASSES_WOT_ASHAMAN     = 4;
-    final static public int CLASSES_WOT_DARK_ONE    = 5;
-    final static public int CLASSES_WOT_WOLF_BROTHER= 6;
-    final static public int CLASSES_WOT_AIEL_WARRIOR= 7;
-    final static public int CLASSES_RL_WARRIOR      = 8;
+    final static public short CLASSES_WOT_AES_SEDAI   = 1;
+    final static public short CLASSES_WOT_WARDER      = 2;
+    final static public short CLASSES_WOT_CHILDREN_OF_THE_LIGHT = 3;
+    final static public short CLASSES_WOT_ASHAMAN     = 4;
+    final static public short CLASSES_WOT_DARK_ONE    = 5;
+    final static public short CLASSES_WOT_WOLF_BROTHER= 6;
+    final static public short CLASSES_WOT_AIEL_WARRIOR= 7;
+    final static public short CLASSES_RL_WARRIOR      = 8;
     
     final static public String[] CLASSES_NAMES = {
         "NULL","Wot:Aes Sedai","Wot:Warder","Wot:Children of the Light","Wot:Ashaman"
@@ -74,6 +74,8 @@ public abstract class CharData implements BackupReady {
     final static public int FLAG_INVISIBLE = 0;
     final static public int FLAG_PARALIZED = 1;
     final static public int FLAG_LAST_FLAG = 2;
+    
+    final static public String[] FLAG_NAMES = {"Invisible","Paralized"};
 
     /* spells and items, will point to this constant to maniupulate data known*/
     final static public int KNOW_READ       = 0;
@@ -94,8 +96,8 @@ public abstract class CharData implements BackupReady {
     final static public int ATTR_HP    = 4;
     final static public int ATTR_STR   = 5;
     final static public int ATTR_INT   = 6;
-    final static public int ATTR_CON   = 7;
-    final static public int ATTR_WIS   = 8;
+    final static public int ATTR_WIS   = 7;
+    final static public int ATTR_CON   = 8;
     final static public int ATTR_DEX   = 9;
     final static public int ATTR_CHA   = 10;
     final static public int ATTR_MANA  = 11;
@@ -113,8 +115,15 @@ public abstract class CharData implements BackupReady {
     final static public int ATTR_SAVINGMIND   = 23;
     final static public int ATTR_SAVINGREFLEX = 24;
     final static public int ATTR_SAVINGCONST  = 25;
-    final static public int ATTR_LAST_ATTR = 26;
+    final static public int ATTR_HUNGER       = 26;
+    final static public int ATTR_THIRSTY      = 27;
+    final static public int ATTR_LAST_ATTR    = 28;
 
+    final static public String[] ATTR_NAMES = { "Exp","Gold","Classes","Levels"
+    ,"Hp","Str","Int","Wis","Con","Dex","Cha","Mana","x","x","x","Mov"
+    ,"Age","Weight","Height","Ac","Thac0","Hit","Dam","Sav. Mind","Sav. Reflex"
+    ,"Sav. Const","Hunger","Thirsty"};
+    
     public int[] maskCharAttributes;
     /**
     *   list of attribues of a playe/mob with [2] data
@@ -143,10 +152,12 @@ public abstract class CharData implements BackupReady {
 
     public int[] maskCharFlags;
     /**
-    *    it's a list of status flags, lile <invisible?>:
-    *    if true, the char is invisible
+    *    it's a list of status flags, like <invisible?>:
+    *    if the bit is ste, the char is invisible
+    *    managed like a maskXXXX
     */
-    public boolean[] charFlags;
+    public int[] charFlags;
+    //public boolean[] charFlags;
 
     protected void InitCharData(){
         maskCharAttributes = new int[2];
@@ -160,7 +171,10 @@ public abstract class CharData implements BackupReady {
         maskCharKnownledge = new int[2];
         charKnownledge = new boolean[KNOW_LAST_KNOWN];
         maskCharFlags = new int[2];
-        charFlags = new boolean[FLAG_LAST_FLAG];
+        charFlags = new int[2];
+//        charFlags = new boolean[FLAG_LAST_FLAG];
+//        for(int i=0; i<charFlags.length; i++)
+//            charFlags[i] = false;
     }
     
     /**
@@ -222,7 +236,8 @@ public abstract class CharData implements BackupReady {
             maskCharKnownledge = ( int[] ) objectInput.readObject();
             charKnownledge = ( boolean[] ) objectInput.readObject();
             maskCharFlags = ( int[] ) objectInput.readObject();
-            charFlags = ( boolean[] ) objectInput.readObject();
+            // charFlags = ( boolean[] ) objectInput.readObject();
+            charFlags = ( int[] ) objectInput.readObject();
         } else {
             // to do.... when new version
         }
@@ -270,7 +285,8 @@ public abstract class CharData implements BackupReady {
             maskCharKnownledge = ( int[] ) objectInput.readObject();
             charKnownledge = ( boolean[] ) objectInput.readObject();
             maskCharFlags = ( int[] ) objectInput.readObject();
-            charFlags = ( boolean[] ) objectInput.readObject();
+            // charFlags = ( boolean[] ) objectInput.readObject();
+            charFlags = ( int[] ) objectInput.readObject();
         } else {
             // to do.... when new version
         }

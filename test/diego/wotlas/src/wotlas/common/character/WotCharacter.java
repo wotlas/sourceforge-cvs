@@ -23,6 +23,8 @@ import wotlas.common.*;
 import wotlas.common.universe.*;
 import wotlas.common.objects.inventories.Inventory;
 import wotlas.libs.graphics2D.*;
+import wotlas.utils.*;
+import wotlas.utils.*;
 
 import java.io.*;
 import java.awt.Color;
@@ -38,12 +40,7 @@ import java.awt.Color;
 
 public abstract class WotCharacter extends BasicChar {
 
-     /**
-      * return data to show in plugin panel attributesPlugin
-      * it's the same for all wotlas classes, 
-      * change for Rogue Like classes, and 
-      * any other diffent environment class.
-      */
+/*
     public String getAttributesText() {
         return " Str : "+this.charAttributes[this.ATTR_STR][this.IDX_ACTUAL]+"\n"
         +" Int : "+this.charAttributes[this.ATTR_INT][this.IDX_ACTUAL]+"\n"
@@ -52,7 +49,7 @@ public abstract class WotCharacter extends BasicChar {
         +" Dex : "+this.charAttributes[this.ATTR_DEX][this.IDX_ACTUAL]+"\n"
         +" Cha : "+this.charAttributes[this.ATTR_CHA][this.IDX_ACTUAL]+"\n" ;
     }
-
+*
     /** return enviroment type : Actually are RogueLike or Wheel of Time
      *
      */
@@ -67,5 +64,32 @@ public abstract class WotCharacter extends BasicChar {
         gold[IDX_ACTUAL] = 100;
         exp[IDX_MAX] = 1;
         exp[IDX_ACTUAL] = 1;
+        this.charAttributes[ATTR_HUNGER][CharData.IDX_MAX] = 100;
+        this.charAttributes[ATTR_HUNGER][CharData.IDX_ACTUAL] = 100;
+        this.charAttributes[ATTR_THIRSTY][CharData.IDX_MAX] = 100;
+        this.charAttributes[ATTR_THIRSTY][CharData.IDX_ACTUAL] = 100;
+        this.charAttributes[ATTR_HP][CharData.IDX_MAX] = 10;
+        this.charAttributes[ATTR_HP][CharData.IDX_ACTUAL] = 10;
+    }
+
+     /**
+      * return data to show in plugin panel attributesPlugin
+      * it's the same for all wotlas classes, 
+      * change for Rogue Like classes, and 
+      * any other diffent environment class.
+      */
+    public int[] showMaskCharAttributes(){ 
+        int[] tmp = new int[ATTR_LAST_ATTR];
+        tmp = MaskTools.set( tmp, ATTR_STR );
+        tmp = MaskTools.set( tmp, ATTR_INT );
+        tmp = MaskTools.set( tmp, ATTR_WIS );
+        tmp = MaskTools.set( tmp, ATTR_CON );
+        tmp = MaskTools.set( tmp, ATTR_DEX );
+        tmp = MaskTools.set( tmp, ATTR_CHA );
+        tmp = MaskTools.set( tmp, ATTR_HUNGER );
+        tmp = MaskTools.set( tmp, ATTR_THIRSTY );
+        tmp = MaskTools.set( tmp, ATTR_MANA );
+        tmp = MaskTools.set( tmp, ATTR_HP );
+        return tmp;
     }
 }

@@ -127,18 +127,88 @@ public class InfoPlugIn extends JPanelPlugIn {
     protected void setLabelText(String text) {
        infoPlayerLabel.setText(text);
     }
-
+    
  /*------------------------------------------------------------------------------------*/
-
+    
   /** To set the player info given a player.
    */
     public void setPlayerInfo( Player player ) {
         if( player.getBasicChar().getEnvironment() == BasicChar.ENVIRONMENT_WOT )
-            ;
-        else
             setWotPlayerInfo( player );
+        else
+            setRLikePlayerInfo( player );
     }
 
+ /*------------------------------------------------------------------------------------*/
+    
+  /** To set the RogueLike player info given a player.
+   */
+    public void setRLikePlayerInfo( Player player ) {
+      if( player==ClientDirector.getDataManager().getMyPlayer() ) {
+
+       // Is there a valid past ?
+          String past = player.getPlayerPast();
+
+          if(past.length()==0 && !savePastButtonDisplayed) {
+            // No past set we display the save button
+                playerTextArea.setEditable(true);
+                this.setLabelText("Your player's past:");
+                this.setText("...");
+                savePastButtonDisplayed = true;
+
+                ImageIcon im_saveup  = ClientDirector.getResourceManager().getImageIcon("save-up.gif");
+                ImageIcon im_savedo  = ClientDirector.getResourceManager().getImageIcon("save-do.gif");
+  
+                savePastButton = new AButton(im_saveup);
+                savePastButton.setRolloverIcon(im_savedo);
+                savePastButton.setPressedIcon(im_savedo);
+                savePastButton.setBorderPainted(false);
+                savePastButton.setContentAreaFilled(false);
+                savePastButton.setFocusPainted(false);
+                savePastButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+                savePastButton.addActionListener(new ActionListener() {
+                    public void actionPerformed (ActionEvent e) {                    	
+                        savePastButton.setEnabled(false);
+                        PlayerImpl p = ClientDirector.getDataManager().getMyPlayer();
+                    	p.setPlayerPast( playerTextArea.getText() );
+                        p.sendMessage( new PlayerPastMessage( p.getPrimaryKey(), p.getPlayerPast() ) );
+                        InfoPlugIn.this.reset();
+                        setPlayerInfo( p );
+                    }
+                });
+
+                whitePanel = new JPanel();
+                whitePanel.setBackground( Color.white );
+                whitePanel.add(savePastButton);
+                add(whitePanel,BorderLayout.SOUTH);
+                revalidate();
+             
+             return;
+          }
+          else if(past.length()==0)
+             return;
+      }
+      else if(savePastButtonDisplayed)
+         reset();
+
+      setLabelText( player.getFullPlayerName(null) );
+
+      if( player!=ClientDirector.getDataManager().getMyPlayer() )
+         setText(   
+            "Class: "+player.getBasicChar().getCommunityName()+"\n"+
+            "Player Past: "+player.getPlayerPast() );
+      else
+         setText(
+            "Nickname: "+player.getPlayerName()+"\n"+
+            "Class: "+player.getBasicChar().getCommunityName()+"\n"+
+            "Player Past: "+player.getPlayerPast() );
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To set the Wot player info given a player.
+   */
     public void setWotPlayerInfo( Player player ) {
       if( player==ClientDirector.getDataManager().getMyPlayer() ) {
 

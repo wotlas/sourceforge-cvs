@@ -602,11 +602,12 @@ public class WorldManager {
              String areaMapList[] = rManager.listUniverseDirectories( worldList[w], AREA_EXT);
              for( int index=0; index<areaMapList.length; index++ ) {
                   String insideAreaTileMapList[] = rManager.listUniverseFiles( areaMapList[index], TILEMAP_EXT );
+                  /*
                   if( pleaseLoadTreeForEditor ) {
                       area = new DefaultMutableTreeNode( areaMapList[index] );
-                      // area = new DefaultMutableTreeNode( areaMapList[index].substring( 0, areaMapList[index].indexOf("." ) ) );
                       EditorPlugIn.treeOfTileMapNode.add(area);
                   }
+                   */
                   for( int index2=0; index2<insideAreaTileMapList.length; index2++ ) {
                       TileMap tileMap = (TileMap) rManager.RestoreObject( insideAreaTileMapList[index2] );
                       if( tileMap==null ) {
@@ -615,6 +616,10 @@ public class WorldManager {
                       }
                       world.addTileMap( tileMap );
                       tileMapCount++;
+                      if( pleaseLoadTreeForEditor && index2==0 ) {
+                          area = new DefaultMutableTreeNode( tileMap.getAreaName() );
+                          EditorPlugIn.treeOfTileMapNode.add(area);
+                      }
                       if( pleaseLoadTreeForEditor ) {
                           map = EditorPlugIn.createNode( tileMap );
                           area.add( map );

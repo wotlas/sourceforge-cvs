@@ -129,6 +129,9 @@ public class AesSedai extends Female {
         this.charAttributes[this.ATTR_DEX][this.IDX_MAX]    = 10;
         this.charAttributes[this.ATTR_CHA][this.IDX_ACTUAL] = 10;
         this.charAttributes[this.ATTR_CHA][this.IDX_MAX]    = 10;
+        
+        this.charAttributes[ATTR_MANA][IDX_MAX] = 100;
+        this.charAttributes[ATTR_MANA][IDX_ACTUAL] = 100;
     }
 
  /*------------------------------------------------------------------------------------*/

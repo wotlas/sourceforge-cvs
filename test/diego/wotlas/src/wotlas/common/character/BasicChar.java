@@ -130,10 +130,10 @@ public abstract class BasicChar extends CharData {
       * change for Rogue Like classes, and 
       * any other diffent environment class.
       */
-     public abstract String getAttributesText();
+    abstract public int[] showMaskCharAttributes();
 
      /** return enviroment type : Actually are RogueLike or Wheel of Time
       *
       */
-     public abstract byte getEnvironment();
+    abstract public byte getEnvironment();
 }

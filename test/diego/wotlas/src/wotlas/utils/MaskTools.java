@@ -25,10 +25,41 @@ package wotlas.utils;
  */
 
 public class MaskTools {
-    
+
+    /* Main Class. only to check the functions.
+    public static void main(String argv[]) {
+       int[] test1,test2;
+       test1 = new int[1];
+       test2 = new int[5];
+       System.out.println( "check on the 1 "+isSet(test1,3) );
+       test1 = set(test1,3);
+       System.out.println( "check on the 1 "+isSet(test1,3) );
+
+       test2 = set(test2,3);
+       test2 = set(test2,5);
+       test2 = set(test2,12);
+       test2 = set(test2,40);
+       test2 = set(test2,100);
+       test2 = set(test2,500);
+       System.out.println( "check on the 2 "+isSet(test2,3) );
+       System.out.println( "check on the 2 "+isSet(test2,5) );
+       System.out.println( "check on the 2 "+isSet(test2,12) );
+       System.out.println( "check on the 2 "+isSet(test2,40) );
+       System.out.println( "check on the 2 "+isSet(test2,100) );
+       System.out.println( "check on the 2 "+isSet(test2,500) );
+       
+       System.out.println( "check on the 2 ! "+isSet(test2,0) );
+       System.out.println( "check on the 2 ! "+isSet(test2,1) );
+       System.out.println( "check on the 2 ! "+isSet(test2,41) );
+
+       test2 = reset(test2,100);
+       System.out.println( "check on the 2 ! "+isSet(test2,100) );
+    }
+    */
+
     static public int[] set(int[] mask, int index){
-        if( (mask.length * 4) >= index){
-            System.out.println("Error making mask, index too high.");
+        if( (mask.length * 32) <= index){
+            System.out.println("set:Error making mask, index too high ["+index+"].");
             return mask;
         }
         int bitIndex = index;
@@ -44,8 +75,8 @@ public class MaskTools {
     }
 
     static public int[] reset(int[] mask, int index){
-        if( (mask.length * 4) >= index){
-            System.out.println("Error making mask, index too high.");
+        if( (mask.length * 32) <= index){
+            System.out.println("reset:Error making mask, index too high ["+index+"].");
             return mask;
         }
         int bitIndex = index;
@@ -58,6 +89,25 @@ public class MaskTools {
         }
         mask[arrayIndex] = mask[arrayIndex] & (~( 1 << bitIndex ));
         return mask;
+    }
+
+    static public boolean isSet(int[] mask, int index){
+        if( (mask.length * 32) <= index){
+            System.out.println("isSet:Error making mask, index too high ["+index+"].");
+            return false;
+        }
+        int bitIndex = index;
+        int arrayIndex = 0;
+        while(true){
+            if( ( bitIndex-32 ) < 0 )
+                break;
+            bitIndex -= 32;
+            arrayIndex++;
+        }
+        if( (mask[arrayIndex] & ( 1 << bitIndex )) != 0 )
+            return true;
+        else
+            return false;
     }
 }
 

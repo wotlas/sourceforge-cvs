@@ -320,7 +320,7 @@ public class TownMapData implements MapData {
           System.out.println("\t\tmapExit.getTargetWotlasLocation() = " + mapExit.getTargetWotlasLocation());
           System.out.println("\t\tmapExit.getMapExitLocation() = " + mapExit.getMapExitLocation());
         }
-
+      
       if (isNotMovingToAnotherMap) {
         isNotMovingToAnotherMap = false;
 
@@ -337,6 +337,3 @@ public class TownMapData implements MapData {
  /*------------------------------------------------------------------------------------*/
 
 }
-
-
-  

@@ -66,7 +66,7 @@ public class YouCanLeaveMapMessage extends LocationChangeMessage
    */
      public void encode( DataOutputStream ostream ) throws IOException {
             super.encode( ostream );
-System.out.println("ENCODING YOU CAN LEAVE...");
+//System.out.println("ENCODING YOU CAN LEAVE...");
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -79,7 +79,7 @@ System.out.println("ENCODING YOU CAN LEAVE...");
    */
      public void decode( DataInputStream istream ) throws IOException {
             super.decode( istream );
-System.out.println("DECODING YOU CAN LEAVE...");
+//System.out.println("DECODING YOU CAN LEAVE...");
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

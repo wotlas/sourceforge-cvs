@@ -37,7 +37,7 @@ public class Building extends ScreenRectangle
 
  /** True if we show debug informations
    */
-  public static boolean SHOW_DEBUG = true;
+  public static boolean SHOW_DEBUG = false;
    
   /** ID of the Building
    */

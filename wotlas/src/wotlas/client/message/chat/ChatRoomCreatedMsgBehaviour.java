@@ -58,12 +58,18 @@ public class ChatRoomCreatedMsgBehaviour extends ChatRoomCreatedMessage implemen
     PlayerImpl player = dataManager.getMyPlayer();
     
     System.out.println("ChatRoomCreatedMsgBehaviour");
+    
     ChatRoom chatRoom = new ChatRoom();
     chatRoom.setPrimaryKey(primaryKey);
     chatRoom.setName(name);
     chatRoom.setCreatorPrimaryKey(creatorPrimaryKey);
+    chatRoom.addPlayer(creatorPrimaryKey);
+    
     player.getChatList().addChatRoom(chatRoom);
-    dataManager.getChatPanel().addChatRoom(chatRoom);
+    dataManager.getChatPanel().addJChatRoom(chatRoom);
+    
+    String[] chatPlayers = {"tic","tac","toc"};
+    player.getChatList().getCurrentJChatRoom().setPlayers(chatPlayers);
 
     }
 

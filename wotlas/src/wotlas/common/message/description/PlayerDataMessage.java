@@ -92,6 +92,9 @@ public class PlayerDataMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void encode( DataOutputStream ostream ) throws IOException {
+
+         ostream.writeBoolean( publicInfoOnly );
+
       // Wotlas Location
          ostream.writeInt( player.getLocation().getWorldMapID() );
          ostream.writeInt( player.getLocation().getTownMapID() );
@@ -104,6 +107,10 @@ public class PlayerDataMessage extends NetMessage
          writeString( player.getFullPlayerName(), ostream );
          writeString( player.getPrimaryKey(), ostream );
 
+         if(!publicInfoOnly)
+            writeString( player.getPlayerPast(), ostream );
+
+      // Movement Composer
          writeString( player.getMovementComposer().getClass().getName(), ostream );
 
          MovementUpdateMessage updateMsg = player.getMovementComposer().getUpdate();
@@ -113,7 +120,6 @@ public class PlayerDataMessage extends NetMessage
 
       // Wotlas Character Data
          writeString( player.getWotCharacter().getClass().getName(), ostream );
-         ostream.writeBoolean( publicInfoOnly );
          player.getWotCharacter().encode( ostream, publicInfoOnly ); // call to encode character's data
      }
 
@@ -126,6 +132,8 @@ public class PlayerDataMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void decode( DataInputStream istream ) throws IOException {
+
+         publicInfoOnly = istream.readBoolean();
 
       // Player Client Instance creation ( no direct call to "server"
       // or "client" packages are issued from the "common" package )
@@ -147,6 +155,9 @@ public class PlayerDataMessage extends NetMessage
          player.setFullPlayerName( readString( istream ) );
          player.setPrimaryKey( readString( istream ) );
 
+         if(!publicInfoOnly)
+             player.setPlayerPast(  readString( istream ) );
+
       // Movement Composer
          MovementComposer mvComposer = (MovementComposer) Tools.getInstance( readString( istream ) );
          MovementUpdateMessage uMsg = (MovementUpdateMessage) Tools.getInstance( readString( istream ) );
@@ -154,7 +165,6 @@ public class PlayerDataMessage extends NetMessage
 
       // Wotlas Character
          WotCharacter wotChar = (WotCharacter) Tools.getInstance( readString( istream ) );
-         publicInfoOnly = istream.readBoolean();
          
          wotChar.decode( istream, publicInfoOnly );
          player.setWotCharacter( wotChar );

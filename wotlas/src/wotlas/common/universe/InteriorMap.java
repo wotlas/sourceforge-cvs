@@ -129,7 +129,7 @@ public class InteriorMap
    * @param id roomID
    * @return corresponding room, null if ID does not exist.
    */
-    public Room getRoomByID( int id ) {
+    public Room getRoomFromID( int id ) {
    	if(id>=rooms.length || id<0) {
            Debug.signal( Debug.ERROR, this, "getRoomByID : Bad room ID "+id );
    	   return null;

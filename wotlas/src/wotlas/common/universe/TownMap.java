@@ -185,9 +185,9 @@ public class TownMap
    * @param id buildingID
    * @return corresponding building, null if ID does not exist.
    */
-    public Building getBuildingByID( int id ) {
+    public Building getBuildingFromID( int id ) {
    	if(id>=buildings.length || id<0) {
-           Debug.signal( Debug.ERROR, this, "getBuildingByID : Bad building ID "+id );
+           Debug.signal( Debug.ERROR, this, "getBuildingFromID : Bad building ID "+id );
    	   return null;
    	}
    	

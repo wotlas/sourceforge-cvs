@@ -184,9 +184,9 @@ public class WorldMap
    * @param id townMapID
    * @return corresponding townMap, null if ID does not exist.
    */
-    public TownMap getTownMapByID( int id ) {
+    public TownMap getTownMapFromID( int id ) {
    	if(id>=townMaps.length || id<0) {
-           Debug.signal( Debug.ERROR, this, "getTownMapByID : Bad town ID "+id );
+           Debug.signal( Debug.ERROR, this, "getTownMapFromID : Bad town ID "+id );
    	   return null;
    	}
    	

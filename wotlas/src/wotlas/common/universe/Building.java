@@ -207,7 +207,7 @@ public class Building
    * @param id interiorMapID
    * @return corresponding interiorMap, null if ID does not exist.
    */
-    public InteriorMap getInteriorMapByID( int id ) {
+    public InteriorMap getInteriorMapFromID( int id ) {
    	if(id>=interiorMaps.length || id<0) {
            Debug.signal( Debug.ERROR, this, "getInteriorMapByID : Bad interiorMap ID "+id+". "+this );
    	   return null;

@@ -1,0 +1,946 @@
+<html>
+<head>
+<title>Wotlas Devel </title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000">
+<p><img src="../images/motif-vigne.gif" width="620" height="40"></p>
+<p><font size="4"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Light And Shadow<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copyright (C) 2001 - 2002. WOTLAS Team.<br>
+  <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TO DO LIST...<br>
+  </font><br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Voici des propositions de d&eacute;veloppement 
+  pour wotlas. Les descriptifs sont succincts, aussi, n'h&eacute;sitez pas &agrave; 
+  demander des d&eacute;tails.<br>
+</p>
+<p>Statut d'un projet : <font color="#0033CC"><i>non d&eacute;velopp&eacute;</i></font>, 
+  <font color="#0033CC"><i><font color="#FF6600">attribu&eacute;</font></i></font>, 
+  <font color="#CC3300"> <i>en cours</i></font>, <font color="#0033CC"><i><font color="#00CC00">d&eacute;velopp&eacute;.</font></i></font></p>
+<p align="center">&nbsp;</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"><font color="#009900"> 
+  1 - Mentir sur son nom</font></b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i><font color="#00CC00">d&eacute;velopp&eacute; 
+  brillament </font></i></font>:)<br>
+  <b>R&eacute;f&eacute;rence Draft :</b> partie 2.3.6 - page 11.<br>
+  <b>Pr&eacute;-requis wotlas :</b> aucun.</p>
+<p><b>Description :</b> Un joueur a la possibilit&eacute; de changer son nom, 
+  et donc de mentir sur son nom. Pour limiter la taille prise en m&eacute;moire, 
+  on n&#146;autorise au joueur qu&#146;un nombre limit&eacute; de faux noms (par 
+  exemple 5). Si le joueur veut changer de nom, il faut alors qu&#146;il choisisse 
+  parmi ses faux noms possibles celui sous lequel il veut &ecirc;tre reconnu. 
+  Chaque joueur poss&egrave;de donc un et un seul vrai nom, plus au plus 5 faux 
+  noms.</p>
+<p><b>D&eacute;veloppement :</b> Le draft donne des id&eacute;es de d&eacute;part 
+  sur le sujet. On peut maintenant pr&eacute;ciser que :</p>
+<p> * La gestion des noms se fait c&ocirc;t&eacute; serveur sur la classe du personnage 
+  wotlas.server.PlayerImpl. Pour ne pas surcharger cette classe il faudra cr&eacute;er 
+  une classe &agrave; part (wotlas.server.LieManager par exemple) que chaque PlayerImpl 
+  poss&eacute;derait pour g&eacute;rer son nom courant et les noms des personnes 
+  connues. Ainsi par exemple lorsque l'on demande PlayerImpl.getPlayerName(), 
+  cette m&eacute;thode appelle par derriere le LieManager pour r&eacute;cup&eacute;rer 
+  le nom demand&eacute;.</p>
+<p> * Il faudra pr&eacute;voir que le client puisse modifier son nom et voir la 
+  liste de ces faux noms/surnoms... le plus simple est de cr&eacute;er une interface 
+  swing (JPanel) que j'ajouterais dans la liste des onglets du wotlas.client.screen.JPlayerPanel. 
+  Il faudra aussi ajouter qq messages r&eacute;seaux pour mettre &agrave; jour/r&eacute;cup&eacute;rer 
+  la liste des noms. Cette partie n'est pas aussi difficile qu'elle en a l'air... 
+  et je suis pr&ecirc;t &agrave; aider la personne qui s'en occupera.</p>
+<p><br>
+</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  2 - Changer d'apparence</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i>non d&eacute;velopp&eacute;</i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> aucune.<br>
+  <b>Pr&eacute;-requis wotlas :</b> syst&egrave;me de connaissances, carat&eacute;ristiques 
+  jeu de role.</p>
+<p><b>Description :</b> Certains joueurs (R&eacute;prouv&eacute;s,certaine Aes 
+  Sedai de haut niveau) auront la possibilit&eacute; de changer compl&egrave;tement 
+  d'apparence... pour revenir plus tard &agrave; leur apparence initiale. Avec 
+  se changement d'apparence on peut aussi changer de nom comme pour l'option 'Mentir', 
+  cela dit ici les autres joueurs ne peuvent pas reconnaitre le joueur qui a chang&eacute; 
+  d'apparence...</p>
+<p><b>D&eacute;veloppement :</b> Il faut m&eacute;moriser les attributs visuels 
+  du personnage (couleur cheveux, yeux, classe du personnage, statut) plus son 
+  nom et surnom. Il faudra ensuite permettre au joueur d'acc&eacute;der &agrave; 
+  un JDialog 'Apparence' via la connaissance associ&eacute;e. Ce JDialog lui permettra 
+  de s&eacute;lectionner sa nouvelle apparence. Une fois valid&eacute;e celle-ci 
+  est chang&eacute;e c&ocirc;t&eacute; client et sauvegard&eacute;e c&ocirc;t&eacute; 
+  serveur. Une fois que l'on a chang&eacute; d'apparence le JDialog 'Apparence' 
+  ne propose que de revenir &agrave; l'apparence initiale.</p>
+<p>C'est un point de d&eacute;part... tout est envisageable pour le d&eacute;veloppement.<br>
+  Consulter le package wotlas.common.character et la classe wotlas.server.PlayerImpl 
+  .</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  3 - Editeur de Carte</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i>non d&eacute;velopp&eacute;</i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> aucune.<br>
+  <b>Pr&eacute;-requis wotlas :</b> aucun.</p>
+<p><b>Description :</b> Il s'agit de permettre l'&eacute;dition et la cr&eacute;ation 
+  de nouvelles cartes pour wotlas. L'image d'une carte ( Monde, Ville, Batiment 
+  ) est cr&eacute;&eacute; sous Photoshop avec son masque associ&eacute; puis 
+  import&eacute;e dans l'&eacute;diteur. Selon le type de la carte (Monde, ville, 
+  batiment) on va alors pouvoir placer des MapExit, RoomLink, etc. Inversement 
+  on pourra aussi ouvrir une carte d&eacute;j&agrave; cr&eacute;&eacute;e et l'&eacute;diter.</p>
+<p>Plus tard quand le syst&egrave;me de gestion des objets sera cr&eacute;&eacute; 
+  on pourra aussi rajouter des objets sur les cartes.</p>
+<p>D&eacute;veloppement: C'est un travail de d&eacute;veloppement assez cons&eacute;quent 
+  qu'il faudra bien analyser/d&eacute;composer afin d'&eacute;viter qu'il ne devienne 
+  chaotique. L'&eacute;dition des cartes pourra se faire en de nombreuses &eacute;tapes 
+  distinctes ( &eacute;dition des RoomLinks PUIS cr&eacute;ation des Rooms... 
+  ). L'&eacute;diteur utilisera le moteur graphique d&eacute;velopp&eacute; pour 
+  wotlas.</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  4 - Effets graphiques 'One Power'</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#CC3300"> <i>en cours</i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> aucune.<br>
+  <b>Pr&eacute;-requis wotlas :</b> aucun.</p>
+<p><b>Description :</b> Il s'agit de cr&eacute;er des effets graphiques pour l'utilisation 
+  du 'One Power' dans le jeu. Un premier effet est celle d'une personne qui canalise 
+  (sorte d'aura avec rotation rapide al&eacute;atoire). L'effet est visible tant 
+  que la personne canalise. On pourra reprendre ce qui a &eacute;t&eacute; fait 
+  avec le wotlas.libs.graphics2D.drawable.AuraEffect . Les autres effets s'&eacute;tablissent 
+  entre deux joueurs : les effets du 'One Power' sont d&eacute;compos&eacute;s 
+  en brins de couleurs diff&eacute;rentes qui oscillent et relient l'utilisateur 
+  &agrave; sa cible.</p>
+<p>On pourra envisager d'autres effets graphiques : explosions, oiseaux traversant 
+  l'&eacute;cran, nuages, etc...</p>
+<p><b>D&eacute;veloppement :</b> Pour representer l'effet graphique des brins 
+  on pourra utiliser les possibit&eacute;s de dessin vectoriel de Java2D (cf. 
+  d&eacute;mo de sun dans le jdk1.3) en y ajoutant un flou ou tout autre effet... 
+  On pourra ainsi cr&eacute;er un effet 2D g&eacute;n&eacute;rique qui s'initialise 
+  en donnant le nombre de brins et leur couleur.</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  5 - Plug-in Moteur 3D</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i><font color="#FF6600">attribu&eacute;</font></i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> aucune.<br>
+  <b>Pr&eacute;-requis wotlas :</b> sans doutes qq adaptations &agrave; faire 
+  pour permettre l'ajout du moteur 3D. Actuellement, chaque carte poss&egrave;de 
+  un lien vers sa repr&eacute;sentation 2D. Il faudra rajouter un lien vers la 
+  repr&eacute;sentation 3D.</p>
+<p><b>Description :</b> L'utilisateur de wotlas aura la possibilit&eacute; d'installer 
+  un Plug-in 3D lui permettant de voir certains lieux du jeu en 3D. Une fois cette 
+  &eacute;tape r&eacute;alis&eacute;e on pourra envisager l'int&eacute;gration 
+  du plug-in directement dans wotlas (avec l'API java3D associ&eacute;e) et l'augmentation 
+  du nombre de sc&egrave;nes 3D. Il faudra d&eacute;finir les personnages du jeu 
+  en 3D et refaire des d&eacute;cors en correspondance avec ceux qui ont &eacute;t&eacute; 
+  cr&eacute;&eacute; en 2D.</p>
+<p><b>D&eacute;veloppement :</b> Fabien. Je m'occuperai de faire un pont c&ocirc;t&eacute; 
+  serveur entre le syst&egrave;me de d&eacute;placement 3D et celui en 2D. Afin 
+  que les mouvements 2D ou 3D des joueurs soient vus de chaque c&ocirc;t&eacute;.</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  <font color="#009900">6 - R&eacute;vision de la structure du moteur graphique 
+  2D</font></b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i><font color="#00CC00">d&eacute;velopp&eacute;</font></i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> aucune<br>
+  <b>Pr&eacute;-requis wotlas :</b> aucun</p>
+<p><b>Description :</b> Notre moteur graphique n'a qu'un seul probl&egrave;me 
+  : la structure de l'ImageLibrary est un peu lourde. Le fait de manipuler des 
+  entiers pour d&eacute;signer des images de la biblioth&egrave;que charg&eacute;e 
+  en m&eacute;moire fait certes gagner du temps, mais pour le d&eacute;veloppeur 
+  c'est un calvaire de manipuler 4 entiers via des macros pour d&eacute;signer 
+  UNE image.</p>
+<p>Je propose donc une r&eacute;vision de la structure du moteur graphique afin 
+  de conserver en m&eacute;moire les noms des r&eacute;pertoires/images.</p>
+<p><b>D&eacute;veloppement :</b> On pourrait garder le syst&egrave;me d'entiers 
+  actuels mais cr&eacute;er en m&eacute;moire l'arborescence de la base d'images 
+  sous forme de tableau de String. Pour cr&eacute;er un ImageIdentifier on pourait 
+  ainsi proc&eacute;der de la mani&egrave;re suivante: </p>
+<p> new ImageIdentifier( &quot;maps&quot;, &quot;universe&quot;, &quot;tarvalon&quot;, 
+  &quot;tarvalon-mask&quot; );</p>
+<p>Ce qui &eacute;viterait d'avoir &agrave; cr&eacute;er des macros (final public 
+  int MAPS_CAT = 0)Reste &agrave; voir comment optimiser la chose pour ne pas 
+  perdre en efficacit&eacute; par rapport aux entiers... si la cr&eacute;ation 
+  se fait avec des Strings, on pourrait par contre ne garder en interne dans l'ImageIdentifier 
+  l'ancienne repr&eacute;sentation sous forme d'entiers. Tout autre proposition 
+  sur la structure de l'ImageLibrary est la bienvenue.</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  7 - Cr&eacute;ation d'un tutorial de cr&eacute;ation de niveaux sous Photoshop 
+  (en Anglais)</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i>non d&eacute;velopp&eacute;</i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> aucune. cf. le mini tutorial que j'avais 
+  &eacute;crit sur le sujet.<br>
+  <b>Pr&eacute;-requis wotlas :</b> aucun</p>
+<p><b>Description :</b> ce tutorial viendrais s'ajouter &agrave; l'&eacute;diteur 
+  de niveau pour expliquer comment cr&eacute;er un niveau pour wotlas, du d&eacute;but 
+  jusqu'&agrave; la fin.</p>
+<p><b>D&eacute;veloppement :</b> aucun.</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  8 - Gestion des objets</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#CC3300"><i>en cours</i></font><br>
+  R&eacute;f&eacute;rence Draft: partie 2.4.2 page 17.<br>
+  Pr&eacute;-requis wotlas: aucun, mais le d&eacute;veloppement pourra aussi &ecirc;tre 
+  li&eacute; &agrave; l'&eacute;diteur d'objets (cf. d&eacute;veloppement n&deg;16).</p>
+<p><b>Description :</b> Il s'agit de rajouter les objets divers et vari&eacute;s 
+  &agrave; l'univers de wotlas : Ajouts de format d'objets g&eacute;n&eacute;rique 
+  : objets fragiles, indestructibles, diff&eacute;rents objets magique, etc... 
+  Il faudra aussi rajouter la possibilit&eacute; de cr&eacute;er une biblioth&egrave;que 
+  d'objets au format texte (via le moteur de persistance).</p>
+<p><b>D&eacute;veloppement :</b> Avant de se lancer dans ce d&eacute;veloppement 
+  il faudra bien en pr&eacute;parer l'architecture. Le but est de pouvoir rajouter 
+  de nouveaux objets &agrave; wotlas en les cr&eacute;ant au format TEXTE du PersistenceManager 
+  (pour des pr&eacute;cisions sur le sujet: aldiss, harry, petrus). Il faudra 
+  certainement rajouter des m&eacute;thodes au wotlas.common.PersistenceManager 
+  pour pouvoir sauver/charger des objets dans la base. Autre point : certains 
+  objets pourront avoir des interfaces graphiques associ&eacute;es (un livre affichera 
+  une interface quand on l'utilisera ).</p>
+<p>Une id&eacute;e de d&eacute;part pour le d&eacute;veloppement:</p>
+<p> Cr&eacute;er un nouveau package pour la gestion des objets, un WotObjectManager 
+  qui s'occupe du chargement de la biblioth&egrave;que d'objets et une base d'objets 
+  standard : cl&eacute;s, livres, diff&eacute;rents objets magiques, etc... Les 
+  instances de ces objets ( cl&eacute; c234, livre 'De l'art d'&eacute;crire', 
+  etc...) sont stock&eacute;s au format texte via le moteur de persistance et 
+  ne sont charg&eacute;s en m&eacute;moire que quand on a besoin d'eux. On pourra 
+  consid&eacute;rer que le chargement/d&eacute;chargement des objets du jeu en 
+  m&eacute;moire sera g&eacute;r&eacute; par le WotObjectManager.</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  9 - Gestion des Connaissances</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#CC3300"><i>en cours</i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> partie 2.4.3 p19.<br>
+  <b>Pr&eacute;-requis wotlas :</b> aucun.</p>
+<p><b>Description :</b> La gestion des connaissance est CENTRALE dans wotlas. 
+  TOUTES les actions du jeu passeront par la manipulation de connaissances et 
+  leur apprentissage. C'est un sujet que l'on a bien d&eacute;velopp&eacute; dans 
+  le draft qui est &agrave; consulter donc pour plus d'informations.</p>
+<p><b>D&eacute;veloppement :</b> On retrouve le mm mod&egrave;le que la gestion 
+  d'objets : des objets connaissance g&eacute;n&eacute;riques, un biblioth&egrave;que 
+  de connaissances stock&eacute;es sur disque au format texte, et un gestionnaire 
+  de connaissances pour les charger en m&eacute;moire au besoin. Le but est l&agrave; 
+  encore de pouvoir rajouter de nouvelles connaissances au format texte sans avoir 
+  &agrave; recompiler la moindre ligne de code.</p>
+<p>Une id&eacute;e d'organisation du d&eacute;veloppement :</p>
+<p> - cr&eacute;er les objets 'connaissance' d&eacute;crits dans le draft.<br>
+  - cr&eacute;er le gestionnaire de connaissances<br>
+  - cr&eacute;er qq connaissances g&eacute;n&eacute;riques ()</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  10 - Lecture/Ecriture dans les livres</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#CC3300"><i>en cours</i></font><font color="#0033CC"></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> partie 2.3.8 p12.<br>
+  <b>Pr&eacute;-requis wotlas :</b> gestion des objets.</p>
+<p><b>Description :</b> Permettre aux joueurs de lire/&eacute;crire dans les objets 
+  'Livre' qu'ils pourraient r&eacute;cup&eacute;rer. On pourrait aller plus loin 
+  en cr&eacute;ant des interface WritableObject et ReadableObject d&eacute;finissant 
+  des types d'objets que l'on peut lire ou sur lesquels on peut &eacute;crire... 
+  bref, toute id&eacute;e sera la bienvenue surtout que l'&eacute;tude du draft 
+  n'&eacute;tait pas compl&egrave;tement termin&eacute;e.</p>
+<p><b>D&eacute;veloppement :</b> &agrave; &eacute;tudier... les livres seraient 
+  stock&eacute;s c&ocirc;t&eacute; serveur (au format texte ou html ? via la librarie 
+  de persistance ?) une interface utilisateur sera &agrave; pr&eacute;voir c&ocirc;t&eacute; 
+  client.</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  11 - Ajout du journal de bord.</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i>non d&eacute;velopp&eacute;</i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> partie 2.3.8 p13.<br>
+  <b>Pr&eacute;-requis wotlas :</b> aucun.</p>
+<p><b>Description :</b> La possibilit&eacute; pour le joueur de disposer d'un 
+  carnet de notes personel. Possibiliter d'y d&eacute;clarer les connaissances 
+  qu'on a fait dans le jeu ( attributs nom + cl&eacute; ), ce qui permettra &eacute;ventuellement 
+  de leur envoyer du courrier ( cf. projet 41 ).</p>
+<p>Another possibility would be to create a contact list : to keep the info on 
+  players, and find them in the world.</p>
+<p><b>D&eacute;veloppement :</b> Les donn&eacute;es de ce journal de bord seraient 
+  sauvegard&eacute;es en LOCAL... ce qui veut dire pas de messages r&eacute;seaux. 
+  D&egrave;s lors il s'agit de cr&eacute;er une fen&ecirc;tre de dialogue simple 
+  (JDialog) qui pourraient &ecirc;tre accessible via une icone au dessus du chat 
+  et qui chargerait/sauvegarderait le texte dans/&agrave; partir d'un fichier 
+  myPersonalNotes.txt . Pour ceux qui voudraient en faire plus, toute id&eacute;e 
+  d'interface est la bienvenue.</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"><font color="#009900"> 
+  12 - Remise en forme de la cr&eacute;ation de compte. Ajout des Quizz.</font></b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i><font color="#00CC00">d&eacute;velopp&eacute; 
+  - cf. wotlas.libs.wizard - seul la partie QUIZZ restera &agrave; faire.</font></i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> partie 2.6 p 29.<br>
+  <b>Pr&eacute;-requis wotlas :</b> aucun.</p>
+<p><b>Description :</b> Pour que le jeu puisse s'enrichir facilement de nouveaux 
+  type de personnages, il faut qu'on puisse le faire rapidement. Plutot que de 
+  d&eacute;velopper 1500 &eacute;crans diff&eacute;rents pour la cr&eacute;ation 
+  des comptes on pourrait utiliser des &eacute;tapes g&eacute;n&eacute;riques 
+  :<br>
+  - une &eacute;tape avec Label, entr&eacute;e texte, Label, entr&eacute;e texte, 
+  Texte d'information<br>
+  - une &eacute;tape avec Label, entr&eacute;e texte, Texte d'information<br>
+  - une &eacute;tape avec Label, JList (pour un choix simple dans une s&eacute;lection)<br>
+  - une &eacute;tape avec Label, JList avec Timer (pour un choix simple dans une 
+  s&eacute;lection dans un temps donn&eacute; pour les quizz)<br>
+  - une &eacute;tape avec Texte d'info (pour afficher une information)</p>
+<p><b>D&eacute;veloppement :</b> Une fois ces &eacute;tapes (JStep) cr&eacute;&eacute;s, 
+  on pourra d&eacute;crire la cr&eacute;ation de comptes par un ensemble de fichiers 
+  texte. Chaque fichier texte r&eacute;f&eacute;ren&ccedil;e un ensemble {type 
+  d'&eacute;tape, textes &agrave; afficher,lien pr&eacute;c&eacute;dent,lien suivant}. 
+  Le JAccountWizard s'occupe de faire le lien entre les diff&eacute;rentes &eacute;tapes.</p>
+<p>Un probl&egrave;me important devra &ecirc;tre r&eacute;solu : comment stocker 
+  les donn&eacute;es r&eacute;colt&eacute;es pour la cr&eacute;ation du compte... 
+  les donn&eacute;es devront &ecirc;tre envoy&eacute;e au serveur et servir &agrave; 
+  la cr&eacute;ation du compte (messages r&eacute;seaux g&eacute;n&eacute;riques?). 
+  De plus la possibilit&eacute; de revenir en arri&egrave;re devra &ecirc;tre 
+  &eacute;tudi&eacute;e.</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  13 - Editeur de cr&eacute;ation de compte.</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i>non d&eacute;velopp&eacute;</i></font> 
+  - would it be really useful ?<br>
+  <b>R&eacute;f&eacute;rence Draft :</b> aucune.<br>
+  <b>Pr&eacute;-requis wotlas :</b> remise en forme de la cr&eacute;ation de compte.</p>
+<p><b>Description :</b> Permettre une maintenance facile du syst&egrave;me de 
+  cr&eacute;ation de compte.</p>
+<p><b>D&eacute;veloppement :</b> &agrave; &eacute;tudier.</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  14 - Ajout des caract&eacute;ristiques RPG (Role Playin Game)</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i>non d&eacute;velopp&eacute;</i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> partie 2.4.1 p14.<br>
+  <b>Pr&eacute;-requis wotlas :</b> aucun.</p>
+<p><b>Description :</b> Ajouter toutes les caract&eacute;ristiques Force, Dext&eacute;rit&eacute;, 
+  Sant&eacute;, etc... dans la classe wotlas.common.character.Human .</p>
+<p><b>D&eacute;veloppement :</b> Ajout des getForce() &amp; setForce(), etc... 
+  (je sais c'est bourrin ici, mettre le minimum d'ent&ecirc;te Javadoc). Mais 
+  aussi des getMinForce() setMinForce(), getMaxForce(), setMaxForce(), indiquant 
+  le min et max de chaque caract&eacute;ristique pour la classe de personnage.</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><font color="#00CC00"><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  15 - Ajout des classes de personnages.</font></b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i><font color="#00CC00">d&eacute;velopp&eacute; 
+  - sera &agrave; compl&eacute;ter avec plus de cat&eacute;gories de personnages, 
+  mais l'essentiel est fait.</font></i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> &eacute;quipe wotlas-orgs.<br>
+  <b>Pr&eacute;-requis wotlas :</b> caract&eacute;ristiques jdr, remise en forme 
+  des comptes, syst&egrave;me de connaissances.</p>
+<p><b>Description :</b> Rajouter des nouvelles classes de personnages &agrave; 
+  wotlas.</p>
+<p><b>D&eacute;veloppement :</b> normalement si tout a &eacute;t&eacute; bien 
+  fait il ne devrait pas y avoir de code &agrave; d&eacute;velopper, juste des 
+  fichiers texte et des images &agrave; rajouter.</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  16 - Editeur d'objets. Ajout d'objets g&eacute;n&eacute;riques.</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i>non d&eacute;velopp&eacute;</i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> aucune.<br>
+  <b>Pr&eacute;-requis wotlas :</b> syst&egrave;me d'objets (l'&eacute;diteur 
+  d'objets pourra &ecirc;tre d&eacute;velopp&eacute; simultan&eacute;ment).</p>
+<p><b>Description :</b> Pour faciliter l'ajout/&eacute;dition des objets dans 
+  le jeu on pourra cr&eacute;er un &eacute;diteur tr&egrave;s simple permettant 
+  de cr&eacute;er/modifier/sauvegarder un objet.</p>
+<p><b>D&eacute;veloppement :</b> On pourra aussi r&eacute;fl&eacute;chir &agrave; 
+  une int&eacute;gration de cet utilitaire &agrave; l'&eacute;diteur de cartes 
+  (pour le placement des objets dans le jeu).</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  17 - Inventaire des personnages</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i>non d&eacute;velopp&eacute;</i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> partie 2.4.2 p17.<br>
+  <b>Pr&eacute;-requis wotlas :</b> gestion des objets.</p>
+<p><b>Description :</b> Rajouter la gestion des objets poss&eacute;d&eacute;s 
+  par un joueur : de leur r&eacute;cup&eacute;ration (clic sur l'objet et proximit&eacute;), 
+  jusqu'&agrave; leur utilisation et leur transfert au sol d'une carte ou &agrave; 
+  un autre joueur.</p>
+<p><b>D&eacute;veloppement :</b> cf. draft.</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  18 - Interface du syst&egrave;me de connaissances.</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#CC3300"><i>en cours</i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> partie 2.4.3 p19.<br>
+  <b>Pr&eacute;-requis wotlas :</b> syst&egrave;mes de connaissances.</p>
+<p><b>Description :</b> Suit le projet de d&eacute;veloppement n&deg;9. Il s'agit 
+  de d&eacute;velopper l'interface swing de manipulation des connaissances du 
+  client tel que d&eacute;crite dans le draft.</p>
+<p><b>D&eacute;veloppement :</b> Les classes seront &agrave; rajouter dans wotlas.client.gui</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"><font color="#00CC00"> 
+  19 - Possibilit&eacute; de sauvegarder une discussion du chat.</font></b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i><font color="#00CC00">d&eacute;velopp&eacute;</font></i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> aucune.<br>
+  <b>Pr&eacute;-requis wotlas :</b> aucun.</p>
+<p><b>Description :</b> Rajouter une icone au dessus du chat pour permettre au 
+  joueur de sauvegarder sur disque le contenu du chat courant. Autre possibilit&eacute; 
+  : plut&ocirc;t que d'un bouton de sauvegarde, on essayera de mettre au point 
+  la sauvegarde automatique de la discussion.</p>
+<p><b>D&eacute;veloppement :</b> Nous disposons d&eacute;j&agrave; d'un utilitaire 
+  de log qui permet d'enregistrer des donn&eacute;es sur disque &agrave; fr&eacute;quence 
+  r&eacute;duite... il ne reste plus qu'&agrave; l'utiliser ici. </p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  20 - Ajout de connaissances standard</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i>non d&eacute;velopp&eacute;</i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> qq id&eacute;es &agrave; la partie 2.4.3 
+  p19.<br>
+  <b>Pr&eacute;-requis wotlas :</b> syst&egrave;mes de connaissances.</p>
+<p><b>Description :</b> En fonction des classes de personnages que l'on envisagera 
+  de rajouter, il faudra ajouter toute sorte de connaissances associ&eacute;es 
+  ( crochetage, exercices de combat, etc ).</p>
+<p><b>D&eacute;veloppement :</b> normalement rien si on s'est bien d&eacute;brouill&eacute;... 
+  juste des fichiers texte &agrave; ajouter... On pourrait m&ecirc;me laisser 
+  se travail aux responsables des classes de personnages. A voir.</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  21 - Gestion des animations des personnages.</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i>non d&eacute;velopp&eacute;</i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> aucune.<br>
+  <b>Pr&eacute;-requis wotlas :</b> aucun.</p>
+<p><b>Description :</b> Pour l'instant les personnages de wotlas ne font que marcher 
+  et notre syst&egrave;me actuel ne se base que sur un seul type d'animation. 
+  Il faut pr&eacute;voir de nouveaux animations/&eacute;tats pour le personnage 
+  (dans la classe PlayerImpl et interface Player) :</p>
+<p> - allong&eacute; par terre (bl&eacute;ss&eacute;, dormir, etc...)<br>
+  - marcher en &eacute;tant arm&eacute; avec une &eacute;p&eacute;e<br>
+  - frapper avec une &eacute;p&eacute;e<br>
+  - frapper avec une dague (la dague ne se voit pas quand le personnage marche)<br>
+  - marcher avec un arc<br>
+  - tirer &agrave; l'arc<br>
+  - courir</p>
+<p><b>D&eacute;veloppement :</b> rajouter des getter/setter pour changer l'&eacute;tat 
+  du personnage (byte playerState avec des macros WotCharacter.WALKING_WITH_SWORD 
+  ), r&eacute;percuter ce changement d'&eacute;tat sur le wotlas.character.WotCharacter 
+  afin de pouvoir lui demander la nouvelle base d'image &agrave; utiliser pour 
+  l'animation. C'est le WotCharacter qui gardera de mani&egrave;re persistante 
+  l'&eacute;tat du personnage.</p>
+<p>Il faudra aussi pr&eacute;voir la cr&eacute;ation des nouvelles images des 
+  animations (me le rappeler). Il faudra de plus &eacute;tudier comment faire 
+  c&ocirc;t&eacute; utilisateur pour que l'on puisse faire courir/allonger son 
+  joueur (clavier? ou souris boutton de droite ?).</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  22 - Combat automatique. Combats dans wotlas.</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i>non d&eacute;velopp&eacute;</i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> s'inspirer de partie 2.4.4 p26.<br>
+  <b>Pr&eacute;-requis wotlas :</b> gestion des animations des personnages.</p>
+<p><b>Description :</b> Ajouter la possibilit&eacute; d'attaquer quelqu'un et 
+  d'enchainer une suite de mouvement de combat (connaissances) lors du combat. 
+  Permettre &agrave; tout joueur de sp&eacute;cifier ce que son personnage faire 
+  automatiquement quand il est attaqu&eacute; (se rendre, attaquer, fuir...).</p>
+<p><b>D&eacute;veloppement :</b> &agrave; &eacute;tudier. Il y a certainement 
+  beaucoup &agrave; faire de ce c&ocirc;t&eacute; l&agrave; !</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  23 - Gestion des Bots.</b></p>
+<p><b>Statut</b> <b>:<font color="#CC3300"><i> en cours</i></font></b> - <i><b><font color="#CC0000">cf 
+  www.alicebot.org</font></b></i><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> partie 2.7 p33.<br>
+  <b>Pr&eacute;-requis wotlas :</b> aucun.</p>
+<p><b>Description :</b> Rajouter des joueurs contr&ocirc;l&eacute;s par l'ordinateur. 
+  Ceux-ci peuvent ne pas bouger, faire un aller retour entre deux points, bouger 
+  al&eacute;atoirement &agrave; l'int&eacute;rieur d'une zone rectangulaire, attaquer 
+  une personne entrant dans une zone rectangulaire, suivre quelqu'un. A noter 
+  que ces bots pourraient r&eacute;agir quand on leur parle avec une certaine 
+  suite de mots ( ex: 'ouvrir', 'porte' )</p>
+<p><b>D&eacute;veloppement :</b> Il s'agit de capitaliser ce qui a d&eacute;j&agrave; 
+  &eacute;t&eacute; d&eacute;velopp&eacute;. On pourra ainsi reprendre TOUT le 
+  code client de la v1.1.1 ( package wolas.client ) et le copier dans un nouveau 
+  package wotlas.bot . A partir de l&agrave; on pourra virer TOUT ce qui est interface 
+  graphique pour ne garder que la structure de chargement et de manipulation de 
+  donn&eacute;es. Un bot se comportera comme un joueur sans interface graphique 
+  et dont la m&eacute;thode PlayerImpl.tick() impl&eacute;mente un comportement 
+  sp&eacute;cifique. On pourra modifier le code pour cr&eacute;er un v&eacute;ritable 
+  serveur de bot contr&ocirc;lant les mouvements d'un grand nombre de bots. Il 
+  restera &agrave; rajouter une proc&eacute;dure simple pour cr&eacute;er facilement 
+  des comptes de bots sur le serveur (type de joueur dont les donn&eacute;es sont 
+  pr&eacute;-format&eacute;es).</p>
+<p>On arrive finalement &agrave; une architecture tr&egrave;s souple : un ou plusieurs 
+  serveurs de bots qui sont connect&eacute;s au serveur de jeu principal et peuvent 
+  ainsi fonctionner sur d'autres ordinateurs.</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  24 - Les rumeurs.</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i>non d&eacute;velopp&eacute;</i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> partie 2.4.5 p27.<br>
+  <b>Pr&eacute;-requis wotlas :</b> aucun.</p>
+<p><b>Description :</b> rajouter un syst&egrave;me de rumeurs &agrave; wotlas. 
+  Voir le draft pour plus de d&eacute;tails.</p>
+<p><b>D&eacute;veloppement :</b> cf. draft.</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  25 - Affichage de la sant&eacute; du personnage.</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i>non d&eacute;velopp&eacute;</i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> aucune.<br>
+  <b>Pr&eacute;-requis wotlas :</b> caract&eacute;ristique jdr : sant&eacute; 
+  du personnage.</p>
+<p>Description: rajouter un effet graphique affichant la sant&eacute; du personnage 
+  eventuellement son souffle aussi (plus la personne est essoufl&eacute;e moins 
+  elle peut se d&eacute;placer et elle doit s'arr&ecirc;ter qq temps pour r&eacute;cup&eacute;rer).</p>
+<p>D&eacute;veloppement: Cr&eacute;er un LifeDrawable reli&eacute; au personnage 
+  principal ( DataManager.getMyPlayer() ) et qui est rajout&eacute; au GraphicsDirector 
+  &agrave; la connexion.</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  26 - Ajout d'une liste d'effets graphiques li&eacute;s aux cartes du jeu.</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i>non d&eacute;velopp&eacute;</i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> aucune.<br>
+  <b>Pr&eacute;-requis wotlas :</b> aucun.</p>
+<p><b>Description :</b> Une carte pourrait poss&eacute;der une liste d'effets 
+  graphiques &agrave; utiliser : oiseau survolant al&eacute;atoirement la carte, 
+  nuages, pluie, etc...</p>
+<p><b>D&eacute;veloppement :</b> Une InteriorMap pourrait poss&eacute;der une 
+  liste de XXXDrawables &agrave; utiliser. Ces XXXDrawable serainent rajout&eacute;s 
+  au moteur graphique lors du chargement de la carte... le BirdDrawable afficherait 
+  une animation d'oiseau survolant la carte par exemple.</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  27 - Ajout d'une liste d'effets sonores li&eacute;s aux cartes.</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i>non d&eacute;velopp&eacute;</i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> aucune.<br>
+  <b>Pr&eacute;-requis wotlas :</b> aucun.</p>
+<p><b>Description :</b> de m&ecirc;me que pour les effets graphiques on pourrait 
+  mettre une liste d'effets sonores &agrave; jouer en boucle sur certaines cartes 
+  (bruit de fond de la mer sur l'entr&eacute;e de Tar Valon par exemple).</p>
+<p><b>D&eacute;veloppement :</b> Editer la classe wotlas.common.universe.InteriorMap 
+  et wotlas.client.InteriorMapData. Il faudra rajouter une option &agrave; la 
+  librarie de sons pour pouvoir jouer en boucle un son.</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  <font color="#009900">28 - Gestion de la luminosit&eacute; du personnage. Masque 
+  de luminosit&eacute;.</font></b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i><font color="#009900">d&eacute;velopp&eacute; 
+  !!</font></i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> aucune.<br>
+  <b>Pr&eacute;-requis wotlas :</b> aucun.</p>
+<p><b>Description :</b> La luminosit&eacute; des cartes de wotlas varie... pour 
+  &eacute;viter que les personnages soit toujours aussi bien &eacute;clair&eacute; 
+  quelque soit leur emplacement sur la carte, on pourrait g&eacute;rer leur luminosit&eacute; 
+  via un masque.</p>
+<p><b>D&eacute;veloppement :</b> Le masque de luminosit&eacute; serait un image 
+  gif de taille 10 fois inf&eacute;rieure &agrave; la taille de la carte. Il serait 
+  compos&eacute; de plusieurs niveau de gris (255). Comme pour le masque des collisions, 
+  il faudrait charger l'image, la convertir en tableau 2D de byte, et disposer 
+  d'un filtre wotlas.libs.graphics2D.filter.BrightnessFilter pour faire varier 
+  la luminosit&eacute; des personnages en fonction de ce qu'indique le masque.</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  29 - Gestion de l'argent dans le jeu.</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i>non d&eacute;velopp&eacute;</i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> aucune.<br>
+  <b>Pr&eacute;-requis wotlas :</b> gestion des objets.</p>
+<p><b>Description :</b> Rajouter l'argent comme objet dans le jeu (pi&egrave;ces, 
+  bourses). Etudier l'utilisation que l'on pourrait en faire dans le jeu : vente 
+  de conseils, achats, placements, etc... Salaires, etc...Connaissances li&eacute;es 
+  &agrave; l'argent (talent de marchand, etc...)</p>
+<p><b>D&eacute;veloppement :</b> &agrave; voir en fonction de ce qui aura &eacute;t&eacute; 
+  &eacute;tudi&eacute;.</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  30 - Gestion des d&eacute;placements sur la carte du monde. Moyens de transport.</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i>non d&eacute;velopp&eacute;</i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> aucune.<br>
+  <b>Pr&eacute;-requis wotlas :</b> gestion des objets, gestion de l'argent.</p>
+<p><b>Description :</b> Etudier et remanier le syst&egrave;me de d&eacute;placement 
+  sur la carte du monde. Etude de faisabilit&eacute;. On &eacute;tait parti dans 
+  l'id&eacute;e que les voyages seraient tr&egrave;s lents sur la carte du monde 
+  (comme dans la r&eacute;alit&eacute;) et ce afin de renforcer la notion d'espace 
+  et de voyage. Lorqu'un joueur se d&eacute;connecte le voyage commenc&eacute; 
+  est, depuis la version 1.0 de wotlas, sauvegard&eacute; sur le serveur. Ce qui 
+  fait que quand le joueur se reconnecte plus tard le voyage a continu&eacute; 
+  pendant son absence. Ce qu'il faut voir c'est la possibilit&eacute; de choisir 
+  son moyen de locomotion : &agrave; pied, &agrave; cheval, en cal&egrave;che, 
+  caravane... on pourrait ainsi faire que le voyage serait tr&egrave;s lent &agrave; 
+  pied (2 jours pour traverser la carte), mais beaucoup plus rapide &agrave; cheval...</p>
+<p><b>D&eacute;veloppement :</b> afficher le temps restant avant arriv&eacute;e 
+  &agrave; destination sur la carte du monde, trouver un moyen de proposer le 
+  choix du moyen de locomotion au joueur (rajout d'une carte sp&eacute;ciale Transports 
+  sur la carte de la ville ? choix lors du d&eacute;placement ? ). Bref toutes 
+  les id&eacute;es seront les bienvenues...</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  31 - Tel'aran'rhiod et autres mondes parall&egrave;les.</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i>non d&eacute;velopp&eacute;</i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> aucune.<br>
+  <b>Pr&eacute;-requis wotlas :</b> Etat &quot;sleeping du joueur&quot; (cf. projet 
+  42). &agrave; voir selon le contenu.</p>
+<p><b>Description :</b> Dans les livres de Jordan il existe de nombreux mondes 
+  parall&egrave;les (The ways, portal stones, monde des r&ecirc;ves). Il s'agit 
+  d'&eacute;tudier leur application &agrave; wotlas : s'agit-il seulement de l'ajout 
+  de nouvelles cartes ? ou faut-il mettre en place d'autres aspects que le simple 
+  passage d'une carte &agrave; une autre ? Dand Tel'aran'rhiod ( monde des r&ecirc;ves 
+  ) le syst&egrave;me de d&eacute;placement se fait par la n&eacute;cessit&eacute;... 
+  en pensant &agrave; un endroit on peut s'y retrouver... parfois des joueurs 
+  qui r&ecirc;vent peuvent se retrouver dans Tel'aran'rhiod... mais en disparaissent 
+  quand ils se r&eacute;veillent...</p>
+<p><b>D&eacute;veloppement :</b> &agrave; voir. Il y a sans doute des aspects 
+  interessants &agrave; d&eacute;velopper. Faire des propositions.</p>
+<p>En tout cas il faut prendre en compte que le corps du personnage reste dans 
+  le monde de d&eacute;part pendant qu'une autre image du joueur &eacute;volue 
+  dans Tel'aran'rhiod. Pour r&eacute;aliser &ccedil;a il faudra : (1) modifier 
+  le GameAccount pour qu'il puisse poss&eacute;der un deuxi&egrave;me champs &quot;player&quot; 
+  persistant representant le joueur &eacute;voluant dans Tel'aran'rhiod, (2) ce 
+  deuxi&egrave;me joueur est cr&eacute;&eacute; quand le personnage entre dans 
+  Tel'aran'rhiod et est d&eacute;truit quand celui-ci le quitte, (3) si le joueur 
+  se d&eacute;connecte alors qu'il est dans Tel'aran'rhiod son personnage y reste, 
+  de toute mani&egrave;re le serveur sauvegardera les deux champs &quot;player&quot; 
+  du compte du client s'ils existent (4) quand le joueur se reconnecte au jeu 
+  le serveur lui renvoit le personnage qui se trouve dans Tel'aran'rhiod (5) si 
+  un personnage du jeu effectue l'op&eacute;ration &quot;r&eacute;veiller&quot; 
+  sur un personnage endormi, qui se trouve dans Tel'aran'rhiod et qui est connect&eacute; 
+  au jeu, ce dernier est imm&eacute;diatement retir&eacute; de Tel'aran'rhiod 
+  et passe &agrave; l'&eacute;tat r&eacute;veill&eacute;.</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"><font color="#009900"> 
+  32 - Communications inter-serveurs</font></b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i><font color="#00CC00">d&eacute;velopp&eacute;</font></i></font><font color="#CC3300"></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> partie 3.1 p34.<br>
+  <b>Pr&eacute;-requis wotlas :</b> aucun.</p>
+<p><b>Description :</b> On avait pr&eacute;vu que certains batiments puissent 
+  &ecirc;tre sur des serveurs diff&eacute;rents. Pour simplifier la tache (et 
+  par n&eacute;cessit&eacute; de gain de temps) on pourra faire que ce sont les 
+  villes du jeu qui pourront &ecirc;tre sur des serveurs diff&eacute;rents. Chaque 
+  ville dans wotlas poss&egrave;dera donc un l'identifiant du serveur qui la poss&egrave;de. 
+  La carte du monde reste partag&eacute;e par tous les serveurs. Quand un joueur 
+  quitte une ville et passe sur la carte du monde, il reste sur son ancien serveur. 
+  D&egrave;s qu'il arrive sur une ville, si celle-ci ne se trouve pas sur son 
+  serveur, le compte du client est d&eacute;plac&eacute; sur le serveur distant 
+  et la connexion est ferm&eacute;e puis r&eacute;ouverte sur le nouveau serveur.</p>
+<p><b>D&eacute;veloppement :</b> Chaque serveur wotlas est en fait le regroupement 
+  de 3 serveurs :</p>
+<p> - un serveur de jeu o&ugrave; &eacute;voluent les joueurs ( client-serveur, 
+  GameServer, d&eacute;velopp&eacute; )<br>
+  - un serveur de cr&eacute;ation de compte ( client-serveur, AccountServer, d&eacute;velopp&eacute; 
+  )<br>
+  - un serveur de transfert de comptes ( serveur-serveur, GatewayServer, non d&eacute;velopp&eacute; 
+  )</p>
+<p>Le GatewayServer fournira le service de d&eacute;m&eacute;nagement/r&eacute;ception 
+  de comptes entre serveur. Les services qu'il proposera seront ensuite utilis&eacute;s 
+  pour effectuer les d&eacute;placements de comptes n&eacute;cessaires. Il faudra 
+  pr&eacute;venir le client si la transaction se passe mal.</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  33 - Internationalisation de wotlas. Gestionnaire du texte. Centralisation des 
+  resssources. </b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i>non d&eacute;velopp&eacute;</i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> aucune.<br>
+  <b>Pr&eacute;-requis wotlas :</b> aucun.</p>
+<p><b>Description :</b> Disposer d'une version de wotlas int&eacute;gralement 
+  en fran&ccedil;ais, en anglais, en italien, etc... Poss&eacute;der un gestionnaire 
+  de ressources : noms d'images, de musiques, de sons, texte, config, etc... ceci 
+  afin de pouvoir controller les appels aux fichiers et transformer wotlas en 
+  un ou plusieurs fichiers JAR.</p>
+<p><b>D&eacute;veloppement :</b> Comment faire ? vos id&eacute;es seront les bienvenues... 
+  en voici une : Cr&eacute;er un LangManager qui serait un service universel de 
+  wotlas ( m&eacute;thode statique LangManager.getDefaultLangMaager() pour le 
+  r&eacute;cup&eacute;rer ) Par exemple si dans une interface qcq du client il 
+  y a le texte &quot;Enter here your password&quot;, le LangManager poss&egrave;derait 
+  deux m&eacute;thodes : getInterface2Password(), setInterface2Password() pour 
+  r&eacute;cup&eacute;rer/sauvegarder le texte &agrave; afficher. Le LangManager 
+  serait charg&eacute; au d&eacute;marrage de wotlas (via le PersistenceManager) 
+  avec tous les textes &agrave; afficher dans une langue donn&eacute;e. Dans le 
+  OptionPanel on pourrait alors choisir sa langue, en d&eacute;signant quel fichier 
+  texte de langue ( english.txt, french.txt, etc... ) il faut charger dans le 
+  LangManager.</p>
+<p>C'est fastidieux certes : chaque ligne de texte devra &ecirc;tre charg&eacute;e 
+  via le LangManager.</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  <font color="#009900">34 - Suppression des singletons en trop dans le code de 
+  wotlas.</font></b></p>
+<p><b>Statut</b> <b>:</b><font color="#0033CC"><i><font color="#00CC00"> d&eacute;velopp&eacute; 
+  - centralisation de la gestion des ressources - prochaine &eacute;tape sera 
+  Java Web Start.</font></i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> aucune.<br>
+  <b>Pr&eacute;-requis wotlas :</b> auncun.</p>
+<p><b>Description :</b> Comme on me l'a fait remarqu&eacute; tr&egrave;s justement, 
+  il y a un l&eacute;ger abus de Singleton dans l'architecture de wotlas (cf. 
+  forum 'Open Discussion' pour une discussion/pr&eacute;sentation autour du motif 
+  de programmation Singleton). Le but est ici de supprimer les Singleton qui sont 
+  en trop dans le code. Il faudra surtout voir si le fait de les retirer ne risque 
+  pas de compliquer trop le code... &agrave; &eacute;tudier.</p>
+<p><b>D&eacute;veloppement :</b> Pour une classe A qui utilise par exemple le 
+  DataManager en l'appellant par sa m&eacute;thode statique DataManager.getDefaultDataManager()... 
+  il faudrait &eacute;viter &ccedil;a en passant &agrave; A la r&eacute;f&eacute;rence 
+  du DataManager par une m&eacute;thode init().</p>
+<p>Cela peut vouloir dire beaucoup de modifications si l'instance de la classe 
+  A est poss&eacute;d&eacute;e par une instance d'une classe B qui ne poss&egrave;de 
+  pas de r&eacute;f&eacute;rence au DataManager. Cette classe B devrait alors 
+  aussi recevoir la r&eacute;f&eacute;rence au DataManager via une m&eacute;thode 
+  init(). Et ainsi de suite...</p>
+<p>Aussi un autre DANGER est celui de la conservation de r&eacute;f&eacute;rence 
+  : avec les ajouts de m&eacute;thodes init() &agrave; A et B ces deux instances 
+  vont garder en m&eacute;moire une r&eacute;f&eacute;rence au DataManager. Il 
+  ne faudra pas oublier de les supprimer quand les instances A et B seront supprim&eacute;s 
+  (vraiment n&eacute;cessaire s'il y a des hashtable qui rentre dans le jeu).</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><font color="#009900"><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  35 - Tests de wotlas sous Java 1.4 et sous Linux.</font></b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i><font color="#00CC00">d&eacute;velopp&eacute; 
+  - thanks to Knut for the tests</font></i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> aucune.<br>
+  <b>Pr&eacute;-requis wotlas :</b> aucun.</p>
+<p><b>Description :</b> Tester wotlas avec la nouvelle version du jdk et aussi 
+  sous Linux.</p>
+<p><b>D&eacute;veloppement :</b> esp&eacute;rons qu'il n'y en ai pas. Dans Java 
+  1.4 le moteur de rendu graphique a &eacute;t&eacute; compl&egrave;tement r&eacute;nov&eacute;. 
+  Il faudra voir ce que cela donne. Pour &eacute;viter de demander &agrave; tous 
+  les utilisateurs de d&eacute;sinstaller leur java 1.3 et de t&eacute;l&eacute;charger 
+  les 9Mo du jre1.4 wotlas DEVRA continuer avec l'API java 1.3 tout en fontionnant 
+  avec la 1.4.</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><font color="#009900"><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  36 - D&eacute;tection de fin de connexion c&ocirc;t&eacute; serveur (librairie 
+  r&eacute;seau).</font></b></p>
+<p><b>Statut</b> <b>:<i><font color="#009900"> d&eacute;velopp&eacute; !!</font></i></b><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> aucune.<br>
+  <b>Pr&eacute;-requis wotlas :</b> auncun.</p>
+<p><b>Description :</b> Pour l'instant le serveur ne peut pas d&eacute;tecter 
+  la fin de la connexion r&eacute;seau car la m&eacute;thode accept() de java 
+  1.3 est bloquante et ne l&egrave;ve pas d'exception quand la connexion est coup&eacute;e. 
+  DONC pour &eacute;viter ce probl&egrave;me tout en restant au niveau de l'api 
+  java1.3 ( il y aurait des solutions simples &agrave; ce probl&egrave;me avec 
+  l'api java 1.4)<br>
+  la solution sera de rajouter un thread de surveillance des interfaces r&eacute;seaux.</p>
+<p><b>D&eacute;veloppement :</b> Rajouter au package wotlas.libs.net.utils une 
+  classe utilitaire h&eacute;ritant de Thread. Cette classe v&eacute;rifiera toutes 
+  les trente secondes que l'interface r&eacute;seau du serveur existe toujours 
+  ! Si ce n'est plus le cas l'utilitaire devra le signaler aux serveurs ( rajouter 
+  un bool&eacute;en interfaceNoLongerExist &agrave; la classe wotlas.libs.net.Server). 
+  Le serveur sort du accept() toutes les deux minutes il pourra alors voir que 
+  l'interface ip n'existe plus et balancer une exception SocketException afin 
+  que l'erreur soit trait&eacute;e... (le traitement de l'erreur a d&eacute;j&agrave; 
+  &eacute;t&eacute; rajout&eacute; dans le catch(SocketException), mais il n'a 
+  put &ecirc;tre trait&eacute; ).</p>
+<p>Utiliser un pattern Observer/EventListener pour la communication entre l'utilitaire 
+  et les serveurs. L'utilitaire pourra avoir plusieurs serveurs comme Observer/EventListener.</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  37 - Console d'administration/gestion des clients.</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i>a demi d&eacute;velopp&eacute;</i></font> 
+  - an account administration GUI is missing<br>
+  <b>R&eacute;f&eacute;rence Draft :</b> aucune.<br>
+  <b>Pr&eacute;-requis wotlas :</b> aucun.</p>
+<p><b>Description :</b> Rajouter une console de commande qui permet de modifier 
+  certains param&egrave;tres sur un compte, de le sauvegarder sur disque, de le 
+  recharger en m&eacute;moire, ou de le supprimer.</p>
+<p><b>D&eacute;veloppement :</b> &agrave; voir. La console doit-elle &ecirc;tre 
+  externe au serveur wotlas ou faire partie du serveur ? On pourrait envisager 
+  le lancement de la console par le serveur. Par exemple quand on rajoute l'option 
+  -admin sur la ligne de commande.</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  38 - Pr&eacute;venir les sur-population</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i>non d&eacute;velopp&eacute;</i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> p50.<br>
+  <b>Pr&eacute;-requis wotlas :</b> aucun.</p>
+<p><b>Description :</b> Bon on certes loin d'avoir des probl&egrave;mes de sur-population 
+  dans wotlas, mais on peut consid&eacute;rer que ce d&eacute;veloppement est 
+  de la pr&eacute;vention. Il s'agit d'&eacute;viter que trop de joueur connect&eacute;s 
+  se retrouvent au m&ecirc;me endroit ( ah! l'&eacute;pineux probl&egrave;me des 
+  foules dans les mondes virtuels ). Par d&eacute;faut la limite est de 30 personnes 
+  mais on peut l'augmenter ou la diminuer selon le besoin : chaque pi&egrave;ce 
+  d'une carte poss&egrave;de sa limite propre ( entier maxPlayers).</p>
+<p><b>D&eacute;veloppement :</b> Actuellement, quand un joueur entre dans un MapExit 
+  (zone rectangulaire representant un changement de carte) on envoie une demande 
+  d'autorisation au serveur pour changer de carte ( CanLeaveXXXMessage ). Dans 
+  99% des cas le serveur r&eacute;ponds OUI ( YouCanLeaveMessage ) et s'il d&eacute;tecte 
+  une erreur de synchronisation avec le client il r&eacute;ponds RESET ( ResetPositionMessage 
+  ) en demandant au client de se remettre &agrave; la bonne position/carte.</p>
+<p>Ce que nous voulons rajouter ici c'est la possibilit&eacute; au serveur de 
+  r&eacute;pondre NON si la destination du joueur est surpeupl&eacute;e. Quand 
+  le serveur re&ccedil;oit une demande &quot;CanLeaveXXXMessage&quot; il peut 
+  v&eacute;rifier le nombre de joueur sur la destination ( myMap.getPlayers().size() 
+  ) et si le nombre myMap.maxPlayers de la destination est d&eacute;pass&eacute;, 
+  il renverrais alors un NON ( MaxPlayerReachedMessage ) qui afficherait juste 
+  un message d'alerte c&ocirc;t&eacute; client. C'est tout.</p>
+<p>J'ajouterais aussi que seul les passage d'une carte de {ville,monde} vers une 
+  carte int&eacute;rieure ( InteriorMap ) seraient &agrave; controller (CanLeaveTownMapMessage 
+  et CanLeaveWorldMapMessage).</p>
+<p>Une fois que le contr&ocirc;le fonctionnera il faudra le modifier pour utiliser 
+  le nombre de personnes connect&eacute;es ( cumuler les player.isConnected() 
+  ) et non se satisfaire d'un &quot;myMap.getPlayers().size()&quot; qui repr&eacute;sente 
+  le nombre total de joueur ( connnect&eacute; et non connect&eacute; ).</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  39 - Home Sweet Home.</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i>non d&eacute;velopp&eacute;</i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> aucune.<br>
+  <b>Pr&eacute;-requis wotlas :</b> aucun.</p>
+<p><b>Description :</b> Permettre &agrave; un joueur de revenir automatiquement 
+  &agrave; un emplacement quand il se d&eacute;connecte A CONDITION que cet emplacement 
+  se trouve dans la m&ecirc;me ville. Revenir &agrave; la maison automatiquement 
+  en quelque sorte...</p>
+<p>Il faudra aussi &eacute;tudier si cela ne risque pas de constituer un &eacute;chapatoire 
+  aux personnes poursuivies...</p>
+<p><br>
+  <b>D&eacute;veloppement :</b> Comment faire ? une id&eacute;e simple de d&eacute;part 
+  : rajouter des infos dans l'onglet Away ( AwayPanel ) c&ocirc;t&eacute; client 
+  (rajouter un ascenseur s'il n'y a pas la place). Le client aurait alors le choix 
+  entre deux options quand il se d&eacute;connecte :</p>
+<p> - rester l&agrave; ou il est<br>
+  - revenir &agrave; la position :</p>
+<p>Apr&egrave;s les &quot;:&quot; de la derni&egrave;re option il y aurait un 
+  bouton &quot;Save Position&quot;. En cliquant sur le bouton le joueur d&eacute;signerait 
+  ainsi sa position courante comme celle o&ugrave; il d&eacute;sire revenir ( 
+  HomePosition ). Rien de plus simple ainsi de d&eacute;signer sa maison ! un 
+  clic !</p>
+<p>Attention &agrave; la gestion des erreurs : si le joueur change de ville sa 
+  HomePosition devra &ecirc;tre r&eacute;initialis&eacute;e. De plus :</p>
+<p> - quand le joueur appuie sur &quot;Save Position&quot; il faut envoyer un 
+  message au serveur pour signaler le changement de HomePosition ( champs persistant 
+  &agrave; rajouter &agrave; wotlas.server.PlayerImpl).</p>
+<p> - quand le joueur se d&eacute;connecte il faudra modifier le wotlas.server.PlayerImpl.connectionClosed 
+  pour bien envoyer les bons messages (retrait du perso de la carte, ajout du 
+  perso &agrave; la nouvelle carte...).</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"><font color="#009900"> 
+  40 - Rajouter des sons d'appels.</font></b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i><font color="#00CC00">d&eacute;velopp&eacute; 
+  et m&ecirc;me enrichi gr&acirc;ce &agrave; xeno</font></i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> aucune.<br>
+  <b>Pr&eacute;-requis wotlas :</b> aucun.</p>
+<p><b>Description :</b> Permettre &agrave; l'utilisateur de siffler pour capter 
+  l'attention de qq'un... si vous avez des id&eacute;es sur des sons que l'on 
+  pourrait rajouter dans le jeu et dont chaque joueur pourrait &ecirc;tre l'origine.</p>
+<p><b>D&eacute;veloppement :</b> &agrave; voir. On pourrait rajouter des commandes 
+  au chat /whistle etc... qui seraient ainsi r&eacute;percuter au niveau sonore 
+  SHOUT et seraient transform&eacute;es en son en arrivant chez les clients destinataire. 
+  Un timestamp serait sauvegard&eacute; pour interdire d'envoyer plus d'un son 
+  toutes les 10 secondes. Pas d'abus !</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  41 - L'envoi / r&eacute;ception de courrier dans le jeu</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i>non d&eacute;velopp&eacute;</i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> aucune.<br>
+  <b>Pr&eacute;-requis wotlas :</b> aucun.</p>
+<p><b>Description :</b> Permettre &agrave; l'utilisateur d'envoyer du courrier 
+  &agrave; des personnes dont il pourrait garder le nom dans un carnet d'adresse 
+  interne au jeu. Lors de l'envoi il faut choisir le moyen de transport : direct 
+  (remise en main propre, &agrave; condition d'&ecirc;tre pr&ecirc;t de la personne), 
+  livreur (cout peu cher, lent sur de grande distances), livreur express ( cout 
+  moyen, un peu plus rapide), pigeon voyageur (cout &eacute;lev&eacute; sauf si 
+  on poss&egrave;de des pigeons, tr&egrave;s rapide). Selon le mode choisi le 
+  message sera gard&eacute; plus ou moins longtemps par le serveur avant envoi 
+  vers le client. </p>
+<p><b>D&eacute;veloppement :</b> Ce d&eacute;veloppement n'est pas forc&eacute;ment 
+  tr&egrave;s compliqu&eacute;. C&ocirc;t&eacute; serveur on peut imaginer que 
+  le PlayerImpl poss&egrave;de un objet 'Messenger' qui est charg&eacute; de stocker 
+  ( de mani&egrave;re persistante ! ) les messages envoy&eacute;s par d'autre 
+  joueurs, le d&eacute;lai d'attente avant le transfert de chaque message vers 
+  le client d&eacute;pend du mode (direct, livreur, pigeon ) que l'emetteur a 
+  choisi. Par exemple si le mode est le mode livreur, le message attendra 6 heures 
+  avant de pouvoir &ecirc;tre transf&eacute;r&eacute; au client. Si on veut que 
+  le message soit d&eacute;livr&eacute; instantan&eacute;ment on peut toujours 
+  utiliser le mode 'direct'.</p>
+<p>Quelques points &agrave; r&eacute;soudre :</p>
+<blockquote>
+  <p>- le temps d'attente avant r&eacute;ception devrait d&eacute;pendre de la 
+    distance avec le r&eacute;cepteur. Il faudra sans doute cr&eacute;er un moyen 
+    pour &eacute;valuer la distance entre deux destinations. On pourra noter que 
+    l'on peut calculer la distance entre deux villes &agrave; partir de leur position 
+    sur la carte. On pourra assimiler la position de l'&eacute;metteur et du r&eacute;cepteur 
+    &agrave; celle de leur ville + un temps de traitement constant ( livreur = 
+    +3h le temps, pigeon = + 5 minutes).</p>
+  <p>- est-ce que le client r&eacute;cup&egrave;re son courrier directement, ou 
+    quand il appuit sur un boutton &quot;v&eacute;rifier courrier&quot;, ou faut-il 
+    un endroit sp&eacute;cial nomm&eacute; &quot;poste&quot; o&ugrave; un bot 
+    attendrait qu'on lui prononce le mot &quot;courrier&quot; pour nous transmettre 
+    notre courrier... &agrave; vous de voir.</p>
+  <p>- ou rajoute-t'on l'interface cliente de r&eacute;ception du courrier ? un 
+    nouvel onglet style Info, Away ? de plus il faudra rajouter quelques m&eacute;thodes 
+    simples au PersistenceManager pour enregistrer/charger le courrier stock&eacute; 
+    sur le disque du client.</p>
+</blockquote>
+<p>&nbsp;</p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+<p><b><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  42 - Dormir.</b></p>
+<p><b>Statut</b> <b>:</b> <font color="#0033CC"><i>non d&eacute;velopp&eacute;</i></font><br>
+  <b>R&eacute;f&eacute;rence Draft :</b> aucune.<br>
+  <b>Pr&eacute;-requis wotlas :</b> aucun.</p>
+<p><b>Description :</b> Permettre &agrave; l'utilisateur de d&eacute;clarer que 
+  son personnage &quot;dors&quot;. Quand on clique sur un personnage le texte 
+  apparaissant au dessus du personnage serait &quot;Elisane Tishar (sleeping)&quot;. 
+  L'effet graphique permettant de rep&eacute;rer les personnages qui dorment de 
+  ceux qui ne dorment pas sera &agrave; &eacute;tudier ( on envisager de remplacer 
+  l'image par celle du personnage allong&eacute;). L'&eacute;tat &quot;sleeping&quot; 
+  permettra d'indiquer aux autres joueurs que m&ecirc;me si on est connect&eacute; 
+  on est temporairement absent.</p>
+<p>Autre fonctionalit&eacute; &agrave; envisager pour plus tard : pour passer 
+  au monde Tel'ran'hriod il faudra &ecirc;tre endormi. On pourra ajouter la possibilit&eacute; 
+  de reveiller un joueur qui dort, possibilit&eacute; qui servira &agrave; tenter 
+  de faire revenir les joueurs qui se promeraient dans Tel'ran'hriod. R&eacute;veiller 
+  un joueur &eacute;choue si celui-ci n'est pas dans Tel'ran'hriod.</p>
+<p><b>D&eacute;veloppement :</b> faut-il rajouter un boutton d'&eacute;tat &quot;sleeping 
+  / awake&quot; ? ou une commande du chat &quot;/sleep&quot; ? dans les deux cas 
+  il faudra rajouter un &eacute;tat bool&eacute;en sleeping aux PlayerImpl ainsi 
+  qu'&agrave; l'interface, des messages associ&eacute;s pour propager le changement 
+  d'&eacute;tat au serveur. Pour tout &ccedil;a on pourra s'inspirer de ce qui 
+  a &eacute;t&eacute; fait avec les messages &quot;AwayMessage&quot; et la propagation 
+  de l'&eacute;tat du personnage &agrave; la connexion/d&eacute;connexion.</p>
+<p>&nbsp; </p>
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+<p><b><font color="#009900"><img src="../images/button.gif" width="14" height="14" align="absmiddle"> 
+  43 - Enhanced Network Interface Detection.</font></b></p>
+<p><b>Statut</b> <b>:</b> <font color="#CC3300"><i><font color="#009900">developped</font></i></font><br>
+  <b>Draft Reference:</b> none.<br>
+  <b>Wotlas Requisites :</b> none.</p>
+<p><b>Description :</b> I think we could migrate the server code to Java 1.4 ... 
+  with the new java.net.NetworkInterface we could detect IP changes and automatically 
+  transfer the new server-X.cfg.adr file to the wotlas web server...</p>
+<p><b>Development :</b> If you are interested by the job OR if you know someone 
+  that might be interested by it, here is the job's description : develop a small 
+  java 1.4 utility that would :</p>
+<p> (1) use the new java.net.NetworkInterface<br>
+  (2) provide a method to get an interface's IP given its name<br>
+  (3) provide a way to monitor a network interface (timer/thread)<br>
+</p>
+<blockquote> 
+  <p>* register a network interface to monitor (only one)<br>
+    * detect when its IP changes<br>
+    * provide a listener interface to notify listeners of the change.</p>
+</blockquote>
+<p>This utility will be included in the wotlas.libs.net.utils package and used 
+  by the wotlas server. The idea would be to give to the server the name of the 
+  network interface it's associated to... The server would react to IP changes 
+  by updating its config &amp; calling a script for config tranfer. For unix, 
+  network interfaces names are usually eth0, eth1, le0, etc... but on windows 
+  systems... (???)<br>
+</p>
+<p align="center"></p>
+<p><img src="../images/motif-vigne.gif" width="620" height="40"></p>
+</body>
+</html>

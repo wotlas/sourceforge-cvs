@@ -147,7 +147,7 @@ public class JClientScreen extends JFrame
     // *** North panel ***
 
       infosPanel.setPreferredSize(new Dimension(mainWidth, northHeight));
-      infosPanel.setBackground(Color.red);
+      infosPanel.setBackground(Color.white);
       getContentPane().add(infosPanel, BorderLayout.NORTH);
 
     // *** Right Panel ***

@@ -369,7 +369,15 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
       }
   }
 
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the player's path follower.
+   */
+   public PathFollower getPathFollower() {
+      return pathFollower;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Returns true if player is moving
    */

@@ -65,7 +65,7 @@ public class GraphicPingPanel extends JPanel implements NetPingListener {
   *
   */
     public GraphicPingPanel() {
-         setFont("Lucida Blackletter");
+         setFont("Lucida Blackletter Regular");
 
          MediaTracker mediaTracker = new MediaTracker(this);
          red  = ClientDirector.getResourceManager().getGuiImage("ping-red.jpg");

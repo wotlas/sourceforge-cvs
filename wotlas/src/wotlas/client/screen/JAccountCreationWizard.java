@@ -98,7 +98,7 @@ public class JAccountCreationWizard extends JWizard {
    public JAccountCreationWizard() {
      super("Account creation wizard",
            ClientDirector.getResourceManager(),
-           FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter").deriveFont(18f),
+           FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter Regular").deriveFont(18f),
            460,460);
 
     // We display first step

@@ -196,7 +196,7 @@ public class JAbout extends JCroppedWindow implements ActionListener {
     public JAbout(Frame owner) {
 
          super(owner,"About", ClientDirector.getResourceManager() );
-         setFont("Lucida Blackletter");
+         setFont("Lucida Blackletter Regular");
          calculTextWidth();
          c_text = new Color(40,50,60);
          c_title = new Color(80,100,190);

@@ -11,4 +11,4 @@ rem
 echo Starting Wotlas Client...
 cd ..
 cd classes
-java -classpath . wotlas.client.ClientDirector
+java -classpath . wotlas.client.ClientDirector -debug

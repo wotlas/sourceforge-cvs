@@ -66,7 +66,7 @@ public class ServerAdminGUI extends JFrame {
          super("Server Administration");
 
       // 1 - GUI construction
-         Font f = FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter");
+         Font f = FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter Regular");
 
          JPanel mainPanel = new JPanel();
          mainPanel.setLayout(new BorderLayout());
@@ -281,7 +281,7 @@ public class ServerAdminGUI extends JFrame {
     UIManager.put("ComboBox.font", f.deriveFont(14f));
     UIManager.put("ComboBox.foreground", Color.black);
 
-    f = FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter");
+    f = FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter Regular");
 
     UIManager.put("Label.font", f.deriveFont(14f));
     UIManager.put("Label.foreground", Color.black);
@@ -327,7 +327,7 @@ public class ServerAdminGUI extends JFrame {
     UIManager.put("TextField.font", f.deriveFont(14f));
     UIManager.put("TextField.foreground", Color.black);
 
-//    f = FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter");
+//    f = FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter Regular");
 
     UIManager.put("ComboBox.font", f.deriveFont(14f));
     UIManager.put("ComboBox.foreground", Color.black);

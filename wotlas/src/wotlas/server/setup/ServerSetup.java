@@ -100,7 +100,7 @@ public class ServerSetup extends JWizard {
     public ServerSetup() {
          super("Server Config",
                ServerDirector.getResourceManager(),
-               FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter").deriveFont(18f),
+               FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter Regular").deriveFont(18f),
                470,450);
          setLocation(200,100);
          serverID = ServerDirector.getServerID(); // we get the current server ID

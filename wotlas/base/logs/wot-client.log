@@ -1,0 +1,38 @@
+Log opened the 2003-12-20 at 19h-11m-19s
+Log created.
+NOTICE - *-------------------------------------*
+NOTICE - |    Wheel Of Time - Light & Shadow   |
+NOTICE - | Copyright (C) 2001-2002 WOTLAS Team |
+NOTICE - *-------------------------------------*
+
+NOTICE - Code version       : 1.3
+NOTICE - Data directory     : ../base
+NOTICE - Client properties loaded successfully.
+NOTICE - Server home URL    : http://wotlas.sourceforge.net/game/
+NOTICE - Sound Player       : Java Sound Player
+NOTICE - Music Player       : Java Sound Midi Player
+NOTICE - Font Factory created...
+ERROR - Failed to load client configuration. Creating a new one.
+NOTICE - wotlas.client.ClientManager
+   no client's profile found : creating a new one...
+NOTICE - Server config Manager started with success !
+NOTICE - Client Manager created...
+NOTICE - Loading Universe Data from :../base\universe\default/
+NOTICE - World Manager loaded 1 worlds, 5 towns, 9 buildings, 18 maps.
+NOTICE - World Manager loaded 0 room inventories.
+NOTICE - DataManager created...
+NOTICE - Loading server table...
+NOTICE - Trying to load Server Table from network...
+WARNING - wotlas.common.ServerConfigManager
+   A new server (1) is available. Trying to load its config.
+NOTICE - wotlas.common.ServerConfigManager
+   Retrieved successfully new server (1) config.
+NOTICE - WOTLAS Client started with success...
+NOTICE - closing JConnectionDialog
+NOTICE - ClientManager connected to AccountServer
+NOTICE - Moving to next wizard step...
+NOTICE - Moving to next wizard step...
+NOTICE - wotlas.client.screen.JAccountCreationWizard
+   Wizard canceled.
+WARNING - wotlas.libs.net.NetReceiver
+   Connection closed a bit roughly : java.net.SocketException: socket closed

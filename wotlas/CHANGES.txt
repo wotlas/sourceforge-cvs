@@ -6,6 +6,17 @@
 * ( File Best Viewed in 1024x768 or above)
 *
 
+CHANGES BETWEEN 1.3 AND ?
+-------------------------
+SSzretter -
+ - 12/20/03 Changed all hard coded refernces to "Lucida Blackletter" to "Lucida Blackletter Regular" to fix Java 1.4.2 compatibility
+    ** need to test this new font name on linux/mac to make sure it works
+ - 12/20/03 Added ToDo.txt - to keep track of ideas, and what needs to be done
+ - 12/20/03 Commented out import wotlas.client.screen.extraplugin.*; in client datamanager to compile - must be work in progress?
+  
+
+
+
 CHANGES BETWEEN V1.2.3 AND V1.3 (20 May 2002)
 ---------------------------------------------
 

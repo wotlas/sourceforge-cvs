@@ -40,7 +40,7 @@ public class MultiLineText extends Drawable {
 
    /** Default Font Name used.
     */
-    static private String defaultFontName = "Lucida Blackletter";
+    static private String defaultFontName = "Lucida Blackletter Regular";
 
  /*------------------------------------------------------------------------------------*/
 

@@ -65,7 +65,7 @@ public class ServerAddressSetup extends JWizard {
     public ServerAddressSetup() {
          super("Server Address Setup",
                ServerDirector.getResourceManager(),
-               FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter").deriveFont(18f),
+               FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter Regular").deriveFont(18f),
                470,550);
 
          setLocation(200,100);

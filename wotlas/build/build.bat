@@ -8,7 +8,7 @@ rem ----------------------------------------------------------------------------
 rem EDIT FOR YOUR CONFIG :
 
 rem Enter your java JDK directory and remove the 'rem'
-set JAVA_HOME=c:\progra~1\javasoft\j2se1.4
+set JAVA_HOME=C:\j2sdk1.4.2
 
 rem ------------------------------------------------------------------------------
 

@@ -218,7 +218,7 @@ public class TownMapData implements MapData {
     gDirector.addDrawable(myPlayer.getGameScreenFullPlayerName());
 
     String[] strTemp2 = { townMap.getFullName() };
-    MultiLineText mltLocationName = new MultiLineText(strTemp2, 10, 10, Color.black, 15.0f, "Lucida Blackletter", ImageLibRef.TEXT_PRIORITY, MultiLineText.RIGHT_ALIGNMENT);
+    MultiLineText mltLocationName = new MultiLineText(strTemp2, 10, 10, Color.black, 15.0f, "Lucida Blackletter Regular", ImageLibRef.TEXT_PRIORITY, MultiLineText.RIGHT_ALIGNMENT);
     gDirector.addDrawable(mltLocationName);
 
     // 10 - We play music

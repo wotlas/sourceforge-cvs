@@ -680,10 +680,10 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
 
        if (isConnectedToGame) {
         textDrawable = new TextDrawable( fullPlayerName, getDrawable(), wotCharacter.getColor(),
-                                        13.0f, "Lucida Blackletter", ImageLibRef.TEXT_PRIORITY, 5000 );
+                                        13.0f, "Lucida Blackletter Regular", ImageLibRef.TEXT_PRIORITY, 5000 );
        } else {
         textDrawable = new TextDrawable( fullPlayerName + " (away)", getDrawable(), wotCharacter.getColor(),
-                                        13.0f, "Lucida Blackletter", ImageLibRef.TEXT_PRIORITY, 5000 );
+                                        13.0f, "Lucida Blackletter Regular", ImageLibRef.TEXT_PRIORITY, 5000 );
        }                                        
        return textDrawable;
    }
@@ -717,7 +717,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
      public MultiLineText getGameScreenFullPlayerName() {
           if(gameScreenFullPlayerName==null) {
              String[] strTemp = { fullPlayerName };
-             gameScreenFullPlayerName = new MultiLineText(strTemp, 10, 10, Color.black, 15.0f, "Lucida Blackletter", ImageLibRef.TEXT_PRIORITY, MultiLineText.LEFT_ALIGNMENT);
+             gameScreenFullPlayerName = new MultiLineText(strTemp, 10, 10, Color.black, 15.0f, "Lucida Blackletter Regular", ImageLibRef.TEXT_PRIORITY, MultiLineText.LEFT_ALIGNMENT);
           }
 
           return gameScreenFullPlayerName;

@@ -175,7 +175,7 @@ public class ClientManager extends JIntroWizard implements ActionListener {
        Debug.signal( Debug.NOTICE, null, "Server config Manager started with success !" );
 
     // 3 - We get the font we are going to use...
-       f = FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter");
+       f = FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter Regular");
   }
 
  /*------------------------------------------------------------------------------------*/

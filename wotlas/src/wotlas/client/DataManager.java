@@ -21,7 +21,7 @@ package wotlas.client;
 
 import wotlas.client.gui.*;
 import wotlas.client.screen.*;
-import wotlas.client.screen.extraplugin.*;
+//import wotlas.client.screen.extraplugin.*; ss commented 12/20/03 to compile - this is something being developed?
 import wotlas.client.screen.JPanelPlugIn;
 import wotlas.client.screen.plugin.InfoPlugIn;
 

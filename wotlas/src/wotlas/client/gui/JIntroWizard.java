@@ -180,7 +180,7 @@ public class JIntroWizard extends JFrame {
         f = new Font("Monospaced", Font.PLAIN, 10);
         UIManager.put("Button.font", f);
 
-        f = FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter");
+        f = FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter Regular");
     
         UIManager.put("ComboBox.font", f.deriveFont(14f));
         UIManager.put("ComboBox.foreground", Color.black);

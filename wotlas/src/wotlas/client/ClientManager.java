@@ -25,20 +25,27 @@ import wotlas.common.ServerConfigListTableModel;
 
 import wotlas.client.gui.*;
 import wotlas.client.screen.*;
+
 import wotlas.utils.Tools;
 import wotlas.utils.Debug;
+
+import wotlas.utils.ALabel;
+import wotlas.utils.ATextField;
+import wotlas.utils.ATableCellRenderer;
 
 import wotlas.libs.net.*;
 import wotlas.libs.net.personality.*;
 import wotlas.common.message.account.*;
 
-import javax.swing.*;
-import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 
+import javax.swing.*;
+import javax.swing.event.*;
+
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.JScrollPane;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
@@ -63,12 +70,12 @@ public class ClientManager
 
   /** Our ServerConfigList file.
    */
-  private ServerConfigList serverConfigList;  
-  
+  private ServerConfigList serverConfigList;
+
   /** Current serverConfig
-   */   
+   */
   ServerConfig currentServerConfig;
-  
+
   /** Generic interface of Wotlas client
    */
   public JIntroWizard screenIntro;
@@ -77,36 +84,47 @@ public class ClientManager
    */
   private int indexScreen;
 
+  ImageIcon im_okup, im_okdo, im_okun;
+  ImageIcon im_cancelup, im_canceldo;
+  ImageIcon im_newup, im_newdo;
+  ImageIcon im_loadup, im_loaddo, im_loadun;
+  ImageIcon im_delup, im_deldo, im_delun;
+
+  Font f;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. Attemps to load the config/client-profiles.cfg file...
    */
   private ClientManager() {
-    
+
     PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
-    
-    // 1 - We load the ProfileConfigList    
+
+    // 1 - We load the ProfileConfigList
     profileConfigList = pm.loadProfileConfigs();
     if (profileConfigList == null) {
       Debug.signal( Debug.FAILURE, this, "Can't init client's profile without a ProfileConfigList file !" );
       //System.exit(1);
     } else {
-      Debug.signal( Debug.NOTICE, null, "Client Configs loaded with success !" );      
+      Debug.signal( Debug.NOTICE, null, "Client Configs loaded with success !" );
     }
 
     // 2 - We load the ServerConfigList
-    serverConfigList = new ServerConfigList(pm);    
+    serverConfigList = new ServerConfigList(pm);
     if (serverConfigList == null) {
       Debug.signal( Debug.FAILURE, this, "No Server Configs loaded !" );
       System.exit(1);
     } else {
-      Debug.signal( Debug.NOTICE, null, "Server Configs loaded with success !" );      
+      Debug.signal( Debug.NOTICE, null, "Server Configs loaded with success !" );
     }
-    
+
     // 3 - We create the wizard to connect Wotlas
     screenIntro = new JIntroWizard();
     // set the different colors of fonts and buttons
     screenIntro.setGUI();
+
+    // 4 - We load some fonts for GUI
+    f = wotlas.utils.SwingTools.loadFont("../base/fonts/Lblack.ttf");
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -152,88 +170,129 @@ public class ClientManager
 
     JPanel tempPanel;
     JScrollPane scrollPane;
-    
-    JLabel label1;
-    JLabel label2;
-    JLabel label3;
-    JLabel label4;
-    JLabel label5;
-    
+
+    ALabel label1;
+    ALabel label2;
+    ALabel label3;
+    ALabel label4;
+    ALabel label5;
+
+    JLabel imgLabel1;
+    JLabel imgLabel2;
+
     final JTextField tfield1;
+    final ATextField atf_login;
     final JPasswordField pfield1;
 
     final JButton b_ok;
     final JButton b_cancel;
     final JButton b_delProfile;
 
+
+
     indexScreen = state;
 
     switch(state)
     {
-      
+
       // ********************
-      // *** First Screen *** 
+      // *** First Screen ***
       // ********************
-      
+
       case 0:
       screenIntro.setTitle("Wotlas - Account selection...");
       
-      // Test if an account exits
+      // Test if an account exists
       if (profileConfigList==null) {
         profileConfigList = new ProfileConfigList();
         start(10);
         return;
-      }      
-      
-      // *** Right Panel ***
+      }
+
+      // Load images of buttons
+      im_cancelup = new ImageIcon("..\\base\\gui\\cancel-up.gif");
+      im_canceldo = new ImageIcon("..\\base\\gui\\cancel-do.gif");
+      im_delup    = new ImageIcon("..\\base\\gui\\delete-up.gif");
+      im_deldo    = new ImageIcon("..\\base\\gui\\delete-do.gif");
+      im_delun    = new ImageIcon("..\\base\\gui\\delete-un.gif");
+      im_loadup   = new ImageIcon("..\\base\\gui\\load-up.gif");
+      im_loaddo   = new ImageIcon("..\\base\\gui\\load-do.gif");
+      im_loadun   = new ImageIcon("..\\base\\gui\\load-un.gif");
+      im_newup    = new ImageIcon("..\\base\\gui\\new-up.gif");
+      im_newdo    = new ImageIcon("..\\base\\gui\\new-do.gif");
+      im_okup     = new ImageIcon("..\\base\\gui\\ok-up.gif");
+      im_okdo     = new ImageIcon("..\\base\\gui\\ok-do.gif");
+      im_okun     = new ImageIcon("..\\base\\gui\\ok-un.gif");
+
+      // Create panels
+      leftPanel = new JPanel();
+      leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
       rightPanel = new JPanel();
       rightPanel.setLayout(new FlowLayout(FlowLayout.CENTER, screenIntro.getRightWidth(), 10));
 
-      b_ok = new JButton("ok");
-      b_ok.setEnabled(false);
-      b_ok.addActionListener(new ActionListener() {
-          public void actionPerformed (ActionEvent e) {
-            start(indexScreen+1);
-          }
-        }
-      );
-      rightPanel.add(b_ok);
+      // Create buttons
+      b_ok = new JButton(im_okup);
+      b_ok.setRolloverIcon(im_okdo);
+      b_ok.setPressedIcon(im_okdo);
+      b_ok.setDisabledIcon(im_okun);
+      b_ok.setBorderPainted(false);
+      b_ok.setContentAreaFilled(false);
+      b_ok.setFocusPainted(false);
 
-      b_cancel = new JButton("cancel");
-      b_cancel.setEnabled(false);
-      rightPanel.add(b_cancel);
+      b_cancel = new JButton(im_cancelup);
+      b_cancel.setRolloverIcon(im_canceldo);
+      b_cancel.setPressedIcon(im_canceldo);
+      b_cancel.setDisabledIcon(im_canceldo);
+      b_cancel.setBorderPainted(false);
+      b_cancel.setContentAreaFilled(false);
+      b_cancel.setFocusPainted(false);
 
-      JButton b_newProfile = new JButton("New ");
-      b_newProfile.addActionListener(new ActionListener() {
-          public void actionPerformed (ActionEvent e) {
-            start(10);
-          }
-        }
-      );
-      rightPanel.add(b_newProfile);
+      JButton b_newProfile = new JButton(im_newup);
+      b_newProfile.setRolloverIcon(im_newdo);
+      b_newProfile.setPressedIcon(im_newdo);
+      b_newProfile.setDisabledIcon(im_newdo);
+      b_newProfile.setBorderPainted(false);
+      b_newProfile.setContentAreaFilled(false);
+      b_newProfile.setFocusPainted(false);
 
-      JButton b_loadProfile = new JButton("Load ");
-      rightPanel.add(b_loadProfile);
+      JButton b_loadProfile = new JButton(im_loadup);
+      b_loadProfile.setRolloverIcon(im_loaddo);
+      b_loadProfile.setPressedIcon(im_loaddo);
+      b_loadProfile.setDisabledIcon(im_loadun);
+      b_loadProfile.setBorderPainted(false);
+      b_loadProfile.setContentAreaFilled(false);
+      b_loadProfile.setFocusPainted(false);
 
-      b_delProfile = new JButton("Delete ");
-      b_delProfile.setEnabled(false);
-      rightPanel.add(b_delProfile);
+      b_delProfile = new JButton(im_delup);
+      b_delProfile.setRolloverIcon(im_deldo);
+      b_delProfile.setPressedIcon(im_deldo);
+      b_delProfile.setDisabledIcon(im_delun);
+      b_delProfile.setBorderPainted(false);
+      b_delProfile.setContentAreaFilled(false);
+      b_delProfile.setFocusPainted(false);
 
       // *** Left JPanel ***
-      leftPanel = new JPanel();
-      leftPanel.setLayout(new FlowLayout(FlowLayout.CENTER, screenIntro.getLeftWidth(), 20));
 
-      label1 = new JLabel("Welcome to WOTLAS");
-      leftPanel.add(label1);
-      label2 = new JLabel("Choose your profile :");
-      leftPanel.add(label2);
+      imgLabel1 = new JLabel(new ImageIcon("..\\base\\gui\\welcome.gif"));
+      imgLabel1.setAlignmentX(Component.CENTER_ALIGNMENT);
+      leftPanel.add(imgLabel1);
+
+      imgLabel2 = new JLabel(new ImageIcon("..\\base\\gui\\choose.gif"));
+      imgLabel2.setAlignmentX(Component.CENTER_ALIGNMENT);
+      leftPanel.add(imgLabel2);
+
+      leftPanel.add(Box.createRigidArea(new Dimension(0,10)));
 
       // Creates a table of profiles
       // data
       ProfileConfigListTableModel profileConfigListTabModel = new ProfileConfigListTableModel(profileConfigList, serverConfigList);
       JTable profilesTable = new JTable(profileConfigListTabModel);
-      profilesTable.setOpaque(false);
-      profilesTable.setPreferredScrollableViewportSize(new Dimension(200, 100));
+      profilesTable.setDefaultRenderer(Object.class, new ATableCellRenderer());
+      profilesTable.setBackground(Color.white);
+      profilesTable.setForeground(Color.black);
+      profilesTable.setSelectionBackground(Color.lightGray);
+      profilesTable.setSelectionForeground(Color.white);
+      profilesTable.setRowHeight(24);
       // selection
       profilesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       ListSelectionModel rowProfilesSM = profilesTable.getSelectionModel();
@@ -257,10 +316,39 @@ public class ClientManager
       });
       // show table
       scrollPane = new JScrollPane(profilesTable);
-      scrollPane.setOpaque(false);
+      scrollPane.getViewport().setBackground(Color.white);
+      JScrollBar jsb_01 = scrollPane.getVerticalScrollBar();      
       leftPanel.add(scrollPane);
 
+      // *** Right Panel ***
+
+      b_ok.setEnabled(false);
+      b_ok.addActionListener(new ActionListener() {
+          public void actionPerformed (ActionEvent e) {
+            start(indexScreen+1);
+          }
+        }
+      );
+      rightPanel.add(b_ok);
+
+      b_cancel.setEnabled(false);
+      rightPanel.add(b_cancel);
+
+      b_newProfile.addActionListener(new ActionListener() {
+          public void actionPerformed (ActionEvent e) {
+            start(10);
+          }
+        }
+      );
+      rightPanel.add(b_newProfile);
+
+      rightPanel.add(b_loadProfile);
+
+      b_delProfile.setEnabled(false);
+      rightPanel.add(b_delProfile);
+
       // *** Adding the panels ***
+
       screenIntro.setLeftPanel(leftPanel);
       screenIntro.setRightPanel(rightPanel);
       screenIntro.showScreen();
@@ -269,17 +357,59 @@ public class ClientManager
     // ********************************
     // *** Connection to GameServer ***
     // ********************************
-    
+
     case 1:
       screenIntro.setTitle("Wotlas - Account selection...");
-      
-      pfield1 = new JPasswordField(15);
 
-      // *** Right Panel ***
+      // Create panels
+      leftPanel = new JPanel();
+      leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
       rightPanel = new JPanel();
       rightPanel.setLayout(new FlowLayout(FlowLayout.CENTER, screenIntro.getRightWidth(), 10));
 
-      b_ok = new JButton("ok");
+      // Create buttons
+      b_ok = new JButton(im_okup);
+      b_ok.setRolloverIcon(im_okdo);
+      b_ok.setPressedIcon(im_okdo);
+      b_ok.setDisabledIcon(im_okun);
+      b_ok.setBorderPainted(false);
+      b_ok.setContentAreaFilled(false);
+      b_ok.setFocusPainted(false);
+
+      b_cancel = new JButton(im_cancelup);
+      b_cancel.setRolloverIcon(im_canceldo);
+      b_cancel.setPressedIcon(im_canceldo);
+      b_cancel.setDisabledIcon(im_canceldo);
+      b_cancel.setBorderPainted(false);
+      b_cancel.setContentAreaFilled(false);
+      b_cancel.setFocusPainted(false);
+
+      // *** Left JPanel ***
+
+      label1 = new ALabel("Welcome " + currentProfileConfig.getLogin() + ",");
+      label1.setAlignmentX(Component.CENTER_ALIGNMENT);
+      leftPanel.add(label1);
+
+      leftPanel.add(Box.createRigidArea(new Dimension(0,10)));
+
+      JPanel mainPanel_01 = new JPanel();
+        mainPanel_01.setBackground(Color.white);
+        JPanel formPanel_01_left = new JPanel(new GridLayout(2,1,5,5));
+          formPanel_01_left.setBackground(Color.white);
+          formPanel_01_left.add(new JLabel(new ImageIcon("..\\base\\gui\\enter-password.gif")));
+          formPanel_01_left.add(new JLabel(new ImageIcon("..\\base\\gui\\your-key.gif")));
+        mainPanel_01.add(formPanel_01_left);
+        JPanel formPanel_01_right = new JPanel(new GridLayout(2,1,5,10));
+          formPanel_01_right.setBackground(Color.white);
+          pfield1 = new JPasswordField(10);
+          pfield1.setFont(f.deriveFont(18f));
+          formPanel_01_right.add(pfield1);
+          formPanel_01_right.add(new ALabel(currentProfileConfig.getKey()));
+        mainPanel_01.add(formPanel_01_right);
+      leftPanel.add(mainPanel_01);
+
+      // *** Right Panel ***
+
       b_ok.addActionListener(new ActionListener() {
         public void actionPerformed (ActionEvent e) {
           char charPasswd[] = pfield1.getPassword();
@@ -292,8 +422,8 @@ public class ClientManager
             }
 
             DataManager.getDefaultDataManager().setCurrentProfileConfig(currentProfileConfig);
-            
-            currentServerConfig = serverConfigList.getServerConfig(currentProfileConfig.getServerID());            
+
+            currentServerConfig = serverConfigList.getServerConfig(currentProfileConfig.getServerID());
 
             JGameConnectionDialog jgconnect = new JGameConnectionDialog( screenIntro,
                     currentServerConfig.getServerName(), currentServerConfig.getGameServerPort(),
@@ -312,7 +442,6 @@ public class ClientManager
       );
       rightPanel.add(b_ok);
 
-      b_cancel = new JButton("cancel");
       b_cancel.addActionListener(new ActionListener() {
         public void actionPerformed (ActionEvent e) {
             start(0);
@@ -321,76 +450,89 @@ public class ClientManager
       );
       rightPanel.add(b_cancel);
 
-      // *** Left JPanel ***
-      leftPanel = new JPanel();
-      leftPanel.setLayout(new FlowLayout(FlowLayout.CENTER, screenIntro.getLeftWidth(), 20));
-
-      label1 = new JLabel("Welcome " + currentProfileConfig.getLogin());
-      leftPanel.add(label1);
-      label2 = new JLabel("type your password to access Wotlas :");
-      leftPanel.add(label2);
-
-      leftPanel.add(pfield1);
-      label3 = new JLabel("your key : " + currentProfileConfig.getKey());
-      leftPanel.add(label3);
-
       // *** Adding the panels ***
+
       screenIntro.setLeftPanel(leftPanel);
       screenIntro.setRightPanel(rightPanel);
       screenIntro.showScreen();
       break;
 
-    case 2:
-    case 3:
-      break;
-    
     // ***********************************
     // *** Connection to AccountServer ***
     // ***********************************
 
     case 10:
       screenIntro.setTitle("Wotlas - Account creation...");
-    
+
       // Account creation
       currentProfileConfig = new ProfileConfig();
 
-      // *** Right Panel ***
+      // Create panels
+      leftPanel = new JPanel();
+      leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
       rightPanel = new JPanel();
       rightPanel.setLayout(new FlowLayout(FlowLayout.CENTER, screenIntro.getRightWidth(), 10));
 
-      b_ok = new JButton("ok");
-      b_ok.setEnabled(false);
+      // Create buttons
+      b_ok = new JButton(im_okup);
+      b_ok.setRolloverIcon(im_okdo);
+      b_ok.setPressedIcon(im_okdo);
+      b_ok.setDisabledIcon(im_okun);
+      b_ok.setBorderPainted(false);
+      b_ok.setContentAreaFilled(false);
+      b_ok.setFocusPainted(false);
+
+      b_cancel = new JButton(im_cancelup);
+      b_cancel.setRolloverIcon(im_canceldo);
+      b_cancel.setPressedIcon(im_canceldo);
+      b_cancel.setDisabledIcon(im_canceldo);
+      b_cancel.setBorderPainted(false);
+      b_cancel.setContentAreaFilled(false);
+      b_cancel.setFocusPainted(false);
 
       // *** Left JPanel ***
-      leftPanel = new JPanel();
-      leftPanel.setLayout(new FlowLayout(FlowLayout.CENTER, screenIntro.getRightWidth(), 20));
 
-      label3 = new JLabel("Complete the informations:");
-      leftPanel.add(label3);
+      imgLabel1 = new JLabel(new ImageIcon("..\\base\\gui\\complete-info.gif"));
+      imgLabel1.setAlignmentX(Component.CENTER_ALIGNMENT);
+      leftPanel.add(imgLabel1);
       
-      tempPanel = new JPanel(new GridLayout(2,2,5,5));
+      leftPanel.add(Box.createRigidArea(new Dimension(0,10)));
+
+      JPanel mainPanel_10 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        mainPanel_10.setAlignmentX(Component.CENTER_ALIGNMENT);
+        mainPanel_10.setBackground(Color.white);
+        JPanel formPanel_10 = new JPanel(new GridLayout(2,2,5,5));
+          formPanel_10.setBackground(Color.white);
+          formPanel_10.add(new JLabel(new ImageIcon("..\\base\\gui\\login.gif")));
+          atf_login = new ATextField(10);
+          atf_login.setSelectionColor(Color.lightGray);
+          atf_login.setSelectedTextColor(Color.white);
+          formPanel_10.add(atf_login);
+          formPanel_10.add(new JLabel(new ImageIcon("..\\base\\gui\\password.gif")));
+          pfield1 = new JPasswordField(10);
+          pfield1.setFont(f.deriveFont(18f));
+          pfield1.setSelectionColor(Color.lightGray);
+          pfield1.setSelectedTextColor(Color.white);
+          formPanel_10.add(pfield1);
+        mainPanel_10.add(formPanel_10);
+      leftPanel.add(mainPanel_10);
+
+      leftPanel.add(Box.createRigidArea(new Dimension(0,10)));
       
-      label1 = new JLabel("login");
-      tempPanel.add(label1);
-      tfield1 = new JTextField(10);
-      tempPanel.add(tfield1);
-      label2 = new JLabel("password:");
-      tempPanel.add(label2);
-      pfield1 = new JPasswordField(10);
-      tempPanel.add(pfield1);
-
-      tempPanel.setOpaque(false);
-      leftPanel.add(tempPanel);
-
-      label4 = new JLabel("Choose a server for your account:");
-      leftPanel.add(label4);
+      imgLabel2 = new JLabel(new ImageIcon("..\\base\\gui\\choose-server.gif"));
+      imgLabel2.setAlignmentX(Component.CENTER_ALIGNMENT);
+      leftPanel.add(imgLabel2);
 
       // Creates a table of servers
       // data
       ServerConfigListTableModel serverConfigListTabModel = new ServerConfigListTableModel(serverConfigList);
       JTable serversTable = new JTable(serverConfigListTabModel);
-      
-      serversTable.setPreferredScrollableViewportSize(new Dimension(250, 80));
+      serversTable.setDefaultRenderer(Object.class, new ATableCellRenderer());
+      serversTable.setBackground(Color.white);
+      serversTable.setForeground(Color.black);
+      serversTable.setSelectionBackground(Color.lightGray);
+      serversTable.setSelectionForeground(Color.white);
+      serversTable.setRowHeight(24);
       // selection
       serversTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       ListSelectionModel rowServerSM = serversTable.getSelectionModel();
@@ -408,38 +550,39 @@ public class ClientManager
             //selectedRow is selected
             currentServerConfig = serverConfigList.ServerConfigAt(selectedRow);
             currentProfileConfig.setOriginalServerID(currentServerConfig.getServerID());
-            currentProfileConfig.setServerID(currentServerConfig.getServerID());            
-            b_ok.setEnabled(true);            
+            currentProfileConfig.setServerID(currentServerConfig.getServerID());
+            b_ok.setEnabled(true);
           }
         }
       });
-      // show table
-      serversTable.setOpaque(false);      
+      // show table      
       scrollPane = new JScrollPane(serversTable);
-      scrollPane.setOpaque(false);
+      scrollPane.getViewport().setBackground(Color.white);      
       leftPanel.add(scrollPane);
 
-      
-      
+      // *** Right Panel ***
+
+      b_ok.setEnabled(false);
       b_ok.addActionListener(new ActionListener() {
-        public void actionPerformed (ActionEvent e) {
-          b_ok.setEnabled(false);
+        public void actionPerformed (ActionEvent e) {          
           char charPasswd[] = pfield1.getPassword();
           String passwd = "";
           if (charPasswd.length < 6) {
             JOptionPane.showMessageDialog( screenIntro, "Password mut have at least 5 characters !", "New Password", JOptionPane.ERROR_MESSAGE);
+            
           } else {
+            b_ok.setEnabled(false);
             for (int i=0; i<charPasswd.length; i++) {
               passwd += charPasswd[i];
             }
 
             // Account creation
-           
-            currentProfileConfig.setLogin(tfield1.getText());
+
+            currentProfileConfig.setLogin(atf_login.getText());
             currentProfileConfig.setPassword(passwd);
-                        
+
             DataManager dataManager = DataManager.getDefaultDataManager();
-            dataManager.setCurrentProfileConfig(currentProfileConfig);            
+            dataManager.setCurrentProfileConfig(currentProfileConfig);
 
             JAccountConnectionDialog jaconnect = new JAccountConnectionDialog( screenIntro,
                        currentServerConfig.getServerName(), currentServerConfig.getAccountServerPort(),
@@ -451,13 +594,13 @@ public class ClientManager
               Debug.signal( Debug.NOTICE, null, "ClientManager ejected from AccountServer");
               return;
             }
-            
+
           }
         }
       });
       rightPanel.add(b_ok);
 
-      b_cancel = new JButton("cancel");
+
       b_cancel.addActionListener(new ActionListener() {
           public void actionPerformed (ActionEvent e) {
             start(0);
@@ -465,12 +608,13 @@ public class ClientManager
         }
       );
       rightPanel.add(b_cancel);
-      
+
       if (profileConfigList.size() == 0) {
         b_cancel.setEnabled(false);
       }
-      
+
       // *** Adding the panels ***
+
       screenIntro.setLeftPanel(leftPanel);
       screenIntro.setRightPanel(rightPanel);
       screenIntro.showScreen();
@@ -479,35 +623,48 @@ public class ClientManager
     // **************************************
     // *** A new account has been created ***
     // **************************************
-    
+
     case 11:
       screenIntro.setTitle("Wotlas - Account creation...");
-      
+
       // Save accounts informations
       profileConfigList.addProfile(currentProfileConfig);
       PersistenceManager.getDefaultPersistenceManager().saveProfilesConfig(profileConfigList);
-      
-      // *** Left Panel ***/
-            
+
+      // Create panels
       leftPanel = new JPanel();
-      leftPanel.setLayout(new FlowLayout(FlowLayout.CENTER, screenIntro.getLeftWidth(), 20));
+      //leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+      rightPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, screenIntro.getRightWidth(), 10));
+
+      // Create buttons
+      b_ok = new JButton(im_okup);
+      b_ok.setRolloverIcon(im_okdo);
+      b_ok.setPressedIcon(im_okdo);
+      b_ok.setDisabledIcon(im_okun);
+      b_ok.setBorderPainted(false);
+      b_ok.setContentAreaFilled(false);
+      b_ok.setFocusPainted(false);
       
-      label1 = new JLabel();
-      label1.setFont(new Font("Dialog", Font.BOLD, 16));
-      label1.setText("<html>Your new account has been"
-                            + "<br>successfully created!<br>" 
-                            + "Remember your key to access wotlas<br>"
-                            + "from anywhere : " + currentProfileConfig.getKey()
-                            + "</center><br>Click OK to enter WOTLAS....</html>");      
+      b_cancel = new JButton(im_cancelup);
+      b_cancel.setRolloverIcon(im_canceldo);
+      b_cancel.setPressedIcon(im_canceldo);
+      b_cancel.setDisabledIcon(im_canceldo);
+      b_cancel.setBorderPainted(false);
+      b_cancel.setContentAreaFilled(false);
+      b_cancel.setFocusPainted(false);
       
-      leftPanel.add(label1);
+      // *** Left Panel ***/            
+      label1 = new ALabel("<html>Your new account has been"
+                            + "<br>successfully created!<br>"
+                            + "Remember your key to access<br>"
+                            + "wotlas from anywhere : " + currentProfileConfig.getKey()
+                            + "</center><br>Click OK to enter WOTLAS....</html>");        
+      leftPanel.add(label1, BorderLayout.CENTER);
       
       // *** Right Panel ***/      
-      rightPanel = new JPanel();
       
-      b_ok = new JButton("ok");
       b_ok.addActionListener(new ActionListener() {
-        public void actionPerformed (ActionEvent e) {                    
+        public void actionPerformed (ActionEvent e) {
             JGameConnectionDialog jgconnect = new JGameConnectionDialog( screenIntro,
               currentServerConfig.getServerName(), currentServerConfig.getGameServerPort(),
               currentProfileConfig.getLogin(), currentProfileConfig.getPassword(),
@@ -521,11 +678,10 @@ public class ClientManager
               Debug.signal( Debug.ERROR, this, "ClientManager ejected from GameServer");
             }
           }
-        }     
+        }
       );
       rightPanel.add(b_ok);
       
-      b_cancel = new JButton("cancel");
       b_cancel.addActionListener(new ActionListener() {
           public void actionPerformed (ActionEvent e) {
             start(0);
@@ -533,8 +689,9 @@ public class ClientManager
         }
       );
       rightPanel.add(b_cancel);
-      
+
       // *** Adding the panels ***
+
       screenIntro.setLeftPanel(leftPanel);
       screenIntro.setRightPanel(rightPanel);
       screenIntro.showScreen();
@@ -543,25 +700,23 @@ public class ClientManager
     // ********************
     // *** Final screen ***
     // ********************
-    
+
     case 100:
-      //screenIntro.setTitle("Wotlas - Welcome !");      
-      //JOptionPane.showMessageDialog( screenIntro, "Wotlas client", "Welcome !", JOptionPane.INFORMATION_MESSAGE);
       screenIntro.dispose();
-      
+
       JInfosPanel infosPanel = new JInfosPanel();
       JMapPanel mapPanel = new JMapPanel();
       JChatPanel chatPanel = new JChatPanel();
       JPreviewPanel previewPanel = new JPreviewPanel();
       JPlayerPanel playerPanel = new JPlayerPanel();
       JLogPanel logPanel = new JLogPanel();
-    
-      JClientScreen mFrame = new JClientScreen(infosPanel, mapPanel, chatPanel, previewPanel, playerPanel, logPanel);    
-      mFrame.init();      
-      mFrame.show();      
-      
-      break;      
-      
+
+      JClientScreen mFrame = new JClientScreen(infosPanel, mapPanel, chatPanel, previewPanel, playerPanel, logPanel);
+      mFrame.init();
+      mFrame.show();
+
+      break;
+
     default:
 
       // end of the wizard

@@ -231,6 +231,86 @@ public class NetMessageFactory
      	msg_class =null;
      }
 
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To add a new message class to this factory. This method is for dynamic code update
+   *  only ( from a maintenance console for example ). IT IS VERY IMPORTANT TO NOTE that
+   *  this method is NOT synchronized. Therefore if you call it when the system is actually
+   *  receiving messages you may encounter conflicts. As it was said, the best way to use
+   *  this method is during a maintenance period of a few minutes ( no clients are
+   *  connected, new clients are refused (see NetServer lock) ).
+   *
+   * @param class_name a complete class name : wotlas.server.message.MyNewMessage.
+   * @return true in case of success, false otherwise.
+   */
+     private boolean addMessageClass( String class_name )
+     {
+       try
+       {
+         // We only work on a well created factory.
+            if( msg_class == null ) {
+                Debug.signal( Debug.WARNING, this, "Factory was not well created !" );
+                return false;
+            }
+
+         // we try to find the given class by its name
+            Class cl = Class.forName( class_name );
+
+         // we check what we've found...
+            if( cl==null ) {
+                Debug.signal( Debug.WARNING, this, "Class not found !" );
+                return false;
+            }
+
+            if( cl.isInterface() ) {
+                Debug.signal( Debug.ERROR, this, "file was an interface !" );
+                return false;
+            }
+
+         // we analyse an instance of this class...
+            Object o = cl.newInstance();
+
+            if( !(o instanceof NetMessage) || !(o instanceof NetMessageBehaviour ) ) {
+                  Debug.signal( Debug.ERROR, this, "Not a right MessageBehaviour class !" );
+                  return false;
+            }
+
+         // we retrieve message category & type
+            int msg_category = ( (NetMessage) o).getMessageCategory();
+            int msg_type = ( (NetMessage) o).getMessageType();
+
+         // let's see if we need a msg_class reallocation ...
+            if( msg_category >= msg_class.length )
+            {
+                 Class tmp[][] = new Class[msg_category+1][];
+                 System.arraycopy( msg_class, 0, tmp, 0, msg_class.length );
+                 msg_class = tmp;
+            }
+
+         // empty category ?
+            if( msg_class[msg_category]==null ) {
+                 msg_class[msg_category] = new Class[msg_type+1];
+            }
+            else if( msg_type >= msg_class[msg_category].length ) // category re-allocation ?
+            {
+                 Class tmp[] = new Class[msg_type+1];
+                 System.arraycopy( msg_class[msg_category], 0, tmp,
+                                   0, msg_class[msg_category].length );
+
+                 msg_class[msg_category] = tmp;
+            }
+
+         // success
+            msg_class[msg_category][msg_type] = cl;
+            return true;
+       }
+       catch( Exception e ) {
+           Debug.signal( Debug.ERROR, this, e );
+           return false;
+       }
+     }
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

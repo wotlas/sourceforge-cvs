@@ -528,8 +528,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
     changeMapData();
 
-    personality.setPingListener( new GraphicPingPanel(mFrame) );
-
 
     // 8 - Start main loop tick
     Debug.signal( Debug.NOTICE, null, "Beginning to tick Graphics Director" );

@@ -57,7 +57,7 @@ public class AccountRecoverMessage extends NetMessage
    * @param clientID client local ID
    * @param serverID server ID who created the client account
    */
-     public AccountCreatedMessage(String key) {
+     public AccountRecoverMessage(String key) {
          super();
          this.key = key;
          playerName = "";

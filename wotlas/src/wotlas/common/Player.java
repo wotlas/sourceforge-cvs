@@ -122,6 +122,14 @@ public interface Player
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** To set the player's primary Key ( account name or any unique ID )
+    *
+    *  @param primaryKey player primary key
+    */
+      public void setPrimaryKey( String primaryKey );
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
    /** To get the player's character.
     *
     *  @return player character

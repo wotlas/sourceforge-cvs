@@ -21,11 +21,13 @@
 package wotlas.client;
 
 import wotlas.common.character.*;
-import wotlas.common.*;
 import wotlas.common.universe.*;
+import wotlas.common.*;
 
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
+
+import wotlas.libs.net.NetMessage;
 
 import wotlas.libs.pathfinding.*;
 
@@ -462,6 +464,16 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Use this method to send a NetMessage to the server.
+   *
+   * @param message message to send to the player.   
+   */
+     public void sendMessage( NetMessage message ) {
+        DataManager.getDefaultDataManager().sendMessage( message );             
+     }
+
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
  ///////////////// ALDISS pour récupérer la pièce courante
 

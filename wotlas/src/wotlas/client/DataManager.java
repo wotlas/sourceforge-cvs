@@ -65,7 +65,7 @@ import java.io.IOException;
 
 import javax.swing.*;
 
-import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 
 /** A DataManager manages Game Data and client's connection.
@@ -145,7 +145,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
   /** List of players
    */
-  private HashMap players;
+  //private HashMap players;
 
   /** Circle selection
    */
@@ -168,7 +168,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   private GraphicsDirector gDirector;
 
   private MapData myMapData;
-  
+
   /** Our AStar object.
    */
   public AStarDouble aStar;
@@ -182,11 +182,11 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   private JPreviewPanel previewPanel;
   private JPlayerPanel playerPanel;
   private JLogPanel logPanel;
-  
+
   /** player's name
    */
   private MultiLineText mltPlayerName;
-  
+
   /** Wotlas location name
    */
   private MultiLineText mltLocationName;
@@ -233,13 +233,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   }
 
  /*------------------------------------------------------------------------------------*/
-  
+
   /** To get the graphicsDirector
    */
   public GraphicsDirector getGraphicsDirector() {
     return gDirector;
   }
-  
+
  /*------------------------------------------------------------------------------------*/
 
   /** To get startGameLock
@@ -248,27 +248,27 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     return startGameLock;
   }
 
-  
+
   public JInfosPanel getInfosPanel() {
     return infosPanel;
   }
-  
+
   public JMapPanel getMapPanel() {
     return mapPanel;
   }
-  
+
   public JChatPanel getChatPanel() {
     return chatPanel;
   }
-    
+
   public JPreviewPanel getPreviewPanel() {
     return previewPanel;
   }
-  
+
   public JPlayerPanel getPlayerPanel() {
     return playerPanel;
   }
-  
+
   public JLogPanel getLogPanel() {
     return logPanel;
   }
@@ -289,22 +289,22 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   }
 
  /*------------------------------------------------------------------------------------*/
-  
+
   public String getDatabasePath() {
     return databasePath;
   }
-  
+
   public String getImageDBHome() {
     return imageDBHome;
   }
 
  /*------------------------------------------------------------------------------------*/
-  
+
   public AStarDouble getAStar() {
     return aStar;
   }
- 
- /*------------------------------------------------------------------------------------*/ 
+
+ /*------------------------------------------------------------------------------------*/
 
   /** This method is called when a new network connection is created
    *
@@ -378,7 +378,17 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
   }
 
- /*------------------------------------------------------------------------------------*/
+  /** Use this method to send a NetMessage to the server.
+   *
+   * @param message message to send to the player.
+   */
+  public void sendMessage( NetMessage message ) {
+    synchronized( personalityLock ) {
+      if ( personality!=null ) {
+        personality.queueMessage( message );
+      }
+    }
+  }
 
   /** To close the network connection if any.
    */
@@ -481,9 +491,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     mFrame.show();
 
     // 9 - Retreive other players informations
-    players = new HashMap();
+    //players = new HashMap();
     //personality.queueMessage(new AllDataLeftPleaseMessage());
-    addPlayer(myPlayer);
+    //addPlayer(myPlayer);
 
   }
 
@@ -526,10 +536,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
   public void tick() {
 
-    myPlayer.tick();
-    //System.out.print("myPlayer::angle = ");
-    //System.out.println(myPlayer.getAngle()*180/Math.PI);
+    //myPlayer.tick();
     myMapData.locationUpdate(myPlayer);
+    Hashtable players = myMapData.getPlayers(myPlayer);
+    Iterator it = players.values().iterator();
+    while( it.hasNext() ) {
+      ( (PlayerImpl) it.next() ).tick();
+    }
 
     if (circle != null) {
       if (circleLife < CIRCLE_LIFETIME) {
@@ -541,15 +554,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         circleLife = 0;
       }
     }
-
-    /*
-    Iterator it = players.values().iterator();
-    //System.out.println("tick players");
-    while( it.hasNext() ) {
-      ( (PlayerImpl) it.next() ).tick();
-    }
-    //System.out.println("end tick");
-    */
 
     gDirector.tick();
 
@@ -584,7 +588,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     } else {
       if (SHOW_DEBUG)
         System.out.println("object.getClass().getName() = " + object.getClass().getName());
-      
+
       if ( object.getClass().getName().equals("wotlas.client.PlayerImpl") ) {
         myPlayer = (PlayerImpl) object;
         //if (circle!=null) {
@@ -593,12 +597,12 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         //}
         //circle = new CircleDrawable(myPlayer.getDrawable(), 20, Color.yellow, (short) ImageLibRef.AURA_PRIORITY);
         //gDirector.addDrawable(circle);
-        
+
         TextDrawable textDrawable = new TextDrawable( myPlayer.getFullPlayerName(), myPlayer.getDrawable(), Color.black, 12.0f, "Lblack.ttf", ImageLibRef.AURA_PRIORITY, 5000 );
         gDirector.addDrawable(textDrawable);
       }
     }
-    
+
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -607,7 +611,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
   public void onRightClicJMapPanel(MouseEvent e) {
     if (SHOW_DEBUG) {
-      System.out.println("Hiding debug informations");      
+      System.out.println("Hiding debug informations");
     } else {
       System.out.println("Showing debug informations");
     }
@@ -636,18 +640,18 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    *
    * @player the player to add
    */
-  public synchronized void addPlayer(PlayerImpl player) {
+  /*public synchronized void addPlayer(PlayerImpl player) {
     players.put( player.getPrimaryKey(), player );
-  }
+  }*/
 
   /** To remove a player
    *
    * @player the player to remove
    */
-  public synchronized boolean removePlayer(PlayerImpl player) {
+  /*public synchronized boolean removePlayer(PlayerImpl player) {
     players.remove(player.getPrimaryKey());
     return true;
-  }
+  }*/
 
   /** To set our player<br>
    * (called by client.message.description.YourPlayerDataMsgBehaviour)
@@ -667,14 +671,14 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       myMapData = new InteriorMapData();
     }
     else if ( myPlayer.getLocation().isTown() ) {
-      myMapData = new TownMapData();      
+      myMapData = new TownMapData();
     }
     else if ( myPlayer.getLocation().isWorld() ) {
       myMapData = new WorldMapData();
     }
     myMapData.initDisplay(myPlayer);
   }
-  
+
  /*------------------------------------------------------------------------------------*/
 
   /** To suppress drawables, shadows, data
@@ -714,7 +718,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     //closeConnection();
     Debug.exit();
   }
-  
+
 
  /*------------------------------------------------------------------------------------*/
   //////////////// ALDISS ajout d'une méthod pour récupérer le joueur courant.

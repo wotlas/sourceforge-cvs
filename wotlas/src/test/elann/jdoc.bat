@@ -1,1 +1,1 @@
-javadoc *.java -d javadoc -author -nodeprecated -windowtitle "Object Management System"
+javadoc -d javadoc -author -nodeprecated -windowtitle "Object Management System" src\*.java src\armors\*.java src\containers\*.java src\interfaces\*.java src\magicals\*.java src\usefuls\*.java src\valueds\*.java src\weapons\*.java

@@ -36,7 +36,7 @@ Quelques règles de visibilité/accès aux variables/méthodes de classes :
 
        Exemple :
 
-          Pas de :
+          PAS DE :
 
              Bob my_bob = new Bob( ... );            
 
@@ -50,9 +50,9 @@ Quelques règles de visibilité/accès aux variables/méthodes de classes :
                     if( s.equals("null") )   // je corrige si c'est pas bon
                         s = "";
                }
-               catch( OutOfBoudException e )
-                  s = "";                       // si je me suis planté dans la taille du tableau
-               }
+               catch( ArrayOutOfBoudException e )
+                  s = "";                       // je me suis planté dans la taille du tableau
+               }                                // je corrige tant bien que mal...
 
               ...
 
@@ -70,7 +70,7 @@ Quelques règles de visibilité/accès aux variables/méthodes de classes :
              }
 
 
-          Mais :
+          MAIS :
 
              Bob my_bob = new Bob( ... );            
 
@@ -87,11 +87,6 @@ Quelques règles de visibilité/accès aux variables/méthodes de classes :
 
                // Retourne la version "String" de l'élément du tableau
                   int getTabElement( int i ) {
-                       if( i>= tab.length ) {
-                           Debug.declareError( Debug.WARNING, new OutOfBoundsException("getElement") );
-                           return "";
-                       }
-
                        if( tab[i]==null )
                            return "";
 
@@ -99,9 +94,55 @@ Quelques règles de visibilité/accès aux variables/méthodes de classes :
                   }
             }
 
-        Le "if( i>= tab.length)" est facultatif. On pourrait laisser Java lancer l'exception
-        tout seul. Ce n'est qu'un exemple, il faut voir au cas par cas. Ici on a considéré que
-        se planter sur la taille du tableau n'étais pas très grave.... ( c'est pour l'exemple ).
+  c - Il faut éviter que le "getXXX" fasse un traitement lourd en plus de renvoyer une valeur.
+      Exemple à éviter :
+
+            private MyData data;
+
+            public MyData getData() {
+                if (data == null) {
+                  // On n'a pas les données, on cherche à les construire avec un
+                  // traitement "lourd" qui impacte d'autres membres de la classe
+                }
+
+               return data;
+            }
+
+          Le problème de cette implémentation, c'est qu'un autre développeur peut
+          croire qu'il peut tester la nullité ou non de "data" en appelant le getter,
+          alors que cela va lui entraîner plein d'effets de bords.
+
+          En général, celle-ci est préférable, même si elle nécessite 2 méthodes
+          plutôt qu'une:
+
+            private MyData data;
+
+            /**
+             * Provides the data or null if not yet computed.
+             * Call computeData before if you want to be sure that the data
+             * are available.
+             * @return the data, possibly null.
+             **/
+
+              public MyData getData() {
+                   return data;
+              }
+
+           /**
+            * Provides the data.
+            * (Possibly compute them if not yet done)
+            * @return the data.
+            **/
+
+            public MyData computeData() {
+                 if (data == null) {
+                   // On n'a pas les données, on cherche à les construire avec un
+                   // traitement "lourd" qui impacte d'autres membres de la classe
+                 }
+
+              return data;
+            }
+
 
 
 LES EXCEPTIONS
@@ -200,4 +241,3 @@ Ca c'est un cas simple car on peut aussi attendre la fin de la fonction pour que
 locale soit effacée... là où ça se complique c'est si on utilise des HashTable ou des tableaux.
 
 Dans ces cas on peut oublier d'effacer des anciennes références, les objets ne sont pas effacés et au bout d'un moment c'est le "Exit: Out Of Memory"... donc attention aux références d'objets ! n'hésitez pas à faire des obj=null , ça n'a rien de ridicule.
-

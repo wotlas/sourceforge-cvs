@@ -37,7 +37,7 @@ import java.util.Iterator;
  * @see wotlas.server.PersistenceManager
  */
 
-class ServerDirector
+class ServerDirector implements Runnable
 {
  /*------------------------------------------------------------------------------------*/
 
@@ -80,6 +80,15 @@ class ServerDirector
     */
       private static DataManager dataManager;
 
+   /** Our default ServerDirector.
+    */
+      private static ServerDirector serverDirector;
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To stop the persistence thread.
+    */
+      private boolean mustStop = false;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -161,8 +170,22 @@ class ServerDirector
            Debug.signal( Debug.NOTICE, null, "WOTLAS Servers started with success..." );
 
         // Everything is ok ! we enter the persistence loop
-           Debug.signal( Debug.NOTICE, null, "Everything is Ok. Entering persistence loop..." );
-           persistenceLoop();
+           Debug.signal( Debug.NOTICE, null, "Everything is Ok. Creating persistence thread..." );
+
+           serverDirector = new ServerDirector();
+           Thread persistenceThread = new Thread( serverDirector );
+           persistenceThread.start();
+
+           Tools.waitTime( 2000 ); // 2s
+           Debug.signal( Debug.NOTICE, null, "Press <ENTER> if you want to shutdown this server." );
+
+           try{
+              System.in.read();
+           }catch( Exception e ) {
+           }
+
+           Debug.signal( Debug.NOTICE, null, "Leaving in 30s..." );
+           serverDirector.stopThread();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -188,31 +211,84 @@ class ServerDirector
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Infinite loop saving the world & accounts periodically.
+   /** Run method for Thread. 
     */
+      public void run(){
+           do{
+             // 1 - we wait the persistence period minus 5 minutes
+                synchronized( this ) {
+                  try{
+                     wait( PERSISTENCE_PERIOD-1000*300 );
+                  }catch(Exception e) {}
+                }
 
-     private static void persistenceLoop()
+                if(mustStopThread())
+                   break;
+
+             // 2 - Start persistence action
+                persistenceAction(true);
+           }
+           while( mustStopThread() );
+
+        // We save data before closing
+           persistenceAction(false);
+
+        // We close the different servers
+           Debug.signal( Debug.NOTICE, null, "Shuting down servers..." );
+           serverManager.getGameServer().stopServer();
+           serverManager.getAccountServer().stopServer();
+           /* serverManager.getGatewayServer().stopServer(); */
+
+           Tools.waitTime( 1000*10 ); // 10s
+           Debug.signal( Debug.NOTICE, null, "Leaving Persistence Thread..." );
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Saves the world & players.
+    *
+    * @param maintenance if true we advertise clients with a "entering maintenance mode"
+    *        message. If false we send a "server is shuting down" message.
+    */
+     private static void persistenceAction( boolean maintenance )
      {
-     	while( true )
-     	{
-           // 1 - we wait the persistence period minus 5 minutes
-              Tools.waitTime( PERSISTENCE_PERIOD-1000*300 );
-
            // We warn all the clients that the server is going to enter
            // maintenance mode for 5 minutes, in 5 minutes.
-              Debug.signal( Debug.NOTICE, null, "Server will enter maintenance mode in 5 minutes...");
-              Iterator it = dataManager.getAccountManager().getIterator();
+           // If we are not in maintenance mode ( maintenance=false )
+           // the message is a "server shuting down" message.
 
-              WarningMessage msg = new WarningMessage(
-                       "Your server will enter maintenance mode in 5 minutes.\n"
-                       +"Please disconnect and reconnect in 10 minutes");
+              if( maintenance )
+                  Debug.signal( Debug.NOTICE, null, "Server will enter maintenance mode in 5 minutes...");
+              else
+                  Debug.signal( Debug.NOTICE, null, "Sending warning messages to connected clients...");
 
-              while( it.hasNext() )
-                  ( (GameAccount) it.next() ).getPlayer().sendMessage( msg );
+              synchronized( dataManager.getAccountManager() )
+              {
+                 Iterator it = dataManager.getAccountManager().getIterator();
+
+                 WarningMessage msg = null;
+              
+                 if( maintenance )
+                    msg =new WarningMessage( "Your server will enter maintenance mode in 5 minutes.\n"
+                                           +"Please disconnect and reconnect in 10 minutes");
+                 else
+                    msg =new WarningMessage( "Your server is about to shutdown in 30s.\n"
+                                           +"Please disconnect and reconnect later.");
+
+                 while( it.hasNext() )
+                    ( (GameAccount) it.next() ).getPlayer().sendMessage( msg );
+              }
  
-           // 2 - We wait five more minutes
-              Tools.waitTime( PERSISTENCE_PERIOD-1000*300 );
-              Debug.signal( Debug.NOTICE, null, "Server enters maintenance mode now...");
+           // 2 - We wait five more minutes ( or 30s if maintenance=false )
+              if( maintenance ) {
+                  Tools.waitTime( 1000*300 ); // 5mn
+                  Debug.signal( Debug.WARNING, null, "Server enters maintenance mode now...");
+              }
+              else {
+                  Tools.waitTime( 1000*30 );  // 30s
+                  Debug.signal( Debug.NOTICE, null, "Saving world & player data...");
+              }
+
 
            // 3 - We close all remaining connections on the GameServer
            //     and enter maintenance mode
@@ -220,19 +296,23 @@ class ServerDirector
               serverManager.getAccountServer().setServerLock( true );
               /* serverManager.getGatewayServer().setServerLock( true ); */
 
-              it = dataManager.getAccountManager().getIterator();
+              synchronized( dataManager.getAccountManager() ) {
+                 Iterator it = dataManager.getAccountManager().getIterator();
 
-              while( it.hasNext() )
-                  ( (GameAccount) it.next() ).getPlayer().closeConnection();
-
+                 while( it.hasNext() )
+                     ( (GameAccount) it.next() ).getPlayer().closeConnection();
+              }
 
            // Saving Accounts
-              it = dataManager.getAccountManager().getIterator();
+              synchronized( dataManager.getAccountManager() ) {
+                 Iterator it = dataManager.getAccountManager().getIterator();
 
-              while( it.hasNext() )
-                  dataManager.getAccountManager().saveAccount( (GameAccount) it.next() );
+                 while( it.hasNext() )
+                     dataManager.getAccountManager().saveAccount( (GameAccount) it.next() );
+              }
 
               Debug.signal( Debug.NOTICE, null, "Saved player data..." );
+
 
            // 4 - We save the world data
               if( !dataManager.getWorldManager().saveLocalUniverse() )
@@ -240,13 +320,33 @@ class ServerDirector
               else
                   Debug.signal( Debug.NOTICE, null, "Saved world data..." );
 
+
            // 5 - Leaving Maintenance Mode
-              serverManager.getGameServer().setServerLock( true );
-              serverManager.getAccountServer().setServerLock( true );
-              /* serverManager.getGatewayServer().setServerLock( true ); */
-              Debug.signal( Debug.NOTICE, null, "Leaving maintenance mode..." );     
-         }
+              if( maintenance ) {
+                  serverManager.getGameServer().setServerLock( true );
+                  serverManager.getAccountServer().setServerLock( true );
+               /* serverManager.getGatewayServer().setServerLock( true ); */
+
+                  Debug.signal( Debug.NOTICE, null, "Leaving maintenance mode..." );
+              }
      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Must stop persistence thread ?
+    */
+      private synchronized boolean mustStopThread() {
+      	 return mustStop;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To stop the persistence thread.
+    */
+      private synchronized void stopThread() {
+      	 mustStop = true;
+      	 notify();
+      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

@@ -17,7 +17,7 @@
 	$query="DROP TABLE todo";
 	mysql_query($query,$connect);
 
-	$query="CREATE TABLE todo (num INT UNSIGNED NOT NULL AUTO_INCREMENT,title VARCHAR(128) NOT NULL,status TINYINT UNSIGNED,draft_ref VARCHAR(128), pre_req VARCHAR(128),descr BLOB, devel BLOB, PRIMARY KEY(num))";
+	$query="CREATE TABLE todo (num INT UNSIGNED NOT NULL,title VARCHAR(128) NOT NULL,status TINYINT UNSIGNED,draft_ref VARCHAR(128), pre_req VARCHAR(128),descr BLOB, devel BLOB, PRIMARY KEY(num))";
 	mysql_query($query,$connect) or die("<br>SQL query failure : $query</body></html>");
 	
 	echo "Table todo créée<br>";

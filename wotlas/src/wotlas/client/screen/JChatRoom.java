@@ -22,6 +22,7 @@ package wotlas.client.screen;
 import wotlas.client.*;
 
 import wotlas.common.chat.ChatRoom;
+import wotlas.common.Player;
 
 import wotlas.libs.log.*;
 
@@ -143,17 +144,29 @@ public class JChatRoom extends JPanel implements MouseListener
     final String strNewName = senderFullName;
     players.put( primaryKey, senderFullName );
 
-    Runnable runnable = new Runnable() {
-      public void run() {
-        if (!strNewName.equals(DataManager.getDefaultDataManager().getMyPlayer().getFullPlayerName()))
-          appendText("<font color='green'>" + strNewName + " entered the chat...</font>");
-        playersListModel.addElement(strNewName);       
-        revalidate();
-        repaint();
-      }
-    };
-    SwingUtilities.invokeLater( runnable );
-
+   Hashtable playersTable = DataManager.getDefaultDataManager().getPlayers();
+   Player newPlayer = (Player) playersTable.get(primaryKey);
+   if ( (newPlayer!=null) && newPlayer.isConnectedToGame() ) {
+      Runnable runnable = new Runnable() {
+        public void run() {
+          if (!strNewName.equals(DataManager.getDefaultDataManager().getMyPlayer().getFullPlayerName()))
+            appendText("<font color='green'>" + strNewName + " entered the chat...</font>");
+          playersListModel.addElement(strNewName);       
+          revalidate();
+          repaint();
+        }
+      };
+      SwingUtilities.invokeLater( runnable );
+    } else {
+      Runnable runnable = new Runnable() {
+        public void run() {          
+          playersListModel.addElement(strNewName);       
+          revalidate();
+          repaint();
+        }
+      };
+      SwingUtilities.invokeLater( runnable );
+    }
   }
 
   /** To remove a player from the JList.

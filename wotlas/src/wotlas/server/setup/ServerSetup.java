@@ -105,7 +105,7 @@ public class ServerSetup extends JFrame
                 System.exit(1);
            }
 
-           Debug.signal( Debug.NOTICE, null, "Server ID set to : "+serverID );
+           Debug.signal( Debug.NOTICE, null, "Current Default Server ID is : "+serverID );
 
       // persistence manager
          pm = PersistenceManager.createPersistenceManager( databasePath );
@@ -195,7 +195,7 @@ public class ServerSetup extends JFrame
          buttonPanel.add(b_save);
 
           b_save.addActionListener(new ActionListener()
-           {
+          {
               public void actionPerformed (ActionEvent e)
               {
                 // we save the config
@@ -229,11 +229,67 @@ public class ServerSetup extends JFrame
                    }
 
                    if( !pm.saveServerConfig(config) )
-                       JOptionPane.showMessageDialog( ServerSetup.this, "Failed to save : server.cfg file not found",
+                       JOptionPane.showMessageDialog( ServerSetup.this, "Failed to save server config in database",
                                                       "Error", JOptionPane.ERROR_MESSAGE);
-                   else
+                   else {
                        JOptionPane.showMessageDialog( ServerSetup.this, "Config saved: "+config.toString(),
                                                       "Success", JOptionPane.INFORMATION_MESSAGE);
+
+                       if(serverID==config.getServerID())
+                          return;
+
+                   // set this server as default ?
+                      int value = JOptionPane.showConfirmDialog(null, "Set this server as default ?", "Update Startup Config", JOptionPane.YES_NO_OPTION);
+
+                      if( value == JOptionPane.YES_OPTION ) {
+                        // we load the server config file
+                         String oldConfig = FileTools.loadTextFromFile( DATABASE_CONFIG );      	
+
+                        // config loaded ?
+                         if(oldConfig==null || oldConfig.length()==0 ) {
+                              JOptionPane.showMessageDialog( ServerSetup.this, "Failed to load file : "+DATABASE_CONFIG,
+                                                             "Error", JOptionPane.ERROR_MESSAGE);
+                              return;
+                         }
+
+                      // search for property
+                         StringBuffer newConfig = new StringBuffer("");
+
+                         int pos = oldConfig.lastIndexOf( "SERVER_ID" );
+
+                         if(pos<0) {
+                              JOptionPane.showMessageDialog( ServerSetup.this, "Failed to find SERVER_ID property in file : "+DATABASE_CONFIG,
+                                                             "Error", JOptionPane.ERROR_MESSAGE);
+                              return;
+                         }
+
+                         pos = oldConfig.indexOf( "=", pos );
+
+                         if(pos<0) {
+                              JOptionPane.showMessageDialog( ServerSetup.this, "Failed to find correct SERVER_ID property in file : "+DATABASE_CONFIG,
+                                                             "Error", JOptionPane.ERROR_MESSAGE);
+                              return;
+                         }
+
+                          newConfig.append( oldConfig.substring(0,pos+1) );
+                          newConfig.append( " "+config.getServerID() );
+                          
+                          pos = oldConfig.indexOf( "\n", pos );
+                          
+                          if(pos>0 && pos<oldConfig.length())
+                            newConfig.append( oldConfig.substring( pos, oldConfig.length() ) );
+                          else 
+                            newConfig.append( "\n" );
+
+                          if( !FileTools.saveTextToFile( DATABASE_CONFIG, newConfig.toString() ) )
+                               JOptionPane.showMessageDialog( ServerSetup.this, "Failed to update "+DATABASE_CONFIG,
+                                                              "Error", JOptionPane.ERROR_MESSAGE );
+                          else
+                               JOptionPane.showMessageDialog( ServerSetup.this, "Config successfully updated !",
+                                                      "Success", JOptionPane.INFORMATION_MESSAGE);
+                      }
+
+                   }
               }
            });
 

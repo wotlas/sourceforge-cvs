@@ -155,6 +155,14 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
   public String getMyCurrentChatPrimaryKey() {
        return currentPrimaryKey;
   }
+  
+  /** To set input box text
+   *
+   * @param text the new text of input box
+   */
+  public void setInputBoxText(String text) {
+    inputBox.setText(text);
+  }
 
  /*------------------------------------------------------------------------------------*/  
 

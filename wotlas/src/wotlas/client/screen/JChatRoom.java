@@ -43,7 +43,7 @@ import java.util.*;
  * @author Petrus, Aldiss
  */
 
-public class JChatRoom extends JPanel
+public class JChatRoom extends JPanel implements MouseListener
 {
 
  /*------------------------------------------------------------------------------------*/
@@ -65,6 +65,8 @@ public class JChatRoom extends JPanel
    */
   private Hashtable players;
   
+  static public String selectedPlayerKey;
+  
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.<br>
@@ -84,10 +86,16 @@ public class JChatRoom extends JPanel
     playersListModel = new DefaultListModel();
     
     playersJList = new JList(playersListModel);
+    
+    playersJList.addMouseListener(this);
+    
     playersJList.setFixedCellWidth(100);
 
     playersJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     
+//    PlayersListRenderer playersListRenderer = new PlayersListRenderer();
+//    if( selectedPlayer.getPlayerAwayMessage()!=null && !selectedPlayer.isConnectedToGame() ) {
+//    playersJList.setRenderer(playersListRenderer);
     
     JScrollPane listScroller = new JScrollPane(playersJList,
             ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
@@ -138,7 +146,7 @@ public class JChatRoom extends JPanel
     Runnable runnable = new Runnable() {
       public void run() {
         if (!strNewName.equals(DataManager.getDefaultDataManager().getMyPlayer().getFullPlayerName()))
-          ;//appendText("<font color='green'>" + strNewName + " entered the chat...</font>");
+          appendText("<font color='green'>" + strNewName + " entered the chat...</font>");
         playersListModel.addElement(strNewName);       
         revalidate();
         repaint();
@@ -196,6 +204,44 @@ public class JChatRoom extends JPanel
   
   public void appendText(String s) {
     chatDisplay.appendText(s);
+  }
+  
+   /*------------------------------------------------------------------------------------*/
+
+  /**
+   * Invoked when the mouse button is clicked
+   */
+  public void mouseClicked(MouseEvent e) {}
+  /**
+   * Invoked when the mouse enters a component
+   */
+  public void mouseEntered(MouseEvent e) {}
+  /**
+   * Invoked when the mouse exits a component
+   */
+  public void mouseExited(MouseEvent e) {}
+  /**
+   * Invoked when a mouse button has been pressed on a component
+   */
+  public void mousePressed(MouseEvent e) {}
+  /**
+   * Invoked when a mouse button has been released on a component
+   */
+  public void mouseReleased(MouseEvent e) {
+    
+    if (DataManager.SHOW_DEBUG)
+      System.out.println("[JChatRoom] : clic sur (" + e.getX() + "," + e.getY() + ")");
+    if (SwingUtilities.isRightMouseButton(e)) {
+      if (DataManager.SHOW_DEBUG)
+        System.out.println("\tright clic");
+
+    } else {
+      if (DataManager.SHOW_DEBUG)
+        System.out.println("\tleft clic");
+      String selectedPlayerName = (String) playersJList.getSelectedValue();      
+      DataManager.getDefaultDataManager().getChatPanel().setInputBoxText("/to:"+selectedPlayerName+":");
+      
+    }
   }
 }
 

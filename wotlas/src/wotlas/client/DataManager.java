@@ -823,6 +823,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
  /** Called when user right-clic on JMapPanel
    */
   public void onRightClicJMapPanel(MouseEvent e) {
+    if (SHOW_DEBUG)
+      System.out.println("DataManager::onRightClicJMapPanel");
   }
 
  /*------------------------------------------------------------------------------------*/

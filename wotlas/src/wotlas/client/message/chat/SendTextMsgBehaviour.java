@@ -81,6 +81,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
             chatRoom.appendText("<font color='brown'>"+message.substring(4)+"</font>");
             return;
           }
+           
             
        // We get the sender of this message
           Hashtable players = dataManager.getPlayers();
@@ -110,6 +111,19 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
           }
           else if (message.startsWith("/me")) {
             message = "<font color='blue'><i>" + senderFullName + " " + message.substring(3) + "</i></font>";
+          } else if (message.startsWith("/to:")) {           
+            message = message.substring(4);
+            int index = message.indexOf(':');
+            
+            if(index<0 || message.endsWith(":")) {
+              message = "/to:" +message+" <font color='red'>ERROR: bad format</font>";
+              player.sendMessage(this);
+              return;
+            }
+            
+            String otherPlayerName = message.substring(0,index);
+            message = "<font color='blue'><i>" + senderFullName + " says to " + otherPlayerName + message.substring(index) + "</i></font>";
+
           } else {
             // We add sender name
             message = "["+senderFullName+"] " + message;

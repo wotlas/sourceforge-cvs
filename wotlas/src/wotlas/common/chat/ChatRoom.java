@@ -24,6 +24,8 @@ import wotlas.common.universe.WotlasLocation;
 
 import wotlas.utils.Debug;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
 
@@ -59,7 +61,7 @@ public class ChatRoom
   
   /** List of players' primary key in the ChatRoom
    */
-  private transient Set players;
+  private Set players = Collections.synchronizedSet(new HashSet());
   
  /*------------------------------------------------------------------------------------*/  
  
@@ -89,7 +91,7 @@ public class ChatRoom
     this.name = name;
   }
   
-  public String getPlayerCreatorKey() {
+  public String getCreatorPrimaryKey() {
     return creatorPrimaryKey;
   }
   
@@ -122,8 +124,7 @@ public class ChatRoom
                          +" already in "+this );
       return false;
     }
-
-    players.add(primaryKey);
+    players.add( primaryKey );
     return true;
   }
   

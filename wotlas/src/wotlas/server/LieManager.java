@@ -19,9 +19,14 @@
 
 package wotlas.server;
 
+import wotlas.utils.Tools;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
+import java.util.Calendar;
+import java.util.Date;
 
 /** Wotlas Lie Manager.
  *
@@ -186,12 +191,19 @@ public class LieManager
   }
   
   /** To add a player to our memory
+   *
+   * @param otherPlayer other player we want to remember
+   * @return other player fake name
    */
   public String addMeet(PlayerImpl otherPlayer) {
     return addMeet(otherPlayer, MEET_SIMPLE);
   }
   
   /** To add a player to our memory
+   *
+   * @param otherPlayer other player we want to remember
+   * @param meetType type of meet
+   * @return other player fake name
    */
   public String addMeet(PlayerImpl otherPlayer, int meetType) {
     if (ServerDirector.SHOW_DEBUG)
@@ -355,6 +367,48 @@ public class LieManager
     return -1;
   }
  
+  /** To update last time we meet another player
+   */
+  public void setLastMeetPlayer(PlayerImpl otherPlayer) {
+    if (ServerDirector.SHOW_DEBUG)
+      System.out.println("LieManager::setLastMeetPlayer(otherPlayer="+otherPlayer+")");
+    if (memories==null)
+      return;
+    String otherPlayerKey = otherPlayer.getPrimaryKey();
+    synchronized(memories) {
+      LieMemory memory;
+      memories.resetIterator();      
+      while ( memories.hasNext() ) {
+        memory = memories.next();
+        if (memory.otherPlayerKey.equals(otherPlayerKey)) {
+          memory.lastMeetTime = System.currentTimeMillis();
+          return;
+        }
+      }
+    }
+  }
+  
+  public String getLastMeetPlayer(PlayerImpl otherPlayer) {
+    if (ServerDirector.SHOW_DEBUG)
+      System.out.println("LieManager::getLastMeetPlayer(otherPlayer="+otherPlayer+")");
+    if (memories==null)
+      return "player never met\n";
+    String otherPlayerKey = otherPlayer.getPrimaryKey();
+    synchronized(memories) {
+      LieMemory memory;
+      memories.resetIterator();      
+      while ( memories.hasNext() ) {
+        memory = memories.next();
+        if (memory.otherPlayerKey.equals(otherPlayerKey)) {      
+          Calendar lastTime = Calendar.getInstance();
+          lastTime.setTime(new Date(memory.lastMeetTime));             
+          return "already met on " + Tools.getLexicalDate(lastTime) + "\n";
+        }
+      }
+      return "player never met\n";
+    }
+  }
+  
  /*------------------------------------------------------------------------------------*/
  
   /** To show debug information
@@ -411,6 +465,7 @@ public class LieManager
             ostream.writeUTF(memory.otherPlayerKey);
             ostream.writeShort(memory.otherPlayerFakeNameIndex);
             ostream.writeInt(memory.meetsNumber);
+            ostream.writeLong(memory.lastMeetTime);
           }
         }
       }
@@ -446,7 +501,7 @@ public class LieManager
         myMemories.resetIterator();
         LieMemory myMemory;
         for (int i=0; i<myMemoriesSize; i++) {
-          myMemory = new LieMemory(istream.readUTF(), istream.readShort(), istream.readInt());
+          myMemory = new LieMemory(istream.readUTF(), istream.readShort(), istream.readInt(), istream.readLong());
           myMemories.add(myMemory);
         }          
       }       

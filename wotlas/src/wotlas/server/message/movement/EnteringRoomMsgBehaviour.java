@@ -136,8 +136,11 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
                   synchronized( players ) {
                      Iterator it = players.values().iterator();
 
-                       while( it.hasNext() )
-                           ((PlayerImpl)it.next()).sendMessage( rMsg );
+                       while( it.hasNext() ) {
+                           PlayerImpl p = (PlayerImpl)it.next();
+                           p.getLieManager().setLastMeetPlayer(player);
+                           p.sendMessage( rMsg );                           
+                       }
                   }
              }
 

@@ -86,7 +86,9 @@ public class PlayerPastMsgBehaviour extends PlayerPastMessage implements NetMess
 
             if( searchedPlayer!=null ) {
               // player found !
-                 player.sendMessage( new PlayerPastMessage( primaryKey, searchedPlayer.getPlayerPast() ) );
+                 String playerPast = searchedPlayer.getLieManager().getLastMeetPlayer(player);
+                 playerPast += searchedPlayer.getPlayerPast();
+                 player.sendMessage( new PlayerPastMessage( primaryKey, playerPast ) );
                  return;
             }
 
@@ -107,7 +109,9 @@ public class PlayerPastMsgBehaviour extends PlayerPastMessage implements NetMess
 
                if( searchedPlayer!=null ) {
               	 // player found !
-              	    player.sendMessage( new PlayerPastMessage( primaryKey, searchedPlayer.getPlayerPast() ) );
+                    String playerPast = searchedPlayer.getLieManager().getLastMeetPlayer(player);
+                    playerPast += searchedPlayer.getPlayerPast();
+              	    player.sendMessage( new PlayerPastMessage( primaryKey, playerPast ) );
               	    return;
                }
           }

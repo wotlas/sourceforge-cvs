@@ -41,9 +41,25 @@ public class LieMemory
     /** Number of times we meet a player
      */
     public int meetsNumber;
+    
+    /** Last time we meet a player
+     */
+    public long lastMeetTime;
 
  /*------------------------------------------------------------------------------------*/
 
+    /** To get lastMeetTime
+     */
+    public long getLastMeetTime() {
+      return lastMeetTime;
+    }
+    
+    /** To set lastMeetTime
+     */
+    public void setLastMeetTime(long lastMeetTime) {
+      this.lastMeetTime = lastMeetTime;
+    }
+    
     /** To get meetsNumber
      */
     public int getMeetsNumber() {
@@ -92,6 +108,16 @@ public class LieMemory
       this.otherPlayerKey = otherPlayerKey;
       this.otherPlayerFakeNameIndex = otherPlayerFakeNameIndex;
       this.meetsNumber = meetType;
+      this.lastMeetTime = System.currentTimeMillis();
+    }
+    
+     /** Constructor
+     */
+    public LieMemory(String otherPlayerKey, short otherPlayerFakeNameIndex, int meetType, long lastMeetTime) {
+      this.otherPlayerKey = otherPlayerKey;
+      this.otherPlayerFakeNameIndex = otherPlayerFakeNameIndex;
+      this.meetsNumber = meetType;
+      this.lastMeetTime = lastMeetTime;
     }
     
     /** Constructor

@@ -41,6 +41,12 @@ public class NetClient
 {
  /*------------------------------------------------------------------------------------*/
 
+   /** Timeout for our server connection.
+    */
+       private static final int CONNECTION_TIMEOUT = 10000;
+
+ /*------------------------------------------------------------------------------------*/
+
    /** Latest error message generated during the NetPersonality creation.
     */
        private String error_message;
@@ -104,6 +110,8 @@ public class NetClient
                }
 
             // We create a new personality and send our key.
+            // This client is the temporary context of the first
+            // incoming message sent by the server.
                personality = getNewDefaultPersonality( socket );
                personality.setContext( (Object) this );
 
@@ -112,18 +120,37 @@ public class NetClient
 
             // We wait for the answer... and process it when it's there.
             // If something went wrong on the server the received message will
-            // set an error_message.
-               personality.waitForAMessageToArrive();
-               personality.start();
-               personality.pleaseReceiveAllMessagesNow();
+            // set an error_message. Otherwise "error_message" will remain null.
+            
+               if( personality.getNetReceiver().isSynchronous() )
+               {
+                  // easier case: the synchronous NetReceiver
+                  // yeah I know we don't use any timeout here...
+                  // the waitForAMessage should be modified to
+                  // support a timeout. Easy to say...
+                     personality.waitForAMessageToArrive();
+                     personality.pleaseReceiveAllMessagesNow();
+               }
+               else {
+                 // we cope with the asynchronous NetReceiver
+                    synchronized( this )
+                    {
+                       personality.start();
 
-               Tools.waitTime(200); // if the NetReceiver is asynchronous we have returned
-                                    // immediately from the previous method call... this is
-                                    // a dirty way to wait for the message to be processed.
-                                    // the pleaseReceive... method should be extended with
-                                    // an extra parameter WAIT, NO_WAIT.
+                       try{
+                          wait( CONNECTION_TIMEOUT );
+                       }
+                       catch(InterruptedException ie){
+                          personality.closeConnection();
+                          Debug.signal(Debug.ERROR, this, "Connection Timeout");
+                          error_message = "Server reached, but connection timeout";
+                          return null;
+                       }
+                    }
+               }
 
-            // Success ?
+            // Success ? let's see if there is an error message
+            // (see the messages in the wotlas.libs.net.message package)
                if(error_message!=null) {
                   Debug.signal(Debug.ERROR, this, "Server returned an Error");
                   personality.closeConnection();
@@ -135,7 +162,7 @@ public class NetClient
           }
           catch(IOException e){
            // Hum ! this server doesn't want to hear from us...
-              error_message = e.getMessage();
+              error_message = "Error during connection: "+e.getMessage();
 
               if(personality!=null)
                  personality.closeConnection();

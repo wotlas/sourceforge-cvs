@@ -209,13 +209,33 @@
   <blockquote> 
     <p><font size="2">On Windows systems just open a MS-DOS window or command-line 
       window and enter <i>ipconfig</i>. It'll display all your IP interfaces. 
-      On unix systems enter <i>ifconfig</i> to obtain the same result.<br>
+      On unix systems enter <i>ifconfig</i> to obtain the same result. You may also open in your web browser this url : <a href="http://checkip.dyndns.org:8245">http://checkip.dyndns.org:8245</a><br>
       <br>
       <a href="#top">back to the top</a></font></p>
   </blockquote>
   <p><b>1.6</b> - I have a DSL Internet connection that works with a DSL hub which 
     is connected to my server via an ethernet network. How can I make my server 
     be enabled from the Internet ?<a name="q16"></a></p>
+  <blockquote>
+    <p><font size="2">If you use NAT (Network Address Translation) because you have only
+    one public IP address, you'll have to do port translation for the 3 ports (declared
+    in the <i>register</i> utility) to the computer where your server is running.<br>
+    For example, if the server private IP is 192.168.1.2, add the following NAT rules:
+    <li>ADD IP NAT TCP 763 192.168.1.2 (Game server)
+    <li>ADD IP NAT TCP 764 192.168.1.2 (Account server)
+    <li>ADD IP NAT TCP 765 192.168.1.2 (Gateway server)<br>
+    1) Put your private server IP in the file base/servers/server-<i>N</i>.cfg.adr
+    (where <i>N</i> is your server id)<br>
+    2) Start your server<br>
+    3) Publish your public ip with the <i>setup</i> utility (cf. <a href="#q12">1.2</a>).<br>
+    Each time your public ip change, you can use the <i>setup</i> utility (cf. <a href="#q12">1.2</a>) to update your server's IP without having to restart
+    your server (cf. <a href="#q15">1.5</a>).<br>
+    <br>
+    To test the client from your private network, the file base/servers/server-<i>N</i>.cfg.adr
+    must contain the private ip address of your server (not the public address!).<br>
+    <br>
+      <a href="#top">back to the top</a></font></p>
+  </blockquote>
   <p><b>1.7</b> - How can I move my wotlas server to another computer ?<a name="q17"></a></p>
   <blockquote> 
     <p><font size="2">The easiest way is to move the entire <i>wotlas server</i> 

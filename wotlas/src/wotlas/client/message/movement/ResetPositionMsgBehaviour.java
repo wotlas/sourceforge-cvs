@@ -40,6 +40,12 @@ public class ResetPositionMsgBehaviour extends ResetPositionMessage implements N
 {
  /*------------------------------------------------------------------------------------*/
 
+   /** To tell if this message is to be invoked later or not.
+    */
+     private boolean invokeLater = true;
+
+ /*------------------------------------------------------------------------------------*/
+
   /** Constructor.
    */
      public ResetPositionMsgBehaviour() {
@@ -54,27 +60,40 @@ public class ResetPositionMsgBehaviour extends ResetPositionMessage implements N
    *        this message.
    */
      public void doBehaviour( Object context ) {
-           if (DataManager.SHOW_DEBUG)      
-             System.out.println("RESET POSITION MESSAGE");
-             
+
         // The context is here a DataManager.
            DataManager dataManager = (DataManager) context;
-           PlayerImpl player = dataManager.getMyPlayer();
+           PlayerImpl myPlayer = dataManager.getMyPlayer();
 
-           if(primaryKey==null) {
-              Debug.signal( Debug.ERROR, this, "No primary key to identify player !" );
-              return;
+        // Direct Change
+           if( invokeLater ) {
+             if(DataManager.SHOW_DEBUG)      
+                System.out.println("RESET POSITION MESSAGE");
+             
+             if(primaryKey==null) {
+                Debug.signal( Debug.ERROR, this, "No primary key to identify player !" );
+                return;
+             }
+
+             if(!myPlayer.getPrimaryKey().equals( primaryKey ) ) {
+                Debug.signal( Debug.ERROR, this, "This message is not for master player !" );
+                return;
+             }
+
+             invokeLater = false;
+             dataManager.invokeLater( this );
+             return;
            }
 
-           if( !player.getPrimaryKey().equals( primaryKey ) ) {
-              Debug.signal( Debug.ERROR, this, "This message is not for master player !" );
-              return;
-           }
-
-        // FAILURE + DEST LOCATION VALUE + NOTIFY TO ADD
-           dataManager.getMapData().canChangeMapLocation( false );
+       // code to invoke after the current tick :
+          Debug.signal( Debug.WARNING, this, "Position reseted by server !" );
+          myPlayer.getMovementComposer().resetMovement();
+          myPlayer.setX(x);
+          myPlayer.setY(y);
+          myPlayer.setLocation( location );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }
 

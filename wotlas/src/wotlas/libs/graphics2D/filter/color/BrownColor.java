@@ -22,12 +22,12 @@ package wotlas.libs.graphics2D.filter.color;
 import wotlas.libs.graphics2D.filter.ColorType;
 
 
-/** Represents the "yellow" colors.
+/** Represents the "brown" colors.
  *
  * @author Aldiss
  */
 
-public class YellowColor implements ColorType{
+public class BrownColor implements ColorType{
 
  /*------------------------------------------------------------------------------------*/
 
@@ -38,7 +38,7 @@ public class YellowColor implements ColorType{
       * @return true if it's of this color type.
       */
        public boolean isFromThisColorType( short r, short g, short b ) {
-       	     if( r >= g && b < 70 && b<g && r-g<=30 )
+       	     if( r > g && r > b && r<130 )
        	         return true;
        	     return false;
        }
@@ -52,9 +52,7 @@ public class YellowColor implements ColorType{
       * @return a rgb integer with an alpha set to 0.
       */
        public int setToColorType( short min, short mid, short max ) {
-       	     if(max>=15)
-                return (max<<16) | ((max-15)<<8) | min;
-             return (max<<16) | (mid<<8) | min;
+             return ((short)(max/1.3f)<<16) | ((max/2)<<8) | (min/2);
        }
 
  /*------------------------------------------------------------------------------------*/

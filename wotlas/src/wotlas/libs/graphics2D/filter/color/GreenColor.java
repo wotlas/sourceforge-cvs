@@ -52,7 +52,7 @@ public class GreenColor implements ColorType{
       * @return a rgb integer with an alpha set to 0.
       */
        public int setToColorType( short min, short mid, short max ) {
-             return (mid<<16) | (max<<8) | min;       	     	
+             return ((short)(mid/1.3f)<<16) | ((short)(max/1.3f)<<8) | (short)(min/1.3f);       	     	
        }
 
  /*------------------------------------------------------------------------------------*/

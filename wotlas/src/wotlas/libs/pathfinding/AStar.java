@@ -24,6 +24,8 @@ import java.util.*;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
+import wotlas.utils.List;
+
 /** A* algorithm finds the optimal path between 2 points 
  *
  * usage:
@@ -71,7 +73,8 @@ public class AStar
 
   /** sorted open {@link Node Node}
    */
-  private Vector nodes = new Vector();
+  //private Vector nodes = new Vector();
+  private List nodes = new List();
    
  /*------------------------------------------------------------------------------------*/
   
@@ -98,19 +101,25 @@ public class AStar
   private Node searchNode()
   {
     Node bestNode;			           // best node of Vector "nodes" (the lowest f)
-    Vector childPoints;			        // children Points of "bestNode"
+    //Vector childPoints;			        // children Points of "bestNode"
+    List childPoints;
     int childCost;			           // cost of the children of "bestNode"
-    Vector children = new Vector();	  // children Nodes of "bestNode"    
+    //Vector children = new Vector();	  // children Nodes of "bestNode"    
+    List children = new List();
     
+    //while (!nodes.isEmpty())    
     while (!nodes.isEmpty())
-    {
-      bestNode = (Node) nodes.firstElement();
+    {    
+      //bestNode = (Node) nodes.firstElement();
+      bestNode = (Node) nodes.elementAt(0);
+      
       //System.out.println("bestNode : ("+bestNode.point.x+","+bestNode.point.y+")");
       
       /* to avoid having to remove ?? */
       if (closed.get(bestNode.point) != null) // if bestNode was in closed
       {
-        nodes.removeElementAt(0);		// remove "bestNode" from "nodes"
+        //nodes.removeElementAt(0);		// remove "bestNode" from "nodes"
+        nodes.removeFirstElement();
         continue;
       }
       
@@ -179,7 +188,7 @@ public class AStar
         }
         else // if childPoint was not in open or closed
         {
-          //System.out.println("Test : childPoint was in open or closed ? non");
+          //System.out.println("Test : childPoint was in open or closed ? no");
           int estimation;
           Node newNode = new Node();
           
@@ -197,7 +206,8 @@ public class AStar
       
       open.remove(bestNode.point);
       closed.put(bestNode.point, bestNode);
-      nodes.removeElementAt(0);
+      //nodes.removeElementAt(0);
+      nodes.removeFirstElement();
       addToNodes(children);
     }
     System.out.println("no path found");
@@ -240,7 +250,8 @@ public class AStar
   /**
    *
    */
-  private void addToNodes(Vector children)
+  //private void addToNodes(Vector children)
+  private void addToNodes(List children)
   {
     Node newNode;
     int idx;
@@ -272,14 +283,16 @@ public class AStar
    * @param p Node.point
    * returns a Vector of child Points of the point "p"
    */
-  private Vector generateChildren(Point p)
+  //private Vector generateChildren(Point p)
+  private List generateChildren(Point p)
   {
-    Vector listChildren = new Vector();        
+    //Vector listChildren = new Vector();        
+    List listChildren = new List(8);        
     int x=p.x;
     int y=p.y;    
     if (isNotBlock(x,y-1))   {listChildren.addElement(new Point(x,y-1));}
     if (isNotBlock(x+1,y))   {listChildren.addElement(new Point(x+1,y));}
-    if (isNotBlock(x,y+1))   {listChildren.addElement(new Point(x,p.y+1));}
+    if (isNotBlock(x,y+1))   {listChildren.addElement(new Point(x,y+1));}
     if (isNotBlock(x-1,y))   {listChildren.addElement(new Point(x-1,y));}
     if (isNotBlock(x-1,y-1)) {listChildren.addElement(new Point(x-1,y-1));}
     if (isNotBlock(x-1,y+1)) {listChildren.addElement(new Point(x-1,y+1));}
@@ -294,7 +307,8 @@ public class AStar
    * @param pStart baginning of the path
    * @param pGoal end of the path
    */
-  public Vector findPath(Point pStart, Point pGoal)
+  //public Vector findPath(Point pStart, Point pGoal)
+  public List findPath(Point pStart, Point pGoal)
   {
     Node firstNode = new Node();
     Node solution = new Node();
@@ -320,7 +334,7 @@ public class AStar
     firstNode.parent = null;
     
     open.put(pointStart, firstNode);
-    nodes.addElement(firstNode);
+    nodes.addElement(firstNode);    
     
     //System.out.println("Beginning of the search");
     solution = searchNode();
@@ -336,12 +350,15 @@ public class AStar
   /**
    * constructs the path from the start node to the node n
    */
-  private Vector getPath(Node n)
+  //private Vector getPath(Node n)
+  private List getPath(Node n)
   {
-    Vector result;
+    //Vector result;
+    List result;
     if (n == null)
     {
-      result = new Vector();
+      //result = new Vector();
+      result = new List();
     } else {
       result = getPath(n.parent);
       result.addElement(n.point);
@@ -352,7 +369,8 @@ public class AStar
   /**
    * prints the AStar path
    */
-  public void showPath(Vector path)
+  //public void showPath(Vector path)
+  public void showPath(List path)
   {
     Point pathPoint;
     for (int i=0; i<path.size(); i++)

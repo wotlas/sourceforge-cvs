@@ -590,7 +590,14 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
  /** Called when user right-clic on JMapPanel
    */
   public void onRightClicJMapPanel(MouseEvent e) {
-    PlayerImpl newPlayer;
+    if (SHOW_DEBUG) {
+      System.out.println("Hiding debug informations");
+    } else {
+      System.out.println("Showing debug informations");
+    }
+    SHOW_DEBUG = !SHOW_DEBUG;
+
+    /*PlayerImpl newPlayer;
     Rectangle screen = gDirector.getScreenRectangle();
 
     if (SHOW_DEBUG)
@@ -603,6 +610,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     gDirector.addDrawable(newPlayer.getDrawable());
 
     addPlayer(newPlayer);
+    */
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -650,7 +658,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   }
 
  /*------------------------------------------------------------------------------------*/
-  
+
   /** Update player's location if he is in a room map
    */
   public void roomLocationUpdate() {
@@ -684,13 +692,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
           System.out.println("Removing an existing player : " + myPlayer + "to room : " + myRoom);
         myRoom.removePlayer( myPlayer );
         myPlayer.getLocation().setRoomID( newRoomID );
-        Room room = worldManager.getRoom(myPlayer.getLocation()); 
+        Room room = worldManager.getRoom(myPlayer.getLocation());
         if (SHOW_DEBUG)
           System.out.println("Adding a new player : " + myPlayer + "to room : " + room);
         room.addPlayer( myPlayer );
         infosPanel.setLocation(room.getFullName());
         if (SHOW_DEBUG)
-          System.out.print("Move to another room : " + newRoomID + " -> " + room.getFullName());                    
+          System.out.print("Move to another room : " + newRoomID + " -> " + room.getFullName());
 
         if (SHOW_DEBUG) {
           RoomLink[] roomLinks = room.getRoomLinks();
@@ -793,7 +801,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       myPlayer.setLocation( mapExit.getTargetWotlasLocation() );
       cleanInteriorMapData(); // suppress drawables, shadows, data
 
-      ScreenPoint targetPoint = mapExit.getTargetPosition();      
+      ScreenPoint targetPoint = mapExit.getTargetPosition();
       myPlayer.setX(targetPoint.x);
       myPlayer.setY(targetPoint.y);
       myPlayer.setPosition(targetPoint);
@@ -822,16 +830,16 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         System.out.println("We are entering a building...");
 
       myPlayer.stopMoving();
-      
+
       if (SHOW_DEBUG) {
         System.out.println("\t\tbuildingMap.getFullName() = " + buildingMap.getFullName());
         System.out.println("\t\tbuildingMap.getShortName() = " + buildingMap.getShortName());
         System.out.print("\t\tmyPlayer.getAngle() = ");
         System.out.println(myPlayer.getAngle()*Math.PI/180);
       }
-      
+
       mapExit = buildingMap.findTownMapExit( myPlayer.getAngle() );
-      
+
       if (SHOW_DEBUG) {
         System.out.println("Which MapExit are we using ?");
         System.out.println("\t\tmapExit.getType() = " + mapExit.getType());
@@ -840,11 +848,11 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         System.out.println("\t\tmapExit.getMapExitLocation() = " + mapExit.getMapExitLocation());
       }
 
-      myPlayer.setLocation(mapExit.getMapExitLocation());      
+      myPlayer.setLocation(mapExit.getMapExitLocation());
       cleanInteriorMapData();
 
       myPlayer.setX( mapExit.getX() + mapExit.getWidth()/2 );
-      myPlayer.setY( mapExit.getY() + mapExit.getHeight()/2 );      
+      myPlayer.setY( mapExit.getY() + mapExit.getHeight()/2 );
       myPlayer.setPosition( new ScreenPoint(myPlayer.getX(), myPlayer.getY()) );
 
       initInteriorMapDisplay(myPlayer.getLocation()); // init new map
@@ -870,7 +878,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         System.out.println("We are entering a town...");
 
       myPlayer.stopMoving();
-      
+
       MapExit mapExit = townMap.findTownMapExit( myPlayer.getCurrentRectangle() );
 
       myPlayer.setLocation( mapExit.getMapExitLocation() );
@@ -914,7 +922,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
     if (SHOW_DEBUG)
       System.out.println("Adding a new player : " + myPlayer + "to room : " + room);
-    room.addPlayer(myPlayer);    
+    room.addPlayer(myPlayer);
 
     // 2 - We set player's position if his position is incorrect
     if (myPlayer.getX() == -1) {
@@ -1157,7 +1165,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     if (mapMaskID==null) {
       Debug.signal( Debug.CRITICAL, this, "Mask not found" );
       Debug.exit();
-    }    
+    }
     BufferedImage bufIm = null;
     try {
       bufIm = ImageLibrary.loadBufferedImage(new ImageIdentifier( mapMaskID ), imageDBHome, BufferedImage.TYPE_INT_ARGB );

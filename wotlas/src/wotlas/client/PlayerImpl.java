@@ -424,7 +424,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
    */
   public void tick() {    
     
-    if (location.isRoom()) {
+    //if (location.isRoom()) {
       // Movement on InteriorMap (with rotations)
       if (turningAlongPath || walkingAlongPath) {
         updatePathMovement();
@@ -434,10 +434,10 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
         sprite.tick();            
       }    
       return;
-    }
+    //}
     
     // Movement on TownMap or WorldMap (without rotations)
-    if (indexTrajectory < trajectory.size()) {    
+    /*if (indexTrajectory < trajectory.size()) {    
       Point newPosition = (Point) trajectory.elementAt(indexTrajectory);
       x = newPosition.x*DataManager.TILE_SIZE;
       y = newPosition.y*DataManager.TILE_SIZE;              
@@ -450,7 +450,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
       indexTrajectory = 0;
       trajectory = null;
       trajectory = new List();      
-    }    
+    }*/   
     
   }
 
@@ -553,7 +553,8 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
            }
            else if(deltaA>Math.PI/8)
                 return; // no footsteps, the angle is to great, we just turn...          
-       } /*else {
+       }
+        /*else {
         setAngle( angle( new Point( position.x, position.y ), nextPoint) );
        }*/
 
@@ -574,7 +575,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
                 setAngle( nextAngle );
                 animation.reset();
 
-                walkingAlongPath=false;
+                walkingAlongPath = false;
                 turningAlongPath = false;
                 path=null;
                 nextPoint=null;
@@ -611,6 +612,17 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
          nextPoint = (Point) path.elementAt(pathIndex);
 
          walkingAlongPath = true;
+          // We only use rotations on an InteriorMap
+         if (location.isRoom()) {           
+           speed = 60;
+         } else if (location.isTown()) {
+           turningAlongPath = false;
+           speed = 10;
+         } else if (location.isWorld()) {
+           turningAlongPath = false;
+           speed = 5;
+         }
+          
          updateAngularNode();
     }
 
@@ -656,8 +668,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     private void updateAngularNode() {
         nextAngle = angle( prevPoint, nextPoint );
         
-        angularDirection = 1;
-        turningAlongPath = true;
+        angularDirection = 1;               
 
         while( nextAngle-getAngle() > Math.PI )
            nextAngle = (float)(nextAngle-2*Math.PI);
@@ -667,6 +678,15 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
 
         if( getAngle() > nextAngle )
             angularDirection = -1;
+            
+         // We only use rotations on an InteriorMap        
+        if (location.isRoom()) {
+          turningAlongPath = true;
+        } else {
+          turningAlongPath = false;
+          // We update the angle right now
+          setAngle(nextAngle);
+        }
 
     }
 

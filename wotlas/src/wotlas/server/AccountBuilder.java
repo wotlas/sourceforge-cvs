@@ -57,6 +57,15 @@ public class AccountBuilder implements NetConnectionListener
     /** ADD HERE OTHER ACCOUNT STATE (player quizz, quizz done ... )
      */
 
+    /** Account Empty State (not initialized)
+     */
+       static final public byte ACCOUNT_LOGIN_PASSWD_STATE = 1;
+
+    /** Account Empty State (not initialized)
+     */
+       static final public byte ACCOUNT_PLAYER_NAMES_STATE = 2;
+
+
     /** Account Ready State (account ready to be created)
      */
        static final public byte ACCOUNT_READY_STATE = 124;
@@ -101,7 +110,9 @@ public class AccountBuilder implements NetConnectionListener
       	// the account is empty for now...
            account = new GameAccount();
            player = new PlayerImpl();
-           state = ACCOUNT_EMPTY_STATE;
+           player.setPlayerLocationToWorld();
+
+           state = ACCOUNT_LOGIN_PASSWD_STATE;   // first state...
       }
 
  /*------------------------------------------------------------------------------------*/
@@ -130,13 +141,28 @@ public class AccountBuilder implements NetConnectionListener
    /** Method called by NetMessages to set login and password.
     */
      public void setLoginAndPassword( String login, String password ) {
-     	if(state!=ACCOUNT_EMPTY_STATE) {
+     	if(state!=ACCOUNT_LOGIN_PASSWD_STATE) {
            stateError();
            return;
         }
 
      	account.setLogin(login);
-     	account.setPassword(password);                
+     	account.setPassword(password);
+        state = ACCOUNT_READY_STATE;    // TMP: change to ACCOUNT_PLAYER_NAMES_STATE
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Method called by NetMessages to set player names.
+    */
+     public void setPlayerNames( String playerName, String fullPlayerName ) {
+     	if(state!=ACCOUNT_PLAYER_NAMES_STATE) {
+           stateError();
+           return;
+        }
+
+     	player.setPlayerName(playerName);
+     	player.setFullPlayerName(fullPlayerName);                
         state = ACCOUNT_READY_STATE;
      }
 
@@ -159,6 +185,8 @@ public class AccountBuilder implements NetConnectionListener
         account.setOriginalServerID( ServerManager.getDefaultServerManager().getServerConfig().getServerID() );
         account.setLastConnectionTimeNow();
 
+        player.setPrimaryKey( account.getAccountName() );
+
      // account creation
         if( accountManager.checkAccountName( account.getAccountName() ) ) {
               personality.queueMessage( new AccountCreationFailedMessage( "Account already exists. Please change your login." ) );
@@ -168,7 +196,7 @@ public class AccountBuilder implements NetConnectionListener
         if( pm.createAccount( account ) ) {
            // we add the account to the AccountManager & the player to the world...
               accountManager.addAccount( account );
-              account.getPlayer().init();
+              player.init();
               
               DataManager.getDefaultDataManager().getWorldManager().addNewPlayer( account.getPlayer() );
               Debug.signal( Debug.NOTICE, this, "Added new client account to the game." );

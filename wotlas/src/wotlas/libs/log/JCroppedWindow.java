@@ -1,6 +1,6 @@
 /*
  * Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
- * Copyright (C) 2001 - WOTLAS Team
+ * Copyright (C) 2001-2002 WOTLAS Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -329,8 +329,8 @@ public class JCroppedWindow extends JWindow{
 
               public JBarPanel() {
               	super(true);
-                setOpaque(false);
-                setBackground( Color.white );
+                this.setOpaque(false);
+                this.setBackground( Color.white );
                 setMinimumSize( new Dimension( 0, 0 ) );
                 setPreferredSize( new Dimension( 100, 0 ) );
                 setMaximumSize( new Dimension( 3000, 0 ) );
@@ -365,7 +365,7 @@ public class JCroppedWindow extends JWindow{
               // 1 - Left & middle bar images
                  g.drawImage( leftBar, 0, 0, this );
 
-                 for( int i=leftBar.getWidth(null); i<=getWidth()-rightBar.getWidth(null);
+                 for( int i=leftBar.getWidth(null); i<=this.getWidth()-rightBar.getWidth(null);
                           i+=middleBar.getWidth(null) )
                       g.drawImage( middleBar, i, 0, this );
 
@@ -389,7 +389,7 @@ public class JCroppedWindow extends JWindow{
                  g2D.setRenderingHints( saveRenderHints ); // restore
 
               // 4 - Right Bar image
-                 g.drawImage( rightBar, getWidth()-rightBar.getWidth(null), 0, this );
+                 g.drawImage( rightBar, this.getWidth()-rightBar.getWidth(null), 0, this );
             }
     }
 

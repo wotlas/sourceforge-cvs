@@ -1,6 +1,6 @@
 /*
  * Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
- * Copyright (C) 2001 - WOTLAS Team
+ * Copyright (C) 2001-2002 WOTLAS Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -422,7 +422,7 @@ public abstract class NetPersonality
               // 2 - We wait 1 second
                  synchronized( this ) {
                     try{
-                       wait( 1000 );
+                       this.wait( 1000 );
                     }catch( Exception e ) {}
                     
                     if(shouldStopPingThread)
@@ -434,7 +434,7 @@ public abstract class NetPersonality
                      if(!pingReceivedBack) {
                         // we wait two more seconds
                            try{
-                              wait( 2000 );
+                              this.wait( 2000 );
                            }catch( Exception e ) {
                            }
 
@@ -466,7 +466,7 @@ public abstract class NetPersonality
 
          public synchronized void stopThread() {
              shouldStopPingThread = true;
-             notify();
+             this.notify();
          }
 
      /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

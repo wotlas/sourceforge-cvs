@@ -1,6 +1,6 @@
 /*
  * Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
- * Copyright (C) 2001 - WOTLAS Team
+ * Copyright (C) 2001-2002 WOTLAS Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -538,7 +538,7 @@ public class ClientManager extends JIntroWizard implements ActionListener {
           public void actionPerformed (ActionEvent e) {
             try{
               new JAbout( ClientManager.this );
-            }catch(Exception ei ) {
+            }catch(RuntimeException ei ) {
               Debug.signal( Debug.ERROR, this, ei );
             }
           }

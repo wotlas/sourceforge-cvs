@@ -1,6 +1,6 @@
 /*
  * Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
- * Copyright (C) 2001 - WOTLAS Team
+ * Copyright (C) 2001-2002 WOTLAS Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -322,19 +322,15 @@ public class JChatRoom extends JPanel implements MouseListener {
         String s = ((PlayerState) value).fullName;
         setText(s);
          
-        /*if (isSelected) {
-          setBackground(list.getSelectionBackground());
-	        setForeground(list.getSelectionForeground());	        
-	      } else {*/
-          setBackground(list.getBackground());
-          if ( ((PlayerState) value).isNotAway ) {
-	          setForeground(list.getForeground());
-	        } else {
-	          setForeground(Color.gray);
-	        }
-        //}
-        setEnabled(list.isEnabled());
-        setFont(list.getFont());
+          this.setBackground(list.getBackground());
+
+          if ( ((PlayerState) value).isNotAway )
+	      this.setForeground(list.getForeground());
+	  else
+	      this.setForeground(Color.gray);
+
+        this.setEnabled(list.isEnabled());
+        this.setFont(list.getFont());
         return this;
      }
   }

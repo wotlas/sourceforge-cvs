@@ -1,6 +1,6 @@
 /*
  * Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
- * Copyright (C) 2001 - WOTLAS Team
+ * Copyright (C) 2001-2002 WOTLAS Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -71,26 +71,18 @@ public class JAbout extends JCroppedWindow implements ActionListener {
   	" Wheel of Time",
   	"---",
   	" Light and Shadow",
-  	"v1.2.3 - April 2002",
+  	"v1.2.4 - April 2002",
   	" ",
   	" ",
-  	" Project Management",
-  	"Aldiss",
-  	"Valère",
-  	" ",
-  	" Project Mentor",
-  	"Fred McMaster",
-        " ",
-  	" Developers - Release 1",
+  	" WOTLAS Development Team",
   	"Aldiss",
   	"Petrus",
   	"MasterBob",
   	"Hari Coplin",
-  	" ",
-  	" Developers - 2nd Team",
         "Fred MacMaster",
         "Blackhole",
         "Vasaldo",
+        "Chris",
         " ",
         " Game Content",
         "Valère",
@@ -100,12 +92,12 @@ public class JAbout extends JCroppedWindow implements ActionListener {
         "Klianwolf",
         "Severian",
         "Xeno yar litharr",
+        "Knut Hamson",
+        "Fred MacMaster",
         "Mazarboul",
         "Great Lord of the Dark",
         "Logain",
         "Felherid",
-        "Knut Hamson",
-        "Fred MacMaster",
         " ",
         " 2D Graphics",
         "Aldiss",
@@ -241,7 +233,7 @@ public class JAbout extends JCroppedWindow implements ActionListener {
                {
                	  // off screen image eventual creation
                     if(offScreenImage==null)
-                           offScreenImage = createImage(DRAWZONE_WIDTH,DRAWZONE_HEIGHT);
+                           offScreenImage = super.createImage(DRAWZONE_WIDTH,DRAWZONE_HEIGHT);
 
                     Graphics2D offScreen = (Graphics2D) offScreenImage.getGraphics();
 
@@ -323,9 +315,9 @@ public class JAbout extends JCroppedWindow implements ActionListener {
              }
 
 	     public void repaint() {
-	     	Graphics gc = getGraphics();
+	     	Graphics gc = this.getGraphics();
                 if(gc!=null)
-                   paint(gc);
+                   this.paint(gc);
 	     }
 
           }; /// END OF J_DRAWZONE PANEL DEFINITION

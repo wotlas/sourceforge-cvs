@@ -1,6 +1,6 @@
 /*
  * Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
- * Copyright (C) 2001 - WOTLAS Team
+ * Copyright (C) 2001-2002 WOTLAS Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -200,7 +200,7 @@ public class GraphicPingPanel extends JPanel implements NetPingListener {
      	    getContentPane().add( new JLabel("No response from server. Please Wait..."), BorderLayout.CENTER );
      	    pack();
      	    SwingTools.centerComponent( this );
-     	    show();
+     	    this.show();
      	}
      }
 

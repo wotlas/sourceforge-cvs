@@ -1,6 +1,6 @@
 /*
  * Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
- * Copyright (C) 2001 - WOTLAS Team
+ * Copyright (C) 2001-2002 WOTLAS Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -203,10 +203,10 @@ public class JConfigurationDlg extends JDialog {
      */
     public JGeneralTab() {
       super();
-      setBackground(Color.white);
-      setLayout(new FlowLayout(FlowLayout.LEFT));
+      this.setBackground(Color.white);
+      this.setLayout(new FlowLayout(FlowLayout.LEFT));
       //setAlignmentX(Component.CENTER_ALIGNMENT);
-      setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
+      this.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
 
       /*ALabel qTextTitle = new ALabel("Graphics");
       qTextTitle.setForeground(Color.white);
@@ -214,7 +214,7 @@ public class JConfigurationDlg extends JDialog {
 
       JPanel innerPanel = new JPanel(new GridLayout(4,1,10,10));
       innerPanel.setBackground(Color.white);
-      add(innerPanel);
+      this.add(innerPanel);
       
 //      ALabel lbl_details = new ALabel("High details for text details.");
 //      innerPanel.add(lbl_details);
@@ -259,8 +259,8 @@ public class JConfigurationDlg extends JDialog {
      */
     public JVolumeTab() {
       super();      
-      setBackground(Color.white);
-      setLayout(new FlowLayout(FlowLayout.LEFT));
+      this.setBackground(Color.white);
+      this.setLayout(new FlowLayout(FlowLayout.LEFT));
       //setAlignmentX(Component.CENTER_ALIGNMENT);
       setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
       
@@ -273,7 +273,7 @@ public class JConfigurationDlg extends JDialog {
       
       JPanel innerPanel = new JPanel(new GridLayout(2,2,10,10));
       innerPanel.setBackground(Color.white);           
-      add(innerPanel);
+      this.add(innerPanel);
       
       ALabel lbl_sound = new ALabel("Sound Volume");
       lbl_sound.setAlignmentY(Component.CENTER_ALIGNMENT);

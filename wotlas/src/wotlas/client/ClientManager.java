@@ -391,7 +391,7 @@ public class ClientManager
       });
       // show table
       scrollPane = new JScrollPane(profilesTable);
-      profilesTable.setPreferredScrollableViewportSize(new Dimension(0, 100));
+      profilesTable.setPreferredScrollableViewportSize(new Dimension(0, 170));
       scrollPane.getViewport().setBackground(Color.white);
       JScrollBar jsb_01 = scrollPane.getVerticalScrollBar();
       leftPanel.add(scrollPane);

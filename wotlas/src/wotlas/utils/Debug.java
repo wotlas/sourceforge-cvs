@@ -168,4 +168,14 @@ public class Debug
 
  /*------------------------------------------------------------------------------------*/
 
+  /** To exit properly.
+   */
+     static public void exit() {
+       // nothing special here, for now.
+       // We'll close our log properly here...
+          System.exit(1);
+     }
+
+ /*------------------------------------------------------------------------------------*/
+
 }

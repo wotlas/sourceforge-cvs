@@ -1,0 +1,21 @@
+#WotLas 1.0 Saved Object
+#Sat Dec 23 21:36:11 CET 2000
+class=wotlas.libs.wizard.JWizardStepParameters
+isDynamic=false
+isLastStep=true
+isNextButtonEnabled=true
+isPrevButtonEnabled=true
+
+stepClass=wotlas.libs.wizard.step.JWizardStepInfo
+stepTitle=Account\ Creation
+
+stepPropertiesKey=2
+stepPropertiesValue=2
+
+stepPropertiesKey.0=init.info0
+stepPropertiesValue.0=\n\nWe\ have\ gathered\ all\ the\ information\ we\ needed.\ When\ you'll\ click\non\ the\ 'ok'\ button\ your\ wotlas\ account\ will\ be\ created\ and\ added\ to\nthe\ game.\ A\ new\ connection\ with\ the\ game\ server\ will\ then\ be\ established.
+
+# SERVER SIDE INCLUDES
+
+stepPropertiesKey.1=server.previous
+stepPropertiesValue.1=player-email.wiz

@@ -1,0 +1,47 @@
+#WotLas 1.0 Saved Object
+#Sat Dec 23 21:36:28 CET 2000
+class=wotlas.libs.wizard.JWizardStepParameters
+isDynamic=false
+isLastStep=false
+isNextButtonEnabled=true
+isPrevButtonEnabled=true
+
+stepClass=wotlas.libs.wizard.step.JWizardStepRadio
+stepTitle=Character\ Class
+
+stepPropertiesKey=10
+stepPropertiesValue=10
+
+stepPropertiesKey.0=init.label0
+stepPropertiesValue.0=Please\ select\ your\ character class:
+
+stepPropertiesKey.1=init.nbChoices
+stepPropertiesValue.1=2
+
+stepPropertiesKey.2=init.choice0
+stepPropertiesValue.2=Aes\ Sedai
+
+stepPropertiesKey.3=init.info0
+stepPropertiesValue.3=\ \ \ \ \ \ Wielders\ of\ the\ One\ Power.\ Since\ the\ Time\ of\ Madness,\ all\nsurviving\ Aes\ Sedai\ are\ women.\ Widely\ distrusted\ and\ feared,\ even\ hated,\ they\ are\ blamed\ by\ many\ for\ the\ Breaking\ of\ the\ World,\ and\ are\ thought\ to\ meddle\ in\ the\ affairs\ of\ nations.\ At\ the\ same\ time,\ few\ rulers\ will\ be\ without\ an\ Aes\ Sedai\ advisor,\ even\ in\ lands\ where\nthe\ existence\ of\ such\ a\ connection\ must\ be\ kept\ secret.
+
+stepPropertiesKey.4=init.choice1
+stepPropertiesValue.4=Warder
+
+stepPropertiesKey.5=init.info1
+stepPropertiesValue.5=\ \ \ \ \ \ A\ warrior\ bonded\ to\ an\ Aes Sedai.\ The\ bonding\ is\ a\ thing\ of\nthe\ One\ Power,\ and\ by\ it\ he\ gains\ such\ gifts\ as\ quick\ healing,\ the\nability\ to\ go\ long\ periods\ without\ food,\ water,\ or\ rest\ and\ the\ ability\ to\ sense\ the\ taint\ of\ the\ Dark\ One\ at\ a\ distance.\n\n
+
+# SERVER SIDE INCLUDES
+
+# Method to call to proceed data
+stepPropertiesKey.6=server.choice0.method
+stepPropertiesValue.6=setWotCharacterClass
+
+# Links
+stepPropertiesKey.7=server.choice0.next
+stepPropertiesValue.7=aes-sedai-rank.wiz
+
+stepPropertiesKey.8=server.choice1.next
+stepPropertiesValue.8=warder-rank.wiz
+
+stepPropertiesKey.9=server.previous
+stepPropertiesValue.9=index.wiz

@@ -1,0 +1,32 @@
+#WotLas 1.0 Saved Object
+#Sat Dec 23 21:36:18 CET 2000
+class=wotlas.libs.wizard.JWizardStepParameters
+isDynamic=false
+isLastStep=false
+isNextButtonEnabled=true
+isPrevButtonEnabled=true
+
+stepClass=wotlas.libs.wizard.step.JWizardStepPassword
+stepTitle=Login\ &\ Password
+
+stepPropertiesKey=5
+stepPropertiesValue=5
+
+stepPropertiesKey.0=init.info0
+stepPropertiesValue.0=\nYou\ need\ to\ enter\ a\ login\ and\ password\ to\ protect\ the\ access\ to\nyour\ wotlas\ account.\ The\ password\ you\ enter\ here\ will\ be\ saved\ to\ your\ disk,\ so\ you\ won't\ have\ to\ enter\ it\ at\ each\ session.\ You\ can\ change\ this\ behaviour\ in\ the\ 'Options'\ panel.
+
+# SERVER SIDE INCLUDES
+
+# Method to call to proceed data
+stepPropertiesKey.1=server.login.method
+stepPropertiesValue.1=setLogin
+
+stepPropertiesKey.2=server.password.method
+stepPropertiesValue.2=setPassword
+
+# Links
+stepPropertiesKey.3=server.next
+stepPropertiesValue.3=player-email.wiz
+
+stepPropertiesKey.4=server.previous
+stepPropertiesValue.4=player-past.wiz

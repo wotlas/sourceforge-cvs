@@ -358,7 +358,11 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** Tick
    */
   public void tick() {
-    myPlayerImpl.tick();
+    PlayerImpl player;
+    for (int i=0; i<players.size(); i++) {
+      player = (PlayerImpl) players.elementAt(i);
+      player.tick();
+    }
     gDirector.tick();
   }
 

@@ -655,6 +655,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     else if ( myPlayer.getLocation().isWorld() )
       worldLocationUpdate();
   }
+
+ /*------------------------------------------------------------------------------------*/
   
   public void roomLocationUpdate() {
        
@@ -759,14 +761,20 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       }
     } // End of part II  
   }
+
+ /*------------------------------------------------------------------------------------*/
   
   public void townLocationUpdate() {
     //System.out.println("DataManager::townLocationUpdate");
   }
 
+ /*------------------------------------------------------------------------------------*/
+
   public void worldLocationUpdate() {
     //System.out.println("DataManager::worldLocationUpdate");
   }
+
+ /*------------------------------------------------------------------------------------*/
   
   /** To init InteriorMap
    */
@@ -857,6 +865,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     // 7 - We add visual properties to the player (shadows...)
     myPlayer.initVisualProperties(gDirector);            
   }
+
+ /*------------------------------------------------------------------------------------*/
   
   public void initTownMapDisplay(WotlasLocation location) {
     myPlayer.init();    
@@ -917,25 +927,92 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
                     myPlayer.getDrawable(),   // reference for screen movements
                     new Dimension( JClientScreen.leftWidth, JClientScreen.mapHeight )   // screen default dimension
                    );    
+     
+    // 7 - We add buildings' images
+    Building buildings[] = townMap.getBuildings();
+    if (buildings!=null) {
+      System.out.println("\tBuildings");
+      ImageIdentifier buildingImageID = null;   // building image identifier
+      Drawable buildingImage = null;            // building image
+      for (int i=0; i<buildings.length; i++) {
+        System.out.println("\t\tbuildings["+i+"] = " + buildings[i]);
+        buildingImageID = buildings[i].getSmallBuildingImage();
+        Rectangle position = buildings[i].toRectangle();
+        buildingImage = (Drawable) new MotionlessSprite(
+                                            position.x,
+                                            position.y,
+                                            buildingImageID,          // image
+                                            ImageLibRef.MAP_PRIORITY, // priority
+                                            false                     // no animation
+                                        );
+        gDirector.addDrawable(buildingImage);
+      }
+    }    
+    
   }
+
+ /*------------------------------------------------------------------------------------*/
   
   public void initWorldMapDisplay(WotlasLocation location) {
-    /*
-    System.out.println("\tWorld");
-    backgroundImageID = worldManager.getWorldMap(location).getWorldImage();
-      System.out.println("\tImageIdentifier = " + backgroundImageID);
+    myPlayer.init();
+    
+    ImageIdentifier backgroundImageID = null;   // background image identifier
+    Drawable background = null;                 // background image
+    
+    // 1 - We load the WorldMap
+    WorldMap worldMap = worldManager.getWorldMap(location);
+    System.out.println("WorldMap");
+    System.out.println("\tfullName = "  + worldMap.getFullName());
+    System.out.println("\tshortName = " + worldMap.getShortName());
+        
+    backgroundImageID = worldMap.getWorldImage();
+    System.out.println("\tImageIdentifier = " + backgroundImageID);
 
-      background = (Drawable) new MotionlessSprite(
+    background = (Drawable) new MotionlessSprite(
                                             0,                        // ground x=0
                                             0,                        // ground y=0
                                             backgroundImageID,        // image
                                             ImageLibRef.MAP_PRIORITY, // priority
                                             false                     // no animation
                                         );
+    
+    // 3 - We set player's position
+    
+    // 4 - given the backgroundImageID we get the mask...
+    ImageIdentifier mapMaskID = null;
+    try {
+      mapMaskID = ImageLibrary.getImageIdentifier( backgroundImageID, imageDBHome, "mask" );
+    } catch( IOException e ) {
+      Debug.signal( Debug.CRITICAL, this, "Image Library Corrupted" );
+      Debug.exit();
+    }
+    if (mapMaskID==null) {
+      Debug.signal( Debug.CRITICAL, this, "Mask not found" );
+      Debug.exit();
+    }
+    
+    // 5 - We load the mask image and initialize the Astar algo.
+    BufferedImage bufIm = null;
+    try {
+      bufIm = ImageLibrary.loadBufferedImage(new ImageIdentifier( mapMaskID ), imageDBHome, BufferedImage.TYPE_INT_ARGB );
+    } catch( IOException e ) {
+      e.printStackTrace();
+      return;
+    }
+    System.out.println("\tbufIm.width = " + bufIm.getWidth());
+    System.out.println("\tbufIm.height = " + bufIm.getHeight());
+    System.out.println("\tbackground.width = " + background.getWidth());
+    System.out.println("\tbackground.height = " + background.getHeight());
+    
+    aStar.setMask( BinaryMask.create( bufIm ) );
+    bufIm.flush(); // free image resource
 
-      myPlayer.setX(152*TILE_SIZE);
-      myPlayer.setY(16*TILE_SIZE);
-    */
+    // 6 - Init the GraphicsDirector
+    gDirector.init( background,               // background drawable
+                    myPlayer.getDrawable(),   // reference for screen movements
+                    new Dimension( JClientScreen.leftWidth, JClientScreen.mapHeight )   // screen default dimension
+                   );    
+
   }
   
   /** suppress drawables, shadows, data

@@ -96,6 +96,12 @@ public class AccountManager {
             // we fill the hash-map...
                for( int i=0; i<nbAccounts; i++ )
                    if( account_list[i]!=null ) {
+
+                       if(account_list[i].getPlayer()==null) {
+                       	  Debug.signal(Debug.ERROR, this, "Failed to load account "+account_list[i].getPrimaryKey()+"! No player data found !");
+                       	  continue;
+                       }
+
                        accounts.put( account_list[i].getAccountName(), account_list[i] );
                        nbAccountsLoaded++;
                    }
@@ -303,6 +309,11 @@ public class AccountManager {
                                               + accountList[i].getName() + File.separator
                                               + CLIENT_PROFILE );
 
+                if(accounts[i]==null) {
+                   Debug.signal(Debug.ERROR, this, "Failed to load "+accountList[i]);
+                   continue;
+                }
+
              // we now search for the latest saved player file.
                 String latest = FileTools.findSave( accountHome + File.separator
                                                           + accountList[i].getName(),
@@ -322,7 +333,10 @@ public class AccountManager {
                                               + accountList[i].getName() + File.separator
                                               + latest );
 
-              accounts[i].setPlayer( player );
+                 if(player!=null)
+                    accounts[i].setPlayer( player );
+                 else
+                    Debug.signal(Debug.ERROR,this,"Failed to load "+latest+" for player "+accounts[i].getPrimaryKey() );
            }
            catch( PersistenceException pe ) {
               Debug.signal( Debug.ERROR, this, "Failed to load account: "

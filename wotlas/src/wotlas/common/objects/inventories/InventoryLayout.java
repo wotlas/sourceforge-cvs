@@ -20,8 +20,12 @@
 package wotlas.common.objects.inventories;
 
 import wotlas.client.ClientDirector;
+
 import wotlas.common.character.*;
 import wotlas.common.ResourceManager;
+
+import wotlas.libs.graphics2D.ImageIdentifier;
+
 import wotlas.utils.Debug;
 import wotlas.utils.ScreenRectangle;
 
@@ -46,6 +50,8 @@ public class InventoryLayout {
   private ScreenRectangle rightBootSlot;
   private ScreenRectangle rightHandSlot;
   private ScreenRectangle sleeveSlot;
+  
+  private ImageIdentifier backgroundId;
 
   /** Empty Constructor for persitence.
    * Data is loaded by the PersistenceManager.
@@ -105,7 +111,7 @@ public class InventoryLayout {
   public ScreenRectangle getLeftHandSlot() {
     return leftHandSlot;
   }
-  public void serLeftHandSlot(ScreenRectangle rect) {
+  public void setLeftHandSlot(ScreenRectangle rect) {
     leftHandSlot = rect;
   }
   
@@ -136,6 +142,14 @@ public class InventoryLayout {
   public void setSleeveSlot(ScreenRectangle rect) {
     sleeveSlot = rect;
   }  
+  
+  public ImageIdentifier getBackgroundId() {
+    return backgroundId;
+  }
+  
+  public void setBackgroundId(ImageIdentifier imId) {
+    backgroundId = imId;
+  }
 
  /*------------------------------------------------------------------------------------*/ 
 
@@ -161,8 +175,6 @@ public class InventoryLayout {
         String fileName = rManager.getLayoutsDir()+character.getClass().getName();
         InventoryLayout cfg = null;
 
-System.out.println(fileName);
-
          if( new File(fileName).exists() ) {
             cfg = (InventoryLayout) rManager.loadObject(fileName);
          }
@@ -171,6 +183,8 @@ System.out.println(fileName);
             Debug.signal( Debug.ERROR, null, "Failed to load WotCharacter Layout. Creating a new one." );
             return new InventoryLayout();
          }
+         
+         
 
          return cfg;
     }

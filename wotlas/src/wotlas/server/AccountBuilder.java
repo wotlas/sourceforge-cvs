@@ -20,13 +20,14 @@
 package wotlas.server;
 
 import wotlas.common.character.*;
+import wotlas.common.universe.*;
 import wotlas.common.message.account.*;
 import wotlas.utils.*;
 
 import wotlas.libs.net.*;
 import wotlas.libs.wizard.*;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 
 
 /** An AccountBuilder helps the creation of a GameAccount for a client. Here is
@@ -308,6 +309,10 @@ public class AccountBuilder implements NetConnectionListener
             Object params[] = new Object[0];
             return (String) m.invoke(this,params);
         }
+        catch( InvocationTargetException ite ) {
+            Debug.signal(Debug.ERROR,this,ite.getTargetException().getMessage());
+            return null;
+        }
         catch( Exception ex ) {
             Debug.signal(Debug.ERROR,this,ex);
             return null;
@@ -464,6 +469,8 @@ public class AccountBuilder implements NetConnectionListener
            className += "AesSedai";
         else if(data.equals("Warder"))
            className += "Warder";
+        else if(data.equals("Special Characters"))
+           return;
         else
            throw new AccountException("Unknown character class !");
 
@@ -560,6 +567,40 @@ public class AccountBuilder implements NetConnectionListener
      	if(data.equals("true"))
            player.setPlayerPast(""); // past will be set later
      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Method called to create special characters
+    */
+     public void setSpecialCharacter( String data ) throws AccountException {
+
+        if(data.equals("shaitan")) {
+          // We create a great lord of the dark...
+             player.setWotCharacter(new DarkOne());
+
+             setPlayerName("Great Lord Of the Dark");
+             setFullPlayerName("Shai'tan");
+             setPlayerPast("SERVE ME OR DIE !");
+
+             WotlasLocation prison = new WotlasLocation(0,2,0,1,0);
+             player.setLocation(prison);
+             player.setX(50);
+             player.setY(100);
+        }
+        else if(data.equals("amyrlin")) {
+          // We create an Amyrlin...
+             player.setWotCharacter(new AesSedai());
+             player.getWotCharacter().setCharacterRank("Amyrlin");
+        }
+        else if(data.equals("chronicles")) {
+          // We create a Keeper of chronicles...
+             player.setWotCharacter(new AesSedai());
+             player.getWotCharacter().setCharacterRank("Keeper Of Chronicles");
+        }
+        else
+           throw new AccountException("Wrong Special Character Key !");
+     }
+
 
  /*------------------------------------------------------------------------------------*/
  /*------------------------------------------------------------------------------------*/

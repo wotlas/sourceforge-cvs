@@ -27,10 +27,18 @@ package wotlas.server;
 
 public class AccountException extends Exception {
 
+   private String msg;
+
  /** Exception Constructor with message.
   */
    public AccountException( String msg ) {
         super( msg );
+        this.msg = msg;
    }
 
+ /** Message getter
+  */
+   public String getMessage() {
+      return msg;
+   }
 }

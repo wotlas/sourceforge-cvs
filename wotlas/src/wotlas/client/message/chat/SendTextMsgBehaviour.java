@@ -125,11 +125,17 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
             String otherPlayerName = message.substring(0,index);
             message = "<font color='blue'><i>" + senderFullName + " says to " + otherPlayerName + message.substring(index) + "</i></font>";
 
-          } else {
-            // We add sender name
-            message = "["+senderFullName+"] " + message;
           }
-           
+          else if( sender!=null && sender.getWotCharacter() instanceof DarkOne ) {
+             // display the message in the "dark one manner..."
+              message = "<b>[DARK ONE] "+message.toUpperCase()+" </b>";
+          }
+          else {
+             // We add sender name
+                message = "["+senderFullName+"] " + message;
+          }
+
+
        // We display the message
           if( voiceSoundLevel!=ChatRoom.SHOUTING_VOICE_LEVEL ) {
               JChatRoom chatRoom = dataManager.getChatPanel().getJChatRoom(chatRoomPrimaryKey);

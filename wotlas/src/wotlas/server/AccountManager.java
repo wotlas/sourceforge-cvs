@@ -210,6 +210,32 @@ public class AccountManager
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To change the status of an account : a 'dead' account means its character has been
+   *  killed in the game.
+   *
+   * @param account the account...
+   * @return true if the account was deleted.
+   */
+     public synchronized boolean changeToDeadAccount( GameAccount account ) {
+           PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
+           WorldManager wManager = DataManager.getDefaultDataManager().getWorldManager();
+
+        // We get the account           
+           if( account==null || account.getIsDeadAccount() )
+               return false;
+
+           if( account.getPlayer().isConnectedToGame() )
+               account.getPlayer().closeConnection();
+
+        // we remove the character from the game...
+           account.setIsDeadAccount(true);
+           wManager.removePlayer( account.getPlayer() );
+           Debug.signal( Debug.WARNING, this, "Account "+account.getAccountName()+" is dead...");
+           return true;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** To get a list of online players.
    *
    * @return a list of online players

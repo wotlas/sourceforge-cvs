@@ -103,6 +103,12 @@ public class GameServer extends NetServer implements ErrorCodeList
        // The account exists... but do we have the right password ?
           if( account.isRightPassword( password ) )
           {
+            // account alive ?
+               if( account.getIsDeadAccount() ) {
+                   refuseClient( personality, ERR_DEAD_ACCOUNT, "Sorry, your character has been killed !" );
+                   return;
+               }
+
             // ok, client accepted...
                account.setLastConnectionTimeNow();
 

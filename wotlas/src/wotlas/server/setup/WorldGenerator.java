@@ -1286,7 +1286,7 @@ public class WorldGenerator {
                mapExit = rooms[0].addMapExit( new ScreenRectangle(410,0,170,20) );
                mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
                mapExit.setMapExitSide( MapExit.NONE );
-               mapExit.setTargetWotlasLocation( new WotlasLocation(0,2,0,1,3) );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,2,0,1,2) );
                mapExit.setTargetPosition( new ScreenPoint(1300,300) );
                mapExit.setTargetOrientation( (float)(-Math.PI/2) );
 
@@ -1309,7 +1309,7 @@ public class WorldGenerator {
                mapExit = rooms[1].addMapExit( new ScreenRectangle(140,0,170,20) );
                mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
                mapExit.setMapExitSide( MapExit.NONE );
-               mapExit.setTargetWotlasLocation( new WotlasLocation(0,2,0,1,2) );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,2,0,1,1) );
                mapExit.setTargetPosition( new ScreenPoint(1020,300) );
                mapExit.setTargetOrientation( (float)(-Math.PI/2) );
 
@@ -1331,7 +1331,7 @@ public class WorldGenerator {
 
 
         // STEP 23 - Rooms of Shayol Ghul Center InteriorMap
-           rooms = new Room[4];
+           rooms = new Room[3];
            map.setRooms( rooms );
 
            rooms[0] = new Room();
@@ -1339,59 +1339,45 @@ public class WorldGenerator {
            rooms[0].setMaxPlayers(30);
 
            rooms[0].setFullName("Shayol Ghul - Prison");
-           rooms[0].setShortName("shayol-ghul");
-           rooms[0].setInsertionPoint( new ScreenPoint(150,150) );
+           rooms[0].setShortName("shayol-prison");
+           rooms[0].setInsertionPoint( new ScreenPoint(450,150) );
 
-             roomLink = rooms[0].addRoomLink( new ScreenRectangle(540,170,20,25) );
-             roomLink.setRoom1ID(1);
-             roomLink.setRoom2ID(0);
+             roomLink = rooms[0].addRoomLink( new ScreenRectangle(900,160,25,125) );
+             roomLink.setRoom1ID(0);
+             roomLink.setRoom2ID(1);
 
            rooms[1] = new Room();
            rooms[1].setRoomID(1);
            rooms[1].setMaxPlayers(30);
 
-           rooms[1].setFullName("Shayol Ghul - Heart");
-           rooms[1].setShortName("shayol-heart");
-           rooms[1].setInsertionPoint( new ScreenPoint(450,150) );
+           rooms[1].setFullName("Shayol Ghul - Tunnels");
+           rooms[1].setShortName("shayol-tunnels");
+           rooms[1].setInsertionPoint( new ScreenPoint(1020,220) );
 
-             roomLink = rooms[1].addRoomLink( new ScreenRectangle(900,160,25,125) );
+             roomLink = rooms[1].addRoomLink( new ScreenRectangle(1160, 10, 25, 130) );
              roomLink.setRoom1ID(1);
              roomLink.setRoom2ID(2);
 
              rooms[1].addRoomLink( rooms[0].getRoomLinks()[0] );
 
-           rooms[2] = new Room();
-           rooms[2].setRoomID(2);
-           rooms[2].setMaxPlayers(30);
-
-           rooms[2].setFullName("Shayol Ghul - Tunnels");
-           rooms[2].setShortName("shayol-tunnels");
-           rooms[2].setInsertionPoint( new ScreenPoint(1020,220) );
-
-             roomLink = rooms[2].addRoomLink( new ScreenRectangle(1160, 10, 25, 130) );
-             roomLink.setRoom1ID(2);
-             roomLink.setRoom2ID(3);
-
-             rooms[2].addRoomLink( rooms[1].getRoomLinks()[0] );
-
-               mapExit = rooms[2].addMapExit( new ScreenRectangle(935, 325, 220, 25) );
+               mapExit = rooms[1].addMapExit( new ScreenRectangle(935, 325, 220, 25) );
                mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
                mapExit.setMapExitSide( MapExit.NONE );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,2,0,0,1) );
                mapExit.setTargetPosition( new ScreenPoint(210,25) );
                mapExit.setTargetOrientation( (float)(Math.PI/2) );
 
-           rooms[3] = new Room();
-           rooms[3].setRoomID(3);
-           rooms[3].setMaxPlayers(30);
+           rooms[2] = new Room();
+           rooms[2].setRoomID(2);
+           rooms[2].setMaxPlayers(30);
 
-           rooms[3].setFullName("Shayol Ghul - Tunnel");
-           rooms[3].setShortName("shayol-ghul");
-           rooms[3].setInsertionPoint( new ScreenPoint(1300,275) );
+           rooms[2].setFullName("Shayol Ghul - Tunnel");
+           rooms[2].setShortName("shayol-ghul");
+           rooms[2].setInsertionPoint( new ScreenPoint(1300,275) );
 
-             rooms[3].addRoomLink( rooms[2].getRoomLinks()[0] );
+             rooms[2].addRoomLink( rooms[1].getRoomLinks()[0] );
 
-               mapExit = rooms[3].addMapExit( new ScreenRectangle(1200,325,200,25) );
+               mapExit = rooms[2].addMapExit( new ScreenRectangle(1200,325,200,25) );
                mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
                mapExit.setMapExitSide( MapExit.NONE );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,2,0,0,0) );

@@ -77,6 +77,10 @@ public class GameAccount
     */
       private int localClientID;
 
+   /** is a dead account ?
+    */
+      private boolean isDeadAccount;
+
    /** Last Connection Time.
     */
       private long lastConnectionTime;
@@ -101,6 +105,7 @@ public class GameAccount
    *  Data is loaded by the PersistenceManager.
    */
      public GameAccount() {
+        isDeadAccount=false;
      }
 
  /*------------------------------------------------------------------------------------*/
@@ -121,6 +126,7 @@ public class GameAccount
          
          lastConnectionTime = System.currentTimeMillis();
          lastConnectionTry = lastConnectionTime;
+         isDeadAccount=false;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -300,6 +306,26 @@ public class GameAccount
      public void setLastConnectionTimeNow() {
          lastConnectionTime = System.currentTimeMillis();
          lastConnectionTry = lastConnectionTime;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** is the account dead ?
+   *
+   * @return true if the account is dead
+   */
+     public boolean getIsDeadAccount() {
+         return isDeadAccount;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** is the account dead ?
+   *
+   * @param isDeadAccount
+   */
+     public void setIsDeadAccount( boolean isDeadAccount ) {
+         this.isDeadAccount = isDeadAccount;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

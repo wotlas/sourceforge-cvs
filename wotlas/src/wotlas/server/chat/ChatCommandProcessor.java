@@ -73,6 +73,7 @@ public class ChatCommandProcessor
            addChatCommand( new BellChatCommand() );
            addChatCommand( new FanfareChatCommand() );
            addChatCommand( new KnockChatCommand() );
+           addChatCommand( new KillChatCommand() );
     }
 
  /*------------------------------------------------------------------------------------*/

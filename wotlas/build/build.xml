@@ -18,7 +18,7 @@
 
         <!-- Possible value are here 'classic' if you want to use Javac
              or 'jikes' if you want to use jikes -->
-        <property name="build.compiler" value="classic"/>
+        <property name="build.compiler" value="jikes"/>
 
 
         <property name="debug" value="off"/>
@@ -27,14 +27,15 @@
         
         <property name="src.dir" value="../src"/>
         <property name="lib.dir" value="../lib"/>
-        <property name="packages" value="wotlas.*"/>
+        <property name="packages" value="wotlas*"/>
         
         <property name="build.src" value="../src"/>
         <property name="build.dest" value="../classes"/>
         <property name="build.javadocs" value="../docs/api"/>
 
         <property name="alice.dir" value="../../alice/ProgramD"/>
-        <property name="alice-classpath" value="${alice.dir}/lib/aliceserver.jar"/>
+        <property name="alice-classpath"  value="${alice.dir}/lib/aliceserver.jar"/>
+        <property name="alice-wotlas-jar" value="${alice.dir}/lib/alicewotlas.jar"/>
         
         <filter token="year" value="${year}"/>
         <filter token="version" value="${version}"/>
@@ -171,15 +172,26 @@
 
     <!-- COMPILE WOTLAS's ALICEBOT LISTENER -->
 
-    <target name="alice" depends="prepare">
+    <target name="alice" depends="prepare,clean,libs,utils">
         <echo message="Compiling Wotlas Alice Listener..."/>
+        <echo message="Note that other wotlas classes have been deleted..."/>
+        <echo message=""/>
+
         <javac srcdir="${build.src}"
             destdir="${build.dest}"
             includes="wotlas/server/bots/alice/**"
+            excludes="wotlas/common/**"
             debug="${debug}"
             classpath="${alice-classpath}"
             deprecation="${deprecation}"
             optimize="${optimize}"/>
+
+        <echo message=""/>
+        <echo message="Creating the wotlas JAR file..."/>
+        <jar jarfile="${alice-wotlas-jar}"
+             basedir="${build.dest}"
+        />
+
     </target>
 
 

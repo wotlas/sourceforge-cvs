@@ -300,12 +300,12 @@ public class InteriorMapData implements MapData
     RoomLink rl = myRoom.isIntersectingRoomLink( myPlayer.getCurrentRectangle() );
 
     // is there a Door ?
-      if ( rl!=null && rl.getDoor()!=null ) {
+      /*if ( rl!=null && rl.getDoor()!=null ) {
            if( !rl.getDoor().isOpened()
                && !rl.getDoor().canMove(myPlayer.getCurrentRectangle(),
                                         myPlayer.getEndPosition() ) )
                myPlayer.stopMovement();
-      }
+      }*/
 
     // Moving to another Room ?
     if ( rl!=null && !couldBeMovingToAnotherRoom ) {

@@ -20,6 +20,7 @@
 package wotlas.libs.graphics2D.drawable;
 
 import wotlas.libs.graphics2D.*;
+import wotlas.libs.pathfinding.*;
 
 import java.awt.*;
 import java.awt.image.*;
@@ -254,6 +255,7 @@ public class DoorDrawable extends Drawable implements DrawableOwner {
       this.isOpening = false;
       this.isClosing = false;
       this.currentAngle = this.iniAngle;
+      AStarDouble.fillRectangle( rOwn );
      }
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -265,6 +267,7 @@ public class DoorDrawable extends Drawable implements DrawableOwner {
       this.isOpening = false;
       this.isClosing = false;
       this.currentAngle = this.iniAngle + this.variationAngle;
+      AStarDouble.cleanRectangle( rOwn );
      }
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

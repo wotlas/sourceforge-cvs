@@ -30,10 +30,13 @@ import wotlas.libs.net.NetMessageCategory;
 
 public interface AccountMessageCategory extends NetMessageCategory {
 
-       public final static byte PASSWORD_AND_LOGIN_MSG = 0;
-       public final static byte ACCOUNT_CREATION_MSG   = 1;
-       public final static byte ACCOUNT_CREATED_MSG    = 2;
+       public final static byte PASSWORD_AND_LOGIN_MSG      = 0;
+       public final static byte ACCOUNT_CREATION_MSG        = 1;
+       public final static byte ACCOUNT_CREATED_MSG         = 2;
        public final static byte ACCOUNT_CREATION_FAILED_MSG = 3;
-       public final static byte ACCOUNT_WARNING_MSG    = 4;
+       public final static byte ACCOUNT_WARNING_MSG         = 4;
+       public final static byte ACCOUNT_WOTCHAR_CLASS_MSG   = 5;
+       public final static byte ACCOUNT_VISUAL_PROPS_MSG    = 6;
+       public final static byte ACCOUNT_PLAYER_NAMES_MSG    = 7;
 }
 

@@ -82,7 +82,7 @@ public class JHTMLWindow extends JDialog implements ActionListener
     * @param title JDialog title
     * @param fileName HTML filename. If the file begins with "http:" we assume it's an URL
     *        otherwise we consider its a local file. If the file begins with "text:" we assume
-    *        the fileName contains the text to display qo we just display the "fileName" string.
+    *        the fileName contains the text to display so we just display the "fileName" string.
     * @param width initial window width
     * @param height initial window height
     * @param center tells if the JDialog must be centered on screen
@@ -121,8 +121,8 @@ public class JHTMLWindow extends JDialog implements ActionListener
          setBackground(Color.white);
 
       // We load the images
-         ImageIcon im_okup = new ImageIcon("..\\base\\gui\\ok-up.gif");
-         ImageIcon im_okdo = new ImageIcon("..\\base\\gui\\ok-do.gif");
+         ImageIcon im_okup = new ImageIcon("../base/gui/ok-up.gif");
+         ImageIcon im_okdo = new ImageIcon("../base/gui/ok-do.gif");
 
       // OK Button
          JButton b_ok = new JButton(im_okup);

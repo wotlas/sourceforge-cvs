@@ -117,7 +117,7 @@ public class PersistenceManager
 
         for( int i=0; i<accountList.length; i++ )
         {
-           if( !accountList[i].isDirectory() )
+           if( !accountList[i].isDirectory() || accountList[i].getName().indexOf('-')<0 )
                continue;
 
            try

@@ -437,12 +437,12 @@ public class ServerConfig
     * @return a string containing all the information to export.
     */
       public String toHTML() {
-          return "<h1>Wotlas Server<h1><br>"
+          return "<h2>Wotlas Server</h2><br>"
                  +"<b>Server Symbolic Name :</b> "+serverSymbolicName+"<br>"
                  +"<b>Server ID:</b> "+serverID+"<br>"
                  +"<b>Location:</b> "+location+"<br>"
                  +"<b>Admin e-mail:</b> <i>"+adminEmail+"</i><br>"
-                 +"<b>Description:</b> "+description+"<br><p>";
+                 +"<b>Description:</b> "+description+"<br>";
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

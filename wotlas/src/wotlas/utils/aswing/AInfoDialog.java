@@ -42,6 +42,7 @@ public class AInfoDialog extends JDialog {
    public AInfoDialog(Frame frame, String message, boolean modal, String guiImagesPath) {
          super(frame,"Information", modal);
          guiImagesPath = guiImagesPath + File.separator;
+
       // some inits
          getContentPane().setLayout( new BorderLayout() );
          getContentPane().setBackground(Color.white);
@@ -51,9 +52,9 @@ public class AInfoDialog extends JDialog {
          getContentPane().add( label1, BorderLayout.CENTER );
 
       // Ok Button
-         ImageIcon im_okup = new ImageIcon(guiImagesPath+"gui/ok-up.gif");
-         ImageIcon im_okdo = new ImageIcon(guiImagesPath+"gui/ok-do.gif");
-         ImageIcon im_okun = new ImageIcon(guiImagesPath+"gui/ok-un.gif");
+         ImageIcon im_okup = new ImageIcon(guiImagesPath+"ok-up.gif");
+         ImageIcon im_okdo = new ImageIcon(guiImagesPath+"ok-do.gif");
+         ImageIcon im_okun = new ImageIcon(guiImagesPath+"ok-un.gif");
          JButton b_ok = new JButton(im_okup);
          b_ok.setRolloverIcon(im_okdo);
          b_ok.setPressedIcon(im_okdo);

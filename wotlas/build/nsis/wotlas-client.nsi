@@ -2,20 +2,20 @@
 ;
 ; This script provides uninstall support and (optionally) start menu shortcuts.
 ;
-; It will create a wotlas-client-1.3-beta.exe in the lib/ directory
+; It will create a wotlas-client-1.3.exe in the lib/ directory
 ;
 
 ; The name of the installer
-Name "Wotlas Client 1.3 beta"
+Name "Wotlas Client 1.3"
 Icon "wotlas.ico"
-Caption "Wotlas Client 1.3 beta"
+Caption "Wotlas Client 1.3"
 WindowIcon on
 
 BGGradient 000000 800000 FFFFFF
 InstallColors FF8080 000030
 
 ; The file to write
-OutFile "wotlas-client-1.3-beta.exe"
+OutFile "wotlas-client-1.3.exe"
 
 LicenseText "Wotlas is available under the GNU Public License. You'll find the source code of this program on SourceForge.net (http://sf.net/projects/wotlas)."
 LicenseData "gpl.txt"

@@ -25,6 +25,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.zip.*;
 import java.util.jar.*;
+import javax.swing.JOptionPane;
 
 /** Various useful tools...
  *
@@ -184,6 +185,14 @@ public class Tools {
                Debug.signal( Debug.ERROR, null, "Failed to create new instance of "+className+", "+ex );
                return null;
           }
+      }
+
+ /*------------------------------------------------------------------------------------*/ 
+
+   /** To display a GUI Debug Message.
+    */
+      public static void displayDebugMesage(  String title, String msg ) {
+            JOptionPane.showMessageDialog(null,msg,title,JOptionPane.ERROR_MESSAGE);
       }
 
  /*------------------------------------------------------------------------------------*/ 
@@ -535,10 +544,6 @@ public class Tools {
      public static String[] listFilesInJar(String jarName, String dirPath, String ext ) {
 
         // 1 - Prepare the search
-        //     If the classpath is not found we'll search in the current '.' directory
-           StringTokenizer tokenizer = new StringTokenizer(System.getProperty("java.class.path", "."),
-                                              System.getProperty("path.separator", ";"));
-
            dirPath = subString( dirPath, "\\", "/" ); // jar uses "/" separator
 
            if(!dirPath.endsWith("/"))
@@ -547,10 +552,6 @@ public class Tools {
            if(dirPath.startsWith("/"))
               dirPath = dirPath.substring( 1, dirPath.length() );
 
-           jarName = jarName.toLowerCase();
-
-           if( !hasJar( jarName ) )
-               return new String[0]; // jar not found
 
         // 2 - We analyze our JAR file
            JarFile jar = null;

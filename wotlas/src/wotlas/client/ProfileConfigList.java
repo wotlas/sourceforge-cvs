@@ -222,7 +222,10 @@ public class ProfileConfigList {
      	ResourceManager rManager = ClientDirector.getResourceManager();
         String fileName = rManager.getExternalConfigsDir()+CLIENT_PROFILES;
 
-        return (ProfileConfigList) rManager.loadObject(fileName);
+        if( new File(fileName).exists() )
+            return (ProfileConfigList) rManager.loadObject(fileName);
+        else
+            return null;
     }
 
  /*------------------------------------------------------------------------------------*/

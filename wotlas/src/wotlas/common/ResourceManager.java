@@ -70,17 +70,13 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Wotlas client JAR file name.
-    *  IF this jar file is not found we'll assume the project resources are not in
-    *  a jar file.
+   /** A part of the Wotlas client JAR file name (without the extension .jar)
     */
-     public static final String WOTLAS_CLIENT_JAR = "wotlas-client.jar";
+     public static final String WOTLAS_CLIENT_JAR = "client";
 
-   /** Wotlas Server JAR file name.
-    *  IF this jar file is not found we'll assume the project resources are not in
-    *  a jar file.
+   /** A part of the Wotlas Server JAR file name (without the extension .jar).
     */
-     public static final String WOTLAS_SERVER_JAR = "wotlas-server.jar";
+     public static final String WOTLAS_SERVER_JAR = "server";
 
    /** Wotlas root dir for resources located in a JAR. We'll search in this
     *  directory for every kind of resources.
@@ -184,48 +180,54 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
     */
      public ResourceManager() {
 
+        // Are we in a JAR FILE ?
            inJar = false;
+           jarName = getJarName();
 
-        // Are we in a client JAR File ?
-           jarName = WOTLAS_CLIENT_JAR;
-           inClientJar = Tools.hasJar(WOTLAS_CLIENT_JAR);
-
-           if( !inClientJar ) {
-             // perhaps the JAR name was changed by Java Web Start
-               jarName = Tools.findJarName( WOTLAS_CLIENT_JAR );
-               
-               if(jarName!=null)
-                  inClientJar = true; // yes the name was changed, we are in a Jar
+           if(jarName==null) {
+             // OK we are not in a JAR. We'll use the default external location for resources
+                basePath = DEFAULT_BASE_PATH;
+                return;
            }
 
-           if( inClientJar ) {
-              inJar = true;
-              createExternalClientDirectories();
+        // Are we in a client JAR File ?
+           if( jarName.indexOf(WOTLAS_CLIENT_JAR) >= 0 ) {
+               inClientJar = true;
+               inJar = true;
+
+               try{
+                  repairClassPath();
+                  createExternalClientDirectories();
+               }catch(Exception e) {
+                  e.printStackTrace();
+                  Tools.displayDebugMesage("Deployment Failed","Wotlas failed to extract config files to the local directory."+
+                                                               "\nCheck the access rights of the installation directory of wotlas.");
+                  Debug.exit();
+               }
+
               return; // ResourceManager created
            }
 
         // Are we in a server JAR File ?
-           jarName = WOTLAS_SERVER_JAR;
-           inServerJar = Tools.hasJar(WOTLAS_SERVER_JAR);
+           if( jarName.indexOf(WOTLAS_SERVER_JAR) >= 0 ) {
+               inServerJar = true;
+               inJar = true;
 
-           if( !inServerJar ) {
-             // perhaps the JAR name was changed by Java Web Start
-               jarName = Tools.findJarName( WOTLAS_SERVER_JAR );
-               
-               if(jarName!=null)
-                  inServerJar = true; // yes the name was changed, we are in a Jar
-           }
+               try{
+                  repairClassPath();
+                  createExternalClientDirectories();
+               }catch(Exception e) {
+                  e.printStackTrace();
+                  Tools.displayDebugMesage("Deployment Failed","Wotlas failed to extract config files to the local directory."+
+                                                               "\nCheck the access rights of the installation directory of wotlas.");
+                  Debug.exit();
+               }
 
-           if( inServerJar ) {
-              inJar = true;
-              createExternalClientDirectories();
               return; // ResourceManager created
            }
 
-
-        // OK we are not in a JAR. We'll use the default external location for resources
-           jarName = null;
-           basePath = DEFAULT_BASE_PATH;
+           Tools.displayDebugMesage("Wrong Jar Name","The Jar file name should contain at least a 'client' or 'server' keyword");
+           Debug.exit();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -251,6 +253,46 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
      public boolean inJar() {
      	return inJar;
      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Returns the name of the JAR we are into.
+     *  @return null if we are not in a jar.
+     */
+        protected String getJarName() {
+             URL url = this.getClass().getResource("ResourceManager.class");
+           
+             if(url==null)
+                return null;
+
+          // check the URL format
+             String sUrl = ""+url;
+
+             if(!sUrl.startsWith("jar"))
+                return null;
+
+          // We are in a Jar, we extract the jar name.
+             int end = sUrl.indexOf('!');
+             if(end<0) return null;
+
+             int beg = sUrl.lastIndexOf("/",end);
+             if(beg<0) return null;
+
+             return sUrl.substring(beg+1,end);
+        }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Repares the class path with the eventually missing current jar name.
+    */
+      protected void repairClassPath() {
+           if( Tools.findJarName(jarName)!=null )
+               return; // our classpath has the current Jar name... nothing to repair.
+
+           System.setProperty( "java.class.path", System.getProperty("java.class.path", ".")
+                               +System.getProperty("path.separator", ";")
+                               +jarName);
+      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

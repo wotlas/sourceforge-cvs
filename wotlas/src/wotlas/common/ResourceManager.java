@@ -209,7 +209,7 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
                   createExternalClientDirectories();
                }catch(Exception e) {
                   e.printStackTrace();
-                  Tools.displayDebugMesage("Deployment Failed","Wotlas failed to extract config files to the local directory."+
+                  Tools.displayDebugMessage("Deployment Failed","Wotlas failed to extract config files to the local directory."+
                                                                "\nCheck the access rights of the installation directory of wotlas.");
                   Debug.exit();
                }
@@ -227,7 +227,7 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
                   createExternalClientDirectories();
                }catch(Exception e) {
                   e.printStackTrace();
-                  Tools.displayDebugMesage("Deployment Failed","Wotlas failed to extract config files to the local directory."+
+                  Tools.displayDebugMessage("Deployment Failed","Wotlas failed to extract config files to the local directory."+
                                                                "\nCheck the access rights of the installation directory of wotlas.");
                   Debug.exit();
                }
@@ -235,7 +235,7 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
               return; // ResourceManager created
            }
 
-           Tools.displayDebugMesage("Wrong Jar Name","The Jar file name should end with a 'client' or 'server' keyword");
+           Tools.displayDebugMessage("Wrong Jar Name","The Jar file name should end with a 'client' or 'server' keyword");
            Debug.exit();
      }
 
@@ -312,7 +312,7 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
    /** Repares the class path with the eventually missing current jar name.
     */
       protected void repairClassPath() {
-           if( !Tools.hasJar(jarName) )
+           if( Tools.hasJar(jarName) )
                return; // our classpath has the current Jar name... nothing to repair.
 
            System.setProperty( "java.class.path", System.getProperty("java.class.path", ".")

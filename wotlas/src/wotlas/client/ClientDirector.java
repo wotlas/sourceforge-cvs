@@ -161,7 +161,7 @@ public class ClientDirector {
        }
        catch( Exception e ) {
          e.printStackTrace();
-         Tools.displayDebugMesage("Start-up Error",""+e);
+         Tools.displayDebugMessage("Start-up Error",""+e);
          Debug.exit();
        }
 

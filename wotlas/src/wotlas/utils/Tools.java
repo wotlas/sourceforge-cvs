@@ -191,7 +191,7 @@ public class Tools {
 
    /** To display a GUI Debug Message.
     */
-      public static void displayDebugMesage(  String title, String msg ) {
+      public static void displayDebugMessage(  String title, String msg ) {
             JOptionPane.showMessageDialog(null,msg,title,JOptionPane.ERROR_MESSAGE);
       }
 
@@ -236,31 +236,6 @@ public class Tools {
 
        return buf.toString();
     }
-
- /*------------------------------------------------------------------------------------*/ 
-
-  /** To get all the available IP address on this machine.
-   *  @return null if none
-   *  @deprecated doesn't work in java 1.3.1
-   */
-  public static String[] getAllInetAddresses() {
-        try{
-           InetAddress list[] = InetAddress.getAllByName(InetAddress.getLocalHost().getHostAddress()); // search for localhost
-
-           if(list==null) return null;
-
-           String strList[] = new String[list.length];
-           
-           for(int i=0; i<list.length; i++)
-               strList[i] = list[i].toString();
-
-           return strList;
-        }
-        catch(UnknownHostException e) {
-           e.printStackTrace();
-           return null;
-        }
-  }
 
  /*------------------------------------------------------------------------------------*/ 
 
@@ -488,40 +463,24 @@ public class Tools {
 
  /*------------------------------------------------------------------------------------*/ 
 
-   /** We search for a jar name in our classpath given a key word.
-    * @param jarName jar file name, such as "wotlas.jar"
-    * @return Jar that has the keyword in its name, null if none
-    */
-     public static String findJarName( String keyword ) {
-     	   keyword = keyword.toLowerCase();
-           StringTokenizer tokenizer = new StringTokenizer(System.getProperty("java.class.path", "."),
-                                              System.getProperty("path.separator", ";"));
-
-           while( tokenizer.hasMoreTokens() ) {
-              String directory = tokenizer.nextToken().toLowerCase();
-              
-              if( directory.indexOf(keyword)>=0 )
-                  return directory;
-           }
-
-           return null; // not found
-     }
-
- /*------------------------------------------------------------------------------------*/ 
-
    /** Returns true if we have the given jar name in our classpath.
     * @param jarName jar file name, such as "wotlas.jar"
     * @return true if the JAR is in the classpath, false if not
     */
      public static boolean hasJar( String jarName ) {
      	   jarName = jarName.toLowerCase();
+
+        // We extract the last part of the JAR name
+           int index = jarName.lastIndexOf("/"); // is a '/' because it comes from an URL
+           if(index>=0) jarName = jarName.substring(index+1,jarName.length());
+
            StringTokenizer tokenizer = new StringTokenizer(System.getProperty("java.class.path", "."),
                                               System.getProperty("path.separator", ";"));
 
            while( tokenizer.hasMoreTokens() ) {
               String directory = tokenizer.nextToken().toLowerCase();
               
-              if( directory.equals(jarName) )
+              if( directory.endsWith(jarName) )
                   return true;
            }
 

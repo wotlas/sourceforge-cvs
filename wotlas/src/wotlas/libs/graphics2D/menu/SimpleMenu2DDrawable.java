@@ -75,34 +75,41 @@ public class SimpleMenu2DDrawable extends Drawable {
     */
     static {
       // we load our small menu images
-        String basePath = "wotlas/libs/graphics2D/menu/images/";
+        String basePath = "images/";
         MediaTracker tracker = new MediaTracker(new Label());
 
-        URL url = ClassLoader.getSystemClassLoader().getResource(basePath+"middle-bar.gif");
+        URL url = SimpleMenu2DDrawable.class.getResource(basePath+"middle-bar.gif");
+/*
+        if( url==null ) {
+          // We try inside a JAR...
+             basePath = "/wotlas/libs/graphics2D/menu/images/";
+             url = SimpleMenu2DDrawable.class.getResource(basePath+"middle-bar.gif");
+        }
+*/
         middleBarImage = Toolkit.getDefaultToolkit().getImage( url );
         tracker.addImage(middleBarImage,0);
 
-        url = ClassLoader.getSystemClassLoader().getResource(basePath+"arrow-right.gif");
+        url = SimpleMenu2DDrawable.class.getResource(basePath+"arrow-right.gif");
         arrowRightImage = Toolkit.getDefaultToolkit().getImage( url );
         tracker.addImage(arrowRightImage,1);
 
-        url = ClassLoader.getSystemClassLoader().getResource(basePath+"arrow-right-select.gif");
+        url = SimpleMenu2DDrawable.class.getResource(basePath+"arrow-right-select.gif");
         arrowRightSelectImage = Toolkit.getDefaultToolkit().getImage( url );
         tracker.addImage(arrowRightSelectImage,2);
 
-        url = ClassLoader.getSystemClassLoader().getResource(basePath+"arrow-down.gif");
+        url = SimpleMenu2DDrawable.class.getResource(basePath+"arrow-down.gif");
         arrowDownImage = Toolkit.getDefaultToolkit().getImage( url );
         tracker.addImage(arrowDownImage,3);
 
-        url = ClassLoader.getSystemClassLoader().getResource(basePath+"arrow-down-select.gif");
+        url = SimpleMenu2DDrawable.class.getResource(basePath+"arrow-down-select.gif");
         arrowDownSelectImage = Toolkit.getDefaultToolkit().getImage( url );
         tracker.addImage(arrowDownSelectImage,4);
 
-        url = ClassLoader.getSystemClassLoader().getResource(basePath+"arrow-up.gif");
+        url = SimpleMenu2DDrawable.class.getResource(basePath+"arrow-up.gif");
         arrowUpImage = Toolkit.getDefaultToolkit().getImage( url );
         tracker.addImage(arrowUpImage,5);
 
-        url = ClassLoader.getSystemClassLoader().getResource(basePath+"arrow-up-select.gif");
+        url = SimpleMenu2DDrawable.class.getResource(basePath+"arrow-up-select.gif");
         arrowUpSelectImage = Toolkit.getDefaultToolkit().getImage( url );
         tracker.addImage(arrowUpSelectImage,6);
 

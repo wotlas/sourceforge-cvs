@@ -113,6 +113,8 @@ public class JClientScreen extends JFrame
         ClientManager.getDefaultClientManager().start(0);
       }
     });
+
+    setIconImage(Toolkit.getDefaultToolkit().getImage("../base/gui/icon.gif"));
   }
 
   public JClientScreen(JInfosPanel infosPanel, JMapPanel myMapPanel, JChatPanel chatPanel,
@@ -135,6 +137,8 @@ public class JClientScreen extends JFrame
         ClientManager.getDefaultClientManager().start(0);
       }
     });
+
+    setIconImage(Toolkit.getDefaultToolkit().getImage("../base/gui/icon.gif"));
   }
 
  /*------------------------------------------------------------------------------------*/

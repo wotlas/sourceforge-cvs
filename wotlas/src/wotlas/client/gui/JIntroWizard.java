@@ -65,6 +65,7 @@ public class JIntroWizard extends JFrame
       }
     });
     setBackground(Color.white);
+    setIconImage(Toolkit.getDefaultToolkit().getImage("../base/gui/icon.gif"));
     setSize(width, height);
     SwingTools.centerComponent(this);
   }

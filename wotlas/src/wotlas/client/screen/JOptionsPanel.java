@@ -115,7 +115,7 @@ public class JOptionsPanel extends JPanel implements MouseListener, ChangeListen
     
       b_help.addActionListener(new ActionListener() {
           public void actionPerformed (ActionEvent e) {
-             new JHTMLWindow( DataManager.getDefaultDataManager().getClientScreen(), "Help", "../docs/help/game-window.html", 340, 450, false );
+             new JHTMLWindow( DataManager.getDefaultDataManager().getClientScreen(), "Help", "../docs/help/index.html", 340, 450, false );
           }
         }
       );

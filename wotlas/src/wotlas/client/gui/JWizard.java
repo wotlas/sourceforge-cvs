@@ -112,10 +112,8 @@ public abstract class JWizard extends JFrame
     setBackground(Color.white);
 
     this.context = context;
-
     
-    
-   
+    setIconImage(Toolkit.getDefaultToolkit().getImage("../base/gui/icon.gif"));
 
 
     vPanels = new Vector();

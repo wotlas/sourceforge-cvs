@@ -743,11 +743,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
              // we go to the door
                 Point doorPoint = door.getPointNearDoor( myPlayer.getCurrentRectangle() );
 
-                if( doorPoint!=null ) {
+                if( doorPoint!=null )
                     myPlayer.moveTo( doorPoint );
-                    if( myMapData instanceof InteriorMapData )
-                        ( (InteriorMapData) myMapData ).setAutomaticDoorOpen(); // does not work yet
-                }
            }
 
            return;

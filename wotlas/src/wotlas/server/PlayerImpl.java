@@ -526,7 +526,7 @@ public class PlayerImpl implements Player, NetConnectionListener
                  sendMessageToNearRooms( myRoom, pMsg, false );
              }
 
-             Debug.signal(Debug.NOTICE,null,"Connection opened for player "+playerName);
+             Debug.signal(Debug.NOTICE,null,"Connection opened for player "+playerName+" at "+Tools.getLexicalTime());
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

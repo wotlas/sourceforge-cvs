@@ -34,7 +34,7 @@ public class Tools
    *
    * @param ms number of milliseconds to wait.
    */
-    static public void waitTime( int ms )
+    static public void waitTime( long ms )
     {
       Object o = new Object();
     

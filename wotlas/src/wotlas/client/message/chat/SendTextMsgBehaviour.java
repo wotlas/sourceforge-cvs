@@ -83,14 +83,21 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
           
               if(chatRoom!=null) {
                  chatRoom.addPlayer(senderPrimaryKey,senderFullName);   // we add the player to the member's list
-                 chatRoom.appendText(message); // if it wasn't already the case
+                switch(voiceSoundLevel) {                  
+                  case ChatRoom.WHISPERING_VOICE_LEVEL:
+                    chatRoom.appendText("<font color='gray'>"+message+"</font>"); // if it wasn't already the case
+                    break;
+                  case ChatRoom.NORMAL_VOICE_LEVEL:
+                    chatRoom.appendText(message);
+                    break;
+                 }
               }
               else
                  Debug.signal( Debug.ERROR, this, "No JChatRoom "+chatRoomPrimaryKey+" found !");
           }
           else {
               JChatRoom chatRoom = dataManager.getChatPanel().getCurrentJChatRoom();
-              chatRoom.appendText(message); // if it wasn't already the case              
+              chatRoom.appendText("<font color='red'>"+message+"</font>"); // if it wasn't already the case              
           }
 
 System.out.println("CLIENT SENDTEXT MSGB DONE");

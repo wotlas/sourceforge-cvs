@@ -58,7 +58,7 @@ public class Client extends NetClient
  ////////////////////////////////////////////////////////////////////////////////
 
 
-static class FalseClient implements NetConnectionListener
+public static class FalseClient implements NetConnectionListener
 {
 
   private NetPersonality perso;

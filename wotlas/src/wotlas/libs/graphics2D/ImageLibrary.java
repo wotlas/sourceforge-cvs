@@ -19,8 +19,6 @@
 
 package wotlas.libs.graphics2D;
 
-import wotlas.utils.Debug;
-
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;

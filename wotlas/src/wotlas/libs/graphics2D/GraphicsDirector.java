@@ -141,8 +141,9 @@ public class GraphicsDirector extends JPanel {
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To initialize the GraphicsDirector. A call to this method suppresses all the
-   *  possessed Drawable Objects. The backDrawable & refDrawable are automatically
-   *  added to the GraphicsDirector Drawable list.
+   *  previously possessed Drawable Objects.
+   *  <p><b>IMPORTANT:</b> The backDrawable & refDrawable are automatically added to
+   *  the GraphicsDirector's Drawable list.
    *
    * @param backDrawable the drawable that you will use as a reference for your 2D cordinates.
    * @param refDrawable reference Drawable for screen movements. The way the screen moves
@@ -190,7 +191,7 @@ public class GraphicsDirector extends JPanel {
 
        paint( getGraphics() );
 
-// SOLUTION 2 : (gives better performance but is instable on slow computers)
+// SOLUTION 2 : (gives better performance but is unstable on slow computers)
 /*
        synchronized( lockPaint ) {
 

@@ -143,17 +143,13 @@ public class JOptionsPanel extends JPanel implements MouseListener//, ChangeList
     });
     innerPanel.add(b_help);
 
-    /*
-    innerPanel.add(vPanel);
-    innerPanel.add(qTextPanel);
-    */
-
+    add(innerPanel);
+    
     if (DataManager.SHOW_DEBUG) {
       JMemory memo = new JMemory();
       memo.init();
     }
-
-    add(innerPanel);
+    
   }
 
  /*------------------------------------------------------------------------------------*/

@@ -37,11 +37,18 @@ import java.io.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
+/** JDialog to configure client options.
+ *
+ * @author Petrus
+ * @see wotlas.client.ClientConfiguration
+ */
+
 public class JConfigurationDlg extends JDialog
 {
 
   protected JSlider soundVolLevel, musicVolLevel;
-  
+  protected JCheckBox cButton;
+    
   /** To get the music volume.
    */
   public short getMusicVolume() {
@@ -70,7 +77,7 @@ public class JConfigurationDlg extends JDialog
     if ((soundVolume>-1) && (soundVolume<SoundLibrary.MAX_SOUND_VOLUME)) {
       soundVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_SOUND_VOLUME, soundVolume);
     } else {
-      soundVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_SOUND_VOLUME, SoundLibrary.MAX_SOUND_VOLUME);
+      soundVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_SOUND_VOLUME, SoundLibrary.MAX_SOUND_VOLUME/2);
     }
   } 
   
@@ -82,10 +89,25 @@ public class JConfigurationDlg extends JDialog
    */
   public JConfigurationDlg(JFrame frame) {
     super(frame, "Options", true);
-    setSize(500,400);
+    setSize(400,300);
+    //setResizable(false);
     
-    setMusicVolume((short) 60);
-    setSoundVolume((short) 30);
+    ClientConfiguration clientConfiguration;
+    try {      
+      clientConfiguration = (ClientConfiguration) PropertiesConverter.load(ClientDirector.CLIENT_OPTIONS);
+    } catch (PersistenceException pe) {
+      Debug.signal( Debug.ERROR, this, "Failed to save sound & music configuration : " + pe.getMessage() );
+      clientConfiguration = new ClientConfiguration();
+    }
+    
+    musicVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_MUSIC_VOLUME,
+                                (short)clientConfiguration.getMusicVolume());
+
+    soundVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_SOUND_VOLUME,
+                                (short)clientConfiguration.getSoundVolume());
+    cButton = new JCheckBox();
+    cButton.setSelected(clientConfiguration.getHighDetails());
+    TextDrawable.setHighQualityTextDisplay(clientConfiguration.getHighDetails());
     
     JPanel pane = (JPanel) getContentPane();
     
@@ -122,14 +144,25 @@ public class JConfigurationDlg extends JDialog
     b_ok.setBorderPainted(false);
     b_ok.setContentAreaFilled(false);
     b_ok.setFocusPainted(false);
+    // Save the configuration
     b_ok.addActionListener(new ActionListener() {
       public void actionPerformed (ActionEvent e) {
-        ClientConfiguration clientConfig = new ClientConfiguration();
-        clientConfig.setSoundVolume((short) soundVolLevel.getValue());
-        clientConfig.setMusicVolume((short) musicVolLevel.getValue());
+        ClientConfiguration clientConfiguration = new ClientConfiguration();        
+        
+        clientConfiguration.setMusicVolume((short) musicVolLevel.getValue());
+        clientConfiguration.setSoundVolume((short) soundVolLevel.getValue());
+        SoundLibrary.getSoundLibrary().setSoundVolume((short) soundVolLevel.getValue());
+        
+        clientConfiguration.setNoMusic((musicVolLevel.getValue()==0));
+        SoundLibrary.getSoundLibrary().setNoMusic(clientConfiguration.getNoMusic());
+        
+        clientConfiguration.setNoSound((soundVolLevel.getValue()==0));
+        SoundLibrary.getSoundLibrary().setNoSound(clientConfiguration.getNoSound());
+        
+        clientConfiguration.setHighDetails(cButton.isSelected());
         
         try {
-          PropertiesConverter.save(SoundLibrary.getSoundLibrary(), "../src/config/clientOptions.cfg");
+          PropertiesConverter.save(clientConfiguration, ClientDirector.CLIENT_OPTIONS);
         } catch (PersistenceException pe) {
           Debug.signal( Debug.ERROR, this, "Failed to save sound & music configuration : " + pe.getMessage() );
         }
@@ -154,17 +187,24 @@ public class JConfigurationDlg extends JDialog
     public JGraphicsTab() {
       super();
       setBackground(Color.white);
-      setAlignmentX(Component.CENTER_ALIGNMENT);
+      setLayout(new FlowLayout(FlowLayout.LEFT));
+      //setAlignmentX(Component.CENTER_ALIGNMENT);
       setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
 
-      ALabel qTextTitle = new ALabel("Graphics");
-      add(qTextTitle);
+      /*ALabel qTextTitle = new ALabel("Graphics");
+      qTextTitle.setForeground(Color.white);
+      add(qTextTitle, BorderLayout.NORTH);*/
 
-      JCheckBox cButton = new JCheckBox();
-      cButton.setBackground(Color.white);
-      cButton.setSelected(false);
+      JPanel innerPanel = new JPanel(new GridLayout(1,2,10,10));
+      innerPanel.setBackground(Color.white);
+      add(innerPanel);
+      
+      ALabel lbl_details = new ALabel("High details");
+      innerPanel.add(lbl_details);
+       
+      cButton.setBackground(Color.white);      
       cButton.addItemListener(this);
-      add(cButton);
+      innerPanel.add(cButton);
     }
     
     /** Invoked when check box state is changed
@@ -187,31 +227,35 @@ public class JConfigurationDlg extends JDialog
     public JVolumeTab() {
       super();      
       setBackground(Color.white);
-      setAlignmentX(Component.CENTER_ALIGNMENT);
+      setLayout(new FlowLayout(FlowLayout.LEFT));
+      //setAlignmentX(Component.CENTER_ALIGNMENT);
       setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
       
       ImageIcon minVolIcon = new ImageIcon("../base/gui/volume16.gif");
       ImageIcon maxVolIcon = new ImageIcon("../base/gui/volume24.gif");
       
+      /*ALabel lbl_title = new ALabel("Sound");      
+      lbl_title.setForeground(Color.white);
+      add(lbl_title, BorderLayout.NORTH);*/
       
       JPanel innerPanel = new JPanel(new GridLayout(2,2,10,10));
       innerPanel.setBackground(Color.white);           
-      add(innerPanel, BorderLayout.WEST);
+      add(innerPanel);
       
       ALabel lbl_sound = new ALabel("Sound volum");
+      lbl_sound.setAlignmentY(Component.CENTER_ALIGNMENT);
       innerPanel.add(lbl_sound);
       
       JPanel soundPanel = new JPanel();
+      //soundPanel.setAlignmentY(Component.CENTER_ALIGNMENT);
         soundPanel.setBackground(Color.white);
         JLabel volMin = new JLabel(minVolIcon);
         volMin.setAlignmentY(Component.CENTER_ALIGNMENT);
         soundPanel.add(volMin);  
 
-        
-        SoundLibrary.getSoundLibrary().changeMusicVolume((short) soundVolLevel.getValue());
         //soundVolLevel.setPaintTrack(false);
         soundVolLevel.setOpaque(false);
-        soundVolLevel.setPreferredSize(new Dimension(50,30));
+        soundVolLevel.setPreferredSize(new Dimension(100,30));
         //soundVolLevel.addChangeListener(this);
         soundVolLevel.setAlignmentY(Component.BOTTOM_ALIGNMENT);
         soundPanel.add(soundVolLevel);
@@ -222,17 +266,17 @@ public class JConfigurationDlg extends JDialog
       innerPanel.add(soundPanel);
       
       ALabel lbl_music = new ALabel("Music volum");
+      lbl_music.setAlignmentY(Component.CENTER_ALIGNMENT);
       innerPanel.add(lbl_music);
         
       JPanel musicPanel = new JPanel();
+      
         musicPanel.setBackground(Color.white);
         musicPanel.add(new JLabel(minVolIcon));
-        
-        musicVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_MUSIC_VOLUME, 30);
-        SoundLibrary.getSoundLibrary().changeMusicVolume((short) musicVolLevel.getValue());
+               
         //musicVolLevel.setPaintTrack(false);
         musicVolLevel.setOpaque(false);
-        musicVolLevel.setPreferredSize(new Dimension(50,30));
+        musicVolLevel.setPreferredSize(new Dimension(100,30));
         musicVolLevel.addChangeListener(this);
         musicVolLevel.setAlignmentY(Component.BOTTOM_ALIGNMENT);
         musicPanel.add(musicVolLevel);

@@ -496,19 +496,25 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       ioe.printStackTrace();
       Debug.exit();
     }
-
+    
     // 0 - Load Client Configuration
-        
+    ClientConfiguration clientConfiguration;
+    try {
+      clientConfiguration = (ClientConfiguration) PropertiesConverter.load(ClientDirector.CLIENT_OPTIONS);
+    } catch (PersistenceException pe) {
+      Debug.signal( Debug.ERROR, this, "Failed to load client configuration : " + pe.getMessage() );
+      clientConfiguration = new ClientConfiguration();    
+    }
     
     // 0 - Create Sound Library
-    SoundLibrary.createSoundLibrary(databasePath);
-
-    /*try {
-      PropertiesConverter.save(SoundLibrary.getSoundLibrary(), "../src/config/soundmusic.cfg");
-    } catch (PersistenceException pe) {
-      Debug.signal( Debug.ERROR, this, "Failed to save sound & music configuration : " + pe.getMessage() );
-    }*/
-
+    SoundLibrary.createSoundLibrary(databasePath);    
+    SoundLibrary.getSoundLibrary().setNoMusic(clientConfiguration.getNoMusic());
+    if (clientConfiguration.getMusicVolume()>0)
+      SoundLibrary.getSoundLibrary().setMusicVolume((short) clientConfiguration.getMusicVolume());
+    SoundLibrary.getSoundLibrary().setNoSound(clientConfiguration.getNoSound());
+    if (clientConfiguration.getSoundVolume()>0)
+      SoundLibrary.getSoundLibrary().setSoundVolume((short) clientConfiguration.getSoundVolume());
+    
     // 1 - Create Graphics Director
     gDirector = new GraphicsDirector( new LimitWindowPolicy() );
 
@@ -553,6 +559,10 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     if (SHOW_DEBUG)
        System.out.println("JClient created");
     mFrame.init();
+    
+    // Client configuration
+    if ( (clientConfiguration.getClientWidth()>0) && (clientConfiguration.getClientHeight()>0) )
+      mFrame.setSize(clientConfiguration.getClientWidth(),clientConfiguration.getClientHeight());
 
     // 7 - Init map display
     if (SHOW_DEBUG)
@@ -575,6 +585,14 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     // This step should have been done in the current MapData.init() but it was not
     // the cas because our DataManager thread was not started...
     sendMessage(new AllDataLeftPleaseMessage());
+    
+    // Free memory
+    try {
+      PropertiesConverter.save(clientConfiguration, ClientDirector.CLIENT_OPTIONS);
+    } catch (PersistenceException pe) {
+      Debug.signal( Debug.ERROR, this, "Failed to save client configuration : " + pe.getMessage() );       
+    }
+    clientConfiguration = null;
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -886,6 +904,22 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** To close the client.
    */
   public void exit() {
+    
+    if (mFrame!=null) {
+      int mFrameWidth =  mFrame.getWidth();
+      int mFrameHeight = mFrame.getHeight();
+      try {
+        ClientConfiguration clientConfiguration = (ClientConfiguration) PropertiesConverter.load(ClientDirector.CLIENT_OPTIONS);
+        if (mFrameWidth>100)
+          clientConfiguration.setClientWidth(mFrameWidth);
+        if (mFrameHeight>100)
+          clientConfiguration.setClientHeight(mFrameHeight);
+        PropertiesConverter.save(clientConfiguration, "../src/config/client-options.cfg");
+      } catch (PersistenceException pe) {
+        Debug.signal( Debug.ERROR, this, "Failed to save client configuration : " + pe.getMessage() );
+      }
+    }
+    
     if (gDirector!=null)
       gDirector.removeAllDrawables();
     Debug.exit();

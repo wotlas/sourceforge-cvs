@@ -29,43 +29,69 @@ import wotlas.libs.sound.*;
 
 public class ClientConfiguration
 {
-  /** music volume
-   */
-  private short musicVolume;
 
-  /** sound volume
-   */
-  private short soundVolume;
+ /*------------------------------------------------------------------------------------*/
 
+  /** music volume.
+   */
+  private short musicVolume = SoundLibrary.MAX_MUSIC_VOLUME/3;
+
+  /** sound volume.
+   */
+  private short soundVolume = SoundLibrary.MAX_SOUND_VOLUME*2/3;
+
+  /** true if no music.
+   */
+  private boolean noMusic = false;
+  
+  /** true if no sounds.
+   */
+  private boolean noSound = false;
+  
+  /** true if high details.
+   */
+  private boolean highDetails = false;
+  
+  /** client screen width.
+   */
+  private int clientWidth = 810;
+  
+  /** client screeen height.
+   */
+  private int clientHeight = 610;
+  
  /*------------------------------------------------------------------------------------*/
 
   /** Empty Constructor for persitence.
    * Data is loaded by the PersistenceManager.
    */
   public ClientConfiguration() {
-    musicVolume = -1;
-    soundVolume = -1;
+    ;
   }
 
-  /** To get the music volume
+ /*------------------------------------------------------------------------------------*/
+
+  /** To get the music volume.
    */
   public short getMusicVolume() {
     return musicVolume;
   }
 
-  /** To set the music volume
+  /** To set the music volume.
    */
   public void setMusicVolume(short musicVolume) {
     this.musicVolume = musicVolume;
   }
+
+ /*------------------------------------------------------------------------------------*/
   
-  /** To get the sound volume
+  /** To get the sound volume.
    */
   public short getSoundVolume() {
     return soundVolume;
   }
 
-  /** To set the sound volume
+  /** To set the sound volume.
    */
   public void setSoundVolume(short soundVolume) {
     this.soundVolume = soundVolume;
@@ -73,4 +99,72 @@ public class ClientConfiguration
   
  /*------------------------------------------------------------------------------------*/
 
+  /** Getter of noMusic.
+   */
+  public boolean getNoMusic() {
+    return noMusic;
+  }
+  
+  /** Setter of noMusic.
+   */
+  public void setNoMusic(boolean value) {
+    this.noMusic = value;
+  }
+  
+ /*------------------------------------------------------------------------------------*/
+
+  /** Getter of noSound.
+   */
+  public boolean getNoSound() {
+    return noSound;
+  }
+  
+  /** Setter of noSound.
+   */
+  public void setNoSound(boolean value) {
+    this.noSound = value;
+  }
+  
+ /*------------------------------------------------------------------------------------*/
+  
+  /** Getter of highDetails.
+   */
+  public boolean getHighDetails() {
+    return highDetails;
+  }
+  
+  /** Setter of highDetails.
+   */
+  public void setHighDetails(boolean value) {
+    this.highDetails = value;
+  }
+  
+ /*------------------------------------------------------------------------------------*/ 
+
+  /** Getter of clientWidth.
+   */
+  public int getClientWidth() {
+    return clientWidth;
+  }
+  
+  /** Setter of clientWidth.
+   */
+  public void setClientWidth(int width) {
+    this.clientWidth = width;
+  }
+  
+  /** Getter of clientHeight.
+   */
+  public int getClientHeight() {
+    return clientHeight;
+  }
+  
+  /** Setter of clientHeight.
+   */
+  public void setClientHeight(int height) {
+    this.clientHeight = height;
+  }
+
+ /*------------------------------------------------------------------------------------*/ 
+  
 }

@@ -37,7 +37,7 @@ import java.util.Iterator;
  * @see wotlas.client.ClientManager; 
  */
 
-class ClientDirector
+public class ClientDirector
 {
 
  /*------------------------------------------------------------------------------------*/
@@ -53,6 +53,10 @@ class ClientDirector
   /** Static Link to Remote Servers Config File.
    */
   public final static String REMOTE_SERVER_CONFIG = "../src/config/remote-servers.cfg";
+  
+  /** Client options and configuration
+   */
+  public final static String CLIENT_OPTIONS = "../src/config/client-options.cfg";
   
   /** Complete Path to the database where are stored the client's profiles
    */

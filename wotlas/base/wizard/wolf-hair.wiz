@@ -1,0 +1,44 @@
+#WotLas 1.0 Saved Object
+#Sat Dec 23 21:36:16 CET 2000
+class=wotlas.libs.wizard.JWizardStepParameters
+isDynamic=false
+isLastStep=false
+isNextButtonEnabled=true
+isPrevButtonEnabled=true
+
+stepClass=wotlas.libs.wizard.step.JWizardStepListNet
+stepTitle=Wolf\ Brother\ Hair\ Color
+
+stepPropertiesKey=9
+stepPropertiesValue=9
+
+stepPropertiesKey.0=init.label0
+stepPropertiesValue.0=Select\ your\ hair\ color\ :
+
+stepPropertiesKey.1=init.nbChoices
+stepPropertiesValue.1=4
+
+stepPropertiesKey.2=init.choice0
+stepPropertiesValue.2=brown
+
+stepPropertiesKey.3=init.choice1
+stepPropertiesValue.3=black
+
+stepPropertiesKey.4=init.choice2
+stepPropertiesValue.4=gray
+
+stepPropertiesKey.5=init.choice3
+stepPropertiesValue.5=white
+
+# SERVER SIDE INCLUDES
+
+# Method to call to proceed data
+stepPropertiesKey.6=server.method
+stepPropertiesValue.6=setHairColor
+
+# Links
+stepPropertiesKey.7=server.next
+stepPropertiesValue.7=player-name.wiz
+
+stepPropertiesKey.8=server.previous
+stepPropertiesValue.8=wolf-rank.wiz

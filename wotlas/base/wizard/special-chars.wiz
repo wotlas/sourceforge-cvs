@@ -19,22 +19,22 @@ stepPropertiesKey.1=init.nbChoices
 stepPropertiesValue.1=3
 
 stepPropertiesKey.2=init.choice0
-stepPropertiesValue.2=Shai'tan
+stepPropertiesValue.2=Dark\ One
 
 stepPropertiesKey.3=init.info0
-stepPropertiesValue.3=The\ Great\ Lord\ of\ the\ Dark,\ locked\ in\ his\ prison\ of\ Shayol\ Ghul.
+stepPropertiesValue.3=\ \ \ \ \ \ \ \ Most\ common\ name,\ used\ in\ every\ land,\ for\ Shai'tan.\ The\ source\ of\ evil,\ antithesis\ of\ the\ Creator.\ Imprisoned\ by\ the\ Creator\ in\ Shayol\ Ghul\ at\ the\ moment\ of\ Creation.\ The\ attempt\ to\ free\ him\ from\ that\ prison\ brought\ about\ the\ War\ of\ the\ shadow,\ the\ Breaking\ of\ the\ World,\ and\ the\ end\ of\ the\ Age\ of\ Legends.
 
 stepPropertiesKey.4=init.choice1
-stepPropertiesValue.4=Amyrlin
+stepPropertiesValue.4=Amyrlin Seat
 
 stepPropertiesKey.5=init.info1
-stepPropertiesValue.5=Leader\ of\ the\ Aes\ Sedai.
+stepPropertiesValue.5=\ \ \ \ \ \ \ \ Leader\ of\ the\ Aes\ Sedai.\ Elected\ for\ life\ by\ the\ Hall\ of\ the\ Tower,\ the\ highest\ council\ of\ the\ Aes\ Sedai,\ which\ consists\ of\ three\ representatives\ from\ each\ of\ the\ seven\ Ajahs.\ The\ Amyrlin\ Seat\ has,\ theorically\ at\ least,\ almost\ supreme\ authority\ among\ the\ Aes Sedai,\ and\ ranks\ socially\ as\ the\ equal\ of\ a\ king\ or\ queen.\n
 
 stepPropertiesKey.6=init.choice2
-stepPropertiesValue.6=Keeper\ of\ Chronicles.
+stepPropertiesValue.6=Keeper\ of\ the\ Chronicles
 
 stepPropertiesKey.7=init.info2
-stepPropertiesValue.7=Aes\ Sedai\ helping\ the\ Amyrlin\ in\ her\ tasks.
+stepPropertiesValue.7=\ \ \ \ \ \ \ \ Second\ in\ authority\ to\ the\ Amyrlin\ Seat\ among\ the\ Aes\ Sedai,\ she\ also\ acts\ as\ secretary\ to\ the\ Amyrlin.\ Chosen\ for\ life\ by\ the\ Hall\ of\ the\ Tower,\ and\ usually\ of\ the\ same\ Ajah\ as\ the\ Amyrlin.\n\n
 
 # SERVER SIDE INCLUDES
 

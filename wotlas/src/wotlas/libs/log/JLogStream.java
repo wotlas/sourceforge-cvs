@@ -107,6 +107,7 @@ public class JLogStream extends LogStream
        // 3 - event management
           dialog.addWindowListener( new WindowAdapter() {
      	    public void windowClosing( WindowEvent e ) {
+     	    	JLogStream.this.flush();
                 dialog = null;
             }
           });

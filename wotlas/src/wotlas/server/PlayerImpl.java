@@ -71,6 +71,10 @@ public class PlayerImpl implements Player, NetConnectionListener
     */
        private String playerPast;
 
+   /** Player away message.
+    */
+       private String playerAwayMessage;
+
    /** WotCharacter Class
     */
        private WotCharacter wotCharacter;
@@ -124,6 +128,7 @@ public class PlayerImpl implements Player, NetConnectionListener
    /** Constructor for persistence.
     */
       public PlayerImpl() {
+      	playerAwayMessage=new String("I'm not here for the moment...");
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -400,6 +405,26 @@ public class PlayerImpl implements Player, NetConnectionListener
     */
       public Room getMyRoom() {
         return myRoom;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the player away message.
+    *
+    *  @return player away Message
+    */
+      public String getPlayerAwayMessage() {
+      	return playerAwayMessage;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the player's away message.
+    *
+    *  @param playerAwayMessage msg
+    */
+      public void setPlayerAwayMessage( String playerAwayMessage ){
+      	this.playerAwayMessage = playerAwayMessage;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

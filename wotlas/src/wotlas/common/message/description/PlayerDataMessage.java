@@ -108,8 +108,10 @@ public class PlayerDataMessage extends NetMessage
          writeString( player.getFullPlayerName(), ostream );
          writeString( player.getPrimaryKey(), ostream );
 
-         if(!publicInfoOnly)
+         if(!publicInfoOnly) {
             writeString( player.getPlayerPast(), ostream );
+            writeString( player.getPlayerAwayMessage(), ostream );
+         }
 
          ostream.writeBoolean( player.isConnectedToGame() );
 
@@ -162,8 +164,10 @@ public class PlayerDataMessage extends NetMessage
          player.setFullPlayerName( readString( istream ) );
          player.setPrimaryKey( readString( istream ) );
 
-         if(!publicInfoOnly)
+         if(!publicInfoOnly){
              player.setPlayerPast(  readString( istream ) );
+             player.setPlayerAwayMessage(  readString( istream ) );
+         }
 
          player.setIsConnectedToGame( istream.readBoolean() );
 

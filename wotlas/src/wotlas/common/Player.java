@@ -157,6 +157,22 @@ public interface Player
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** To get the player away message.
+    *
+    *  @return player away Message
+    */
+      public String getPlayerAwayMessage();
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the player's away message.
+    *
+    *  @param playerAwayMessage msg
+    */
+      public void setPlayerAwayMessage( String playerAwayMessage );
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
    /** To get the player's character.
     *
     *  @return player character

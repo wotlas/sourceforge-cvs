@@ -79,7 +79,7 @@ public class InfoPanel extends JPanel
        // Is there a valid past ?
           String past = player.getPlayerPast();
 
-          if(past.length()==0) {
+          if(past.length()==0 && !savePastButtonDisplayed) {
             // No past set we display the save button
                 playerTextArea.setEditable(true);
                 this.setLabelText("Your player's past:");
@@ -102,6 +102,7 @@ public class InfoPanel extends JPanel
                         PlayerImpl player = DataManager.getDefaultDataManager().getMyPlayer();
                     	player.setPlayerPast( playerTextArea.getText() );
                         player.sendMessage( new PlayerPastMessage( player.getPrimaryKey(), player.getPlayerPast() ) );
+                        InfoPanel.this.reset();
                         setPlayerInfo( player );
                     }
                 });
@@ -114,15 +115,11 @@ public class InfoPanel extends JPanel
              
              return;
           }
-          else if( savePastButtonDisplayed ) {
-             // Past Set we remove the Save Button
-                playerTextArea.setEditable(false);
-                remove(savePastButton);
-                remove(whitePanel);
-                revalidate();
-          }
-
+          else if(past.length()==0)
+             return;
     }
+    else if(savePastButtonDisplayed)
+         reset();
 
     setLabelText( player.getFullPlayerName() );
 
@@ -133,4 +130,23 @@ public class InfoPanel extends JPanel
          "Player Past: "+player.getPlayerPast() );
   }
     
+    
+  /** To reset this panel
+   */
+   public void reset() {
+
+      if(savePastButtonDisplayed) {
+         playerTextArea.setEditable(false);
+         remove(savePastButton);
+         remove(whitePanel);
+         revalidate();
+         savePastButton = null;
+        whitePanel = null;
+      }
+
+      savePastButtonDisplayed=false;
+      this.setText("Click on a player...");
+      this.setLabelText("No Player Selected");
+   }
+   
  }  

@@ -27,6 +27,7 @@ import wotlas.common.movement.*;
 import wotlas.common.*;
 
 import wotlas.common.message.description.PlayerPastMessage;
+import wotlas.common.message.description.PlayerAwayMessage;
 
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
@@ -74,6 +75,10 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   /** Player character's past
    */
   private String playerPast;
+
+  /** Player away message.
+   */
+  private String playerAwayMessage;
 
   /** Wotlas Character
    */
@@ -297,6 +302,32 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     */
       public void setPlayerPast( String playerPast ) {
            this.playerPast = playerPast;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the player away message.
+    *
+    *  @return player away Message
+    */
+      public String getPlayerAwayMessage() {
+      	     if(isConnectedToGame && DataManager.getDefaultDataManager().getMyPlayer()!=this)
+      	        return null;
+      	
+             if(playerAwayMessage==null)
+                sendMessage( new PlayerAwayMessage( primaryKey, "") );
+             	
+             return playerAwayMessage;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the player's away message.
+    *
+    *  @param playerAwayMessage msg
+    */
+      public void setPlayerAwayMessage( String playerAwayMessage ){
+      	this.playerAwayMessage = playerAwayMessage;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

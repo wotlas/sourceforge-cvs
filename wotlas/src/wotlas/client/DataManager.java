@@ -599,6 +599,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     changeMapData();
     
     addPlayer(myPlayer);
+    playerPanel.reset();
 
     // We can now ask for eventual remaining data
     // This step should have been done in the current MapData.init() but it was not
@@ -705,7 +706,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
            PlayerImpl selectedPlayer = (PlayerImpl) object;
            if (circle!=null)
              gDirector.removeDrawable(circle);
-            
+
+       // drawables
            circle = new CircleDrawable( selectedPlayer.getDrawable(),
                                         20,
                                         selectedPlayer.getWotCharacter().getColor(),
@@ -716,6 +718,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
            gDirector.addDrawable(selectedPlayer.getTextDrawable());
            gDirector.addDrawable(selectedPlayer.getWotCharacter().getAura());
 
+       // InfoPanel
            Component c_info = dataManager.getPlayerPanel().getTab("-info-");
            
            if( c_info==null || !(c_info instanceof InfoPanel) ) {
@@ -725,6 +728,14 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
            InfoPanel infoPanel = (InfoPanel) c_info;
            infoPanel.setPlayerInfo( selectedPlayer );
+           
+       // Away Message
+           if( selectedPlayer.getPlayerAwayMessage()!=null && !selectedPlayer.isConnectedToGame() ) {
+               JChatRoom chatRoom = chatPanel.getCurrentJChatRoom();
+               chatRoom.appendText("<font color='gray'>"+selectedPlayer.getPlayerName()+"(away) says: <i>"
+                                                    +selectedPlayer.getPlayerAwayMessage()+"</i></font>");
+           }
+
            return;
     }
     else if( object instanceof Door ) {

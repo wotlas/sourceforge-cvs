@@ -47,6 +47,11 @@ public class JPlayerPanel extends JPanel implements MouseListener
                                      new InfoPanel(), "Information on Selected Player" );
      playerTabbedPane.getComponentAt(0).setName("-info-");
 
+  // We add an Away Panel
+     playerTabbedPane.addTab("Away", new ImageIcon("../base/gui/pin.gif"),
+                                     new AwayPanel(), "Not Connected Options" );
+     playerTabbedPane.getComponentAt(1).setName("-away-");
+
      add(playerTabbedPane);
   }
   
@@ -61,7 +66,15 @@ public class JPlayerPanel extends JPanel implements MouseListener
    } 
    return null;
   }	 
-  
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To reset the JPlayerPanel.
+   */
+  public void reset() {
+  	( (InfoPanel)playerTabbedPane.getComponentAt(0) ).reset();
+  	( (AwayPanel)playerTabbedPane.getComponentAt(1) ).reset();
+  }
   
  /*------------------------------------------------------------------------------------*/
  

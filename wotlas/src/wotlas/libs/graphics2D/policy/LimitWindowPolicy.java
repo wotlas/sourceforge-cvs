@@ -133,8 +133,8 @@ public class LimitWindowPolicy implements WindowPolicy{
       // we correct the center if it's out of the backround dimension.
 	  if(screen.x<0) screen.x = 0;
         if(screen.y<0) screen.y = 0;
-        if( (screen.x+screen.width)>=background.width ) screen.x = background.width-screen.width-1;
-        if( (screen.y+screen.height)>=background.height ) screen.y = background.height-screen.height-1;
+        if( (screen.x+screen.width)>=background.width ) screen.x = (background.width-screen.width)/2;
+        if( (screen.y+screen.height)>=background.height ) screen.y = (background.height-screen.height)/2;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

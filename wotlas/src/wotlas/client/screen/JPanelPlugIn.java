@@ -22,11 +22,11 @@ package wotlas.client.screen;
 import javax.swing.JPanel;
 
 /** Represents a JPanel plug-in that can be added to the JPlayerPanel.
- *  To create a plug-in just create a wotlas.client.screen.plugin class that
- *  extends JPanelPlugIn. That's all. The class will be loaded dynamically.
+ *  To create a plug-in just create a class that this class. That's all.
+ *  The class will be searched via the classpath and loaded dynamically.
  *
  *  Note also that the plug-in class must have an empty constructor and should
- *  do the main inits in the init() method.
+ *  do its main inits in the init() method.
  *
  * @author Aldiss
  */

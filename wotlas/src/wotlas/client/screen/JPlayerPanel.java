@@ -21,6 +21,7 @@ package wotlas.client.screen;
 
 import wotlas.client.ClientDirector;
 import wotlas.utils.Debug;
+import wotlas.utils.Tools;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,8 +30,8 @@ import java.awt.event.*;
 import java.io.*;
 
 
-/** JPanel that possesses & display various plugins located in the
- *  wotlas.client.screen.plugin package.
+/** JPanel that possesses & display various plugins that implement
+ *  the JPanelPlugIn package.
  *
  * @author Petrus, Aldiss
  */
@@ -61,32 +62,32 @@ public class JPlayerPanel extends JPanel implements MouseListener {
    */
     protected void init() {
 
-       /** We load the available plug-ins
-        *  WE ASSUME THAT WE ARE NOT IN A JAR FILE
+       /** We load the available plug-ins (we search everywhere).
         */
-          File pluginFiles[] = new File( "wotlas/client/screen/plugin" ).listFiles();
-
-          if( pluginFiles==null || pluginFiles.length==0 ) {
-              Debug.signal( Debug.WARNING, this, "No plug-ins found in wotlas/client/screen/plugin !" );
+          Class classes[] = null;
+        
+          try{
+              classes = Tools.getImplementorsOf("wotlas.client.screen.JPanelPlugIn", null );
+          }
+          catch( ClassNotFoundException e ) {
+              Debug.signal(Debug.CRITICAL, this, e );
+              return;
+          }
+          catch( SecurityException e ) {
+              Debug.signal(Debug.CRITICAL, this, e );
+              return;
+          }
+          catch( RuntimeException e ) {
+              Debug.signal(Debug.ERROR, this, e );
               return;
           }
 
-          for( int i=0; i<pluginFiles.length; i++ ) {
 
-              if( !pluginFiles[i].isFile() || !pluginFiles[i].getName().endsWith(".class") 
-                  || pluginFiles[i].getName().indexOf('$')>=0 )
-                  continue;
+          for( int i=0; i<classes.length; i++ ) {
 
-           // We load the class file
+           // We get an instance of the plug-in and add it to our JTabbedPane
               try{
-                  String name = pluginFiles[i].getName();
-                  Class cl = Class.forName( "wotlas.client.screen.plugin."
-                                            + name.substring( 0, name.lastIndexOf(".class") ) );
-
-                  if(cl==null || cl.isInterface())
-                     continue;
-
-                  Object o = cl.newInstance();
+                  Object o = classes[i].newInstance();
 
                   if( o==null || !(o instanceof JPanelPlugIn) )
                       continue;

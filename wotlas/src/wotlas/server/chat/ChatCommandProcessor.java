@@ -24,6 +24,7 @@ import wotlas.common.message.chat.SendTextMessage;
 import wotlas.common.chat.ChatRoom;
 
 import wotlas.utils.Debug;
+import wotlas.utils.Tools;
 
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -57,31 +58,32 @@ public class ChatCommandProcessor {
    */
     public void init() {
 
-       /** We load the available commands
-        * WE ASSUME THAT WE ARE NOT IN A JAR FILE
+       /** We load the available plug-ins (we search in our local directory).
         */
-          File commandsFiles[] = new File( "wotlas/server/chat" ).listFiles();
-
-          if( commandsFiles==null || commandsFiles.length==0 ) {
-              Debug.signal( Debug.WARNING, this, "No chat commands found in wotlas/server/chat !" );
+          Class classes[] = null;
+          String packages[] ={ "wotlas.server.chat" };
+        
+          try{
+              classes = Tools.getImplementorsOf("wotlas.server.chat.ChatCommand", packages );
+          }
+          catch( ClassNotFoundException e ) {
+              Debug.signal(Debug.CRITICAL, this, e );
+              return;
+          }
+          catch( SecurityException e ) {
+              Debug.signal(Debug.CRITICAL, this, e );
+              return;
+          }
+          catch( RuntimeException e ) {
+              Debug.signal(Debug.ERROR, this, e );
               return;
           }
 
-          for( int i=0; i<commandsFiles.length; i++ ) {
+          for( int i=0; i<classes.length; i++ ) {
 
-              if( !commandsFiles[i].isFile() || !commandsFiles[i].getName().endsWith(".class") )
-                  continue;
-
-           // We load the class file
+           // We create instances of the chat commands
               try{
-                  String name = commandsFiles[i].getName();
-                  Class cl = Class.forName( "wotlas.server.chat."
-                                            + name.substring( 0, name.lastIndexOf(".class") ) );
-
-                  if(cl==null || cl.isInterface())
-                     continue;
-
-                  Object o = cl.newInstance();
+                  Object o = classes[i].newInstance();
 
                   if( o==null || !(o instanceof ChatCommand) )
                       continue;

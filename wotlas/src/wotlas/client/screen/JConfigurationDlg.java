@@ -52,6 +52,7 @@ public class JConfigurationDlg extends JDialog {
   protected JCheckBox savePassButton;
   protected JCheckBox policyButton;
   protected JCheckBox hardwareButton;
+  protected JCheckBox logButton;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -118,6 +119,9 @@ public class JConfigurationDlg extends JDialog {
       if(!Tools.javaVersionHigherThan("1.4.0"))
          hardwareButton.setEnabled(false);
 
+      logButton = new JCheckBox("Display the log window after start-up.");
+      logButton.setSelected( clientConfiguration.getDisplayLogWindow() );
+
       JPanel pane = (JPanel) getContentPane();
     
    // JDialog properties
@@ -182,6 +186,11 @@ public class JConfigurationDlg extends JDialog {
         clientConfiguration.setCenterScreenPolicy(policyButton.isSelected());
         clientConfiguration.setUseHardwareAcceleration(hardwareButton.isSelected());
 
+        if( clientConfiguration.getDisplayLogWindow()!=logButton.isSelected() )
+            ClientDirector.getLogStream().setVisible( logButton.isSelected() );
+
+        clientConfiguration.setDisplayLogWindow(logButton.isSelected());
+
         ClientDirector.getClientConfiguration().save();
         dispose();
       }
@@ -212,7 +221,7 @@ public class JConfigurationDlg extends JDialog {
       qTextTitle.setForeground(Color.white);
       add(qTextTitle, BorderLayout.NORTH);*/
 
-      JPanel innerPanel = new JPanel(new GridLayout(4,1,10,10));
+      JPanel innerPanel = new JPanel(new GridLayout(5,1,10,10));
       innerPanel.setBackground(Color.white);
       this.add(innerPanel);
       
@@ -235,6 +244,9 @@ public class JConfigurationDlg extends JDialog {
 
       hardwareButton.setBackground(Color.white);      
       innerPanel.add(hardwareButton);
+
+      logButton.setBackground(Color.white);      
+      innerPanel.add(logButton);
     }
     
     /** Invoked when check box state is changed

@@ -45,43 +45,43 @@ public class GraphicsDirector extends JPanel {
    *  reference here, because all Drawables should be expressed in background
    *  coordinates).
    */
-    private Rectangle screen;
+    protected Rectangle screen;
  
   /** Background's Dimension. The background can be any Drawable,
    *  we don't have to possess a handle it, we only need its dimension.
    */
-    private Dimension background;
+    protected Dimension background;
 
   /** Our Drawable reference, we need to know which drawable our windowPolicy
    *  is going to refer to center the screen.
    */
-    private Drawable refDrawable;
+    protected Drawable refDrawable;
 
   /** Our drawables. They are sorted by priority.
    */
-    private DrawableIterator drawables;
+    protected DrawableIterator drawables;
 
   /** The image library from which will take our images.
    */
-    private ImageLibrary imageLib;
+    protected ImageLibrary imageLib;
 
   /** Our WindowPolicy. It tells us how to move the screen on the background.
    */
-    private WindowPolicy windowPolicy;
+    protected WindowPolicy windowPolicy;
 
  /*------------------------------------------------------------------------------------*/
 
   /** Can we display our drawables ?
    */
-    private boolean display;
+    protected boolean display;
 
   /** Lock for repaint...
    */
-    private Object lockPaint = new Object();
+    protected Object lockPaint = new Object();
 
   /** OffScreen image for the GraphicsDirector. 
    */
-    private Image backBufferImage;
+    protected Image backBufferImage;
 
   /** FOR REPAINT SOLUTION 2
    ** To repaint the screen.

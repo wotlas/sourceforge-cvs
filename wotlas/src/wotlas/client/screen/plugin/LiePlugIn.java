@@ -46,10 +46,6 @@ public class LiePlugIn extends JPanelPlugIn {
 
  /*------------------------------------------------------------------------------------*/ 
 
-  /** Table used to display the fake names
-   */  
-    private JTable fakeNamesList;
-
   /** 'New' button.
    */
     private AButton newNameButton;

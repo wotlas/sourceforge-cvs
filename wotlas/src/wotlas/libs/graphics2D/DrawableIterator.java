@@ -26,6 +26,10 @@ package wotlas.libs.graphics2D;
  * Concurrent accesses ARE NOT supported. Only one thread should use this iterator at the
  * same time.
  *
+ * There are also three methods : resetIteratorToEnd(), hasPrev(), prev() to iterate over
+ * the drawables backward... BUT the remove(), replace() and insert() methods only work as
+ * they do when you iterate with the hasNext(), next() methods.
+ *
  * @author aldiss
  */
 
@@ -173,18 +177,36 @@ public class DrawableIterator
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Resets this iterator.
+   /** Resets this iterator ( use hasNext() & next() methods ).
     */
       public void resetIterator() {
           current = first;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Resets this iterator to the end of the drawable list ( use hasPrev() & prev()
+    *  methods ). 
+    */
+      public void resetIteratorToEnd() {
+          current = last;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/ 
  
    /** Returns true if there is a next element.
     *  @return true if there is a next element.
     */
       public boolean hasNext() {
+          return current!=null;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Returns true if there is a previous element.
+    *  @return true if there is a previous element.
+    */
+      public boolean hasPrev() {
           return current!=null;
       }
 
@@ -197,6 +219,18 @@ public class DrawableIterator
            if(current==null) return null;
             Drawable drawable = current.drawable;
             current = current.next;
+            return drawable;
+       }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Returns the previous drawable.
+    *  @return previous drawable
+    */
+       public Drawable prev() {
+           if(current==null) return null;
+            Drawable drawable = current.drawable;
+            current = current.prev;
             return drawable;
        }
 

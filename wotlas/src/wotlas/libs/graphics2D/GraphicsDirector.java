@@ -274,6 +274,9 @@ public class GraphicsDirector extends JPanel {
    /** Given a point we search for the first drawable that implements the DrawableOwner
     *  interface AND contains the point. We then return the owner of the drawable.
     *
+    *  The search in the Drawable list is performed backward : we inspect top sprites
+    *  ( high priority ) first.
+    *
     *  @param x x cordinate
     *  @param y y cordinate
     *  @return the owner of the targeted drawable, null if none or not found.
@@ -281,10 +284,10 @@ public class GraphicsDirector extends JPanel {
      public Object findOwner( int x, int y ) {
 
         synchronized( drawables ) {
-            drawables.resetIterator();
+            drawables.resetIteratorToEnd();
         
-            while( drawables.hasNext() ) {
-               Drawable d = drawables.next();
+            while( drawables.hasPrev() ) {
+               Drawable d = drawables.prev();
 
                if( d instanceof DrawableOwner )
                    if ( d.contains( x+screen.x, y+screen.y )

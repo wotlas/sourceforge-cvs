@@ -87,12 +87,11 @@ public class WorldManager
    public boolean loadLocalUniverse() {
 
        // Call to the PersistenceManager to load the worlds from the dataBase.
-/**           PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
-              worldMaps = pm.loadLocalUniverse();
-**/
-      return true; // fake, for now...
+          PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
+          worldMaps = pm.loadLocalUniverse();
+          return true;
    }
-  
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To save our local game universe. 
@@ -102,10 +101,8 @@ public class WorldManager
 
    public boolean saveLocalUniverse() {
        // Call to the PersistenceManager to save the worlds to the dataBase.
-/**              PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
-              pm.saveLocalUniverse( worldMaps );
-**/
-      return false;
+          PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
+          return pm.saveLocalUniverse( worldMaps, false );
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

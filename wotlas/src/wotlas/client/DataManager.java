@@ -20,12 +20,15 @@
 // TODO :
 // - remplacer currentProfile par playerImpl
 // - utiliser une hashtable pour les players
+// - changer la boucle du thread
+// - mettre un lock sur le circle
 
 package wotlas.client;
 
 import wotlas.client.gui.*;
 import wotlas.client.screen.*;
 
+import wotlas.common.character.*;
 import wotlas.common.ImageLibRef;
 import wotlas.common.message.account.*;
 import wotlas.common.message.description.*;
@@ -54,9 +57,10 @@ import java.awt.MediaTracker;
 
 import java.io.File;
 
-import java.lang.Byte;
-
 import javax.swing.*;
+
+import java.util.HashMap;
+import java.util.Iterator;
 
 /** A DataManager manages Game Data and client's connection.
  * It possesses a WorldManager
@@ -72,12 +76,18 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** Image Library
    */
   public final static String IMAGE_LIBRARY = "graphics/imagelib";
-  
+
   /** size of a mask's cell (in pixels)
    */
   public final static int TILE_SIZE = 10;
-  
+
+  /** TIMEOUT to the Account Server
+   */
   private static final int CONNECTION_TIMEOUT = 5000;
+  
+  /** Number of tick before destroying the circle
+   */
+  private static final int CIRCLE_LIFETIME = 20;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -94,8 +104,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** Our World Manager
    */
   private WorldManager worldManager;
-  
-  
+
+
  /*------------------------------------------------------------------------------------*/
 
   /** Personality Lock
@@ -105,10 +115,10 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** Our NetPersonality, useful if we want to send messages !
    */
   private NetPersonality personality;
-  
+
   /** Game Lock (unlocked by client.message.description.YourPlayerDataMsgBehaviour)
    */
-  private byte startGameLock[] = new byte[1];
+  private Object startGameLock = new Object();
 
  /*------------------------------------------------------------------------------------*/
 
@@ -119,11 +129,23 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** Our playerImpl.
    */
   private PlayerImpl myPlayer;
-  
+
   /** List of players
    */
-  private List players;
+  private HashMap players;
 
+  /** Circle selection
+   */
+  private CircleDrawable circle;
+  
+  /** Number of tick since circle creation
+   */
+  private int circleLife = 0;
+  
+  /** Circle Lock
+   */
+  private byte circleLock[] = new byte[1];
+  
   /** Our ImageLibrary.
    */
   private ImageLibrary imageLib;
@@ -182,13 +204,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   }
 
  /*------------------------------------------------------------------------------------*/
-  
+
   /** To get startGameLock
    */
-  public byte[] getStartGameLock() {
+  public Object getStartGameLock() {
     return startGameLock;
   }
-  
+
  /*------------------------------------------------------------------------------------*/
 
   /** To set the current profileConfig<br>
@@ -216,6 +238,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       this.personality = personality;
     }
 
+    personality.setContext(this);
+
     if (currentProfileConfig.getLocalClientID() == -1) {
       Debug.signal( Debug.NOTICE, null, "no valid key found => request a new account to AccountServer");
       Debug.signal( Debug.NOTICE, null, "sending login & password");
@@ -223,27 +247,33 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       personality.queueMessage( new PasswordAndLoginMessage( currentProfileConfig.getLogin(),
               currentProfileConfig.getPassword() ) );
 
-      personality.setContext(this);
-
-      try {
-        wait( 2000 );
-      } catch(Exception e) {
-        ; // Do nothing
-      }
-
-      if (personality==null) {
-        Debug.signal( Debug.ERROR, this, "Connection closed by AccountServer" );
-        return;
-      }
-
-      Debug.signal( Debug.NOTICE, null, "OK, now we create a new account" );
-      personality.queueMessage( new AccountCreationMessage() );
-
+      /*
       try {
         wait( 1000 );
       } catch(Exception e){
         ; // Do nothing
       }
+      */
+      
+      JAccountWizard host = new JAccountWizard(personality);
+      wotlas.utils.SwingTools.centerComponent(host);
+      host.init();
+      host.start();      
+      
+      if (personality==null) {
+        Debug.signal( Debug.ERROR, this, "Connection closed by AccountServer" );
+        return;
+      }
+
+      Debug.signal( Debug.NOTICE, null, "New account created !" );
+            
+      /*
+      try {
+        wait( 1000 );
+      } catch(Exception e){
+        ; // Do nothing
+      }
+      */
 
       return;
 
@@ -283,7 +313,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
  /*------------------------------------------------------------------------------------*/
 
-  /** To set the ID of currentProfileConfig
+  /** To set the ID of currentProfileConfig<br>
+   * called by wotlas.client.message.account.AccountCreatedMsgBehaviour
    */
   public void setCurrentProfileConfigID(int clientID, int serverID) {
     currentProfileConfig.setLocalClientID(clientID);
@@ -297,15 +328,15 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** To show the client's interface
    */
   public void showInterface() {
-    
+
     // Create Graphics Director
     System.out.println("Creating gDirector");
     gDirector = new GraphicsDirector( new LimitWindowPolicy() );
-    
+
     System.out.println("Retreiving player's informations");
     // Retreive player's informations
     try {
-      synchronized(startGameLock) {   
+      synchronized(startGameLock) {
         personality.queueMessage(new MyPlayerDataPleaseMessage());
         startGameLock.wait(CONNECTION_TIMEOUT);
       }
@@ -314,7 +345,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       Debug.exit();
     }
 
-    
+    Debug.signal( Debug.NOTICE, null, myPlayer.getFullPlayerName() );
     // Background
     ImageIdentifier groundImId = new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
                                            (short) 2,
@@ -345,14 +376,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
     aStar.initMask(maskBuffImg, 80, 56);
 
-    // Creation of the drawable reference    
+    // Creation of the drawable reference
     myPlayer = new PlayerImpl();
     myPlayer.init();
     myPlayer.setX(groundSpr.getWidth()/2);
-    myPlayer.setY(groundSpr.getHeight()/2);    
-    players = new List();
-    players.addElement(myPlayer);
-    
+    myPlayer.setY(groundSpr.getHeight()/2);
+    players = new HashMap();
+
     // Init of the GraphicsDirector
      gDirector.init(
                       (Drawable) groundSpr,         // background drawable
@@ -395,10 +425,21 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** Tick
    */
   public void tick() {
-    PlayerImpl player;
-    for (int i=0; i<players.size(); i++) {
-      player = (PlayerImpl) players.elementAt(i);
-      player.tick();
+    myPlayer.tick();
+    if (circle != null) {
+      if (circleLife < CIRCLE_LIFETIME) {        
+        circle.tick();
+        circleLife++;
+      } else {
+        System.out.println("destroy circle");
+        gDirector.removeDrawable(circle);        
+        circle = null;
+        circleLife = 0;
+      }
+    }      
+    Iterator it = players.values().iterator();
+    while( it.hasNext() ) {
+      ( (PlayerImpl) it.next() ).tick();
     }
     gDirector.tick();
   }
@@ -415,44 +456,50 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
   /** Called when user left-clic on JMapPanel
    */
-  public void onLeftClicJMapPanel(MouseEvent e) {
+  public void onLeftClicJMapPanel(MouseEvent e) {        
     Rectangle screen = gDirector.getScreenRectangle();
-    
-    Object object = gDirector.findOwner( e.getX(), e.getY());
-    if (object != null) {
-      System.out.println(object.getClass());
-      myPlayer = (PlayerImpl) object;
-    }
-    
-    int newX = e.getX() + (int)screen.getX();
-    int newY = e.getY() + (int)screen.getY();
-    System.out.println("newPosition : " + newX + ", " + newY);
-    myPlayer.setEndPosition(newX, newY);
-    
-    // Create the trajectory
-    myPlayer.setTrajectory(aStar.findPath(new Point(myPlayer.getX()/TILE_SIZE, myPlayer.getY()/TILE_SIZE), new Point(newX/TILE_SIZE, newY/TILE_SIZE)));
 
+    Object object = gDirector.findOwner( e.getX(), e.getY());
+    
+    if (object == null) {            
+      int newX = e.getX() + (int)screen.getX();
+      int newY = e.getY() + (int)screen.getY();
+      myPlayer.setEndPosition(newX, newY);
+      // Create the trajectory
+      myPlayer.setTrajectory(aStar.findPath( new Point( myPlayer.getX()/TILE_SIZE, myPlayer.getY()/TILE_SIZE),
+                                           new Point(newX/TILE_SIZE, newY/TILE_SIZE)));
+    } else {
+      System.out.println("object.getClass().getName()" + object.getClass().getName());
+      if (circle!=null) {
+        gDirector.removeDrawable(circle);
+        circle = null;
+      }
+      circle = new CircleDrawable(myPlayer.getDrawable(), 20, Color.yellow, (short) 0);      
+      gDirector.addDrawable(circle);  
+      circle.tick();
+      //PlayerImpl player = (PlayerImpl) object;
+    }
   }
 
  /*------------------------------------------------------------------------------------*/
- 
+
  /** Called when user right-clic on JMapPanel
    */
   public void onRightClicJMapPanel(MouseEvent e) {
+    PlayerImpl newPlayer;
     Rectangle screen = gDirector.getScreenRectangle();
-    
+
     System.out.println("playerImpl creation : ");
-    
-    myPlayer = new PlayerImpl();
-    myPlayer.init();
-    myPlayer.setX(e.getX() + (int)screen.getX());
-    myPlayer.setY(e.getY() + (int)screen.getY());        
-    players.addElement(myPlayer);
-    
-    gDirector.addDrawable(myPlayer.getDrawable());
-                  
+
+    newPlayer = new PlayerImpl();
+    newPlayer.init();
+    newPlayer.setX(e.getX() + (int)screen.getX());
+    newPlayer.setY(e.getY() + (int)screen.getY());
+    gDirector.addDrawable(newPlayer.getDrawable());
+
+    addPlayer(newPlayer);
   }
-  
+
  /*------------------------------------------------------------------------------------*/
 
   /** To add a new player to the screen<br>
@@ -460,10 +507,19 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    *
    * @player the player to add
    */
-  public void addPlayer(Player player) {
-    players.addElement((PlayerImpl) player);
+  public synchronized void addPlayer(PlayerImpl player) {
+    players.put( player.getPrimaryKey(), player );
   }
-  
+
+  /** To remove a player
+   *
+   * @player the player to remove
+   */
+  public synchronized boolean removePlayer(PlayerImpl player) {
+    players.remove(player.getPrimaryKey());
+    return true;
+  }
+
   /** To set our player<br>
    * (called by client.message.description.YourPlayerDataMsgBehaviour)
    *
@@ -474,5 +530,5 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   }
 
  /*------------------------------------------------------------------------------------*/
-  
+
 }

@@ -37,9 +37,17 @@ public class SimpleMenu2D implements Menu2D {
    */
     public static final int MAX_ITEMS_DISPLAYED = 10;
 
+  /** Time to wait before automatic scrolling (ms)
+   */
+    public static final int MIN_TIME_BEFORE_SCROLL = 2000;
+
   /** Time to wait between two mouse move automatic navigation (ms)
    */
-    public static final int MIN_TIME_BETWEEN_MOVE = 400;
+    public static final int MIN_TIME_BETWEEN_SCROLL = 200;
+
+  /** Min Time before we display a menu
+   */
+    public static final int MIN_TIME_BEFORE_MENU = 50;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -60,6 +68,10 @@ public class SimpleMenu2D implements Menu2D {
    */
     protected int firstItemIndex;
 
+  /** Is the first index an arrow ?
+   */
+    protected boolean isFirstIndexArrow;
+
   /** Is this menu visible ?
    */
     protected boolean isVisible;
@@ -75,6 +87,14 @@ public class SimpleMenu2D implements Menu2D {
   /** TimeStamp for automatic actions
    */
     protected long timeStamp;
+
+  /** Can we automatically scroll ?
+   */
+    protected boolean scrollEnabled;
+
+  /** Initial position when this menu is being dragged.
+   */
+    protected int dragFromX, dragFromY;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -93,7 +113,9 @@ public class SimpleMenu2D implements Menu2D {
      	setItems( items );
      	selectedItemIndex = -1;
      	firstItemIndex = 0;
+        isFirstIndexArrow = false;
      	isVisible = false;
+     	scrollEnabled=false;
      	menuDrawable = new SimpleMenu2DDrawable(this);
      }
 
@@ -264,6 +286,8 @@ public class SimpleMenu2D implements Menu2D {
             isVisible=false;
             selectedItemIndex=-1;
             firstItemIndex=0;
+            isFirstIndexArrow=false;
+            scrollEnabled = false;
 
             hideSubMenus();
          }
@@ -348,15 +372,25 @@ public class SimpleMenu2D implements Menu2D {
              if(index<firstItemIndex || maxIndex<=index ) return true;
 
            // need to update the first index displayed ?
-             if( index==firstItemIndex && firstItemIndex!=0 ) {
-                 firstItemIndex--; // backward navigation
+             if( index==firstItemIndex && ( firstItemIndex!=0 || isFirstIndexArrow ) ) {
                  hideSubMenus();
+
+                 if( isFirstIndexArrow && firstItemIndex==0 )
+                    isFirstIndexArrow = false;
+                 else
+                    firstItemIndex--; // backward navigation
+
                  return true;
              }
              
              if( index==maxIndex-1 && index<items.length-1 ) {
-                 firstItemIndex++; // forward navigation
                  hideSubMenus();
+
+                 if( !isFirstIndexArrow && firstItemIndex==0 )
+                    isFirstIndexArrow = true;
+                 else
+                    firstItemIndex++; // forward navigation
+
                  return true;
              }
 
@@ -380,7 +414,8 @@ public class SimpleMenu2D implements Menu2D {
                  }
                  else {
                      items[index].link.hide();
-                     return true; // we hid the linked menu
+                     timeStamp = System.currentTimeMillis()+1000; // to avoid our menu to re-appear
+                     return true; // we hide the linked menu
                  }
              }
 
@@ -421,29 +456,105 @@ public class SimpleMenu2D implements Menu2D {
          if( menuDrawable.contains( x, y ) ) {
              selectedItemIndex = menuDrawable.getItemAt( y );
 
-             if( selectedItemIndex==firstItemIndex && firstItemIndex!=0 ) {
+             if(selectedItemIndex<firstItemIndex || maxIndex<=selectedItemIndex ) return true;
 
-                 if(now-timeStamp < MIN_TIME_BETWEEN_MOVE)
+             if( selectedItemIndex==firstItemIndex && ( firstItemIndex!=0 ||
+                 isFirstIndexArrow ) ) {
+
+                 if(!scrollEnabled && now-timeStamp < MIN_TIME_BEFORE_SCROLL)
                     return true;
 
-                 timeStamp = now;
-                 firstItemIndex--; // backward navigation
-                 hideSubMenus();
-             }
-             else if( selectedItemIndex==maxIndex-1 && selectedItemIndex<items.length-1 ) {
-
-                 if(now-timeStamp < MIN_TIME_BETWEEN_MOVE)
+                 if(now-timeStamp < MIN_TIME_BETWEEN_SCROLL)
                     return true;
 
+                 scrollEnabled=true;
                  timeStamp = now;
-                 firstItemIndex++; // forward navigation
                  hideSubMenus();
+
+                 if( isFirstIndexArrow && firstItemIndex==0 )
+                    isFirstIndexArrow = false;
+                 else
+                    firstItemIndex--; // backward navigation
+
+                 return true;
              }
 
+             if( selectedItemIndex==maxIndex-1 && selectedItemIndex<items.length-1 ) {
+
+                 if(!scrollEnabled && now-timeStamp < MIN_TIME_BEFORE_SCROLL)
+                    return true;
+
+                 if(now-timeStamp < MIN_TIME_BETWEEN_SCROLL)
+                    return true;
+
+                 scrollEnabled=true;
+                 timeStamp = now;
+                 hideSubMenus();
+
+                 if( !isFirstIndexArrow && firstItemIndex==0 )
+                    isFirstIndexArrow = true;
+                 else
+                    firstItemIndex++; // forward navigation
+
+                 return true;
+             }
+
+             scrollEnabled=false; // cancel scrolling
+
+             if( items[selectedItemIndex].itemName.equals("-") ) return true;
+             if( !items[selectedItemIndex].isEnabled ) return true;
+
+           // item is a link
+             if( items[selectedItemIndex].link!=null ) {
+
+                 if( !items[selectedItemIndex].link.isVisible() ) {
+
+                     if(now-timeStamp < MIN_TIME_BEFORE_MENU)
+                        return true;
+
+                     hideSubMenus();
+
+                  // We display the newly selected menu
+                     int xi = menuDrawable.getX()+menuDrawable.getWidth()+1;
+                     int yi = menuDrawable.getItemY(selectedItemIndex);
+
+                     items[selectedItemIndex].link.menuDrawable.setParentRectangle( menuDrawable.getRectangle() );
+                     items[selectedItemIndex].link.show( new Point(xi,yi) );
+                 }
+             }
+
+             timeStamp = now; // reset time-stamp
              return true;
          }
 
          return false;
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To call when the mouse cursor is dragged.
+   * @param dx mouse's dx
+   * @param dy mouse's dy
+   * @param startsNow tells if the drag movement is just about to start
+   */
+    public boolean mouseDragged( int dx, int dy, boolean startsNow ) {
+
+         if(!isVisible)
+            return false;
+
+         for( int i=0; i<items.length; i++ )
+               if( items[i].link !=null )
+                   items[i].link.mouseDragged(dx,dy,startsNow);
+
+         if(startsNow) {
+            dragFromX = menuDrawable.getX();
+            dragFromY = menuDrawable.getY();
+            return true;
+         }
+
+         menuDrawable.getRectangle().x = dragFromX + dx ;
+         menuDrawable.getRectangle().y = dragFromY + dy ;
+         return true;
     }
 
  /*------------------------------------------------------------------------------------*/
@@ -475,4 +586,12 @@ public class SimpleMenu2D implements Menu2D {
 
  /*------------------------------------------------------------------------------------*/
 
+  /** To tell if the first item to display is an arrow.
+   * @return index
+   */
+    public boolean isFirstIndexArrow() {
+        return isFirstIndexArrow;
+    }
+
+ /*------------------------------------------------------------------------------------*/
 }

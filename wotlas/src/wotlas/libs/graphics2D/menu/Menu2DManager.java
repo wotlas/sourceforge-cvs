@@ -212,4 +212,18 @@ public class Menu2DManager {
 
  /*------------------------------------------------------------------------------------*/
 
+  /** To call when the mouse cursor is dragged.
+   * @param dx mouse's dx
+   * @param dy mouse's dy
+   * @param startsNow tells if the drag movement is just about to start
+   */
+    public void mouseDragged( int dx, int dy, boolean startsNow ) {
+        if(rootMenu==null)
+           return;
+
+          rootMenu.mouseDragged(dx,dy,startsNow);
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
 }

@@ -89,4 +89,13 @@ public interface Menu2D {
 
  /*------------------------------------------------------------------------------------*/
 
+  /** To call when the mouse cursor is dragged.
+   * @param dx mouse's dx
+   * @param dy mouse's dy
+   * @param startsNow tells if the drag movement is just about to start
+   */
+    public boolean mouseDragged( int dx, int dy, boolean startsNow );
+
+ /*------------------------------------------------------------------------------------*/
+
 }

@@ -73,32 +73,44 @@ public class SimpleMenu2DDrawable extends Drawable {
     static {
       // we load our small menu images
         String basePath = "wotlas/libs/graphics2D/menu/images/";
+        MediaTracker tracker = new MediaTracker(new Label());
 
         URL url = ClassLoader.getSystemClassLoader().getResource(basePath+"middle-bar.gif");
         middleBarImage = Toolkit.getDefaultToolkit().getImage( url );
+        tracker.addImage(middleBarImage,0);
 
         url = ClassLoader.getSystemClassLoader().getResource(basePath+"arrow-right.gif");
         arrowRightImage = Toolkit.getDefaultToolkit().getImage( url );
+        tracker.addImage(arrowRightImage,1);
 
         url = ClassLoader.getSystemClassLoader().getResource(basePath+"arrow-right-select.gif");
         arrowRightSelectImage = Toolkit.getDefaultToolkit().getImage( url );
+        tracker.addImage(arrowRightSelectImage,2);
 
         url = ClassLoader.getSystemClassLoader().getResource(basePath+"arrow-down.gif");
         arrowDownImage = Toolkit.getDefaultToolkit().getImage( url );
+        tracker.addImage(arrowDownImage,3);
 
         url = ClassLoader.getSystemClassLoader().getResource(basePath+"arrow-down-select.gif");
         arrowDownSelectImage = Toolkit.getDefaultToolkit().getImage( url );
+        tracker.addImage(arrowDownSelectImage,4);
 
         url = ClassLoader.getSystemClassLoader().getResource(basePath+"arrow-up.gif");
         arrowUpImage = Toolkit.getDefaultToolkit().getImage( url );
+        tracker.addImage(arrowUpImage,5);
 
         url = ClassLoader.getSystemClassLoader().getResource(basePath+"arrow-up-select.gif");
         arrowUpSelectImage = Toolkit.getDefaultToolkit().getImage( url );
+        tracker.addImage(arrowUpSelectImage,6);
+
+         try{
+             tracker.waitForAll();
+         }catch(InterruptedException e) { e.printStackTrace(); }
     };
 
    /** Selected text color
     */
-       public static final Color blueColor = new Color( 10, 40, 100 );
+       public static final Color blueColor = new Color( 20, 80, 160 );
 
  /*------------------------------------------------------------------------------------*/
 
@@ -290,7 +302,7 @@ public class SimpleMenu2DDrawable extends Drawable {
                 else
                     totalHeight = DIST_BETWEEN_TWO_LINES + items.length*((int)size+DIST_BETWEEN_TWO_LINES);
 
-                r.width = maxWidth + 2*HORIZONTAL_BORDER;
+                r.width = maxWidth + 2*HORIZONTAL_BORDER+1;
                 r.height = totalHeight;
             }
             else {
@@ -331,7 +343,7 @@ public class SimpleMenu2DDrawable extends Drawable {
         }
 
        // transparent rectangle
-         gc.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.45f ) );
+         gc.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f ) );
          gc.setColor(Color.white);
          gc.fillRect(r.x,r.y,r.width,rHeight);
          gc.setComposite( AlphaComposite.SrcOver ); // suppressing alpha
@@ -365,7 +377,7 @@ public class SimpleMenu2DDrawable extends Drawable {
             if( (r.y+rHeight)<(y+(int)size) )
                 break;
 
-            if( i==menu2D.getFirstItemIndex() && menu2D.getFirstItemIndex()!=0 ) {
+            if( i==menu2D.getFirstItemIndex() && menu2D.isFirstIndexArrow() ) {
                // Up Arrow
                 if( menu2D.getSelectedItemIndex()!=i )
                     gc.drawImage( arrowUpImage, r.x+(r.width-arrowUpImage.getWidth(null))/2, y+5, null );
@@ -406,9 +418,9 @@ public class SimpleMenu2DDrawable extends Drawable {
 
                if( menu2D.getItems()[i].link!=null ) {
                    if( menu2D.getSelectedItemIndex()!=i )
-                      gc.drawImage( arrowRightImage, r.x+r.width-HORIZONTAL_BORDER, y+(int)size-arrowRightImage.getHeight(null), null );
+                      gc.drawImage( arrowRightImage, r.x+r.width-HORIZONTAL_BORDER+1, y+(int)size-arrowRightImage.getHeight(null), null );
                    else
-                      gc.drawImage( arrowRightSelectImage, r.x+r.width-HORIZONTAL_BORDER, y+(int)size-arrowRightSelectImage.getHeight(null), null );
+                      gc.drawImage( arrowRightSelectImage, r.x+r.width-HORIZONTAL_BORDER+1, y+(int)size-arrowRightSelectImage.getHeight(null), null );
                }
 
                gc.setRenderingHints( savedRenderHints );
@@ -428,8 +440,6 @@ public class SimpleMenu2DDrawable extends Drawable {
    *  @return true if the drawable is "live", false if it must be deleted.
    */
      public boolean tick() {
-
-
         return true;
      }
 

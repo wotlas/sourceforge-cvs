@@ -899,7 +899,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Called when the mouse cursor is moved.
+  /** Called when the mouse cursor is dragged with the left button.
    * @param e mouse event
    * @param dx delta x since mouse pressed
    * @param dy delta y since mouse pressed
@@ -947,6 +947,20 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
             return;
 
         menuManager.mouseMoved( x, y );
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Called when the mouse cursor is dragged with the left button.
+   * @param dx delta x since mouse pressed
+   * @param dy delta y since mouse pressed
+   * @param startsNow tells if the drag movement is just about to start
+   */
+    public void onRightButtonDragged( int dx, int dy,  boolean startsNow ) {
+        if( !menuManager.isVisible() )
+            return;
+
+        menuManager.mouseDragged( dx, dy, startsNow );
     }
 
  /*------------------------------------------------------------------------------------*/

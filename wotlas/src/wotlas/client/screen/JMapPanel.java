@@ -58,6 +58,10 @@ public class JMapPanel extends JPanel implements MouseListener, MouseMotionListe
    */
     private boolean isLeftMouseButtonPressed;
 
+  /** Mouse button dragged ?
+   */
+    private boolean mouseDragged;
+
   /** Mouse Position
    */
     private int x, y;
@@ -122,7 +126,13 @@ public class JMapPanel extends JPanel implements MouseListener, MouseMotionListe
    * Invoked when a mouse button has been pressed on a component
    */
     public void mousePressed(MouseEvent e) {
+       mouseDragged = false;
+
        if (SwingUtilities.isRightMouseButton(e)) {
+           isLeftMouseButtonPressed = false;
+           x=e.getX();
+           y=e.getY();
+           dataManager.onRightButtonDragged( 0, 0, true );
        }
        else {
            isLeftMouseButtonPressed = true;
@@ -146,7 +156,8 @@ public class JMapPanel extends JPanel implements MouseListener, MouseMotionListe
           if (DataManager.SHOW_DEBUG)
              System.out.println("\tright clic");
 
-          dataManager.onRightClicJMapPanel(e);
+          if(!mouseDragged)
+             dataManager.onRightClicJMapPanel(e);
        }
        else {
           isLeftMouseButtonPressed = false;
@@ -158,6 +169,8 @@ public class JMapPanel extends JPanel implements MouseListener, MouseMotionListe
           if( Math.abs(e.getX()-x)<5 && Math.abs(e.getY()-y)<5 )
               dataManager.onLeftClicJMapPanel(e);
        }
+
+       mouseDragged = false;
     }
 
  /*------------------------------------------------------------------------------------*/
@@ -165,10 +178,12 @@ public class JMapPanel extends JPanel implements MouseListener, MouseMotionListe
    /** Called when the mouse is dragged.
     */
      public void mouseDragged(MouseEvent e) {
-        if(!isLeftMouseButtonPressed)
-           return;
-
-        dataManager.onLeftButtonDragged( e, e.getX()-x, e.getY()-y, MOUSE_MOVEMENT );
+     	mouseDragged = true;
+     	
+        if(isLeftMouseButtonPressed)
+           dataManager.onLeftButtonDragged( e, e.getX()-x, e.getY()-y, MOUSE_MOVEMENT );
+        else
+           dataManager.onRightButtonDragged( e.getX()-x, e.getY()-y, false );
      }
 
    /** Called when the mouse is moved.

@@ -53,12 +53,13 @@ public class JMapPanel extends JPanel implements MouseListener
    * @param gDirector Graphics Director
    */
   public JMapPanel(GraphicsDirector gDirector, DataManager dataManager) {
-    super(new FlowLayout(FlowLayout.LEFT,0,0));    
+    //super(new FlowLayout(FlowLayout.LEFT,0,0));    
+    super(new GridLayout(1,1,0,0));
     
     this.gDirector = gDirector;
     this.dataManager = dataManager;
     
-    add(gDirector, BorderLayout.NORTH);
+    add(gDirector);
     
     // Listen to Mouse clics
     addMouseListener(this);    

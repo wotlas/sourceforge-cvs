@@ -27,7 +27,6 @@ import wotlas.common.objects.usefuls.Paragraph;
  * @author Elann
  * @see wotlas.common.objects.usefuls.Book
  * @see wotlas.common.objects.usefuls.Chapter
- * @see wotlas.common.objects.interfaces.BookInterface
  */
 
 class Paragraph

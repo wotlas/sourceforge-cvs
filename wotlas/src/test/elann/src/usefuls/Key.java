@@ -35,6 +35,13 @@ public class Key extends UsefulObject implements TransportableInterface
 
  /*------------------------------------------------------------------------------------*/
 
+ /** Key identifier.
+  */
+  	private int iKeyID;
+	
+ /** Key string identifier.
+  */
+  	private String sKeyID; 																						
 	  
  /*------------------------------------------------------------------------------------*/
  
@@ -46,6 +53,42 @@ public class Key extends UsefulObject implements TransportableInterface
 	 this.objectName="default key";
 	}															
 	
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+ /** Get the key integer identifier.
+  * @return iKeyID
+  */
+  	public int getIKeyID()
+	{
+	 return this.iKeyID;
+	}
+	
+ /** Set the key integer identifier.
+  * @param iKeyID the new key identifier
+  */
+    public void setIKeyID(int iKeyID)
+	{
+	 this.iKeyID=iKeyID;
+	} 
+ 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+ /** Get the key string identifier.
+  * @return sKeyID
+  */
+  	public String getSKeyID()
+	{
+	 return this.sKeyID;
+	}
+	
+ /** Set the key string identifier.
+  * @param sKeyID the new key identifier
+  */
+    public void setSKeyID(String sKeyID)
+	{
+	 this.sKeyID=sKeyID;
+	} 
+ 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

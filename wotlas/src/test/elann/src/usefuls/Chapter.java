@@ -26,7 +26,7 @@ import wotlas.common.objects.usefuls.Paragraph;
  * Used in books.
  * @author Elann
  * @see wotlas.common.objects.usefuls.Book
- * @see wotlas.common.objects.interfaces.BookInterface
+ * @see wotlas.common.objects.usefuls.Paragraph
  */
 
 class Chapter
@@ -45,6 +45,10 @@ class Chapter
   /** The current number of paragraphs in the chapter.
    */
    private short nbParagraphs;
+   
+  /** The current paragraph in the chapter.
+   */
+   private short currentParagraph;
   
   /** The title of the chapter.
    */
@@ -83,6 +87,17 @@ class Chapter
    */
 	public void setNbParagraphs(short nbParagraphs);
  
+  /** Get the current paragraph in the chapter.
+   * @return currentParagraph
+   */
+	public short getCurrentParagraph();
+ 
+  /** Set the current paragraph in the chapter.
+   * Should not be called directly.
+   * @param currentParagraphs the new active paragraph
+   */
+	public void setCurrentParagraph(short currentParagraph);
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
 }

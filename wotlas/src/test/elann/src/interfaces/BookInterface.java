@@ -58,11 +58,13 @@ public interface BookInterface
 
   /** Get a chapter by index.
    * @param index the index in the book
+   * @return the requested Chapter if available ; null else
    */ 
    	public Chapter getChapter(int index);
 
   /** Get a chapter by title.
    * @param title the title of the chapter
+   * @return the requested Chapter if available ; null else
    */
     public Chapter getChapterByTitle(String title);
 	

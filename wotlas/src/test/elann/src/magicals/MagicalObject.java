@@ -38,9 +38,9 @@ public abstract class MagicalObject extends UsefulObject
    */
       private Weave magicEffect;
 	  
-  /** The powers involved in the magical action. THE CLASS POWER/POWERLIST DOES NOT EXIST.
+  /** The powers involved in the magical action. THE CLASS POWER DOES NOT EXIST.
    */
-   	  private Power [] powersInvolved;
+   	  private Power[] powersInvolved;
 	  
 	  
  /*------------------------------------------------------------------------------------*/

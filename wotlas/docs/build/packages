@@ -4,4 +4,7 @@ wotlas.libs.net.personality
 wotlas.libs.pathfinding
 wotlas.libs.persistence
 wotlas.common.universe
+wotlas.common
+wotlas.server
+wotlas.server.setup
 wotlas.utils

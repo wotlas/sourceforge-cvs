@@ -67,7 +67,7 @@ public class JGameConnectionDialog extends JConnectionDialog
     */
 
    public JGameConnectionDialog(Frame frame,String server,int port, String login,
-                                String password, String localClientID, String originalServerID,
+                                String password, int localClientID, int originalServerID,
                                 Object context) {
          super(frame, server, port, login+"-"+originalServerID+"-"
                                     +localClientID+":"+password, context);

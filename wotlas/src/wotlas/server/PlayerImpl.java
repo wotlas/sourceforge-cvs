@@ -27,7 +27,7 @@ import wotlas.libs.net.NetPersonality;
 import wotlas.libs.net.NetMessage;
 
 import wotlas.common.universe.*;
-import wotlas.utils.Debug;
+import wotlas.utils.*;
 
 /** Class of a Wotlas Player. It is the class that, in certain way, a client gets connected to.
  *  All the client messages have a server PlayerImpl context.
@@ -57,17 +57,35 @@ public class PlayerImpl implements Player, NetConnectionListener
     */
        private String fullPlayerName;
 
-   /** Player's x position
+   /** Player's current x position
     */
        private int x;
 
-   /** Player's y position
+   /** Player's current y position
     */
        private int y;
 
    /** WotCharacter Class
     */
-       WotCharacter wotCharacter;
+       private WotCharacter wotCharacter;
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** is this player moving ? 
+    */
+       private boolean isMoving = false;
+
+   /** First Point of movement.
+    */
+       private ScreenPoint firstPoint;
+
+   /** End Point of movement.
+    */
+       private ScreenPoint endPoint;
+
+   /** Time when we initialized this movement on the Server.
+    */
+       private long movementTimeStamp;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -80,6 +98,10 @@ public class PlayerImpl implements Player, NetConnectionListener
    /** Our NetPersonality, useful if we want to send messages !
     */
        transient private NetPersonality personality;
+
+   /** Our current Room ( if we are a Room, null otherwise )
+    */
+       transient private Room myRoom;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -255,6 +277,42 @@ public class PlayerImpl implements Player, NetConnectionListener
     */
       public void setWotCharacter( WotCharacter wotCharacter ) {
          this.wotCharacter = wotCharacter;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   // other getters & setters for persistence
+
+      public void setIsMoving( boolean isMoving ) {
+      	this.isMoving = isMoving;
+      }
+
+      public boolean getIsMoving() {
+      	return isMoving;
+      }
+
+      public void setFirstPoint( ScreenPoint firstPoint ) {
+      	this.firstPoint = firstPoint;
+      }
+
+      public ScreenPoint getFirstPoint() {
+      	return firstPoint;
+      }
+
+      public void setEndPoint( ScreenPoint endPoint ) {
+      	this.endPoint = endPoint;
+      }
+
+      public ScreenPoint getEndPoint() {
+      	return endPoint;
+      }
+
+      public void setMovementTimeStamp( long movementTimeStamp ) {
+      	this.movementTimeStamp = movementTimeStamp;
+      }
+
+      public long getMovementTimeStamp() {
+      	return movementTimeStamp;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

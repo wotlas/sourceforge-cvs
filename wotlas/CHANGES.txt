@@ -1,3 +1,53 @@
+CHANGES BETWEEN V1.2 AND V1.1.2
+-------------------------------
+
+ - added new maps : "Shayol Ghul" (2 maps), "White Tower" (2 maps), and "South Tv Ruins" is no longer hidden
+ - added multi-server support. A player account can now travel from a server to another.
+   The game universe can now be shared between servers. Each server possess a set of buildings.
+ - corrected bugs in ServerConfigList : the previous code was sometimes attempting to reach wrong URI.
+ - added ServerConfigList buffer flush every hour (to force update of the server table)
+ - added server-map-setup tool (see .bat .sh commands) to manage server/building asssociation.
+ - reformed chat command systems : it now has generic interfaces, processor and online doc.
+ - added new chat commands : /server to get info on your current server, /help to get the list of
+   available commands, /info to get information on a command, /log to print something in the server log.
+ - added "sound" chat commands : /fanfare to play the fanfare, /bell to ring a bell,
+   /knock to knock on a door... you have to wait 10 seconds between two sounds (error msg otherwise)
+ - about 8 new musics for all the levels...
+ - local password storage. Your passwords are now saved on disk. This option can be unset.
+ - behaviour part of some messages are now in the "invokeLater" mode to avoid events error.
+   we made extensive use of the SwingUtilities.invokeLater() util.
+ - reformed and improved the wotlas.libs.net library : it no longuer uses a static registry.
+   Our network library is now easier to use : you write a message and its associated behaviour and that's all.
+ - The JCroppedWindow code has been improved : it now uses SwingUtilities.invokeLater() and doesn't crash
+   Also it now uses a MouseMotionListener for better movement management. The About window now uses
+   JCroppedWindow.
+ - Music management improved : the current music is not stopped if the new level one's is the same.
+ - chat display enhanced : we now use our own version of the HTMLEditorKit.
+ - persistence manager behaviour changed : we no longer save universe data during daily persistence save.
+
+
+CHANGES BETWEEN V1.1.2 AND V1.1.1
+---------------------------------
+
+ - corrected some minor bugs found in wotlas v1.1.1 (MultiRegionImage & chat)
+ - new version of the 2D Graphics engine (new ImageLibrary structure)
+ - "/who" chat command to know who are the people connected to the game
+ - "/to" chat command to show that your current message is for a precise player
+   To use the command just click on a player name in the chat player list.
+ - when you connect, a message is displayed to tell you the number of connected players
+
+
+CHANGES BETWEEN V1.1.1 AND V1.1
+-------------------------------
+
+ - corrected the bug of the first account window which was sent to background...
+ - corrected the nullPointerException in JOptionPanel...
+ - corrected typo in "About Wotlas" dialog...
+ - corrected error display on the server side when setup is started the first time.
+ - corrected error display on the client side when wotlas is started the first time.
+ - corrected format of away messages : they now start with a space to avoid >D smiley.
+ - added smiley :-)
+
 
 CHANGES BETWEEN V1.1 AND V1.0
 -----------------------------
@@ -15,8 +65,11 @@ CHANGES BETWEEN V1.1 AND V1.0
  - you can erase an account.
  - a "-debug" option is now available for both client and server.
 
-   KNOWN CONFLICTS IN V1.1 & V1.0
-   - Divx3.1alpha drivers cause Wotlas to crash... install the Divx4.0 or better ! 
-   - If you experience any problems WHEN you enter the game after your account creation,
-     please turn off the sound in the option panel (available on the main screen).
+
+KNOWN CONFLICTS IN V1.x
+-----------------------
+
+ - Divx3.1alpha drivers cause Wotlas to crash... install the Divx4.0 or better ! 
+ - If you experience any problems WHEN you enter the game after your account creation,
+   please turn off the sound in the option panel (available on the main screen).
 

@@ -38,5 +38,7 @@ public interface AccountMessageCategory extends NetMessageCategory {
        public final static byte ACCOUNT_WOTCHAR_CLASS_MSG   = 5;
        public final static byte ACCOUNT_VISUAL_PROPS_MSG    = 6;
        public final static byte ACCOUNT_PLAYER_NAMES_MSG    = 7;
+       public final static byte DELETE_MY_ACCOUNT_MSG       = 8;
+       public final static byte DELETE_YOUR_ACCOUNT_MSG     = 9;
 }
 

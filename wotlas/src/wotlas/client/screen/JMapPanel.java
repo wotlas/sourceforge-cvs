@@ -23,6 +23,8 @@ import wotlas.client.DataManager;
 
 import wotlas.libs.graphics2D.*;
 
+import wotlas.utils.Debug;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -98,4 +100,12 @@ public class JMapPanel extends JPanel implements MouseListener
    */
   public void mouseReleased(MouseEvent e) {}
 
+ /*------------------------------------------------------------------------------------*/
+  
+  /** To close the client
+   */
+  public void exit() {
+    gDirector.removeAllDrawables();
+    Debug.exit();
+  }
 }

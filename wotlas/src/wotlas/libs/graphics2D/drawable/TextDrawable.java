@@ -230,7 +230,7 @@ public class TextDrawable extends Drawable {
           gc.setFont(font);
         }
 
-        gc.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f ) );
+        //gc.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.8f ) );
 
         if(text!=null)
          {
@@ -251,7 +251,7 @@ public class TextDrawable extends Drawable {
          }
 
         // restore
-           gc.setComposite( AlphaComposite.SrcOver );
+           //gc.setComposite( AlphaComposite.SrcOver );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

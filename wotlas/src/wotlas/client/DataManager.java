@@ -508,8 +508,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       clientConfiguration = new ClientConfiguration();    
     }
     
-    // 0 - Create Sound Library
-    SoundLibrary.createSoundLibrary(databasePath);    
+    //
     SoundLibrary.getSoundLibrary().setNoMusic(clientConfiguration.getNoMusic());
     if (clientConfiguration.getMusicVolume()>0)
       SoundLibrary.getSoundLibrary().setMusicVolume((short) clientConfiguration.getMusicVolume());

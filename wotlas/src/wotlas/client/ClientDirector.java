@@ -20,7 +20,10 @@
 package wotlas.client;
 
 import wotlas.libs.log.*;
+
 import wotlas.libs.persistence.*;
+
+import wotlas.libs.sound.SoundLibrary;
 
 import wotlas.utils.Debug;
 import wotlas.utils.FileTools;
@@ -167,6 +170,9 @@ public class ClientDirector
     persistenceManager = PersistenceManager.createPersistenceManager(databasePath);
     Debug.signal( Debug.NOTICE, null, "Persistence Manager Created..." );
                 
+    // STEP 3 - Creation of Sound Library
+    SoundLibrary.createSoundLibrary(databasePath);    
+    
     // STEP 4 - We ask the ClientManager to get ready
     clientManager = ClientManager.createClientManager(databasePath);
     Debug.signal( Debug.NOTICE, null, "Client Created (but not started)..." );

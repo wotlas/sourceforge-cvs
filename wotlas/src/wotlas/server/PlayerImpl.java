@@ -300,14 +300,12 @@ public class PlayerImpl implements Player, NetConnectionListener
    /** To get the player's full name
     */
       public String getFullPlayerName(String otherPlayerKey) {
-System.out.println("getFullPlayerName(String otherPlayerKey)s deprecated");
         return lieManager.getCurrentFakeName();
       }
       
    /** To get the player's full name
     */
       public String getFullPlayerName() {
-System.out.println("getFullPlayerName() deprecated");
         return lieManager.getCurrentFakeName();
       }
     

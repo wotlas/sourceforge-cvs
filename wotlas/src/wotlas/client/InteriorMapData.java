@@ -128,6 +128,7 @@ public class InteriorMapData implements MapData
       System.out.println("\tfullName = "       + room.getFullName());
       System.out.println("\tshortName = "      + room.getShortName());
     }
+    dataManager.getChatPanel().changeMainJChatRoom(room.getShortName());
     dataManager.getInfosPanel().setLocation(room.getFullName());
 
 /* NETMESSAGE */
@@ -303,6 +304,11 @@ System.out.println("NOTIFYING");
           System.out.println("dataManager.sendMessage( new EnteringRoomMessage(...) )");
         if (SEND_NETMESSAGE)
           dataManager.sendMessage( new EnteringRoomMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation(), myPlayer.getX(), myPlayer.getY()) );                
+
+        if (SHOW_DEBUG)
+          System.out.println("Changing main ChatRoom");
+        dataManager.getChatPanel().changeMainJChatRoom(room.getShortName());
+        dataManager.getChatPanel().addPlayer("chat-0", myPlayer.getPrimaryKey());
 
         if (SHOW_DEBUG)
           System.out.println("Adding a new player : " + myPlayer + "to room : " + room);

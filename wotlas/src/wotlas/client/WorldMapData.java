@@ -110,6 +110,7 @@ public class WorldMapData implements MapData
       System.out.println("\tfullName = "  + worldMap.getFullName());
       System.out.println("\tshortName = " + worldMap.getShortName());
     }
+    dataManager.getChatPanel().changeMainJChatRoom(worldMap.getShortName());
     dataManager.getInfosPanel().setLocation(worldMap.getFullName());
 
     dataManager.addPlayer(myPlayer);

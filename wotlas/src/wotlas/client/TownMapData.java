@@ -110,6 +110,7 @@ public class TownMapData implements MapData
       System.out.println("\tfullName = "  + townMap.getFullName());
       System.out.println("\tshortName = " + townMap.getShortName());
     }
+    dataManager.getChatPanel().changeMainJChatRoom(townMap.getShortName());
     dataManager.getInfosPanel().setLocation(townMap.getFullName());
 
     dataManager.addPlayer(myPlayer);

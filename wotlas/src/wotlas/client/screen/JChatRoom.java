@@ -58,6 +58,7 @@ public class JChatRoom extends JPanel
   /** List of ChatRoom players.
    */
   private JList playersJList;
+  private DefaultListModel playersListModel;
 
  /*------------------------------------------------------------------------------------*/  
  
@@ -74,13 +75,10 @@ public class JChatRoom extends JPanel
     msg_number = 0;
     
     // CENTER (JPanel where messages appear)
-    
-    
     /*HTMLEditorKit kit = new HTMLEditorKit();
    	HTMLDocument doc_chat = (HTMLDocument) kit.createDefaultDocument();
     */
     doc_chat = new DefaultStyledDocument();
-    
     
     messagesPane = new JTextPane(doc_chat);
     messagesPane.setContentType("text/html");
@@ -98,11 +96,10 @@ public class JChatRoom extends JPanel
     //Element elt = doc_chat.getElement("p");
     //System.out.println("elt = " + elt);
     
-    // EAST (List of ChatRoom players)
-    //chatPlayers = new String[chatRoom.getPlayers().size()];
-    String[] chatPlayers = {"bernie","petrus","thierry","valere"};
+    // EAST (List of ChatRoom players)  
+    playersListModel = new DefaultListModel();
     
-    playersJList = new JList(chatPlayers);
+    playersJList = new JList(playersListModel);
     playersJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     JScrollPane listScroller = new JScrollPane(playersJList, 
             ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
@@ -115,31 +112,35 @@ public class JChatRoom extends JPanel
 
  /*------------------------------------------------------------------------------------*/  
   
-  /** To update the list of players
+  /** To add some players to the JList.
    */
-  synchronized public void setPlayers(Object[] players) {
-    playersJList = new JList(players);
+  synchronized public void addPlayers(Object[] players) {
+    for (int i=0; i<players.length; i++)
+      playersListModel.addElement(players[i]);
   }
   
-  synchronized public void addPlayer(String value) {
-    System.out.println("JChatRoom::addPlayer " + value);
+  /** To add a player to the JList.
+   */
+  synchronized public void addPlayer(Object player) {
+    playersListModel.addElement(player);
   }
   
-  synchronized public void removePlayer(String value) {
-    System.out.println("JChatRoom::removePlayer " + value);
+  /** To remove a player from the JList.
+   */
+  synchronized public void removePlayer(Object player) {
+    playersListModel.removeElement(player);
   }
   
-
+  synchronized public void removeAllPlayers() {
+    playersListModel.removeAllElements();
+  }
+  
  /*------------------------------------------------------------------------------------*/  
-
-
-   
+ 
   synchronized public void appendText(String text) {
     // too much messages displayed ?
     msg_number++;
     
-
-
    /* StringBuffer buffer = messagesPane.getText();
     System.out.println("buffer = " + buffer);
     buffer = buffer + text + "<br>";

@@ -141,30 +141,19 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     add("Center", tabbedPane);
     add("South", bottomChat);
     
-    // Create some ChatRooms
-    ChatRoom chat1 = new ChatRoom();
-    chat1.setPrimaryKey("chattest-1");
-    chat1.setName("chatRoom one");
+    // Create main ChatRoom
+    ChatRoom mainChat = new ChatRoom();
+    mainChat.setPrimaryKey("chat-0");
+    mainChat.setName("");
+    JChatRoom jchatRoom = addJChatRoom(mainChat);
     
+    System.out.println("DataManager.getDefaultDataManager().getMyPlayer().getPrimaryKey() = " + DataManager.getDefaultDataManager().getMyPlayer().getPrimaryKey());
+    jchatRoom.addPlayer(DataManager.getDefaultDataManager().getMyPlayer().getPrimaryKey());
     
-    
-    ChatRoom chat2 = new ChatRoom();
-    chat2.setPrimaryKey("chattest-2");
-    chat2.setName("chatRoom two");
-    
-    ChatRoom chat3 = new ChatRoom();
-    chat3.setPrimaryKey("chattest-3");
-    chat3.setName("chatRoom three");
-    
-    addJChatRoom(chat1);
-    addJChatRoom(chat2);
-    addJChatRoom(chat3);
-    
-    JChatRoom jchat1 = getJChatRoom("chattest-1");
+    /*JChatRoom jchat1 = getJChatRoom("chattest-1");
     jchat1.appendText("test<br>");
     jchat1.appendText("coucou<br>");
-    
-    removeJChatRoom("chattest-2");
+    */
     
   }
 
@@ -199,11 +188,12 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
   /** To add a JChatRoom.<br>
    * called by wotlas.client.message.chat.ChatRoomCreatedMessage
    */
-  public boolean addJChatRoom(ChatRoom chatRoom) {
+  public JChatRoom addJChatRoom(ChatRoom chatRoom) {
+    System.out.println("JChatRoom::addJChatRoom");
     JChatRoom jchatRoom = new JChatRoom(chatRoom);
-    System.out.println("addJChatRoom");
+    System.out.println("\tcreatorPrimaryKey = " + chatRoom.getCreatorPrimaryKey());
     tabbedPane.addTab("#" + chatRoom.getName(), iconUp, jchatRoom, chatRoom.getName() + " channel");    
-    return true;
+    return jchatRoom;
   }
   
   /** To remove a JChatRoom.
@@ -231,6 +221,14 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     if (chatTabIndex == 0)
       return;
     tabbedPane.remove(chatTabIndex);
+  }
+  
+  /** To change the title of main JChatRoom associated to the room (first index)
+   */
+  public void changeMainJChatRoom(String roomName) {    
+    tabbedPane.setTitleAt(0, roomName);
+    JChatRoom jchatRoom = (JChatRoom) tabbedPane.getComponentAt(0);
+    jchatRoom.removeAllPlayers();
   }
   
   /** To get a JChatRoom.
@@ -271,6 +269,8 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     System.out.println("ERROR : Couldn't setCurrentJChatRoom");
     return false;
   }
+
+ /*------------------------------------------------------------------------------------*/  
   
   /** To add a player to a JChatRoom.
    *

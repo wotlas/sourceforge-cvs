@@ -183,8 +183,11 @@ public class TownMapData implements MapData
         System.out.println("\tDrawing Buildings");
       ImageIdentifier buildingImageID = null;   // building image identifier
       Drawable buildingImage = null;            // building image
-      for (int i=0; i<buildings.length; i++) {        
+      for (int i=0; i<buildings.length; i++) {
         buildingImageID = buildings[i].getSmallBuildingImage();
+        
+        if(buildings[i].getX() < -5 ) continue; // we don't display buildings that are out of the screen
+        
         Rectangle position = buildings[i].toRectangle();
         buildingImage = (Drawable) new MotionlessSprite( position.x,
                                                          position.y,

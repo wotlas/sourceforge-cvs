@@ -68,7 +68,11 @@ public class PropertiesConverter
          Debug.signal(Debug.ERROR, name, ex);
          throw new PersistenceException(ex);
       }
-      save(object, os);                    
+      save(object, os);
+      
+      try{
+        os.close(); // close stream : ADDED by ALDISS
+      }catch(IOException e) {}
    }
 
    /**
@@ -185,6 +189,11 @@ public class PropertiesConverter
          Debug.signal(Debug.ERROR, is, ex);
          throw new PersistenceException(ex);
       }
+  
+      try{    
+        is.close(); // close the stream : Added by ALDISS
+      }catch(IOException e) {}
+      
       // Build the object from its content
       return fromProperties(toBeRestored, "");
    }

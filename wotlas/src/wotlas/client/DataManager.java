@@ -732,8 +732,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        // Away Message
            if( selectedPlayer.getPlayerAwayMessage()!=null && !selectedPlayer.isConnectedToGame() ) {
                JChatRoom chatRoom = chatPanel.getCurrentJChatRoom();
-               chatRoom.appendText("<font color='gray'>"+selectedPlayer.getPlayerName()+" (away) says: <i>"
-                                                    +selectedPlayer.getPlayerAwayMessage()+"</i></font>");
+               chatRoom.appendText("<font color='gray'>"+selectedPlayer.getPlayerName()+" (away) says:<i> "
+                                                    +selectedPlayer.getPlayerAwayMessage()+" </i></font>");
            }
 
            return;

@@ -47,36 +47,36 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
 
  /*------------------------------------------------------------------------------------*/
 
-  ImageIcon iconUp = new ImageIcon("../base/gui/pin.gif");
+   private ImageIcon iconUp = new ImageIcon("../base/gui/pin.gif");
 
   /** Our tabbedPane
    */
-  JTabbedPane tabbedPane;
+   private JTabbedPane tabbedPane;
 
   /** Button to create a new chatRoom
    */
-  JButton b_createChatRoom;
+   private JButton b_createChatRoom;
 
 
   /** Button to leave the chatRoom
    */
-  JButton b_leaveChatRoom;
+   private JButton b_leaveChatRoom;
 
   /** TextField where player writes messages
    */
-  JTextField inputBox;
+   private JTextField inputBox;
 
   /** Voice Sound Level
    */
-  JSlider chatVoiceLevel;
+   private JSlider chatVoiceLevel;
 
   /** Primary key of current ChatRoom
    */
-  String currentPrimaryKey;
-
-  /** Last message in input box
+   private String currentPrimaryKey;
+ 
+  /** Last messages in input box
    */
-  String lastMessage;
+   private ChatMessageHistory messageHistory;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -84,7 +84,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
    */
   public JChatPanel() {
     super();
-
+    messageHistory = new ChatMessageHistory();
     tabbedPane = new JTabbedPane();
 
     // NORTH
@@ -114,7 +114,11 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     inputBox.addKeyListener(new KeyAdapter() {
         public void keyReleased(KeyEvent e) {
           if ( e.getKeyCode()==KeyEvent.VK_UP )  {
-            inputBox.setText(lastMessage);
+            inputBox.setText( messageHistory.getPrevious(inputBox.getText()) );
+            return;
+          }
+          if ( e.getKeyCode()==KeyEvent.VK_DOWN )  {
+            inputBox.setText( messageHistory.getNext(inputBox.getText()) );
             return;
           }
           if ( e.getKeyCode()==KeyEvent.VK_ENTER ) {
@@ -435,11 +439,15 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
   private void okAction() {
     String message;
 
-    lastMessage = inputBox.getText();
     message = inputBox.getText();
 
     if(message.length()==0)
       return;
+
+    if(message.length()>ChatRoom.MAXIMUM_MESSAGE_SIZE)
+       message = message.substring(0,ChatRoom.MAXIMUM_MESSAGE_SIZE-4) +"...";
+
+    messageHistory.add(message);
 
     DataManager dManager = DataManager.getDefaultDataManager();
 

@@ -63,6 +63,18 @@ public class WotlasLocation
 
  /*------------------------------------------------------------------------------------*/
 
+  /** Constructor from another WotlasLocation.
+   */
+    public WotlasLocation( WotlasLocation other ) {
+        this.worldMapID = other.worldMapID;
+        this.townMapID = other.townMapID;
+        this.buildingID = other.buildingID;
+        this.interiorMapID = other.interiorMapID;
+        this.roomID = other.roomID;
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
   /** Constructor for Rooms.
    */
     public WotlasLocation(int worldMapID, int townMapID, int buildingID, int interiorMapID,

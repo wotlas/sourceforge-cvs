@@ -21,7 +21,9 @@ package wotlas.common.universe;
 
 import wotlas.utils.*;
 
- /** RoomLink class
+ /** RoomLink class. Represents the screen zone which links two rooms.
+  *  A RoomLink MUST not have a width equal to its height... A square form
+  *  would not help us to determine the limit between the two rooms.
   *
   * @author Petrus, Aldiss
   * @see wotlas.common.universe.Door
@@ -35,17 +37,26 @@ public class RoomLink extends ScreenRectangle
    */
    private int roomLinkID;
    
-  /** ID of the first Room
+  /** ID of the first Room ( the one on the west or north )
    */
    private int room1ID;
   
-  /** ID of the second Room
+  /** ID of the second Room ( the one on the east or south )
    */
    private int room2ID;
   
   /** door of the Room
    */
    private Door door;
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** If true, it means that that someone is currently entering this RoomLink (from one
+   *  side ot the other ). false means we are leaving the RoomLink.
+   *  THIS field is only relevant when you know that your player is intersecting this
+   *  RoomLink.
+   *
+   transient private boolean isEnteringRoomLink;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -59,6 +70,9 @@ public class RoomLink extends ScreenRectangle
    */
    public RoomLink(ScreenRectangle r) {
        super(r);
+       
+       if(r.width==r.height)
+          Debug.signal( Debug.ERROR, this, "INVALID ROOMLINK: height is equal to width !!!");
    }
  
  /*------------------------------------------------------------------------------------*/
@@ -93,5 +107,31 @@ public class RoomLink extends ScreenRectangle
   }
 
  /*------------------------------------------------------------------------------------*/
+
+   /** To test if the current player (client side) is intersecting this RoomLink.
+    *
+    *  If true means that that someone is currently entering this RoomLink (from one
+    *  side ot the other ). false means we are leaving the RoomLink.
+    *  THIS field is only relevant when you know that your player is intersecting this
+    *  RoomLink.
+    *
+    * @return true (entering), false (leaving)
+    *
+     public boolean isEnteringRoomLink() {
+          return isEnteringRoomLink;
+     }
   
+ /*------------------------------------------------------------------------------------*/
+
+   /** To set the isEnteringRoomLink field. See the isEnteringRoomLink() method for
+    *  more details.
+    *
+    * @param isEnteringRoomLink true (entering), false (leaving)
+    *
+     public void setIsEnteringRoomLink( boolean isEnteringRoomLink ) {
+          this.isEnteringRoomLink = isEnteringRoomLink;
+     }
+  
+ /*------------------------------------------------------------------------------------*/
+
 }

@@ -115,7 +115,7 @@ public class MapExit extends ScreenRectangle
     this.targetWotlasLocation = myTargetWotlasLocation;
   }
   public WotlasLocation getTargetWotlasLocation() {
-    return targetWotlasLocation;
+    return new WotlasLocation( targetWotlasLocation );
   }
   public void setTargetPosition(ScreenPoint myTargetPosition) {
     this.targetPosition = myTargetPosition;

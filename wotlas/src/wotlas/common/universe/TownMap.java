@@ -351,7 +351,7 @@ public class TownMap extends ScreenRectangle
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Returns the MapExit that is on the side given by the specified rectangle.
+  /** Returns the MapExit which is on the side given by the specified rectangle.
    *  It's an helper for you : if your player is on a WorldMap and wants to go inside
    *  a TownMap use this method to retrieve a valid MapExit and get an insertion point.
    *
@@ -395,6 +395,53 @@ public class TownMap extends ScreenRectangle
    
       return mapExits[0]; // default
    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Tests if the given player rectangle has its x,y cordinates in a Building.
+   *
+   *  Here is an example how to use this method (at each game tick) :
+   *  <pre>
+   *
+   *  TownMap tMap = worldManager.getTown( player.getWotlasLocation() );
+   *
+   *  Building bMap = bMap.isEnteringTown( myPlayer.myDestX, myPlayer.myDestY,
+   *                                       myPlayer.getCurrentRectangle() );
+   *
+   *  if( bMap != null ) {
+   *   // intersection with a Building, which MapExit are we using ?
+   *      MapExit mExit = bMap.findBuildingExit( myPlayer.getCurrentRectangle() );
+   *  
+   *   // ok, we have the Building => we know which image to display, buildings, etc...
+   *   //     we have the MapExit => we know where to insert our player on the
+   *   //                            InteriorMap, it's done the following way :
+   *
+   *      myPlayer.setX( mExit.getX() + mExit.getWidth()/2 );
+   *      myPlayer.setY( mExit.getY() + mExit.getHeight()/2 );
+   *
+   *  </pre>
+   *  Yes, we set our player on the middle of the MapExit. Refer to the Building
+   *  findBuildingExit() javadoc for more details on this method.
+   *
+   * @param destX destination x position of the player movement ( endPoint of path )
+   * @param destY destination y position of the player movement ( endPoint of path )
+   * @param rCurrent rectangle containing the player's current position, width & height
+   * @return the Building the player is heading to (if he has reached it, or if there
+   *         are any), null if none.
+   */
+     public Building isEnteringBuilding( int destX, int destY, Rectangle rCurrent ) {
+        if(buildings==null)
+           return null;
+
+        for( int i=0; i<buildings.length; i++ ){
+             Rectangle buildRect = buildings[i].toRectangle();
+
+             if( buildRect.contains( destX, destY ) && buildRect.intersects( rCurrent ) )
+                 return buildings[i]; // building reached
+        }
+
+        return null;
+     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

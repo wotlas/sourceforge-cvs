@@ -22,9 +22,115 @@ package wotlas.common.universe;
 import wotlas.common.Player;
 import wotlas.utils.*;
 
+import java.awt.Rectangle;
 import java.util.Hashtable;
 
- /** A Room of an interiorMap.
+ /** A Room of an interiorMap. Here is a sample code on how to use a Room
+  *  during the player tick... all the following could be placed in the
+  *  client's DataManager :
+  *
+  *  <pre>
+  *
+  * // tells if the player could be moving to another room
+  *    private boolean couldBeMovingToAnotherRoom = false;
+  *
+  * // current RoomLink considered for intersection
+  *    private RoomLink latestRoomLink;
+  *
+  *    
+  *    public void tick() {
+  *         player.tick();
+  *         locationUpdate();
+  *    }
+  *
+  *
+  *    public void locationUpdate() {
+  *
+  *      // we call the right method whether the player is on
+  *      // a TownMap, a WorldMap or in a Room.
+  *
+  *         if( player.getWotlasLocation().isRoom() )
+  *             roomLocationUpdate();
+  *         else if ( player.getWotlasLocation().isTown() )
+  *             townLocationUpdate();
+  *         else if ( player.getWotlasLocation().isWorld() )
+  *             worldLocationUpdate();
+  *    }
+  *
+  *
+  *    public void roomLocationUpdate() {
+  *    
+  *        Room myRoom = worldManager.getRoom( player.getWotlasLocation() );
+  *
+  *     // I - ROOMLINK INTERSECTION UPDATE ( is the player moving to another room ? )
+  *
+  *        RoomLink rl = myRoom.isIntersectingRoomLink( player.getCurrentRectangle() );
+  *
+  *        if( rl!=null && !couldBeMovingToAnotherRoom ) {
+  *          // Player is intersecting a RoomLink
+  *             latestRoomLink = rl;
+  *             couldBeMovingToAnotherRoom = true;
+  *
+  *          // is there a Door ?
+  *             if( rl.getDoor()!=null ) {
+  *                 // nothing for now
+  *             }
+  *        }
+  *        else if ( couldBeMovingToAnotherRoom ) {
+  *          // ok, no intersection now, are we in an another room ?
+  *             couldBeMovingToAnotherRoom = false;
+  *
+  *             int newRoomID = myRoom.isInOtherRoom( latestRoomLink, player.getCurrentRectangle() );
+  *             
+  *             if( newRoomID>=0 ) {
+  *                // Ok, we move to this new Room
+  *                   myRoom.removePlayer( player );
+  *                   player.getWotlasLocation().setRoomID( newRoomID );
+  *                   myRoom.addPlayer( player );
+  *             }
+  *        } // End of part I
+  *
+  *
+  *     // II - MAPEXIT INTERSECTION UPDATE ( is the player moving to another map ? )
+  *        if( player.isMoving() ) {
+  *            MapExit mapExit = myRoom.isIntersectingMapExit( player.getDestX(), player.getDestY(),
+  *                                                            player.getCurrentRectangle() );
+  *
+  *            if( mapExit!=null ) {
+  *            	  // Ok, we are going to a new map...
+  *                  myRoom.removePlayer( player );
+  *                  player.setWotlasLocation( mapExit.getTargetWotlasLocation() );
+  *                  cleanInteriorMapData(); // suppress drawables, shadows, data
+  *
+  *                  switch( mapExit.getType ) {
+  *                      case mapExit.INTERIOR_MAP_EXIT :
+  *                               initInteriorMapDisplay(); // init new map
+  *                               break;
+  *
+  *                      case mapExit.TOWN_EXIT :
+  *                               initTownMapDisplay(); // init new map
+  *                               break;
+  *                  }
+  *            }
+  *        } // End of part II
+  *
+  *    }
+  *
+  *  
+  *    public void initInteriorMapDisplay( PlayerImpl player ) {
+  * 
+  *      // 1 - we load the images & init the graphicsDirector
+  *      // 2 - we init our Player, add a shadow, and start the display
+  *    }
+  *
+  *
+  *    public void initTownMapDisplay( PlayerImpl player ) {
+  * 
+  *      // 1 - we load the images & init the graphicsDirector
+  *      // 2 - we init our Player (no shadow drawable) and start the display
+  *    }
+  *
+  *  </pre>
   *
   * @author Petrus, Aldiss
   * @see wotlas.common.universe.RoomLink
@@ -122,7 +228,7 @@ public class Room
     }
 
     public ScreenPoint getInsertionPoint() {
-      return insertionPoint;
+      return new ScreenPoint( insertionPoint );
     }
 
     public void setMaxPlayers(int myMaxPlayers) {
@@ -319,6 +425,88 @@ public class Room
     public void init( InteriorMap myInteriorMap ){
        this.myInteriorMap = myInteriorMap;
     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Returns the eventual RoomLink the given player is intersecting.
+   *
+   * @param rCurrent rectangle containing the player's current position, width & height
+   * @return the Building the player is heading to (if he has reached it, or if there
+   *         are any), null if none.
+   */
+     public RoomLink isIntersectingRoomLink( Rectangle rCurrent ) {
+        if(roomLinks==null)
+           return null;
+
+        for( int i=0; i<roomLinks.length; i++ )
+             if( roomLinks[i].toRectangle().intersects( rCurrent ) )
+                 return roomLinks[i]; // RoomLink reached
+
+        return null;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Returns the eventual MapExit the given player is intersecting.
+   *
+   * @param rCurrent rectangle containing the player's current position, width & height
+   * @return the Building the player is heading to (if he has reached it, or if there
+   *         are any), null if none.
+   */
+     public MapExit isIntersectingMapExit( int destX, int destY, Rectangle rCurrent ) {
+        if(mapExits==null)
+           return null;
+
+        for( int i=0; i<mapExits.length; i++ )
+             if( mapExits[i].toRectangle().contains(destX,destY)
+                 && mapExits[i].toRectangle().intersects( rCurrent ) )
+                 return mapExits[i]; // mapExits reached
+
+        return null;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Returns the RoomID of the RoomLink's target Room if the given current player
+    *  Rectangle is proved to be in this other room. We return -1 if we are still in our
+    *  room.
+    *
+    *  You should call this method
+    *
+    * @param rlink a RoomLink the player has intersected recently
+    * @param rCurrent current player Rectangle.
+    * @return -1 if the player is still in this Room, the other RoomID if he has moved to
+    *         the other Room pointed by the given RoomLink.
+    */
+     public int isInOtherRoom( RoomLink rlink, Rectangle rCurrent ) {
+
+             if( rlink.width < rlink.height ) {
+                 if( rlink.getRoom1ID()==roomID ){
+                   // ok, we are the west Room
+                      if( rlink.x + rlink.width < rCurrent.x )
+                          return rlink.getRoom2ID(); // we are in the other room
+                 }
+                 else {
+                  // ok, we are the east Room
+                      if( rCurrent.x + rCurrent.width < rlink.x )
+                          return rlink.getRoom1ID(); // we are in the other room
+                 }
+             }
+             else if( rlink.width > rlink.height ) {
+                 if( rlink.getRoom1ID()==roomID ){
+                   // ok, we are the north Room
+                      if( rlink.y + rlink.height < rCurrent.y )
+                          return rlink.getRoom2ID(); // we are in the other room
+                 }
+                 else {
+                  // ok, we are the south Room
+                      if( rCurrent.y + rCurrent.height < rlink.y )
+                          return rlink.getRoom1ID(); // we are in the other room
+                 }
+             }
+
+        return -1; // we are still in this room
+     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

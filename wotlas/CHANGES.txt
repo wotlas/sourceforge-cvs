@@ -6,8 +6,8 @@
 * ( File Best Viewed in 1024x768 or above)
 *
 
-CHANGES BETWEEN V1.2.3 AND V1.3 (5 May 2002)
---------------------------------------------
+CHANGES BETWEEN V1.2.3 AND V1.3 (10 May 2002)
+---------------------------------------------
 
  - Added bots definitions and a link to a remote AliceBot server.
  - Improved the server architecture : lots of tasks done before by the ServerDirector are now
@@ -18,6 +18,11 @@ CHANGES BETWEEN V1.2.3 AND V1.3 (5 May 2002)
  - brightness mask added to maps.
  - Progress Monitor added when you enter the game.
  - Antialiased Swing is now a wotlas library.
+ - /info command has been renamed to /manual and it's use is now easier : "/manual fanfare"
+ - Added a /away chat command and new player states to be able to say that you are connected but away.
+ - the html documentation has been updated to make our code use proper URLs.
+ - Added JAR Name detection and Java Web Start support.
+ - Added in-game menus on the client side.
 
 
 CHANGES BETWEEN V1.2.2 AND V1.2.3 (11 April 2002)
@@ -47,7 +52,7 @@ CHANGES BETWEEN V1.2.1 AND V1.2.2 (3 April 2002)
  - The Persistence Managers (used to load/save universe, configs, etc... to/from dot properties file)
    do not exist anymore. Their save/load methods have been moved to other object managers.
  - The ServerConfigList (managed the configs of the servers) has been renamed to ServerConfigManager
-   and possesses now all its asociated save/load/create methods.
+   and possesses now all its associated save/load/create methods.
  - The World Managers (manages the world data) found in wotlas.client and wotlas.server do not
    exist anymore. Their code has been transfered to the standard wotlas.common.WorldManager.
  - The wotlas.client.ClientManager, wotlas.client.DataManager (manages the client data and processes)

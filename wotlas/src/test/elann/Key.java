@@ -25,9 +25,10 @@ package wotlas.common.object;
  * @author Elann
  * @see wotlas.common.object.UsefulObject
  * @see wotlas.common.object.LockableInterface
+ * @see wotlas.common.object.TransportableInterface 
  */
 
-public class Key extends UsefulObject
+public class Key extends UsefulObject implements TransportableInterface 
 {
 
  /*------------------------------------------------------------------------------------*/

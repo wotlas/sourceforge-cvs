@@ -26,9 +26,10 @@ package wotlas.common.object;
  * @see wotlas.common.object.Weapon
  * @see wotlas.common.object.HeavyWeaponInterface
  * @see wotlas.common.object.RepairInterface
+ * @see wotlas.common.object.TransportableInterface 
  */
 
-public class HeavyWeapon extends Weapon implements HeavyWeaponInterface, RepairInterface
+public class HeavyWeapon extends Weapon implements HeavyWeaponInterface, RepairInterface, TransportableInterface
 {
 
  /** The weapon visibility status

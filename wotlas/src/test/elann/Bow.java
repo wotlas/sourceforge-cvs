@@ -25,9 +25,10 @@ package wotlas.common.object;
  * @author Elann
  * @see wotlas.common.object.DistantWeapon
  * @see wotlas.common.object.DistantWeaponInterface
+ * @see wotlas.common.object.TransportableInterface
  */
 
-public class Bow extends DistantWeapon
+public class Bow extends DistantWeapon implements TransportableInterface
 {
 
  /*------------------------------------------------------------------------------------*/

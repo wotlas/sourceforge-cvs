@@ -24,9 +24,10 @@ package wotlas.common.object;
  * 
  * @author Elann
  * @see wotlas.common.object.ContainerObject
+ * @see wotlas.common.object.TransportableInterface
  */
 
-public class Bag extends ContainerObject
+public class Bag extends ContainerObject implements TransportableInterface
 {
 
  /*------------------------------------------------------------------------------------*/

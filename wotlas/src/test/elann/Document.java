@@ -26,9 +26,10 @@ package wotlas.common.object;
  * @see wotlas.common.object.UsefulObject
  * @see wotlas.common.object.ReadableInterface
  * @see wotlas.common.object.WritableInterface
+ * @see wotlas.common.object.TransportableInterface
  */
 
-public abstract class Document extends UsefulObject implements ReadableInterface, WritableInterface
+public abstract class Document extends UsefulObject implements ReadableInterface, WritableInterface, TransportableInterface
 {
 
  /*------------------------------------------------------------------------------------*/

@@ -25,9 +25,10 @@ package wotlas.common.object;
  * @author Elann
  * @see wotlas.common.object.Weapon
  * @see wotlas.common.object.RepairInterface
+ * @see wotlas.common.object.TransportableInterface
  */
 
-public class LightWeapon extends Weapon implements RepairInterface
+public class LightWeapon extends Weapon implements RepairInterface, TransportableInterface
 {
 
  /** The weapon's position

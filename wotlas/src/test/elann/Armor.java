@@ -25,9 +25,10 @@ package wotlas.common.object;
  * @author Elann
  * @see wotlas.common.object.BaseObject
  * @see wotlas.common.object.ArmorInterface
+ * @see wotlas.common.object.TransportableInterface
  */
 
-public abstract class Armor extends BaseObject implements ArmorInterface, RepairInterface
+public abstract class Armor extends BaseObject implements ArmorInterface, RepairInterface, TransportableInterface
 {
 
  /*------------------------------------------------------------------------------------*/

@@ -94,6 +94,7 @@ public class WorldGenerator {
            worldMap.setWorldImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
                                                         ImageLibRef.UNIVERSE_SET,
                                                         ImageLibRef.RANDLAND_MAP_ACTION ) );
+           worldMap.setMusicName("tar-valon-01.mid");
 
         // STEP 3 - Tar Valon Creation
            TownMap townMaps[] = new TownMap[1];
@@ -113,6 +114,7 @@ public class WorldGenerator {
            townMap.setTownImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
                                                       ImageLibRef.UNIVERSE_SET ,
                                                       ImageLibRef.TARVALON_MAP_ACTION ) );
+           townMap.setMusicName("tar-valon-01.mid");
 
            MapExit mapExit = null;
 
@@ -189,6 +191,8 @@ public class WorldGenerator {
            map.setImageHeight(1200);
            map.setImageRegionWidth(350);
            map.setImageRegionHeight(400);
+
+           map.setMusicName("tar-valon-01.mid");
 
 
         // STEP 6 - Rooms of TarValon WestGate InteriorMap

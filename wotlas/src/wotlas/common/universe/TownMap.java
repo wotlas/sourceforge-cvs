@@ -58,6 +58,10 @@ public class TownMap extends ScreenRectangle
    */
     private ImageIdentifier townImage;
 
+  /** Music Name
+   */
+    private String musicName;
+
   /** Map exits...
    */
     private MapExit[] mapExits;
@@ -148,6 +152,14 @@ public class TownMap extends ScreenRectangle
 
     public MapExit[] getMapExits() {
       return mapExits;
+    }
+
+    public void setMusicName(String musicName) {
+      this.musicName = musicName;
+    }
+
+    public String getMusicName() {
+      return musicName;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -53,6 +53,10 @@ public class WorldMap
    */
     private ImageIdentifier worldImage;
 
+  /** Music Name
+   */
+    private String musicName;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Array of TownMap
@@ -108,6 +112,14 @@ public class WorldMap
 
     public ImageIdentifier getWorldImage() {
       return worldImage;
+    }
+
+    public void setMusicName(String musicName) {
+      this.musicName = musicName;
+    }
+
+    public String getMusicName() {
+      return musicName;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

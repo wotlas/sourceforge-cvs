@@ -64,6 +64,10 @@ public class InteriorMap
    */
     private int imageRegionHeight;
   
+  /** Music Name
+   */
+    private String musicName;
+  
   /** List of the rooms of the Building
    * non transient (rooms in the same file of the building)
    */
@@ -159,6 +163,15 @@ public class InteriorMap
     public ImageIdentifier getInteriorMapImage() {
       return interiorMapImage;
     }
+
+    public void setMusicName(String musicName) {
+      this.musicName = musicName;
+    }
+
+    public String getMusicName() {
+      return musicName;
+    }
+
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

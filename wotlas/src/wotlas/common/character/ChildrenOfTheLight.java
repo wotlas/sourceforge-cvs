@@ -29,77 +29,49 @@ import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.graphics2D.filter.*;
 
 
-/** An Aes Sedai character.
+/** A Children Of The Light character.
  *
  * @author Aldiss
- * @see wotlas.common.character.Female
+ * @see wotlas.common.character.Male
  */
 
-public class AesSedai extends Female {
+public class ChildrenOfTheLight extends Male {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Ajah & Aes Sedai rank
+  /** Warder rank
    */
-    public final static String aesSedaiRank[][] = {
+    public final static String childrenRank[][] = {
           //        Rank Name                Rank Symbol
-                {   "Stilled",               "stilled-11",  },
-                {   "Novice",                "novice-9",    },
-                {   "Accepted",              "accepted-8",  },
-                {   "Blue Ajah",             "blue-4",      },
-                {   "Green Ajah",            "green-5",     },
-                {   "Yellow Ajah",           "yellow-1",    },
-                {   "Red Ajah",              "red-3",       },
-                {   "Brown Ajah",            "brown-2",     },
-                {   "White Ajah",            "white-6",     },
-                {   "Gray Ajah",             "gray-7",      },
-                {   "Keeper of the Chronicles",  "keeper-10",   },
-                {   "Amyrlin",               "amyrlin-0",   },
-                {   "Black Ajah",            "black-12",    },
+                {   "Soldier of the Light",  "soldier-0",  },
     };
 
-  /** Ajah & Aes Sedai rank
+  /** Warder rank
    */
-    public final static Color aesSedaiColor[] = {
+    public final static Color childrenColor[] = {
          //        Rank Color
-                   new Color(160,115,130),
                    Color.white,
-                   Color.white,
-                   new Color(119,152,213),
-                   new Color(128,206,113),
-                   new Color(209,203,99),
-                   new Color(223,83,65),
-                   new Color(180,158,80),
-                   Color.white,
-                   new Color(184,184,184),
-                   new Color(230,220,240),
-                   new Color(243,228,175),
-                   Color.black,
     };
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Aes Sedai status ( ajah, novice, accepted, amyrlin ). [PUBLIC INFO]
+  /** Children status ( soldier, ... ). [PUBLIC INFO]
    */
     private String characterRank;
-
-  /** Do we have to wear a black Ajah dress ? [PUBLIC INFO]
-   */
-    private boolean blackAjah = false;
 
  /*------------------------------------------------------------------------------------*/
 
   /** Current Sprite.
    */
-    transient private Sprite aesSedaiSprite;
+    transient private Sprite childrenSprite;
 
   /** Current Shadow.
    */
-    transient private ShadowSprite aesSedaiShadowSprite;
+    transient private ShadowSprite childrenShadowSprite;
 
   /** Current Aura.
    */
-    transient private AuraEffect aesSedaiAuraEffect;
+    transient private AuraEffect childrenAuraEffect;
 
   /** ColorImageFilter for InteriorMap Sprites.
    */
@@ -109,7 +81,7 @@ public class AesSedai extends Female {
 
    /** Constructor
     */
-    public AesSedai() {
+    public ChildrenOfTheLight() {
     }
 
  /*------------------------------------------------------------------------------------*/
@@ -128,14 +100,14 @@ public class AesSedai extends Female {
          if( ImageLibrary.getDefaultImageLibrary() == null )
              return null;
 
-         if(aesSedaiSprite!=null)
-             return (Drawable) aesSedaiSprite;
+         if(childrenSprite!=null)
+             return (Drawable) childrenSprite;
 
        // 1 - Sprite Creation + Filter
-          aesSedaiSprite = new Sprite( (SpriteDataSupplier) player, ImageLibRef.PLAYER_PRIORITY );
-          aesSedaiSprite.useAntialiasing(true);
+          childrenSprite = new Sprite( (SpriteDataSupplier) player, ImageLibRef.PLAYER_PRIORITY );
+          childrenSprite.useAntialiasing(true);
           updateColorFilter();
-         return aesSedaiSprite;
+         return childrenSprite;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -143,55 +115,33 @@ public class AesSedai extends Female {
   /** Updates the color filter that is used for the AesSedai sprite.
    */
       private void updateColorFilter() {
-         if(aesSedaiSprite==null)
+         if(childrenSprite==null)
              return;
 
          filter = new ColorImageFilter();
 
-         if(!blackAjah) {
-              if(characterRank.equals("Brown Ajah")) {
-                   filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.brown );
-              }
-              else if(characterRank.equals("Blue Ajah")) {
-                   // no filter needed
-              }
-              else if(characterRank.equals("Green Ajah")) {
-                   filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.green );
-              }
-              else if(characterRank.equals("Red Ajah")) {
-                   filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.red );
-              }
-              else if(characterRank.equals("Gray Ajah")) {
-                   filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.gray );
-              }
-              else if(characterRank.equals("Yellow Ajah")) {
-                   filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.yellow );
-              }
-              else
-                   filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.white );
-          }
-          else
-              filter.addColorChangeKey( ColorImageFilter.blue, ColorImageFilter.darkgray ); // black dress
-
       // 2 - Hair Color
          if( hairColor.equals("brown") ) {
-                   filter.addColorChangeKey( ColorImageFilter.yellow, ColorImageFilter.brown );
+                   filter.addColorChangeKey( ColorImageFilter.lightYellow, ColorImageFilter.brown );
          }
          else if( hairColor.equals("black") ) {
-                   filter.addColorChangeKey( ColorImageFilter.yellow, ColorImageFilter.darkgray );
+                   filter.addColorChangeKey( ColorImageFilter.lightYellow, ColorImageFilter.darkgray );
          }
          else if( hairColor.equals("gray") ) {
-                   filter.addColorChangeKey( ColorImageFilter.yellow, ColorImageFilter.gray );
+                   filter.addColorChangeKey( ColorImageFilter.lightYellow, ColorImageFilter.gray );
          }
          else if( hairColor.equals("white") ) {
-                   filter.addColorChangeKey( ColorImageFilter.yellow, ColorImageFilter.lightgray );
+                   filter.addColorChangeKey( ColorImageFilter.lightYellow, ColorImageFilter.lightgray );
          }
          else if( hairColor.equals("reddish") ) {
-                   filter.addColorChangeKey( ColorImageFilter.yellow, ColorImageFilter.red );
+                   filter.addColorChangeKey( ColorImageFilter.lightYellow, ColorImageFilter.red );
+         }
+         else if( hairColor.equals("golden") ) {
+                   filter.addColorChangeKey( ColorImageFilter.lightYellow, ColorImageFilter.yellow );
          }
 
        // 3 - Set Filter
-         aesSedaiSprite.setDynamicImageFilter( filter );
+         childrenSprite.setDynamicImageFilter( filter );
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -206,16 +156,18 @@ public class AesSedai extends Female {
          if( ImageLibrary.getDefaultImageLibrary() == null )
              return null;
 
-         if(aesSedaiShadowSprite!=null)
-             return (Drawable) aesSedaiShadowSprite;
+         if(childrenShadowSprite!=null)
+             return (Drawable) childrenShadowSprite;
 
       // Shadow Creation
-         String path[] = { "players-0", "shadows-3", "aes-sedai-walking-0" };
-         aesSedaiShadowSprite = new ShadowSprite( aesSedaiSprite.getDataSupplier(),
+         String path = null;
+
+         path = "players-0/shadows-3/children-walking-5";
+
+         childrenShadowSprite = new ShadowSprite( childrenSprite.getDataSupplier(),
                                                   new ImageIdentifier( path ),
                                                   ImageLibRef.SHADOW_PRIORITY, 4, 4 );
-         //aesSedaiShadowSprite.useAntialiasing(true);
-         return aesSedaiShadowSprite;
+         return childrenShadowSprite;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -227,28 +179,22 @@ public class AesSedai extends Female {
          if( ImageLibrary.getDefaultImageLibrary() == null )
              return null;
 
-         if(aesSedaiAuraEffect!=null) {
-             if(aesSedaiAuraEffect.isLive()) {
+         if(childrenAuraEffect!=null) {
+             if(childrenAuraEffect.isLive()) {
                 return null; // aura still displayed on screen
              }
 
-             aesSedaiAuraEffect.reset();
-             return (Drawable) aesSedaiAuraEffect;
+             childrenAuraEffect.reset();
+             return (Drawable) childrenAuraEffect;
          }
 
       // Aura Creation
-         aesSedaiAuraEffect = new AuraEffect( aesSedaiSprite.getDataSupplier(), getAuraImage(),
-                                              ImageLibRef.AURA_PRIORITY, 5000 );
-         aesSedaiAuraEffect.useAntialiasing(true);
-
-         if(characterRank.equals("Novice"))
-            aesSedaiAuraEffect.setAmplitudeLimit( 0.6f );
-         else if(characterRank.equals("Stilled"))
-            aesSedaiAuraEffect.setAmplitudeLimit( 3.1f );
-         else if(characterRank.equals("Keeper Of Chronicles"))
-            aesSedaiAuraEffect.setAuraMaxAlpha(0.7f);
-
-         return aesSedaiAuraEffect;
+         childrenAuraEffect = new AuraEffect( childrenSprite.getDataSupplier(), getAuraImage(),
+                                            ImageLibRef.AURA_PRIORITY, 5000 );
+         childrenAuraEffect.useAntialiasing(true);
+         childrenAuraEffect.setAuraMaxAlpha(0.7f);
+         childrenAuraEffect.setAmplitudeLimit( 0.0f );
+         return childrenAuraEffect;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -259,20 +205,16 @@ public class AesSedai extends Female {
       // symbol selection
          String symbolName = null;
 
-         if(!blackAjah) {
-            for( int i=0; i<aesSedaiRank.length; i++ )
-              if( characterRank.equals(aesSedaiRank[i][0]) ) {
-                  symbolName = aesSedaiRank[i][1];
+            for( int i=0; i<childrenRank.length; i++ )
+              if( characterRank.equals(childrenRank[i][0]) ) {
+                  symbolName = childrenRank[i][1];
                   break;
               }
-         } else
-            symbolName="blackajah-12";
 
-         if(symbolName==null) symbolName=aesSedaiRank[0][1]; // default if not found
+         if(symbolName==null) symbolName=childrenRank[0][1]; // default if not found
 
       // Aura Creation
-         String path[] = { "players-0", "symbols-2", "aes-sedai-symbols-0", symbolName+".gif" };
-         return new ImageIdentifier( path );
+         return new ImageIdentifier( "players-0/symbols-2/children-symbols-2/"+symbolName+".gif" );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -281,10 +223,9 @@ public class AesSedai extends Female {
    *  @return character's color
    */
      public Color getColor(){
-       if(!blackAjah)
-         for( int i=0; i<aesSedaiRank.length; i++ )
-              if( characterRank.equals(aesSedaiRank[i][0]) )
-                  return aesSedaiColor[i];
+         for( int i=0; i<childrenRank.length; i++ )
+              if( characterRank.equals(childrenRank[i][0]) )
+                  return childrenColor[i];
 
         return Color.black;
      }
@@ -295,7 +236,7 @@ public class AesSedai extends Female {
    * @return the name of the community.
    */
      public String getCommunityName() {
-        return "Aes Sedai";
+        return "Children of the Light";
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -317,8 +258,8 @@ public class AesSedai extends Female {
      public void setCharacterRank( String rank ) {
 
          if(rank!=null)
-            for( int i=0; i<aesSedaiRank.length; i++ )
-              if( rank.equals(aesSedaiRank[i][0]) ) {
+            for( int i=0; i<childrenRank.length; i++ )
+              if( rank.equals(childrenRank[i][0]) ) {
                   characterRank = rank;
                   return; // success
               }
@@ -338,50 +279,22 @@ public class AesSedai extends Female {
          ImageIdentifier imID = super.getImage(playerLocation);
 
          if( imID==null ) {
-              if(aesSedaiSprite!=null && filter!=null)
-                 aesSedaiSprite.setDynamicImageFilter(filter);
+              if(childrenSprite!=null && filter!=null)
+                 childrenSprite.setDynamicImageFilter(filter);
 
-           // We return the default Aes Sedai Image...
-              String path[] = { "players-0", "aes-sedai-0", "aes-sedai-walking-0" };
+           // We return the default Warder Image...
+              String path = null;
+
+                 path = "players-0/children-6/children-walking-0";
+
               return new ImageIdentifier( path );
          }
 
-         if(aesSedaiSprite!=null)
-            aesSedaiSprite.setDynamicImageFilter( null ); // no filter for player small image
+         if(childrenSprite!=null)
+            childrenSprite.setDynamicImageFilter( null ); // no filter for player small image
 
          return imID;
      }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-   /** To toggle the Black Ajah status...
-    * @return the new blackAjah state.
-    */
-    public boolean toggleBlackAjah() {
-        blackAjah = !blackAjah;
-        updateColorFilter();
-
-        if(aesSedaiAuraEffect!=null)
-           aesSedaiAuraEffect.setImage(getAuraImage());
-
-        return blackAjah;
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-   /** Get Black ajah state : for persistence only. Use toggleBlackAjah().
-    */
-    public boolean getBlackAjah() {
-        return blackAjah;
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-   /** Set Black ajah state : for persistence only. Use toggleBlackAjah().
-    */
-    public void setBlackAjah(boolean blackAjah) {
-        this.blackAjah = blackAjah;
-    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -396,7 +309,6 @@ public class AesSedai extends Female {
      public void encode( DataOutputStream ostream, boolean publicInfoOnly ) throws IOException {
         super.encode( ostream, publicInfoOnly );
         ostream.writeUTF( characterRank );
-        ostream.writeBoolean( blackAjah );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -412,7 +324,6 @@ public class AesSedai extends Female {
      public void decode( DataInputStream istream, boolean publicInfoOnly ) throws IOException {
         super.decode( istream, publicInfoOnly );
         characterRank = istream.readUTF();
-        blackAjah = istream.readBoolean();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

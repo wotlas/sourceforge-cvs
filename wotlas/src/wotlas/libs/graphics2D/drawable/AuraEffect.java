@@ -285,7 +285,7 @@ public class AuraEffect extends Drawable {
 
        if( amplitudeLimit<0 )
            angle -= 0.15;
-       else {
+       else if(amplitudeLimit>0) {
        	   angle += direction*0.15;
        	
            if( angle >= amplitudeLimit )

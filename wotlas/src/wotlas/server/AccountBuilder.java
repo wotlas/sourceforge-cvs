@@ -471,6 +471,10 @@ public class AccountBuilder implements NetConnectionListener
            className += "AesSedai";
         else if(data.equals("Warder"))
            className += "Warder";
+        else if(data.equals("Children of the Light"))
+           className += "ChildrenOfTheLight";
+        else if(data.equals("Wolf Brother"))
+           className += "WolfBrother";
         else if(data.equals("Special Characters"))
            return;
         else
@@ -534,6 +538,8 @@ public class AccountBuilder implements NetConnectionListener
    /** Method called to set the player's name.
     */
      public void setPlayerName( String data )  throws AccountException {
+     	if(data.length()>30)
+           throw new AccountException("Your nickname should have less than 30 letters !");
      	player.setPlayerName(data);
      }
 
@@ -542,6 +548,12 @@ public class AccountBuilder implements NetConnectionListener
    /** Method called to set the player's full name.
     */
      public void setFullPlayerName( String data )  throws AccountException {
+     	if(data.length()>30)
+           throw new AccountException("Your full name should have less than 30 letters !");
+
+     	if(data.length()<5)
+           throw new AccountException("Your full name should have more than 4 letters !");
+
      	player.setFullPlayerName(data);                
      }
 
@@ -599,7 +611,7 @@ public class AccountBuilder implements NetConnectionListener
         else if(data.equals( props.getProperty("key.chronicles","chronicles") )) {
           // We create a Keeper of chronicles...
              player.setWotCharacter(new AesSedai());
-             player.getWotCharacter().setCharacterRank("Keeper Of Chronicles");
+             player.getWotCharacter().setCharacterRank("Keeper of the Chronicles");
         }
         else
            throw new AccountException("Wrong Special Character Key !");

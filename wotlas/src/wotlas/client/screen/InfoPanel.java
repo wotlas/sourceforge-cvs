@@ -22,8 +22,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import wotlas.utils.*;
+import wotlas.utils.aswing.*;
 
 import wotlas.common.*;
+import wotlas.common.message.description.PlayerPastMessage;
+import wotlas.client.*;
 
 /** JPanel to show the informations of the player
  *
@@ -32,14 +35,16 @@ import wotlas.common.*;
 
 public class InfoPanel extends JPanel
 {
-  ALabel infoPlayerLabel = new ALabel();
-  ATextArea playerTextArea;
-  
-  
+  private ALabel infoPlayerLabel = new ALabel();
+  private ATextArea playerTextArea;
+
+  private boolean savePastButtonDisplayed  = false;
+
+  private AButton savePastButton;
   
  /*------------------------------------------------------------------------------------*/ 
   
-  /** Consctructor.
+  /** Constructor.
    */
   public InfoPanel() {
     super();
@@ -55,7 +60,7 @@ public class InfoPanel extends JPanel
     
     add(infoPlayerLabel);
     add(new JScrollPane(playerTextArea));    
-  }     
+  }
     
   public void setText(String text) {
     playerTextArea.setText(text);
@@ -66,12 +71,60 @@ public class InfoPanel extends JPanel
   }
 
   public void setPlayerInfo( Player player ) {
+
+    if( player==DataManager.getDefaultDataManager().getMyPlayer() ) {
+
+       // Is there a valid past ?
+          String past = player.getPlayerPast();
+
+          if(past.length()==0) {
+            // No past set we display the save button
+                playerTextArea.setEditable(true);
+                this.setLabelText("Enter your player's past:");
+                this.setText("...");
+                savePastButtonDisplayed = true;
+
+                ImageIcon im_saveup  = new ImageIcon("../base/gui/save-up.gif");
+                ImageIcon im_savedo  = new ImageIcon("../base/gui/save-do.gif");
+                savePastButton = new AButton(im_saveup);
+                savePastButton.setRolloverIcon(im_savedo);
+                savePastButton.setPressedIcon(im_savedo);
+                savePastButton.setBorderPainted(false);
+                savePastButton.setContentAreaFilled(false);
+                savePastButton.setFocusPainted(false);
+                savePastButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+                savePastButton.addActionListener(new ActionListener() {
+                    public void actionPerformed (ActionEvent e) {                    	
+                        savePastButton.setEnabled(false);
+                        PlayerImpl player = DataManager.getDefaultDataManager().getMyPlayer();
+                    	player.setPlayerPast( playerTextArea.getText() );
+                        player.sendMessage( new PlayerPastMessage( player.getPrimaryKey(), player.getPlayerPast() ) );
+                        setPlayerInfo( player );
+                    }
+                });
+
+                add(savePastButton);
+                revalidate();
+             
+             return;
+          }
+          else if( savePastButtonDisplayed ) {
+             // Past Set we remove the Save Button
+                playerTextArea.setEditable(false);
+                remove(savePastButton);
+                revalidate();
+          }
+
+    }
+
     setLabelText( player.getFullPlayerName() );
+
     setText( 
-      "Nickname: "+player.getPlayerName()+"\n"+
-      "Community: "+player.getWotCharacter().getCommunityName()+"\n"+
-      "Rank: "+player.getWotCharacter().getCharacterRank()+"\n\n"+
-      "Player Past: "+player.getPlayerPast() );
+         "Nickname: "+player.getPlayerName()+"\n"+
+         "Community: "+player.getWotCharacter().getCommunityName()+"\n"+
+         "Rank: "+player.getWotCharacter().getCharacterRank()+"\n\n"+
+         "Player Past: "+player.getPlayerPast() );
   }
     
  }  

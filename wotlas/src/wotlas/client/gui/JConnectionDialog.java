@@ -20,7 +20,7 @@
 package wotlas.client.gui;
 
 import wotlas.libs.net.*;
-import wotlas.utils.ALabel;
+import wotlas.utils.aswing.*;
 import wotlas.utils.Debug;
 import wotlas.utils.SwingTools;
 import wotlas.utils.Tools;

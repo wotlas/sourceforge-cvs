@@ -21,7 +21,7 @@ package wotlas.client.screen;
 
 import wotlas.client.PlayerImpl;
 
-import wotlas.utils.ALabel;
+import wotlas.utils.aswing.*;
 
 import java.awt.*;
 import java.awt.event.*;

@@ -22,6 +22,7 @@ package wotlas.server.setup;
 import wotlas.common.*;
 import wotlas.server.PersistenceManager;
 import wotlas.utils.*;
+import wotlas.utils.aswing.*;
 
 import java.io.*;
 import javax.swing.*;

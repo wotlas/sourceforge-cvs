@@ -28,6 +28,7 @@ import wotlas.common.Player;
 import wotlas.common.universe.WotlasLocation;
 
 import wotlas.utils.*;
+import wotlas.utils.aswing.*;
 
 import javax.swing.*;
 import java.awt.*;

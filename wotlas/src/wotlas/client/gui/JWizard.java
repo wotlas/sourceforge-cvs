@@ -22,7 +22,7 @@ package wotlas.client.gui;
 import wotlas.client.ClientManager;
 import wotlas.client.DataManager;
 import wotlas.common.message.account.*;
-import wotlas.utils.ALabel;
+import wotlas.utils.aswing.*;
 
 import wotlas.libs.net.*;
 

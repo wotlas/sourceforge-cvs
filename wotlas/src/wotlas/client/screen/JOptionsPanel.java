@@ -22,6 +22,7 @@ package wotlas.client.screen;
 import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.sound.*;
 import wotlas.utils.*;
+import wotlas.utils.aswing.*;
 import wotlas.client.*;
 
 import java.awt.*;

@@ -29,6 +29,7 @@ import wotlas.common.message.description.*;
 import wotlas.libs.net.NetPersonality;
 
 import wotlas.utils.*;
+import wotlas.utils.aswing.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -385,6 +386,7 @@ public class JAccountWizard extends JWizard
     private ATextArea ta_infos;
     private ATextArea ta_past;
     private JPanel mainPanel, formPanel;
+    private ACheckBox savePastLater;
 
     /** called when the step is to be shown
      */
@@ -397,7 +399,11 @@ public class JAccountWizard extends JWizard
     /** called when Next button is clicked
      */
     public boolean onNext(Object context) {
-      personality.queueMessage( new wotlas.common.message.account.PlayerPastMessage(ta_past.getText()));
+      if(savePastLater.isSelected())      
+          personality.queueMessage( new wotlas.common.message.account.PlayerPastMessage(""));
+      else
+          personality.queueMessage( new wotlas.common.message.account.PlayerPastMessage(ta_past.getText()));
+
       return true;
     }
 
@@ -447,6 +453,9 @@ public class JAccountWizard extends JWizard
         ta_past.setPreferredSize(new Dimension(0,300));
 //        formPanel.add(ta_past);
         add(ta_past);
+
+        savePastLater = new ACheckBox("I'll write this later...",false);
+        add(savePastLater);
 
 //      mainPanel.add(formPanel);
 

@@ -60,6 +60,17 @@ public class PlayerPastMsgBehaviour extends PlayerPastMessage implements NetMess
         // The context is here a PlayerImpl.
            PlayerImpl player = (PlayerImpl) context;
 
+        // is our player the dest of this message
+           if( primaryKey.equals(player.getPrimaryKey()) ) {
+             // do we have to save the past for our player
+              if( player.getPlayerPast()==null || player.getPlayerPast().length()==0 )
+                  player.setPlayerPast( playerPast ); // we save the past...
+
+              return;
+           }
+
+
+       // no, it's another player we want...
            if( !player.getLocation().isRoom() ) {
                Debug.signal( Debug.ERROR, this, "Location is not a room ! "+player.getLocation() );
                return;

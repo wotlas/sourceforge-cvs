@@ -141,7 +141,7 @@ public class ProfileConfigList
         return false; // not found
 
       if(profiles.length==1) {
-      	profiles=null; // no profile remaining...
+      	profiles=new ProfileConfig[0]; // no profile remaining...
       	return true;
       }
 

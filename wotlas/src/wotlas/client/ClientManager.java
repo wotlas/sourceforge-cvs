@@ -31,6 +31,7 @@ import wotlas.libs.net.*;
 import wotlas.libs.net.personality.*;
 
 import wotlas.utils.*;
+import wotlas.utils.aswing.*;
 
 import java.awt.*;
 import java.awt.event.*;

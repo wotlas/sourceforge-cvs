@@ -21,8 +21,9 @@ package wotlas.client;
 
 import wotlas.client.screen.JClientScreen;
 
-import wotlas.common.*;
+import wotlas.common.message.movement.*;
 import wotlas.common.universe.*;
+import wotlas.common.*;
 
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
@@ -42,6 +43,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
+import java.util.Hashtable;
+
 public class InteriorMapData implements MapData
 {
 
@@ -51,7 +54,13 @@ public class InteriorMapData implements MapData
    */
   public static boolean SHOW_DEBUG = true;
 
-  DataManager dataManager;
+  /** True if we send netMessage
+   */
+  public static boolean SEND_NETMESSAGE = false;
+  
+  /** Our default dataManager
+   */
+  private DataManager dataManager;
 
   /** tells if the player could be moving to another room
    */
@@ -248,6 +257,13 @@ public class InteriorMapData implements MapData
         myRoom.removePlayer( myPlayer );
         myPlayer.getLocation().setRoomID( newRoomID );
         Room room = dataManager.getWorldManager().getRoom(myPlayer.getLocation());
+        
+/* NETMESSAGE */
+        if (SHOW_DEBUG)
+          System.out.println("dataManager.sendMessage( new EnteringRoomMessage(...) )");
+        if (SEND_NETMESSAGE)
+          dataManager.sendMessage( new EnteringRoomMessage(myPlayer.getPrimaryKey(), myPlayer.getLocation()) );                
+
         if (SHOW_DEBUG)
           System.out.println("Adding a new player : " + myPlayer + "to room : " + room);
         room.addPlayer( myPlayer );
@@ -340,6 +356,17 @@ public class InteriorMapData implements MapData
     } // End of part II
   }
 
+ /*------------------------------------------------------------------------------------*/
+  
+  /** To get players around
+   *
+   * @param myPlayer the master player
+   */
+  public Hashtable getPlayers(PlayerImpl myPlayer) {
+    Room myRoom = dataManager.getWorldManager().getRoom( myPlayer.getLocation() );
+    return myRoom.getPlayers();
+  }
+  
  /*------------------------------------------------------------------------------------*/
 
   /** To update the graphicsDirector's drawables

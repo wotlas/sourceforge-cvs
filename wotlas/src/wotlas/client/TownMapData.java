@@ -42,6 +42,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
+import java.util.Hashtable;
+
 public class TownMapData implements MapData
 {
 
@@ -51,6 +53,12 @@ public class TownMapData implements MapData
    */
   public static boolean SHOW_DEBUG = true;
 
+  /** True if we send netMessage
+   */
+  public static boolean SEND_NETMESSAGE = false;
+  
+  /** Our default dataManager
+   */
   DataManager dataManager;
 
  /*------------------------------------------------------------------------------------*/
@@ -88,6 +96,8 @@ public class TownMapData implements MapData
     }
     dataManager.getInfosPanel().setLocation(townMap.getFullName());
 
+    townMap.addPlayer(myPlayer);
+    
     // 2 - We set player's position if his position is incorrect
 
     // 3 - We load the image
@@ -208,6 +218,10 @@ public class TownMapData implements MapData
       if (SHOW_DEBUG)
         System.out.println("We are going to a world map...");
 
+      if (SHOW_DEBUG)
+        System.out.println("Removing player from the map...");
+      townMap.removePlayer(myPlayer);
+
 ///////////////////////////// ALDISS : avant stopMoving()
       myPlayer.stopMovement();
 ///////////////////////////// FIN ALDISS
@@ -244,6 +258,10 @@ public class TownMapData implements MapData
       if (SHOW_DEBUG)
         System.out.println("We are entering a building...");
 
+      if (SHOW_DEBUG)
+        System.out.println("Removing player from the map...");
+      townMap.removePlayer(myPlayer);
+      
 ///////////////////////////// ALDISS : avant stopMoving()
       myPlayer.stopMovement();
 ///////////////////////////// FIN ALDISS
@@ -307,6 +325,17 @@ public class TownMapData implements MapData
     }
   }
 
+ /*------------------------------------------------------------------------------------*/
+  
+  /** To get players around
+   *
+   * @param myPlayer the master player
+   */
+  public Hashtable getPlayers(PlayerImpl myPlayer) {
+    TownMap townMap = dataManager.getWorldManager().getTownMap( myPlayer.getLocation() );
+    return townMap.getPlayers();
+  }
+  
  /*------------------------------------------------------------------------------------*/
 
   /** To update the graphicsDirector's drawables

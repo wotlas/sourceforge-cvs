@@ -19,6 +19,8 @@
 
 package wotlas.client;
 
+import java.util.Hashtable;
+
 /** Interface of a map (WorldMap, TownMap or InteriorMap
  *
  * @author Petrus
@@ -46,6 +48,8 @@ public interface MapData
    * - test if player is intersecting a screenZone<br>
    * - test if player is entering a new WotlasLocation<br>
    * - change the current MapData
+   *
+   * @param myPlayer the master player
    */
   public void locationUpdate(PlayerImpl myPlayer);
 
@@ -57,6 +61,14 @@ public interface MapData
 
  /*------------------------------------------------------------------------------------*/
   
+  /** To get players around
+   *
+   * @param myPlayer the master player
+   */
+  public Hashtable getPlayers(PlayerImpl myPlayer);
+ 
+ /*------------------------------------------------------------------------------------*/
+ 
 }
   
   

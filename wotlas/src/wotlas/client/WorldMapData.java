@@ -42,6 +42,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
+import java.util.Hashtable;
+
 public class WorldMapData implements MapData
 {
 
@@ -50,7 +52,13 @@ public class WorldMapData implements MapData
   /** True if we show debug informations
    */
   public static boolean SHOW_DEBUG = true;
-
+  
+  /** True if we send netMessage
+   */
+  public static boolean SEND_NETMESSAGE = false;
+  
+  /** Our default dataManager
+   */
   DataManager dataManager;
 
  /*------------------------------------------------------------------------------------*/
@@ -88,6 +96,8 @@ public class WorldMapData implements MapData
     }
     dataManager.getInfosPanel().setLocation(worldMap.getFullName());
 
+    worldMap.addPlayer(myPlayer);
+    
     // 2 - We set player's position if his position is incorrect
 
     // 3 - We load the image
@@ -194,10 +204,16 @@ public class WorldMapData implements MapData
       if (SHOW_DEBUG)
         System.out.println("We are entering a town...");
 
+      if (SHOW_DEBUG)
+        System.out.println("Removing player from the map...");
+      worldMap.removePlayer(myPlayer);
+      
 ///////////////////////////// ALDISS : changement de nom de stopMoving
 
       myPlayer.stopMovement();
 ///////////////////////////// FIN ALDISS
+
+      
 
       MapExit mapExit = townMap.findTownMapExit( myPlayer.getCurrentRectangle() );
 
@@ -212,6 +228,17 @@ public class WorldMapData implements MapData
       //initTownMapDisplay(myPlayer.getLocation()); // init new map
       dataManager.changeMapData();
     }
+  }
+
+ /*------------------------------------------------------------------------------------*/
+  
+  /** To get players around
+   *
+   * @param myPlayer the master player
+   */
+  public Hashtable getPlayers(PlayerImpl myPlayer) {
+    WorldMap worldMap = dataManager.getWorldManager().getWorldMap( myPlayer.getLocation() );
+    return worldMap.getPlayers();
   }
 
  /*------------------------------------------------------------------------------------*/

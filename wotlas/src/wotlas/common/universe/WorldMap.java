@@ -99,21 +99,22 @@ public class WorldMap
    *
    * @return a new TownMap object
    */
-  public TownMap addTownMap() {
+  public TownMap addTownMap()
+  {
+  	TownMap myTownMap = new TownMap();
+  		
     if (townMaps == null) {
       townMaps = new TownMap[1];
+      myTownMap.setTownMapID(0);
+      townMaps[0] = myTownMap;
+    } else {
+    	TownMap[] myTownMaps = new TownMap[townMaps.length+1];
+    	myTownMap.setTownMapID(townMaps.length);
+    	myTownMap.setFromWorldMapID(this.WorldMapID);
+    	System.arraycopy(townMaps, 0, myTownMaps, 0, townMaps.length);
+    	myTownMaps[townMaps.length] = myTownMap;
+    	townMaps = myTownMaps;
     }
-    
-    TownMap[] myTownMaps = new TownMap[townMaps.length+1];
-    
-    TownMap myTownMap = new TownMap();
-    myTownMap.setTownMapID(townMaps.length);
-    myTownMap.setFromWorldMapID(this.WorldMapID);
-    
-    System.arraycopy(townMaps, 0, myTownMaps, 0, townMaps.length);
-    myTownMaps[townMaps.length] = myTownMap;
-    townMaps = myTownMaps;
-    
     return myTownMap;
   }
 

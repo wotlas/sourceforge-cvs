@@ -38,6 +38,10 @@ public class Room
   /** Full name of the World
    */
    private String fullName;
+  
+  /** Short name of the World
+   */
+   private String shortName;
    
   /** Point of insertion (teleportation, arrival)
    */
@@ -87,6 +91,12 @@ public class Room
   public String getFullName() {
     return fullName;
   }
+  public void setShortName(String myShortName) {
+    this.shortName = myShortName;
+  }
+  public String getShortName() {
+    return shortName;
+  }
   public void setInsertionPoint(Point myInsertionPoint) {
     this.insertionPoint = myInsertionPoint;
   }
@@ -96,7 +106,7 @@ public class Room
   public void setMaxPlayers(int myMaxPlayers) {
     this.maxPlayers = myMaxPlayers;
   }
-  public int getPaxPlayers() {
+  public int getMaxPlayers() {
     return maxPlayers;
   }
   public void setRoomLinks(RoomLink[] myRoomLinks) {
@@ -129,20 +139,21 @@ public class Room
    *
    * @return a new RoomLink object
    */
-  public RoomLink addRoomLink() {
+  public RoomLink addRoomLink()
+  {
+    RoomLink myRoomLink = new RoomLink();
+    
     if (roomLinks == null) {
       roomLinks = new RoomLink[1];
+      myRoomLink.setRoomLinkID(0);
+      roomLinks[0] = myRoomLink;
+    } else {
+      RoomLink[] myRoomLinks = new RoomLink[roomLinks.length+1];
+      myRoomLink.setRoomLinkID(roomLinks.length);
+      System.arraycopy(roomLinks, 0, myRoomLinks, 0, roomLinks.length);
+      myRoomLinks[roomLinks.length] = myRoomLink;
+      roomLinks = myRoomLinks;
     }
-    
-    RoomLink[] myRoomLinks = new RoomLink[roomLinks.length+1];
-    
-    RoomLink myRoomLink = new RoomLink();
-    myRoomLink.setRoomLinkID(roomLinks.length);
-    
-    System.arraycopy(roomLinks, 0, myRoomLinks, 0, roomLinks.length);
-    myRoomLinks[roomLinks.length] = myRoomLink;
-    roomLinks = myRoomLinks;
-    
     return myRoomLink;
   }
   
@@ -150,20 +161,21 @@ public class Room
    *
    * @return a new MapExit object
    */
-  public MapExit addMapExit() {
+  public MapExit addMapExit()
+  {
+    MapExit myMapExit = new MapExit();
+    
     if (mapExits == null) {
       mapExits = new MapExit[1];
+      myMapExit.setMapExitID(0);
+      mapExits[0] = myMapExit;
+    } else {
+      MapExit[] myMapExits = new MapExit[mapExits.length+1];
+      myMapExit.setMapExitID(mapExits.length);
+      System.arraycopy(mapExits, 0, myMapExits, 0, mapExits.length);
+      myMapExits[mapExits.length] = myMapExit;
+      mapExits = myMapExits;
     }
-    
-    MapExit[] myMapExits = new MapExit[mapExits.length+1];
-    
-    MapExit myMapExit = new MapExit();
-    myMapExit.setMapExitID(mapExits.length);
-    
-    System.arraycopy(mapExits, 0, myMapExits, 0, mapExits.length);
-    myMapExits[mapExits.length] = myMapExit;
-    mapExits = myMapExits;
-    
     return myMapExit;
   }
   

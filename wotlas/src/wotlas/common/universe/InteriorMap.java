@@ -117,20 +117,21 @@ public class InteriorMap
    *
    * @return a new Room object
    */
-  public Room addRoom() {
+  public Room addRoom()
+  {
+    Room myRoom = new Room();
+    
     if (rooms == null) {
       rooms = new Room[1];
+      myRoom.setRoomID(0);
+      rooms[0] = myRoom;
+    } else {
+      Room[] myRooms = new Room[rooms.length+1];      
+      myRoom.setRoomID(rooms.length);
+      System.arraycopy(rooms, 0, myRooms, 0, rooms.length);
+      myRooms[rooms.length] = myRoom;
+      rooms = myRooms;
     }
-    
-    Room[] myRooms = new Room[rooms.length+1];
-    
-    Room myRoom = new Room();
-    myRoom.setRoomID(rooms.length);
-    
-    System.arraycopy(rooms, 0, myRooms, 0, rooms.length);
-    myRooms[rooms.length] = myRoom;
-    rooms = myRooms;
-    
     return myRoom;
   }
 

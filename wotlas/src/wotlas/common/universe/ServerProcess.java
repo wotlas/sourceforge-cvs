@@ -57,21 +57,22 @@ public class ServerProcess
    *
    * @return a new WorldMap object
    */
-  public WorldMap addWorldMap() {
-    if (worldMaps == null) {
-      worldMaps = new WorldMap[1];
-    }
-    
-    WorldMap[] myWorldMaps = new WorldMap[worldMaps.length+1];
-    
+  public WorldMap addWorldMap()
+  {
     WorldMap myWorldMap = new WorldMap();
-    myWorldMap.setWorldMapID(worldMaps.length);
     
-    System.arraycopy(worldMaps, 0, myWorldMaps, 0, worldMaps.length);
-    myWorldMaps[worldMaps.length] = myWorldMap;
-    worldMaps = myWorldMaps;
-
+    if (worldMaps == null) {
+      worldMaps = new WorldMap[1];      
+      myWorldMap.setWorldMapID(0);
+      worldMaps[0] = myWorldMap;
+    } else {
+      WorldMap[] myWorldMaps = new WorldMap[worldMaps.length+1];
+      myWorldMap.setWorldMapID(worldMaps.length);
+      System.arraycopy(worldMaps, 0, myWorldMaps, 0, worldMaps.length);
+      myWorldMaps[worldMaps.length] = myWorldMap; 
+      worldMaps = myWorldMaps;      
+    }    
     return myWorldMap;
   }
-
+   
 }

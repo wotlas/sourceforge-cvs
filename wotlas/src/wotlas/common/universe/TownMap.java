@@ -122,6 +122,30 @@ public class TownMap
     return buildingsEnter;
   }
   
+ /*------------------------------------------------------------------------------------*/
+
+  /** Adda new Building object to the array {@link #buildings buildings})
+   *
+   * @return a new Building object
+   */
+  public Building addBuilding()
+  {
+    Building myBuilding = new Building();
+    
+    if (buildings == null) {
+      buildings = new Building[1];      
+      myBuilding.setBuildingID(0);
+      buildings[0] = myBuilding;
+    } else {
+      Building[] myBuildings = new Building[buildings.length+1];
+      myBuilding.setBuildingID(buildings.length);
+      System.arraycopy(buildings, 0, myBuildings, 0, buildings.length);
+      myBuildings[buildings.length] = myBuilding; 
+      buildings = myBuildings;      
+    }    
+    return myBuilding;
+  }
+  
 }
 
         

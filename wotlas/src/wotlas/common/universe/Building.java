@@ -159,20 +159,21 @@ public class Building
    *
    * @return a new InteriorMap object
    */
-  public InteriorMap addInteriorMap() {
+  public InteriorMap addInteriorMap()
+  {
+    InteriorMap myInteriorMap = new InteriorMap();
+    
     if (interiorMaps == null) {
       interiorMaps = new InteriorMap[1];
+      myInteriorMap.setInteriorMapID(0);
+      interiorMaps[0] = myInteriorMap;
+    } else {
+      InteriorMap[] myInteriorMaps = new InteriorMap[interiorMaps.length+1];
+      myInteriorMap.setInteriorMapID(interiorMaps.length);
+      System.arraycopy(interiorMaps, 0, myInteriorMaps, 0, interiorMaps.length);
+      myInteriorMaps[interiorMaps.length] = myInteriorMap;
+      interiorMaps = myInteriorMaps;
     }
-    
-    InteriorMap[] myInteriorMaps = new InteriorMap[interiorMaps.length+1];
-    
-    InteriorMap myInteriorMap = new InteriorMap();
-    myInteriorMap.setInteriorMapID(interiorMaps.length);
-    
-    System.arraycopy(interiorMaps, 0, myInteriorMaps, 0, interiorMaps.length);
-    myInteriorMaps[interiorMaps.length] = myInteriorMap;
-    interiorMaps = myInteriorMaps;
-    
     return myInteriorMap;
   }
 

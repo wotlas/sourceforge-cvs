@@ -57,15 +57,10 @@ public class InteriorMapData implements MapData
    */
   public static boolean SHOW_DEBUG = false;
 
- /** if true, the player can change its MapData
+  /** if true, the player can change its MapData
    * otherwise, the server didn't send a message to do so => player stay where he is
    */
   public boolean canChangeMap;
-
-  /** lock to verify player can leave the map<br>
-   * unlocked by client.message.movement.YourCanLeaveMsgBehaviour
-   */
-  //private Object changeMapLock = new Object();
 
   /** Our default dataManager
    */
@@ -114,11 +109,11 @@ public class InteriorMapData implements MapData
 
  /*------------------------------------------------------------------------------------*/
 
-  /** To get changeMapLock
+  /** To set isNotMovingToAnotherMap
    */
-  /*public Object getChangeMapLock() {
-    return changeMapLock;
-  }*/
+  public void setIsNotMovingToAnotherMap(boolean value) {
+    isNotMovingToAnotherMap = value;
+  }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -224,6 +219,7 @@ public class InteriorMapData implements MapData
 
     // 5 - We initialize the AStar algo
     myPlayer.getMovementComposer().setMovementMask( BinaryMask.create( bufIm ), 5, 4 );
+    myPlayer.getMovementComposer().resetMovement();
     bufIm.flush(); // free image resource
 
     // 6 - We init the GraphicsDirector
@@ -400,14 +396,15 @@ public class InteriorMapData implements MapData
     // Moving to another Room ?
     if ( rl!=null && !couldBeMovingToAnotherRoom ) {
       // Player is intersecting a RoomLink
-      if (SHOW_DEBUG)
-        System.out.println("Intersecting a RoomLink");
+      /*if (SHOW_DEBUG)
+        System.out.println("Intersecting a RoomLink");*/
       latestRoomLink = rl;
       couldBeMovingToAnotherRoom = true;
     } else if ( rl==null && couldBeMovingToAnotherRoom ) {
       // ok, no intersection now, are we in an another room ?
-      if (SHOW_DEBUG)
+      /*if (SHOW_DEBUG)
         System.out.println("ok, no intersection now, are we in an another room ?");
+        */
       couldBeMovingToAnotherRoom = false;
 
       int newRoomID;
@@ -472,8 +469,9 @@ public class InteriorMapData implements MapData
         }
 
       } else {
-        if (SHOW_DEBUG)
+        /*if (SHOW_DEBUG)
           System.out.println("We are still in the same room" + newRoomID);
+          */
       }
     } // End of part I
 

@@ -41,19 +41,13 @@ public interface MapData
   /** Set to true to show debug information
    */
   public void showDebug(boolean value);
-  
-  /** To get changeMap lock<br>
-   * called by client.message.movement.YourCanLeaveMsgBehaviour
-   */  
-  //public Object getChangeMapLock();
-  
+
  /*------------------------------------------------------------------------------------*/
-  
-  /** canChangeMap is set to true if player can change its MapData<br>
-   * called by wotlas.client.message.YouCanLeaveMapMessage
+   
+  /** To set isNotMovingToAnotherMap
    */
-  //public void canChangeMapLocation( boolean canChangeMap );
- 
+  public void setIsNotMovingToAnotherMap(boolean value);
+
  /*------------------------------------------------------------------------------------*/
  
   /** To init the display<br>

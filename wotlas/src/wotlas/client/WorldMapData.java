@@ -60,11 +60,6 @@ public class WorldMapData implements MapData
    */
   public boolean canChangeMap;
 
-  /** lock to verify player can leave the map<br>
-   * unlocked by client.message.movement.YourCanLeaveMsgBehaviour
-   */
-  //private Object changeMapLock = new Object();
-
   /** Our default dataManager
    */
   private DataManager dataManager;
@@ -75,7 +70,6 @@ public class WorldMapData implements MapData
   
   /** previous location
    */
-  //private String previousLocation = "";
   private int currentWorldMapID = -1;
 
  /*------------------------------------------------------------------------------------*/
@@ -86,13 +80,13 @@ public class WorldMapData implements MapData
     SHOW_DEBUG = value;
   }
 
-/*------------------------------------------------------------------------------------*/
+ /*------------------------------------------------------------------------------------*/
 
-  /** To get changeMapLock
+  /** To set isNotMovingToAnotherMap
    */
-  /*public Object getChangeMapLock() {
-    return changeMapLock;
-  }*/
+  public void setIsNotMovingToAnotherMap(boolean value) {
+    isNotMovingToAnotherMap = value;
+  }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -103,6 +97,9 @@ public class WorldMapData implements MapData
    * - show the other images (shadows, buildings, towns...)
    */
   public void initDisplay(PlayerImpl myPlayer) {
+    if (DataManager.SHOW_DEBUG)
+      System.out.println("-- initDisplay in WorldMapData --");
+
     myPlayer.init();
 
     ImageIdentifier backgroundImageID = null;   // background image identifier
@@ -161,6 +158,7 @@ public class WorldMapData implements MapData
 
     // 5 - We initialize the AStar algo
     myPlayer.getMovementComposer().setMovementMask( BinaryMask.create( bufIm ), 5, 1 );
+    myPlayer.getMovementComposer().resetMovement();
     bufIm.flush(); // free image resource
 
     // 6 - We init the GraphicsDirector
@@ -177,9 +175,7 @@ public class WorldMapData implements MapData
         System.out.println("\tDrawing Towns");
       ImageIdentifier townImageID = null;   // town image identifier
       Drawable townImage = null;            // town image
-      for (int i=0; i<towns.length; i++) {
-        /*if (SHOW_DEBUG)
-          System.out.println("\t\ttowns["+i+"] = " + towns[i]);*/
+      for (int i=0; i<towns.length; i++) {        
         townImageID = towns[i].getSmallTownImage();
         Rectangle position = towns[i].toRectangle();
         townImage = (Drawable) new MotionlessSprite( position.x,

@@ -55,15 +55,10 @@ public class TownMapData implements MapData
    */
   public static boolean SHOW_DEBUG = false;
 
- /** if true, the player can change its MapData
+  /** if true, the player can change its MapData
    * otherwise, the server didn't send a message to do so => player stay where he is
    */
   public boolean canChangeMap;
-
-  /** lock to verify player can leave the map<br>
-   * unlocked by client.message.movement.YourCanLeaveMsgBehaviour
-   */
-  //private Object changeMapLock = new Object();
 
   /** Our default dataManager
    */
@@ -87,11 +82,11 @@ public class TownMapData implements MapData
 
  /*------------------------------------------------------------------------------------*/
 
-  /** To get changeMapLock
+  /** To set isNotMovingToAnotherMap
    */
-  /*public Object getChangeMapLock() {
-    return changeMapLock;
-  }*/
+  public void setIsNotMovingToAnotherMap(boolean value) {
+    isNotMovingToAnotherMap = value;
+  }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -125,7 +120,6 @@ public class TownMapData implements MapData
       System.out.println("\tshortName = " + townMap.getShortName());
     }
     dataManager.getChatPanel().changeMainJChatRoom(townMap.getShortName());
-    //dataManager.getInfosPanel().setLocation(townMap.getFullName());
 
     dataManager.addPlayer(myPlayer);
 
@@ -164,6 +158,7 @@ public class TownMapData implements MapData
 
     // 5 - We initialize the AStar algo
     myPlayer.getMovementComposer().setMovementMask( BinaryMask.create( bufIm ), 5, 1 );
+    myPlayer.getMovementComposer().resetMovement();
     bufIm.flush(); // free image resource
 
     // 6 - Init the GraphicsDirector
@@ -180,9 +175,7 @@ public class TownMapData implements MapData
         System.out.println("\tDrawing Buildings");
       ImageIdentifier buildingImageID = null;   // building image identifier
       Drawable buildingImage = null;            // building image
-      for (int i=0; i<buildings.length; i++) {
-        /*if (SHOW_DEBUG)
-          System.out.println("\t\tbuildings["+i+"] = " + buildings[i]);*/
+      for (int i=0; i<buildings.length; i++) {        
         buildingImageID = buildings[i].getSmallBuildingImage();
         Rectangle position = buildings[i].toRectangle();
         buildingImage = (Drawable) new MotionlessSprite( position.x,
@@ -306,10 +299,6 @@ public class TownMapData implements MapData
       if (SHOW_DEBUG)
         System.out.println("We are entering a building...");
 
-      if (SHOW_DEBUG)
-        System.out.println("Removing player from the map...");
-
-
 ///////////////////////////// ALDISS : avant stopMoving()
       myPlayer.getMovementComposer().resetMovement();
 ///////////////////////////// FIN ALDISS
@@ -380,13 +369,9 @@ public class TownMapData implements MapData
           System.out.println("\t\tmapExit.getTargetWotlasLocation() = " + mapExit.getTargetWotlasLocation());
           System.out.println("\t\tmapExit.getMapExitLocation() = " + mapExit.getMapExitLocation());
         }
-      }
+      }     
 
-      //myPlayer.setLocation(mapExit.getMapExitLocation());
-
-/* NETMESSAGE */
-      /*myPlayer.sendMessage( new CanLeaveTownMapMessage(myPlayer.getPrimaryKey(),
-                              myPlayer.getLocation(), myPlayer.getX(), myPlayer.getY()) );*/
+/* NETMESSAGE */      
       if (isNotMovingToAnotherMap) {
         isNotMovingToAnotherMap = false;
         myPlayer.sendMessage( new CanLeaveTownMapMessage(myPlayer.getPrimaryKey(),

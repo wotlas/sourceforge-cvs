@@ -94,6 +94,7 @@ public class ResetPositionMsgBehaviour extends ResetPositionMessage implements N
           myPlayer.setY(y);
           myPlayer.setLocation( location );
           myPlayer.setSyncID( syncID );
+          dataManager.getMapData().setIsNotMovingToAnotherMap(true);
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

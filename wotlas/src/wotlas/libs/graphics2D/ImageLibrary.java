@@ -797,8 +797,13 @@ public class ImageLibrary {
     *  If these two tries fail we return null. If an ImageLibrary exists but the specified
     *  ImageIndex is not a valid entry in this ImageIndex
     *
+    * IMPORTANT : note again that if an ImageLibrary exists, there is a high probability that
+    *             this method call we'll also launch the loading of the other images found in
+    *             the same 'imageAction' Directory as the specified Image.
+    *             If it's not what you want use the other loadBufferedImage method below.
+    *
     * @param imID complete image identifier
-    * @param imageDatabasePath path to search for an Image databse if no Image Library is found.
+    * @param imageDatabasePath path to search for an Image database if no Image Library is found.
     * @return if found, a BufferedImage of the image, null otherwise.
     * @exception IOException only if the image library has a bad format.
     */
@@ -833,7 +838,8 @@ public class ImageLibrary {
     *  "Action" directory which "set" directory has the "-exc" option.
     *
     * @param imID complete image identifier
-    * @param imageDatabasePath path to search for an Image databse.
+    * @param imageDatabasePath path to search for an Image database.
+    * @param imageType image type : BufferedImage.INT_ARGB for instance.
     * @return if found, a BufferedImage of the image, null otherwise.
     * @exception IOException only if the image library has a bad format.
     */
@@ -848,6 +854,56 @@ public class ImageLibrary {
        if( listIm==null ) return null;
 
        return findImageIn( listIm, imID.imageIndex, imageType );
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the ImageIdentifier of an image given a key-word. We don't load any images,
+    *  we just check the image file names that are in the given 'imageAction' directory.
+    *
+    *  This is especially useful when you are searching for an image's mask. If the image
+    *  mask is in the same 'imageAction' directory and has the word 'mask' somewhere in its
+    *  file name, getImageIdentifier( myImageId, myDataBasePath, "mask" ) will return its
+    *  entire identifier.
+    *
+    * @param imActionID complete image action identifier where to search.
+    * @param imageDatabasePath path to search for an Image databse.
+    * @param keyword word to search.
+    * @return if found, the complete ImageIdentifier of the first image matching the keyword,
+    *         null otherwise.
+    * @exception IOException only if the image library has a bad format.
+    */
+    static public ImageIdentifier getImageIdentifier( ImageIdentifier imActionID,
+                                                      String imageDataBasePath,
+                                                      String keyword ) throws IOException {
+       String set = getSetDirectory( imageDataBasePath, imActionID );
+       String action = getNameFromID( set, imActionID.imageAction );
+
+       if( action==null ) return null;
+
+       File imageFiles[] = new File( set+File.separator+action ).listFiles();
+       if( imageFiles==null ) return null;
+
+       for( int l=0; l<imageFiles.length; l++ ) {
+             if( imageFiles[l].isDirectory() || imageFiles[l].getName().lastIndexOf('-')<0 )
+                 continue;
+
+             String imageName = imageFiles[l].getName().toLowerCase();
+
+             if( imageName.endsWith(".jpg") || imageName.endsWith(".gif") )
+                  imageName = imageName.substring( 0, imageName.lastIndexOf('.') );
+             else
+                  continue;
+
+          // Is it the image we wanted ?
+             if( imageName.indexOf( keyword ) >=0 ) {
+                ImageIdentifier result = new ImageIdentifier( imActionID );
+                result.imageIndex = (short) getIDFromName( imageName );
+                return result;
+             }
+       }
+
+       return null; // not found
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

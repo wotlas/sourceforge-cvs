@@ -78,13 +78,11 @@ public class LimitWindowPolicy implements WindowPolicy{
         Dimension background = gDirector.getBackgroundDimension();
         Rectangle refDrawable = gDirector.getRefDrawable().getRectangle();
         
-        System.out.println("screen.x = " + screen.x);
-        System.out.println("screen.width = " + screen.width);
-        System.out.println("background.width = " + background.width);          
-        System.out.println("refDrawable.x = " + refDrawable.x);
-        System.out.println("refDrawable.width = " + refDrawable.width);
-        
-        
+        //System.out.println("screen.x = " + screen.x);
+        //System.out.println("screen.width = " + screen.width);
+        //System.out.println("background.width = " + background.width);          
+        //System.out.println("refDrawable.x = " + refDrawable.x);
+        //System.out.println("refDrawable.width = " + refDrawable.width);                
 
        //calculate the pourcentage to the edge on the 4 directions
 	 //the top left corner of the refDrawable is taken for references for limitHaut and limitGauche	

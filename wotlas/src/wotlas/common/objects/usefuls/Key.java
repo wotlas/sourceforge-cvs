@@ -40,11 +40,11 @@ public class Key extends UsefulObject implements TransportableInterface
 
  /** Key identifier.
   */
-  	private int iKeyID;
+  	protected int iKeyID;
 	
  /** Key string identifier.
   */
-  	private String sKeyID; 																						
+  	protected String sKeyID; 																						
 	  
  /** Is it on ?
   */
@@ -70,13 +70,17 @@ public class Key extends UsefulObject implements TransportableInterface
 	 /* no op */
 	}
 
-  /** Put the object "on". Needed before action is possible.
+  /** Ready the key for usage.
    */
-    public void equip()
+    public void ready()
 	{
-	 equipped=true;
+	 /* no op */
 	}
 
+    public void equip()
+	{	   
+	 equipped=true;
+	}
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
    /** Gets rid of the object. The object is dropped on the ground.

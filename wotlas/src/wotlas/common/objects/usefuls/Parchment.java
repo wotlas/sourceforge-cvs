@@ -34,17 +34,13 @@ public class Parchment extends Document
 
  /*------------------------------------------------------------------------------------*/
 
- /** Is it on ?
-  */
-  private boolean equipped;
-  
  /** The text of the parchment.
   */
-  private Chapter text;
+  protected Chapter text;
   
  /** The name of the parchment.
   */
-  private String title;
+  protected String title;
 
  
  /*------------------------------------------------------------------------------------*/
@@ -83,23 +79,23 @@ public class Parchment extends Document
 	 if (!equipped)
 	 	return;
 		
-	 makeReady();
+	 if (!ready)
+	 	return;		
 	 /* Open the GUI */
 	}
 
-  /** Put the object "on". Needed before action is possible.
+  /** Put the object "on".
    */
     public void equip()
 	{
 	 equipped=true;
 	}
-
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 	
   /** Ready the document.
    * Currently no op.  
    */
-    public void makeReady()
+    public void ready()
 	{
 	 /* no op */
 	}

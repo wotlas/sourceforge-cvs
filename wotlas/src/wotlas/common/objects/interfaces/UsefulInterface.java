@@ -31,14 +31,14 @@ public interface UsefulInterface
  /*------------------------------------------------------------------------------------*/
 
 
-  /** Use the object. Lots of different implementations. 
+  /** Use the object.
    */
     public void use();
 
-  /** Put the object "on". Needed before action is possible.
+  /** Ready the object for usage.
    */
-    public void equip();
-
+    public void ready();
+	
 	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

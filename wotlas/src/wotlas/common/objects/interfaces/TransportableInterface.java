@@ -48,6 +48,11 @@ public interface TransportableInterface
    */
     public void giveTo(Player receiver);
 	
+  /** Put the object "on".<br>
+   * Enable usage for some objects, visibility for others.
+   */
+    public void equip();
+
 		
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

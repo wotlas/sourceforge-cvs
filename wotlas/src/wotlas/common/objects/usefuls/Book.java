@@ -41,23 +41,19 @@ public class Book extends Document implements BookInterface
 
  /** The content of the book.
   */
-  private Chapter[] chapters;
+  protected Chapter[] chapters;
   
  /** The current number of chapters in the book.
   */
-  private short nbChapters;
+  protected short nbChapters;
 
  /** The active chapter in the book.
   */
-  private short currentChapter;
+  protected short currentChapter;
 
  /** The title of the book.
   */
-  private String title;
-  
- /** Is it on ?
-  */
-  private boolean equipped;
+  protected String title;
  
  /*------------------------------------------------------------------------------------*/
 
@@ -84,17 +80,29 @@ public class Book extends Document implements BookInterface
 	{
 	 if (!equipped)
 	 	return;
+		
+	 if (!ready)
+	 	return;
+		
 	 open();
 	}
 
-  /** Put the object "on". Needed before action is possible.
+  /** Ready the book.
+   */
+    public void ready()
+	{
+	 /* no op */
+	 ready=true;
+	}
+
+  /** Put the book "on".<br>
    */
     public void equip()
 	{
-	 /* Put it on */
+	 /* no op */
 	 equipped=true;
 	}
-
+	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Open the book.<br>
@@ -120,13 +128,6 @@ public class Book extends Document implements BookInterface
 	 /* Launch the GUI */
 	}
 
-  /** Ready the book.
-   * Calls open()  
-   */
-    public void makeReady()
-	{
-	 open();
-	}
 
   /** Get the current chapter.
    * @return active chapter

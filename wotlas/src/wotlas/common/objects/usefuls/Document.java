@@ -39,6 +39,10 @@ public abstract class Document extends UsefulObject implements ReadableInterface
 
  /*------------------------------------------------------------------------------------*/
 
+ /** Is it on ?
+  */
+  protected boolean equipped;
+ 
 	  
  /*------------------------------------------------------------------------------------*/
  

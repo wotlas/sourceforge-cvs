@@ -35,6 +35,9 @@ public abstract class UsefulObject extends BaseObject implements UsefulInterface
 
  /*------------------------------------------------------------------------------------*/
 
+ /** Is it ready ?
+  */
+  protected boolean ready;
   
  /*------------------------------------------------------------------------------------*/
 
@@ -52,9 +55,9 @@ public abstract class UsefulObject extends BaseObject implements UsefulInterface
    */
     public abstract void use();
 
-  /** Put the object "on". Needed before action is possible.
+  /** Ready the object for usage. Lots of different implementations.
    */
-    public abstract void equip();
+    public abstract void ready();
 
 	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

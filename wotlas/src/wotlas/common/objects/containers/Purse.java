@@ -44,8 +44,12 @@ public class Purse extends ContainerObject implements TransportableInterface
  
  /** The actual content of the purse.
   */  																						
-  private ValuedObject content;
+  protected ValuedObject content;
  
+ /** Is the object "on" ?
+  */  																						
+  protected boolean equipped;
+
  /*------------------------------------------------------------------------------------*/
 
  /** The default constructor.<br>
@@ -139,6 +143,16 @@ public class Purse extends ContainerObject implements TransportableInterface
 	{
 	 /* no op */
 	}
+	
+  /** Put the object "on".<br>
+   * Enable usage for some objects, visibility for others.
+   */
+    public void equip()
+	{
+	 /* no op */
+	 equipped=true;
+	}
+	
 	
  /*------------------------------------------------------------------------------------*/
 	

@@ -36,6 +36,10 @@ public class Bag extends ContainerObject implements TransportableInterface
 
  /*------------------------------------------------------------------------------------*/
 
+ /** Is the object "on" ?
+  */  																						
+  protected boolean equipped;
+
  
  /*------------------------------------------------------------------------------------*/
 
@@ -86,6 +90,15 @@ public class Bag extends ContainerObject implements TransportableInterface
 	{
 	 /* no op */
 	}
+	
+  /** Put the bag "on".<br>
+   */
+    public void equip()
+	{
+	 /* no op */
+	 equipped=true;
+	}
+	
 
  /*------------------------------------------------------------------------------------*/
 

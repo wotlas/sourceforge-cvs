@@ -29,13 +29,7 @@ package wotlas.common.objects.interfaces;
 public interface WritableInterface
 {
 
- /*------------------------------------------------------------------------------------*/
-
-  /** Ready the document.
-   * Unfold for a parchment, open for a book, ...  
-   */
-    public void makeReady();
-	
+ /*------------------------------------------------------------------------------------*/	
  
   /** Write to the document.
    * @param text the text to write

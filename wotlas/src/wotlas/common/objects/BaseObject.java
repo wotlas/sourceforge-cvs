@@ -23,6 +23,8 @@ import wotlas.common.Player;	// the class used to give or sell. It has to be ada
 //import wotlas.common.Levels;	// not implemented
 //import wotlas.common.Knowledge; // not implemented
 import wotlas.common.universe.WotlasLocation;	
+import wotlas.libs.graphics2D.Drawable;
+import wotlas.libs.graphics2D.ImageIdentifier;
 
 /** 
  * The base class for all game objects that may be encountered in wotlas.
@@ -55,28 +57,75 @@ public class BaseObject
    */
      protected short objectWeight;
 	  
-  /** Object's size - used for max load.
+  /** Object's size - used for max load in Containers.
    */
      protected short objectSize;
 
-  /** The level(s) required to use this object. - THE CLASS LEVEL/LEVELLIST DOES NOT EXIST ! 
+  /** The level(s) required to use this object. - THE CLASS LEVEL DOES NOT EXIST ! 
    */
 	 protected String[] /*Level[]*/ requiredLevels;													
 
-  /** The knowledge required to use this object. - THE CLASS KNOWLEDGE/KNOWLEDGELIST DOES NOT EXIST !
+  /** The knowledge required to use this object. - THE CLASS KNOWLEDGE DOES NOT EXIST !
    */
    	 protected String[] /*Knowledge[]*/ requiredKnowledge;
 
-  /** The owner of this object. - THE CLASS CHARACTER HAS TO BE ADAPTED FOR OBJECTS !
+  /** The owner of this object. - THE CLASS PLAYER HAS TO BE ADAPTED FOR OBJECTS !
    */
    	 protected Player owner;
   	 
+  /** The GFX of the object.
+   */
+	 protected Drawable drawable;
 	 
+  /** The icon in the Inventory
+   */
+	 protected ImageIdentifier inventoryPicture;
+	 	 
  /*------------------------------------------------------------------------------------*/
 		
-  /* ------- Constructor - TO DO . ----- */		
+  /* ------- Constructor ----- */
+  		
+  /** Default constructor.<br>Just sets className and objectName to default.
+   */
+   	 public BaseObject()
+	 {
+	  className="BaseObject";
+	  objectName="default object";
+	 }
 		
-  /* ------- Getters / Setters - still missing some - boring :-( --------- */
+  /* ------- Getters / Setters - still missing some : Knowledge & Levels, owner --------- */
+
+  /** Return the ImageIdentifier of the object's inventory representation.
+  	  @return inventoryPicture
+   */
+   	 public ImageIdentifier getInventoryPicture()
+	 {
+	  return inventoryPicture;
+	 }
+
+  /** Set the ImageIdentifier of the object's inventory representation.
+  	  @param inventoryPicture the new ID
+   */
+   	 public void setInventoryPicture(ImageIdentifier inventoryPicture)
+	 {
+	  this.inventoryPicture=inventoryPicture;
+	 }
+
+  /** Return the object's in-game representation.
+  	  @return drawable
+   */
+   	 public Drawable getDrawable()
+	 {
+	  return drawable;
+	 }
+
+  /** Set the object's in-game representation.
+  	  @param drawable the new drawable
+   */
+   	 public void setDrawable(Drawable drawable)
+	 {
+	  this.drawable=drawable;
+	 }
 	
   /** Return the name of the class of the object (like Sword, Axe, ...)
   	  @return className

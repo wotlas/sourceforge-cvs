@@ -30,11 +30,6 @@ public interface ReadableInterface
 {
 
  /*------------------------------------------------------------------------------------*/
-
-  /** Ready the document.
-   * Unfold a parchment, open a book, ...  
-   */
-    public void makeReady();
 	
   /** Get the document's text.
    * @return current readable text

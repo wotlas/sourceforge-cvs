@@ -413,6 +413,16 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     return (turningAlongPath || walkingAlongPath);
   }
   
+  /** To stop the player's movement
+   */
+  public void stopMoving() {
+    walkingAlongPath = false;
+    turningAlongPath = false;
+    path = null;
+    nextPoint = null;
+    prevPoint = null;
+  }
+  
   /** Tick
    */
   public void tick() {    

@@ -328,7 +328,8 @@ public class InteriorMapData implements MapData
         
       Debug.signal( Debug.NOTICE, null, "LOCATION HAS CHANGED in InteriorMapData");
 
-      dataManager.getPlayers().clear();
+      if(dataManager.getPlayers()!=null)
+         dataManager.getPlayers().clear();
       dataManager.cleanInteriorMapData(); // suppress drawables, shadows, data
       dataManager.getChatPanel().reset();
 

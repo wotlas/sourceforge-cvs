@@ -250,7 +250,9 @@ public class TownMapData implements MapData
         
       Debug.signal( Debug.NOTICE, null, "LOCATION HAS CHANGED in TownMapData");
 
-      dataManager.getPlayers().clear();
+      if(dataManager.getPlayers()!=null)
+         dataManager.getPlayers().clear();
+
       dataManager.cleanInteriorMapData();
       dataManager.getChatPanel().reset();
       

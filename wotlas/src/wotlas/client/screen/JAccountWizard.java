@@ -286,6 +286,7 @@ public class JAccountWizard extends JWizard
     /** called when Next button is clicked
      */
     public void onNext(Object context) {
+      DataManager.getDefaultDataManager().getCurrentProfileConfig().setPlayerName(tf_fullname.getText());
       personality.queueMessage( new PlayerNamesMessage(tf_nickname.getText(), tf_fullname.getText(), tf_email.getText()));
     }
 

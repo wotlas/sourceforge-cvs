@@ -59,7 +59,7 @@ public class JChatRoom extends JPanel
 
   /** Where messages appear.
    */
-  private JTextPane messagesPane;
+  private JEditorPane messagesPane;
 
   /** Chat document.
    */
@@ -84,7 +84,8 @@ public class JChatRoom extends JPanel
    * @param chatRoom the chatRoom to display
    */
   JChatRoom(ChatRoom chatRoom) {
-    super(false);
+    //super(false);
+    super(true);
     setName(chatRoom.getPrimaryKey());
     setLayout(new BorderLayout());
     players = new Hashtable(2);
@@ -98,32 +99,41 @@ public class JChatRoom extends JPanel
 //    doc_chat = new DefaultStyledDocument();
 
 //    messagesPane = new JTextPane(doc_chat); ALDISS
-    messagesPane = new JTextPane();
+    messagesPane = new JEditorPane();
     messagesPane.setContentType("text/html");
     messagesPane.setEditable(false);
 
     JScrollPane displayScroller = new JScrollPane(messagesPane);
-
+    
     attribut = new SimpleAttributeSet();
     StyleConstants.setFontSize(attribut,12);
 
-    strBuffer = "<font color='green'><i>new chat created</i></font><br>\n";
-
+    /*
+    strBuffer = "<font color='green'><i>new chat created</i></font><br>\n";;
     messagesPane.setText("<html><body>" + strBuffer + "</body></html>");
+    */
 
     //messagesPane.setCaretPosition(messagesPane.getText().length());
 
     // EAST (List of ChatRoom players)
     playersListModel = new DefaultListModel();
-
+    
     playersJList = new JList(playersListModel);
+
     playersJList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    
+    
     JScrollPane listScroller = new JScrollPane(playersJList,
             ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
             ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
+    playersJList.setPreferredSize(new Dimension(40,0));
+
     add("Center", displayScroller);
     add("East", listScroller);
+
+    strBuffer = "";
+    appendText("<font color='green'><i>new chat created</i></font>");
 
   }
 
@@ -159,6 +169,8 @@ public class JChatRoom extends JPanel
         if (!strNewName.equals(DataManager.getDefaultDataManager().getMyPlayer().getFullPlayerName()))
           appendText("<font color='green'>" + strNewName + " entered the chat...</font>");
         playersListModel.addElement(strNewName);
+        revalidate();
+        repaint();
       }
     };
     SwingUtilities.invokeLater( runnable );
@@ -181,6 +193,8 @@ public class JChatRoom extends JPanel
         if (!strOldName.equals(DataManager.getDefaultDataManager().getMyPlayer().getFullPlayerName()))
           appendText("<font color='green'><i>" + strOldName + " left the chat...</i></font>");
         playersListModel.removeElement(strOldName);
+        revalidate();
+        repaint();
       }
     };
     SwingUtilities.invokeLater( runnable );
@@ -246,15 +260,15 @@ public class JChatRoom extends JPanel
 
       // Search for smileys
       
-      text = Tools.subString(text, ":,(", "<img src='file:..\\base\\gui\\chat\\cry.gif'>");
-      text = Tools.subString(text, ":o", "<img src='file:..\\base\\gui\\chat\\eek.gif'>");
-      text = Tools.subString(text, ":D", "<img src='file:..\\base\\gui\\chat\\laugh.gif'>");
-      text = Tools.subString(text, ":(", "<img src='file:..\\base\\gui\\chat\\mad.gif'>");
-      text = Tools.subString(text, ">0", "<img src='file:..\\base\\gui\\chat\\rant.gif'>");
-      text = Tools.subString(text, "|I", "<img src='file:..\\base\\gui\\chat\\sleep.gif'>");
-      text = Tools.subString(text, ":)", "<img src='file:..\\base\\gui\\chat\\smile.gif'>");
-      text = Tools.subString(text, ":|", "<img src='file:..\\base\\gui\\chat\\squint.gif'>");
-      text = Tools.subString(text, ";)", "<img src='file:..\\base\\gui\\chat\\wink.gif'>");
+      text = Tools.subString(text, ":,(", "<img width=15 height=15 src='file:..\\base\\gui\\chat\\cry.gif'>");
+      text = Tools.subString(text, ":o",  "<img width=15 height=15 src='file:..\\base\\gui\\chat\\eek.gif'>");
+      text = Tools.subString(text, ":D",  "<img width=15 height=15 src='file:..\\base\\gui\\chat\\laugh.gif'>");
+      text = Tools.subString(text, ":(",  "<img width=15 height=15 src='file:..\\base\\gui\\chat\\mad.gif'>");
+      text = Tools.subString(text, ">0",  "<img width=15 height=15 src='file:..\\base\\gui\\chat\\rant.gif'>");
+      text = Tools.subString(text, "|I",  "<img width=15 height=15 src='file:..\\base\\gui\\chat\\sleep.gif'>");
+      text = Tools.subString(text, ":)",  "<img width=15 height=15 src='file:..\\base\\gui\\chat\\smile.gif'>");
+      text = Tools.subString(text, ":|",  "<img width=15 height=15 src='file:..\\base\\gui\\chat\\squint.gif'>");
+      text = Tools.subString(text, ";)",  "<img width=15 height=15 src='file:..\\base\\gui\\chat\\wink.gif'>");
 
 
     //try {
@@ -265,11 +279,11 @@ public class JChatRoom extends JPanel
       strBuffer += text + "<br>\n";
 
       Runnable runnable = new Runnable() {
-          public void run() {
-               messagesPane.setText(strBuffer);
-          }
+        public void run() {
+          messagesPane.setText(strBuffer);
+          messagesPane.repaint();
+        }
       };
-
       SwingUtilities.invokeLater( runnable );
 
     /*} catch(BadLocationException e) {

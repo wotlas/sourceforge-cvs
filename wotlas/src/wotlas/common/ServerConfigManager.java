@@ -290,8 +290,9 @@ public class ServerConfigManager {
 
           if(parent!=null) {
              pMonitor = new ProgressMonitor( parent, "Loading Server List", "", 0, getMaxValue() );
-             pMonitor.setMillisToPopup(500);
              pMonitor.setMillisToDecideToPopup(100);
+             pMonitor.setMillisToPopup(500);
+             pMonitor.setProgress(0);
           }
 
           int ind=0;

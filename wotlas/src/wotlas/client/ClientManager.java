@@ -1063,8 +1063,14 @@ public class ClientManager extends JIntroWizard implements ActionListener {
     case DATAMANAGER_DISPLAY:
 
       hide();
-      ClientDirector.getDataManager().showInterface();
 
+      Thread heavyProcessThread = new Thread() {
+        public void run() {
+           ClientDirector.getDataManager().showInterface();
+        }
+      };
+
+      heavyProcessThread.start();
       break;
 
     default:

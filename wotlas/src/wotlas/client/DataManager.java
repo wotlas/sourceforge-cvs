@@ -39,6 +39,7 @@ import wotlas.libs.persistence.*;
 import wotlas.libs.sound.SoundLibrary;
 
 import wotlas.utils.*;
+import wotlas.utils.aswing.AProgressMonitor;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -439,10 +440,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
           return;
        }
 
-       ProgressMonitor pMonitor = new ProgressMonitor( ClientDirector.getClientManager(),
-                                           "Loading Data...", "", 0, 100 );
-       pMonitor.setMillisToPopup(500);
-       pMonitor.setMillisToDecideToPopup(100);
+       AProgressMonitor pMonitor = new AProgressMonitor( ClientDirector.getClientManager(), "Wotlas" );
+       pMonitor.setProgress("Loading Shared Images...",0);
 
     // 1 - Create Image Library
        String imageDBHome = ClientDirector.getResourceManager().getBase( IMAGE_LIBRARY );
@@ -456,7 +455,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
           Debug.exit();
        }
 
-       pMonitor.setProgress(10);
+       pMonitor.setProgress("Reading Preferences...",10);
 
     // 2 - Set Client Configuration Choices
        ClientConfiguration clientConfiguration = ClientDirector.getClientConfiguration();
@@ -471,7 +470,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        if(clientConfiguration.getSoundVolume()>0)
          SoundLibrary.getSoundLibrary().setSoundVolume((short) clientConfiguration.getSoundVolume());
 
-       pMonitor.setProgress(15);
+       pMonitor.setProgress("Creating 2D Engine...",15);
     
     // 3 - Create Graphics Director
        WindowPolicy wPolicy = null;
@@ -489,7 +488,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        Debug.signal(Debug.NOTICE, null, "Graphics Engine is using hardware mode : "+
                                          clientConfiguration.getUseHardwareAcceleration() );
 
-       pMonitor.setProgress(20);
+       pMonitor.setProgress("Creating GUI...",20);
 
     // 4 - Creation of the GUI components
        clientScreen = new JClientScreen(gDirector, this );
@@ -497,7 +496,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        if(SHOW_DEBUG)
           System.out.println("JClientScreen created");
 
-       pMonitor.setProgress(30);
+       pMonitor.setProgress("Loading Player Data...",30);
 
     // 5 - We retrieve our player's own data
        myPlayer = null;
@@ -527,7 +526,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        if (SHOW_DEBUG)
           System.out.println("POSITION set to x:"+myPlayer.getX()+" y:"+myPlayer.getY()+" location is "+myPlayer.getLocation());
 
-       pMonitor.setProgress(80);
+       pMonitor.setProgress("Setting Preferences...",80);
 
     // 6 - Final GUI inits
        personality.setPingListener( (NetPingListener) clientScreen.getPingPanel() );
@@ -537,7 +536,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        if ( (clientConfiguration.getClientWidth()>0) && (clientConfiguration.getClientHeight()>0) )
           clientScreen.setSize(clientConfiguration.getClientWidth(),clientConfiguration.getClientHeight());
 
-       pMonitor.setProgress(85);
+       pMonitor.setProgress("Loading Map Data...",85);
 
     // 7 - Init the map display...
        changeMapData();
@@ -545,14 +544,14 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        if(SHOW_DEBUG)
          System.out.println("Changed map data !");
 
-       pMonitor.setProgress(95);
+       pMonitor.setProgress("Starting Game...",95);
 
     // 8 - Start the tick thread.
        start();
        Debug.signal( Debug.NOTICE, null, "Started the tick thread..." );
 
        clientScreen.show();
-       pMonitor.setProgress(100);
+       pMonitor.setProgress("Done...",100);
        pMonitor.close();
 
        if (SHOW_DEBUG)
@@ -571,6 +570,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
     public void resumeInterface() {
        Debug.signal( Debug.NOTICE, null, "DataManager::ResumeInterface");
+
+       AProgressMonitor pMonitor = new AProgressMonitor( ClientDirector.getClientManager(), "Wotlas" );
+       pMonitor.setProgress("Creating 2D Engine...",15);
 
     // 1 - We recreate the graphics director...
        WindowPolicy wPolicy = null;
@@ -591,6 +593,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        clientScreen.getMapPanel().updateGraphicsDirector(gDirector);
 
     // 2 - Retrieve player's informations
+       pMonitor.setProgress("Loading Player Data...",30);
        myPlayer = null;
 
        waitForConnection(10000); // 10s max...
@@ -619,16 +622,24 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
           System.out.println("POSITION set to x:"+myPlayer.getX()+" y:"+myPlayer.getY()+" location is "+myPlayer.getLocation());
 
     // 3 - Reset previous the data
+       pMonitor.setProgress("Setting Preferences...",80);
+
        clientScreen.getChatPanel().reset();
        clientScreen.getPlayerPanel().reset();
        players.clear();
        personality.setPingListener( (NetPingListener) clientScreen.getPingPanel() );
 
     // 4 - Init map display, resume tick thread & show screen...
+       pMonitor.setProgress("Loading Map Data...",85);
+
        changeMapData();
        resumeTickThread();
 
+       pMonitor.setProgress("Starting Game...",95);
        clientScreen.show();
+
+       pMonitor.setProgress("Done...",100);
+       pMonitor.close();
 
     // 5 - Welcome message
        sendMessage(new WelcomeMessage());

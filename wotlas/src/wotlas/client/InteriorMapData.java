@@ -282,7 +282,7 @@ System.out.println("NOTIFYING");
 
       // is there a Door ?
       if ( rl.getDoor()!=null ) {
-        // nothing for now
+           rl.openDoor( myPlayer.getCurrentRectangle() );
       }
     } else if ( rl==null && couldBeMovingToAnotherRoom ) {
       // ok, no intersection now, are we in an another room ?

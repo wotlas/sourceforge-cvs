@@ -40,7 +40,7 @@ public class GraphicsDirector extends JPanel {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Represents the visble part of the JPanel (it has the JPanel's size)
+  /** Represents the visible part of the JPanel (it has the JPanel's size)
    *  and is expressed in the background's coordinate (we use the background as a
    *  reference here, because all Drawables should be expressed in background
    *  coordinates).
@@ -61,9 +61,15 @@ public class GraphicsDirector extends JPanel {
    */
     private DrawableIterator drawables;
 
+  /** The image library from which will take our images.
+   */
+    private ImageLibrary imageLib;
+
   /** Our WindowPolicy. It tells us how to move the screen on the background.
    */
     private WindowPolicy windowPolicy;
+
+ /*------------------------------------------------------------------------------------*/
 
   /** Can we display our drawables ?
    */
@@ -77,29 +83,59 @@ public class GraphicsDirector extends JPanel {
    */
     private Image backBufferImage;
 
-  /** To repaint the screen.
-   */
+  /** FOR REPAINT SOLUTION 2
+   ** To repaint the screen.
+   * 
     private Thread paintThread;
   
-  /** Is there already a Thread waiting to repaint the screen ?
-   */
+   ** Is there already a Thread waiting to repaint the screen ?
+   *
     private boolean isLocked;
+
+   ** END OF REPAINT SOLUTION 2 */
 
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. The window policy is not supposed to change during the life of the
    *  GraphicsDirector, but you can still change it by invoking the setWindowPolicy()
-   *  method.
+   *  method. The ImageLibrary is set to the default one : ImageLibrary.getDefault...
    *
    * @param windowPolicy a policy that manages window scrolling.
+   * @exception ImageLibraryException if no ImageLibrary is found.
    */
-    public GraphicsDirector( WindowPolicy windowPolicy ) {
+    public GraphicsDirector( WindowPolicy windowPolicy )
+    throws ImageLibraryException {
+    	this( windowPolicy, null );
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Constructor. The window policy is not supposed to change during the life of the
+   *  GraphicsDirector, but you can still change it by invoking the setWindowPolicy()
+   *  method. If the imageLibrary is set to null we seek for a default one.
+   *
+   * @param windowPolicy a policy that manages window scrolling.
+   * @param imageLib ImageLibrary to use for this GraphicsDirector.
+   * @exception ImageLibraryException if no ImageLibrary is found.
+   */
+    public GraphicsDirector( WindowPolicy windowPolicy, ImageLibrary imageLib )
+    throws ImageLibraryException {
       super(false); // we don't use the default JPanel double-buffering
+
+      if(imageLib==null) {
+         this.imageLib = ImageLibrary.getDefaultImageLibrary();
+         
+         if(this.imageLib==null)
+            throw new ImageLibraryException("No Image Library Found !");
+      }
+      else
+         this.imageLib = imageLib;
+
       display = false;
       drawables = new DrawableIterator();
       setWindowPolicy( windowPolicy );
       setBackground( Color.white );
-      isLocked=false;
+      // isLocked=false;  // remove this comment for REPAINT solution 2
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -115,6 +151,11 @@ public class GraphicsDirector extends JPanel {
    */
     public void init( Drawable backDrawable,  Drawable refDrawable, Dimension screen) {
 
+      // we reset the GraphicsDirector's drawables
+         drawables.clear();
+         addDrawable( backDrawable );
+         addDrawable( refDrawable );
+
       // Background dims
          display = false;
          background = new Dimension( backDrawable.getWidth(), backDrawable.getHeight() );
@@ -124,12 +165,6 @@ public class GraphicsDirector extends JPanel {
          setPreferredSize( screen );
          setMaximumSize( background );
          setMinimumSize( new Dimension(10,10) );
-
-
-      // we reset the GraphicsDirector's drawables
-         drawables.clear();
-         addDrawable( backDrawable );
-         addDrawable( refDrawable );
 
       // We set the new drawable reference an tick our WindowPolicy.
          this.refDrawable = refDrawable;
@@ -151,11 +186,11 @@ public class GraphicsDirector extends JPanel {
   /** Our customized repaint method
    */
     public void repaint() {      
-       if(lockPaint==null) return;
+       if(lockPaint==null) return; // to prevent repaint() calls during the constructor call.
 
        paint( getGraphics() );
 
-// SOLUTION 2 :
+// SOLUTION 2 : (gives better performance but is instable on slow computers)
 /*
        synchronized( lockPaint ) {
 
@@ -235,6 +270,7 @@ public class GraphicsDirector extends JPanel {
           antiARenderHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
           boolean previousHadAntiA = false;
+          final Rectangle r_screen =  new Rectangle( screen );
 
           synchronized( drawables ) {
 
@@ -256,7 +292,7 @@ public class GraphicsDirector extends JPanel {
                         gc2D.setRenderingHints( savedRenderHints );
                     }
 
-                    d.paint( gc2D, new Rectangle( screen ) );
+                    d.paint( gc2D, r_screen );
              }
 
           }
@@ -277,6 +313,10 @@ public class GraphicsDirector extends JPanel {
     public void addDrawable( Drawable dr ) {
     	if(dr==null) return;
 
+     // We initialize the drawable.
+        dr.init(imageLib);
+
+     // We insert it in our list (list ordered by priority)
         synchronized( drawables ) {
             drawables.resetIterator();
 
@@ -435,4 +475,14 @@ public class GraphicsDirector extends JPanel {
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the ImageLibrary associated to this GraphicsDirector.
+    *  @return our ImageLibrary
+    */
+     public ImageLibrary getImageLibrary() {
+     	return imageLib;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }

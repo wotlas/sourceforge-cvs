@@ -26,12 +26,92 @@ import java.awt.image.*;
 import java.io.*;
 
 /** An ImageLibrary manages shared images ( i.e. used by more than
- *  one entity ). It also proposes static methods for image loading.<p>
+ *  one object ). It also proposes static methods for image loading.
  *
- *  It relies on a image Database that must have a special structure ( see
- *  the createImagelibrary() method for more details ).<p>
+ *  <p>It relies on a image database that is loaded into memory at creation time.
+ *  The database must have the following structure:</p>
+ *   <pre>
+ *     - it is a tree composed of directories and images. Each directory can contain
+ *       sub-directories or/and images.
  *
- *  Images in the ImageLibrary are INT_ARGB buffered images.
+ *     - the directories must have the following format : <DIR_NAME>-<XXX>[-option]
+ *       XXX represents the directory ID (must start at 0 and increase one by one).
+ *       Available options are :
+ *
+ *          o -jit : "just in time". All the images that are in the directory AND its
+ *            sub-directories are NOT loaded into memory until they are needed. This
+ *            option is always automatically propagated to sub-directories.
+ *
+ *          o -exc : "exclusion". Only one of the sub-directories can be loaded into
+ *            memory at the same time. When you load one of them the others are
+ *            automatically unloaded (flushed). It is logical that the images of a
+ *            "-exc" directory are not loaded at start-up. You need to load them manually.
+ *            
+ *            This option is especially useful when handling huge images that don't need
+ *            to be in memory at the same time.
+ *
+ *       Example :  animals-0
+ *                      |
+ *                      --- cats-0-jit    // lots of small cat images, loaded just in time
+ *                      |
+ *                      --- dogs-1-exc    // huge dog images
+ *                           |
+ *                           --- poddle-0
+ *                           |
+ *                           --- ousti-1
+ *                           |
+ *                           --- cork-2
+ *
+ *     - images must have the following format : <IMAGE_NAME>-<XXX>.<jpg|gif>
+ *       XXX represents the image ID (must start at 0 and increase one by one).
+ *
+ *       Example : cats-0-jit
+ *                    |
+ *                    --- cat-0.jpg
+ *                    |
+ *                    --- strange_cat-1.jpg
+ *                    |
+ *                    --- an_other_cat-2.gif
+ *                    |
+ *                    --- big_cats-0  // sub-directory, note that the IDs between images
+ *                                    // and directories are separated.
+ *
+ *     - for animations all the images must be in the same directory. There musn't
+ *       be other images in the directory. You can create an Animation object to manage
+ *       your animation.
+ *   </pre>
+ *
+ *   <p>As you see directories and images have IDs. These IDs help for array creation and 
+ *      direct access to images. Images in the ImageLibrary are INT_ARGB buffered images.
+ *   </p>
+ *   <p>With the example above an ImageIdentifier representing the cat-0.jpg could be created
+ *      either by calling :</p>
+ *      <pre>
+ *        String path[] = { "animals-0", "cats-0" };
+ *        ImageIdentifier imCat = new ImageIdentifier( path );
+ *
+ *        or
+ *
+ *        String path[] = { "animals-0", "cats-0", "cat-0.jpg" };
+ *        ImageIdentifier imCat = new ImageIdentifier( path );
+ *
+ *        or
+ *
+ *        ImageIdentifier imCat = new ImageIdentifier( "animals-0/cats-0/cat-0.jpg" );
+ *       </pre>
+ *
+ *   <p> Note that in both case the internal representation of the ImageIdentifier will be
+ *       { [0, 0], 0 }. Note also that it is optional to give the directory options such as '-jit'
+ *       or '-exc'. You can either enter 'cats-0' or 'cats-0-jit'. If you specify a precise image
+ *       name, the extension is mandatory : we entered 'cat-0.jpg' not 'cat-0'.
+ *   </p>
+ *
+ *   <p> Developer Tips: This image library can be used as a singleton if your application
+ *       has a need for it. Otherwise we recommend that you extend this class and add a
+ *       public constructor. You could then have, for example, an application that has more
+ *       than one ImageLibrary. For security just set the 'defaultImageLibrary' to null in the
+ *       sub-class constructor.
+ *   </p>
  *
  * @author MasterBob, Aldiss
  * @see wotlas.libs.graphics2D.ImageIdentifier
@@ -40,115 +120,67 @@ import java.io.*;
 public class ImageLibrary {
 
  /*------------------------------------------------------------------------------------*/
- 
+
+  /** Debug Mode. If set to true, recompile the class and it will display extra
+   *  warning/error messages.
+   */
+     protected static final boolean DEBUG_MODE = false;
+
+  /** Do we have to warn about db entries that have bad format ? or just ignore them ?
+   */
+     protected static boolean ignoreBadFormatEntries = true;
+
    /** Our Default ImageLibrary.
     */
-     private static ImageLibrary imageLibrary;
-
-   /** An image counter.
-    */
-     private static int nbImagesLoaded;
-
-  /** Do we have to display db entries with bad format ?
-   */
-     private static boolean displayBadFormatEntries;
+     protected static ImageLibrary defaultImageLibrary;
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Image classified by Category/Set/Action/Index
+  /** Root Directory of the Image Library. ImageLibDir is an internal class.
    */
-     private BufferedImage images[][][][];
+     protected ImageLibDir rootDir;
 
-  /** Our Image Database path.
+  /** Path where user fonts are stored (ex: ../base/fonts that contains "Lucida.ttf").
    */
-     private String imageDataBasePath;
+     protected String userFontPath;
 
  /*------------------------------------------------------------------------------------*/
-
-   /** Constructor with the image database path. We load all the images in memory.
-    *
-    * @param imageDataBasePath the path to the image database.
-    * @exception IOException if an error occurs while loading the images.
-    */
-     private ImageLibrary( String imageDataBasePath ) throws IOException {
-     	this.imageDataBasePath = imageDataBasePath;
-     	displayBadFormatEntries = false;
-
-        loadImageDataBase();
-     }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
   
   /** Do we have to display db entries with bad format ?
    * 
-   * @param display if true we display disk entries of the ImageLibrary that
-   *        have a bad format.
+   * @param ignore if false we warn about disk entries of the ImageLibrary that
+   *        have a bad format (exceptions are thrown).
    */
-    public void displayBadFormatEntries( boolean display ) {
-    	displayBadFormatEntries = display;
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Creates an ImageLibrary or returned the previously created one.
-   *  We load all the images from the specified image database.<p>
-   *
-   *  The image database must have the following structure :<p>
-   *
-   *  - "category" directories. Each "category" directory name must end with "-XX"
-   *    where XX is the "category" ID number.<p>
-   *
-   *  - "category" directories contain "set" directories. Each "set" directory name
-   *    must end with "-XX" where XX is the "set" ID number.<p>
-   *
-   *  - "set" directories contain "action" directories. Each "action" directory name
-   *    must end with "-XX" where XX is the "action" ID number.<p>
-   *
-   *  - "action" directories contain the images. Each image name must end with
-   *    with "-XX.YYY" where XX is the "index" of the image and YYY is either "gif"
-   *    or "jpg".<p><br>
-   *
-   *  If a "set" directory name has the format "-XX-jit" (jit for "just in time")
-   *  it means that its sub "action" directory will only be loaded when they are needed
-   *  ( they are not loaded into memory when the ImageLibrary is being created ).<br>
-   *
-   *  <p>If a "set" directory name has the format "-XX-exc" (exc for exclusive or exclude)
-   *  it means that we don't load any of its "action" directories automatically, you have to
-   *  load them manually. ALSO only ONE of these sub "action" directories can be loaded into
-   *  memory at the same time.  When you load one of them the others are automatically flushed.
-   *  This option is especially useful when handling huge images that don't need to be
-   *  in memory at the same time.<br>
-   *
-   *  <p>To manually load "action" directories/images which "set" directories have the format
-   *  "-XX-jit" or "-XX-exc" you can use the loadImageSet(), loadImageAction() or loadImageIndex()
-   *  methods.<br>
-   *
-   *  <p>You can manually unload images from "-jit" or "-exc" "set" directories by calling
-   *  the unloadImageSet(), unloadImageAction() or unloadImageIndex() method.
-   *
-   *  IMPORTANT: for directory names that end with "-XX" or "-XX-<option>" the XX index must start
-   *  at zero and increment with no jumps between numbers.
-   *
-   * @param imageDataBasePath the path to the image database.
-   * @return the created (or previously created) image library.
-   * @exception IOException if an error occurs while loading the images.
-   */
-   public static ImageLibrary createImageLibrary( String imageDataBasePath )
-   throws IOException {
-         if( imageLibrary == null )
-             imageLibrary = new ImageLibrary( imageDataBasePath );
-         
-         return imageLibrary;
+   public static void ignoreBadFormatEntries( boolean ignore ) {
+          ignoreBadFormatEntries = ignore;
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the default image library.
+  /** Constructor with the image database path. We load all the images in memory.
    *
-   * @return the default image library.
+   * @param imageDataBasePath the path to the image database.
+   * @param userFontPath the path where user fonts are stored (ex: lucida.ttf).
+   * @exception ImageLibraryException if an error occurs while loading the images.
    */
-   public static ImageLibrary getDefaultImageLibrary() {
-         return imageLibrary;
+   protected ImageLibrary( String imageDataBasePath, String userFontPath )
+   throws ImageLibraryException {
+   
+          this.userFontPath = userFontPath;
+
+       // 1 - Check DataBase
+          File homeDir = new File(imageDataBasePath);
+  
+          if( !homeDir.isDirectory() || !homeDir.exists() )
+             throw new ImageLibraryException("Image DataBase Not found : "+imageDataBasePath
+                                    +" is not a valid directory.");
+       // We create the database structure (recursive creation)
+          rootDir = new ImageLibDir( homeDir, null );
+
+       // We load the images of the database structure
+          int loadedImages = rootDir.initImageLoad();
+         
+          if(DEBUG_MODE) System.out.println("Notice: ImageLibrary created with "+loadedImages+" images.");
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -158,119 +190,416 @@ public class ImageLibrary {
    * @return the default image databasepath.
    */
    public String getImageDataBasePath() {
-         return imageDataBasePath;
+         return rootDir.dir.getPath();
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the default databasepath (image database's parent directory).
+  /** To get the font path where all the user Fonts are stored. This path is used by
+   *  some of the classes of the wotlas.libs.graphics2D.drawable package that draw text.
    *
-   * @return the default databasepath.
+   * @return the default font path.
    */
-   public String getDataBasePath() {
-         return new File(new File(imageDataBasePath).getParent()).getParent();
+   public String getUserFontPath() {
+         return userFontPath;
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To load the image database. We don't load "set directories" that ends with the "-jit"
-   *  or "-exc" options.
+  /** Creates an ImageLibrary or returned the previously created one.
+   *  We load all the images from the specified image database.<p>
+   *
+   *  <p>To manually load directories/images which parent directories have the format
+   *  "-XX-jit" or "-XX-exc" you can use the loadImage() method.<br>
+   *
+   *  <p>You can manually unload images from "-jit" or "-exc" "set" directories by calling
+   *  the unloadImage() method.
+   *
+   *  IMPORTANT: for directory names that end with "-XX" or "-XX-<option>" the XX index must start
+   *  at zero and increment with no jumps between numbers.
+   *
+   * @param imageDataBasePath the path to the image database.
+   * @return the created (or previously created) image library.
+   * @exception ImageLibraryException if an error occurs while loading the images.
    */
-   private void loadImageDataBase() throws IOException{
+   public static ImageLibrary createImageLibrary( String imageDataBasePath, String userFontPath )
+   throws ImageLibraryException {
+         if( defaultImageLibrary==null )
+             defaultImageLibrary = new ImageLibrary( imageDataBasePath, userFontPath );
 
-    // 1 - Check DataBase
-       File homeDir = new File(imageDataBasePath);
-   
-       if( !homeDir.isDirectory() || !homeDir.exists() )
-           throw new IOException("Image DataBase Not found : "+imageDataBasePath
-                                 +" is not a valid directory.");
-   
-    // 2 - Category creation
-       File cats[] = homeDir.listFiles();
-
-       if(cats==null) {
-          Debug.signal( Debug.WARNING, this, "No Categories found in Image Database !");
-          return;
-       }
-
-       images = new BufferedImage[cats.length][][][];
-
-       for( int c=0; c<cats.length; c++ )
-       {
-            if( !cats[c].isDirectory() || cats[c].getName().lastIndexOf('-') <0 )
-               continue;
-
-         // 2.1 - We get the category ID
-            int catID = getIDFromName( cats[c].getName() );
-
-            if(catID >= cats.length )
-               throw new IOException( "Category ID in "+cats[c].getName()+" has bad range." );
-
-         // 2.2 - Set creation
-            File sets[] = cats[c].listFiles();
-
-            if(sets==null) {
-               Debug.signal( Debug.WARNING, this, "No Sets found in category "+cats[c].getName());
-               continue;
-            }
-
-            images[catID] = new BufferedImage[sets.length][][];
-
-            for( int s=0; s<sets.length; s++ )
-            {
-               if( !sets[s].isDirectory() || sets[s].getName().lastIndexOf('-')<0 )
-                     continue;
-
-             // 2.2.1 - we get the set ID...
-               int setID = getIDFromName( sets[s].getName() );
-            
-               if(setID >= sets.length )
-                  throw new IOException( "Set ID in "+sets[s].getName()+" has bad range." );
-
-             // 2.2.2 - Action creation
-                File actions[] = sets[s].listFiles();
-
-                if(actions==null) {
-                   Debug.signal( Debug.WARNING, this, "No Actions found in set "+sets[s].getName());
-                   continue;
-                }
-
-                images[catID][setID] = new BufferedImage[actions.length][];
-
-                for( int a=0; a<actions.length; a++ )
-                {
-                    if( !actions[a].isDirectory() || actions[a].getName().lastIndexOf('-')<0 )
-                         continue;
-
-                 // 2.2.2.1 - We get the ActionID
-                    int actID = getIDFromName( actions[a].getName() );
-            
-                    if( actID >= actions.length )
-                        throw new IOException( "Action ID in "+actions[a].getName()+" has bad range." );
-            
-                 // 2.2.2.2 - Index creation
-                    File index[] = actions[a].listFiles();
-
-                    if(index==null) {
-                       Debug.signal( Debug.WARNING, this, "No images found in action "+actions[a].getName());
-                       continue;
-                    }
-
-                 // 2.2.2.3 - Image loading
-                    if( !sets[s].getName().endsWith("-jit") && !sets[s].getName().endsWith("-exc") ) {
-                        images[catID][setID][actID] = loadBufferedImages( actions[a].getPath() );
-
-                        if( images[catID][setID][actID] == null)
-                          Debug.signal( Debug.WARNING, this, "No images loaded from "+actions[a].getPath());
-                    }
-                }
-            }
-       }
-
-    // 3 - We print some stats
-       Debug.signal( Debug.NOTICE, this, "ImageLibrary started with "+nbImagesLoaded+" images in memory.");
-       nbImagesLoaded=0;
+         return defaultImageLibrary;
    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the default image library.
+   *
+   * @return the default image library.
+   */
+   public static ImageLibrary getDefaultImageLibrary() {
+         return defaultImageLibrary;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get an image from the database. If we have to load the given image we check that
+   *  it is in a "JIT" directory. If it's the case we load the image and return the one
+   *  wanted, if not we return null and an error is declared.
+   *
+   * @param imId complete image identifier
+   * @return image found in the library.
+   * @exception ImageLibraryException if the imId is invalid.
+   */
+   public BufferedImage getImage( ImageIdentifier imId )
+   throws ImageLibraryException{
+
+      ImageLibDir dir = rootDir;
+
+       try{
+        // we select the directory where the image is        
+           for( int index=0; index<imId.dirIds.length; index++ )
+                dir = dir.childDirs[imId.dirIds[index]];
+
+        // is the image available ?
+           BufferedImage bufIm = dir.images[imId.imageId];
+
+           if(bufIm!=null)
+              return bufIm; // success !
+        }
+        catch( Exception e ) {
+       	   throw new ImageLibraryException(""+e);
+        }
+
+     // We try to load the image ( must be a JIT image ).
+        if( dir.dirOption!=ImageLibDir.OPT_JIT ) {
+            if(DEBUG_MODE)
+               System.out.println("ERROR: Trying to load an image that is not in a JIT directory : "+imId);
+            return null; // directory has no "Just in Time" option we return null;
+        }
+
+        return dir.loadImage( imId.imageId );
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To load an image in the database. You can use this method to load images that are
+   *  in "-JIT" directories or "-EXC" directories. If a directory that has the '-exc' option
+   *  is found on the path to the image, we unload all the other sub-directories starting
+   *  from this directory.
+   *
+   * @param imId complete image identifier
+   * @return the image just loaded in the library.
+   * @exception ImageLibraryException if the imId is invalid.
+   */
+   public BufferedImage loadImage( ImageIdentifier imId )
+   throws ImageLibraryException {
+
+      ImageLibDir dir = rootDir;
+
+       try{
+        // we select the directory where the image is
+           for( int index=0; index<imId.dirIds.length; index++ ) {
+                dir = dir.childDirs[imId.dirIds[index]];
+
+             // We check for the "-EXC" option                
+                if(dir.dirOption==ImageLibDir.OPT_EXC && index<imId.dirIds.length-1) {
+                   // we unload other sub-directories
+                      for( int i=0; i<dir.childDirs.length; i++ )
+                           if(i!=imId.dirIds[index+1])
+                              dir.childDirs[i].unloadAllImages(true);
+                }
+           }
+
+        // is the image already available ?
+           BufferedImage bufIm = dir.images[ imId.imageId ];
+
+           if(bufIm!=null)
+              return bufIm; // success !
+       }
+       catch( Exception e ) {
+         throw new ImageLibraryException(""+e);
+       }
+
+    // We try to load the image...
+       return dir.loadImage( imId.imageId );
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To load all the images of a directory in the database. You can use this method to load
+   * images that are in "-JIT" directories or "-EXC" directories. If a directory that has the
+   * '-exc' option is found on the path to the image, we unload all the other sub-directories
+   * starting from this directory.
+   *
+   * @param imId complete image identifier pointing to a directory of the database
+   * @param loadSubDirsAlso if true we also load the sub-directories
+   * @return the number of images loaded in the library.
+   * @exception ImageLibraryException if the imId is invalid.
+   */
+   public int loadImagesFromDirectory( ImageIdentifier imId, boolean loadSubDirsAlso )
+   throws ImageLibraryException {
+
+      ImageLibDir dir = rootDir;
+
+       try{
+        // we select the directory where the image is
+           for( int index=0; index<imId.dirIds.length; index++ ) {
+                dir = dir.childDirs[imId.dirIds[index]];
+
+             // We check for the "-EXC" option                
+                if(dir.dirOption==ImageLibDir.OPT_EXC && index<imId.dirIds.length-1) {
+                   // we unload other sub-directories
+                      for( int i=0; i<dir.childDirs.length; i++ )
+                           if(i!=imId.dirIds[index+1])
+                              dir.childDirs[i].unloadAllImages(true);
+                }
+           }
+       }
+       catch( Exception e ) {
+          throw new ImageLibraryException(""+e);
+       }
+
+    // is the image already available ?
+       return dir.loadAllImages(loadSubDirsAlso);
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To check that the specified ImageIdentifier points out a valid Imagelibrary entry.
+   *
+   * @param imId complete image identifier
+   * @return true if the image is in the library (already loaded), false if not.
+   * @exception ImageLibraryException if the imId is invalid.
+   */
+   public boolean checkImage( ImageIdentifier imId )
+   throws ImageLibraryException {
+
+      ImageLibDir dir = rootDir;
+
+       try{
+        // we select the directory where the image is supposed to be
+           for( int index=0; index<imId.dirIds.length; index++ )
+                dir = dir.childDirs[imId.dirIds[index]];
+
+        // is the image available ?
+           if( dir.images[ imId.imageId ]!=null)
+               return true;
+       }
+       catch( Exception e ) {
+           throw new ImageLibraryException(""+e);
+       }
+
+       return false;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To unload an image from memory.
+   * @param imID image identifier pointing the imageSet to unload.
+   * @exception ImageLibraryException if the imId is invalid.
+   */
+   public void unloadImage( ImageIdentifier imId )
+   throws ImageLibraryException {
+
+      ImageLibDir dir = rootDir;
+
+       try{
+        // we select the directory where the image is
+           for( int index=0; index<imId.dirIds.length; index++ )
+                dir = dir.childDirs[imId.dirIds[index]];
+       }
+       catch( Exception e ) {
+           throw new ImageLibraryException(""+e);
+       }
+
+    // we unload the image.
+       dir.unloadImage( imId.imageId );
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To unload all the images of a directory in the database.
+   *
+   * @param imId complete image identifier pointing to a directory of the database
+   * @param unloadSubDirsAlso if true we also load the sub-directories
+   * @return the number of images loaded in the library.
+   * @exception ImageLibraryException if the imId is invalid.
+   */
+   public int unloadImagesFromDirectory( ImageIdentifier imId, boolean unloadSubDirsAlso )
+   throws ImageLibraryException {
+
+      ImageLibDir dir = rootDir;
+
+       try{
+        // we select the directory where the image is
+           for( int index=0; index<imId.dirIds.length; index++ )
+                dir = dir.childDirs[imId.dirIds[index]];
+       }
+       catch( Exception e ) {
+           throw new ImageLibraryException(""+e);
+       }
+
+    // we unload all the images
+       return dir.unloadAllImages(unloadSubDirsAlso);
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get an image's width. IMPORTANT: We suppose the image is in the database
+   *  (except if it's a JIT image).
+   *
+   * @param imId image identifier
+   * @return width
+   * @exception ImageLibraryException if the imId is invalid.
+   */
+   public int getWidth( ImageIdentifier imId )
+   throws ImageLibraryException {
+
+      BufferedImage bufIm = getImage( imId );
+      if( bufIm==null )
+          return -1;
+
+      return bufIm.getWidth(null);
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get an image's height. IMPORTANT: We suppose the image is in the database
+   *  (except if it's a JIT image).
+   *
+   * @param imId image identifier
+   * @return height
+   * @exception ImageLibraryException if the imId is invalid.
+   */
+   public int getHeight( ImageIdentifier imId )
+   throws ImageLibraryException {
+
+      BufferedImage bufIm = getImage( imId );
+      if( bufIm==null )
+          return -1;
+
+      return bufIm.getHeight(null);
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** For Animations. We return the number of images of the specified ImageIdentifier's
+   *  directory. Animation objects call this method to initialize.
+   *
+   * @param imId image identifier
+   * @return length of the dir.images[] array given by the imId.
+   * @exception ImageLibraryException if the imId is invalid.
+   */
+   public int getAnimationLength( ImageIdentifier imId )
+   throws ImageLibraryException {
+
+      ImageLibDir dir = rootDir;
+
+       try{
+        // we select the directory where the image is supposed to be
+           for( int index=0; index<imId.dirIds.length; index++ )
+                dir = dir.childDirs[imId.dirIds[index]];
+       }
+       catch( Exception e ) {
+           throw new ImageLibraryException(""+e);
+       }
+
+      return dir.images.length;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the ImageIdentifier of an image given a key-word. We don't load any images,
+   *  we just check the image file names that are in the given directory.
+   *
+   *  This is especially useful when you are searching for an image's mask. If the image
+   *  mask is in the same directory and has the word 'mask' somewhere in its
+   *  file name, getImageIdentifier( myDirectoryId, "mask" ) will return its
+   *  entire identifier.
+   *
+   * @param imDirectory complete image identifier representing the directory where to search.
+   * @param keyword word to search.
+   * @return if found, the complete ImageIdentifier of the first image matching the keyword,
+   *         null otherwise.
+   * @exception ImageLibraryException if the imId is invalid.
+   */
+   public ImageIdentifier getImageIdentifier( ImageIdentifier imDirectory, String keyword )
+   throws ImageLibraryException {
+
+           ImageLibDir dir = rootDir;
+
+        // we select the directory where the image is supposed to be
+           try{
+             for( int index=0; index<imDirectory.dirIds.length; index++ )
+                  dir = dir.childDirs[imDirectory.dirIds[index]];
+           }
+           catch( Exception e ) {
+               throw new ImageLibraryException("Bad ImageIdentifier: "+e);
+           }
+
+        // we search among the images we have.
+           File imageFiles[] = dir.dir.listFiles();
+           if( imageFiles==null ) return null;
+
+           for( int l=0; l<imageFiles.length; l++ ) {
+             if( imageFiles[l].isDirectory())
+                 continue;
+
+             int id = getImageID( imageFiles[l].getName() );
+             if( id<0 ) continue; // not a valid image file
+
+            // Is it the image we wanted ?
+               if( imageFiles[l].getName().indexOf( keyword ) >=0 ) {
+                   ImageIdentifier result = new ImageIdentifier( imDirectory );
+                   result.imageId = (short) id;
+                   return result;
+               }
+           }
+
+       return null; // not found
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the File object that represents an ImageIdentifier of our database.
+   *  We don't load any images, just return the associated File object.
+   *
+   * @param imId complete image identifier representing an image of the database.
+   * @return if found, the complete File path to the image on disk, null otherwise.
+   * @exception ImageLibraryException if the imId is invalid.
+   */
+   public File getImageFile( ImageIdentifier imId )
+   throws ImageLibraryException {
+
+           ImageLibDir dir = rootDir;
+
+        // we select the directory where the image is supposed to be
+           try{
+             for( int index=0; index<imId.dirIds.length; index++ )
+                  dir = dir.childDirs[imId.dirIds[index]];
+           }
+           catch( Exception e ) {
+               throw new ImageLibraryException("Bad ImageIdentifier: "+e);
+           }
+
+        // we search among the images we have.
+           File imageFiles[] = dir.dir.listFiles();
+           if( imageFiles==null ) return null;
+
+           for( int l=0; l<imageFiles.length; l++ ) {
+             if( imageFiles[l].isDirectory())
+                 continue;
+
+             int id = getImageID( imageFiles[l].getName() );
+             if( id<0 ) continue; // not a valid image file
+
+            // Is it the image we wanted ?
+               if( id==imId.imageId )
+                   return imageFiles[l];
+           }
+
+       return null; // not found
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -278,44 +607,66 @@ public class ImageLibrary {
    *  we return the <number> part.
    *
    * @param name directory name
-   * @return ID
-   * @exception IOException if the given name has a bad format.
+   * @return ID>=0 if valid, -1 if not valid.
    */
-   static private int getIDFromName( String name ) throws IOException{
+   protected static int getDirectoryID( String dirName ) {
 
+       String name = dirName.toLowerCase();
        String s_val = null;
 
     // 1 - we retrieve the substring
        if(name.endsWith("-jit")||name.endsWith("-exc")) {
            int last = name.lastIndexOf('-');
-           if(last==0) throw new IOException("Invalid format :"+name+". Should be <name>-<number>-<option>]");
+           if(last<2) return -1; // error: invalid index
 
            int first = name.lastIndexOf('-', last-1);
-           if(first<0) throw new IOException("Invalid format :"+name+". Should be <name>-<number>-<option>]");
+           if(first<0) return -1; // error: invalid format
 
            s_val = name.substring( first+1, last );
        }
        else {
            int first = name.lastIndexOf('-');
-           if( first<0 || first==name.length()-1 )
-              throw new IOException("Invalid format :"+name+". Should be <name>-<number>-<option>]");
+           if( first<0 || first==name.length()-1 ) return -1;
 
            s_val = name.substring( first+1, name.length() );
        }
 
     // 2 - We parse the substring
-       int ID = -1;
-            
        try{
-           ID = Integer.parseInt( s_val );
+           return Integer.parseInt( s_val );
        }catch(NumberFormatException bne) {
-           throw new IOException("Invalid format :"+name+". Should be <name>-<number>-<option>]");
+       	   return -1; // invalid format
        }
+   }
 
-       if(ID<0)
-          throw new IOException("Invalid format :"+name+". Should be <name>-<number>-<option>]");
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-      return ID;
+  /** Given an image name of our database ( format <name>-<number>.<jpg|gif> )
+   *  we return the <number> part.
+   *
+   * @param name image name
+   * @return ID>=0 if valid, -1 if not valid.
+   */
+   static protected int getImageID( String imageName ) {
+
+       String name = imageName.toLowerCase();
+
+    // 1 - we retrieve the substring
+       if( !name.endsWith(".jpg") && !name.endsWith(".gif") )
+           return -1; // bad format
+
+       int lastPoint = name.lastIndexOf('.');
+       if(lastPoint<2) return -1; // error: invalid index
+
+       int first = name.lastIndexOf('-', lastPoint-1);
+       if(first<0) return -1; // error: invalid format
+
+    // 2 - We parse the substring            
+       try{
+           return Integer.parseInt( name.substring( first+1, lastPoint ) );
+       }catch(NumberFormatException bne) {
+       	   return -1; // invalid format
+       }
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -323,28 +674,21 @@ public class ImageLibrary {
   /** Given a directory of our database and a number ( format <name>-<number>-<option> )
    *  we return the immediate sub-directory name that has the specified number.
    *
-   * @param path directory path
+   * @param path directory path where to search
    * @param idToFind <number> part of the format to find.
-   * @return file name that has the given ID, null if not found
-   * @exception IOException if the given path has file names with bad format.
+   * @return directory name that has the given ID, null if not found
    */
-   static private String getNameFromID( String path, int idToFind ) throws IOException {
+   static protected String getDirectoryNameFromID( String path, int idToFind ) {
 
       File list[] = new File(path).listFiles();
       if(list==null) return null;
 
       for( int i=0; i<list.length; i++ ) {
-         if( !list[i].isDirectory() )
-             continue;
+             if( !list[i].isDirectory() )
+                 continue;
 
-         try{
-             if( getIDFromName( list[i].getName() ) == idToFind )
+             if( getDirectoryID( list[i].getName() )==idToFind )
                  return list[i].getName();
-         }
-         catch( IOException ioe ) {
-             if(displayBadFormatEntries)
-                Debug.signal( Debug.ERROR, null, ""+ioe);
-         }
       }
 
       return null; // not found
@@ -352,321 +696,8 @@ public class ImageLibrary {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Given an ImageIdentifier we return its associated "set" directory.
-    *
-    * @param imageDataBasePath path to the image database
-    * @param imID image identifier to use to find the associated set directory.
-    * @return the "set" directory associated to this ImageIdentifier.
-    * @exception IOException if the given image database has path names with bad format.
-    */
-    static private String getSetDirectory( String imageDataBasePath, ImageIdentifier imID )
-    throws IOException {
-
-     // 1 - category
-        String cat = getNameFromID( imageDataBasePath, imID.imageCategory );
- 
-        if( cat==null )
-            throw new IOException( "Failed to load Image Set, bad Category :"+imID );
-
-     // 2 - set
-        String set = getNameFromID( imageDataBasePath+File.separator+cat,
-                                   imID.imageSet ); 
-        if( set==null )
-            throw new IOException( "Failed to load Image Set, bad Set :"+imID );
-
-        return imageDataBasePath+File.separator+cat+File.separator+set;
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To load an entire "-jit"'s "set" directory from the image database.
-   *
-   * @param imID image identifier pointing to an imageSet.
-   * @exception IOException if something goes wrong
-   */
-   public void loadImageSet( ImageIdentifier imID ) throws IOException{
-
-    // 1 - We retrieve the "set" directory
-       String set = getSetDirectory( imageDataBasePath, imID );
-
-       if( !set.endsWith("-jit") )
-           throw new IOException( "ImageSet has no '-jit' option ! check your ImageIdentifier :"+imID );
-
-    // 2 - actions directory
-       File actions[] = new File(set).listFiles();
-       if(actions==null) throw new IOException( "Failed to load Image actions, no actions :"+imID );
-
-       for( int a=0; a<actions.length; a++ ) {
-           if( !actions[a].isDirectory() || actions[a].getName().lastIndexOf('-')<0 )
-               continue;
-
-        // We get the ActionID
-           int actID = getIDFromName( actions[a].getName() );
-
-           if( actID >= actions.length )
-                throw new IOException( "Action ID in "+actions[a].getName()+" has bad range." );
-
-        // And load the images
-           images[imID.imageCategory][imID.imageSet][actID] = loadBufferedImages( actions[a].getPath() );
-
-           if( images[imID.imageCategory][imID.imageSet][imID.imageAction] == null )
-               Debug.signal( Debug.WARNING, this, "No images loaded from "+actions[a].getPath());
-       }
-
-    // 3 - We print some stats...
-       Debug.signal( Debug.NOTICE, this, "Added "+nbImagesLoaded+" Images to database");
-       nbImagesLoaded=0;
-   }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To load an "action" directory which "set" directory ends with the "-jit" or "-exc".
-   *  option. If the option is "-exc" we first unload any loaded "action" directory from
-   *  this "set" directory. We return immediately if the wanted action directory has already
-   *  been loaded.
-   *
-   * @param imID image identifier pointing to an imageAction.
-   * @exception IOException if something goes wrong
-   */
-   public void loadImageAction( ImageIdentifier imID ) throws IOException{
-
-       if( images[imID.imageCategory][imID.imageSet][imID.imageAction] != null )
-           return;
-
-    // 1 - We retrieve the "set" directory
-       String set = getSetDirectory( imageDataBasePath, imID );
-
-    // 2 - action directory
-       String act = getNameFromID( set, imID.imageAction ); 
-       if( act==null ) throw new IOException( "Failed to load Image Action, bad action :"+imID );
-
-       if( set.endsWith("-exc") )
-           unloadImageSet( imID );  // we unload actions that have previously been loaded
-       else if( !set.endsWith("-jit") )
-           throw new IOException( "ImageSet has neither '-jit' or '-exc' option ! check your ImageIdentifier :"+imID );
-
-    // 3 - image loading
-       String imagesHome = set+File.separator+act;
-       images[imID.imageCategory][imID.imageSet][imID.imageAction] = loadBufferedImages( imagesHome );
-
-       if( images[imID.imageCategory][imID.imageSet][imID.imageAction] == null)
-           throw new IOException("No images loaded from "+imagesHome );
-
-    // 5 - Print some stats
-       Debug.signal( Debug.NOTICE, this, "Added "+nbImagesLoaded+ " images to database.");
-       nbImagesLoaded=0;
-   }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To load an image from an "action" directory. The "set" directory must end with the
-   *  "-exc". If there are other "action" directories already loaded, we first unload them.
-   *  The image loaded is of the type ARGB.
-   *
-   *  If the given image has already been loaded, we return immediately.
-   *
-   * @param imID image identifier pointing to an imageSet.
-   * @exception IOException if something goes wrong
-   */
-   public void loadImageIndex( ImageIdentifier imID ) throws IOException{
-        loadImageIndex( imID, BufferedImage.TYPE_INT_ARGB );
-   }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To load an image from an "action" directory. The "set" directory must end with the
-   *  "-exc". If there are other "action" directories already loaded, we first unload them.
-   *
-   *  If the given image has already been loaded, we return immediately.
-   *
-   * @param imID image identifier pointing to an imageSet.
-   * @param imType the image type. Must be on of the BufferedImage.TYPE_XXXX like TYPE_INT_ARGB
-   * @exception IOException if something goes wrong
-   */
-   public void loadImageIndex( ImageIdentifier imID, int imType ) throws IOException{
-
-       if( images[imID.imageCategory][imID.imageSet][imID.imageAction] != null &&
-           images[imID.imageCategory][imID.imageSet][imID.imageAction][imID.imageIndex] != null )
-           return;
-
-    // 1 - We retrieve the "set" directory
-       String set = getSetDirectory( imageDataBasePath, imID );
-
-    // 2 - action directory
-       String act = getNameFromID( set, imID.imageAction ); 
-       if( act==null ) throw new IOException( "Failed to load Image Action, bad action :"+imID );
-
-       if( set.endsWith("-exc") ) {
-         // we unload actions that have previously been loaded.
-         // if OUR imageAction had already some of its images loaded, we avoid them to
-         // be unloaded when we call the unloadSet() method.
-            BufferedImage tmp[] = images[imID.imageCategory][imID.imageSet][imID.imageAction];  // save
-            images[imID.imageCategory][imID.imageSet][imID.imageAction] = null;
-
-            unloadImageSet( imID );
-
-            images[imID.imageCategory][imID.imageSet][imID.imageAction] = tmp;  // restore
-       }
-       else
-            throw new IOException( "ImageSet has no '-exc' option ! check your ImageIdentifier :"+imID );
-
-    // 4 - image loading
-       File index[] = new File(set+File.separator+act).listFiles();
-       if(index==null) throw new IOException( "No images found in action "+set+File.separator+act);
-
-       if( images[imID.imageCategory][imID.imageSet][imID.imageAction] == null )
-           images[imID.imageCategory][imID.imageSet][imID.imageAction] = new BufferedImage[index.length];
-
-       images[imID.imageCategory][imID.imageSet][imID.imageAction][imID.imageIndex]
-                                  = findImageIn( index, imID.imageIndex, imType );
-       nbImagesLoaded=0;
-   }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To get an image from the database. If the given imID is not found in the database
-   *  we check if the imageSet has the "JIT" option. If it's the case we load the images
-   *  and return the one wanted, if not we return null and an error is declared.
-   *
-   * @param imID completeimage identifier
-   * @return image found in the library.
-   */
-   public BufferedImage getImage( ImageIdentifier imID ) {
-      if( !checkImage(imID) )
-          return null;
-
-      return images[imID.imageCategory][imID.imageSet][imID.imageAction][imID.imageIndex];
-   }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To check that the specified ImageIdentifier points out a valid Imagelibrary entry.
-   *  If not we try to load the image from disk.
-   *
-   * @param imID completeimage identifier
-   * @return true if the image is in the library ( or has just been loaded successfully )
-   */
-   public boolean checkImage( ImageIdentifier imID ) {
-
-      if( images[imID.imageCategory][imID.imageSet][imID.imageAction] == null ) {
-        // ok, this means we have to load this imageAction data now...
-           try{
-               loadImageAction( imID );
-           }catch( IOException e ) {
-               if(displayBadFormatEntries)
-                  Debug.signal( Debug.ERROR, this, "An error occured while loading "+imID+" (action) :"+e);
-               return false;
-           }
-      }
-
-      if( images[imID.imageCategory][imID.imageSet][imID.imageAction][imID.imageIndex] == null ) {
-        // we need to load the image now...
-           try{
-               loadImageIndex( imID );
-           }catch( IOException e ) {
-               if(displayBadFormatEntries)
-                  Debug.signal( Debug.ERROR, this, "An error occured while loading "+imID+" (index) :"+e);
-               return false;
-           }
-      }
-
-      return true;
-   }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To unload an imageSet from memory.
-   *  @param imID image identifier pointing the imageSet to unload.
-   */
-   public void unloadImageSet( ImageIdentifier imID ) {
-
-       for( int a=0; a<images[imID.imageCategory][imID.imageSet].length; a++ )
-            if(images[imID.imageCategory][imID.imageSet][a]!=null) {
-               for( int i=0; i<images[imID.imageCategory][imID.imageSet][a].length; i++ )
-                    if(images[imID.imageCategory][imID.imageSet][a][i]!=null)
-                       images[imID.imageCategory][imID.imageSet][a][i].flush();
-
-               images[imID.imageCategory][imID.imageSet][a] = null;
-            }
-   }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To unload an imageAction from memory.
-   *  @param imID image identifier pointing the imageAction to unload.
-   */
-   public void unloadImageAction( ImageIdentifier imID ) {
-
-       if( images[imID.imageCategory][imID.imageSet][imID.imageAction]==null )
-           return;
-
-       for( int i=0; i<images[imID.imageCategory][imID.imageSet][imID.imageAction].length; i++ )
-            if( images[imID.imageCategory][imID.imageSet][imID.imageAction][i]!=null )
-                images[imID.imageCategory][imID.imageSet][imID.imageAction][i].flush();
-
-       images[imID.imageCategory][imID.imageSet][imID.imageAction] = null;
-   }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To unload an imageIndex from memory.
-   *  @param imID image identifier pointing the imageIndex to unload.
-   */
-   public void unloadImageIndex( ImageIdentifier imID ) {
-
-       if( images[imID.imageCategory][imID.imageSet][imID.imageAction] == null ) return;
-       if( images[imID.imageCategory][imID.imageSet][imID.imageAction][imID.imageIndex] == null ) return;
-
-       images[imID.imageCategory][imID.imageSet][imID.imageAction][imID.imageIndex].flush();
-       images[imID.imageCategory][imID.imageSet][imID.imageAction][imID.imageIndex] = null;
-   }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To get an image's width. IMPORTANT: We suppose the image is in the database.
-   *
-   * @param imID image identifier
-   * @return width
-   */
-   public int getWidth( ImageIdentifier imID ) {
-      if( !checkImage(imID) )
-          return -1;
-
-      return images[imID.imageCategory][imID.imageSet][imID.imageAction][imID.imageIndex].getWidth(null);
-   }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To get an image's width. IMPORTANT: We suppose the image is in the database.
-   *
-   * @param imID image identifier
-   * @return width
-   */ 
-   public int getHeight( ImageIdentifier imID ) {
-      if( !checkImage(imID) )
-          return -1;
-
-      return images[imID.imageCategory][imID.imageSet][imID.imageAction][imID.imageIndex].getHeight(null);
-   }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** For Animations. We return the number of images of the specified ImageIdentifier's
-   *  imageAction.
-   *
-   * @param imID image identifier
-   * @return length of the imID.imageAction array.
-   */
-   public int getIndexLength( ImageIdentifier imID ) {
-      if( !checkImage(imID) )
-          return -1;
-
-      return images[imID.imageCategory][ imID.imageSet][imID.imageAction].length;
-   }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To load an image.
+  /** To load an image given its name. We don't check for any name format, we just try
+   *  to load the image.
    *
    * @param the path to the image
    * @return the loaded image...
@@ -683,7 +714,6 @@ public class ImageLibrary {
          }
          catch(InterruptedException e) { e.printStackTrace(); }
 
-       nbImagesLoaded++;
        return im;
   }
 
@@ -695,12 +725,26 @@ public class ImageLibrary {
    *  Important : the returned array can have null fields if non-image files were found
    *              in the specified directory.
    *
-   * @param the path to the images
-   * @return the loaded images...
+   * @param path the path to the images
+   * @return the loaded images... null if there are none
    */
-    static public Image[] loadImages( String path )
-    {
-      File list[] = new File(path).listFiles();
+    static public Image[] loadImages( String path ) {
+    	return loadImages( new File(path) );
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To load all the images of a directory. The image name must follow the format :
+   *  <name>-<number>.<ext> where ext is either "jpg" or "gif".
+   *
+   *  Important : the returned array can have null fields if non-image files were found
+   *              in the specified directory.
+   *
+   * @param path the path to the images
+   * @return the loaded images... null if there are none
+   */
+    static public Image[] loadImages( File path ) {
+      File list[] = path.listFiles();
       
       if(list==null)
          return null;
@@ -709,26 +753,20 @@ public class ImageLibrary {
       MediaTracker tracker = new MediaTracker(new Label());
       Toolkit tk = Toolkit.getDefaultToolkit();
 
-         for( int i=0; i<list.length; i++)
-         {
-            String name = list[i].getName().toLowerCase();
+         for( int i=0; i<list.length; i++) {
 
-            if( list[i].isDirectory() || ( !name.endsWith(".jpg") && !name.endsWith(".gif") ) )
+            if( list[i].isDirectory() )
                 continue;
 
-            int id=0;
+            int id = getImageID( list[i].getName() );
 
-            try{
-               id = getIDFromName( name.substring( 0, name.lastIndexOf('.')) );
-            }catch( IOException e ) {
-               if(displayBadFormatEntries)
-                  Debug.signal( Debug.WARNING, null, "Bad Image Name Format ! :"+e);
+            if(id<0) {
+               if(DEBUG_MODE) System.out.println( "Warning: Bad Image Name Format ! ( "+list[i]+" )");
                continue;
             }
 
-            im[id] = tk.getImage( path+File.separator+list[i].getName() );
+            im[id] = tk.getImage( path.getPath()+File.separator+list[i].getName() );
             tracker.addImage(im[id],i);
-            nbImagesLoaded++;
          }
 
          try{
@@ -756,8 +794,7 @@ public class ImageLibrary {
    * @param the path to the image
    * @return the loaded buffered image...
    */
-    static public BufferedImage loadBufferedImage( String path, int imageType )
-    {
+    static public BufferedImage loadBufferedImage( String path, int imageType ) {
      // We load the image.
         Image im = loadImage( path );
         
@@ -769,49 +806,60 @@ public class ImageLibrary {
         Graphics2D offBf = bufIm.createGraphics();
         offBf.drawImage( im,0,0,null );
 
-     return bufIm;
+      return bufIm;
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To load all the images of a directory. The image name must follow the format :
-   *  <name>-<number>.<ext> where ext is either "jpg" or "gif".
+   *  <name>-<number>.<ext> where ext is either "jpg" or "gif". The returned array has
+   *  no holes.
    *
-   *  Important : the returned array can have null fields if non-image files were found
-   *              in the specified directory.
-   *
-   * @param the path to the images
+   * @param path the path to the images
    * @return the loaded images transformed into buffered images...
    */
-    static public BufferedImage[] loadBufferedImages( String path )
-    {
+    static public BufferedImage[] loadBufferedImages( String path ) {
+        return loadBufferedImages( new File(path) );
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To load all the images of a directory. The image name must follow the format :
+   *  <name>-<number>.<ext> where ext is either "jpg" or "gif". The returned array has
+   *  no holes. The <number> must start at 0.
+   *
+   *  Important : the returned array can have null fields if the image numbers have jump.
+   *
+   * @param path the path to the images
+   * @return the loaded images transformed into buffered images... a 0 length array if
+   *         there are no images. We never return null.
+   */
+    static public BufferedImage[] loadBufferedImages( File path ) {
      // We load all the images.
         Image im[] = loadImages( path );
         
         if(im==null)
-           return null;
+           return new BufferedImage[0];
 
      // We count how many images we have...
         int imageCount=0;
-        
+
         for( int c=0; c<im.length; c++ )
-           if( im[c]!=null ) imageCount++;
+           if( im[c]!=null ) imageCount=c+1; // we keep the max
 
         if(imageCount==0)
-           return null;
+           return new BufferedImage[0];
 
      // We transform these images into buffered images
         BufferedImage bufIm[] = new BufferedImage[imageCount];
-        int count=0;
       
         for( int c=0; c<im.length; c++ )
            if( im[c]!=null ) {
-       	       bufIm[count] = new BufferedImage( im[c].getWidth(null),
-    	                      im[c].getHeight(null), BufferedImage.TYPE_INT_ARGB );
+       	       bufIm[c] = new BufferedImage( im[c].getWidth(null),
+                                             im[c].getHeight(null), BufferedImage.TYPE_INT_ARGB );
 
-               Graphics2D offBf = bufIm[count].createGraphics();
+               Graphics2D offBf = bufIm[c].createGraphics();
                offBf.drawImage( im[c],0,0,null);
-               count++;
           }
 
      return bufIm;
@@ -825,153 +873,266 @@ public class ImageLibrary {
    * @param imageFiles list of files to investigate...
    * @param imageIndex index of the image to find
    * @param imageType if you don't know what to put here set it to BufferedImage.TYPE_INT_ARGB
-   * @exception IOException if files have a bad format, or if the file is not found.
+   *        it's the type of the image we are going to create.
+   * @return null if the image is not found
    */
-    static public BufferedImage findImageIn( File imageFiles[], int imageIndex, int imageType )
-    throws IOException {
+    static public BufferedImage findImageIn( File imageFiles[], int imageIndex, int imageType ){
+       if(imageFiles==null) return null;
 
        for( int l=0; l<imageFiles.length; l++ ) {
-             if( imageFiles[l].isDirectory() || imageFiles[l].getName().lastIndexOf('-')<0 )
+             if( imageFiles[l].isDirectory() )
                  continue;
 
-             String imageName = imageFiles[l].getName().toLowerCase();
-
-             if( imageName.endsWith(".jpg") || imageName.endsWith(".gif") )
-                  imageName = imageName.substring( 0, imageName.lastIndexOf('.') );
-             else
-                  continue;
+             int id = getImageID( imageFiles[l].getName() );
+             if(id<0) continue;
 
           // Is it the image we wanted ?
-             if(  getIDFromName( imageName ) == imageIndex )
-                  return loadBufferedImage( imageFiles[l].getPath(), imageType );
+             if( id == imageIndex )
+                 return loadBufferedImage( imageFiles[l].getPath(), imageType );
        }
 
-       throw new IOException("No image found for "+imageIndex );
+       return null;  // not found
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+ /** Represents a directory of the Image Library. It can contains other ImageLibDir and/or
+  * images. There are no GETTERS/SETTERS because this class is for internal use only. Data
+  * can be accessed directly.
+  */
+
+ class ImageLibDir {
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Directory Option : no option
+   */
+    public final static byte OPT_NONE = 0;
+
+  /** Directory Option : JIT = just in time, directory content loaded only when needed.
+   */
+    public final static byte OPT_JIT = 1;
+
+  /** Directory Option : EXC = exclude, directory content loaded only by the user, one subdir
+   *  only at the same time. Other unused directories are automatically unloaded.
+   */
+    public final static byte OPT_EXC = 2;
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Directory File representation.
+   */
+    protected File dir;
+
+  /** Directory Option (OPT_NONE, OPT_JIT, OPT_EXC).
+   */
+    protected byte dirOption;
+
+  /** Parent directory. If null it means this dir is root.
+   */
+    protected ImageLibDir parentDir;
+
+  /** Eventual Sub-directories
+   */
+    protected ImageLibDir childDirs[];
+
+  /** Eventual images of this directory.
+   */
+    protected BufferedImage images[];
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Constructor.
+   * @param dir file representing the directory of this ImageLibDir object.
+   * @param parentDir parent directory, null if this is the root directory
+   * @exception ImageLibraryException if ignoreBadFormatEntries=false and the image db has bad entries.
+   */
+    public ImageLibDir( File dir, ImageLibDir parentDir )
+    throws ImageLibraryException {
+
+        this.dir = dir;
+        this.parentDir = parentDir;
+
+      // 1 - We get the eventual option of this directory
+         if( dir.getName().endsWith("-jit") )
+             dirOption = OPT_JIT;
+         else if( dir.getName().endsWith("-exc") )
+             dirOption = OPT_EXC;
+         else if( parentDir!=null && parentDir.dirOption==OPT_JIT )
+             dirOption = OPT_JIT;  // this option is always propagated to sub-directories.
+         else
+             dirOption = OPT_NONE;
+       
+      // 2 - Is there a child structure to create ?
+         File childs[] = dir.listFiles();
+
+         if(childs==null) {
+            // Empty directory
+               if(DEBUG_MODE) System.out.println("WARNING: Empty directory found ( "+dir+" )");
+       
+               childDirs = new ImageLibDir[0];
+               images = new BufferedImage[0];
+               return;
+         }
+
+      // 3 - We check the child structure
+         int nbChildDirs = 0;
+         int nbImages = 0;
+
+         for( int c=0; c<childs.length; c++ )
+            if( childs[c].isDirectory() ) {
+              // CHILD DIRECTORIES
+                int id = ImageLibrary.getDirectoryID(childs[c].getName());
+
+                if( id<0 ) {
+                    if( ignoreBadFormatEntries ) {
+                        if(DEBUG_MODE) System.out.println("ERROR: ImageLibrary directory has a bad format : "+childs[c]);
+                    }
+                    else
+                        throw new ImageLibraryException("ImageLibrary directory has a bad format : "+childs[c]);
+                }
+                else if( id>=nbChildDirs )
+                        nbChildDirs = id+1;
+            }
+            else {
+              // IMAGES OF THIS DIRECTORY
+                int id = ImageLibrary.getImageID(childs[c].getName());
+
+                if( id<0 ) {
+                    if( ignoreBadFormatEntries )
+                        if(DEBUG_MODE) System.out.println("ERROR: ImageLibrary image has a bad format : "+childs[c]);
+                    else
+                        throw new ImageLibraryException("ImageLibrary image has a bad format : "+childs[c]);
+                }
+                else if( id>=nbImages )
+                        nbImages = id+1;
+            }
+
+       // 4 - We can now create our child structure. Images will be loaded later.
+          childDirs = new ImageLibDir[nbChildDirs];
+          images = new BufferedImage[nbImages];
+
+          for( int c=0; c<childs.length; c++ )
+            if( childs[c].isDirectory() ) {
+             // We recursively construct the child structure
+                int id = ImageLibrary.getDirectoryID(childs[c].getName());
+                if( id<0 ) continue;
+
+                childDirs[id] = new ImageLibDir( childs[c], this );
+            }
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To load an ARGB image from its ImageIdentifier. The image is searched as follows :
-    *
-    *  - if there is an existing image library we try a getImage() call. It will eventually
-    *    load the image(s) if it was not already in memory. If the given ImageIndentifier is
-    *    not a valid entry in the ImageLibrary an error message will be displayed on screen.
-    *
-    *  - if there is no existing image library ( or if the previous operation failed & returned
-    *    null ) we seek for the specified imageDatabasePath.
-    *
-    *  If these two tries fail we return null. If an ImageLibrary exists but the specified
-    *  ImageIndex is not a valid entry in this ImageIndex
-    *
-    * IMPORTANT : note again that if an ImageLibrary exists, there is a high probability that
-    *             this method call we'll also launch the loading of the other images found in
-    *             the same 'imageAction' Directory as the specified Image.
-    *             If it's not what you want use the other loadBufferedImage method below.
-    *
-    * @param imID complete image identifier
-    * @param imageDatabasePath path to search for an Image database if no Image Library is found.
-    * @return if found, a BufferedImage of the image, null otherwise.
-    * @exception IOException only if the image library has a bad format.
+  /** Called to load the image library the first time. We propagate the call to
+   *  our childs. We stop the load of childs if we encounter a JIT or EXC directory.
+   *  @return the number of images loaded
+   */
+    public int initImageLoad() {
+         int loaded=0;
+
+      // No image to load for these options
+         if( dirOption==OPT_JIT || dirOption==OPT_EXC )
+             return 0;
+
+         if(images.length!=0) {
+            images = loadBufferedImages( dir );
+
+            for(int i=0; i<images.length; i++ )
+                if(images[i]!=null) loaded++;
+         }
+
+      // Child directories init propagation
+         for( int i=0; i<childDirs.length; i++ )
+              loaded += childDirs[i].initImageLoad();
+         
+         return loaded;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get an image of our directory. We don't perform any checks.
+    *  @param index index of the image.
+    *  @return the image that has the wanted index
     */
-    static public BufferedImage loadBufferedImage( ImageIdentifier imID, String imageDataBasePath )
-    throws IOException {
-       // Step 1 - Any Image Library ?
-          if( imageLibrary!=null ) {
-              BufferedImage bufIm = imageLibrary.getImage(imID);
-
-              if( bufIm!=null )
-                  return bufIm;
-          }
-
-       // Step 2 - We seek in the specified database
-          String set = getSetDirectory( imageDataBasePath, imID );
-          String action = getNameFromID( set, imID.imageAction );
-
-          if( action==null ) return null;
-
-          File listIm[] = new File( set+File.separator+action ).listFiles();
-          if( listIm==null ) return null;
-
-          return findImageIn( listIm, imID.imageIndex, BufferedImage.TYPE_INT_ARGB );
+    public BufferedImage getImage( int index ) {
+           return images[index];
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To load an image of a specified image type from its ImageIdentifier.
-    *  The image is searched using the given imageDatabase path. Because images in the
-    *  ImageLibrary are INT_ARGB buffered images, this explains why other types of images
-    *  can't be loaded into it. Therefore you should place these images in a separate
-    *  "Action" directory which "set" directory has the "-exc" option.
-    *
-    * @param imID complete image identifier
-    * @param imageDatabasePath path to search for an Image database.
-    * @param imageType image type : BufferedImage.INT_ARGB for instance.
-    * @return if found, a BufferedImage of the image, null otherwise.
-    * @exception IOException only if the image library has a bad format.
+   /** To load an image of our directory.
+    *  @param index index of the image.
+    *  @return the image we just loaded.
     */
-    static public BufferedImage loadBufferedImage( ImageIdentifier imID, String imageDataBasePath,
-                                                   int imageType ) throws IOException {
-       String set = getSetDirectory( imageDataBasePath, imID );
-       String action = getNameFromID( set, imID.imageAction );
-
-       if( action==null ) return null;
-
-       File listIm[] = new File( set+File.separator+action ).listFiles();
-       if( listIm==null ) return null;
-
-       return findImageIn( listIm, imID.imageIndex, imageType );
+    public BufferedImage loadImage( int index ) {
+           images[index] = findImageIn( dir.listFiles(), index, BufferedImage.TYPE_INT_ARGB );
+           return images[index];
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To get the ImageIdentifier of an image given a key-word. We don't load any images,
-    *  we just check the image file names that are in the given 'imageAction' directory.
-    *
-    *  This is especially useful when you are searching for an image's mask. If the image
-    *  mask is in the same 'imageAction' directory and has the word 'mask' somewhere in its
-    *  file name, getImageIdentifier( myImageId, myDataBasePath, "mask" ) will return its
-    *  entire identifier.
-    *
-    * @param imActionID complete image action identifier where to search.
-    * @param imageDatabasePath path to search for an Image databse.
-    * @param keyword word to search.
-    * @return if found, the complete ImageIdentifier of the first image matching the keyword,
-    *         null otherwise.
-    * @exception IOException only if the image library has a bad format.
+   /** To load all the image of our directory, and if suddirs=true of all our
+    *  sub-directories (unless we find JIT or EXC options on their directories !).
+    *  @param loadSubDirsAlso if true we propagate an initImageLoad() to sub-directories.
+    *  @return the number of images loaded
     */
-    static public ImageIdentifier getImageIdentifier( ImageIdentifier imActionID,
-                                                      String imageDataBasePath,
-                                                      String keyword ) throws IOException {
-       String set = getSetDirectory( imageDataBasePath, imActionID );
-       String action = getNameFromID( set, imActionID.imageAction );
+    public int loadAllImages( boolean loadSubDirsAlso ) {
+      // We load valid images
+         int loaded = 0;
 
-       if( action==null ) return null;
+         if(images.length!=0) {
+            images = loadBufferedImages( dir );
 
-       File imageFiles[] = new File( set+File.separator+action ).listFiles();
-       if( imageFiles==null ) return null;
+            for(int i=0; i<images.length; i++ )
+                if(images[i]!=null) loaded++;
+         }
 
-       for( int l=0; l<imageFiles.length; l++ ) {
-             if( imageFiles[l].isDirectory() || imageFiles[l].getName().lastIndexOf('-')<0 )
-                 continue;
-
-             String imageName = imageFiles[l].getName().toLowerCase();
-
-             if( imageName.endsWith(".jpg") || imageName.endsWith(".gif") )
-                  imageName = imageName.substring( 0, imageName.lastIndexOf('.') );
-             else
-                  continue;
-
-          // Is it the image we wanted ?
-             if( imageName.indexOf( keyword ) >=0 ) {
-                ImageIdentifier result = new ImageIdentifier( imActionID );
-                result.imageIndex = (short) getIDFromName( imageName );
-                return result;
-             }
-       }
-
-       return null; // not found
+      // Child directories load propagation ( by init() call )
+         if(loadSubDirsAlso)
+            for( int i=0; i<childDirs.length; i++ )
+                 loaded += childDirs[i].initImageLoad();
+         
+         return loaded;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To unload an image of our directory.
+    *  @param index index of the image.
+    */
+    public void unloadImage( int index ) {
+    	if(images[index]!=null) {
+    	   images[index].flush();
+    	   images[index] = null;
+    	}
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To unload all the images of our directory. If unloadSubDirsAlso=true we also
+    *  unload sub directories.
+    *  @param unloadSubDirsAlso if true we propagate the unloadAll call to sub-directories.
+    *  @return the numbers of images unloaded from the library.
+    */
+    public int unloadAllImages( boolean unloadSubDirsAlso ) {
+       int unloaded = 0;
+
+       for( int i=0; i<images.length; i++ )
+           if(images[i]!=null) {
+              images[i].flush();
+              images[i] = null;
+              unloaded++;
+           }
+
+       if(unloadSubDirsAlso)
+          for( int i=0; i<childDirs.length; i++ )
+               unloaded += childDirs[i].unloadAllImages(true);
+
+       return unloaded;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ }
 
 }

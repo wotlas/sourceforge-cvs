@@ -25,8 +25,8 @@ import java.awt.*;
 import java.awt.geom.*;
 
 /** Represents the shadow of a Sprite. This is an animated shadow. It must have the
- *  same number of images in its animation as its associated Sprite. The shadow alpha
- *  is initially set to 25%.
+ *  SAME number of images in its animation as its associated Sprite. The shadow transparency
+ *  (alpha) is initially set to 25%.
  *
  * @author MasterBob, Aldiss
  * @see wotlas.libs.graphics2D.drawable.Sprite
@@ -73,8 +73,6 @@ public class ShadowSprite extends Drawable {
         this.deltaX = deltaX;
         this.deltaY = deltaY;
         shadowAlpha = 0.25f;
-
-        tick();
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -85,6 +83,21 @@ public class ShadowSprite extends Drawable {
     public void setShadowAlpha( float shadowAlpha ) {
     	this.shadowAlpha = shadowAlpha;
     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To initialize this drawable with the ImageLibrary. Don't call it yourself ! it's
+   *  done automatically when you call addDrawable on the GraphicsDirector.
+   *
+   *  IF you need the ImageLib for some special inits just extend this method and don't
+   *  forget to call a super.init(imageLib) !
+   *
+   *  @param imagelib ImageLibrary where you can take the images to display.
+   */
+     protected void init( ImageLibrary imageLib ) {
+     	super.init(imageLib);
+        tick();
+     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -126,13 +139,13 @@ public class ShadowSprite extends Drawable {
 
       // 4 - image display
          if( affTr==null ) {
-             gc.drawImage( ImageLibrary.getDefaultImageLibrary().getImage( shadowImage ),
+             gc.drawImage( getImageLibrary().getImage( shadowImage ),
                            r.x-screen.x, r.y-screen.y, null );
          }
          else {
              affTr.translate( r.x-screen.x, r.y-screen.y );
 
-             gc.drawImage( ImageLibrary.getDefaultImageLibrary().getImage( shadowImage ),
+             gc.drawImage( getImageLibrary().getImage( shadowImage ),
                            affTr, null );
          }
 
@@ -150,16 +163,16 @@ public class ShadowSprite extends Drawable {
    *  @return true if the drawable is "live", false if it must be deleted.
    */
      public boolean tick() {
-    
+
        // 1 - Current Image Index
-          shadowImage.imageIndex = dataSupplier.getImageIdentifier().imageIndex;
+          shadowImage.setImageId( dataSupplier.getImageIdentifier().getImageId() );
 
        // 2 - We update our rectangle
           r.x = dataSupplier.getX()+deltaX;
           r.y = dataSupplier.getY()+deltaY;
 
-          r.width = ImageLibrary.getDefaultImageLibrary().getWidth( shadowImage );
-          r.height = ImageLibrary.getDefaultImageLibrary().getHeight( shadowImage );
+          r.width = getImageLibrary().getWidth( shadowImage );
+          r.height = getImageLibrary().getHeight( shadowImage );
 
          return true; // no update needed, a sprite is always "live" by default.
      }

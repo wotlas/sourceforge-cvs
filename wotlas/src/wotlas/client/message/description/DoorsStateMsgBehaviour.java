@@ -19,12 +19,10 @@
 
 package wotlas.client.message.description;
 
-import java.io.IOException;
 import java.util.*;
 
 import wotlas.utils.Debug;
 
-import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.common.message.description.*;
 import wotlas.common.universe.*;

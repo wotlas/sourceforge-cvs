@@ -25,10 +25,9 @@ import java.awt.geom.*;
 import java.awt.image.*;
 
 /** An AuraEffect is a sprite that rely on a SpriteDataSupplier. It is used to just display
- *  a rotating image on the GraphicsDirector. The image can change ( hasAnimation=true in constructor)
- *  but you can not change its (x,y) cordinates once set in the constructor.
+ *  a rotating image on the GraphicsDirector. The image can be an animation.<br>
  *
- *  A MotionlessSprite is especially useful for background images.
+ *  It's especially useful when you need to display that a sprite is selected.
  *
  * @author MasterBob, Aldiss
  */
@@ -92,23 +91,22 @@ public class AuraEffect extends Drawable {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
+  /** Constructor. IF you want the aura to be animated, just set the
+   *  call the ImageIdentifier.setIsAnimation() on image and set it to true.
+   *
+   *  The image changes at each tick. If you want to change this behaviour use the
+   *  getAnimation() method to retrieve the Animation object that was created.
    *
    * @param dataSupplier ou r reference
    * @param image image identifier to use for this sprite.
    * @param priority sprite's priority
-   * @param hasAnimation if set to true we use the given identifier as a base for an animation,
-   *        if set to false, we let the ImageIdentifier imageIndex set to 0.
    * @param lifeTime display duration
    */
-    public AuraEffect(SpriteDataSupplier dataSupplier, ImageIdentifier image, short priority,
-                      boolean hasAnimation, int lifeTime) {
+    public AuraEffect( SpriteDataSupplier dataSupplier, ImageIdentifier image, short priority,
+                       int lifeTime) {
      super();
 
      this.image = image;
-     r.width = ImageLibrary.getDefaultImageLibrary().getWidth( image );
-     r.height = ImageLibrary.getDefaultImageLibrary().getHeight( image );
-
      this.auraType = auraType;
      this.priority = priority;
      this.dataSupplier = dataSupplier;
@@ -118,12 +116,32 @@ public class AuraEffect extends Drawable {
      alpha=0.0f;
      amplitudeLimit = -1.0f;
      direction = -1;
-
-     if(hasAnimation)
-        sprAnim = new Animation( image );
+     hasAnimation = false;
     }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To initialize this drawable with the ImageLibrary. Don't call it yourself ! it's
+   *  done automatically when you call addDrawable on the GraphicsDirector.
+   *
+   *  IF you need the ImageLib for some special inits just extend this method and don't
+   *  forget to call a super.init(imageLib) !
+   *
+   *  @param imagelib ImageLibrary where you can take the images to display.
+   */
+     protected void init( ImageLibrary imageLib ) {
+     	super.init(imageLib);
+
+         r.width = getImageLibrary().getWidth( image );
+         r.height = getImageLibrary().getHeight( image );
+
+         if( image.getIsAnimation() ) {
+             sprAnim = new Animation( image, imageLib );
+             hasAnimation = true;
+         }
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To limit the rotation of this aura (in radians). If -1 there is no
     *  amplitude limit.
@@ -131,6 +149,14 @@ public class AuraEffect extends Drawable {
     */
      public void setAmplitudeLimit( float amplitudeLimit ) {
           this.amplitudeLimit = amplitudeLimit;
+     }
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the animation object if the given image represented an Animation.
+    */
+     public Animation getAnimation() {
+     	return sprAnim;
      }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -190,17 +216,16 @@ public class AuraEffect extends Drawable {
         int anchorY = r.y + r.height/2;
         affTr.rotate( angle, anchorX-screen.x, anchorY-screen.y );
 
-        BufferedImage bufIm = ImageLibrary.getDefaultImageLibrary().getImage( image );
+        BufferedImage bufIm = getImageLibrary().getImage( image );
 
         if( hasAnimation ) {
-            gc.drawImage( ImageLibrary.getDefaultImageLibrary().getImage( sprAnim.getCurrentImage() ),
+            gc.drawImage( getImageLibrary().getImage( sprAnim.getCurrentImage() ),
                           r.x, r.y, null );
         }
-        else
-          {
+        else {
            affTr.translate( r.x-screen.x, r.y-screen.y );
            gc.drawImage( bufIm, affTr, null );
-          }
+        }
 
        gc.setComposite( AlphaComposite.SrcOver ); // cleaning
     }
@@ -216,19 +241,19 @@ public class AuraEffect extends Drawable {
    */
      public boolean tick() {
 
-       // Animation Update.
-          if( hasAnimation ) {
+     // Animation Update.
+       if(hasAnimation) {
             sprAnim.tick();
-            r.width = ImageLibrary.getDefaultImageLibrary().getWidth( sprAnim.getCurrentImage() );
-            r.height = ImageLibrary.getDefaultImageLibrary().getHeight( sprAnim.getCurrentImage() );
-           }
+            r.width = getImageLibrary().getWidth( sprAnim.getCurrentImage() );
+            r.height = getImageLibrary().getHeight( sprAnim.getCurrentImage() );
+       }
 
        if( dataSupplier != null ) {
-          int w = ImageLibrary.getDefaultImageLibrary().getWidth( dataSupplier.getImageIdentifier() );
-          int h = ImageLibrary.getDefaultImageLibrary().getHeight( dataSupplier.getImageIdentifier() );
+          int w = getImageLibrary().getWidth( dataSupplier.getImageIdentifier() );
+          int h = getImageLibrary().getHeight( dataSupplier.getImageIdentifier() );
           r.x = dataSupplier.getX()+w/2-r.width/2;
           r.y = dataSupplier.getY()+h/2-r.height/2;
-        }
+       }
 
        if(alpha<0.4f && !isDisappearing)
           alpha+=0.01f;

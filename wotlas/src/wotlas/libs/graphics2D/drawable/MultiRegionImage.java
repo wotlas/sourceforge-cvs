@@ -102,7 +102,7 @@ public class MultiRegionImage extends Drawable {
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. A MultiRegionImage priority is always 0. The default destructionDelta 
-   *  value is 50.
+   *  value is 30.
    *
    * @param refDrawable reference drawable which position helps us to compute region
    *        visibility
@@ -126,7 +126,7 @@ public class MultiRegionImage extends Drawable {
         nbRegionX = width / deltaX;
         nbRegionY = height / deltaY;
 
-        destructionDelta = 50;
+        destructionDelta = 30;
 
         this.deltaX = deltaX;
         this.deltaY = deltaY;
@@ -167,7 +167,7 @@ public class MultiRegionImage extends Drawable {
         for( int i=0; i<nbRegionX; i++ )
            for( int j=0; j<nbRegionY; j++ )
               if( image[i][j]!=null )
-                  gc.drawImage( ImageLibrary.getDefaultImageLibrary().getImage( image[i][j] ),
+                  gc.drawImage( getImageLibrary().getImage( image[i][j] ),
                                 i*deltaX-screen.x, j*deltaY-screen.y, null );
     }
 
@@ -180,8 +180,6 @@ public class MultiRegionImage extends Drawable {
    public boolean tick() {
 
     // 1 - some inits
-       ImageLibrary imLib = ImageLibrary.getDefaultImageLibrary();
-
        int x = refDrawable.getRectangle().x;
        int y = refDrawable.getRectangle().y;
 
@@ -191,7 +189,6 @@ public class MultiRegionImage extends Drawable {
 
        int indJMin = (y-perceptionRadius-destructionDelta)/deltaY;
        int indJMax = (y+perceptionRadius+destructionDelta)/deltaY;
-
 
        if( indIMin <0 ) indIMin = 0;
        else if( indIMin>=nbRegionX ) indIMin = nbRegionX-1;
@@ -205,17 +202,20 @@ public class MultiRegionImage extends Drawable {
        if( indJMax <0 ) indJMax = 0;
        else if( indJMax>=nbRegionY ) indJMax = nbRegionY-1;
 
+       boolean outOfRange;
 
        for(int i=0; i<nbRegionX; i++ ) {
-           if(indIMin<=i && i<=indIMax)
-              continue;
+           if(i<indIMin || indIMax<i)
+              outOfRange=true;
+           else
+              outOfRange=false;
 
            for( int j=0; j<nbRegionY; j++ ) {
-              if(indJMin<=j && j<=indJMax)
+              if(!outOfRange && (indJMin<=j && j<=indJMax) )
                   continue;
 
               if( image[i][j]!=null ) {
-                  imLib.unloadImageIndex( image[i][j] ); // unload
+                  imageLib.unloadImage( image[i][j] ); // unload
                   image[i][j] = null;
               }
            }
@@ -246,15 +246,8 @@ public class MultiRegionImage extends Drawable {
            for( int j=indJMin; j<=indJMax; j++ )
               if( image[i][j]==null ) {
                   image[i][j] = new ImageIdentifier( imBase );
-                  image[i][j].imageIndex = (short) (nbRegionX*j+i);
-                  
-                  try{
-                     imLib.loadImageIndex( image[i][j], BufferedImage.TYPE_INT_RGB );
-                  }
-                  catch( java.io.IOException e ) {
-                     Debug.signal( Debug.ERROR, this, "Failed to load image "+e);
-                     image[i][j] = null;
-                  }
+                  image[i][j].setImageId( (short) (nbRegionX*j+i) );
+                  imageLib.loadImage( image[i][j] );
                }
 
       return true; // a MultiRegionImage is always "live" by default.

@@ -60,31 +60,30 @@ public class Animation {
 
   /** Constructor with specified image identifier to use as a base for the animation.
    *  We change the image for display at each tick (nbTicksBeforeNextImage=1).
-   *
    * @param animBase image identifier of the images to use for the animation.
+   * @param imLib image library from which the animation images are taken.
    */
-    public Animation( ImageIdentifier animBase ) {
-       setAnimBase( animBase );
-       nbTicksBeforeNextImage = 1;
+    public Animation( ImageIdentifier animBase, ImageLibrary imLib ) {
+       this( animBase, imLib, (byte)1 );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Constructor with specified image identifier to use as a base for the animation
    *  and the number of ticks before we select the next image for display.
-   *
    * @param animBase image identifier of the images to use for the animation.
+   * @param imLib image library from which the animation images are taken.
    * @param nbTicksBeforeNextImage number of ticks before next image.
    */
-    public Animation( ImageIdentifier animBase, byte nbTicksBeforeNextImage ) {
-       setAnimBase( animBase );
+    public Animation( ImageIdentifier animBase, ImageLibrary imLib, byte nbTicksBeforeNextImage ) {
+
        this.nbTicksBeforeNextImage = nbTicksBeforeNextImage;
+       setAnimBase( animBase, imLib );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Returns the current image identifier of the animation.
-   *
    * @return current image identifier of the animation.
    */
     public ImageIdentifier getCurrentImage() {
@@ -96,7 +95,7 @@ public class Animation {
   /** We reset the animation.
    */
     public void reset() {
-   	animBase.imageIndex = 0;
+   	animBase.imageId = 0;
    	tickCounter = 0;
     }
 
@@ -107,8 +106,8 @@ public class Animation {
     public void tick() {
        tickCounter++;
 
-       if( ( tickCounter%nbTicksBeforeNextImage ) == 0 ) {
-           animBase.imageIndex = (short) ( (animBase.imageIndex+1)%animLength );
+       if( ( tickCounter%nbTicksBeforeNextImage )==0 ) {
+           animBase.imageId = (short) ( (animBase.imageId+1)%animLength );
            tickCounter=0;
        }
     }
@@ -116,25 +115,24 @@ public class Animation {
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To get the animation base.
-   *
    * @return animation base.
    */
     public ImageIdentifier getAnimBase() {
        ImageIdentifier animBase = new ImageIdentifier( this.animBase );
-       animBase.imageIndex = 0;
+       animBase.imageId = 0;
        return animBase;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To set the animation base.
-   *
    * @param animBase animation base to set.
+   * @param imLib image library from which the animation images are taken.
    */
-    public void setAnimBase( ImageIdentifier animBase ) {
+    public void setAnimBase( ImageIdentifier animBase, ImageLibrary imLib ) {
+       animLength = (short) imLib.getAnimationLength( animBase );
        this.animBase = new ImageIdentifier( animBase );
-       this.animBase.imageIndex = 0;
-       animLength = (short) ImageLibrary.getDefaultImageLibrary().getIndexLength( animBase );
+       this.animBase.imageId = 0;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

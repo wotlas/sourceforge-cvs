@@ -23,10 +23,10 @@ import wotlas.libs.graphics2D.*;
 import java.awt.*;
 
 /** A MotionlessSprite is a sprite that has no DataSupplier. It is used to just display
- *  an image on the GraphicsDirector. The image can change ( hasAnimation=true in constructor)
- *  but you can not change its (x,y) cordinates once set in the constructor.
+ *  an image on the GraphicsDirector. The image can be an animation
+ *  but you can not change its (x,y) cordinates once they are set in the constructor.
  *
- *  A MotionlessSprite is especially useful for background images.
+ *  A MotionlessSprite is especially useful for background images or static images.
  *
  * @author MasterBob, Aldiss
  */
@@ -58,54 +58,77 @@ public class MotionlessSprite extends Drawable implements DrawableOwner {
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor with no Owner ( see the DrawableOwner interface ) for this sprite.
-   *  The cordinates x,y are supposed to be background cordinates.
+   *  The cordinates x,y are supposed to be background cordinates. The image given can
+   *  represent an animation.
    *
    * @param x sprite's x cordinate
    * @param y sprite's y cordinate
    * @param image image identifier to use for this sprite.
    * @param priority sprite's priority
-   * @param hasAnimation if set to true we use the given identifier as a base for an animation,
-   *        if set to false, we let the ImageIdentifier imageIndex set to 0.
    */
-    public MotionlessSprite( int x, int y, ImageIdentifier image, short priority, boolean hasAnimation ) {
-        this( x, y, image, priority, hasAnimation, null, true );
+    public MotionlessSprite( int x, int y, ImageIdentifier image, short priority ) {
+        this( x, y, image, priority, null, true );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Constructor with owner and cordinates reference. The owner is just given as
-   *  a string that should represent its name.
+   *  a string that should represent its name. The image given can
+   *  represent an animation.
    *
    * @param x sprite's x cordinate
    * @param y sprite's y cordinate
    * @param image image identifier to use for this sprite.
    * @param priority sprite's priority
-   * @param hasAnimation if set to true we use the given identifier as a base for an animation,
-   *        if set to false, we let the ImageIdentifier imageIndex set to 0.
    * @param owner the owner's name
    * @param isBackgroundCordinates set to true if x, y are background cordinates, to false if they are
    *        screen cordinates.
    */
-    public MotionlessSprite( int x, int y, ImageIdentifier image, short priority, boolean hasAnimation,
+    public MotionlessSprite( int x, int y, ImageIdentifier image, short priority,
                              String owner, boolean isBackgroundCordinates ) {
     	super();
     	r.x = x;
     	r.y = y;
-        r.width = ImageLibrary.getDefaultImageLibrary().getWidth( image );
-        r.height = ImageLibrary.getDefaultImageLibrary().getHeight( image );
     	
     	this.image = image;    	
         this.priority = priority;
-        this.hasAnimation = hasAnimation;
         this.isBackgroundCordinates = isBackgroundCordinates;
-
-        if(hasAnimation)
-           sprAnim = new Animation( image );
-
         this.owner = owner;
+
+        hasAnimation = false;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To initialize this drawable with the ImageLibrary. Don't call it yourself ! it's
+   *  done automatically when you call addDrawable on the GraphicsDirector.
+   *
+   *  IF you need the ImageLib for some special inits just extend this method and don't
+   *  forget to call a super.init(imageLib) !
+   *
+   *  @param imagelib ImageLibrary where you can take the images to display.
+   */
+     protected void init( ImageLibrary imageLib ) {
+     	super.init(imageLib);
+
+        r.width = getImageLibrary().getWidth( image );
+        r.height = getImageLibrary().getHeight( image );
+
+         if( image.getIsAnimation() ) {
+             sprAnim = new Animation( image, imageLib );
+             hasAnimation = true;
+         }
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the animation object if the given image represented an Animation.
+    */
+     public Animation getAnimation() {
+     	return sprAnim;
+     }
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Paint method called by the GraphicsDirector. The specified rectangle represents
    *  the displayed screen in background cordinates ( see GraphicsDirector ).
@@ -127,11 +150,11 @@ public class MotionlessSprite extends Drawable implements DrawableOwner {
         }
 
         if( hasAnimation ) {
-            gc.drawImage( ImageLibrary.getDefaultImageLibrary().getImage( sprAnim.getCurrentImage() ),
+            gc.drawImage( getImageLibrary().getImage( sprAnim.getCurrentImage() ),
                           myX, myY, null );
         }
         else
-            gc.drawImage( ImageLibrary.getDefaultImageLibrary().getImage( image ), myX, myY, null );
+            gc.drawImage( getImageLibrary().getImage( image ), myX, myY, null );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

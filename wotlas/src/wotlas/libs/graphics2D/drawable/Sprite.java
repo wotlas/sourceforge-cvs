@@ -28,7 +28,8 @@ import java.awt.geom.*;
 /** A Sprite is mainly an image displayed on the GraphicsDirector. The sprite data is 
  *  given by an object implementing the SpriteDataSupplier interface. Because a sprite
  *  has no Image field but an ImageIdentifier, it can then represent an animation if
- *  the imageIdentifier changes on each tick.
+ *  the imageIdentifier changes on each tick. You can use an Animation object to manage
+ *  the animation.
  *
  * @author MasterBob, Aldiss
  * @see wotlas.libs.graphics2D.drawable.SpriteDataSupplier
@@ -84,11 +85,7 @@ public class Sprite extends Drawable implements DrawableOwner {
    * @param priority sprite's priority
    */
     public Sprite(SpriteDataSupplier dataSupplier, short priority) {
-    	super();
-        this.dataSupplier = dataSupplier;
-        this.priority = priority;
-        anchorMode = CENTER_ANCHOR_POINT;
-        tick();
+    	this(dataSupplier,priority,CENTER_ANCHOR_POINT);
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -104,8 +101,22 @@ public class Sprite extends Drawable implements DrawableOwner {
         this.dataSupplier = dataSupplier;
         this.priority = priority;
         this.anchorMode = anchorMode;
-        tick();
     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To initialize this drawable with the ImageLibrary. Don't call it yourself ! it's
+   *  done automatically when you call addDrawable on the GraphicsDirector.
+   *
+   *  IF you need the ImageLib for some special inits just extend this method and don't
+   *  forget to call a super.init(imageLib) !
+   *
+   *  @param imagelib ImageLibrary where you can take the images to display.
+   */
+     protected void init( ImageLibrary imageLib ) {
+     	super.init(imageLib);
+        tick();
+     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -207,7 +218,7 @@ public class Sprite extends Drawable implements DrawableOwner {
 
 
       // 4 - image display
-         BufferedImage bufIm = ImageLibrary.getDefaultImageLibrary().getImage( image );
+         BufferedImage bufIm = imageLib.getImage( image );
          
          if( imageFilter!=null )
              bufIm = imageFilter.filterImage( bufIm );
@@ -239,8 +250,8 @@ public class Sprite extends Drawable implements DrawableOwner {
 
         image = dataSupplier.getImageIdentifier();
 
-        r.width = ImageLibrary.getDefaultImageLibrary().getWidth( image );
-        r.height = ImageLibrary.getDefaultImageLibrary().getHeight( image );
+        r.width = imageLib.getWidth( image );
+        r.height = imageLib.getHeight( image );
 
         return true; // no update needed and a sprite is always "live" by default.
      }

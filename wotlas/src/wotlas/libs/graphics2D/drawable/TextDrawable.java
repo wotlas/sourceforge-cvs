@@ -41,6 +41,10 @@ public class TextDrawable extends Drawable {
     */
      private static boolean highQualityTextDisplay = false;
 
+   /** Default Font Name used.
+    */
+    static private String defaultFontName = "Lblack.ttf";
+
  /*------------------------------------------------------------------------------------*/
 
    /** Text to write
@@ -54,6 +58,10 @@ public class TextDrawable extends Drawable {
    /** Font to use.
     */
      private Font font;
+
+   /** The name of the font used
+    */
+     private String fontName;
 
     /** Text Font Size. .
     */
@@ -108,9 +116,24 @@ public class TextDrawable extends Drawable {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Constructor with drawable to use as reference. The font use we use as default
-   *  is Lucida Blackletter and must be available in the font directory of the
-   *  default database. The default color is black & size 12.
+    /** To get the default font name.
+     */
+     static public String getDefaultFontName() {
+     	return defaultFontName;
+     }
+
+ /*------------------------------------------------------------------------------------*/
+
+    /** To set the default font name.
+     */
+     static public void setDefaultFontName( String fontName ) {
+     	defaultFontName = fontName;
+     }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Constructor with drawable to use as reference. We use the default font name.
+   *  The default color is black & size 12.
    *
    *  The TextDrawable has infinite life.
    *
@@ -119,9 +142,8 @@ public class TextDrawable extends Drawable {
    * @param priority textDrawble's priority
    */
     public TextDrawable( String text, Drawable refDrawable, short priority) {
-    	this( text, refDrawable, Color.black, 13.0f,"Lblack.ttf", priority, -1 );
+    	this( text, refDrawable, Color.black, 13.0f,defaultFontName, priority, -1 );
     }
-
 
    /*------------------------------------------------------------------------------------*/
 
@@ -160,9 +182,9 @@ public class TextDrawable extends Drawable {
     	super();
         this.text = text;
         recalculate = true;
-	      setReferenceDrawable(refDrawable);
-        setFont(fontName);
-        setSize(size);
+	setReferenceDrawable(refDrawable);
+        this.fontName = fontName;
+        this.size=size;
         setColor(color);
         this.priority = priority;
         this.timeLimit = System.currentTimeMillis()+lifeTime;
@@ -170,6 +192,22 @@ public class TextDrawable extends Drawable {
         useAntialiasing(true);
     }
 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To initialize this drawable with the ImageLibrary. Don't call it yourself ! it's
+   *  done automatically when you call addDrawable on the GraphicsDirector.
+   *
+   *  IF you need the ImageLib for some special inits just extend this method and don't
+   *  forget to call a super.init(imageLib) !
+   *
+   *  @param imagelib ImageLibrary where you can take the images to display.
+   */
+     protected void init( ImageLibrary imageLib ) {
+     	super.init(imageLib);
+     	
+     	setFont(fontName);
+        setSize(size);
+     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -220,7 +258,7 @@ public class TextDrawable extends Drawable {
   */
   public void setFont(String fontName){
    try {
-      String fontPath = ImageLibrary.getDefaultImageLibrary().getDataBasePath()+File.separator+"fonts";
+      String fontPath = getImageLibrary().getUserFontPath();
 
       FileInputStream fis = new FileInputStream(fontPath+File.separator+fontName);
       font = Font.createFont(Font.TRUETYPE_FONT, fis);

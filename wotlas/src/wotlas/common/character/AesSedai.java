@@ -205,13 +205,11 @@ public class AesSedai extends Female {
              return (Drawable) aesSedaiShadowSprite; 
 
       // Shadow Creation
+         String path[] = { "players-0", "shadows-3", "aes-sedai-walking-0" };
          aesSedaiShadowSprite = new ShadowSprite( aesSedaiSprite.getDataSupplier(),
-                                                  new ImageIdentifier(
-                                                       ImageLibRef.PLAYERS_CATEGORY,
-                                                       ImageLibRef.PLAYER_SHADOW_IMAGES_SET,
-                                                       ImageLibRef.AES_SEDAI_WALK_SHADOW_ACTION ),
+                                                  new ImageIdentifier( path ),
                                                   ImageLibRef.SHADOW_PRIORITY, 4, 4 );
-         aesSedaiShadowSprite.useAntialiasing(true);
+         //aesSedaiShadowSprite.useAntialiasing(true);
          return aesSedaiShadowSprite;
      }
 
@@ -234,49 +232,47 @@ public class AesSedai extends Female {
          }
 
       // symbol selection
-         short imageIndex = 0;
+         String symbolName = null;
 
           switch( aesSedaiStatus ) {
               case AES_NOVICE :
-                      imageIndex = ImageLibRef.AES_NOVICE_SYMBOL_INDEX;
+                      symbolName = "novice-9";
                       break;
               case AES_ACCEPTED :
-                      imageIndex = ImageLibRef.AES_ACCEPTED_SYMBOL_INDEX;
+                      symbolName = "accepted-8";
                       break;
               case AES_BROWN_AJAH :
-                      imageIndex = ImageLibRef.AES_BROWN_SYMBOL_INDEX;
+                      symbolName = "brown-2";
                       break;
               case AES_WHITE_AJAH:
-                      imageIndex = ImageLibRef.AES_WHITE_SYMBOL_INDEX;
+                      symbolName = "white-6";
                       break;
               case AES_BLUE_AJAH :
-                      imageIndex = ImageLibRef.AES_BLUE_SYMBOL_INDEX;
+                      symbolName = "blue-4";
                       break;
               case AES_GREEN_AJAH :
-                      imageIndex = ImageLibRef.AES_GREEN_SYMBOL_INDEX;
+                      symbolName = "green-5";
                       break;
               case AES_RED_AJAH :
-                      imageIndex = ImageLibRef.AES_RED_SYMBOL_INDEX;
+                      symbolName = "red-3";
                       break;
               case AES_GRAY_AJAH :
-                      imageIndex = ImageLibRef.AES_GREY_SYMBOL_INDEX;
+                      symbolName = "gray-7";
                       break;
               case AES_YELLOW_AJAH :
-                      imageIndex = ImageLibRef.AES_YELLOW_SYMBOL_INDEX;
+                      symbolName = "yellow-1";
                       break;
               case AES_AMYRLIN :
-                      imageIndex = ImageLibRef.AES_AMYRLIN_SYMBOL_INDEX;
+                      symbolName = "amyrlin-0";
                       break;
           }
 
       // Aura Creation
-         ImageIdentifier auraImage = new ImageIdentifier( ImageLibRef.PLAYERS_CATEGORY,
-                                                          ImageLibRef.PLAYER_SYMBOL_IMAGES_SET,
-                                                          ImageLibRef.AES_SEDAI_SYMBOL_ACTION,
-                                                          imageIndex );
+         String path[] = { "players-0", "symbols-2", "aes-sedai-symbols-0", symbolName+".jpg" };
+         ImageIdentifier auraImage = new ImageIdentifier( path );
 
          aesSedaiAuraEffect = new AuraEffect( aesSedaiSprite.getDataSupplier(), auraImage,
-                                              ImageLibRef.AURA_PRIORITY, false, 5000 );
+                                              ImageLibRef.AURA_PRIORITY, 5000 );
          aesSedaiAuraEffect.useAntialiasing(true);
 
          if(aesSedaiStatus==AES_NOVICE)
@@ -370,9 +366,8 @@ public class AesSedai extends Female {
                  aesSedaiSprite.setDynamicImageFilter(filter);
 
            // We return the default Aes Sedai Image...
-              return new ImageIdentifier( ImageLibRef.PLAYERS_CATEGORY ,
-                                          ImageLibRef.AES_SEDAI_SET ,
-                                          ImageLibRef.AES_BLUE_GOLDH_WALKING_ACTION );
+              String path[] = { "players-0", "aes-sedai-0", "aes-sedai-walking-0" };
+              return new ImageIdentifier( path );
          }
 
          if(aesSedaiSprite!=null)

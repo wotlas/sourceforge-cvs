@@ -92,9 +92,7 @@ public abstract class Human implements WotCharacter {
 
          // Default image for towns & worlds
             if( playerLocation.isTown() || playerLocation.isWorld() )
-                return new ImageIdentifier( ImageLibRef.PLAYERS_CATEGORY ,
-                                            ImageLibRef.PLAYER_SMALL_IMAGES_SET ,
-                                            ImageLibRef.PLAYER_SMALL_IM_ACTION );
+                return new ImageIdentifier( "players-0/players-small-images-1/player-small-0" );
 
             return null; // null otherwise, we let sub-classes redefine the rest...
      }

@@ -26,10 +26,7 @@ package wotlas.client.screen;
 import wotlas.client.ClientManager;
 import wotlas.client.DataManager;
 
-import wotlas.libs.graphics2D.*;
-import wotlas.libs.graphics2D.drawable.*;
-import wotlas.libs.graphics2D.policy.*;
-
+import wotlas.libs.graphics2D.GraphicsDirector;
 import wotlas.utils.Debug;
 
 import java.awt.*;

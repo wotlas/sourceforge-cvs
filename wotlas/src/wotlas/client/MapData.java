@@ -29,8 +29,7 @@ import java.util.Hashtable;
  * @see wotlas.client.InteriorMapData
  */
  
-public interface MapData
-{
+public interface MapData {
   
  /*------------------------------------------------------------------------------------*/
   
@@ -56,7 +55,7 @@ public interface MapData
    * - init the Graphics Director
    * - show the other images (shadows, buildings, towns...)
    */
-  public void initDisplay(PlayerImpl myPlayer);
+  public void initDisplay( PlayerImpl myPlayer, DataManager dataManager );
 
  /*------------------------------------------------------------------------------------*/
   

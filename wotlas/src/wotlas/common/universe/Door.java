@@ -198,7 +198,7 @@ public class Door
      	isDisplayed = false;
      }
 
- /*------------------------------------------------------------------------------------*/  
+ /*------------------------------------------------------------------------------------*/
 
    /** To get the Door Drawable to add to the GraphicsDirector.
     * @return DoorDrawable corresponding to this room.

@@ -493,9 +493,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     // 0 - Create Image Library
     imageDBHome = databasePath + File.separator + IMAGE_LIBRARY;
     try {
-      imageLib = ImageLibrary.createImageLibrary(imageDBHome);
-    } catch( java.io.IOException ioe ) {
-      ioe.printStackTrace();
+      imageLib = ImageLibrary.createImageLibrary( imageDBHome, databasePath+File.separator+"fonts");
+    } catch( Exception ex ) {
+      ex.printStackTrace();
       Debug.exit();
     }
     
@@ -517,7 +517,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       SoundLibrary.getSoundLibrary().setSoundVolume((short) clientConfiguration.getSoundVolume());
     
     // 1 - Create Graphics Director
-    gDirector = new GraphicsDirector( new LimitWindowPolicy() );
+    gDirector = new GraphicsDirector( new LimitWindowPolicy(), imageLib );
 
     // 2 - Retrieve player's informations
     myPlayer = new PlayerImpl();
@@ -534,14 +534,14 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
     myPlayer.setIsMaster( true );   // this player is controlled by the user.
 
-    // Retreive player's location
+    // 3 - Retreive player's location
     WotlasLocation location = myPlayer.getLocation();
     if (SHOW_DEBUG)
         System.out.println("POSITION set to x:"+myPlayer.getX()+" y:"+myPlayer.getY()+" location is "+location);
 
     players = new Hashtable();
     
-    // 5 - Create the panels
+    // 4 - Create the panels
     infosPanel = new JInfosPanel(myPlayer);
     mapPanel = new JMapPanel(gDirector, this);
     chatPanel = new JChatPanel();
@@ -554,14 +554,14 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     if (SHOW_DEBUG)
         System.out.println("Displaying window");
 
-    // 6 - Create main Frame
+    // 5 - Create main Frame
     mFrame = new JClientScreen(infosPanel, mapPanel, chatPanel, optionsPanel, playerPanel, logPanel, pingPanel);
 
     if (SHOW_DEBUG)
        System.out.println("JClient created");
     mFrame.init();
     
-    // Client configuration
+    // 6 - Client configuration
     if ( (clientConfiguration.getClientWidth()>0) && (clientConfiguration.getClientHeight()>0) )
       mFrame.setSize(clientConfiguration.getClientWidth(),clientConfiguration.getClientHeight());
 
@@ -733,8 +733,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       System.out.println("DataManager::onLeftClicJMapPanel");
 
     Rectangle screen = gDirector.getScreenRectangle();
-
-    Object object = gDirector.findOwner( e.getX(), e.getY());
+    Object object = gDirector.findOwner( e.getX(), e.getY() );
 
     if ( object instanceof PlayerImpl ) {
       	// We display text & aura                      
@@ -866,7 +865,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       myMapData = new WorldMapData();
     }
     myMapData.showDebug(SHOW_DEBUG);
-    myMapData.initDisplay(myPlayer);
+    myMapData.initDisplay(myPlayer, this);
   }
 
  /*------------------------------------------------------------------------------------*/

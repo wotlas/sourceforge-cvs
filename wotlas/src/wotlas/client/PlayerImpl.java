@@ -154,7 +154,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   */
   public void init() {
     Debug.signal( Debug.NOTICE, null, "PlayerImpl::init");
-    animation = new Animation(wotCharacter.getImage(location));
+    animation = new Animation( wotCharacter.getImage(location), ImageLibrary.getDefaultImageLibrary() );
     sprite = (Sprite) wotCharacter.getDrawable(this);              
     movementComposer.init( this );
   }
@@ -163,6 +163,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
    * or to show other players
    */
   public void initVisualProperties(GraphicsDirector gDirector) {
+
     if (isMaster) {
       gDirector.addDrawable(wotCharacter.getShadow());
     } else {
@@ -177,7 +178,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     if (!isMaster) {
       gDirector.removeDrawable(wotCharacter.getDrawable(this));
       gDirector.removeDrawable(wotCharacter.getShadow());
-    }    
+    }
   }
 
  /*------------------------------------------------------------------------------------*/

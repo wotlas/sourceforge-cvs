@@ -96,17 +96,21 @@ public class WorldMapData implements MapData
    * - init the Graphics Director
    * - show the other images (shadows, buildings, towns...)
    */
-  public void initDisplay(PlayerImpl myPlayer) {
+  public void initDisplay(PlayerImpl myPlayer, DataManager dataManager ) {
+
     if (DataManager.SHOW_DEBUG)
       System.out.println("-- initDisplay in WorldMapData --");
 
-    myPlayer.init();
+    this.dataManager = dataManager;
 
     ImageIdentifier backgroundImageID = null;   // background image identifier
     Drawable background = null;                 // background image
 
-    dataManager = DataManager.getDefaultDataManager();
+    GraphicsDirector gDirector = dataManager.getGraphicsDirector();
     String imageDBHome = dataManager.getImageDBHome();
+
+    // 0 - some inits...
+    myPlayer.init();
 
     // 1 - We load the WorldMap
     WotlasLocation location = myPlayer.getLocation();
@@ -127,33 +131,38 @@ public class WorldMapData implements MapData
 
     // 3 - We load the image
     backgroundImageID = worldMap.getWorldImage();
+    gDirector.getImageLibrary().loadImage( backgroundImageID );
+
     if (SHOW_DEBUG)
       System.out.println("\tImageIdentifier = " + backgroundImageID);
+
     background = (Drawable) new MotionlessSprite( 0,                        // ground x=0
                                                   0,                        // ground y=0
                                                   backgroundImageID,        // image
-                                                  ImageLibRef.MAP_PRIORITY, // priority
-                                                  false                     // no animation
+                                                  ImageLibRef.MAP_PRIORITY  // priority
                                                  );
 
     // 4 - We load the mask
-    ImageIdentifier mapMaskID = null;
-    try {
-      mapMaskID = ImageLibrary.getImageIdentifier( backgroundImageID, imageDBHome, "mask" );
-    } catch( IOException e ) {
-      Debug.signal( Debug.CRITICAL, this, "Image Library Corrupted" );
-      Debug.exit();
-    }
-    if (mapMaskID==null) {
-      Debug.signal( Debug.CRITICAL, this, "Mask not found" );
-      Debug.exit();
-    }
     BufferedImage bufIm = null;
+
     try {
-      bufIm = ImageLibrary.loadBufferedImage(new ImageIdentifier( mapMaskID ), imageDBHome, BufferedImage.TYPE_INT_ARGB );
-    } catch( IOException e ) {
-      e.printStackTrace();
-      return;
+       ImageIdentifier mapMaskID = gDirector.getImageLibrary().getImageIdentifier( backgroundImageID, "mask" );
+
+       if(mapMaskID!=null) {
+          File maskFile = gDirector.getImageLibrary().getImageFile( mapMaskID );
+          
+          if(maskFile!=null)
+             bufIm = ImageLibrary.loadBufferedImage( maskFile.getPath(), BufferedImage.TYPE_INT_ARGB );
+       }
+
+       if(bufIm==null) {
+          Debug.signal( Debug.CRITICAL, this, "Mask not found" );
+          Debug.exit();
+       }
+    }
+    catch( ImageLibraryException e ) {
+      Debug.signal( Debug.CRITICAL, this, "Image Library Corrupted: "+e );
+      Debug.exit();
     }
 
     // 5 - We initialize the AStar algo
@@ -162,7 +171,6 @@ public class WorldMapData implements MapData
     bufIm.flush(); // free image resource
 
     // 6 - We init the GraphicsDirector
-    GraphicsDirector gDirector = dataManager.getGraphicsDirector();
     gDirector.init( background,               // background drawable
                     myPlayer.getDrawable(),   // reference for screen movements
                     new Dimension( JClientScreen.leftWidth, JClientScreen.mapHeight )   // screen default dimension
@@ -181,8 +189,7 @@ public class WorldMapData implements MapData
         townImage = (Drawable) new MotionlessSprite( position.x,
                                                      position.y,
                                                      townImageID,              // image
-                                                     ImageLibRef.MAP_PRIORITY, // priority
-                                                     false                     // no animation
+                                                     ImageLibRef.MAP_PRIORITY  // priority
                                                     );
         gDirector.addDrawable(townImage);
       }

@@ -24,6 +24,7 @@ import wotlas.common.universe.*;
 import wotlas.server.*;
 
 import wotlas.libs.graphics2D.ImageIdentifier;
+import wotlas.libs.graphics2D.drawable.DoorDrawable;
 
 import wotlas.utils.*;
 
@@ -90,13 +91,11 @@ public class WorldGenerator {
            WorldMap worldMap = new WorldMap();
            worldMaps[0] = worldMap;
 
-           worldMap.setWorldMapID(0);     
+           worldMap.setWorldMapID(0);
            worldMap.setFullName("RandLand");
            worldMap.setShortName("randland");
            worldMap.setInsertionPoint( new ScreenPoint(680,455) );
-           worldMap.setWorldImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
-                                                        ImageLibRef.UNIVERSE_SET,
-                                                        ImageLibRef.RANDLAND_MAP_ACTION ) );
+           worldMap.setWorldImage( new ImageIdentifier( "maps-1/universe-2/randland-0") );
            worldMap.setMusicName("tar-valon-01.mid");
 
         // STEP 3 - TOWNS
@@ -113,13 +112,9 @@ public class WorldGenerator {
            townMap.setShortName("tarvalon");
            townMap.setInsertionPoint( new ScreenPoint(70,340) );
 
-           townMap.setSmallTownImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
-                                                           ImageLibRef.TOWN_SMALL_SET,
-                                                           ImageLibRef.TARVALON_SMALL_IM_ACTION ) );
+           townMap.setSmallTownImage( new ImageIdentifier( "maps-1/town-small-1/tar-valon-small-0" ) );
 
-           townMap.setTownImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
-                                                      ImageLibRef.UNIVERSE_SET ,
-                                                      ImageLibRef.TARVALON_MAP_ACTION ) );
+           townMap.setTownImage( new ImageIdentifier( "maps-1/universe-2/randland-1" ) );
            townMap.setMusicName("tar-valon-01.mid");
 
            MapExit mapExit = null;
@@ -212,13 +207,9 @@ public class WorldGenerator {
            townMap.setShortName("blightrefuge");
            townMap.setInsertionPoint( new ScreenPoint(0,0) );
 
-           townMap.setSmallTownImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
-                                                           ImageLibRef.TOWN_SMALL_SET,
-                                                           ImageLibRef.BLIGHT_REFUGE_SMALL_IM_ACTION ) );
+           townMap.setSmallTownImage( new ImageIdentifier( "maps-1/town-small-1/blight-refuge-small-1" ) );
 
-           townMap.setTownImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
-                                                      ImageLibRef.UNIVERSE_SET ,
-                                                      (short)-1 ) ); // no town image
+           townMap.setTownImage( new ImageIdentifier() ); // no town image
            townMap.setMusicName("tar-valon-01.mid");
 
 
@@ -233,9 +224,7 @@ public class WorldGenerator {
            buildings[0].setServerID(0);
            buildings[0].setHasTownExits(false);
            buildings[0].setHasBuildingExits(true);
-           buildings[0].setSmallBuildingImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
-                                                                ImageLibRef.BUILDING_SMALL_SET,
-                                                                ImageLibRef.TARVALON_WEGATE_SMALL_IM_ACTION ) );
+           buildings[0].setSmallBuildingImage( new ImageIdentifier( "maps-1/building-small-0/tar-valon-wegate-small-1") );
 
         // Tar Valon - North-West Clearing (Building)
            buildings[1] = new Building(55,232,18,18);
@@ -245,9 +234,7 @@ public class WorldGenerator {
            buildings[1].setServerID(0);
            buildings[1].setHasTownExits(false);
            buildings[1].setHasBuildingExits(true);
-           buildings[1].setSmallBuildingImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
-                                                                ImageLibRef.BUILDING_SMALL_SET,
-                                                                ImageLibRef.TARVALON_NWCLNG_SMALL_IM_ACTION ) );
+           buildings[1].setSmallBuildingImage( new ImageIdentifier( "maps-1/building-small-0/tar-valon-nwclearing-small-2" ) );
 
         // Tar Valon - North-West Gate (Building)
            buildings[2] = new Building(210,400,13,21);
@@ -257,9 +244,7 @@ public class WorldGenerator {
            buildings[2].setServerID(0);
            buildings[2].setHasTownExits(false);
            buildings[2].setHasBuildingExits(true);
-           buildings[2].setSmallBuildingImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
-                                                                ImageLibRef.BUILDING_SMALL_SET,
-                                                                ImageLibRef.TARVALON_NWGATE_SMALL_IM_ACTION ) );
+           buildings[2].setSmallBuildingImage( new ImageIdentifier( "maps-1/building-small-0/tar-valon-nwgate-small-3") );
 
         // Tar Valon - South-West Clearing (Building)
            buildings[3] = new Building(95,795,20,20);
@@ -269,9 +254,7 @@ public class WorldGenerator {
            buildings[3].setServerID(0);
            buildings[3].setHasTownExits(false);
            buildings[3].setHasBuildingExits(true);
-           buildings[3].setSmallBuildingImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
-                                                                ImageLibRef.BUILDING_SMALL_SET,
-                                                                ImageLibRef.TARVALON_SWCLNG_SMALL_IM_ACTION ) );
+           buildings[3].setSmallBuildingImage( new ImageIdentifier( "maps-1/building-small-0/tar-valon-swclearing-small-4") );
 
         // Tar Valon - White Tower South Gate (Building)
            buildings[4] = new Building(276,503,14,15);
@@ -281,9 +264,7 @@ public class WorldGenerator {
            buildings[4].setServerID(0);
            buildings[4].setHasTownExits(false);
            buildings[4].setHasBuildingExits(true);
-           buildings[4].setSmallBuildingImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
-                                                                ImageLibRef.BUILDING_SMALL_SET,
-                                                                ImageLibRef.TARVALON_WHTOW_SMALL_IM_ACTION ) );
+           buildings[4].setSmallBuildingImage( new ImageIdentifier( "maps-1/building-small-0/tar-valon-swhitower-small-0") );
 
         // STEP 5 - Tar Valon West Gate InteriorMap
            InteriorMap maps[] = new InteriorMap[1];
@@ -295,9 +276,7 @@ public class WorldGenerator {
            map.setInteriorMapID(0);
            map.setFullName("Tar Valon West Gate - First Level");
            map.setShortName("firstlevel");
-           map.setInteriorMapImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
-                                                      ImageLibRef.UNIVERSE_SET ,
-                                                      ImageLibRef.TARVALON_WEST_GATE_MAP_ACTION ) );
+           map.setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/tar-valon-wegate-3" ) );
            map.setImageWidth(1050);
            map.setImageHeight(1200);
            map.setImageRegionWidth(350);
@@ -354,14 +333,14 @@ public class WorldGenerator {
              roomLink = rooms[2].addRoomLink( new ScreenRectangle( 695, 770, 60, 25 ) );
              roomLink.setRoom1ID(2);
              roomLink.setRoom2ID(14);  
-             roomLink.setDoor( new Door( 705, 777, -halfPI, (byte)ImageLibRef.HORIZONTAL_RIGHT_PIVOT,
-                               new ImageIdentifier((short)2,(short)0,(short)2,ImageLibRef.HORIZONTAL_RIGHT_PIVOT) ) );
+             roomLink.setDoor( new Door( 705, 777, -halfPI, DoorDrawable.HORIZONTAL_RIGHT_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-40len-8th-2/hor-right-pivot-3.gif" ) ) );
 
              roomLink = rooms[2].addRoomLink( new ScreenRectangle( 700, 505, 50, 25) );
              roomLink.setRoom1ID(5);
              roomLink.setRoom2ID(2);
-             roomLink.setDoor( new Door( 705, 514, halfPI, (byte)ImageLibRef.HORIZONTAL_RIGHT_PIVOT,
-                               new ImageIdentifier((short)2,(short)0,(short)2,ImageLibRef.HORIZONTAL_RIGHT_PIVOT) ) );
+             roomLink.setDoor( new Door( 705, 514, halfPI, DoorDrawable.HORIZONTAL_RIGHT_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-40len-8th-2/hor-right-pivot-3.gif" ) ) );
 
              rooms[2].addRoomLink( rooms[1].getRoomLinks()[0] );
 
@@ -392,9 +371,9 @@ public class WorldGenerator {
 
              roomLink = rooms[4].addRoomLink( new ScreenRectangle( 780, 150, 20, 40) );
              roomLink.setRoom1ID(8);
-             roomLink.setRoom2ID(4);  
-             roomLink.setDoor( new Door( 786, 154, -halfPI,(byte)ImageLibRef.VERTICAL_TOP_PIVOT,
-                               new ImageIdentifier((short)2,(short)0,(short)1,ImageLibRef.VERTICAL_TOP_PIVOT) ) );
+             roomLink.setRoom2ID(4);
+             roomLink.setDoor( new Door( 786, 154, -halfPI,DoorDrawable.VERTICAL_TOP_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-8th-1/vert-top-pivot-0.gif" ) ) );
 
              rooms[4].addRoomLink( rooms[3].getRoomLinks()[0] );
 
@@ -449,8 +428,8 @@ public class WorldGenerator {
              roomLink = rooms[8].addRoomLink( new ScreenRectangle( 680, 120, 40, 20) );
              roomLink.setRoom1ID(9);
              roomLink.setRoom2ID(8);
-             roomLink.setDoor( new Door( 685, 127, halfPI,(byte)ImageLibRef.HORIZONTAL_RIGHT_PIVOT,
-                               new ImageIdentifier((short)2,(short)0,(short)0,ImageLibRef.HORIZONTAL_RIGHT_PIVOT) ) );
+             roomLink.setDoor( new Door( 685, 127, halfPI,DoorDrawable.HORIZONTAL_RIGHT_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-5th-0/hor-right-pivot-3.gif" ) ) );
 
              rooms[8].addRoomLink( rooms[6].getRoomLinks()[1] );
              rooms[8].addRoomLink( rooms[4].getRoomLinks()[0] );
@@ -468,8 +447,8 @@ public class WorldGenerator {
              roomLink = rooms[10].addRoomLink( new ScreenRectangle( 780, 1110, 25, 40) );
              roomLink.setRoom1ID(14);
              roomLink.setRoom2ID(10);  
-             roomLink.setDoor( new Door( 786, 1114, halfPI, (byte)ImageLibRef.VERTICAL_BOTTOM_PIVOT,
-                               new ImageIdentifier((short)2,(short)0,(short)1,ImageLibRef.VERTICAL_BOTTOM_PIVOT) ) );
+             roomLink.setDoor( new Door( 786, 1114, halfPI, DoorDrawable.VERTICAL_BOTTOM_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-8th-1/vert-bottom-pivot-1.gif" ) ) );
 
              rooms[10].addRoomLink( rooms[3].getRoomLinks()[1] );
 
@@ -492,8 +471,8 @@ public class WorldGenerator {
              roomLink = rooms[11].addRoomLink( new ScreenRectangle( 570, 1110, 40, 20) );
              roomLink.setRoom1ID(16);
              roomLink.setRoom2ID(11);
-             roomLink.setDoor( new Door( 575, 1118, -halfPI, (byte)ImageLibRef.HORIZONTAL_RIGHT_PIVOT,
-                               new ImageIdentifier((short)2,(short)0,(short)0,ImageLibRef.HORIZONTAL_RIGHT_PIVOT) ) );
+             roomLink.setDoor( new Door( 575, 1118, -halfPI, DoorDrawable.HORIZONTAL_RIGHT_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-5th-0/hor-right-pivot-3.gif" ) ) );
 
            rooms[12].setFullName("West Gate - South Tower - Room");
            rooms[12].setShortName("bsouth-room1");
@@ -502,8 +481,8 @@ public class WorldGenerator {
              roomLink = rooms[12].addRoomLink( new ScreenRectangle( 670, 990, 20, 40) );
              roomLink.setRoom1ID(12);
              roomLink.setRoom2ID(14);  
-             roomLink.setDoor( new Door( 676, 995, halfPI, (byte)ImageLibRef.VERTICAL_BOTTOM_PIVOT,
-                               new ImageIdentifier((short)2,(short)0,(short)0,ImageLibRef.VERTICAL_BOTTOM_PIVOT) ) );
+             roomLink.setDoor( new Door( 676, 995, halfPI, DoorDrawable.VERTICAL_BOTTOM_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-5th-0/vert-bottom-pivot-1.gif" ) ) );
 
            rooms[13].setFullName("West Gate - South Tower's Store");
            rooms[13].setShortName("bsouth-store");
@@ -512,8 +491,8 @@ public class WorldGenerator {
              roomLink = rooms[13].addRoomLink( new ScreenRectangle( 670, 850, 20, 40) );
              roomLink.setRoom1ID(13);
              roomLink.setRoom2ID(14);  
-             roomLink.setDoor( new Door( 677, 854, -halfPI, (byte)ImageLibRef.VERTICAL_BOTTOM_PIVOT,
-                               new ImageIdentifier((short)2,(short)0,(short)0,ImageLibRef.VERTICAL_BOTTOM_PIVOT) ) );
+             roomLink.setDoor( new Door( 677, 854, -halfPI, DoorDrawable.VERTICAL_BOTTOM_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-5th-0/vert-bottom-pivot-1.gif" ) ) );
 
            rooms[14].setFullName("West Gate - South Tower Hall");
            rooms[14].setShortName("bsouth-entry");
@@ -539,8 +518,8 @@ public class WorldGenerator {
              roomLink = rooms[15].addRoomLink( new ScreenRectangle( 520, 910, 20, 40) );
              roomLink.setRoom1ID(17);
              roomLink.setRoom2ID(15);  
-             roomLink.setDoor( new Door( 528, 915, -halfPI, (byte)ImageLibRef.VERTICAL_TOP_PIVOT,
-                               new ImageIdentifier((short)2,(short)0,(short)0,ImageLibRef.VERTICAL_TOP_PIVOT) ) );
+             roomLink.setDoor( new Door( 528, 915, -halfPI, DoorDrawable.VERTICAL_TOP_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-5th-0/vert-top-pivot-0.gif" ) ) );
 
              rooms[15].addRoomLink( rooms[14].getRoomLinks()[0] );
 
@@ -551,8 +530,8 @@ public class WorldGenerator {
              roomLink = rooms[16].addRoomLink( new ScreenRectangle( 520, 1060, 20, 40) );
              roomLink.setRoom1ID(17);
              roomLink.setRoom2ID(16);
-             roomLink.setDoor( new Door( 528, 1065, -halfPI, (byte)ImageLibRef.VERTICAL_BOTTOM_PIVOT,
-                               new ImageIdentifier((short)2,(short)0,(short)0,ImageLibRef.VERTICAL_BOTTOM_PIVOT) ) );
+             roomLink.setDoor( new Door( 528, 1065, -halfPI, DoorDrawable.VERTICAL_BOTTOM_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-5th-0/vert-bottom-pivot-1.gif" ) ) );
 
              rooms[16].addRoomLink( rooms[11].getRoomLinks()[0] );
              rooms[16].addRoomLink( rooms[14].getRoomLinks()[1] );
@@ -572,9 +551,7 @@ public class WorldGenerator {
            maps[0].setInteriorMapID(0);
            maps[0].setFullName("Tar Valon - Forest - North West Clearing");
            maps[0].setShortName("nw-clearing");
-           maps[0].setInteriorMapImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
-                                                         ImageLibRef.UNIVERSE_SET ,
-                                                         ImageLibRef.TARVALON_NW_CLEARING_ACTION ) );
+           maps[0].setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/tv-nw-clearing-4" ) );
            maps[0].setImageWidth(550);
            maps[0].setImageHeight(350);
            maps[0].setImageRegionWidth(550);
@@ -626,9 +603,7 @@ public class WorldGenerator {
            maps[0].setInteriorMapID(0);
            maps[0].setFullName("Tar Valon - South West Ruins");
            maps[0].setShortName("sw-ruins");
-           maps[0].setInteriorMapImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
-                                                         ImageLibRef.UNIVERSE_SET ,
-                                                         ImageLibRef.TARVALON_SW_CLEARING_ACTION ) );
+           maps[0].setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/tv-sw-ruins-10" ) );
            maps[0].setImageWidth(550);
            maps[0].setImageHeight(350);
            maps[0].setImageRegionWidth(550);
@@ -675,9 +650,7 @@ public class WorldGenerator {
            maps[0].setInteriorMapID(0);
            maps[0].setFullName("Tar Valon - North West Gate");
            maps[0].setShortName("nw-gate-lv0");
-           maps[0].setInteriorMapImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
-                                                         ImageLibRef.UNIVERSE_SET ,
-                                                         ImageLibRef.TARVALON_NW_GATE_LV0_MAP_ACTION ) );
+           maps[0].setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/tv-nw-gate-lv0-5" ) );
            maps[0].setImageWidth(640);
            maps[0].setImageHeight(460);
            maps[0].setImageRegionWidth(640);
@@ -689,9 +662,7 @@ public class WorldGenerator {
            maps[1].setInteriorMapID(1);
            maps[1].setFullName("Tar Valon - North West Gate - Terrace");
            maps[1].setShortName("nw-gate-lv1");
-           maps[1].setInteriorMapImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
-                                                         ImageLibRef.UNIVERSE_SET,
-                                                         ImageLibRef.TARVALON_NW_GATE_LV1_MAP_ACTION ) );
+           maps[1].setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/tv-nw-gate-lv1-6" ) );
            maps[1].setImageWidth(600);
            maps[1].setImageHeight(460);
            maps[1].setImageRegionWidth(600);
@@ -772,9 +743,7 @@ public class WorldGenerator {
            map.setInteriorMapID(0);
            map.setFullName("Tar Valon West Gate - White Tower South Gate");
            map.setShortName("tvwtsg");
-           map.setInteriorMapImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
-                                                      ImageLibRef.UNIVERSE_SET ,
-                                                      ImageLibRef.TARVALON_WHTOW_LEV0_MAP_ACTION ) );
+           map.setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/tv-s-whitetower-gate-2" ) );
            map.setImageWidth(600);
            map.setImageHeight(1000);
            map.setImageRegionWidth(600);
@@ -808,20 +777,20 @@ public class WorldGenerator {
              roomLink = rooms[0].addRoomLink( new ScreenRectangle( 270, 830, 10, 40) );
              roomLink.setRoom1ID(0);
              roomLink.setRoom2ID(2);
-             roomLink.setDoor( new Door( 272, 830, halfPI, (byte)ImageLibRef.VERTICAL_BOTTOM_PIVOT,
-                               new ImageIdentifier((short)2,(short)0,(short)2,ImageLibRef.VERTICAL_BOTTOM_PIVOT) ) );
+             roomLink.setDoor( new Door( 272, 830, halfPI, DoorDrawable.VERTICAL_BOTTOM_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-40len-8th-2/vert-bottom-pivot-1.gif" ) ) );
 
              roomLink = rooms[0].addRoomLink( new ScreenRectangle( 300, 570, 10, 30) );
              roomLink.setRoom1ID(0);
              roomLink.setRoom2ID(4);
-             roomLink.setDoor( new Door( 302, 570, -halfPI, (byte)ImageLibRef.VERTICAL_TOP_PIVOT,
-                               new ImageIdentifier((short)2,(short)0,(short)1,ImageLibRef.VERTICAL_TOP_PIVOT) ) );
+             roomLink.setDoor( new Door( 302, 570, -halfPI, DoorDrawable.VERTICAL_TOP_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-8th-1/vert-top-pivot-0.gif" ) ) );
 
              roomLink = rooms[0].addRoomLink( new ScreenRectangle( 300, 110, 10, 30) );
              roomLink.setRoom1ID(0);
              roomLink.setRoom2ID(5);
-             roomLink.setDoor( new Door( 302, 110, -halfPI, (byte)ImageLibRef.VERTICAL_TOP_PIVOT,
-                               new ImageIdentifier((short)2,(short)0,(short)1,ImageLibRef.VERTICAL_TOP_PIVOT) ) );
+             roomLink.setDoor( new Door( 302, 110, -halfPI, DoorDrawable.VERTICAL_TOP_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-8th-1/vert-top-pivot-0.gif" ) ) );
 
              roomLink = rooms[0].addRoomLink( new ScreenRectangle( 300, 900, 10, 30) );
              roomLink.setRoom1ID(0);
@@ -846,14 +815,14 @@ public class WorldGenerator {
              roomLink = rooms[1].addRoomLink( new ScreenRectangle( 530, 850, 10, 30) );
              roomLink.setRoom1ID(3);
              roomLink.setRoom2ID(1);
-             roomLink.setDoor( new Door( 532, 850, -halfPI, (byte)ImageLibRef.VERTICAL_TOP_PIVOT,
-                               new ImageIdentifier((short)2,(short)0,(short)1,ImageLibRef.VERTICAL_TOP_PIVOT) ) );
+             roomLink.setDoor( new Door( 532, 850, -halfPI, DoorDrawable.VERTICAL_TOP_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-8th-1/vert-top-pivot-0.gif" ) ) );
 
              roomLink = rooms[1].addRoomLink( new ScreenRectangle( 530, 360, 10, 30) );
              roomLink.setRoom1ID(9);
              roomLink.setRoom2ID(1);
-             roomLink.setDoor( new Door( 532, 360, -halfPI, (byte)ImageLibRef.VERTICAL_TOP_PIVOT,
-                               new ImageIdentifier((short)2,(short)0,(short)1,ImageLibRef.VERTICAL_TOP_PIVOT) ) );
+             roomLink.setDoor( new Door( 532, 360, -halfPI, DoorDrawable.VERTICAL_TOP_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-8th-1/vert-top-pivot-0.gif" ) ) );
 
              rooms[1].addRoomLink( rooms[0].getRoomLinks()[0] );
              rooms[1].addRoomLink( rooms[0].getRoomLinks()[1] );
@@ -867,8 +836,8 @@ public class WorldGenerator {
              roomLink = rooms[2].addRoomLink( new ScreenRectangle( 430, 770, 30, 10) );
              roomLink.setRoom1ID(2);
              roomLink.setRoom2ID(3);
-             roomLink.setDoor( new Door( 430, 772, halfPI, (byte)ImageLibRef.HORIZONTAL_RIGHT_PIVOT,
-                               new ImageIdentifier((short)2,(short)0,(short)0,ImageLibRef.HORIZONTAL_RIGHT_PIVOT) ) );
+             roomLink.setDoor( new Door( 430, 772, halfPI, DoorDrawable.HORIZONTAL_RIGHT_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-5th-0/hor-right-pivot-3.gif" ) ) );
 
              rooms[2].addRoomLink( rooms[0].getRoomLinks()[2] );
 
@@ -892,20 +861,20 @@ public class WorldGenerator {
              roomLink = rooms[4].addRoomLink( new ScreenRectangle( 400, 590, 10, 30) );
              roomLink.setRoom1ID(4);
              roomLink.setRoom2ID(6);
-             roomLink.setDoor( new Door( 402, 590, halfPI, (byte)ImageLibRef.VERTICAL_BOTTOM_PIVOT,
-                               new ImageIdentifier((short)2,(short)0,(short)0,ImageLibRef.VERTICAL_BOTTOM_PIVOT) ) );
+             roomLink.setDoor( new Door( 402, 590, halfPI, DoorDrawable.VERTICAL_BOTTOM_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-5th-0/vert-bottom-pivot-1.gif" ) ) );
 
              roomLink = rooms[4].addRoomLink( new ScreenRectangle( 400, 510, 10, 30) );
              roomLink.setRoom1ID(4);
              roomLink.setRoom2ID(7);
-             roomLink.setDoor( new Door( 402, 510, halfPI, (byte)ImageLibRef.VERTICAL_BOTTOM_PIVOT,
-                               new ImageIdentifier((short)2,(short)0,(short)0,ImageLibRef.VERTICAL_BOTTOM_PIVOT) ) );
+             roomLink.setDoor( new Door( 402, 510, halfPI, DoorDrawable.VERTICAL_BOTTOM_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-5th-0/vert-bottom-pivot-1.gif" ) ) );
 
              roomLink = rooms[4].addRoomLink( new ScreenRectangle( 400, 430, 10, 30) );
              roomLink.setRoom1ID(4);
              roomLink.setRoom2ID(8);
-             roomLink.setDoor( new Door( 402, 430, halfPI, (byte)ImageLibRef.VERTICAL_BOTTOM_PIVOT,
-                               new ImageIdentifier((short)2,(short)0,(short)0,ImageLibRef.VERTICAL_BOTTOM_PIVOT) ) );
+             roomLink.setDoor( new Door( 402, 430, halfPI, DoorDrawable.VERTICAL_BOTTOM_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-5th-0/vert-bottom-pivot-1.gif" ) ) );
 
              rooms[4].addRoomLink( rooms[0].getRoomLinks()[3] );
 
@@ -917,26 +886,26 @@ public class WorldGenerator {
              roomLink = rooms[5].addRoomLink( new ScreenRectangle( 400, 330, 10, 30) );
              roomLink.setRoom1ID(5);
              roomLink.setRoom2ID(9);
-             roomLink.setDoor( new Door( 402, 330, -halfPI, (byte)ImageLibRef.VERTICAL_TOP_PIVOT,
-                               new ImageIdentifier((short)2,(short)0,(short)0,ImageLibRef.VERTICAL_TOP_PIVOT) ) );
+             roomLink.setDoor( new Door( 402, 330, -halfPI, DoorDrawable.VERTICAL_TOP_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-5th-0/vert-top-pivot-0.gif" ) ) );
 
              roomLink = rooms[5].addRoomLink( new ScreenRectangle( 400, 250, 10, 30) );
              roomLink.setRoom1ID(5);
              roomLink.setRoom2ID(10);
-             roomLink.setDoor( new Door( 402, 250, -halfPI, (byte)ImageLibRef.VERTICAL_TOP_PIVOT,
-                               new ImageIdentifier((short)2,(short)0,(short)0,ImageLibRef.VERTICAL_TOP_PIVOT) ) );
+             roomLink.setDoor( new Door( 402, 250, -halfPI, DoorDrawable.VERTICAL_TOP_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-5th-0/vert-top-pivot-0.gif" ) ) );
 
              roomLink = rooms[5].addRoomLink( new ScreenRectangle( 400, 170, 10, 30) );
              roomLink.setRoom1ID(5);
              roomLink.setRoom2ID(11);
-             roomLink.setDoor( new Door( 402, 170, -halfPI, (byte)ImageLibRef.VERTICAL_TOP_PIVOT,
-                               new ImageIdentifier((short)2,(short)0,(short)0,ImageLibRef.VERTICAL_TOP_PIVOT) ) );
+             roomLink.setDoor( new Door( 402, 170, -halfPI, DoorDrawable.VERTICAL_TOP_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-5th-0/vert-top-pivot-0.gif" ) ) );
 
              roomLink = rooms[5].addRoomLink( new ScreenRectangle( 400, 90, 10, 30) );
              roomLink.setRoom1ID(5);
              roomLink.setRoom2ID(12);
-             roomLink.setDoor( new Door( 402, 90, -halfPI, (byte)ImageLibRef.VERTICAL_TOP_PIVOT,
-                               new ImageIdentifier((short)2,(short)0,(short)0,ImageLibRef.VERTICAL_TOP_PIVOT) ) );
+             roomLink.setDoor( new Door( 402, 90, -halfPI, DoorDrawable.VERTICAL_TOP_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-5th-0/vert-top-pivot-0.gif" ) ) );
 
              rooms[5].addRoomLink( rooms[0].getRoomLinks()[4] );
              rooms[5].addRoomLink( rooms[4].getRoomLinks()[0] );
@@ -998,9 +967,8 @@ public class WorldGenerator {
            buildings[0].setServerID(0);
            buildings[0].setHasTownExits(true);
            buildings[0].setHasBuildingExits(true);
-           buildings[0].setSmallBuildingImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
-                                                                ImageLibRef.BUILDING_SMALL_SET,
-                                                                (short)-1 ) ); // no image
+           buildings[0].setSmallBuildingImage( new ImageIdentifier() ); // no image
+
         // STEP 13 - Blight Refuge Exterior InteriorMap
            maps = new InteriorMap[3];
            buildings[0].setInteriorMaps( maps );
@@ -1011,9 +979,7 @@ public class WorldGenerator {
            map.setInteriorMapID(0);
            map.setFullName("Blight Refuge Outside");
            map.setShortName("blightrefugeouside");
-           map.setInteriorMapImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
-                                                      ImageLibRef.UNIVERSE_SET ,
-                                                      ImageLibRef.BLIGHT_REFUGE_EXT_MAP_ACTION ) );
+           map.setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/blight-refuge-ext-7" ) );
            map.setImageWidth(720);
            map.setImageHeight(400);
            map.setImageRegionWidth(720);
@@ -1081,9 +1047,7 @@ public class WorldGenerator {
            map.setInteriorMapID(1);
            map.setFullName("Blight Refuge Interior1");
            map.setShortName("blightrefugeInterior1");
-           map.setInteriorMapImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
-                                                      ImageLibRef.UNIVERSE_SET ,
-                                                      ImageLibRef.BLIGHT_REFUGE_INT0_MAP_ACTION ) );
+           map.setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/blight-refuge-int0-8" ) );
            map.setImageWidth(400);
            map.setImageHeight(500);
            map.setImageRegionWidth(400);
@@ -1106,14 +1070,14 @@ public class WorldGenerator {
              roomLink = rooms[0].addRoomLink( new ScreenRectangle(330,20,10,30) );
              roomLink.setRoom1ID(0);
              roomLink.setRoom2ID(1);
-             roomLink.setDoor( new Door( 331, 20, halfPI, (byte)ImageLibRef.VERTICAL_TOP_PIVOT,
-                               new ImageIdentifier((short)2,(short)0,(short)1,ImageLibRef.VERTICAL_TOP_PIVOT) ) );
+             roomLink.setDoor( new Door( 331, 20, halfPI, DoorDrawable.VERTICAL_TOP_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-8th-1/vert-top-pivot-0.gif" ) ) );
 
              roomLink = rooms[0].addRoomLink( new ScreenRectangle(90,290,30,10) );
              roomLink.setRoom1ID(0);
              roomLink.setRoom2ID(2);
-             roomLink.setDoor( new Door( 90, 291, halfPI, (byte)ImageLibRef.HORIZONTAL_LEFT_PIVOT,
-                               new ImageIdentifier((short)2,(short)0,(short)1,ImageLibRef.HORIZONTAL_LEFT_PIVOT) ) );
+             roomLink.setDoor( new Door( 90, 291, halfPI, DoorDrawable.HORIZONTAL_LEFT_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-8th-1/hor-left-pivot-2.gif" ) ) );
 
                mapExit = rooms[0].addMapExit( new ScreenRectangle(375,130,30,50) );
                mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
@@ -1149,8 +1113,8 @@ public class WorldGenerator {
              roomLink = rooms[2].addRoomLink( new ScreenRectangle(350,290,30,10) );
              roomLink.setRoom1ID(3);
              roomLink.setRoom2ID(2);
-             roomLink.setDoor( new Door( 350, 291, -halfPI, (byte)ImageLibRef.HORIZONTAL_RIGHT_PIVOT,
-                               new ImageIdentifier((short)2,(short)0,(short)1,ImageLibRef.HORIZONTAL_RIGHT_PIVOT) ) );
+             roomLink.setDoor( new Door( 350, 291, -halfPI, DoorDrawable.HORIZONTAL_RIGHT_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-30len-8th-1/hor-right-pivot-3.gif" ) ) );
 
              rooms[2].addRoomLink( rooms[0].getRoomLinks()[1] );
 
@@ -1177,9 +1141,7 @@ public class WorldGenerator {
            map.setInteriorMapID(2);
            map.setFullName("Blight Refuge Interior2");
            map.setShortName("blightrefugeInterior2");
-           map.setInteriorMapImage( new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
-                                                      ImageLibRef.UNIVERSE_SET ,
-                                                      ImageLibRef.BLIGHT_REFUGE_INT1_MAP_ACTION ) );
+           map.setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/blight-refuge-int1-9" ) );
            map.setImageWidth(525);
            map.setImageHeight(530);
            map.setImageRegionWidth(525);

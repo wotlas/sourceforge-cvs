@@ -28,8 +28,11 @@ import java.awt.Graphics2D;
  *  the order that the GraphicsDirector will use to display Drawables. Low priority Drawables
  *  are displayed first.
  *
- *  A drawable can have antialiasing ( default is false ). The anti-aliasing is managed
- *  by the GraphicsDirector.
+ *  <p>A drawable can have antialiasing ( default is false ). The anti-aliasing is managed
+ *  by the GraphicsDirector.</p>
+ *
+ *  <p>Drawables are linked to an ImageLibrary when they are added to a GraphicsDirector.
+ *  The ImageLibrary used is the same as the GraphicsDirector.</p>
  *
  * @author MasterBob, Aldiss
  * @see wotlas.libs.graphics2D.GraphicsDirector
@@ -57,9 +60,15 @@ public abstract class Drawable {
    */
      protected boolean useAntialiasing;
 
+  /** Our Image Library.
+   */
+     protected ImageLibrary imageLib;
+
  /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
+  /** Constructor. Beware ! When you extend this class, in your constructor when you call
+   *  super() it will initialize every fields EXCEPT the imageLibrary parameter that will
+   *  be set later when you add this drawable to a GraphicsDirector.
    */
      protected Drawable() {
         priority = -1;
@@ -70,12 +79,27 @@ public abstract class Drawable {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To initialize this drawable with the ImageLibrary. Don't call it yourself ! it's
+   *  done automatically when you call addDrawable on the GraphicsDirector.
+   *
+   *  IF you need the ImageLib for some special inits just extend this method and don't
+   *  forget to call a super.init(imageLib) !
+   *
+   *  @param imagelib ImageLibrary where you can take the images to display.
+   */
+     protected void init( ImageLibrary imageLib ) {
+     	this.imageLib=imageLib;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** Paint method called by the GraphicsDirector. The specified rectangle represents
    *  the displayed screen in background cordinates ( see GraphicsDirector ).
    *
-   *  @param gc graphics 2D use for display (double buffering is handled by the
-   *         GraphicsDirector)
-   *  @param screen display zone of the graphicsDirector, in background coordinates.
+   *  @param gc graphics 2D use for display. Double buffering is handled by the
+   *         GraphicsDirector as well as antialiasing (see useAntialiasing() method).
+   *  @param screen rectangle of the graphicsDirector that is displayed on screen,
+   *         expressed in background coordinates.
    */
      abstract public void paint( Graphics2D gc, Rectangle screen );
 
@@ -192,6 +216,15 @@ public abstract class Drawable {
      public boolean contains( int x, int y ) {
          return r.contains( x, y );
      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the ImageLibrary.
+   * @return the ImageLibrary associated to this drawable.
+   */
+    public ImageLibrary getImageLibrary() {
+    	 return imageLib;
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

@@ -24,7 +24,6 @@ import wotlas.libs.graphics2D.*;
 import java.awt.*;
 import java.awt.image.*;
 import java.awt.geom.*;
-import java.lang.Math;
 
 /** The DoorDrawable will represent the action of closing and opening a door.
  *  4 style of doors are considered.
@@ -133,17 +132,38 @@ public class DoorDrawable extends Drawable implements DrawableOwner {
                          byte doorType, ImageIdentifier image, short priority) {
     	super();
 
-      // Compute rectangle for door closed
         rDoorClosed = new Rectangle();
+        rDoorOpened = new Rectangle();
 
         rDoorClosed.x = positionX;
         rDoorClosed.y = positionY;
-        rDoorClosed.width = ImageLibrary.getDefaultImageLibrary().getWidth( image );
-        rDoorClosed.height = ImageLibrary.getDefaultImageLibrary().getHeight( image );
+        r = rDoorClosed;
 
+        this.priority = priority;
+        this.iniAngle = iniAngle;
+        this.variationAngle = variationAngle;
+        this.doorType = doorType;
+        this.image = image;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To initialize this drawable with the ImageLibrary. Don't call it yourself ! it's
+   *  done automatically when you call addDrawable on the GraphicsDirector.
+   *
+   *  IF you need the ImageLib for some special inits just extend this method and don't
+   *  forget to call a super.init(imageLib) !
+   *
+   *  @param imagelib ImageLibrary where you can take the images to display.
+   */
+     protected void init( ImageLibrary imageLib ) {
+     	super.init(imageLib);
+
+      // Compute rectangle for door closed
+        rDoorClosed.width = getImageLibrary().getWidth( image );
+        rDoorClosed.height = getImageLibrary().getHeight( image );
         
       // Compute rectangle for door opened
-         rDoorOpened = new Rectangle();
          if( iniAngle<=1.0 && Math.abs(variationAngle)>=1.55 /*Math.PI/2*/ ) {
             switch( doorType ) {
              //default:
@@ -220,14 +240,7 @@ public class DoorDrawable extends Drawable implements DrawableOwner {
                        break;
             }
          }
-
-        this.priority = priority;
-        this.iniAngle = iniAngle;
-        this.variationAngle = variationAngle;
-        this.doorType = doorType;
-        this.image = image;
-        r = rDoorClosed;
-    }
+     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -434,7 +447,7 @@ public class DoorDrawable extends Drawable implements DrawableOwner {
 
 
       // 3 - image display
-         BufferedImage bufIm = ImageLibrary.getDefaultImageLibrary().getImage( image );
+         BufferedImage bufIm = getImageLibrary().getImage( image );
 
          if( affTr==null )
              gc.drawImage( bufIm, rDoorClosed.x-screen.x, rDoorClosed.y-screen.y, null );

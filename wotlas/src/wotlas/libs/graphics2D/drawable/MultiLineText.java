@@ -35,8 +35,16 @@ public class MultiLineText extends Drawable {
 
  /*------------------------------------------------------------------------------------*/
 
+   /** Alignement of the text
+    */
     static public short LEFT_ALIGNMENT  = 0;
     static public short RIGHT_ALIGNMENT = 1;
+
+   /** Default Font Name used.
+    */
+    static private String defaultFontName = "Lblack.ttf";
+
+ /*------------------------------------------------------------------------------------*/
 
    /** The text to write
     */
@@ -45,6 +53,10 @@ public class MultiLineText extends Drawable {
    /** The color of the text
     */
      private Color color = Color.black;
+
+   /** The name of the font used
+    */
+     private String fontName;
 
    /** The font used
     */
@@ -89,21 +101,30 @@ public class MultiLineText extends Drawable {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Constructor. Default font is Lucida BlackLetter.
+    /** To get the default font name.
+     */
+     static public String getDefaultFontName() {
+     	return defaultFontName;
+     }
+
+ /*------------------------------------------------------------------------------------*/
+
+    /** To set the default font name.
+     */
+     static public void setDefaultFontName( String fontName ) {
+     	defaultFontName = fontName;
+     }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Constructor. We use the default font (see static getter/setter). 
    *
    * @param xs MultiLineText's xs top left corner of the text
    * @param ys MultiLineText's ys top left corner of the text
    * @param priority MultiLineText's priority
    */
     public MultiLineText( String[] text, int xs, int ys, short priority) {
-    	super();
-        this.text = text;
-        recalculate = true;
-        this.xs = xs;
-        this.ys = ys;
-        setFont("Lblack.ttf");
-        this.priority = priority;
-        useAntialiasing(true);
+    	this(text,xs,ys,Color.black,20.0f,defaultFontName,priority,LEFT_ALIGNMENT);
     }
 
  /*------------------------------------------------------------------------------------*/
@@ -126,8 +147,8 @@ public class MultiLineText extends Drawable {
         recalculate = true;
         this.xs = xs;
         this.ys = ys;
-        setFont(font);
-        setSize(size);
+        fontName = font;
+        this.size=size;
         setColor(color);
         this.priority = priority;
         useAntialiasing(true);
@@ -136,11 +157,27 @@ public class MultiLineText extends Drawable {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To initialize this drawable with the ImageLibrary. Don't call it yourself ! it's
+   *  done automatically when you call addDrawable on the GraphicsDirector.
+   *
+   *  IF you need the ImageLib for some special inits just extend this method and don't
+   *  forget to call a super.init(imageLib) !
+   *
+   *  @param imagelib ImageLibrary where you can take the images to display.
+   */
+     protected void init( ImageLibrary imageLib ) {
+     	super.init(imageLib);
+     	
+     	setFont(fontName);
+        setSize(size);
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
  /**
   * define the text
   */
- public void setText(String[] text)
-  {
+  public void setText(String[] text) {
    this.text = text;
    recalculate = true;
   }
@@ -151,8 +188,7 @@ public class MultiLineText extends Drawable {
  /**
   * define the color
   */
- public void setColor(Color color)
-  {
+  public void setColor(Color color) {
    this.color = color;
   }
 
@@ -161,8 +197,7 @@ public class MultiLineText extends Drawable {
  /**
   * define the size
   */
-  public void setSize(float size)
-   {
+   public void setSize(float size) {
     this.size = size;
     font = font.deriveFont(Font.PLAIN, size);
     Map fontAttributes = font.getAttributes();
@@ -178,7 +213,7 @@ public class MultiLineText extends Drawable {
   */
   public void setFont(String fontName) {
     try {
-      String fontPath = ImageLibrary.getDefaultImageLibrary().getDataBasePath()+File.separator+"fonts";
+      String fontPath = getImageLibrary().getUserFontPath();
 
       FileInputStream fis = new FileInputStream(fontPath+File.separator+fontName);
       font = Font.createFont(Font.TRUETYPE_FONT, fis);
@@ -242,7 +277,7 @@ public class MultiLineText extends Drawable {
               }
 
               r.width = widthText + 12;
-              r.height = heightsText[text.length-1] + 12;
+              r.height = heightsText[text.length-1] + 10;
               if (isLeftAligned) {
                 r.x = xs;
               } else {
@@ -289,7 +324,6 @@ public class MultiLineText extends Drawable {
    *  @return true if the drawable is "live", false if it must be deleted.
    */
      public boolean tick() {
-
         return true; // no update needed and a MotionlessSprite is always "live" by default.
      }
 

@@ -145,7 +145,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
 
     inputBox = new NoFocusJTextField();
     inputBox.getCaret().setVisible(true);
-    inputBox.setInputVerifier(new NoFocusInputVerifier());
+    //inputBox.setInputVerifier(new NoFocusInputVerifier());
     inputBox.addKeyListener(new KeyAdapter() {
         public void keyPressed(KeyEvent keyEvent) {
           // Tab key

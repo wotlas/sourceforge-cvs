@@ -31,6 +31,7 @@ import wotlas.libs.graphics2D.ImageLibraryReference;
 public interface ImageLibRef extends ImageLibraryReference
 {
  /*------------------------------------------------------------------------------------*/
+ /*------------------------------------------------------------------------------------*/
 
   /*** IMAGE CATEGORIES ***/
 
@@ -43,6 +44,7 @@ public interface ImageLibRef extends ImageLibraryReference
     public final static short MAPS_CATEGORY = 1;
 
  /*------------------------------------------------------------------------------------*/
+ /*------------------------------------------------------------------------------------*/
 
   /*** PLAYERS CATEGORY ***/
 
@@ -54,15 +56,59 @@ public interface ImageLibRef extends ImageLibraryReference
    */
     public final static short PLAYER_SMALL_IMAGES_SET = 1;
 
+  /** Player's symbol images.
+   */
+    public final static short PLAYER_SYMBOL_IMAGES_SET = 2;
+
+  /** Player's shadow images.
+   */
+    public final static short PLAYER_SHADOW_IMAGES_SET = 3;
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** Aes Sedai Set - ACTION LIST */
 
    /** Blue ajah Aes Sedai with golden hair, walking.
+    *  Other images are obtained by color filters.
     */
      public final static short AES_BLUE_GOLDH_WALKING_ACTION = 0;
 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /*** Player small images set - ACTION LIST ***/
+
+   /** Player small image on town maps (& WorldMap)...
+    */
+     public final static short PLAYER_SMALL_IM_ACTION = 0;
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /*** Player symbol images set - ACTION LIST ***/
+
+   /** Aes Sedai symbol images for small Auras...
+    */
+     public final static short AES_SEDAI_SYMBOL_ACTION  = 0;
+
+     public final static short AES_AMYRLIN_SYMBOL_INDEX = 0;
+     public final static short AES_YELLOW_SYMBOL_INDEX  = 1;
+     public final static short AES_BROWN_SYMBOL_INDEX   = 2;
+     public final static short AES_RED_SYMBOL_INDEX     = 3;
+     public final static short AES_BLUE_SYMBOL_INDEX    = 4;
+     public final static short AES_GREEN_SYMBOL_INDEX   = 5;
+     public final static short AES_WHITE_SYMBOL_INDEX   = 6;
+     public final static short AES_GREY_SYMBOL_INDEX    = 7;
+     public final static short AES_ACCEPTED_SYMBOL_INDEX= 8;
+     public final static short AES_NOVICE_SYMBOL_INDEX  = 9;
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /*** Player shadow images set - ACTION LIST ***/
+
+   /** Aes Sedai shadow images when walking...
+    */
+     public final static short AES_SEDAI_WALK_SHADOW_ACTION  = 0;
+
+ /*------------------------------------------------------------------------------------*/
  /*------------------------------------------------------------------------------------*/
 
   /*** MAPS CATEGORY ***/
@@ -120,21 +166,14 @@ public interface ImageLibRef extends ImageLibraryReference
      public final static short TARVALON_WEGATE_SMALL_IM_ACTION = 1;
 
  /*------------------------------------------------------------------------------------*/
-
-  /*** Player small images set - ACTION LIST ***/
-
-   /** Player small image on town maps (& WorldMap)...
-    */
-     public final static short PLAYER_SMALL_IM_ACTION = 0;
-
  /*------------------------------------------------------------------------------------*/
 
   /** DRAWABLE PRIORITIES
    */
     public final static short MAP_PRIORITY      = 0;      // lowest priority, drawn first
     public final static short SHADOW_PRIORITY   = 5;      // shadows
-    public final static short OBJECT_PRIORITY   = 20;     // wotlas objects
-    public final static short AURA_PRIORITY     = 25;     // small player auras
+    public final static short AURA_PRIORITY     = 20;     // small player auras
+    public final static short OBJECT_PRIORITY   = 25;     // wotlas objects
     public final static short ONEPOWER_PRIORITY = 30;     // one power effects
     public final static short PLAYER_PRIORITY   = 50;     // players
     public final static short DOOR_PRIORITY     = 100;    // doors

@@ -49,10 +49,12 @@ COMMON_PACKAGES2 = wotlas/common/message/description \
 SERVER_PACKAGES = wotlas/server \
                   wotlas/server/setup \
                   wotlas/server/message/account \
-                  wotlas/server/message/description
+                  wotlas/server/message/description \
+                  wotlas/server/message/gateway
 
 SERVER_PACKAGES2 = wotlas/server/message/movement \
-                   wotlas/server/message/chat
+                   wotlas/server/message/chat \
+                   wotlas/server/chat
 
 CLIENT_PACKAGES = wotlas/client \
                   wotlas/client/screen \

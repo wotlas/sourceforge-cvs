@@ -54,7 +54,8 @@ public class LocationChangeMsgBehaviour extends LocationChangeMessage implements
    *        this message.
    */
      public void doBehaviour( Object context ) {
-System.out.println("LOCATION CHANGED FOR PLAYER "+primaryKey+" !");
+       if (DataManager.SHOW_DEBUG)
+        System.out.println("LOCATION CHANGED FOR PLAYER "+primaryKey+" !");
 
         // The context is here a DataManager.
            DataManager dataManager = (DataManager) context;

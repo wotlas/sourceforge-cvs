@@ -20,11 +20,10 @@
              or 'jikes' if you want to use jikes -->
         <property name="build.compiler" value="jikes"/>
 
-
-        <property name="debug" value="off"/>
+        <property name="debug" value="on"/>
         <property name="optimize" value="on"/>
         <property name="deprecation" value="on"/>
-        
+
         <property name="src.dir" value="../src"/>
         <property name="lib.dir" value="../lib"/>
         <property name="wotlas-packages" value="wotlas.*"/>
@@ -109,17 +108,80 @@
     <!-- COMPILE CLIENT -->
 
     <target name="client" depends="prepare,utils,libs,common,client-only">
-        <mkdir dir="${build.dest}/wotlas/libs/graphics2D/menu/images/"/>
+    </target>
 
-        <copy todir="${build.dest}/wotlas/libs/graphics2D/menu/images/" >
-            <fileset dir="${build.src}/wotlas/libs/graphics2D/menu/images" />
+    <!-- COMPILE JWS CLIENT -->
+
+    <target name="client-jws" depends="prepare,clean,client">
+
+        <!-- JAR DIRS -->
+        <mkdir dir="${build.dest}/jws/"/>
+        <mkdir dir="${build.dest}/jws/wotlas/"/>
+
+        <mkdir dir="${build.dest}/jws/base/"/>
+        <mkdir dir="${build.dest}/jws/base/gui"/>
+        <mkdir dir="${build.dest}/jws/base/graphics"/>
+        <mkdir dir="${build.dest}/jws/base/configs"/>
+        <mkdir dir="${build.dest}/jws/base/fonts"/>
+        <mkdir dir="${build.dest}/jws/base/sounds"/>
+        <mkdir dir="${build.dest}/jws/base/music"/>
+        <mkdir dir="${build.dest}/jws/base/universe"/>
+
+        <mkdir dir="${build.dest}/jws/docs/"/>
+        <mkdir dir="${build.dest}/jws/docs/help"/>
+
+        <!-- CODE COPY -->
+        <copy todir="${build.dest}/jws/wotlas" >
+            <fileset dir="${build.dest}/wotlas" />
         </copy>
 
+        <!-- RESOURCES COPY -->
+        <copy todir="${build.dest}/jws/base/gui" >
+            <fileset dir="../base/gui/" />
+        </copy>
+
+        <copy todir="${build.dest}/jws/base/graphics" >
+            <fileset dir="../base/graphics/" />
+        </copy>
+
+        <copy todir="${build.dest}/jws/base/configs" >
+            <fileset dir="../base/configs/" />
+        </copy>
+
+        <copy todir="${build.dest}/jws/base/fonts" >
+            <fileset dir="../base/fonts/" />
+        </copy>
+
+        <copy todir="${build.dest}/jws/base/universe" >
+            <fileset dir="../base/universe/" />
+        </copy>
+
+        <copy todir="${build.dest}/jws/base/sounds" >
+            <fileset dir="../base/sounds/" />
+        </copy>
+
+        <copy todir="${build.dest}/jws/base/music" >
+            <fileset dir="../base/music/" />
+        </copy>
+
+        <copy todir="${build.dest}/jws/docs/help" >
+            <fileset dir="../docs/help/" />
+        </copy>
+
+        <delete dir="${build.dest}/jws/base/configs/remote"/>
+        <delete dir="${build.dest}/jws/base/configs/macros"/>
+        <delete file="${build.dest}/jws/base/configs/server.cfg"/>
+        <delete dir="${build.dest}/jws/base/graphics/gui"/>
+
+        <!-- JAR CREATION -->
         <echo message="Creating the ${wotlas-client-jar} JAR file..."/>
         <jar jarfile="${wotlas-client-jar}"
-             basedir="${build.dest}"
+             basedir="${build.dest}/jws/"
              manifest="${wotlas-client-manifest}"
         />
+
+        <echo message="Cleaning..."/>
+        <delete dir="${build.dest}/jws"/>
     </target>
 
     <!-- COMPILE SERVER ONLY -->
@@ -168,6 +230,12 @@
             debug="${debug}"
             deprecation="${deprecation}"
             optimize="${optimize}"/>
+
+        <mkdir dir="${build.dest}/wotlas/libs/graphics2D/menu/images/"/>
+
+        <copy todir="${build.dest}/wotlas/libs/graphics2D/menu/images/" >
+            <fileset dir="${build.src}/wotlas/libs/graphics2D/menu/images" />
+        </copy>
     </target>
 
 

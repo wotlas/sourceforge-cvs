@@ -65,6 +65,9 @@ public class JCroppedWindow extends JWindow{
   // resizable window ?
      private boolean  resizable;
 
+  // use the dark menu bar ?
+     private boolean useDarkMenuBar;
+
  /*------------------------------------------------------------------------------------*/
 
   // Our user ContentPane... yes it's a JPanel...
@@ -78,14 +81,35 @@ public class JCroppedWindow extends JWindow{
    * @param title window title, set to "" if you want none
    */
    public JCroppedWindow( Frame owner, String title ) {
+        this(owner,title,false);
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Constructor with owner Frame and title.
+   *
+   * @param owner frame owner
+   * @param title window title, set to "" if you want none
+   * @param useDarkMenuBar which images do we use for the menu bar : light images or
+   *        dark images.
+   */
+   public JCroppedWindow( Frame owner, String title, boolean useDarkMenuBar) {
         super( owner );
         this.title = title;
+        this.useDarkMenuBar = useDarkMenuBar;
 
      // We load the images
-        leftBar = ImageLibrary.loadImage( "../base/gui/left-bar.gif" );
-        middleBar = ImageLibrary.loadImage( "../base/gui/middle-bar.gif" );
-        rightBar = ImageLibrary.loadImage( "../base/gui/right-bar.gif" );
-        
+        if(useDarkMenuBar) {
+           leftBar = ImageLibrary.loadImage( "../base/gui/left-bar-dark.gif" );
+           middleBar = ImageLibrary.loadImage( "../base/gui/middle-bar-dark.gif" );
+           rightBar = ImageLibrary.loadImage( "../base/gui/right-bar-dark.gif" );
+        }
+        else {
+           leftBar = ImageLibrary.loadImage( "../base/gui/left-bar.gif" );
+           middleBar = ImageLibrary.loadImage( "../base/gui/middle-bar.gif" );
+           rightBar = ImageLibrary.loadImage( "../base/gui/right-bar.gif" );
+        }
+
      // Font
         titleFont = new Font( "Dialog", Font.PLAIN, 11 );
 
@@ -354,7 +378,12 @@ public class JCroppedWindow extends JWindow{
                  renderHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
     
                  g2D.setRenderingHints( renderHints );
-                 g2D.setColor( Color.black );
+                 
+                 if(JCroppedWindow.this.useDarkMenuBar)
+                    g2D.setColor( new Color(160,146,130) );
+                 else
+                    g2D.setColor( Color.black );
+
                  g2D.setFont( titleFont );
                  g2D.drawString( title, leftBar.getWidth(null)+2, 11 );
                  g2D.setRenderingHints( saveRenderHints ); // restore

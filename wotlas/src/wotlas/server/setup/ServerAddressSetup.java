@@ -27,6 +27,8 @@ import wotlas.utils.*;
 import wotlas.utils.Debug;
 import wotlas.utils.aswing.*;
 
+import wotlas.libs.log.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -89,7 +91,7 @@ public class ServerAddressSetup extends JWizard {
           }
           catch( WizardException we ) {
                we.printStackTrace();
-               System.exit(1); // init failed !
+               Debug.exit(); // init failed !
           }
     }
 
@@ -98,7 +100,7 @@ public class ServerAddressSetup extends JWizard {
   /** Called when wizard is finished (after last step's end).
    */
    protected void onFinished(Object context) {
-           System.exit(0);
+           Debug.exit();
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -106,7 +108,7 @@ public class ServerAddressSetup extends JWizard {
   /** Called when wizard is canceled ('cancel' button pressed).
    */
    protected void onCanceled(Object context) {
-         System.exit(0);
+         Debug.exit();
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -523,7 +525,7 @@ public class ServerAddressSetup extends JWizard {
                        workingDirPath = new File(workingDir);
 
                     try{
-                       System.out.println( "Command run :\n"+cmd );
+                       Debug.signal(Debug.NOTICE,null,"Command run :\n"+cmd);
                        Process pr = Runtime.getRuntime().exec( fullCmd.toString(), null, workingDirPath );
                        result = pr.waitFor();
                     }
@@ -583,19 +585,29 @@ public class ServerAddressSetup extends JWizard {
    */
     static public void main( String argv[] ) {
 
+        // STEP 0 - Log Creation
+           try {
+              Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(), "../log/server-setup.log", "../base/gui/log-title-dark.jpg" ) );
+           } catch( java.io.FileNotFoundException e ) {
+              e.printStackTrace();
+              Debug.exit();
+           }
+
+           Debug.signal(Debug.NOTICE,null,"Starting Server Address Setup...");
+
         // STEP 1 - We load the database path. Where is the data ?
            Properties properties = FileTools.loadPropertiesFile( DATABASE_CONFIG );
 
              if( properties==null ) {
                 Debug.signal( Debug.FAILURE, null, "No valid server-database.cfg file found !" );
-                System.exit(1);
+                Debug.exit();
              }
 
            databasePath = properties.getProperty( "DATABASE_PATH","" );
 
            if( databasePath.length()==0 ) {
                Debug.signal( Debug.FAILURE, null, "No Database Path specified in config file !" );
-               System.exit(1);
+               Debug.exit();
            }
 
            Debug.signal( Debug.NOTICE, null, "DataBase Path Found : "+databasePath );
@@ -605,14 +617,14 @@ public class ServerAddressSetup extends JWizard {
 
            if( s_serverID.length()==0 ) {
                Debug.signal( Debug.FAILURE, null, "No ServerID specified in config file !" );
-               System.exit(1);
+               Debug.exit();
            }
 
            try{
               serverID = Integer.parseInt( s_serverID );
            }catch( Exception e ) {
                 Debug.signal( Debug.FAILURE, null, "Bad ServerID specified in config file !" );
-                System.exit(1);
+                Debug.exit();
            }
 
            Debug.signal( Debug.NOTICE, null, "Current Default Server ID is : "+serverID );
@@ -623,7 +635,7 @@ public class ServerAddressSetup extends JWizard {
 
              if( serverProperties==null ) {
                 Debug.signal( Debug.FAILURE, null, "No valid remote-servers.cfg file found !" );
-                System.exit(1);
+                Debug.exit();
              }
 
 

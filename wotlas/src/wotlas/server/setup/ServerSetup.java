@@ -26,6 +26,7 @@ import wotlas.utils.aswing.*;
 
 import wotlas.libs.wizard.*;
 import wotlas.libs.wizard.step.*;
+import wotlas.libs.log.*;
 
 import java.io.*;
 import javax.swing.*;
@@ -115,7 +116,7 @@ public class ServerSetup extends JWizard {
           }
           catch( WizardException we ) {
                we.printStackTrace();
-               System.exit(1); // init failed !
+               Debug.exit(); // init failed !
           }
     }
 
@@ -124,7 +125,7 @@ public class ServerSetup extends JWizard {
   /** Called when wizard is finished (after last step's end).
    */
    protected void onFinished(Object context) {
-           System.exit(0);
+           Debug.exit();
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -132,7 +133,7 @@ public class ServerSetup extends JWizard {
   /** Called when wizard is canceled ('cancel' button pressed).
    */
    protected void onCanceled(Object context) {
-         System.exit(0);
+         Debug.exit();
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -827,20 +828,29 @@ public class ServerSetup extends JWizard {
    *  @param argv none
    */
     static public void main( String argv[] ) {
+        // STEP 0 - Log Creation
+           try {
+              Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(), "../log/register-setup.log", "../base/gui/log-title-dark.jpg" ) );
+           } catch( java.io.FileNotFoundException e ) {
+              e.printStackTrace();
+              Debug.exit();
+           }
+           
+           Debug.signal(Debug.NOTICE,null,"Starting Register Setup...");
 
         // STEP 1 - We load the database path. Where is the data ?
            Properties properties = FileTools.loadPropertiesFile( DATABASE_CONFIG );
 
              if( properties==null ) {
                 Debug.signal( Debug.FAILURE, null, "No valid server-database.cfg file found !" );
-                System.exit(1);
+                Debug.exit();
              }
 
            databasePath = properties.getProperty( "DATABASE_PATH","" );
 
            if( databasePath.length()==0 ) {
                Debug.signal( Debug.FAILURE, null, "No Database Path specified in config file !" );
-               System.exit(1);
+               Debug.exit();
            }
 
            Debug.signal( Debug.NOTICE, null, "DataBase Path Found : "+databasePath );
@@ -850,14 +860,14 @@ public class ServerSetup extends JWizard {
 
            if( s_serverID.length()==0 ) {
                Debug.signal( Debug.FAILURE, null, "No ServerID specified in config file !" );
-               System.exit(1);
+               Debug.exit();
            }
 
            try{
               serverID = Integer.parseInt( s_serverID );
            }catch( Exception e ) {
                 Debug.signal( Debug.FAILURE, null, "Bad ServerID specified in config file !" );
-                System.exit(1);
+                Debug.exit();
            }
 
            Debug.signal( Debug.NOTICE, null, "Current Default Server ID is : "+serverID );
@@ -868,7 +878,7 @@ public class ServerSetup extends JWizard {
 
              if( serverProperties==null ) {
                 Debug.signal( Debug.FAILURE, null, "No valid "+REMOTE_SERVER_CONFIG+" file found !" );
-                System.exit(1);
+                Debug.exit();
              }
 
 

@@ -22,6 +22,8 @@ package wotlas.server.setup;
 import wotlas.server.PersistenceManager;
 import wotlas.common.universe.*;
 import wotlas.common.*;
+import wotlas.libs.log.*;
+import wotlas.utils.Debug;
 
 import javax.swing.*;
 import java.awt.*;
@@ -53,12 +55,20 @@ public class ServerMapSetup extends WorldTree {
   /** Static Init.
    */    
     static{
+     // STEP 0 - Log Creation
+        try {
+           Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(), "../log/server-map-setup.log", "../base/gui/log-title-dark.jpg" ) );
+        } catch( java.io.FileNotFoundException e ) {
+           e.printStackTrace();
+           Debug.exit();
+        }
+
         pm = wotlas.server.PersistenceManager.createPersistenceManager(DATABASE_PATH);
         worldMaps = pm.loadLocalUniverse(false);
 
         if( worldMaps==null ) {
-            System.out.println("Error: couldn't load world data.");
-            System.exit(1);
+            Debug.signal(Debug.FAILURE,null,"Error: couldn't load world data.");
+            Debug.exit();
         }
 
         for( int i=0; i<worldMaps.length; i++ )
@@ -103,7 +113,7 @@ public class ServerMapSetup extends WorldTree {
 
           bQuit.addActionListener(new ActionListener() {
               public void actionPerformed (ActionEvent e) {
-                  System.exit(1);
+                  Debug.exit();
               }
           });
 
@@ -140,7 +150,7 @@ public class ServerMapSetup extends WorldTree {
            b.setServerID(nID);        
         }
         catch(Exception e) {
-           System.out.println("ERROR: "+e.getMessage()+"\n  -> ServerID not saved.");
+           Debug.signal(Debug.ERROR, this,"ERROR: "+e.getMessage()+"\n  -> ServerID not saved.");
            return;
         }
 
@@ -152,6 +162,8 @@ public class ServerMapSetup extends WorldTree {
   /** Main
    */
     static public void main( String argv[] ) {
+
+          Debug.signal(Debug.NOTICE,null,"Starting Server Map Setup...");
 
           WorldManager wManager = new WorldManager(worldMaps);
           new ServerMapSetup(wManager);

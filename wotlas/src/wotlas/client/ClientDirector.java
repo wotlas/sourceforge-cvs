@@ -40,8 +40,7 @@ import java.util.Iterator;
  * @see wotlas.client.ClientManager; 
  */
 
-public class ClientDirector
-{
+public class ClientDirector {
 
  /*------------------------------------------------------------------------------------*/
   
@@ -99,12 +98,17 @@ public class ClientDirector
     // Parse command line arguments
     int i=0;
     String arg;
+    boolean classicLogWindow = false;
+    
     while (i<argv.length && argv[i].startsWith("-")) {
       arg = argv[i];
       i++;
       if (arg.equals("-debug")) {
         System.out.println("mode DEBUG on");
         SHOW_DEBUG = true;
+      }
+      else if (arg.equals("-classic")) {
+        classicLogWindow = true;
       }
       /*if (arg.equals("-nosound")) {
         System.out.println("sound off");
@@ -117,7 +121,10 @@ public class ClientDirector
       
     // STEP 0 - Start a JLogStream to display our Debug messages
     try {
-      Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(), CLIENT_LOG, "../base/gui/log-title.jpg" ) );
+      if(classicLogWindow)
+         Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(), CLIENT_LOG, "../base/gui/log-title.jpg" ) );
+      else
+         Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(), CLIENT_LOG, "../base/gui/log-title-dark.jpg" ) );
     } catch( java.io.FileNotFoundException e ) {
       e.printStackTrace();
       return;

@@ -101,6 +101,9 @@ class ServerDirector
                return;
            }
 
+           if( !Tools.javaVersionHigherThan( "1.3.0" ) )
+               Debug.exit();
+
            Debug.signal( Debug.NOTICE, null, "*-----------------------------------*" );
            Debug.signal( Debug.NOTICE, null, "|   Wheel Of Time - Light & Shadow  |" );
            Debug.signal( Debug.NOTICE, null, "|  Copyright (C) 2001 - WOTLAS Team |" );

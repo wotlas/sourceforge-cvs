@@ -416,15 +416,38 @@ public class TownMap extends ScreenRectangle implements WotlasMap
       if(mapExits==null) {
       	// Ok, this town has no MapExit, we suppose it's just a building
       	// Is there ONE building ?
-      	   if(buildings!=null && buildings.length==1 && buildings[0]!=null)
-      	      return buildings[0].getBuildingExits()[0];
+      	   if(buildings==null || buildings.length==0 || buildings[0]==null
+      	      || buildings[0].getBuildingExits()==null || buildings[0].getBuildingExits().length==0) {
+              Debug.signal(Debug.ERROR,this,"Failed to find town map exit !");
+              return null; // nope ! error
+           }
 
-           return null;
+           if(fromPosition==null)
+              return null; // no position to analyze
+
+        // We search on the first map exit
+           MapExit bExits[] = buildings[0].getBuildingExits();
+
+           for(int i=0; i<bExits.length; i++ ) {
+             if( bExits[i].getMapExitSide()==MapExit.WEST && fromPosition.x <= x+width/2 )
+                 return bExits[i];
+
+             if( bExits[i].getMapExitSide()==MapExit.EAST && fromPosition.x >= x+width/2 )
+                 return bExits[i];
+
+             if( bExits[i].getMapExitSide()==MapExit.NORTH && fromPosition.y <= y+height/2 )
+                 return bExits[i];
+
+             if( bExits[i].getMapExitSide()==MapExit.SOUTH && fromPosition.y >= y+height/2 )
+                 return bExits[i];
+           }
+   
+          return bExits[0]; // default
       }
 
       if(mapExits.length==1)
          return mapExits[0];
-   
+
       for(int i=0; i<mapExits.length; i++ ) {
          if( mapExits[i].getMapExitSide()==MapExit.WEST && fromPosition.x <= x+width/2 )
              return mapExits[i];

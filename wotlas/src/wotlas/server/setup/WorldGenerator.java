@@ -101,10 +101,10 @@ public class WorldGenerator {
         // STEP 3 - TOWNS
 
         // Tar Valon Creation
-           TownMap townMaps[] = new TownMap[3];
+           TownMap townMaps[] = new TownMap[4];
            worldMap.setTownMaps( townMaps );
 
-           TownMap townMap = new TownMap(758,280,12,11);
+           TownMap townMap = new TownMap(755,277,17,17);
            townMaps[0] = townMap;
 
            townMap.setTownMapID(0);
@@ -226,9 +226,23 @@ public class WorldGenerator {
            townMap.setTownImage( new ImageIdentifier() ); // no town image
            townMap.setMusicName("blight-refuge.mid");
 
+        // Braem Wood 'Town'
+           townMap = new TownMap(706,377,15,15);
+           townMaps[3] = townMap;
+
+           townMap.setTownMapID(3);
+           townMap.setFullName("Braem Wood");
+           townMap.setShortName("braemwood");
+           townMap.setInsertionPoint( new ScreenPoint(0,0) );
+
+           townMap.setSmallTownImage( new ImageIdentifier( "maps-1/town-small-1/braem-small-3" ) );
+
+           townMap.setTownImage( new ImageIdentifier() ); // no town image
+           townMap.setMusicName("blight-refuge.mid");
+
 
         // STEP 4 - Tar Valon West Gate Building
-           Building buildings[] = new Building[6];
+           Building buildings[] = new Building[5];
            townMaps[0].setBuildings( buildings );
 
            buildings[0] = new Building(208,493,10,18);
@@ -260,35 +274,25 @@ public class WorldGenerator {
            buildings[2].setHasBuildingExits(true);
            buildings[2].setSmallBuildingImage( new ImageIdentifier( "maps-1/building-small-0/tar-valon-nwgate-small-3") );
 
-        // Tar Valon - South-West Clearing (Building)
-           buildings[3] = new Building(95,795,20,20);
+        // Tar Valon - White Tower South Gate (Building)
+           buildings[3] = new Building(276,503,14,15);
            buildings[3].setBuildingID(3);
-           buildings[3].setFullName("Tar Valon - South West Ruins");
-           buildings[3].setShortName("SouthRuins");
+           buildings[3].setFullName("Tar Valon - White Tower South Gate");
+           buildings[3].setShortName("WhiteTowerGate");
            buildings[3].setServerID(0);
            buildings[3].setHasTownExits(false);
            buildings[3].setHasBuildingExits(true);
-           buildings[3].setSmallBuildingImage( new ImageIdentifier( "maps-1/building-small-0/tar-valon-swclearing-small-4") );
+           buildings[3].setSmallBuildingImage( new ImageIdentifier( "maps-1/building-small-0/tar-valon-swhitower-small-0") );
 
-        // Tar Valon - White Tower South Gate (Building)
-           buildings[4] = new Building(276,503,14,15);
+        // Tar Valon - White Tower (Building)
+           buildings[4] = new Building(-10,-10,1,1);
            buildings[4].setBuildingID(4);
-           buildings[4].setFullName("Tar Valon - White Tower South Gate");
-           buildings[4].setShortName("WhiteTowerGate");
+           buildings[4].setFullName("Tar Valon - White Tower");
+           buildings[4].setShortName("WhiteTower");
            buildings[4].setServerID(0);
            buildings[4].setHasTownExits(false);
            buildings[4].setHasBuildingExits(true);
-           buildings[4].setSmallBuildingImage( new ImageIdentifier( "maps-1/building-small-0/tar-valon-swhitower-small-0") );
-
-        // Tar Valon - White Tower (Building)
-           buildings[5] = new Building(-10,-10,1,1);
-           buildings[5].setBuildingID(5);
-           buildings[5].setFullName("Tar Valon - White Tower");
-           buildings[5].setShortName("WhiteTower");
-           buildings[5].setServerID(0);
-           buildings[5].setHasTownExits(false);
-           buildings[5].setHasBuildingExits(true);
-           buildings[5].setSmallBuildingImage( new ImageIdentifier() );
+           buildings[4].setSmallBuildingImage( new ImageIdentifier() );
 
         // STEP 5 - Tar Valon West Gate InteriorMap
            InteriorMap maps[] = new InteriorMap[1];
@@ -620,53 +624,6 @@ public class WorldGenerator {
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
                mapExit.setTargetPosition( new ScreenPoint(65,225) );
 
-        // STEP 8bis - Tar Valon SW Clearing InteriorMap
-           maps = new InteriorMap[1];
-           maps[0] = new InteriorMap();
-
-           maps[0].setInteriorMapID(0);
-           maps[0].setFullName("Tar Valon - South West Ruins");
-           maps[0].setShortName("sw-ruins");
-           maps[0].setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/tv-sw-ruins-10" ) );
-           maps[0].setImageWidth(550);
-           maps[0].setImageHeight(350);
-           maps[0].setImageRegionWidth(550);
-           maps[0].setImageRegionHeight(350);
-
-           maps[0].setMusicName("tv-clearing.mid");
-
-           buildings[3].setInteriorMaps( maps );
-
-        // STEP 8bis2 - Rooms of Tar Valon NW Clearing InteriorMap
-           rooms = new Room[1];
-           maps[0].setRooms( rooms );
-           rooms[0] = new Room();
-           rooms[0].setRoomID(0);
-           rooms[0].setMaxPlayers(30);
-
-           rooms[0].setFullName("Tar Valon - South West Ruins");
-           rooms[0].setShortName("sw-ruins");
-           rooms[0].setInsertionPoint( new ScreenPoint(260,160) );
-
-               mapExit = rooms[0].addMapExit( new ScreenRectangle(190,325,335,25) );
-               mapExit.setType( MapExit.BUILDING_EXIT );
-               mapExit.setMapExitSide( MapExit.SOUTH );
-               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
-               mapExit.setTargetPosition( new ScreenPoint(105,820) );
-
-               mapExit = rooms[0].addMapExit( new ScreenRectangle(320,0,230,20) );
-               mapExit.setType( MapExit.BUILDING_EXIT );
-               mapExit.setMapExitSide( MapExit.NORTH );
-               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
-               mapExit.setTargetPosition( new ScreenPoint(105,780) );
-
-               mapExit = rooms[0].addMapExit( new ScreenRectangle(525,20,25,330) );
-               mapExit.setType( MapExit.BUILDING_EXIT );
-               mapExit.setMapExitSide( MapExit.EAST );
-               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
-               mapExit.setTargetPosition( new ScreenPoint(120,800) );
-
-
         // STEP 9 - Tar Valon NW Gate InteriorMap
            maps = new InteriorMap[2];
            maps[0] = new InteriorMap();
@@ -762,7 +719,7 @@ public class WorldGenerator {
            map = new InteriorMap();
            maps[0] = map;
 
-           buildings[4].setInteriorMaps( maps );
+           buildings[3].setInteriorMaps( maps );
 
            map.setInteriorMapID(0);
            map.setFullName("Tar Valon - White Tower - South Gate");
@@ -848,7 +805,7 @@ public class WorldGenerator {
                mapExit = rooms[0].addMapExit( new ScreenRectangle(40,0,360,25) );
                mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
                mapExit.setMapExitSide( MapExit.NORTH );
-               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,4,1,0) );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,3,1,0) );
                mapExit.setTargetPosition( new ScreenPoint(280,750) );
                mapExit.setTargetOrientation( (float)(-Math.PI/2) );
 
@@ -1023,14 +980,14 @@ public class WorldGenerator {
                mapExit = rooms[0].addMapExit( new ScreenRectangle(110,770,360,30) );
                mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
                mapExit.setMapExitSide( MapExit.SOUTH );
-               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,4,0,0) );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,3,0,0) );
                mapExit.setTargetPosition( new ScreenPoint(185,25) );
                mapExit.setTargetOrientation( (float)(Math.PI/2) );
 
                mapExit = rooms[0].addMapExit( new ScreenRectangle(320,0,130,20) );
                mapExit.setType( MapExit.BUILDING_EXIT );
                mapExit.setMapExitSide( MapExit.NORTH );
-               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,5,0,0) );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,4,0,0) );
                mapExit.setTargetPosition( new ScreenPoint(375,1450) );
                mapExit.setTargetOrientation( (float)(-Math.PI/2) );
 
@@ -1046,7 +1003,7 @@ public class WorldGenerator {
            map = new InteriorMap();
            maps[0] = map;
 
-           buildings[5].setInteriorMaps( maps );
+           buildings[4].setInteriorMaps( maps );
 
            map.setInteriorMapID(0);
            map.setFullName("White Tower - Hall");
@@ -1090,7 +1047,7 @@ public class WorldGenerator {
                mapExit = rooms[0].addMapExit( new ScreenRectangle(320,1480,130,20) );
                mapExit.setType( MapExit.BUILDING_EXIT );
                mapExit.setMapExitSide( MapExit.SOUTH );
-               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,4,1,0) );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,3,1,0) );
                mapExit.setTargetPosition( new ScreenPoint(370,40) );
                mapExit.setTargetOrientation( (float)(Math.PI/2) );
 
@@ -1741,6 +1698,130 @@ public class WorldGenerator {
                mapExit.setTargetPosition( new ScreenPoint(480,25) );
                mapExit.setTargetOrientation( (float)(Math.PI/2) );
 
+
+        // STEP 24 - Braem Wood Building
+           buildings = new Building[1];
+           townMaps[3].setBuildings( buildings );
+
+           buildings[0] = new Building(0,0,10,10);
+           buildings[0].setBuildingID(0);
+           buildings[0].setFullName("Braem Wood Road");
+           buildings[0].setShortName("braem-road");
+           buildings[0].setServerID(0);
+           buildings[0].setHasTownExits(true);
+           buildings[0].setHasBuildingExits(true);
+           buildings[0].setSmallBuildingImage( new ImageIdentifier() ); // no image
+
+        // STEP 25 - Braem Wood Road InteriorMap
+           maps = new InteriorMap[1];
+           maps[0] = new InteriorMap();
+           buildings[0].setInteriorMaps( maps );
+
+           maps[0].setInteriorMapID(0);
+           maps[0].setFullName("Braem Wood - Road");
+           maps[0].setShortName("braem-road");
+           maps[0].setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/braem-wood-10" ) );
+           maps[0].setImageWidth(1800);
+           maps[0].setImageHeight(350);
+           maps[0].setImageRegionWidth(200);
+           maps[0].setImageRegionHeight(350);
+
+           maps[0].setMusicName("tv-clearing.mid");
+
+        // STEP 25 - Rooms of Braem Wood Road InteriorMap
+           rooms = new Room[4];
+           maps[0].setRooms( rooms );
+
+           for(int i=0; i<4; i++ ) {
+               rooms[i] = new Room();
+               rooms[i].setRoomID(i);
+               rooms[i].setMaxPlayers(30);
+           }
+
+           rooms[0].setFullName("Braem Wood - Ruins");
+           rooms[0].setShortName("bw-ruins");
+           rooms[0].setInsertionPoint( new ScreenPoint(260,160) );
+
+             roomLink = rooms[0].addRoomLink( new ScreenRectangle(640, 230, 10, 40) );
+             roomLink.setRoom1ID(0);
+             roomLink.setRoom2ID(1);
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(320,0,140,20) );
+               mapExit.setType( MapExit.BUILDING_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0) );
+               mapExit.setTargetPosition( new ScreenPoint(713,370) );
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(190,330,470,20) );
+               mapExit.setType( MapExit.BUILDING_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0) );
+               mapExit.setTargetPosition( new ScreenPoint(707,393) );
+
+           rooms[1].setFullName("Braem Wood - Road");
+           rooms[1].setShortName("bw-road");
+           rooms[1].setInsertionPoint( new ScreenPoint(880,100) );
+
+             roomLink = rooms[1].addRoomLink( new ScreenRectangle(1245, 200, 10, 120) );
+             roomLink.setRoom1ID(1);
+             roomLink.setRoom2ID(2);
+
+             rooms[1].addRoomLink( rooms[0].getRoomLinks()[0] );
+
+               mapExit = rooms[1].addMapExit( new ScreenRectangle(770,0,180,20) );
+               mapExit.setType( MapExit.BUILDING_EXIT );
+               mapExit.setMapExitSide( MapExit.NORTH );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0) );
+               mapExit.setTargetPosition( new ScreenPoint(713,370) );
+
+               mapExit = rooms[1].addMapExit( new ScreenRectangle(700,330,520,20) );
+               mapExit.setType( MapExit.BUILDING_EXIT );
+               mapExit.setMapExitSide( MapExit.SOUTH );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0) );
+               mapExit.setTargetPosition( new ScreenPoint(707,393) );
+
+           rooms[2].setFullName("Braem Wood");
+           rooms[2].setShortName("wood");
+           rooms[2].setInsertionPoint( new ScreenPoint(1400,140) );
+
+             roomLink = rooms[2].addRoomLink( new ScreenRectangle(1510, 40, 10, 30) );
+             roomLink.setRoom1ID(2);
+             roomLink.setRoom2ID(3);
+             roomLink.setDoor( new Door( 1512, 40, halfPI, DoorDrawable.VERTICAL_BOTTOM_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/stone-30len-5th-3/vert-bottom-pivot-1.gif" ) ) );
+
+             roomLink = rooms[2].addRoomLink( new ScreenRectangle(1740, 40, 10, 30) );
+             roomLink.setRoom1ID(3);
+             roomLink.setRoom2ID(2);
+             roomLink.setDoor( new Door( 1742, 40, -halfPI, DoorDrawable.VERTICAL_BOTTOM_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/stone-30len-5th-3/vert-bottom-pivot-1.gif" ) ) );
+
+             rooms[2].addRoomLink( rooms[1].getRoomLinks()[0] );
+
+               mapExit = rooms[2].addMapExit( new ScreenRectangle(1360,0,150,20) );
+               mapExit.setType( MapExit.BUILDING_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0) );
+               mapExit.setTargetPosition( new ScreenPoint(713,370) );
+
+               mapExit = rooms[2].addMapExit( new ScreenRectangle(1750,0,20,20) );
+               mapExit.setType( MapExit.BUILDING_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0) );
+               mapExit.setTargetPosition( new ScreenPoint(713,370) );
+
+               mapExit = rooms[2].addMapExit( new ScreenRectangle(1460,330,330,20) );
+               mapExit.setType( MapExit.BUILDING_EXIT );
+               mapExit.setMapExitSide( MapExit.NONE );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0) );
+               mapExit.setTargetPosition( new ScreenPoint(707,393) );
+
+           rooms[3].setFullName("Braem Wood - Deserted House");
+           rooms[3].setShortName("bw-house");
+           rooms[3].setInsertionPoint( new ScreenPoint(1600,100) );
+
+             rooms[3].addRoomLink( rooms[2].getRoomLinks()[0] );
+             rooms[3].addRoomLink( rooms[2].getRoomLinks()[1] );
 
         // STEP XX - We save this simple universe.
            persistenceManager = wotlas.server.PersistenceManager.createPersistenceManager( databasePath );

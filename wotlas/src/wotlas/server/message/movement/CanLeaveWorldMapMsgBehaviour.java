@@ -151,10 +151,10 @@ public class CanLeaveWorldMapMsgBehaviour extends CanLeaveWorldMapMessage implem
                       TownMap townMap = currentWorld.getTownMaps()[i];
               
                       if( townMap.getTownMapID()==location.getTownMapID()
-                          && townMap.getMapExits()==null ) {                   
+                          && townMap.getMapExits()==null ) {     
                           MapExit mapExit = townMap.findTownMapExit(null);
 
-                          if( mapExit==null || !mapExit.getMapExitLocation().equals( location ) )
+                          if( mapExit!=null && !mapExit.getMapExitLocation().equals( location ) )
                               continue;
 
                        // MapExit Found !!!

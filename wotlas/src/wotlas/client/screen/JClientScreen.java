@@ -63,7 +63,7 @@ public class JClientScreen extends JFrame
   public final static int mapHeight = 300;  // Same as above
   private final static int gameMinHeight = 200; // JMapPanel
 
-  private final static int thumbHeight = 100;
+  private final static int thumbHeight = 145;
 
   //private final static int playerHeight = 300;
   private final static int playerHeight = mainHeight-thumbHeight;
@@ -159,7 +159,9 @@ public class JClientScreen extends JFrame
       rightPanel.setBackground(Color.black);
       
       // *** Preview Panel ***
-      optionsPanel.setPreferredSize(new Dimension(mainWidth-leftWidth-10, thumbHeight));      
+      optionsPanel.setPreferredSize(new Dimension(mainWidth-leftWidth-4, thumbHeight));
+      optionsPanel.setMinimumSize(new Dimension(mainWidth-leftWidth-4, thumbHeight));
+      optionsPanel.setMaximumSize(new Dimension(mainWidth-leftWidth-4, thumbHeight));
       optionsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
       rightPanel.add(optionsPanel, BorderLayout.NORTH);
 

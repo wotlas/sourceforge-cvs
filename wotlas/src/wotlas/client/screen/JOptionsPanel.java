@@ -19,7 +19,6 @@
 
 package wotlas.client.screen;
 
-import wotlas.libs.sound.*;
 import wotlas.utils.*;
 import wotlas.utils.aswing.*;
 import wotlas.client.*;
@@ -35,14 +34,13 @@ import javax.swing.event.*;
  * @author Petrus
  */
 
-public class JOptionsPanel extends JPanel implements MouseListener//, ChangeListener, ItemListener
+public class JOptionsPanel extends JPanel implements MouseListener
 {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Slider to change volume level.
-   */
-  private JSlider volumeLevel;
+
+   private Image menu;
 
   /** Consctructor.
    */
@@ -52,10 +50,10 @@ public class JOptionsPanel extends JPanel implements MouseListener//, ChangeList
     JPanel innerPanel = new JPanel();
     innerPanel.setOpaque(false);
     innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
-    innerPanel.setBorder(BorderFactory.createEmptyBorder(3,3,5,5)); // all 10s
+    //innerPanel.setBorder(BorderFactory.createEmptyBorder(3,3,5,5)); // all 10s
 
 // Title
-    ALabel lbl_title = new ALabel("Menu");
+    ALabel lbl_title = new ALabel(" ");
     lbl_title.setAlignmentX(Component.CENTER_ALIGNMENT);
     innerPanel.add(lbl_title);
 
@@ -79,50 +77,6 @@ public class JOptionsPanel extends JPanel implements MouseListener//, ChangeList
     });
     innerPanel.add(b_options);
 
-// Volume Panel
-    /*JPanel vPanel = new JPanel();
-    vPanel.setOpaque(false);
-    vPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-    vPanel.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));
-
-    ALabel volTitle = new ALabel("Volume : ");
-    vPanel.add(volTitle);
-
-    JLabel soundMin = new JLabel(new ImageIcon("../base/gui/volume16.gif"));
-    //soundMin.setAlignmentY(Component.CENTER_ALIGNMENT);
-    vPanel.add(soundMin);
-
-    volumeLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_MUSIC_VOLUME, 30);
-    SoundLibrary.getSoundLibrary().changeMusicVolume((short) volumeLevel.getValue());
-
-    volumeLevel.setPaintTrack(false);
-    volumeLevel.setOpaque(false);
-    volumeLevel.setPreferredSize(new Dimension(50,30));
-    volumeLevel.addChangeListener(this);
-    volumeLevel.setAlignmentY(Component.BOTTOM_ALIGNMENT);
-    vPanel.add(volumeLevel);
-
-    JLabel soundMax = new JLabel(new ImageIcon("../base/gui/volume24.gif"));
-    //soundMax.setAlignmentY(Component.CENTER_ALIGNMENT);
-    vPanel.add(soundMax);
-    */
-
-// Text Quality
-    /*
-    JPanel qTextPanel = new JPanel();
-    qTextPanel.setOpaque(false);
-    qTextPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-    qTextPanel.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
-
-    ALabel qTextTitle = new ALabel("high quality text : ");
-    qTextPanel.add(qTextTitle);
-
-    JCheckBox cButton = new JCheckBox();
-    cButton.setBackground(Color.white);
-    cButton.setSelected(false);
-    cButton.addItemListener(this);
-    qTextPanel.add(cButton);
-    */
 
 // Help buttons
     ImageIcon im_helpup  = new ImageIcon("../base/gui/help-up.gif");
@@ -143,13 +97,35 @@ public class JOptionsPanel extends JPanel implements MouseListener//, ChangeList
     innerPanel.add(b_help);
 
     add(innerPanel);
-    
+
+  // We load the image
+     MediaTracker mediaTracker = new MediaTracker(this);
+     menu  = getToolkit().getImage("../base/gui/menu.jpg");
+     mediaTracker.addImage(menu,0);
+
+         try{
+            mediaTracker.waitForAll(); // wait for all images to be in memory
+         }
+         catch(InterruptedException e){
+            e.printStackTrace();
+         }
+
+
     if (DataManager.SHOW_DEBUG) {
       JMemory memo = new JMemory();
       memo.init();
     }
     
   }
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To paint our panel...
+    */
+      public void paintComponent(Graphics g) {
+      	  if(menu!=null)
+             g.drawImage(menu,0,0,this);
+     }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -175,20 +151,5 @@ public class JOptionsPanel extends JPanel implements MouseListener//, ChangeList
   public void mouseReleased(MouseEvent e) {}
 
  /*------------------------------------------------------------------------------------*/
-
-  /** Invoked when volume is changed
-   */
-  /*
-  public void stateChanged(ChangeEvent e) {
-    SoundLibrary.getSoundLibrary().changeMusicVolume((short) volumeLevel.getValue());
-  }*/
-
-  /** Invoked when check box state is changed
-   */
-  /*public void itemStateChanged(ItemEvent e) {
-    Object source = e.getItemSelectable();
-    TextDrawable.setHighQualityTextDisplay( (e.getStateChange() == ItemEvent.SELECTED) );
-  }
-  */
 
 }

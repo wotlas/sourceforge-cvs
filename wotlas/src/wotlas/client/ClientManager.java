@@ -64,6 +64,12 @@ public class ClientManager
    */
   private static ClientManager clientManager;
 
+  /** Do we have to remember passwords ? i.e. save them to disk. (default is true).
+   */
+    private static boolean rememberPasswords = true;
+
+ /*------------------------------------------------------------------------------------*/
+
   /** Our ProfileConfigList file.
    */
   private ProfileConfigList profileConfigList;
@@ -107,7 +113,30 @@ public class ClientManager
 
   /** Default font
    */
-  private Font f;
+    private Font f;
+
+  /** Do we have to login the user automatically if his password is in memory ?
+   *  Automatic login makes that the password prompt doesn't displays if
+   *  there is already a password in memory.
+   *
+   *  This option is used only when we need to reconnect because the client
+   *  account has moved to another server.
+   */
+    private boolean automaticLogin;
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To set if we have to remember passwords or not
+   */
+    static public void setRememberPasswords( boolean remember ) {
+    	rememberPasswords = remember;
+    }
+
+  /** do we have to remember passwords ?
+   */
+    static public boolean getRememberPasswords() {
+    	return rememberPasswords;
+    }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -115,6 +144,7 @@ public class ClientManager
    */
   private ClientManager(String databasePath) {
     this.databasePath = databasePath;
+    automaticLogin = false;
 
     PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
 
@@ -128,21 +158,18 @@ public class ClientManager
       Debug.signal( Debug.NOTICE, null, "Client Configs loaded with success !" );
     }
 
+    if(!rememberPasswords)
+       profileConfigList.deletePasswords(); // make sure we don't save any password here
+
     // 2 - We load the ServerConfigList
     serverConfigList = new ServerConfigList(pm);
-    if (serverConfigList == null) {
-      Debug.signal( Debug.FAILURE, this, "No Server Configs loaded !" );
-      Debug.exit();
-    } else {
-      Debug.signal( Debug.NOTICE, null, "Server Configs loaded with success !" );
-      serverConfigList.setRemoteServerConfigHomeURL( ClientDirector.getRemoteServerConfigHomeURL() );
-    }
+    Debug.signal( Debug.NOTICE, null, "Server Configs loaded with success !" );
+    serverConfigList.setRemoteServerConfigHomeURL( ClientDirector.getRemoteServerConfigHomeURL() );
 
     // 3 - We create the wizard to connect Wotlas
     screenIntro = new JIntroWizard();
     screenIntro.setGUI();
     f = SwingTools.loadFont("../base/fonts/Lblack.ttf");
-
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -180,6 +207,31 @@ public class ClientManager
   public ProfileConfig getCurrentProfileConfig() {
     return currentProfileConfig;
   }
+
+  /** To get the ServerConfigList.
+   *
+   * @return the ServerConfigList
+   */
+  public ServerConfigList getServerConfigList() {
+    return serverConfigList;
+  }
+
+  /** To set automatic login or not.
+   *  Automatic login makes that the password prompt doesn't displays if
+   *  there is already a password in memory.
+   *
+   *  This option is used only when we need to reconnect because the client
+   *  account has moved to another server.
+   */
+   public void setAutomaticLogin( boolean automaticLogin ) {
+      this.automaticLogin = automaticLogin;
+   }
+
+  /** Are we using automatic login or not ?
+   */
+   public boolean getAutomaticLogin() {
+      return automaticLogin;
+   }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -563,6 +615,9 @@ public class ClientManager
           formPanel_01_right.setBackground(Color.white);
           pfield1 = new APasswordField(10);
           pfield1.setFont(f.deriveFont(18f));
+
+          if( currentProfileConfig.getPassword()!=null )
+              pfield1.setText(currentProfileConfig.getPassword());
           
           pfield1.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
@@ -596,6 +651,11 @@ public class ClientManager
                     currentProfileConfig.getOriginalServerID(), DataManager.getDefaultDataManager());
 
             if ( jgconnect.hasSucceeded() ) {
+              currentProfileConfig.setPassword(passwd);
+
+              if(rememberPasswords)
+                 PersistenceManager.getDefaultPersistenceManager().saveProfilesConfig(profileConfigList);
+
               Debug.signal( Debug.NOTICE, null, "ClientManager connected to GameServer");
               start(100);
             } else {
@@ -617,10 +677,15 @@ public class ClientManager
       rightPanel.add(b_cancel);
 
       // *** Adding the panels ***
-
       screenIntro.setLeftPanel(leftPanel);
       screenIntro.setRightPanel(rightPanel);
       screenIntro.showScreen();
+
+      if( automaticLogin && currentProfileConfig.getPassword()!=null ) {
+      	 automaticLogin = false;  // works only once...
+         b_ok.doClick();          // we launch the connection procedure
+      }
+
       break;
 
     // ********************************
@@ -678,6 +743,9 @@ public class ClientManager
               b_delProfile.doClick();
             }
           });
+
+          if( currentProfileConfig.getPassword()!=null )
+              pfield1.setText(currentProfileConfig.getPassword());
           
           formPanel_02_right.add(pfield1);
           formPanel_02_right.add(new ALabel(currentProfileConfig.getKey()));
@@ -1114,6 +1182,7 @@ public class ClientManager
       // Save accounts informations
       profileConfigList.addProfile(currentProfileConfig);
       PersistenceManager.getDefaultPersistenceManager().saveProfilesConfig(profileConfigList);
+
 
       // Create panels
       leftPanel = new JPanel();

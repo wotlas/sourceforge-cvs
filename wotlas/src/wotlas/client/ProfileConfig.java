@@ -28,13 +28,21 @@ package wotlas.client;
 
 public class ProfileConfig
 {
+ /*------------------------------------------------------------------------------------*/
+
+  /** To forbid access to passwords (default is false).
+   */
+   private static boolean forbidPasswordAccess = false;
+
+ /*------------------------------------------------------------------------------------*/
+
   /** client's login
    */
   private String login;
 
   /** client's password
    */
-  private transient String password;
+  private String password;
   
   /** client's name
    */
@@ -62,12 +70,21 @@ public class ProfileConfig
 
  /*------------------------------------------------------------------------------------*/
 
+  /** To set if we can access to passwords store in this class.
+   * @param forbid set to true to forbid the access
+   */
+    static void setPasswordAccess( boolean forbid ) {
+         forbidPasswordAccess = forbid;
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
   /** Empty Constructor for persitence.
    * Data is loaded by the PersistenceManager.
    */
   public ProfileConfig() {
     login = new String("nobody");
-    password = new String("toto");
+    password = null;
     playerName = new String("nobody");
     serverID = -1;
     serverName = new String("nope");
@@ -88,16 +105,19 @@ public class ProfileConfig
     this.login = login;
   }
 
-  /** To get the client's password
+  /** To get the client's password. Beware of the state of forbidPasswordAccess.
    */
   public String getPassword() {
+    if(forbidPasswordAccess) return null;
+
     return password;
   }
 
-  /** To set the client's password
+  /** To set the client's password. Beware of the state of forbidPasswordAccess.
    */
   public void setPassword(String password) {
-    this.password = password;
+    if(!forbidPasswordAccess)
+       this.password = password;
   }
 
   /** To get the client's Name

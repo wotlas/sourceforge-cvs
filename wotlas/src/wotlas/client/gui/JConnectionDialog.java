@@ -128,13 +128,21 @@ public abstract class JConnectionDialog extends JDialog implements Runnable
     public void run() {
 
         do{
-             Tools.waitTime( 1500 );
+             Tools.waitTime( 750 );
         }
         while( !isShowing() );
 
-
         tryConnection();
-        dispose();
+
+        final JConnectionDialog cDialog = this;
+
+        Runnable runnable = new Runnable() {
+           public void run() {
+           	cDialog.dispose();
+           }
+        };
+
+        SwingUtilities.invokeLater( runnable );
         Debug.signal( Debug.NOTICE, null, "close JConnectionDialog");
     }
 
@@ -177,7 +185,7 @@ public abstract class JConnectionDialog extends JDialog implements Runnable
          l_info.setText( "Connection succeeded..." );
          hasSucceeded = true;
 
-         Tools.waitTime( 1500 );
+         Tools.waitTime( 1000 );
     }
 
  /*------------------------------------------------------------------------------------*/

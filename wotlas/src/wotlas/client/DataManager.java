@@ -433,14 +433,23 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
     Debug.signal( Debug.NOTICE, null, "DataManager not connected anymore to GameServer" );
-    
+
     //if (gDirector!=null) {
-    if ( (mFrame!=null) && (mFrame.isShowing()) ) {
-      gDirector.removeAllDrawables();
-      showWarningMessage("Connection to Server lost ! Re-connect to the game...");
-      ClientManager.getDefaultClientManager().start(1);
-    }
-    
+     if ( (mFrame!=null) && (mFrame.isShowing()) ) {
+
+        if( !ClientManager.getDefaultClientManager().getAutomaticLogin() ) {
+           gDirector.removeAllDrawables();
+           showWarningMessage("Connection to Server lost ! Re-connect to the game...");
+        }
+
+        Runnable runnable = new Runnable() {
+           public void run() {
+              ClientManager.getDefaultClientManager().start(1);  // we restart the ClientManager
+           }                                                     // on the Login entry
+        };
+
+        SwingUtilities.invokeLater( runnable );
+     }
   }
 
   /** Use this method to send a NetMessage to the server.

@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-// TODO : implémenter removeProfile
 
 package wotlas.client;
 
@@ -76,6 +75,19 @@ public class ProfileConfigList
   public void setCurrentProfileIndex(int currentProfileIndex) {
     this.currentProfileIndex = currentProfileIndex;
   }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** If we want to delete passwords to make sure they are not saved to disk.
+   */
+   public void deletePasswords() {
+   	if(profiles==null)
+   	   return;
+
+   	for( int i=0; i<profiles.length; i++ )
+           if(profiles[i]!=null)
+              profiles[i].setPassword(null);
+   }
 
  /*------------------------------------------------------------------------------------*/
 

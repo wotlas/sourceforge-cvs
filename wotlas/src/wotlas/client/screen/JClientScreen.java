@@ -77,7 +77,7 @@ public class JClientScreen extends JFrame
   private JMapPanel mapPanel;
   private GraphicsDirector gDirector;
   private JChatPanel chatPanel;
-  private JPreviewPanel previewPanel;
+  private JOptionsPanel optionsPanel;
   private JPlayerPanel playerPanel;
   private JLogPanel logPanel;
 
@@ -90,12 +90,12 @@ public class JClientScreen extends JFrame
   }
 
   public JClientScreen(JInfosPanel infosPanel, GraphicsDirector gDirector, JChatPanel chatPanel,
-                       JPreviewPanel previewPanel, JPlayerPanel playerPanel, JLogPanel logPanel) {
+                       JOptionsPanel optionsPanel, JPlayerPanel playerPanel, JLogPanel logPanel) {
     super("Wotlas client");
     this.infosPanel = infosPanel;
     this.gDirector = gDirector;
     this.chatPanel = chatPanel;
-    this.previewPanel = previewPanel;
+    this.optionsPanel = optionsPanel;
     this.playerPanel = playerPanel;
     this.logPanel = logPanel;
     addWindowListener( new WindowAdapter() {
@@ -108,12 +108,12 @@ public class JClientScreen extends JFrame
   }
 
   public JClientScreen(JInfosPanel infosPanel, JMapPanel myMapPanel, JChatPanel chatPanel,
-                       JPreviewPanel previewPanel, JPlayerPanel playerPanel, JLogPanel logPanel) {
+                       JOptionsPanel optionsPanel, JPlayerPanel playerPanel, JLogPanel logPanel) {
     super("Wotlas client");
     this.infosPanel = infosPanel;
     this.mapPanel = myMapPanel;
     this.chatPanel = chatPanel;
-    this.previewPanel = previewPanel;
+    this.optionsPanel = optionsPanel;
     this.playerPanel = playerPanel;
     this.logPanel = logPanel;
     addWindowListener( new WindowAdapter() {
@@ -144,8 +144,8 @@ public class JClientScreen extends JFrame
 
       // *** Preview Panel ***
 
-      //previewPanel.setPreferredSize(new Dimension(mainWidth-leftWidth, thumbHeight));
-      //rightPanel.add(previewPanel);
+      optionsPanel.setPreferredSize(new Dimension(mainWidth-leftWidth, thumbHeight));
+      rightPanel.add(optionsPanel);
 
       // *** Player Panel ***
 
@@ -204,14 +204,14 @@ public class JClientScreen extends JFrame
 
   /** To set
    */
-  public void setPreviewPanel(JPreviewPanel previewPanel) {
-    this.previewPanel = previewPanel;
+  public void setOptionsPanel(JOptionsPanel optionsPanel) {
+    this.optionsPanel = optionsPanel;
   }
 
   /** To get
    */
-  public JPreviewPanel getPreviewPanel() {
-    return previewPanel;
+  public JOptionsPanel getOptionsPanel() {
+    return optionsPanel;
   }
 
   /** To set

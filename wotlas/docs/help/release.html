@@ -9,14 +9,15 @@
 <p align="center"><img src="../../base/gui/welcome-title.jpg" width="360" height="180"><br>
   <font size="1">Copyright (C) &nbsp;2001 -2002 &nbsp;WOTLAS Team<br>
   <br>
-  </font><b>WOTLAS v1.2 RELEASE NOTES<br>
+  </font><b>WOTLAS v1.2 RELEASE NOTES<font size="2"><a name="top"></a></font><br>
   </b><font size="2">5 March 2002</font></p>
 <blockquote> 
   <p><font size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;These 
-    release notes are here to guide you. We provide pointers to other help files, 
-    describe the installation of <i>wotlas</i> ( <b>W</b>heel <b>O</b>f <b>T</b>ime 
-    - <b>L</b>ight <b>A</b>nd <b>S</b>hadow ), package contents, game features 
-    and support information.</font></p>
+    release notes are here to guide you. We provide pointers to help files, describe 
+    the installation of <i>wotlas</i> ( <b>W</b>heel <b>O</b>f <b>T</b>ime - <b>L</b>ight 
+    <b>A</b>nd <b>S</b>hadow ), give its package contents, game features and support 
+    information. <i>Wotlas</i> is a free software available under the <a href="../../gnu-public-license.txt" target="_blank">GNU 
+    General Public License</a>.</font></p>
   <p><img src="../../base/gui/shady-pin.gif" width="14" height="14" align="absmiddle"><b> 
     <a href="#contents">Contents</a><br>
     </b><img src="../../base/gui/shady-pin.gif" width="14" height="14" align="absmiddle"><b> 
@@ -30,14 +31,15 @@
     </b><img src="../../base/gui/shady-pin.gif" width="14" height="14" align="absmiddle"><b> 
     <a href="#help">Help, FAQ, Chat smileys</a></b><br>
     <img src="../../base/gui/shady-pin.gif" width="14" height="14" align="absmiddle"><b> 
+    <a href="#api">API Documentation</a></b><br>
+    <img src="../../base/gui/shady-pin.gif" width="14" height="14" align="absmiddle"><b> 
     <a href="#contact">Contact, Bug Report, Forum, Support</a></b></p>
 </blockquote>
 <hr width="50%" align="center">
 <br>
 <img src="../../base/gui/shady-pin.gif" width="14" height="14" align="absmiddle"><b> 
 Contents</b><a name="contents"></a><br>
-<blockquote> <font size="2">The <i><b>wotlas-client</b></i> package contains :</font> 
-  <br>
+<blockquote> <font size="2">The <i><b>wotlas-client</b></i> package contains :</font><br>
   <blockquote> 
     <p><font size="2"> - The wotlas client game files v1.2 ( java classes, graphics, 
       sounds, musics )<br>
@@ -53,12 +55,32 @@ Contents</b><a name="contents"></a><br>
   </blockquote>
   <p><font size="2">The <i><b>wotlas-devel</b></i> package contains :</font> <br>
   </p>
-  <blockquote><font size="2"> - The wotlas server files v1.2 ( java classes, wizard 
-    steps )<br>
-    - The wotlas client game files v1.2 ( java classes, graphics, sounds, musics 
-    )<br>
-    - The wotlas source code.<br>
-    - The help files, access to online news.</font></blockquote>
+  <blockquote> 
+    <p><font size="2"> - The wotlas server files v1.2 ( java classes, wizard steps 
+      )<br>
+      - The wotlas client game files v1.2 ( java classes, graphics, sounds, musics 
+      )<br>
+      - The wotlas source code.<br>
+      - The help files, an API documentation generator, access to online news.</font></p>
+  </blockquote>
+  <p><font size="2">The <i><b>wotlas-source</b></i> package contains :</font> 
+    <br>
+  </p>
+  <blockquote> 
+    <p><font size="2"> - The wotlas source code.<br>
+      - The help files, an API documentation generator, access to online news.</font></p>
+  </blockquote>
+  <p><font size="2">The <i><b>wotlas-network-manager</b></i> package contains 
+    :</font> <br>
+  </p>
+  <blockquote> 
+    <p><font size="2"> - The wotlas network manager files v1.2 ( java classes 
+      ) <br>
+      - Utilities to generate the wotlas universe, assign server identifiers, 
+      export server configs.<br>
+      - The help files.</font></p>
+  </blockquote>
+  <p><font size="2"><a href="#top">back to the top</a></font></p>
 </blockquote>
 <p><br>
   <img src="../../base/gui/shady-pin.gif" width="14" height="14" align="absmiddle"><b> 
@@ -80,6 +102,7 @@ Contents</b><a name="contents"></a><br>
       <br>
       - Possibility to lie on your name.</font></p>
   </blockquote>
+  <p><font size="2"><a href="#top">back to the top</a></font></p>
 </blockquote>
 <p><br>
   <img src="../../base/gui/shady-pin.gif" width="14" height="14" align="absmiddle"><b> 
@@ -96,6 +119,7 @@ Contents</b><a name="contents"></a><br>
       creation ) turn off the music in the option panel (available on the main 
       screen ). </font></p>
   </blockquote>
+  <p><font size="2"><a href="#top">back to the top</a></font></p>
 </blockquote>
 <br>
 <img src="../../base/gui/shady-pin.gif" width="14" height="14" align="absmiddle"><b> 
@@ -125,6 +149,7 @@ Requirements<a name="hardware"></a></b>
     successfully on Windows OS ( 98, Me, NT4, 2000 &amp; XP ) and Linux OS. We 
     also tested wotlas successfully with Java 1.3.0, 1.3.1 and 1.4 . Some minor 
     bugs that have not been fixed yet are listed in our <a href="wotlas-faq.html" target="_self">FAQ</a>.</font></p>
+  <p><font size="2"><a href="#top">back to the top</a></font></p>
 </blockquote>
 <p></p>
 <p><br>
@@ -138,12 +163,9 @@ Requirements<a name="hardware"></a></b>
   <p><font size="2">2 - If you have to install Java on your computer you can use 
     the links below. You can download Java 1.4 if the size ( 9MB ) doesn't bother 
     you. Otherwise Java 1.3 ( 3MB ) will be just fine. Note that <i>wotlas</i> 
-    runs faster with Java 1.4.<br>
-    <br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In both cases 
-    you are looking for the JRE package ( Java Runtime Environment ) with US English 
-    support ( there is no need for the international version unless you need it 
-    ).</font></p>
+    runs faster with Java 1.4. In both cases you are looking for the JRE package 
+    ( <b>J</b>ava <b>R</b>untime <b>E</b>nvironment ) with US English support 
+    ( there is no special need for the international version in wotlas ).</font></p>
   <blockquote> 
     <p><font size="2"><a href="http://java.sun.com/j2se/1.3/jre/download-windows.html" target="_blank"><b>J</b>ava 
       <b>R</b>untime <b>E</b>nvironment <b>1.3.1</b> for Windows</a><br>
@@ -182,6 +204,61 @@ Requirements<a name="hardware"></a></b>
       first read our <a href="wotlas-faq.html" target="_blank">FAQ</a> . If your 
       problem is not listed here please <a href="#contact">contact us</a>.</font></p>
   </blockquote>
+  <p><font size="2"><b><br>
+    Notes for other packages :</b></font></p>
+  <blockquote> 
+    <p><font size="2">- If you are using the<b> wotlas-devel </b>package you'll 
+      find all the <i>.bat</i> and <i>.sh</i> scripts in the <i>bin/</i> directory. 
+      Some of these commands don't have the same name but are easy to identify 
+      ( <i>wotlas-client.bat</i> instead of <i>wotlas.bat</i> on the client side 
+      ).</font></p>
+    <p><font size="2">- If you want to compile wotlas you'll find a <i><b>makefile</b></i> 
+      in the <i>build/</i> directory. There is a <a href="../../build/compile-readme.txt" target="_blank">readme</a> 
+      explaining how to get/configure the <i>make</i> utility if you don't have 
+      it. If you take a look at our <i>makefile</i> you'll note that it's not 
+      very efficient. We wrote it that way so it will work on <i>any</i> Windows 
+      systems <i>without</i> installing any other development packages (<i>cygwin</i> 
+      for instance). Of course for unix environments our makefile is a shame...</font></p>
+    <p><font size="2">- If you are using the<b> wotlas-network-manager </b>package 
+      you'll find also the <i>.bat</i> and <i>.sh</i> scripts in the <i>bin/</i> 
+      directory. There is no documentation on this package as it's rather experimental. 
+      But let's give you some starting points :</font></p>
+    <blockquote> 
+      <p><font size="2"><b>- 1</b> - Read our <a href="wotlas-faq.html" target="_blank">FAQ</a> 
+        to get familiar with the server side of wotlas. The key ideas are : a 
+        server table that lists the available servers, server config files that 
+        describe servers, a central web server that hosts all these files to enable 
+        users and server administrators to get them.<br>
+        <b>- 2</b> - To generate the universe data that will be used by servers 
+        use the <i><b>world-generator</b></i> script. Universe data is stored 
+        in <i>base/universe/ .<br>
+        </i> <b>- 3 -</b> Once you have done that the buildings of the universe 
+        are not assigned to any server. To assign server identifiers to buildings 
+        use the <i><b>server-map-setup</b></i> script. It's your job to assign 
+        identifiers to servers.<br>
+        <b>- 4</b> - You have now a valid universe data you can send to the server 
+        administrators you are managing. Just zip the <i>base/universe/</i> directory 
+        and send it to them.<br>
+        - <b>5</b> - Your job is also to collect server config files, update the 
+        server table and export it to a central web server. To do that just copy 
+        to <i>base/servers/</i> the server config files you receive.<br>
+        - <b>6</b> - To update the server table and export it to your central 
+        web server ( with all the server config files ) just call the <i><b>updateServerTable</b></i> 
+        script.<br>
+        - <b>7</b> - If your central web server is not <i>SourceForge.net</i> 
+        you'll have to edit the contents of the <i><b>updateServerTable</b></i> 
+        script. Be aware also that your server administrators need to know your 
+        central web server URL ( to be able to store their server-x.cfg.adr file 
+        ) and how to connect to it ( scp, ftp, pscp ). You should try to configure 
+        yourself a server to check if it works.<br>
+        - <b>8</b> - Finally your last job is to update the news for your wotlas 
+        network. You can use the <b><i>updateServerNews</i></b> script to do that. 
+        The news.html file is in <i>docs/online-news/</i> .</font></p>
+    </blockquote>
+    <p><font size="2">Contact us if you have any question as this is a very new 
+      package and there are not a lot of guide lines. Good Luck !</font></p>
+  </blockquote>
+  <p><font size="2"><a href="#top">back to the top</a></font></p>
 </blockquote>
 <p><br>
   <img src="../../base/gui/shady-pin.gif" width="14" height="14" align="absmiddle"><b> 
@@ -193,6 +270,23 @@ Requirements<a name="hardware"></a></b>
     you can try our <a href="wotlas-faq.html">FAQ</a> or the in-game help (just 
     hit the <i>help</i> button in wotlas main screen). We also provide <a href="smileys.html" target="_self">here</a> 
     the list of the smileys we recognize in our chat.</font></p>
+  <p><font size="2"><a href="#top">back to the top</a></font></p>
+</blockquote>
+<p><br>
+  <img src="../../base/gui/shady-pin.gif" width="14" height="14" align="absmiddle"><b> 
+  API Documentation <a name="api"></a></b></p>
+<blockquote> 
+  <p><font size="2"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I</font><font size="2">f 
+    you have downloaded the <i>wotlas-devel</i> or <i>wotlas-source</i> package 
+    you have access to the API Javadoc of our project. You first need to build 
+    it by launching the <i>build-javadoc.bat</i> or <i>build-javadoc.sh</i> commands 
+    of the <i>/build</i> directory. Once you have done that you'll be able to 
+    see the <a href="../api/index.html" target="_blank">API documentation</a>.<br>
+    <br>
+    The API documentation is generated in the <i>docs/api/</i> directory. Other 
+    project / API / UML documentation might be available on our <i>sourceforge.net</i> 
+    web site.</font></p>
+  <p><font size="2"><a href="#top">back to the top</a></font></p>
 </blockquote>
 <p><br>
   <img src="../../base/gui/shady-pin.gif" width="14" height="14" align="absmiddle"><b> 
@@ -209,8 +303,11 @@ Requirements<a name="hardware"></a></b>
     you want to ask a question or submit a bug you should go to our <a href="http://sourceforge.net/projects/wotlas" target="_blank">SourceForge 
     site</a>, but if you want to contact us privately you can use the following 
     mail address : <b>light-and-shadow@netcourrier.com</b></font></p>
-  <p><font size="2">For news on the wotlas project go to <a href="http://wotlas.sf.net" target="_blank">http://wotlas.sf.net</a> 
-    .</font></p>
+  <p><font size="2">For more news on the wotlas project go to <a href="http://wotlas.sf.net" target="_blank">http://wotlas.sf.net</a> 
+    .<br>
+    For more information on the GNU General Public License click <a href="http://www.gnu.org/copyleft/gpl.html" target="_blank">here</a>.<br>
+    </font></p>
+  <p><font size="2"><a href="#top">back to the top</a></font></p>
 </blockquote>
 <p><br>
   <img src="../../base/gui/stone-bar-heavy.gif" width="620" height="40"></p>

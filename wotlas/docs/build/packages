@@ -11,11 +11,12 @@ wotlas.libs.graphics2D.policy
 wotlas.libs.graphics2D.filter
 wotlas.libs.graphics2D.filter.color
 wotlas.libs.sound
+wotlas.libs.wizard
+wotlas.libs.wizard.step
 wotlas.common
 wotlas.common.chat
 wotlas.common.universe
 wotlas.common.movement
-wotlas.common.message
 wotlas.common.message.account
 wotlas.common.message.description
 wotlas.common.message.movement
@@ -23,6 +24,7 @@ wotlas.common.message.chat
 wotlas.common.character
 wotlas.server
 wotlas.server.setup
+wotlas.server.chat
 wotlas.server.message.account
 wotlas.server.message.description
 wotlas.server.message.chat

@@ -544,6 +544,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         Point p0[] = new Point[path.size()];
         for (int i=0; i<path.size(); i++) {
           Point p = (Point) path.elementAt(i);
+          //System.out.println("path[" + i + "] = " + p.x  + "," + p.y);
           p0[i] = new Point(p.x*TILE_SIZE, p.y*TILE_SIZE);
         }
         Drawable pathDrawable = (Drawable) new PathDrawable( p0, Color.red, (short) ImageLibRef.AURA_PRIORITY );
@@ -571,6 +572,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
           Point p1[] = new Point[smoothPath.size()];
           for (int i=0; i<smoothPath.size(); i++) {
             Point p = (Point) smoothPath.elementAt(i);
+            //System.out.println("smoothPath[" + i + "] = " + p.x  + "," + p.y);
             p1[i] = new Point(p.x*TILE_SIZE, p.y*TILE_SIZE);
           }
           Drawable pathDrawable1 = (Drawable) new PathDrawable( p1, Color.blue, (short) ImageLibRef.AURA_PRIORITY );
@@ -780,17 +782,63 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     TownMap townMap = worldManager.getTownMap( myPlayer.getLocation() );
    
     Point destination = myPlayer.getEndPosition();
-    Building buildingMap = townMap.isEnteringBuilding( destination.x,
+    
+    // MAPEXIT INTERSECTION UPDATE ( is the player moving to another map ? )
+    MapExit mapExit = townMap.isIntersectingMapExit( destination.x,
+                                                     destination.y,
+                                                     myPlayer.getCurrentRectangle() );
+    
+    if ( mapExit!=null ) {
+      // Ok, we are going to a world map...
+      System.out.println("Ok, we are going to a world map...");
+
+      myPlayer.stopMoving();
+      myPlayer.setLocation( mapExit.getTargetWotlasLocation() );            
+      cleanInteriorMapData(); // suppress drawables, shadows, data
+
+      ScreenPoint targetPoint = mapExit.getTargetPosition();
+      System.out.println("targetPoint = " + targetPoint);
+      myPlayer.setX(targetPoint.x);
+      myPlayer.setY(targetPoint.y);
+      myPlayer.setPosition(targetPoint);  
+
+      if (mapExit.getType() == MapExit.TOWN_EXIT) {
+        System.out.println("Move to WorldMap");
+        initWorldMapDisplay(myPlayer.getLocation());
+      } else {
+        Debug.signal( Debug.CRITICAL, this, "Unknown mapExit : " + mapExit.getType() );
+      }
+    }
+    
+    /*Building buildingMap = townMap.isEnteringBuilding( destination.x,
                                                        destination.y,
+                                                       myPlayer.getCurrentRectangle() );*/
+    Building buildingMap = townMap.isEnteringBuilding( myPlayer.getX(),
+                                                       myPlayer.getY(),
                                                        myPlayer.getCurrentRectangle() );
    
     if ( buildingMap != null ) {
       // intersection with a Building, which MapExit are we using ?
       System.out.println("Ok, we are going to a new building...");
-            
-      MapExit mapExit = buildingMap.findTownMapExit( myPlayer.getAngle() );
+      
       myPlayer.stopMoving();
-      myPlayer.setLocation( mapExit.getTargetWotlasLocation() );
+      
+      System.out.println("\tbuildingMap.getFullName() = " + buildingMap.getFullName());
+      System.out.println("\tbuildingMap.getShortName() = " + buildingMap.getShortName());
+                  
+      System.out.print("\tmyPlayer.getAngle() = ");
+      System.out.println(myPlayer.getAngle()*Math.PI/180);
+      
+      mapExit = buildingMap.findTownMapExit( myPlayer.getAngle() );      
+      
+      System.out.println("\tmapExit.getType() = " + mapExit.getType());
+      System.out.println("\tmapExit.getMapExitSide() = " + mapExit.getMapExitSide());
+      System.out.println("\tmapExit.getTargetWotlasLocation() = " + mapExit.getTargetWotlasLocation());      
+      System.out.println("\tmapExit.getMapExitLocation() = " + mapExit.getMapExitLocation());      
+            
+      myPlayer.setLocation(mapExit.getMapExitLocation());
+      
+      System.out.println(mapExit);
       cleanInteriorMapData();
    
       myPlayer.setX( mapExit.getX() + mapExit.getWidth()/2 );
@@ -801,7 +849,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   }
 
  /*------------------------------------------------------------------------------------*/
-
+  
+  /** To update World location
+   */
   public void worldLocationUpdate() {
 
     WorldMap worldMap = worldManager.getWorldMap( myPlayer.getLocation() );
@@ -917,6 +967,15 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       drawScreenRectangle(roomLinks[i].toRectangle(), Color.green);
     }
 
+    MapExit[] mapExits = room.getMapExits();
+    if (mapExits!= null) {
+      System.out.println("\tMapExit");
+      for (int i=0; i<mapExits.length; i++) {
+        System.out.println("\t\tmapExits["+i+"] = " + mapExits[i]);
+        drawScreenRectangle(mapExits[i].toRectangle(), Color.yellow);
+      }
+    }
+    
     // 7 - We add visual properties to the player (shadows...)
     myPlayer.initVisualProperties(gDirector);
 
@@ -1009,6 +1068,16 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       }
     }
 
+    // 8 - We add MapExits' images
+    MapExit[] mapExits = townMap.getMapExits();
+    if (mapExits!= null) {
+      System.out.println("\tMapExit");
+      for (int i=0; i<mapExits.length; i++) {
+        System.out.println("\t\tmapExits["+i+"] = " + mapExits[i]);
+        drawScreenRectangle(mapExits[i].toRectangle(), Color.yellow);
+      }
+    }
+  
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -1024,6 +1093,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     System.out.println("WorldMap");
     System.out.println("\tfullName = "  + worldMap.getFullName());
     System.out.println("\tshortName = " + worldMap.getShortName());
+    infosPanel.setLocation(worldMap.getFullName());
 
     backgroundImageID = worldMap.getWorldImage();
     System.out.println("\tImageIdentifier = " + backgroundImageID);
@@ -1065,6 +1135,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     System.out.println("\tbackground.height = " + background.getHeight());
 
     aStar.setMask( BinaryMask.create( bufIm ) );
+    aStar.setSpriteSize(1);
     bufIm.flush(); // free image resource
 
     // 6 - Init the GraphicsDirector
@@ -1072,6 +1143,27 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
                     myPlayer.getDrawable(),   // reference for screen movements
                     new Dimension( JClientScreen.leftWidth, JClientScreen.mapHeight )   // screen default dimension
                    );
+    
+    // 7 - We add towns' images
+    TownMap towns[] = worldMap.getTownMaps();
+    if (towns!=null) {
+      System.out.println("\tTowns");
+      ImageIdentifier townImageID = null;   // town image identifier
+      Drawable townImage = null;            // town image
+      for (int i=0; i<towns.length; i++) {
+        System.out.println("\t\ttowns["+i+"] = " + towns[i]);
+        townImageID = towns[i].getSmallTownImage();
+        Rectangle position = towns[i].toRectangle();
+        townImage = (Drawable) new MotionlessSprite(
+                                            position.x,
+                                            position.y,
+                                            townImageID,              // image
+                                            ImageLibRef.MAP_PRIORITY, // priority
+                                            false                     // no animation
+                                        );
+        gDirector.addDrawable(townImage);
+      }
+    }
 
   }
 

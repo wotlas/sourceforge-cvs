@@ -58,11 +58,12 @@ public class JAccountConnectionDialog extends JConnectionDialog
     * @param frame frame owner of this JDialog
     * @param server server name (DNS or IP address)
     * @param port server port
+    * @param serverID Id of the server we want to join
     * @param context context to set to messages ( see NetPersonality ).
     */
 
-   public JAccountConnectionDialog(Frame frame,String server,int port, Object context) {
-         super(frame,server,port,"AccountServerPlease!",context);
+   public JAccountConnectionDialog(Frame frame,String server,int port, int serverID, Object context) {
+         super(frame,server,port,serverID,"AccountServerPlease!",context);
    }
 
  /*------------------------------------------------------------------------------------*/

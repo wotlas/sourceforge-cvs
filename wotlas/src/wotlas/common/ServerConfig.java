@@ -31,9 +31,11 @@ package wotlas.common;
  *     game servers and publish a up-to-date list of active servers. Wotlas Client Software
  *     can then download this list and display it to the user.<br><p>
  *
- * The ServerConfig class is saved by the PersistenceManager in config/server.cfg.
+ * The ServerConfig class is saved by the PersistenceManager in base/servers/server-<id>.cfg.
+ * base/servers/server-<id>-adr.cfg
+ *
  * When you install a wotlas server you need to create this file. To help you a setup tool
- * is provided in the package : wotlas.server.setup.
+ * is provided in the package : wotlas.server.setup.ServerSetup
  *
  * @author Aldiss
  * @see wotlas.server.setup.ServerSetup
@@ -48,8 +50,10 @@ public class ServerConfig
       private String serverSymbolicName;
 
    /** Server Name, normally the host name. Example: "tatoo.wotlas.org"
+    *  Since wotlas v1.2 the serverName is transient and saved separately in an other file.
+    *  see javadoc header of this class.
     */
-      private String serverName;
+      transient private String serverName;
 
    /** Server ID. This ID is given by light-and-shadow.org. See the wotlas.setup package.
     */
@@ -105,12 +109,18 @@ public class ServerConfig
 
  /*------------------------------------------------------------------------------------*/
 
+   /** Last time we updated the server data.
+    */
+      transient private long lastUpdateTime;
+
+ /*------------------------------------------------------------------------------------*/
+
   /** Empty Constructor for persistence.
    *  Data is loaded by the PersistenceManager.
    */
      public ServerConfig() {
         serverSymbolicName = new String("My Wotlas Server");
-        serverName = new String("localhost");
+        serverName = null;
         serverID = 0;
         accountServerPort = 25500;
         gameServerPort = 26500;
@@ -118,9 +128,10 @@ public class ServerConfig
         maxNumberOfGameConnections = 110;
         maxNumberOfAccountConnections = 20;
         maxNumberOfGatewayConnections = 20;
-        description = new String("Enter a description for your server");
-        location = new String("France ? USA ? England ?");
+        description = new String("Enter a description for your server...");
+        location = new String("France ? USA ? Germany ? England ?");
         adminEmail = new String("myAdress@foobar.net");
+        lastUpdateTime=0;
         
         worldFirstXPosition = 743;
         worldFirstYPosition = 277;  // default is Tar Valon
@@ -147,6 +158,8 @@ public class ServerConfig
         configVersion = other.getConfigVersion();
         worldFirstXPosition = other.getWorldFirstXPosition();
         worldFirstYPosition = other.getWorldFirstYPosition();
+
+        lastUpdateTime=System.currentTimeMillis();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -167,6 +180,7 @@ public class ServerConfig
     */
       public void setServerName( String serverName ) {
           this.serverName = serverName;
+          lastUpdateTime=System.currentTimeMillis();
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -406,10 +420,7 @@ public class ServerConfig
    /** To set the version of this server config.
     */
       public void setConfigVersion() {
-         if( serverSymbolicName.length()>3 )
-             configVersion = "WOT-"+serverName.substring(0,3).toUpperCase()+"-"+System.currentTimeMillis();
-         else
-             configVersion = "WOT-"+serverName.substring(0,serverName.length()).toUpperCase()+"-"+System.currentTimeMillis();
+          configVersion = "WOT-"+System.currentTimeMillis();
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -493,6 +504,23 @@ public class ServerConfig
                  +"<b>Location:</b> "+location+"<br>"
                  +"<b>Admin e-mail:</b> <i>"+adminEmail+"</i><br>"
                  +"<b>Description:</b> "+description+"<br>";
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the last time we updated this config.
+    */
+      public long getLastUpdateTime() {
+      	  return lastUpdateTime;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To clear the last update timestamp. This operation will force the next call
+    *  to this config (via the ServerConfigList) to first fetch a new config on the net.
+    */
+      public void clearLastUpdateTime() {
+      	  lastUpdateTime=0;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -34,9 +34,22 @@ public class ServerConfigList
 {
  /*------------------------------------------------------------------------------------*/
 
-   /** Update Period for the Remote Server Table... (in ms)
+   /** Update period for server config address... (in ms)
+    *
+    *  Our cache system works on a "fail first" mode...
+    *  If a server is reachable we don't check for a new update on its Internet address.
+    *  If a server becomes unreachable then we check if its UPDATE_PERIOD has been reached
+    *  if true we check for a new address.
     */
-       public final long UPDATE_PERIOD = 1000*3600;  // every hour
+       public final long UPDATE_PERIOD = 1000*60*20;  // every twenty minutes
+
+
+   /** Update period for the server table... (in ms). This is a straight cache mode.
+    *  Each time the serverTable is accessed we check its lastServerTableUpdateTime
+    *  and compare it to this period...
+    */
+       public final long UPDATE_TABLE_PERIOD = 1000*3600*6;  // every 6 hours
+
 
  /*------------------------------------------------------------------------------------*/
 
@@ -60,9 +73,9 @@ public class ServerConfigList
      */
        private boolean serversRemoteHomeUnreachable;
 
-    /** Last time we updated our remoteServerTable.
+    /** Last time we updated the server table.
      */
-       private long lastUpdateTime;
+       private long lastServerTableUpdateTime;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -73,7 +86,7 @@ public class ServerConfigList
    public ServerConfigList( PersistenceManager pm ) {
          this.pm = pm;
          serversRemoteHomeUnreachable = false;
-         lastUpdateTime=0; // none
+         lastServerTableUpdateTime=0; // none
 
       // attempt to load the configs from persistenceManager...
          configs = pm.loadServerConfigs();
@@ -107,11 +120,11 @@ public class ServerConfigList
        // Update Period Reached ?
           long now = System.currentTimeMillis();
 
-          if( remoteServerTable== null || (lastUpdateTime+UPDATE_PERIOD)<=now ) {
+          if( remoteServerTable== null || (lastServerTableUpdateTime+UPDATE_TABLE_PERIOD)<=now ) {
              // yes ! we erase the old server table.
                 Debug.signal( Debug.NOTICE, null, "Loading server table..." );
                 remoteServerTable = null;
-                lastUpdateTime=now;
+                lastServerTableUpdateTime=now;
           }
 
           if( remoteServerTable!= null )
@@ -182,15 +195,24 @@ public class ServerConfigList
                      // a new server config is available
                         Debug.signal( Debug.WARNING, this, "A new config is available for server "+config.getServerID()+". Trying to load it.");
 
-                        String newConfig = FileTools.getTextFileFromURL( remoteServerConfigHomeURL
-                                   +PersistenceManager.SERVERS_PREFIX+config.getServerID()+PersistenceManager.SERVERS_SUFFIX );
-                        
+                        String fileURL = remoteServerConfigHomeURL
+                               + PersistenceManager.SERVERS_PREFIX+config.getServerID()+PersistenceManager.SERVERS_SUFFIX;
+
+                        String newConfig = FileTools.getTextFileFromURL( fileURL );
+
                         if( newConfig ==null ) {
                             Debug.signal( Debug.CRITICAL, this, "Failed to get new Server "+config.getServerID()+" config. Reverting to previous one.");
                             return;
                         }
 
-                        if( pm.updateServerConfig( newConfig, config ) ){
+                        String newAdr = FileTools.getTextFileFromURL( fileURL+PersistenceManager.SERVERS_ADDRESS_SUFFIX );
+
+                        if( newAdr==null ) {
+                            Debug.signal( Debug.CRITICAL, this, "Failed to get new Server "+config.getServerID()+" address. Reverting to previous one.");
+                            return;
+                        }
+
+                        if( pm.updateServerConfig( newConfig, newAdr, config ) ) {
                             Debug.signal( Debug.WARNING, this, "Updated successfully Server "+config.getServerID()+" config.");
                             return;
                         }
@@ -280,20 +302,29 @@ public class ServerConfigList
                  }
 
                  Debug.signal( Debug.WARNING, this, "A new server ("+serverID+") is available. Trying to load its config.");
-                      
-                 String newConfig = FileTools.getTextFileFromURL( remoteServerConfigHomeURL
-                                         +PersistenceManager.SERVERS_PREFIX+serverID+PersistenceManager.SERVERS_SUFFIX );
-                        
+
+                 String fileURL = remoteServerConfigHomeURL
+                               + PersistenceManager.SERVERS_PREFIX+serverID+PersistenceManager.SERVERS_SUFFIX;
+
+                 String newConfig = FileTools.getTextFileFromURL( fileURL );
+
                  if( newConfig ==null ) {
-                     Debug.signal( Debug.CRITICAL, this, "Failed to get new Server "+serverID+" config. Reverting to previous one.");
+                     Debug.signal( Debug.ERROR, this, "Failed to get new Server "+serverID+" config. Reverting to previous one.");
                      continue;
                  }
 
-                 config = pm.createServerConfig( newConfig, serverID );
+                 String newAdr = FileTools.getTextFileFromURL( fileURL+PersistenceManager.SERVERS_ADDRESS_SUFFIX );
+
+                 if( newAdr==null ) {
+                     Debug.signal( Debug.ERROR, this, "Failed to get new Server "+serverID+" address. Reverting to previous one.");
+                     continue;
+                 }
+
+                 config = pm.createServerConfig( newConfig, newAdr, serverID );
 
                  if( config!=null ){
                     // We save it in our table
-                       Debug.signal( Debug.NOTICE, this, "Retrieved successfully new server ("+config.getServerID()+") config.");
+                       Debug.signal( Debug.NOTICE, this, "Retrieved successfully new server ("+serverID+") config.");
                        addConfig( config );
                  }
              }
@@ -383,6 +414,44 @@ public class ServerConfigList
       if(configs==null) return null;
       return configs[index];
    }
+
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To report a dead server. We'll then try to check the server address.
+   * @param serverID server id which represents the dead server
+   * @return another address you can try for this server, if this address fails
+   *     you can really consider the server dead. If we return null it means
+   *     that we don't where able to update the server address...
+   */
+    public String reportDeadServer( int serverID ) {
+
+        ServerConfig currentConfig = findServerConfig(serverID);
+
+        if(currentConfig==null) {
+            Debug.signal( Debug.ERROR, this, "Failed to find local config of server "+currentConfig.getServerID()+".");
+            return null;
+        }
+
+     // We check the cache timestamp
+        if( currentConfig.getLastUpdateTime()+UPDATE_PERIOD > System.currentTimeMillis() )
+            return null; // we recently checked the address
+
+        String fileURL = remoteServerConfigHomeURL
+                      + PersistenceManager.SERVERS_PREFIX+currentConfig.getServerID()+PersistenceManager.SERVERS_SUFFIX;
+
+     // We load the address file
+        String newAdr = FileTools.getTextFileFromURL( fileURL+PersistenceManager.SERVERS_ADDRESS_SUFFIX );
+
+        if( newAdr==null ) {
+            Debug.signal( Debug.ERROR, this, "Failed to get new Server "+currentConfig.getServerID()+" address. Reverting to previous one.");
+            return null;
+        }
+
+        if( !pm.updateServerConfig( null, newAdr, currentConfig ) )
+            Debug.signal(Debug.ERROR,this,"For some reason we failed to save the new address...");
+
+        return newAdr; // new address the user can try...
+    }
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

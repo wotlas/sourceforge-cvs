@@ -27,6 +27,7 @@ import wotlas.utils.FileTools;
 import wotlas.utils.Tools;
 
 import java.io.File;
+import java.io.IOException;
 
  /** Persistence Manager for Wotlas Servers. The persistence manager is the central
   * class where are saved/loaded data for the game. Mainly, this common part deals with 
@@ -57,6 +58,8 @@ public class PersistenceManager
    public final static String SERVERS_HOME = "servers";
    public final static String SERVERS_PREFIX = "server-";
    public final static String SERVERS_SUFFIX = ".cfg";
+   public final static String SERVERS_ADDRESS_SUFFIX = ".adr"; // this suffix is added after the
+                                                               // SERVERS_SUFFIX : "server-0.cfg.adr"
 
  /*------------------------------------------------------------------------------------*/
 
@@ -350,9 +353,22 @@ public class PersistenceManager
                             +SERVERS_PREFIX+serverID+SERVERS_SUFFIX;
 
       try{
-          return (ServerConfig) PropertiesConverter.load( serverFile );
+          ServerConfig config = (ServerConfig) PropertiesConverter.load( serverFile );
+          String serverName = FileTools.loadTextFromFile( serverFile+SERVERS_ADDRESS_SUFFIX );
+          
+          if( serverName==null )
+             throw new IOException("no "+serverFile+SERVERS_ADDRESS_SUFFIX+" file found !");
+          
+          if( serverName.indexOf('\n')>0 )
+              serverName = serverName.substring(0,serverName.indexOf('\n'));
+
+          if(serverName.length()==0)
+             throw new IOException("empty "+serverFile+SERVERS_ADDRESS_SUFFIX+" file !");
+          
+          config.setServerName( serverName.trim() );
+          return config;
       }
-      catch( PersistenceException pe ) {
+      catch( Exception pe ) {
           Debug.signal( Debug.ERROR, this, "Failed to load server config: "+pe.getMessage() );
           return null;
       }
@@ -372,9 +388,14 @@ public class PersistenceManager
 
       try{
           PropertiesConverter.save( serverConfig, serverFile );
+
+          if( serverConfig.getServerName()!=null
+              && !FileTools.saveTextToFile( serverFile+SERVERS_ADDRESS_SUFFIX, serverConfig.getServerName() ) )
+              throw new IOException("couldn't save "+serverFile+SERVERS_ADDRESS_SUFFIX+" file !");
+
           return true;
       }
-      catch( PersistenceException pe ) {
+      catch( Exception pe ) {
           Debug.signal( Debug.ERROR, this, "Failed to save server config: "+pe.getMessage() );
           return false;
       }
@@ -384,40 +405,42 @@ public class PersistenceManager
 
   /** Updates a server config of the SERVERS_HOME directory.
    *  The oldServerConfig fields are updated with the new ones.
+   *  The newConfigText paramter can be null : we then only save the new address.
    *
-   *  @param newConfigText new config loaded from an URL.
+   *  @param newConfigText new config loaded from an URL. Can be null.
+   *  @param newAdrText new server address loaded from an URL
    *  @param oldServerConfig server config
    *  @return true in case of success, false if an error occured.
    */
-   public boolean updateServerConfig( String newConfigText, ServerConfig oldServerConfig )
+   public boolean updateServerConfig( String newConfigText, String newAdrText, ServerConfig oldServerConfig )
    {
       String serverFile = databasePath+File.separator+SERVERS_HOME+File.separator
                             +SERVERS_PREFIX+oldServerConfig.getServerID()+SERVERS_SUFFIX;
 
       try{
-          if( !FileTools.saveTextToFile( serverFile, newConfigText ) ) {
-            // Save Failed, we revert to previous config ( security )
-               saveServerConfig( oldServerConfig );
-               return false;
-          }
+          if( newConfigText!=null && !FileTools.saveTextToFile( serverFile, newConfigText ) )
+             throw new IOException("failed to save "+serverFile+" file !");
+
+          if( !FileTools.saveTextToFile( serverFile+SERVERS_ADDRESS_SUFFIX, newAdrText ) )
+             throw new IOException("failed to save "+serverFile+SERVERS_ADDRESS_SUFFIX+" file !");
 
         // We load the newly saved config...
-          ServerConfig newConfig = (ServerConfig) PropertiesConverter.load( serverFile );
-              
-          if( newConfig.getServerID()!= oldServerConfig.getServerID() ) {
-            // Save Failed, we revert to previous config ( security )
-               Debug.signal( Debug.ERROR, this, "New Config not saved: new config Server ID is "
-                             +newConfig.getServerID()+", was expecting "+oldServerConfig.getServerID() );
-               saveServerConfig( oldServerConfig );
-               return false;
-          }
+          if( newConfigText!=null ) {
+              ServerConfig newConfig = (ServerConfig) PropertiesConverter.load( serverFile );
 
-          oldServerConfig.update( newConfig );
+              if( newConfig.getServerID()!= oldServerConfig.getServerID() )
+                  throw new IOException("new Config was not saved: it hasn't the expected Server ID !");
+
+              newConfig.setServerName( newAdrText );
+              oldServerConfig.update( newConfig );
+          }
+          else
+              oldServerConfig.setServerName( newAdrText );
       }
-      catch( PersistenceException pe ) {
+      catch( Exception pe ) {
           Debug.signal( Debug.ERROR, this, "Failed to update server config: "+pe.getMessage() );
           saveServerConfig( oldServerConfig );
-          return false;
+          return false; // Save Failed, we revert to previous config
       }
 
       return true;
@@ -427,11 +450,12 @@ public class PersistenceManager
 
   /** To create a server config from a text file representing a previously saved ServerConfig.
    *
-   *  @param newConfig new config loaded from an URL.
+   *  @param newConfigText new config loaded from an URL.
+   *  @param newAdrText new server address loaded from an URL
    *  @param serverID server Id
    *  @return the created ServerConfig in case of success, null if an error occured.
    */
-   public ServerConfig createServerConfig( String newConfigText, int serverID )
+   public ServerConfig createServerConfig( String newConfigText, String newAdrText, int serverID )
    {
       String serverFile = databasePath+File.separator+SERVERS_HOME+File.separator
                             +SERVERS_PREFIX+serverID+SERVERS_SUFFIX;
@@ -443,18 +467,15 @@ public class PersistenceManager
       	 Debug.signal(Debug.WARNING,this,"Server Home created...");
       }
 
-      try{
-           if( !FileTools.saveTextToFile( serverFile, newConfigText ) )
-               return null; // Save Failed
+      if( !FileTools.saveTextToFile( serverFile, newConfigText ) )
+          return null; // Save Failed
 
-        // We load the newly saved config...
-           return (ServerConfig) PropertiesConverter.load( serverFile );
-      }
-      catch( PersistenceException pe ) {
-          Debug.signal( Debug.ERROR, this, "Failed to load just saved server config: "+pe.getMessage() );
+      if( !FileTools.saveTextToFile( serverFile+SERVERS_ADDRESS_SUFFIX, newAdrText ) ) {
+          new File(serverFile).delete();
+          return null; // Save Failed
       }
 
-      return null;
+      return loadServerConfig(serverID); // We load the newly saved config...
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -472,7 +493,8 @@ public class PersistenceManager
 
       if(!serversHomeDir.exists()) {
       	 serversHomeDir.mkdir();
-      	 Debug.signal(Debug.WARNING,this,"Server Home created...");
+      	 Debug.signal(Debug.WARNING,this,"Server Home created... no server files found.");
+      	 return null;
       }
 
       File configFileList[] = serversHomeDir.listFiles();
@@ -482,6 +504,7 @@ public class PersistenceManager
       	 return null;
       }
 
+     // We count how many server config files we have...
        int nbFiles=0;
 
         for( int i=0; i<configFileList.length; i++ )
@@ -499,12 +522,28 @@ public class PersistenceManager
       {
         for( int i=0; i<configFileList.length; i++ )
            if(configFileList[i].isFile() && configFileList[i].getName().endsWith(SERVERS_SUFFIX) ){
-               configList[index] = (ServerConfig) PropertiesConverter.load( serversHome
-                                                  +File.separator+configFileList[i].getName() );
+
+               String serverFile = serversHome + File.separator + configFileList[i].getName();
+
+               configList[index] = (ServerConfig) PropertiesConverter.load( serverFile );
+
+               String serverName = FileTools.loadTextFromFile( serverFile+SERVERS_ADDRESS_SUFFIX );
+
+               if( serverName==null )
+                   throw new IOException("no "+serverFile+SERVERS_ADDRESS_SUFFIX+" file found !");
+
+               if( serverName.indexOf('\n')>0 )
+                   serverName = serverName.substring(0,serverName.indexOf('\n'));
+
+               if(serverName.length()==0)
+                   throw new IOException("empty "+serverFile+SERVERS_ADDRESS_SUFFIX+" file !");
+
+               configList[index].setServerName( serverName.trim() );
+               configList[index].clearLastUpdateTime(); // clear timestamp set by this operation
                index++;
            }
       }
-      catch( PersistenceException pe ) {
+      catch( Exception pe ) {
           Debug.signal( Debug.ERROR, this, "Failed to load server config: "+pe.getMessage() );
           return null;
       }

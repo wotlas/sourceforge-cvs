@@ -82,8 +82,8 @@ public class ServerManager
                                              account_packages,
                                              config.getMaxNumberOfAccountConnections() );
        // 3 - We create the GameServer
-          String game_packages[] = null; /*{ "wotlas.server.message.description",
-                                     "wotlas.server.message.movement",
+          String game_packages[] = { "wotlas.server.message.description" };
+/*                                     "wotlas.server.message.movement",
                                      "wotlas.server.message.chat" };
 */
           gameServer = new GameServer( config.getServerName(),

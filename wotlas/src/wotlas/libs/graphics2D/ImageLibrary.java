@@ -168,7 +168,7 @@ public class ImageLibrary {
    * @return the default databasepath.
    */
    public String getDataBasePath() {
-         return new File(imageDataBasePath).getParent();
+         return new File(new File(imageDataBasePath).getParent()).getParent();
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

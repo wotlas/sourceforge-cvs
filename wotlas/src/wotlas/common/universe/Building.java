@@ -356,6 +356,43 @@ public class Building extends ScreenRectangle
    
       return buildingExits[0]; // default
    }
+   
+   /** Returns the buildingExit (MapExit) that is on the side given by the specified angle.
+   * @param a angle which should represent the direction by which the player hits this TownMap zone.
+   * @return the appropriate MapExit, null if there are no MapExits.
+   */
+   public MapExit findTownMapExit( double fromAngle ) {
+   	
+      if(buildingExits==null)
+         return null;
+
+      if(buildingExits.length==1)
+         return buildingExits[0];
+   
+      for(int i=0; i<buildingExits.length; i++ ) {
+        if ( (fromAngle>Math.PI/2) && (fromAngle<-Math.PI/2 ) ) {
+          // West
+         if( buildingExits[i].getMapExitSide()==MapExit.WEST )
+             return buildingExits[i];
+        } else {
+          // East
+         if( buildingExits[i].getMapExitSide()==MapExit.EAST )
+             return buildingExits[i];
+        }
+        
+        if (fromAngle<0) {
+          // North
+         if( buildingExits[i].getMapExitSide()==MapExit.NORTH )
+             return buildingExits[i];
+        } else {
+          // South
+         if( buildingExits[i].getMapExitSide()==MapExit.SOUTH )
+             return buildingExits[i];
+        }
+      }
+   
+      return buildingExits[0]; // default
+   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

@@ -34,6 +34,7 @@ import wotlas.common.Player;
 
 import wotlas.client.*;
 import wotlas.client.screen.*;
+import wotlas.client.screen.plugin.InfoPlugIn;
 
 /**
  * Associated behaviour to the PlayerPastMessage...
@@ -41,8 +42,8 @@ import wotlas.client.screen.*;
  * @author Aldiss
  */
 
-public class PlayerPastMsgBehaviour extends PlayerPastMessage implements NetMessageBehaviour
-{
+public class PlayerPastMsgBehaviour extends PlayerPastMessage implements NetMessageBehaviour {
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
@@ -74,18 +75,15 @@ public class PlayerPastMsgBehaviour extends PlayerPastMessage implements NetMess
            searchedPlayer.setPlayerPast( playerPast );
 
         // 3 - Update of the panel
-           Component c_info = dataManager.getClientScreen().getPlayerPanel().getTab("-info-");
-           
-           if( c_info==null || !(c_info instanceof InfoPanel) ) {
-               Debug.signal( Debug.ERROR, this, "InfoPanel not found !");
-               return;
+           InfoPlugIn infoPanel = (InfoPlugIn) dataManager.getClientScreen().getPlayerPanel().getPlugIn("Info");
+
+           if(infoPanel==null) {
+              Debug.signal(Debug.ERROR,this,"InfoPlugIn not found !");
+       	      return;
            }
 
-           InfoPanel infoPanel = (InfoPanel) c_info;
            infoPanel.setPlayerInfo( searchedPlayer );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }
-

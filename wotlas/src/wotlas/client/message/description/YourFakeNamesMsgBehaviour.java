@@ -22,6 +22,7 @@ package wotlas.client.message.description;
 import wotlas.client.*;
 import wotlas.client.DataManager;
 import wotlas.client.screen.*;
+import wotlas.client.screen.plugin.LiePlugIn;
 
 import wotlas.common.message.description.*;
 
@@ -40,16 +41,15 @@ import java.io.IOException;
  * @author Petrus
  */
 
-public class YourFakeNamesMsgBehaviour extends YourFakeNamesMessage implements NetMessageBehaviour
-{
+public class YourFakeNamesMsgBehaviour extends YourFakeNamesMessage implements NetMessageBehaviour {
 
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
    */
-  public YourFakeNamesMsgBehaviour() {
-    super();
-  }
+   public YourFakeNamesMsgBehaviour() {
+      super();
+   }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -58,26 +58,22 @@ public class YourFakeNamesMsgBehaviour extends YourFakeNamesMessage implements N
    * @param sessionContext an object giving specific access to other objects needed to process
    *        this message.
    */
-  public void doBehaviour( Object sessionContext ) {
-    DataManager dataManager = (DataManager) sessionContext;
+    public void doBehaviour( Object sessionContext ) {
+       DataManager dataManager = (DataManager) sessionContext;
     
     // Update of the panel
-    Component c_lie = dataManager.getClientScreen().getPlayerPanel().getTab("-lie-");
-   
-    if ( c_lie==null || !(c_lie instanceof LiePanel) ) {
-      Debug.signal( Debug.ERROR, this, "LiePanel not found !");
-      return;
-    }
+       LiePlugIn liePanel = (LiePlugIn) dataManager.getClientScreen().getPlayerPanel().getPlugIn("Lie");
 
-    LiePanel liePanel = (LiePanel) c_lie;    
-    for (int i=0;i<fakeNamesLength; i++) {      
-      liePanel.setFakeName(i, fakeNames[i]);
+       if(liePanel==null) {
+       	  Debug.signal(Debug.ERROR,this,"LiePlugIn not found !");
+       	  return;
+       }
+
+       for (int i=0;i<fakeNamesLength; i++)
+          liePanel.setFakeName(i, fakeNames[i]);
+ 
+       liePanel.setCurrentFakeName(currentFakeNameIndex);
     }
-    
-    liePanel.setCurrentFakeName(currentFakeNameIndex);
-  }
 
  /*------------------------------------------------------------------------------------*/
-
 }
-

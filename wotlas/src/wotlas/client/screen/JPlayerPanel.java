@@ -20,95 +20,164 @@
 package wotlas.client.screen;
 
 import wotlas.client.ClientDirector;
+import wotlas.utils.Debug;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-/** JPanel to show the informations of the player
+import java.io.*;
+
+
+/** JPanel that possesses & display various plugins located in the
+ *  wotlas.client.screen.plugin package.
  *
- * @author Petrus
+ * @author Petrus, Aldiss
  */
 
 public class JPlayerPanel extends JPanel implements MouseListener {
 
-  JTabbedPane playerTabbedPane;
+ /*------------------------------------------------------------------------------------*/ 
+
+  /** Our TabbedPane where are stored the plug-ins.
+   */
+    private JTabbedPane playerTabbedPane;
   
  /*------------------------------------------------------------------------------------*/ 
   
   /** Consctructor.
    */
-  public JPlayerPanel() {
-    super();
-    this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
+    public JPlayerPanel() {
+      super();
+      setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
     
-     playerTabbedPane = new JTabbedPane();
-    
-  // We add an Info Panel
-     playerTabbedPane.addTab("Info", ClientDirector.getResourceManager().getImageIcon("pin.gif"),
-                                     new InfoPanel(), "Information on Selected Player" );
-     playerTabbedPane.getComponentAt(0).setName("-info-");
+      playerTabbedPane = new JTabbedPane();
+      add(playerTabbedPane);
 
-  // We add an Away Panel
-     playerTabbedPane.addTab("Away", ClientDirector.getResourceManager().getImageIcon("pin.gif"),
-                                     new AwayPanel(), "Not Connected Options" );
-     playerTabbedPane.getComponentAt(1).setName("-away-");
-  
-  // We add a Lie Panel
-     playerTabbedPane.addTab("Lie", ClientDirector.getResourceManager().getImageIcon("pin.gif"),
-                                    new LiePanel(), "Lie on your name" );
-     playerTabbedPane.getComponentAt(2).setName("-lie-");
-
-     add(playerTabbedPane);
-  }
-  
-  /** To get a TabbedPane
-   *
-   * @name name of tabbed pane
-   */
-  public Component getTab(String name)
-  {
-   for (int i=0; i<playerTabbedPane.getTabCount();i++) {
-    if ( playerTabbedPane.getComponentAt(i).getName().equals(name) ) {
-      return playerTabbedPane.getComponentAt(i);
+      init();
     }
-   } 
-   return null;
-  }	 
+
+ /*------------------------------------------------------------------------------------*/ 
+
+  /** To init the JPlayerPanel with the available plug-ins.
+   */
+    protected void init() {
+
+       /** We load the available plug-ins
+        *  WE ASSUME THAT WE ARE NOT IN A JAR FILE
+        */
+          File pluginFiles[] = new File( "wotlas/client/screen/plugin" ).listFiles();
+
+          if( pluginFiles==null || pluginFiles.length==0 ) {
+              Debug.signal( Debug.WARNING, this, "No plug-ins found in wotlas/client/screen/plugin !" );
+              return;
+          }
+
+          for( int i=0; i<pluginFiles.length; i++ ) {
+
+              if( !pluginFiles[i].isFile() || !pluginFiles[i].getName().endsWith(".class") 
+                  || pluginFiles[i].getName().indexOf('$')>=0 )
+                  continue;
+
+           // We load the class file
+              try{
+                  String name = pluginFiles[i].getName();
+                  Class cl = Class.forName( "wotlas.client.screen.plugin."
+                                            + name.substring( 0, name.lastIndexOf(".class") ) );
+
+                  if(cl==null || cl.isInterface())
+                     continue;
+
+                  Object o = cl.newInstance();
+
+                  if( o==null || !(o instanceof JPanelPlugIn) )
+                      continue;
+
+               // Ok, we have a valid plug-in
+                  addPlugIn( (JPanelPlugIn)o, ((JPanelPlugIn)o).getPlugInIndex() );
+              }
+              catch( Exception e ) {
+                  Debug.signal( Debug.WARNING, this, e );
+              }
+          }
+
+        Debug.signal(Debug.NOTICE,null,"Loaded "+playerTabbedPane.getTabCount()+" plug-ins...");
+    }
+
+ /*------------------------------------------------------------------------------------*/ 
+
+  /** To add a plugin to our tabbed pane
+   *  @param plugIn plug-in to add
+   *  @param index index in the list, -1 means at the end.
+   */
+    protected void addPlugIn( JPanelPlugIn plugIn, int index ) {
+         if(index<0 || index>playerTabbedPane.getTabCount()-1)
+            playerTabbedPane.addTab( plugIn.getPlugInName(),
+                                  ClientDirector.getResourceManager().getImageIcon("pin.gif"),
+                                  plugIn,
+                                  plugIn.getToolTipText() );
+         else
+            playerTabbedPane.insertTab( plugIn.getPlugInName(),
+                                  ClientDirector.getResourceManager().getImageIcon("pin.gif"),
+                                  plugIn,
+                                  plugIn.getToolTipText(), index );
+    }
+
+ /*------------------------------------------------------------------------------------*/ 
+  
+  /** To get a PlugIn given its name.
+   * @param plugInName plug-in name as returned by plugIn.getPlugInName()
+   * @return plugIn, null if not found
+   */
+    public JPanelPlugIn getPlugIn( String plugInName ) {
+
+        for(int i=0; i<playerTabbedPane.getTabCount();i++) {
+            JPanelPlugIn plugIn = (JPanelPlugIn) playerTabbedPane.getComponentAt(i);
+
+             if( plugIn.getPlugInName().equals(plugInName) )
+                  return plugIn;
+        }
+
+        return null; // not found
+    }
 
  /*------------------------------------------------------------------------------------*/
 
-  /** To reset the JPlayerPanel.
+  /** To reset the JPlayerPanel and the state of all its plug-ins.
    */
-  public void reset() {
-  	( (InfoPanel)playerTabbedPane.getComponentAt(0) ).reset();
-  	( (AwayPanel)playerTabbedPane.getComponentAt(1) ).reset();
-  	( (LiePanel )playerTabbedPane.getComponentAt(2) ).reset();
-  }
+    public void reset() {
+        for(int i=0; i<playerTabbedPane.getTabCount();i++) {
+            JPanelPlugIn plugIn = (JPanelPlugIn) playerTabbedPane.getComponentAt(i);
+            plugIn.reset();
+        }
+    }
   
  /*------------------------------------------------------------------------------------*/
- 
+
   /**
    * Invoked when the mouse button is clicked
    */
-  public void mouseClicked(MouseEvent e) {}
+    public void mouseClicked(MouseEvent e) {}
+
   /**
    * Invoked when the mouse enters a component
    */
-  public void mouseEntered(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {}
+
   /**
    * Invoked when the mouse exits a component
    */
-  public void mouseExited(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {}
+
   /**
    * Invoked when a mouse button has been pressed on a component
    */
-  public void mousePressed(MouseEvent e) {}
+    public void mousePressed(MouseEvent e) {}
+
   /**
    * Invoked when a mouse button has been released on a component
    */
-  public void mouseReleased(MouseEvent e) {}
+    public void mouseReleased(MouseEvent e) {}
 
  /*------------------------------------------------------------------------------------*/
-
 }

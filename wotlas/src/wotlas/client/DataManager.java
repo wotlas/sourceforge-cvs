@@ -21,6 +21,7 @@ package wotlas.client;
 
 import wotlas.client.gui.*;
 import wotlas.client.screen.*;
+import wotlas.client.screen.plugin.InfoPlugIn;
 
 import wotlas.common.character.*;
 import wotlas.common.*;
@@ -742,15 +743,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
            selectedPlayer = (PlayerImpl) object; // new player selected      
 
-        // We get the InfoPanel
-           Component c_info = clientScreen.getPlayerPanel().getTab("-info-");
+        // We get the InfoPlugIn
+           InfoPlugIn infoPanel = (InfoPlugIn) clientScreen.getPlayerPanel().getPlugIn("Info");
 
-           if( c_info==null || !(c_info instanceof InfoPanel) ) {
-               Debug.signal( Debug.ERROR, this, "InfoPanel not found !");
-               return;
+           if(infoPanel==null) {
+              Debug.signal(Debug.ERROR,this,"InfoPlugIn not found !");
+       	      return;
            }
-
-           InfoPanel infoPanel = (InfoPanel) c_info;
 
         // We erase the previous selection circle
            if (circle!=null) {
@@ -763,7 +762,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
                 gDirector.addDrawable(selectedPlayer.getTextDrawable());
                 gDirector.addDrawable(selectedPlayer.getWotCharacter().getAura());
                 selectedPlayer=null;
-                infoPanel.reset();
+
+                if(infoPanel!=null) infoPanel.reset();
                 return;
            }
 
@@ -776,7 +776,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
            gDirector.addDrawable(circle);
            gDirector.addDrawable(selectedPlayer.getTextDrawable());
            gDirector.addDrawable(selectedPlayer.getWotCharacter().getAura());
-           infoPanel.setPlayerInfo( selectedPlayer );
+
+           if(infoPanel!=null)
+              infoPanel.setPlayerInfo( selectedPlayer );
 
         // Away Message
            String awayMessage = selectedPlayer.getPlayerAwayMessage();

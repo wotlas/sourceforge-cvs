@@ -22,6 +22,7 @@ package wotlas.client.message.description;
 import wotlas.client.*;
 import wotlas.client.DataManager;
 import wotlas.client.screen.*;
+import wotlas.client.screen.plugin.LiePlugIn;
 
 import wotlas.common.message.description.*;
 
@@ -40,8 +41,7 @@ import java.io.IOException;
  * @author Petrus
  */
 
-public class SetFakeNameMsgBehaviour extends SetFakeNameMessage implements NetMessageBehaviour
-{
+public class SetFakeNameMsgBehaviour extends SetFakeNameMessage implements NetMessageBehaviour {
 
  /*------------------------------------------------------------------------------------*/
 
@@ -58,22 +58,19 @@ public class SetFakeNameMsgBehaviour extends SetFakeNameMessage implements NetMe
    * @param sessionContext an object giving specific access to other objects needed to process
    *        this message.
    */
-  public void doBehaviour( Object sessionContext ) {
-    DataManager dataManager = (DataManager) sessionContext;
+   public void doBehaviour( Object sessionContext ) {
+       DataManager dataManager = (DataManager) sessionContext;
     
     // Update of the panel
-    Component c_lie = dataManager.getClientScreen().getPlayerPanel().getTab("-lie-");
-   
-    if ( c_lie==null || !(c_lie instanceof LiePanel) ) {
-      Debug.signal( Debug.ERROR, this, "LiePanel not found !");
-      return;
-    }
+       LiePlugIn liePanel = (LiePlugIn) dataManager.getClientScreen().getPlayerPanel().getPlugIn("Lie");
 
-    LiePanel liePanel = (LiePanel) c_lie;
-    liePanel.setFakeName(index, fakeName);
-  }
+       if(liePanel==null) {
+       	  Debug.signal(Debug.ERROR,this,"LiePlugIn not found !");
+       	  return;
+       }
+
+       liePanel.setFakeName(index, fakeName);
+   }
 
  /*------------------------------------------------------------------------------------*/
-
 }
-

@@ -63,9 +63,13 @@ public class AuraEffect extends Drawable {
     private double angle = 0;
 
    /**
-    * The type of the aura (blue,...)
+    * The maximum alpha of this aura effect (default is 40%)
     */
-    private short auraType;
+    private float auraMaxAlpha;
+
+   /** Step Alpha when the alpha is increasing or decreasing.
+    */
+    private double alphaStep;
 
    /** TimeStamp indicating when we'll need to remove our drawable from screen.
     *  If -1 we have infinite life. The TextDrawable must be removed manually.
@@ -107,13 +111,13 @@ public class AuraEffect extends Drawable {
      super();
 
      this.image = image;
-     this.auraType = auraType;
      this.priority = priority;
      this.dataSupplier = dataSupplier;
      this.lifeTime = lifeTime;
      this.timeLimit = System.currentTimeMillis()+lifeTime;
      isDisappearing = false;
      alpha=0.0f;
+     setAuraMaxAlpha(0.4f);
      amplitudeLimit = -1.0f;
      direction = -1;
      hasAnimation = false;
@@ -274,10 +278,10 @@ public class AuraEffect extends Drawable {
           r.y = dataSupplier.getY()+h/2-r.height/2;
        }
 
-       if(alpha<0.4f && !isDisappearing)
-          alpha+=0.01f;
-       else if(alpha>0.01 && isDisappearing)
-          alpha-=0.01f;
+       if(alpha<auraMaxAlpha && !isDisappearing)
+          alpha+=alphaStep;
+       else if(alpha>alphaStep && isDisappearing)
+          alpha-=alphaStep;
 
        if( amplitudeLimit<0 )
            angle -= 0.15;
@@ -297,7 +301,7 @@ public class AuraEffect extends Drawable {
         if( !isDisappearing && timeLimit-System.currentTimeMillis() <0) {
             isDisappearing = true;
             return true;
-        }else if( isDisappearing && alpha<=0.01 ) {
+        }else if( isDisappearing && alpha<=alphaStep ) {
             return false;
         }
         return true;
@@ -308,9 +312,18 @@ public class AuraEffect extends Drawable {
    /** Returns true if the Aura is still displayed on screen
     */
    public boolean isLive() {
-        if( (isDisappearing && alpha<=0.01) || timeLimit+5000-System.currentTimeMillis() <0)
+        if( (isDisappearing && alpha<=alphaStep) || timeLimit+5000-System.currentTimeMillis() <0)
             return false;
         return true;   	
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** The maximum alpha of this aura effect (default is 40%)
+   */
+   public void setAuraMaxAlpha( float auraMaxAlpha ) {
+   	this.auraMaxAlpha = auraMaxAlpha;
+        alphaStep = auraMaxAlpha/40;
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

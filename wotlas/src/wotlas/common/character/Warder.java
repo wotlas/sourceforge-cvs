@@ -206,6 +206,7 @@ public class Warder extends Male {
          warderAuraEffect = new AuraEffect( warderSprite.getDataSupplier(), getAuraImage(),
                                             ImageLibRef.AURA_PRIORITY, 5000 );
          warderAuraEffect.useAntialiasing(true);
+         warderAuraEffect.setAuraMaxAlpha(0.75f);
 
          if(characterRank.equals("Tower Guard"))
             warderAuraEffect.setAmplitudeLimit( 2.6f );

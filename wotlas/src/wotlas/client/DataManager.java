@@ -40,6 +40,7 @@ import wotlas.libs.net.NetPersonality;
 import wotlas.libs.pathfinding.AStarDouble;
 
 import wotlas.utils.Debug;
+import wotlas.utils.List;
 import wotlas.utils.Tools;
 
 import java.awt.*;
@@ -107,6 +108,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** Our current playerImpl.
    */
   private PlayerImpl myPlayerImpl;
+  
+  private List players;
 
   /** Our ImageLibrary.
    */
@@ -301,27 +304,18 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     aStar = new AStarDouble();
 
     // Loading mask image
-    /*Image maskImg    = Toolkit.getDefaultToolkit().getImage("../base/mask.gif");
-    MediaTracker myTracker = new MediaTracker(new Label());
-    myTracker.addImage(maskImg, 0);
-    try {
-      myTracker.waitForAll();
-    } catch (InterruptedException ie) {
-      System.err.println("InterruptedException: " + ie);
-      System.exit(1);
-    }    
-    BufferedImage maskBuffImg = new BufferedImage(80, 56, BufferedImage.TYPE_INT_RGB);
-    */
     BufferedImage maskBuffImg = ImageLibrary.loadBufferedImage("../base/mask.gif");
 
     aStar.initMask(maskBuffImg, 80, 56);
 
-    // Creation of the drawable reference
+    // Creation of the drawable reference    
     myPlayerImpl = new PlayerImpl();
     myPlayerImpl.init();
     myPlayerImpl.setX(groundSpr.getWidth()/2);
-    myPlayerImpl.setY(groundSpr.getHeight()/2);
-
+    myPlayerImpl.setY(groundSpr.getHeight()/2);    
+    players = new List();
+    players.addElement(myPlayerImpl);
+    
     // Init of the GraphicsDirector
      gDirector.init(
                       (Drawable) groundSpr,         // background drawable
@@ -355,7 +349,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     Object lock = new Object();
     while( true ) {
       tick();
-      Tools.waitTime(10);
+      Tools.waitTime(50);
     }
   }
 
@@ -378,14 +372,15 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Called when user clic on JMapPanel
+  /** Called when user left-clic on JMapPanel
    */
-  public void onClicJMapPanel(MouseEvent e) {
+  public void onLeftClicJMapPanel(MouseEvent e) {
     Rectangle screen = gDirector.getScreenRectangle();
     
     Object object = gDirector.findOwner( e.getX(), e.getY());
     if (object != null) {
       System.out.println(object.getClass());
+      myPlayerImpl = (PlayerImpl) object;
     }
     
     int newX = e.getX() + (int)screen.getX();
@@ -399,5 +394,21 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   }
 
  /*------------------------------------------------------------------------------------*/
-
+ 
+ /** Called when user right-clic on JMapPanel
+   */
+  public void onRightClicJMapPanel(MouseEvent e) {
+    Rectangle screen = gDirector.getScreenRectangle();
+    
+    System.out.println("playerImpl creation : ");
+    
+    myPlayerImpl = new PlayerImpl();
+    myPlayerImpl.init();
+    myPlayerImpl.setX(e.getX() + (int)screen.getX());
+    myPlayerImpl.setY(e.getY() + (int)screen.getY());        
+    players.addElement(myPlayerImpl);
+    
+    gDirector.addDrawable(myPlayerImpl.getDrawable());
+                  
+  }
 }

@@ -19,8 +19,6 @@
 
 package wotlas.libs.graphics2D;
 
-import wotlas.utils.Debug;
-
 import java.awt.MediaTracker;
 import java.awt.Image;
 import java.awt.image.BufferedImage;

@@ -22,7 +22,7 @@ package wotlas.libs.net;
 
 /** 
  * A NetMessageCategory simply contains IDs of the message types belonging 
- * to this category. To a NetMessageCategory corresponds ONE category ID
+ * to the same category. To a NetMessageCategory corresponds ONE category ID
  * declared in the NetMessageRegistry.
  *<br>
  * There are some restrictions :

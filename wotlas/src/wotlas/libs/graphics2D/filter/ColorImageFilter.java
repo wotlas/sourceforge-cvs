@@ -58,19 +58,23 @@ public class ColorImageFilter implements DynamicImageFilter {
       public final static ColorType red = (ColorType) new RedColor();
 
    /** Brown Color Type
-    *
+    */
       public final static ColorType brown = (ColorType) new BrownColor();
 
-    ** Light Gray Color Type
-    *
+   /** White Color Type
+    */
+      public final static ColorType white = (ColorType) new WhiteColor();
+
+   /** Light Gray Color Type
+    */
       public final static ColorType lightgray = (ColorType) new LightGrayColor();
 
-    ** Gray Color Type
-    *
+   /** Gray Color Type
+    */
       public final static ColorType gray = (ColorType) new GrayColor();
 
-    ** Dark Gray Color Type
-    *
+   /** Dark Gray Color Type
+    */
       public final static ColorType darkgray = (ColorType) new DarkGrayColor();
 
  /*------------------------------------------------------------------------------------*/

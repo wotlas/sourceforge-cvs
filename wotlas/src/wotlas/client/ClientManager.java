@@ -35,6 +35,7 @@ import wotlas.utils.aswing.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 
 import javax.swing.event.*;
 import javax.swing.JFrame;
@@ -111,7 +112,9 @@ public class ClientManager
     PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
 
     // 1 - We load the ProfileConfigList
-    profileConfigList = pm.loadProfileConfigs();
+    if( new File("../src/config/client-profiles.cfg").exists() )
+        profileConfigList = pm.loadProfileConfigs();
+
     if (profileConfigList == null) {
       Debug.signal( Debug.NOTICE, this, "no client's profile found : creating a new one..." );
     } else {

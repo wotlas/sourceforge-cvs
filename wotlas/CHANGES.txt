@@ -23,6 +23,7 @@ CHANGES BETWEEN V1.2.3 AND V1.3 (10 May 2002)
  - the html documentation has been updated to make our code use proper URLs.
  - Added JAR Name detection and Java Web Start support.
  - Added in-game menus on the client side.
+ - Enhanced network library. Our server now use Java 1.4 NetworkInterface to monitor its net interface.
 
 
 CHANGES BETWEEN V1.2.2 AND V1.2.3 (11 April 2002)

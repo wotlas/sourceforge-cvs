@@ -1,1 +1,20 @@
-Récupérer le fichier http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/wotlas/CVSROOT
+1°) Installer WinCVS (http://www.wincvs.org)
+
+2°) Installer SFSetup (http://sfsetup.sourceforge.net)
+
+3°) Se logger par ssh sur shell.sourceforge.net
+taper en ligne de commande : ssh -l <user> wotlas.sourceforge.net
+
+4°) Se logger par ssh sur cvs.wotlas.sourceforge.net
+taper en ligne de commande : ssh -l <user> cvs.wotlas.sourceforge.net
+
+5°) Lancer WinCVS:
+ - menu Create/Checkout module
+ - taper . dans "Enter the module name and path on the server"
+ - une fenêtre dos s'ouvre -> rentrer son mot de passe
+C'est bon, cela devrait fonctionner !!
+
+6°) Vérifier le module wotlas
+- menu Create/Checkout module
+- taper wotlas dans "Enter the module name and path on the server"
+- une fenêtre dos s'ouvre -> rentrer son mot de passe

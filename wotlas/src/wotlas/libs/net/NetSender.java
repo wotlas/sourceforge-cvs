@@ -146,12 +146,12 @@ public class NetSender extends NetThread
                synchronized( this )
                {
                   // we wait for some action...
-                     try{
-                          while( nb_messages==0 )
-                             wait();
-                     }
-                     catch( InterruptedException e )
-                     {}
+                     while( nb_messages==0 && !shouldStopThread() )
+                         try{
+                               wait();
+                         }
+                         catch( InterruptedException e )
+                         {}
 
                   // ok, we have at least one message... what do we do ?
                      if( sender_type==AGGREGATE_MESSAGES )
@@ -162,14 +162,14 @@ public class NetSender extends NetThread
                            long t0 = System.currentTimeMillis();
                            long tr = aggregation_timeout;
 
-                            while( nb_messages<aggregation_msg_limit )
+                            while( nb_messages<aggregation_msg_limit && !shouldStopThread())
                             {
                                try{
-                                    wait( tr );
-                               } 
+                                        wait( tr );
+                               }
                                catch( InterruptedException e )
                                {}
-                            
+
                                tr = aggregation_timeout-System.currentTimeMillis()-t0;
 
                                if(tr<3) break; // aggregation end
@@ -273,8 +273,12 @@ public class NetSender extends NetThread
    * 
    * @exception IOException if something goes wrong while sending this message
    */
-     synchronized private void sendQueuedMessages() throws IOException {
-       for( short i=0; i<nb_messages; i++) {
+     synchronized private void sendQueuedMessages() throws IOException
+     {
+        if(shouldStopThread())
+            return;
+
+        for( short i=0; i<nb_messages; i++) {
      	    if(message_list[i]==null) continue;
 
             out_stream.writeByte( message_list[i].getMessageCategory() );
@@ -282,7 +286,7 @@ public class NetSender extends NetThread
      	    message_list[i].encode( out_stream );
      	    message_list[i] = null;
      	}
-     
+
         out_stream.flush();
      	nb_messages = 0;
 

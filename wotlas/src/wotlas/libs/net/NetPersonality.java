@@ -188,7 +188,8 @@ public abstract class NetPersonality
    * @param message message you want to send.
    */
      public void queueMessage( NetMessage message ) {
-          my_netsender.queueMessage( message );
+            if( my_netsender!=null )
+                my_netsender.queueMessage( message );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -206,16 +207,23 @@ public abstract class NetPersonality
 
   /** To close this connection. Erases all the allocated resources.
    */
-     synchronized public void closeConnection() {
+     synchronized public void closeConnection()
+     {
      	  if( my_netsender==null ||  my_netreceiver==null )
      	      return;
      	  
-     	  if( listener!=null )
+          if( listener!=null )
               listener.connectionClosed( this );
 
           my_netsender.stopThread();
+          my_netreceiver.stopThread();
           my_netsender.closeSocket();  // only lets the NetReceiver finish its work
                                        // before closing
+          
+          synchronized( my_netsender ) {
+                my_netsender.notify();    // we don't forget to wake up the thread !
+          }
+          
           my_netsender = null;
           my_netreceiver = null;
           listener=null;

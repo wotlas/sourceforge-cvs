@@ -48,7 +48,7 @@ package wotlas.server;
  * @see wotlas.server.GameServer
  */
 
-class GameAccount
+public class GameAccount
 {
  /*------------------------------------------------------------------------------------*/
 
@@ -296,5 +296,16 @@ class GameAccount
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** prints account info.
+   */
+     public String toString(){
+         return "Account Info:"
+           +"\nlogin: "+login
+           +"\nPassword: "+password
+           +"\naccountName: "+getAccountName()
+           +"\nlastConnection: "+getLastConnectionTime()+"\n";
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
 

@@ -95,7 +95,7 @@ public class GameServer extends NetServer
           }
           else {
                Debug.signal( Debug.NOTICE, this, "A client entered a bad password");
-               refuseClient( personality, "mauvais mot de passe :"+key );
+               refuseClient( personality, "Bad password:"+key );
           }
     }
 

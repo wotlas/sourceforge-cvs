@@ -77,7 +77,7 @@ class AccountManager
                        nbAccountsLoaded++;
                    }
 
-          Debug.signal( Debug.NOTICE, this, "AccountManager loaded "+nbAccountsLoaded+" accouts." );
+          Debug.signal( Debug.NOTICE, this, "AccountManager loaded "+nbAccountsLoaded+" accounts." );
    }
   
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -101,7 +101,7 @@ class AccountManager
    * @return an iterator that review all the GameAccounts.
    */
      public Iterator getIterator() {
-         return accounts.entrySet().iterator();
+         return accounts.values().iterator();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -134,6 +134,16 @@ class AccountManager
    */
      public synchronized boolean checkAccountName( String accountName ) {
          return accounts.containsKey( accountName );
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To add a new account (note that we don't check if it already exists).
+   *
+   * @param account account to add.
+   */
+     public synchronized void addAccount( GameAccount account ) {
+         accounts.put( account.getAccountName(), account );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

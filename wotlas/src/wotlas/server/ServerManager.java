@@ -52,7 +52,7 @@ public class ServerManager
 
    /** Our AccountServer
     */
-//      private AccountServer accountServer;
+      private AccountServer accountServer;
 
    /** Our GatewayServer
     */
@@ -75,20 +75,17 @@ public class ServerManager
            }
 
        // 2 - We create the AccountServer
-/** Not for now
- **
           String account_packages[] = { "wotlas.server.message.account" };
 
           accountServer = new AccountServer( config.getServerName(),
                                              config.getAccountServerPort(),
                                              account_packages,
                                              config.getMaxNumberOfAccountConnections() );
- **/
        // 3 - We create the GameServer
-          String game_packages[] = { "wotlas.server.message.description",
+          String game_packages[] = null; /*{ "wotlas.server.message.description",
                                      "wotlas.server.message.movement",
                                      "wotlas.server.message.chat" };
-
+*/
           gameServer = new GameServer( config.getServerName(),
                                        config.getGameServerPort(),
                                        game_packages,
@@ -115,7 +112,7 @@ public class ServerManager
    */
    public void start() {
        gameServer.start();
-//       accountServer.start();
+       accountServer.start();
 //       gatewayServer.start();
    }
 
@@ -160,10 +157,10 @@ public class ServerManager
    *
    * @return the account server.
    */
-/*   public AccountServer getAccountServer() {
-         return acountServer;
-   }
-*/
+    public AccountServer getAccountServer() {
+         return accountServer;
+    }
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To get the GatewayServer.
@@ -174,6 +171,16 @@ public class ServerManager
          return gatewayServer;
    }
 */
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the ServerConfig.
+   *
+   * @return the serverConfig
+   */
+    public ServerConfig getServerConfig() {
+         return config;
+    }
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

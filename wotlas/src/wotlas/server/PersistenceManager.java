@@ -117,7 +117,7 @@ public class PersistenceManager
 
         for( int i=0; i<accountList.length; i++ )
         {
-           if( !accountList[i].isFile() )
+           if( !accountList[i].isDirectory() )
                continue;
 
            try
@@ -188,7 +188,10 @@ public class PersistenceManager
                                                       PLAYER_PREFIX, PLAYER_SUFFIX, false );
 
               // have we found the latest saved file ?
-                 if( oldest!=null && !oldest.equals(PLAYER_PREFIX+Tools.getLexicalDate()+PLAYER_SUFFIX) ) {
+                 if( oldest!=null ) {
+                 	
+                    if( oldest.equals(PLAYER_PREFIX+Tools.getLexicalDate()+PLAYER_SUFFIX) )
+                        return true;  // it's the file we've just saved, so we don't delete it
 
                     String oldestpath = accountHome + File.separator + account.getAccountName()
                                         + File.separator + oldest;
@@ -240,6 +243,9 @@ public class PersistenceManager
           Debug.signal( Debug.ERROR, this, "Failed to save account: "
                             + accountHome + File.separator
                             + account.getAccountName() +"\n Message:"+pe.getMessage() );
+          if( !deleteAccount( account.getAccountName() ) )          
+               Debug.signal( Debug.WARNING, this, "Failed to delete bad account" );
+
           return false;
       }
 

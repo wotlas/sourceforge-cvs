@@ -21,9 +21,11 @@ package wotlas.server;
 
 import wotlas.utils.Debug;
 import wotlas.utils.FileTools;
+import wotlas.common.message.account.WarningMessage;
+import wotlas.utils.Tools;
 
 import java.util.Properties;
-
+import java.util.Iterator;
 
 /** The MAIN server class. It starts the PersistenceManager, the ServerManager
  *  and the DataManager. So got it ? yeah, it's the boss on the server side...
@@ -37,9 +39,13 @@ class ServerDirector
 {
  /*------------------------------------------------------------------------------------*/
 
-   /** Static Link Database Config File.
+   /** Static Link to Database Config File.
     */
     public final static String DATABASE_CONFIG = "../src/config/server-database.cfg";
+
+   /** Persistence period in ms.
+    */
+    public final static int PERSISTENCE_PERIOD = 1000*3600*12; // 12h
 
  /*------------------------------------------------------------------------------------*/
 
@@ -75,6 +81,12 @@ class ServerDirector
    */
      public static void main( String argv[] )
      {
+        // STEP 0 - Print some info...
+           Debug.signal( Debug.NOTICE, null, "*-----------------------------------*" );
+           Debug.signal( Debug.NOTICE, null, "|   Wheel Of Time - Light & Shadow  |" );
+           Debug.signal( Debug.NOTICE, null, "|  Copyright (C) 2001 - WOTLAS Team |" );
+           Debug.signal( Debug.NOTICE, null, "*-----------------------------------*\n");
+
         // STEP 1 - We load the database path. Where is the data ?
            properties = FileTools.loadPropertiesFile( DATABASE_CONFIG );
 
@@ -111,9 +123,9 @@ class ServerDirector
            serverManager.start();
            Debug.signal( Debug.NOTICE, null, "WOTLAS Servers started with success..." );
 
-        // Everything is ok !
-           Debug.signal( Debug.NOTICE, null, "Awaiting clients..." );
-
+        // Everything is ok ! we enter the persistence loop
+           Debug.signal( Debug.NOTICE, null, "Everything is Ok. Entering persistence loop..." );
+           persistenceLoop();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -129,5 +141,66 @@ class ServerDirector
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** Infinite loop saving the world & accounts periodically.
+    */
+
+     private static void persistenceLoop()
+     {
+     	while( true )
+     	{
+           // 1 - we wait the persistence period minus 5 minutes
+              Tools.waitTime( PERSISTENCE_PERIOD-1000*300 );
+
+           // We warn all the clients that the server is going to enter
+           // maintenance mode for 5 minutes, in 5 minutes.
+              Debug.signal( Debug.NOTICE, null, "Server will enter maintenance mode in 5 minutes...");
+              Iterator it = dataManager.getAccountManager().getIterator();
+
+              WarningMessage msg = new WarningMessage(
+                       "Your server will enter maintenance mode in 5 minutes.\n"
+                       +"Please disconnect and reconnect in 10 minutes");
+
+              while( it.hasNext() )
+                  ( (GameAccount) it.next() ).getPlayer().sendMessage( msg );
+ 
+           // 2 - We wait five more minutes
+              Tools.waitTime( PERSISTENCE_PERIOD-1000*300 );
+              Debug.signal( Debug.NOTICE, null, "Server enters maintenance mode now...");
+
+           // 3 - We close all remaining connections on the GameServer
+           //     and enter maintenance mode
+              serverManager.getGameServer().setServerLock( true );
+              serverManager.getAccountServer().setServerLock( true );
+              /* serverManager.getGatewayServer().setServerLock( true ); */
+
+              it = dataManager.getAccountManager().getIterator();
+
+              while( it.hasNext() )
+                  ( (GameAccount) it.next() ).getPlayer().closeConnection();
+
+
+           // Saving Accounts
+              it = dataManager.getAccountManager().getIterator();
+
+              while( it.hasNext() )
+                  dataManager.getAccountManager().saveAccount( (GameAccount) it.next() );
+
+              Debug.signal( Debug.NOTICE, null, "Saved player data..." );
+
+           // 4 - We save the world data
+              if( !dataManager.getWorldManager().saveLocalUniverse() )
+                  Debug.signal( Debug.WARNING, null, "Failed to save world data..." );
+              else
+                  Debug.signal( Debug.NOTICE, null, "Saved world data..." );
+
+           // 5 - Leaving Maintenance Mode
+              serverManager.getGameServer().setServerLock( true );
+              serverManager.getAccountServer().setServerLock( true );
+              /* serverManager.getGatewayServer().setServerLock( true ); */
+              Debug.signal( Debug.NOTICE, null, "Leaving maintenance mode..." );     
+         }
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
 

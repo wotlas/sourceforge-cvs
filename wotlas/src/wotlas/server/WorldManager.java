@@ -137,7 +137,7 @@ public class WorldManager
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
-  /** Add a player to this universe. This method is called at system init and should NOT
+  /** Add a player to this universe. This method is called for inits and should NOT
    *  be used in any other cases. Use movePlayer instead.
    *
    * @param player player to add to this world.

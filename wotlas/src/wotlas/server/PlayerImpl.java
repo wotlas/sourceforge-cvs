@@ -34,7 +34,7 @@ import wotlas.libs.net.NetMessage;
  * @see wotlas.common.NetConnectionListener
  */
 
-class PlayerImpl implements Player, NetConnectionListener
+public class PlayerImpl implements Player, NetConnectionListener
 {
  /*------------------------------------------------------------------------------------*/
 
@@ -42,11 +42,32 @@ class PlayerImpl implements Player, NetConnectionListener
     */
        String test = new String("it's working."); // TO REMOVE
 
+       public String getTest(){
+          return test;
+       }
+
+       public void setTest(String test){
+          this.test = test;
+       }
+
+   /** Personality Lock
+    */
+       private byte personalityLock[] = new byte[1];
+
  /*------------------------------------------------------------------------------------*/
 
    /** Our NetPersonality, useful if we want to send messages !
     */
        transient private NetPersonality personality;
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** Constructor.
+    */
+      public PlayerImpl() {
+      
+          // player initial location : World
+      }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -65,7 +86,7 @@ class PlayerImpl implements Player, NetConnectionListener
    */
      public void connectionCreated( NetPersonality personality ) {
 
-             synchronized( this.personality ) {
+             synchronized( personalityLock ) {
                  this.personality = personality;
              }
 
@@ -82,7 +103,7 @@ class PlayerImpl implements Player, NetConnectionListener
    */
      public void connectionClosed( NetPersonality personality ) {
 
-             synchronized( this.personality ) {
+             synchronized( personalityLock ) {
                  this.personality = null;
              }
 
@@ -101,7 +122,7 @@ class PlayerImpl implements Player, NetConnectionListener
    */
      public boolean sendMessage( NetMessage message ) {
 
-             synchronized( personality ) {
+             synchronized( personalityLock ) {
              	if( personality!=null ) {
                     personality.queueMessage( message );
                     return true;
@@ -109,6 +130,17 @@ class PlayerImpl implements Player, NetConnectionListener
              }
 
          return false;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To close the network connection if any.
+   */
+     public void closeConnection() {
+             synchronized( personalityLock ) {
+             	if( personality!=null )
+                    personality.closeConnection();
+             }
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

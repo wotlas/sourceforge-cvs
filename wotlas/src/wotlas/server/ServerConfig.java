@@ -337,15 +337,15 @@ public class ServerConfig
     */
       public String toString() {
           return "Wotlas Server Declaration\n"
-                 +"Ref:\n\t#WOT"+System.currentTimeMillis()+"\n"
-                 +"\nServer Name:\n\t"+serverName
-                 +"\nServer ID:\n\t"+serverID+"\n"
-                 +"\nAccount Port:\n\t"+accountServerPort
-                 +"\nGame Port:\n\t"+gameServerPort
-                 +"\nGateway Port:\n\t"+gatewayServerPort+"\n"
-                 +"\nLocation:\n\t"+location
-                 +"\nAdmin e-mail:\n\t"+adminEmail
-                 +"Description:\n\t"+description+"\n";
+                 +"Ref:\n   #WOT"+System.currentTimeMillis()+"\n"
+                 +"\nServer Name:\n   "+serverName
+                 +"\nServer ID:\n   "+serverID+"\n"
+                 +"\nAccount Port:\n   "+accountServerPort
+                 +"\nGame Port:\n   "+gameServerPort
+                 +"\nGateway Port:\n   "+gatewayServerPort+"\n"
+                 +"\nLocation:\n   "+location
+                 +"\nAdmin e-mail:\n   "+adminEmail
+                 +"\nDescription:\n   "+description+"\n";
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -121,8 +121,6 @@ public class FileTools
    static public boolean savePropertiesFile( Properties props, String pathname, String header )
    {
       try{
-         new File(pathname).createNewFile(); // to be sure
-
          BufferedOutputStream os = new BufferedOutputStream( new FileOutputStream(pathname) );
          props.store( os, header );
 

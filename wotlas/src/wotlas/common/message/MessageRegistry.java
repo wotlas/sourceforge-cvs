@@ -17,8 +17,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
  
-package wotlas.libs.net;
+package wotlas.common.message;
 
+import wotlas.libs.net.NetMessageRegistry;
 
 /** 
  * MessageRegistry where are declared all the messages categories used in wotlas
@@ -33,7 +34,7 @@ package wotlas.libs.net;
  * @see wotlas.libs.net.NetMessageRegistry
  */
 
-public interface MessageRegistry {
+public interface MessageRegistry extends NetMessageRegistry {
 
  /** The zero Category is reserved ( system category )
   */

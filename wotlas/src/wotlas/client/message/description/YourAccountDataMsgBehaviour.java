@@ -57,16 +57,14 @@ public class YourAccountDataMsgBehaviour extends YourAccountDataMessage implemen
         ClientManager clientManager = ClientManager.getDefaultClientManager();
         
         ProfileConfig currentProfileConfig = clientManager.getCurrentProfileConfig();
-        
+
         currentProfileConfig.setPlayerName(playerName);
-        
         currentProfileConfig.setServerID(serverID);
-                
+
         ProfileConfigList profileConfigList = clientManager.getProfileConfigList();
         profileConfigList.updateProfile(currentProfileConfig);
         
         PersistenceManager.getDefaultPersistenceManager().saveProfilesConfig(profileConfigList);
-              
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

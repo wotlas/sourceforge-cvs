@@ -84,7 +84,7 @@ public class SetCurrentChatRoomMessage extends NetMessage
         while( it.hasNext() ) {
                Player p = (Player) it.next();
                playersPrimaryKey[i] = p.getPrimaryKey();
-               fullPlayerNames[i] = p.getFullPlayerName(otherPlayerKey);
+               fullPlayerNames[i] = p.getPlayerName();
                i++;
         }
      }

@@ -20,107 +20,99 @@
 package wotlas.common.objects.containers;
 
 import wotlas.common.objects.interfaces.*;
-import wotlas.common.objects.BaseObject;
 import wotlas.common.objects.valueds.ValuedObject;
 import wotlas.common.Player;
+import wotlas.common.objects.usefuls.Key;
 
 /** 
- * The belt. Special Container that is also a piece of Armor.
+ * A chest. Used to securely store objects.
  * 
  * @author Elann
  * @see wotlas.common.objects.containers.ContainerObject
- * @see wotlas.common.objects.interfaces.ArmorInterface
- * @see wotlas.common.objects.interfaces.TransportableInterface
+ * @see wotlas.common.objects.interfaces.LockableInterface
  */
 
-public class Belt extends ContainerObject implements TransportableInterface, ArmorInterface
+public class Chest extends ContainerObject implements LockableInterface
 {
 
  /*------------------------------------------------------------------------------------*/
-  
-  protected short defense;
-  
-  protected boolean equipped;
+
+ /** The Key associated with the chest.
+  */
+  protected Key key;
+ 
  
  /*------------------------------------------------------------------------------------*/
 
- /** The default constructor. Calls ContainerObject's constructor.
+  /** The default constructor. Calls ContainerObject's constructor.
+   */
+      public Chest()
+	  {
+	   super();
+	   	   
+	   className="Chest";
+	   objectName="default chest";  // to modify
+	   key=null;
+	  }
+ 
+ /** Parametric constructor. Calls ContainerObject's constructor.
+  * @param key the key working with the chest
   */
-  public Belt()
+  public Chest(Key key)
   {
    super();
      
-   className="Belt";
-   objectName="standard belt";	  // to modify
+   className="Chest";
+   objectName=key.getSKeyID()+"-chest";
+   this.key=key;
   }
 
- /** The only constructor. Calls ContainerObject's constructor.
+ 
+ /** Parametric constructor. Calls ContainerObject's constructor.
   * @param capacity the number of objects that can be contained
   */
-  public Belt(short capacity)
+  public Chest(short capacity)
   {
    super(capacity);
      
-   className="Belt";
-   objectName="standard belt";	  // to modify
+   className="Chest";
+   objectName="default chest";	  // to modify
+   key=null;
   }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-	
-  /** Get the armor's defense points
-   * @return defense
-   */ 				
-   	public short getDefense()
-	{
-	 return defense;
-	} 																		
+ /** Full parametric constructor. Calls ContainerObject's constructor.
+  * @param key the key working with the chest
+  */
+  public Chest(Key key,short capacity)
+  {
+   super(capacity);
+     
+   className="Chest";
+   objectName=key.getSKeyID()+"-chest";
+   this.key=key;
+  }
 
-  /** Sets the defense of the armor.
-    * @param defense the new defense
-    */
-	public void setDefense(short defense)
-	{
-	 this.defense=defense;
-	}
+  
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
-  /** Puts on the armor.
-   */
-    public void equip()
-	{
-	 equipped=true;
-	}
-
 	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-   /** Gets rid of the object. The object is dropped on the ground.
+  /** Try to lock the object.
+   * @param key the key used 
    */
-    public void discard()
+    public void tryLock(Key key)
 	{
-	 /* no op */
-	}
-
-  /** Sells the object to somebody.
-  	  @param buyer The Player who buy the object. 
-  	  @return the prize paid.
-   */
-    public ValuedObject sellTo(Player buyer)
-	{
-	 /* no op */
-	 return new ValuedObject();
-	}
-
-  /** Gives the object to somebody.
-  	  @param receiver The Player who receive the object.
-   */
-    public void giveTo(Player receiver)
-	{
-	 /* no op */
-	}
 	
+	}
+
+  /** Try to unlock the object.
+   * @param key the key used 
+   */
+    public void tryUnlock(Key key)
+	{
+	
+	}
 	
  /*------------------------------------------------------------------------------------*/
-	
- 
+
 }
 

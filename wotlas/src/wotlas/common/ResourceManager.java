@@ -38,7 +38,7 @@ import java.util.Properties;
 
 
 /** Manages the different resources found in wotlas. Resources are searched in a JAR
- *  or via the provided (or default) basse path. If we are in a JAR file ( server or
+ *  or via the provided (or default) base path. If we are in a JAR file ( server or
  *  client jar ) we call 'external resources' resources that are stored outside the
  *  JAR. 
  *

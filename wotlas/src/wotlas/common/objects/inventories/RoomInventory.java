@@ -17,56 +17,49 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
  
-package wotlas.common.objects;
+package wotlas.common.objects.inventories;
 
-//import java.rmi.Remote;
-//import java.rmi.RemoteException;
-
-//import wotlas.utils.Tools;
-
-import wotlas.common.objects.inventories.Inventory;	
+import wotlas.common.objects.containers.Ground;
 
 /** 
- * The ObjectManager. Used to handle all kinds of Object and Inventory.<br>
- * Has different implementations in client and server sides.
+ * This is the base class for all RoomInventories.
+ *
  * @author Elann
  */
 
-public class ObjectManager
+public class RoomInventory
 {
 
  /*------------------------------------------------------------------------------------*/
- 
- /** An Inventory object.
-  */
-  private Inventory inventory;
- 
- 
- /*------------------------------------------------------------------------------------*/
-		
-  /* ------- Constructor ----- */
-  
-  /** Default constructor.
-   *
-   */
-   	public ObjectManager()
-	{
-	
-	}		
-		
-  /* ------- Getters / Setters --------- */
-	
-  /** Get the Inventory object owned by the Manager.
-  	  @return the Inventory
-   */
-    public Inventory getInventory() { return inventory; }
 
-  /** Set the Inventory of the Manager.
-  	  @param inventory the new Inventory
+  /** The ground of the room. Used to manage the objects disposed on the ground.
    */
-    public void setInventory(Inventory inventory) { this.inventory=inventory; }
-	
+      protected Ground ground;
+
+ /*------------------------------------------------------------------------------------*/
+
+ 
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ 
+  /** Get the book.
+   * @return book
+   */
+    public Ground getGround()
+    {
+        return ground;
+    }
+
+  /** Set the ground.
+   * @param ground the new ground
+   */
+    public void setGround(Ground ground)
+    {
+        this.ground=ground;
+    }
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+ 
+ 
 }
 

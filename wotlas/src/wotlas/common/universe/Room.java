@@ -69,7 +69,7 @@ public class Room implements WotlasMap {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Our interiorMap wher this room is.
+  /** Our interiorMap where this room is.
    */
     private transient InteriorMap myInteriorMap;
 

@@ -69,7 +69,7 @@ public class AccountManager {
 
  /*------------------------------------------------------------------------------------*/
 
-   /** Constructor. Attemps to load the client accounts.
+   /** Constructor. Attempts to load the client accounts.
     */
      public AccountManager( ResourceManager rManager ) {
      	  this.rManager = rManager;

@@ -17,56 +17,48 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
  
-package wotlas.common.objects;
+package wotlas.common.objects.containers;
 
-//import java.rmi.Remote;
-//import java.rmi.RemoteException;
-
-//import wotlas.utils.Tools;
-
-import wotlas.common.objects.inventories.Inventory;	
+import wotlas.common.objects.interfaces.*;
+import wotlas.common.objects.valueds.ValuedObject;
+import wotlas.common.Player;
 
 /** 
- * The ObjectManager. Used to handle all kinds of Object and Inventory.<br>
- * Has different implementations in client and server sides.
+ * A shelf. Used in shops, houses, store-rooms, ...
+ * 
  * @author Elann
+ * @see wotlas.common.objects.containers.ContainerObject
  */
 
-public class ObjectManager
+public class Shelf extends ContainerObject
 {
 
  /*------------------------------------------------------------------------------------*/
- 
- /** An Inventory object.
-  */
-  private Inventory inventory;
- 
+
  
  /*------------------------------------------------------------------------------------*/
-		
-  /* ------- Constructor ----- */
-  
-  /** Default constructor.
-   *
-   */
-   	public ObjectManager()
-	{
-	
-	}		
-		
-  /* ------- Getters / Setters --------- */
-	
-  /** Get the Inventory object owned by the Manager.
-  	  @return the Inventory
-   */
-    public Inventory getInventory() { return inventory; }
 
-  /** Set the Inventory of the Manager.
-  	  @param inventory the new Inventory
-   */
-    public void setInventory(Inventory inventory) { this.inventory=inventory; }
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ /** The default constructor. Calls ContainerObject's constructor.
+  */
+  public Shelf()
+  {
+   super();  
+   
+   className="Shelf";
+   objectName="standard shelf";	  // to modify
+  }
+
+ /** The parametric constructor. Calls ContainerObject's constructor.
+  * @param capacity the number of objects that can be contained
+  */
+  public Shelf(short capacity)
+  {
+   super(capacity);  
+   className="Shelf";
+   objectName="standard shelf";	  // to modify
+  }
+  
+ /*------------------------------------------------------------------------------------*/
 
 }
 

@@ -41,15 +41,15 @@ public class ContainerObject extends BaseObject implements ContainerInterface
 
   /** The capacity of the container
    */
-      private short capacity;
+      protected short capacity;
 
   /** The quantity contained
    */
-      private short quantity;
+      protected short quantity;
 
   /** The content
    */
-      private BaseObject[] content;
+      protected BaseObject[] content;
 
   
  /*------------------------------------------------------------------------------------*/

@@ -54,6 +54,7 @@ public class Purse extends ContainerObject implements TransportableInterface
   public Purse()
   {
    super(defaultPurseCapacity);  
+
    className="Purse";
    objectName="standard purse";	  // to modify -> player name ?
   }
@@ -65,6 +66,7 @@ public class Purse extends ContainerObject implements TransportableInterface
   public Purse(short capacity)
   {
    super(capacity);  
+
    className="Purse";
    objectName="standard purse";	  // to modify -> player name ?
   }

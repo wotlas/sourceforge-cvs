@@ -19,6 +19,8 @@
  
 package wotlas.common.objects.containers;
 
+import wotlas.common.universe.Room;
+
 /** 
  * The ground object.
  * 
@@ -33,19 +35,89 @@ public class Ground extends ContainerObject
 
  /*------------------------------------------------------------------------------------*/
 
+   /** The owner of the ground.
+   */
+      protected transient Room ownerRoom;
+
  
  /*------------------------------------------------------------------------------------*/
 
- /** The only constructor. Calls ContainerObject's constructor.
+ /** Default constructor. Calls ContainerObject's constructor.
+  */
+  public Ground()
+  {
+   super();  
+   
+   className="Ground";
+   objectName="standard ground";	  // to modify -> name of the room
+  }
+
+ /** Parametric constructor. Calls ContainerObject's constructor.
+  * @param ownerRoom the ground's owner
+  */
+  public Ground(Room ownerRoom)
+  {
+   super();  
+   
+   this.ownerRoom=ownerRoom;
+   className="Ground";
+   
+   // set the objectName
+   updateName();
+  }
+
+ /** Parametric constructor. Calls ContainerObject's constructor.
   * @param capacity the number of objects that can be laid on the ground
   */
   public Ground(short capacity)
   {
    super(capacity);  
-   this.className="Ground";
-   this.objectName="standard ground";	  // to modify -> name of the room
+
+   className="Ground";
+   objectName="standard ground";	  // to modify -> name of the room
   }
+
+ /** Full parametric constructor. Calls ContainerObject's constructor.
+  * @param ownerRoom the ground's owner
+  * @param capacity the number of objects that can be laid on the ground
+  */
+  public Ground(Room ownerRoom,short capacity)
+  {
+   super(capacity);  
+   
+   this.ownerRoom=ownerRoom;
+   className="Ground";
+   
+   // set the objectName
+   updateName();
+  }
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+ /** Set the room owner of the ground. 
+  * @param ownerRoom the new room owner
+  */
+  public void setOwnerRoom(Room ownerRoom)
+  {
+   this.ownerRoom=ownerRoom;
+  }
+
+ /** Get the room owner of the ground. 
+  * @return ownerRoom
+  */
+  public Room getOwnerRoom()
+  {
+   return ownerRoom;
+  }
+
+ /** Set ground's name based on its owner 
+  */  
+  public void updateName()
+  {
+   objectName=ownerRoom.getShortName()+"-ground";
+  }
  
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }
 

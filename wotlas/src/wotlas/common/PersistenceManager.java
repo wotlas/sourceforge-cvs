@@ -190,7 +190,7 @@ public class PersistenceManager
               Debug.signal( Debug.FAILURE, this, "Failed to load world: "
                             + universeHome + File.separator
                             + worldSaveList[w].getName() +"\n Message:"+pe.getMessage() );
-              System.exit(1);
+              Debug.exit();
            }
         }
 

@@ -79,7 +79,7 @@ public class AccountServer extends NetServer
               
               if( !FileTools.savePropertiesFile( props, ACCOUNT_CONFIG, "Do not remove or modify this file !") ){
                   Debug.signal( Debug.FAILURE, this,"Cannot create or get account-server.cfg file!");
-                  System.exit(1);
+                  Debug.exit();
               }
         }
         else {
@@ -89,7 +89,7 @@ public class AccountServer extends NetServer
              }
              catch( Exception e ){
                   Debug.signal( Debug.FAILURE, this,"Bad account-server.cfg clientCounter property!");
-                  System.exit(1);
+                  Debug.exit();
              }
         }
     }

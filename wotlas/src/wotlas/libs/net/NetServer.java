@@ -120,7 +120,7 @@ public class NetServer extends Thread
                }
                catch (IOException e){
                   Debug.signal( Debug.FAILURE, this, e );
-                  System.exit(1);
+                  Debug.exit();
                }
         }
 
@@ -161,7 +161,7 @@ public class NetServer extends Thread
                }
                catch(UnknownHostException ue) {
                   Debug.signal( Debug.FAILURE, this, ue );
-                  System.exit(1);
+                  Debug.exit();
                }
 
            // ServerSocket inits
@@ -171,7 +171,7 @@ public class NetServer extends Thread
                }
                catch (IOException e){
                   Debug.signal( Debug.FAILURE, this, e );
-                  System.exit(1);
+                  Debug.exit();
                }
         }
 
@@ -279,7 +279,7 @@ public class NetServer extends Thread
 
                   // bad IOException generated...
                      Debug.signal( Debug.FAILURE, this, e );
-                     System.exit(1);
+                     Debug.exit();
                }
 
             // Ok, a client has arrived.

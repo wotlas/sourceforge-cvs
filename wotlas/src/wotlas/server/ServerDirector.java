@@ -111,14 +111,14 @@ class ServerDirector
 
              if( properties==null ) {
                 Debug.signal( Debug.FAILURE, null, "No valid server.cfg file found !" );
-                System.exit(1);
+                Debug.exit();
              }
 
            databasePath = properties.getProperty( "DATABASE_PATH" );
 
              if( databasePath==null ) {
                 Debug.signal( Debug.FAILURE, null, "No Database Path specified in config file !" );
-                System.exit(1);
+                Debug.exit();
              }
 
            Debug.signal( Debug.NOTICE, null, "DataBase Path Found : "+databasePath );
@@ -127,14 +127,14 @@ class ServerDirector
 
            if( s_serverID==null ) {
                Debug.signal( Debug.FAILURE, null, "No ServerID specified in config file !" );
-               System.exit(1);
+               Debug.exit();
            }
 
            try{
               serverID = Integer.parseInt( s_serverID );
            }catch( Exception e ) {
                 Debug.signal( Debug.FAILURE, null, "Bad ServerID specified in config file !" );
-                System.exit(1);
+                Debug.exit();
            }
 
            Debug.signal( Debug.NOTICE, null, "Server ID set to : "+serverID );

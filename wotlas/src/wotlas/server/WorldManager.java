@@ -52,7 +52,7 @@ public class WorldManager extends wotlas.common.WorldManager
        // we use the PersistenceManager to load the worlds.
           if( !loadLocalUniverse() ) {
               Debug.signal( Debug.FAILURE, null, "Could not load data correctly ! Exiting..." );
-              System.exit(1);
+              Debug.exit();
           }
 
        // We rebuild shortcuts

@@ -71,7 +71,7 @@ public class ServerManager
 
           if( config == null ) {
                Debug.signal( Debug.FAILURE, this, "Can't init servers without a ServerConfig !" );
-               System.exit(1);
+               Debug.exit();
            }
 
        // 2 - We create the AccountServer

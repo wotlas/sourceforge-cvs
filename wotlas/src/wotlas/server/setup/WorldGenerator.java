@@ -96,7 +96,7 @@ public class WorldGenerator {
            worldMap.setShortName("randland");
            worldMap.setInsertionPoint( new ScreenPoint(680,455) );
            worldMap.setWorldImage( new ImageIdentifier( "maps-1/universe-2/randland-0") );
-           worldMap.setMusicName("tar-valon-01.mid");
+           worldMap.setMusicName("stedding.mid");
 
         // STEP 3 - TOWNS
 
@@ -114,8 +114,8 @@ public class WorldGenerator {
 
            townMap.setSmallTownImage( new ImageIdentifier( "maps-1/town-small-1/tar-valon-small-0" ) );
 
-           townMap.setTownImage( new ImageIdentifier( "maps-1/universe-2/randland-1" ) );
-           townMap.setMusicName("tar-valon-01.mid");
+           townMap.setTownImage( new ImageIdentifier( "maps-1/universe-2/tar-valon-1" ) );
+           townMap.setMusicName("tar-valon.mid");
 
            MapExit mapExit = null;
 
@@ -210,7 +210,7 @@ public class WorldGenerator {
            townMap.setSmallTownImage( new ImageIdentifier( "maps-1/town-small-1/blight-refuge-small-1" ) );
 
            townMap.setTownImage( new ImageIdentifier() ); // no town image
-           townMap.setMusicName("tar-valon-01.mid");
+           townMap.setMusicName("blight-refuge.mid");
 
 
         // STEP 4 - Tar Valon West Gate Building
@@ -282,7 +282,7 @@ public class WorldGenerator {
            map.setImageRegionWidth(350);
            map.setImageRegionHeight(400);
 
-           map.setMusicName("tar-valon-01.mid");
+           map.setMusicName("tv-bridge.mid");
 
 
         // STEP 6 - Rooms of TarValon WestGate InteriorMap
@@ -557,7 +557,7 @@ public class WorldGenerator {
            maps[0].setImageRegionWidth(550);
            maps[0].setImageRegionHeight(350);
 
-           maps[0].setMusicName("tar-valon-01.mid");
+           maps[0].setMusicName("tv-clearing.mid");
 
            buildings[1].setInteriorMaps( maps );
 
@@ -609,7 +609,7 @@ public class WorldGenerator {
            maps[0].setImageRegionWidth(550);
            maps[0].setImageRegionHeight(350);
 
-           maps[0].setMusicName("tar-valon-01.mid");
+           maps[0].setMusicName("tv-clearing.mid");
 
            buildings[3].setInteriorMaps( maps );
 
@@ -656,7 +656,7 @@ public class WorldGenerator {
            maps[0].setImageRegionWidth(640);
            maps[0].setImageRegionHeight(460);
 
-           maps[0].setMusicName("tar-valon-01.mid");
+           maps[0].setMusicName("tv-bridge.mid");
 
            maps[1] = new InteriorMap();
            maps[1].setInteriorMapID(1);
@@ -668,7 +668,7 @@ public class WorldGenerator {
            maps[1].setImageRegionWidth(600);
            maps[1].setImageRegionHeight(460);
 
-           maps[1].setMusicName("tar-valon-01.mid");
+           maps[1].setMusicName("tv-bridge.mid");
 
            buildings[2].setInteriorMaps( maps );
 
@@ -733,15 +733,15 @@ public class WorldGenerator {
                mapExit.setTargetOrientation( (float)(Math.PI/4) );
 
 
-        // STEP 11 bis - Tar Valon West Gate InteriorMap
-           maps = new InteriorMap[1];
+        // STEP 11 bis - Tar Valon White Tower South Gate InteriorMap
+           maps = new InteriorMap[2];
            map = new InteriorMap();
            maps[0] = map;
 
            buildings[4].setInteriorMaps( maps );
 
            map.setInteriorMapID(0);
-           map.setFullName("Tar Valon West Gate - White Tower South Gate");
+           map.setFullName("Tar Valon - White Tower South Gate");
            map.setShortName("tvwtsg");
            map.setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/tv-s-whitetower-gate-2" ) );
            map.setImageWidth(600);
@@ -749,12 +749,25 @@ public class WorldGenerator {
            map.setImageRegionWidth(600);
            map.setImageRegionHeight(200);
 
-           map.setMusicName("tar-valon-01.mid");
+           map.setMusicName("tv-white-tower.mid");
 
+           map = new InteriorMap();
+           maps[1] = map;
 
-        // STEP 11bis2 - Rooms of TarValon WestGate InteriorMap
+           map.setInteriorMapID(1);
+           map.setFullName("Tar Valon - White Tower Front");
+           map.setShortName("whtow-front");
+           map.setInteriorMapImage( new ImageIdentifier( "maps-1/universe-2/whitetower-entrance-11" ) );
+           map.setImageWidth(760);
+           map.setImageHeight(800);
+           map.setImageRegionWidth(380);
+           map.setImageRegionHeight(200);
+
+           map.setMusicName("tv-white-tower-hall.mid");
+
+        // STEP 11bis2 - Rooms of TarValon White Tower South Gate InteriorMap
            rooms = new Room[13];
-           map.setRooms( rooms );
+           maps[0].setRooms( rooms );
 
            for(int i=0; i<13; i++ ) {
                rooms[i] = new Room();
@@ -808,8 +821,14 @@ public class WorldGenerator {
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
                mapExit.setTargetPosition( new ScreenPoint(282,520) );
 
-           rooms[1].setFullName("White Tower - South Gate 2");
-           rooms[1].setShortName("south-gate2");
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(40,0,360,25) );
+               mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
+               mapExit.setMapExitSide( MapExit.NORTH );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,4,1,0) );
+               mapExit.setTargetPosition( new ScreenPoint(280,750) );
+
+           rooms[1].setFullName("White Tower - South Gate - Back");
+           rooms[1].setShortName("south-gate-back");
            rooms[1].setInsertionPoint( new ScreenPoint(500,670) );
 
              roomLink = rooms[1].addRoomLink( new ScreenRectangle( 530, 850, 10, 30) );
@@ -955,6 +974,38 @@ public class WorldGenerator {
 
              rooms[12].addRoomLink( rooms[5].getRoomLinks()[3] );
 
+        // STEP 11bisc - Rooms of TarValon White Tower Front InteriorMap
+           rooms = new Room[2];
+           
+           maps[1].setRooms( rooms );
+
+           for(int i=0; i<2; i++ ) {
+               rooms[i] = new Room();
+               rooms[i].setRoomID(i);
+               rooms[i].setMaxPlayers(30);
+           }
+
+           rooms[0].setFullName("White Tower - Front");
+           rooms[0].setShortName("white-tower");
+           rooms[0].setInsertionPoint( new ScreenPoint(380,400) );
+
+             roomLink = rooms[0].addRoomLink( new ScreenRectangle( 590, 730, 10, 30) );
+             roomLink.setRoom1ID(0);
+             roomLink.setRoom2ID(1);
+             roomLink.setDoor( new Door( 592, 730, halfPI, DoorDrawable.VERTICAL_BOTTOM_PIVOT,
+                               new ImageIdentifier( "objects-2/doors-0/wood-40len-8th-2/vert-bottom-pivot-1.gif" ) ) );
+
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(110,770,360,30) );
+               mapExit.setType( MapExit.INTERIOR_MAP_EXIT );
+               mapExit.setMapExitSide( MapExit.SOUTH );
+               mapExit.setTargetWotlasLocation( new WotlasLocation(0,0,4,0,0) );
+               mapExit.setTargetPosition( new ScreenPoint(185,25) );
+
+           rooms[1].setFullName("White Tower - Front - Storehouse");
+           rooms[1].setShortName("storehouse");
+           rooms[1].setInsertionPoint( new ScreenPoint(640,750) );
+
+             rooms[1].addRoomLink( rooms[0].getRoomLinks()[0] );
 
         // STEP 12 - Blight Refuge Building
            buildings = new Building[1];
@@ -985,7 +1036,7 @@ public class WorldGenerator {
            map.setImageRegionWidth(720);
            map.setImageRegionHeight(400);
 
-           map.setMusicName("tar-valon-01.mid");
+           map.setMusicName("blight-refuge.mid");
 
 
         // STEP 14 - Rooms of Blight Refuge Ext InteriorMap
@@ -1053,7 +1104,7 @@ public class WorldGenerator {
            map.setImageRegionWidth(400);
            map.setImageRegionHeight(500);
 
-           map.setMusicName("tar-valon-01.mid");
+           map.setMusicName("blight-hall.mid");
 
         // STEP 16 - Rooms of Blight Refuge Int0 InteriorMap
            rooms = new Room[4];
@@ -1147,7 +1198,7 @@ public class WorldGenerator {
            map.setImageRegionWidth(525);
            map.setImageRegionHeight(530);
 
-           map.setMusicName("tar-valon-01.mid");
+           map.setMusicName("blight-hall.mid");
 
         // STEP 18 - Rooms of Blight Refuge Int0 InteriorMap
            rooms = new Room[1];

@@ -80,7 +80,6 @@ public class AccountBuilder implements NetConnectionListener
     */
      private byte state;
 
-
    /** The Game Account we are building
     */
      private GameAccount account;

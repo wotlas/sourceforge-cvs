@@ -34,7 +34,7 @@ import wotlas.utils.Debug;
   *  all its data in one huge file.
   *
   * @author Petrus, Aldiss
-  * @see wotlas.common.universe.WorlManager
+  * @see wotlas.common.WorlManager
   * @see wotlas.common.universe.WorldMap
   */
  

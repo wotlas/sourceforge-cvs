@@ -66,7 +66,8 @@ CLIENT_PACKAGES = wotlas/client \
                   wotlas/client/gui
 
 CLIENT_PACKAGES2 = wotlas/client/message/movement \
-                   wotlas/client/message/chat
+                   wotlas/client/message/chat \
+                   wotlas/client/screen/plugin
 
 ##########################################################################
 

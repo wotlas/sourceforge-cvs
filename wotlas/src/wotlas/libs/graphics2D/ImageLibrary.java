@@ -49,6 +49,10 @@ public class ImageLibrary {
     */
      private static int nbImagesLoaded;
 
+  /** Do we have to display db entries with bad format ?
+   */
+     private static boolean displayBadFormatEntries;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Image classified by Category/Set/Action/Index
@@ -68,12 +72,24 @@ public class ImageLibrary {
     */
      private ImageLibrary( String imageDataBasePath ) throws IOException {
      	this.imageDataBasePath = imageDataBasePath;
+     	displayBadFormatEntries = false;
 
         loadImageDataBase();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
   
+  /** Do we have to display db entries with bad format ?
+   * 
+   * @param display if true we display disk entries of the ImageLibrary that
+   *        have a bad format.
+   */
+    public void displayBadFormatEntries( boolean display ) {
+    	displayBadFormatEntries = display;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** Creates an ImageLibrary or returned the previously created one.
    *  We load all the images from the specified image database.<p>
    *
@@ -306,7 +322,8 @@ public class ImageLibrary {
                  return list[i].getName();
          }
          catch( IOException ioe ) {
-             Debug.signal( Debug.ERROR, null, ""+ioe);
+             if(displayBadFormatEntries)
+                Debug.signal( Debug.ERROR, null, ""+ioe);
          }
       }
 
@@ -500,7 +517,8 @@ public class ImageLibrary {
            try{
                loadImageAction( imID );
            }catch( IOException e ) {
-               Debug.signal( Debug.ERROR, this, "An error occured while loading "+imID+" (action) :"+e);
+               if(displayBadFormatEntries)
+                  Debug.signal( Debug.ERROR, this, "An error occured while loading "+imID+" (action) :"+e);
                return false;
            }
       }
@@ -510,7 +528,8 @@ public class ImageLibrary {
            try{
                loadImageIndex( imID );
            }catch( IOException e ) {
-               Debug.signal( Debug.ERROR, this, "An error occured while loading "+imID+" (index) :"+e);
+               if(displayBadFormatEntries)
+                  Debug.signal( Debug.ERROR, this, "An error occured while loading "+imID+" (index) :"+e);
                return false;
            }
       }
@@ -666,7 +685,8 @@ public class ImageLibrary {
             try{
                id = getIDFromName( name.substring( 0, name.lastIndexOf('.')) );
             }catch( IOException e ) {
-               Debug.signal( Debug.WARNING, null, "Bad Image Name Format ! :"+e);
+               if(displayBadFormatEntries)
+                  Debug.signal( Debug.WARNING, null, "Bad Image Name Format ! :"+e);
                continue;
             }
 

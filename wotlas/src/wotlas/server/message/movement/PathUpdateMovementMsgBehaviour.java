@@ -87,8 +87,10 @@ System.out.println("propagation des updates....");
               	 
               	 while( it.hasNext() ) {
               	    PlayerImpl p = (PlayerImpl)it.next();
-              	    if(p!=player)
+              	    if(p!=player) {
+System.out.println("envoi du mouvement à "+p.getPrimaryKey());
                        p.sendMessage( this );
+                    }
               	 }
               }
 
@@ -108,6 +110,7 @@ System.out.println("propagation des updates....");
               	 
               	      while( it.hasNext() ) {
               	          PlayerImpl p = (PlayerImpl)it.next();
+System.out.println("envoi du mouvement à la pièce d'à côté à "+p.getPrimaryKey());
                           p.sendMessage( this );
               	      }
                    }

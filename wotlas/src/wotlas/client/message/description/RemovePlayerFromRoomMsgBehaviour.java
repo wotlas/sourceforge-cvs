@@ -81,7 +81,7 @@ System.out.println("REMOVE PLAYER MESSAGE p:"+primaryKey);
 
               if(playerImpl==null)
                  return;
-
+System.out.println("REMOVING PLAYER "+primaryKey);
               players.remove( primaryKey );
            }
 

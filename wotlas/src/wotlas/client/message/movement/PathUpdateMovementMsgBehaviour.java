@@ -75,41 +75,21 @@ System.out.println("PATH UPDATE MESSAGE FOR PLAYER "+primaryKey);
           if( player.getLocation().isRoom() )
           {
               Player playerToUpdate = null;
-              Room room = player.getMyRoom();              
-              if( room==null ) return;
 
            // Search in Current Room
-              Hashtable players = room.getPlayers();
+              Hashtable players = dataManager.getPlayers();
      
               synchronized( players ) {
               	 playerToUpdate = (Player) players.get( primaryKey );
               }
-                 if(playerToUpdate!=null) {
-                    playerToUpdate.getMovementComposer().setUpdate( (MovementUpdateMessage)this );
-                    return; // success !
-                 }
 
-           // Search in other rooms
-              if(room.getRoomLinks()==null) return; // not found
-              
-              for( int i=0; i<room.getRoomLinks().length; i++ ) {
-                   Room otherRoom = room.getRoomLinks()[i].getRoom1();
-                   
-                   if( otherRoom==room )
-                       otherRoom = room.getRoomLinks()[i].getRoom2();
-
-                   players = otherRoom.getPlayers();
-
-                   synchronized( players ) {
-                       playerToUpdate = (Player) players.get( primaryKey );
-                   }
-                     if(playerToUpdate!=null) {
-                        playerToUpdate.getMovementComposer().setUpdate( (MovementUpdateMessage)this );
-                        return; // success !
-                     }
+              if(playerToUpdate!=null && playerToUpdate.getPrimaryKey().equals(primaryKey) ) {
+System.out.println("Movement successfully updated for "+primaryKey);
+                 playerToUpdate.getMovementComposer().setUpdate( (MovementUpdateMessage)this );
+                 return; // success !
               }
-
-             return; // not found
+              else
+System.out.println("Movement NOOOT updated for "+primaryKey);
           }
 
      }

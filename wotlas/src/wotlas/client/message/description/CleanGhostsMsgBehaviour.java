@@ -83,8 +83,8 @@ System.out.println("CLEAN GHOSTS MESSAGE");
 
            int roomIDs[] = null;
 
-           if( myRoom.getRoomLinks()==null ) {
-              roomIDs = new int[myRoom.getRoomLinks().length+1];	
+           if( myRoom.getRoomLinks()!=null ) {
+              roomIDs = new int[myRoom.getRoomLinks().length+1];
            
               for( int i=0; i<myRoom.getRoomLinks().length; i++ ) {
                    Room otherRoom = myRoom.getRoomLinks()[i].getRoom1();
@@ -96,10 +96,9 @@ System.out.println("CLEAN GHOSTS MESSAGE");
               }
            }
            else
-              roomIDs = new int[1] ;  
+              roomIDs = new int[1] ;
 
            roomIDs[roomIDs.length-1] = myRoom.getRoomID();
-
 
         // 3 - We remove the ghosts players
            Hashtable players = dataManager.getPlayers();
@@ -123,6 +122,7 @@ System.out.println("CLEAN GHOSTS MESSAGE");
                  
                      if( !isInList ) {
                          it.remove(); // GHOST !!
+System.out.println("REMOVING GHOSTS !!!!"+playerImpl.getPrimaryKey()+" rID"+playerImpl.getLocation().getRoomID());
                          playerImpl.cleanVisualProperties(dataManager.getGraphicsDirector());
                      }
               }

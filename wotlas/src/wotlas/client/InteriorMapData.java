@@ -293,9 +293,6 @@ System.out.println("NOTIFYING");
 
       if ( newRoomID>=0 ) {
         // Ok, we move to this new Room
-        if (SHOW_DEBUG)
-          System.out.println("Removing an existing player : " + myPlayer + "to room : " + myRoom);
-        myRoom.removePlayer( myPlayer );
         WotlasLocation location = myPlayer.getLocation();
         location.setRoomID( newRoomID );
         myPlayer.setLocation(location);        

@@ -200,7 +200,7 @@ public class TownMapData implements MapData
     gDirector.addDrawable(mltPlayerName);
     
     String[] strTemp2 = { townMap.getFullName() };
-    MultiLineText mltLocationName = new MultiLineText(strTemp2, gDirector.getWidth()-10, 10, Color.black, 15.0f, "Lblack.ttf", ImageLibRef.TEXT_PRIORITY, MultiLineText.RIGHT_ALIGNMENT);
+    MultiLineText mltLocationName = new MultiLineText(strTemp2, 10, 10, Color.black, 15.0f, "Lblack.ttf", ImageLibRef.TEXT_PRIORITY, MultiLineText.RIGHT_ALIGNMENT);
     gDirector.addDrawable(mltLocationName);
 
     //   - We play music

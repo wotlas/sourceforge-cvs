@@ -110,13 +110,15 @@ public class MultiLineText extends Drawable {
 
   /** Constructor.
    *
-   * @param xs MultiLineText's xs top left corner of the text
+   * @param xs space between top left corner and left border if LEFT_ALIGNMENT<br>
+   *        or space between top right corner and right border if RIGHT_ALIGNMENT
    * @param ys MultiLineText's ys top left corner of the text
    * @param text MultiLineText's text
    * @param color MultiLineText's color
    * @param size MultiLineText's size
    * @param font MultiLineText's font
    * @param priority MultiLineText's priority
+   * @param alignment LEFT_ALIGNMENT or RIGHT_ALIGNMENT
    */
     public MultiLineText( String[] text, int xs, int ys, Color color, float size, String font, short priority, short alignment) {
     	super();
@@ -240,9 +242,12 @@ public class MultiLineText extends Drawable {
               
               r.width = widthText + 12;
               r.height = heightsText[text.length-1] + 12;
-              r.x = xs;
+              if (isLeftAligned) {
+                r.x = xs;                
+              } else {
+                r.x = (int)screen.getWidth()-xs;
+              }
               r.y = ys;
-
               recalculate = false;
         } else {
            // Display background rectangle
@@ -254,9 +259,9 @@ public class MultiLineText extends Drawable {
                  gc.setColor( Color.black );
                  gc.draw3DRect(xs-6,ys-3,r.width,r.height,false);
                } else {
-                 gc.fillRect(xs-widthText-6,ys-3,r.width,r.height);
+                 gc.fillRect((int)screen.getWidth()-xs-widthText-6,ys-3,r.width,r.height);
                  gc.setColor( Color.black );
-                 gc.draw3DRect(xs-widthText-6,ys-3,r.width,r.height,false);
+                 gc.draw3DRect((int)screen.getWidth()-xs-widthText-6,ys-3,r.width,r.height,false);
                }
 
                gc.setComposite( AlphaComposite.SrcOver ); // restore
@@ -269,7 +274,7 @@ public class MultiLineText extends Drawable {
                        gc.drawString(this.text[i], xs, ys+heightsText[i]);
                else
                    for(int i=0; i<text.length; i++)
-                       gc.drawString(this.text[i], xs-widthText, ys+heightsText[i]);
+                       gc.drawString(this.text[i], (int)screen.getWidth()-xs-widthText, ys+heightsText[i]);
         }
     }
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -101,8 +101,8 @@ public class HelpChatCommand implements ChatCommand
           ChatCommandProcessor processor = ServerDirector.getDataManager().getChatCommandProcessor();
           message = "/cmd:Here are the commands you can use:<br><b>"
                        + processor.getCommandList( displayAll )+"</b><br>"
-                       + "Use the /info command to get more information on the other commands."
-                       + "<br>For example, enter '/info /who'.";
+                       + "Use the /manual command to get more information on other commands."
+                       + "<br>For example, enter '/manual who' to get information on the '/who' command.";
 
           response.setMessage(message);
           player.sendMessage(response);

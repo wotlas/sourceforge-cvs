@@ -26,12 +26,12 @@ import wotlas.common.chat.ChatRoom;
 import wotlas.utils.Debug;
 
 
-/** "/info" chat command. To print some info on a command.
+/** "/manual" chat command. To print some info on a command.
  *
  * @author Aldiss
  */
 
-public class InfoChatCommand implements ChatCommand
+public class ManualChatCommand implements ChatCommand
 {
  /*------------------------------------------------------------------------------------*/
 
@@ -42,7 +42,7 @@ public class InfoChatCommand implements ChatCommand
     * @return the chat command prefix that will help identify the command.
     */
       public String getChatCommandPrefix() {
-      	 return "/info";
+      	 return "/manual";
       }
 
  /*------------------------------------------------------------------------------------*/
@@ -73,11 +73,11 @@ public class InfoChatCommand implements ChatCommand
     * @return command full documentation.
     */
       public String getCommandDocumentation() {
-      	return "<font size='4'>Command 'info'</font>" +
-      	       "<br><b> Syntax :</b> /info [commandName] " +
+      	return "<font size='4'>Command 'manual'</font>" +
+      	       "<br><b> Syntax :</b> /manual [commandName] " +
       	       "<br><b> Voice  :</b> normal voice level " +
       	       "<br><b> Descr  :</b> prints information on the given command." +
-      	       "<br><b> Example:</b> /info /who will print info on the who command...";
+      	       "<br><b> Example:</b> '/manual who' will print info on the who command...";
       }
 
  /*------------------------------------------------------------------------------------*/
@@ -93,17 +93,17 @@ public class InfoChatCommand implements ChatCommand
     */
       public boolean exec( String message, PlayerImpl player, SendTextMessage response ) {
 
-          if( message.indexOf(' ')!=5 )
+          if( message.indexOf(' ')!=7 )
               return true; // no parameters
 
-          String commandName = message.substring(6);
+          String commandName = "/"+message.substring(8);
 
           ChatCommandProcessor processor = ServerDirector.getDataManager().getChatCommandProcessor();
 
           message = processor.getCommandDocumentation( commandName );
 
           if( message==null ) {
-              response.setMessage("/cmd:/info command error:<font color='red'> unknown command </font>");
+              response.setMessage("/cmd:/manual command error:<font color='red'> unknown command </font>");
               player.sendMessage(response);
               return true;
           }

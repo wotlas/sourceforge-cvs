@@ -287,7 +287,7 @@ public class PlayerImpl implements Player, NetConnectionListener
     *  @return player name
     */
       public String getPlayerName() {
-         return playerName;
+         return lieManager.getFakeName();
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -327,7 +327,7 @@ public class PlayerImpl implements Player, NetConnectionListener
     *  @param player name
     */
       public void setPlayerName( String playerName ) {
-           this.playerName = playerName;
+           lieManager.setPlayerName(playerName);           
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -580,7 +580,7 @@ public class PlayerImpl implements Player, NetConnectionListener
                  sendMessageToNearRooms( myRoom, pMsg, false );
              }
 
-             Debug.signal(Debug.NOTICE,null,"Connection opened for player "+playerName+" at "+Tools.getLexicalTime());
+             Debug.signal(Debug.NOTICE,null,"Connection opened for player "+lieManager.getPlayerName()+" at "+Tools.getLexicalTime());
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -597,7 +597,7 @@ public class PlayerImpl implements Player, NetConnectionListener
                  this.personality = null;
              }
 
-             Debug.signal(Debug.NOTICE, null, "Connection closed on player: "+playerName+" at "+Tools.getLexicalTime());
+             Debug.signal(Debug.NOTICE, null, "Connection closed on player: "+lieManager.getPlayerName()+" at "+Tools.getLexicalTime());
 
          // 1 - Leave any current chat...
             if( !currentChatPrimaryKey.equals( ChatRoom.DEFAULT_CHAT ) ) {

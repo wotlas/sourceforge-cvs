@@ -24,24 +24,25 @@ import java.io.IOException;
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.common.message.description.*;
 import wotlas.common.Player;
-import wotlas.server.PlayerImpl;
+import wotlas.common.universe.*;
 import wotlas.server.LieManager;
+import wotlas.server.PlayerImpl;
 
 /**
- * Associated behaviour to the MyPlayerDataPleaseMessage...
+ * Associated behaviour to the ChangeFakeNameMessage...
  *
- * @author Aldiss
+ * @author Petrus
  */
 
-public class MyPlayerDataPleaseMsgBehaviour extends MyPlayerDataPleaseMessage implements NetMessageBehaviour
+public class ChangeFakeNameMsgBehaviour extends ChangeFakeNameMessage implements NetMessageBehaviour
 {
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
    */
-     public MyPlayerDataPleaseMsgBehaviour() {
-          super();
-     }
+  public ChangeFakeNameMsgBehaviour() {
+    super();
+  }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -50,17 +51,13 @@ public class MyPlayerDataPleaseMsgBehaviour extends MyPlayerDataPleaseMessage im
    * @param sessionContext an object giving specific access to other objects needed to process
    *        this message.
    */
-     public void doBehaviour( Object sessionContext ) {
-
-        // The sessionContext is here a PlayerImpl.
-           PlayerImpl player = (PlayerImpl) sessionContext;
-
-        // We send the player's data
-           player.sendMessage( new YourPlayerDataMessage( (Player) player ) );
-           
-        
-           
-     }
+  public void doBehaviour( Object sessionContext ) {
+    // The sessionContext is here a PlayerImpl.
+    PlayerImpl player = (PlayerImpl) sessionContext;
+    LieManager lieManager = player.getLieManager();
+    
+    lieManager.setCurrentFakeName(index);    
+  }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

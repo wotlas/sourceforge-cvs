@@ -24,24 +24,25 @@ import java.io.IOException;
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.common.message.description.*;
 import wotlas.common.Player;
-import wotlas.server.PlayerImpl;
+import wotlas.common.universe.*;
 import wotlas.server.LieManager;
+import wotlas.server.PlayerImpl;
 
 /**
- * Associated behaviour to the MyPlayerDataPleaseMessage...
+ * Associated behaviour to the CreateFakeNameMessage...
  *
- * @author Aldiss
+ * @author Petrus
  */
 
-public class MyPlayerDataPleaseMsgBehaviour extends MyPlayerDataPleaseMessage implements NetMessageBehaviour
+public class CreateFakeNameMsgBehaviour extends CreateFakeNameMessage implements NetMessageBehaviour
 {
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
    */
-     public MyPlayerDataPleaseMsgBehaviour() {
-          super();
-     }
+  public CreateFakeNameMsgBehaviour() {
+    super();
+  }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -50,17 +51,16 @@ public class MyPlayerDataPleaseMsgBehaviour extends MyPlayerDataPleaseMessage im
    * @param sessionContext an object giving specific access to other objects needed to process
    *        this message.
    */
-     public void doBehaviour( Object sessionContext ) {
-
-        // The sessionContext is here a PlayerImpl.
-           PlayerImpl player = (PlayerImpl) sessionContext;
-
-        // We send the player's data
-           player.sendMessage( new YourPlayerDataMessage( (Player) player ) );
-           
-        
-           
-     }
+  public void doBehaviour( Object sessionContext ) {
+    // The sessionContext is here a PlayerImpl.
+    PlayerImpl player = (PlayerImpl) sessionContext;
+    LieManager lieManager = player.getLieManager();
+    
+    int currentFakeName = lieManager.createFakeName(fakeName);    
+    if (currentFakeName > 0) {
+      player.sendMessage(new SetFakeNameMessage(currentFakeName, fakeName));
+    }
+  }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

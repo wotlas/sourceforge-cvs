@@ -55,7 +55,7 @@ public class JPlayerPanel extends JPanel implements MouseListener
   // We add a Lie Panel
      playerTabbedPane.addTab("Lie", new ImageIcon("../base/gui/pin.gif"),
                                     new LiePanel(), "Lie on your name" );
-     playerTabbedPane.getComponentAt(2).setName("-lie");
+     playerTabbedPane.getComponentAt(2).setName("-lie-");
 
      add(playerTabbedPane);
   }

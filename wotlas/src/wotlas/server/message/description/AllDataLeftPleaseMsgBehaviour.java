@@ -55,6 +55,9 @@ public class AllDataLeftPleaseMsgBehaviour extends AllDataLeftPleaseMessage impl
         // The sessionContext is here a PlayerImpl.
            PlayerImpl player = (PlayerImpl) sessionContext;
 
+        // We send the player's fake names
+           player.sendMessage( new YourFakeNamesMessage( player.getLieManager().getFakeNames(), player.getLieManager().getCurrentFakeName() ) );
+           
         // We send the all the data left
 
         // 1 - PLAYER DATA

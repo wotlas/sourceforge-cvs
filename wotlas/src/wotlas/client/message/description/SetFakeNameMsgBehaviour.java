@@ -17,51 +17,64 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package wotlas.server.message.description;
+package wotlas.client.message.description;
+
+import wotlas.client.*;
+import wotlas.client.DataManager;
+import wotlas.client.screen.*;
+
+import wotlas.common.message.description.*;
+
+import wotlas.libs.net.NetMessageBehaviour;
+
+import wotlas.utils.Debug;
+
+import java.awt.*;
 
 import java.io.IOException;
 
-import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.message.description.*;
-import wotlas.common.Player;
-import wotlas.server.PlayerImpl;
-import wotlas.server.LieManager;
 
 /**
- * Associated behaviour to the MyPlayerDataPleaseMessage...
+ * Associated behaviour to the SetFakeNameMessage...
  *
- * @author Aldiss
+ * @author Petrus
  */
 
-public class MyPlayerDataPleaseMsgBehaviour extends MyPlayerDataPleaseMessage implements NetMessageBehaviour
+public class SetFakeNameMsgBehaviour extends SetFakeNameMessage implements NetMessageBehaviour
 {
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
    */
-     public MyPlayerDataPleaseMsgBehaviour() {
-          super();
-     }
+  public SetFakeNameMsgBehaviour() {
+    super();
+  }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ /*------------------------------------------------------------------------------------*/
 
   /** Associated code to this Message...
    *
    * @param sessionContext an object giving specific access to other objects needed to process
    *        this message.
    */
-     public void doBehaviour( Object sessionContext ) {
+  public void doBehaviour( Object sessionContext ) {
+    DataManager dataManager = (DataManager) sessionContext;
+    
+    // Update of the panel
+    Component c_lie = dataManager.getPlayerPanel().getTab("-lie-");
+   
+    if ( c_lie==null || !(c_lie instanceof LiePanel) ) {
+      Debug.signal( Debug.ERROR, this, "LiePanel not found !");
+      return;
+    }
 
-        // The sessionContext is here a PlayerImpl.
-           PlayerImpl player = (PlayerImpl) sessionContext;
+    LiePanel liePanel = (LiePanel) c_lie;
+    liePanel.setFakeName(index, fakeName);
+    
+  }
 
-        // We send the player's data
-           player.sendMessage( new YourPlayerDataMessage( (Player) player ) );
-           
-        
-           
-     }
+ /*------------------------------------------------------------------------------------*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
 

@@ -33,6 +33,10 @@ public class LieManager
   /** Static Link to Server Config File.
    */
   public final static int FAKENAMES_NUMBER = 5;
+  
+  /** Number of players to remember
+   */
+  private final static int MEMORY_LENGTH = 30;
 
   /** List of player's fake names
    */
@@ -40,33 +44,87 @@ public class LieManager
 
   /** Index of current fake name
    */
-  private int currentFakeName;
+  private int currentFakeName = 0;
   
  /*------------------------------------------------------------------------------------*/
 
+  /** To get fake names
+   */
   public String[] getFakeNames() {
     return fakeNames;
   }
   
+  /** To set fake names
+   * @param fakeNames array of fake names
+   */
   public void setFakeNames(String[] fakeNames) {
     this.fakeNames = fakeNames;
   }
   
+  /** To get current fake name
+   * @return the index of current fake name
+   */
+  public int getCurrentFakeName() {
+    return currentFakeName;
+  }
+  
+  /** To set the current fake name
+   * @param index index of current fake name
+   */
+  public void setCurrentFakeName(int index) {
+    this.currentFakeName = index;
+  }
+
+ /*------------------------------------------------------------------------------------*/
+  
+  /** Get a specific fake name
+   *
+   * @param index index of fake name
+   */
   public String getFakeName(int index) {
     return fakeNames[index];
   }
   
+  /** Get current fake name
+   */
+  public String getFakeName() {
+    return fakeNames[currentFakeName];
+  }
+  
+  public String getPlayerName() {
+    return fakeNames[0];
+  }
+  
   public boolean setFakeName(int index, String fakeName) {
-    if (fakeNames[index].length() == 0) {
-      System.out.println("index = " + index);
-      System.out.println("fakeName = " + fakeName);    
+    if ( (index<0) || (index>FAKENAMES_NUMBER) )
+      return false;
+      
+    if (fakeNames[index].length() == 0) {      
       fakeNames[index] = fakeName;
       return true;
     } else {
-      System.out.println("index = " + index);
-      System.out.println("fakeName already set");
       return false;
     }
+  }
+  
+  public boolean setPlayerName(String fakeName) {
+    return setFakeName(0, fakeName);
+  }
+
+  /** To create a new fake name
+   * @param fakeName new fake name
+   * @return index of new fake name
+   */
+  public int createFakeName(String fakeName) {    
+    for (int i=0; i<FAKENAMES_NUMBER;) {
+      if (fakeNames[i].length() == 0) {
+        fakeNames[i] = fakeName;        
+        return i;
+      } else {
+        i++;
+      }
+    }
+    return -1;
   }
   
  /*------------------------------------------------------------------------------------*/

@@ -594,22 +594,35 @@ public class ClientManager
       ListSelectionModel rowServerSM = serversTable.getSelectionModel();
       rowServerSM.addListSelectionListener(new ListSelectionListener()
       {
+        private JHTMLWindow htmlDescr;
+
         public void valueChanged(ListSelectionEvent e)
         {
+           ListSelectionModel lsm = (ListSelectionModel) e.getSource();
+           if (lsm.isSelectionEmpty())
+               return; //no rows were selected
+
+           int selectedRow = lsm.getMinSelectionIndex();
+
+          //selectedRow is selected
+            currentServerConfig = serverConfigList.ServerConfigAt(selectedRow);
+
+            if(htmlDescr==null)
+               htmlDescr = new JHTMLWindow( screenIntro, "Wotlas Server", "text:"+currentServerConfig.toHTML(), 350, 250, false );
+            else {
+               htmlDescr.setText( currentServerConfig.toHTML() );
+               if( !htmlDescr.isShowing() ) htmlDescr.show();
+            }
           //Ignore extra messages.
-          if (e.getValueIsAdjusting()) return;
-          ListSelectionModel lsm = (ListSelectionModel) e.getSource();
-          if (lsm.isSelectionEmpty()) {
-            //no rows are selected
-          } else {
-            int selectedRow = lsm.getMinSelectionIndex();
+            if (e.getValueIsAdjusting())
+              return;
+
             //selectedRow is selected
             currentServerConfig = serverConfigList.ServerConfigAt(selectedRow);
             //serversTable.setToolTipText(currentServerConfig.getDescription());
             currentProfileConfig.setOriginalServerID(currentServerConfig.getServerID());
             currentProfileConfig.setServerID(currentServerConfig.getServerID());
             b_ok.setEnabled(true);
-          }
         }
       });
       // show table

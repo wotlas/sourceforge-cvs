@@ -244,17 +244,17 @@ public class WorldGenerator {
            rooms[3].setShortName("tarval-entry");
            rooms[3].setInsertionPoint( new ScreenPoint(960,640) );
 
-             roomLink = rooms[3].addRoomLink( new ScreenRectangle( 800, 490, 250, 25) );
+             roomLink = rooms[3].addRoomLink( new ScreenRectangle( 800, 460, 250, 25) );
              roomLink.setRoom1ID(4);
              roomLink.setRoom2ID(3);  
 
-             roomLink = rooms[3].addRoomLink( new ScreenRectangle( 800, 785, 250, 25) );
+             roomLink = rooms[3].addRoomLink( new ScreenRectangle( 800, 815, 250, 25) );
              roomLink.setRoom1ID(3);
              roomLink.setRoom2ID(10);  
 
              rooms[3].addRoomLink( rooms[2].getRoomLink(0) );
 
-               mapExit = rooms[3].addMapExit( new ScreenRectangle(1020,515,30,270) );
+               mapExit = rooms[3].addMapExit( new ScreenRectangle(1020,485,30,330) );
                mapExit.setType( MapExit.BUILDING_EXIT );
                mapExit.setMapExitSide( MapExit.EAST );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
@@ -271,7 +271,7 @@ public class WorldGenerator {
 
              rooms[4].addRoomLink( rooms[3].getRoomLink(0) );
 
-               mapExit = rooms[4].addMapExit( new ScreenRectangle(1020,0,30,490) );
+               mapExit = rooms[4].addMapExit( new ScreenRectangle(1020,0,30,460) );
                mapExit.setType( MapExit.BUILDING_EXIT );
                mapExit.setMapExitSide( MapExit.NORTH );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
@@ -342,7 +342,7 @@ public class WorldGenerator {
 
              rooms[10].addRoomLink( rooms[3].getRoomLink(1) );
 
-               mapExit = rooms[10].addMapExit( new ScreenRectangle(1020,810,30,390) );
+               mapExit = rooms[10].addMapExit( new ScreenRectangle(1020,840,30,360) );
                mapExit.setType( MapExit.BUILDING_EXIT );
                mapExit.setMapExitSide( MapExit.SOUTH );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
@@ -374,7 +374,7 @@ public class WorldGenerator {
            rooms[13].setShortName("bsouth-store");
            rooms[13].setInsertionPoint( new ScreenPoint(600,850) );
 
-             roomLink = rooms[13].addRoomLink( new ScreenRectangle( 730, 980, 20, 40) );
+             roomLink = rooms[13].addRoomLink( new ScreenRectangle( 670, 850, 20, 40) );
              roomLink.setRoom1ID(13);
              roomLink.setRoom2ID(14);  
 

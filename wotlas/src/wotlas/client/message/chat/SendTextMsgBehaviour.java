@@ -41,8 +41,7 @@ import wotlas.utils.*;
  * @author Petrus
  */
 
-public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageBehaviour
-{
+public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageBehaviour {
 
  /*------------------------------------------------------------------------------------*/
 
@@ -60,6 +59,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
    *        this message.
    */
     public void doBehaviour( Object sessionContext ) {
+
        // The sessionContext is here a DataManager.
           DataManager dataManager = (DataManager) sessionContext;
           PlayerImpl player = dataManager.getMyPlayer();
@@ -122,20 +122,18 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
              return;
           }
           else if (message.startsWith("/me")) {
-            message = "<font color='blue'><i>" + senderFullName + " " + message.substring(3) + "</i></font>";
-          } else if (message.startsWith("/to:")) {           
+            message = "<font color='blue'><i>" + senderFullName + " " + message.substring(3) + " </i></font>";
+          }
+          else if (message.startsWith("/to:")) {
             message = message.substring(4);
             int index = message.indexOf(':');
-            
-            if(index<0 || message.endsWith(":")) {
-              message = "/to:" +message+" <font color='red'>ERROR: bad format</font>";
-              player.sendMessage(this);
-              return;
-            }
-            
-            String otherPlayerName = message.substring(0,index);
-            message = "<font color='blue'><i>" + senderFullName + " says to " + otherPlayerName + message.substring(index) + "</i></font>";
 
+            if( index>=0 && index+1<message.length() ) {
+               String otherPlayerName = message.substring(0,index);
+               message = "<font color='blue'><i>" + senderFullName + " says to " + otherPlayerName + message.substring(index) + "</i></font>";
+            }
+            else
+               message = "/to:" +message+" <font color='red'>ERROR: bad format</font>";
           }
           else if( sender!=null && sender.getWotCharacter() instanceof DarkOne ) {
              // display the message in the "dark one manner..."

@@ -23,7 +23,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-/** The first screen of wotlas client's interface
+/** A wizard to enter wotlas world
  *
  * @author Petrus
  */
@@ -153,7 +153,18 @@ public class JIntroWizard extends JFrame
     bgPanel = null;
     dispose();
   }
-
+  
+  /** Set the different colors
+   */
+  static public void setGUI() {
+    // Set the differents fonts
+    Font f = new Font("Monospaced", Font.PLAIN, 10);
+    UIManager.put("Button.font", f);
+    
+    f = new Font("Dialog", Font.BOLD, 15);
+    UIManager.put("Label.font", f);
+    UIManager.put("Label.foreground", Color.white);
+  }
  /*--------------------------------------------------------------------------*/ 
   
 }  

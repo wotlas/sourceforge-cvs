@@ -201,14 +201,18 @@ public class AesSedai extends Female {
 
   /** Return the character's aura.
    *  @return character's Aura Drawable.
-   */     
+   */
      public Drawable getAura(){
       	 if( ImageLibrary.getDefaultImageLibrary() == null )
       	     return null;
 
          if(aesSedaiAuraEffect!=null) {
+             if(aesSedaiAuraEffect.isLive()) {
+                return null; // aura still displayed on screen
+             }
+
              aesSedaiAuraEffect.setAlpha( 0.0f );
-             return (Drawable) aesSedaiAuraEffect; 
+             return (Drawable) aesSedaiAuraEffect;
          }
 
       // symbol selection

@@ -35,6 +35,10 @@ public class ProfileConfig
   /** client's password
    */
   private transient String password;
+  
+  /** client's name
+   */
+  private String playerName;
 
   /** serverID where the client last connected
    */
@@ -64,6 +68,7 @@ public class ProfileConfig
   public ProfileConfig() {
     login = new String("nobody");
     password = new String("toto");
+    playerName = new String("nobody");
     serverID = -1;
     serverName = new String("nope");
     serverPort = -1;
@@ -95,6 +100,18 @@ public class ProfileConfig
     this.password = password;
   }
 
+  /** To get the client's Name
+   */
+  public String getPlayerName() {
+    return playerName;
+  }
+  
+  /** To set client's Name
+   */
+  public void setPlayerName(String playerName) {
+    this.playerName = playerName;
+  }
+  
   /** To get the serverID where the client last connected
    */
   public int getServerID() {

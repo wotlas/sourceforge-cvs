@@ -423,9 +423,10 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** To set the ID of currentProfileConfig<br>
    * called by wotlas.client.message.account.AccountCreatedMsgBehaviour
    */
-  public void setCurrentProfileConfigID(int clientID, int serverID) {
+  public void setCurrentProfileConfigID(int clientID, int serverID, String clientName) {
     currentProfileConfig.setLocalClientID(clientID);
     currentProfileConfig.setOriginalServerID(serverID);
+    currentProfileConfig.setPlayerName(clientName);
     closeConnection();
     ClientManager.getDefaultClientManager().start(11);
   }

@@ -756,7 +756,7 @@ public class ClientManager
       // *** Right Panel ***/
 
       b_ok.addActionListener(new ActionListener() {
-        public void actionPerformed (ActionEvent e) {
+        public void actionPerformed (ActionEvent e) {       
             JGameConnectionDialog jgconnect = new JGameConnectionDialog( screenIntro,
               currentServerConfig.getServerName(), currentServerConfig.getGameServerPort(),
               currentProfileConfig.getLogin(), currentProfileConfig.getPassword(),

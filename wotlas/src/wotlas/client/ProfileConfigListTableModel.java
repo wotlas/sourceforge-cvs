@@ -51,7 +51,7 @@ public class ProfileConfigListTableModel extends AbstractTableModel
 
   /** Names of the table columns
    */
-  private final String[] columnNames = {"login", "server", "key"};
+  private final String[] columnNames = {"name", "server", "key"};
 
  /*------------------------------------------------------------------------------------*/
 
@@ -95,7 +95,7 @@ public class ProfileConfigListTableModel extends AbstractTableModel
   public Object getValueAt(int row, int col) {
     switch(col) {
       case 0:
-        return profiles[row].getLogin();
+        return profiles[row].getPlayerName();
 
       case 1:
         serverConfig = servers.getServerConfig(profiles[row].getServerID());

@@ -46,6 +46,8 @@ import wotlas.libs.net.NetPersonality;
 
 import wotlas.libs.pathfinding.AStarDouble;
 
+import wotlas.libs.sound.SoundLibrary;
+
 import wotlas.utils.Debug;
 import wotlas.utils.List;
 import wotlas.utils.ScreenPoint;
@@ -360,6 +362,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       Debug.exit();
     }
 
+    // 0 - Create Sound Library
+    SoundLibrary.createSoundLibrary( databasePath);
+    
     // 1 - Create Graphics Director
     gDirector = new GraphicsDirector( new LimitWindowPolicy() );
         
@@ -428,8 +433,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
     // Start main loop tick
     Debug.signal( Debug.NOTICE, null, "Beginning to tick Graphics Director" );
-    this.start();
-
+    this.start();    
+    
     // Retreive other players informations
     players = new HashMap();
     //personality.queueMessage(new AllDataLeftPleaseMessage());
@@ -455,8 +460,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     delay = 30;
     if ( os.equals("Windows 2000") ) {
       delay = 35;
-    }
-
+    }    
+    
     Object lock = new Object();
     while( true ) {
       now = System.currentTimeMillis();
@@ -863,7 +868,10 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
     
     // 7 - We add visual properties to the player (shadows...)
-    myPlayer.initVisualProperties(gDirector);            
+    myPlayer.initVisualProperties(gDirector);           
+    
+    // 8 - We play music
+    SoundLibrary.getSoundLibrary().playMusic( "tar-valon-01.mid" ); 
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -879,6 +887,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     System.out.println("TownMap");
     System.out.println("\tfullName = "  + townMap.getFullName());
     System.out.println("\tshortName = " + townMap.getShortName());
+    infosPanel.setLocation(townMap.getFullName());
     
     backgroundImageID = townMap.getTownImage();
     System.out.println("\tbackgroundImageID = " + backgroundImageID);

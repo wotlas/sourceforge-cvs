@@ -30,7 +30,7 @@ package wotlas.libs.net;
 
 public interface NetEngineVersion {
 
-  public final static float VERSION    = 1.2f;
+  public final static float VERSION    = 1.23f;
 
 }
 

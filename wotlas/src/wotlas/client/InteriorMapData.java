@@ -180,7 +180,7 @@ public class InteriorMapData implements MapData
     if (SHOW_DEBUG)
       System.out.println("\tbackgroundImageID = " + backgroundImageID);
     background = (Drawable) new MultiRegionImage( myPlayer.getDrawable(),              // our reference for image loading
-                                                  450,                                 // perception radius
+                                                  500,                                 // perception radius
                                                   imap.getImageRegionWidth(),          // grid deltax
                                                   imap.getImageRegionHeight(),         // grid deltay
                                                   imap.getImageWidth(),                // image's total width

@@ -305,7 +305,7 @@ public class AccountBuilder implements NetConnectionListener
      public void stateError() {
         state=ACCOUNT_EMPTY_STATE;
         personality.queueMessage( new AccountCreationFailedMessage( "bad state detected ! please retry." ) );
-        Debug.signal( Debug.ERROR, this, "Bad State Detected During Account Creation" );
+        Debug.signal( Debug.ERROR, this, "Bad State Detected During Account Creation: state "+state );
         personality.closeConnection();
      }
 

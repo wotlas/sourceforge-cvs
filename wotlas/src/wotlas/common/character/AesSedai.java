@@ -136,7 +136,7 @@ public class AesSedai extends Female {
           }
 
       // 2 - Hair Color
-          switch( aesSedaiStatus ) {
+          switch( hairColor ) {
               case BALD :
                       break;
               case GOLDEN_HAIR :

@@ -32,6 +32,7 @@ import wotlas.common.universe.*;
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.graphics2D.policy.*;
+import wotlas.libs.graphics2D.menu.*;
 import wotlas.libs.net.*;
 import wotlas.libs.net.utils.NetQueue;
 import wotlas.libs.persistence.*;
@@ -59,7 +60,8 @@ import java.util.Properties;
  * @see wotlas.common.NetConnectionListener
  */
 
-public class DataManager extends Thread implements NetConnectionListener, Tickable {
+public class DataManager extends Thread implements NetConnectionListener, Tickable,
+                                                   Menu2DListener {
 
  /*------------------------------------------------------------------------------------*/
 
@@ -132,6 +134,10 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** List of all the players displayed on screen.
    */
     private Hashtable players;
+
+  /** Our menu manager.
+   */
+    private Menu2DManager menuManager;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -423,6 +429,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
   public void showInterface() {
 
+    // 0 - State analysis, progress monitor init...
        Debug.signal( Debug.NOTICE, null, "DataManager call to ShowInterface");
 
        if (imageLib !=null) {
@@ -431,6 +438,11 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
           resumeInterface();
           return;
        }
+
+       ProgressMonitor pMonitor = new ProgressMonitor( ClientDirector.getClientManager(),
+                                           "Loading Data...", "", 0, 100 );
+       pMonitor.setMillisToPopup(500);
+       pMonitor.setMillisToDecideToPopup(100);
 
     // 1 - Create Image Library
        String imageDBHome = ClientDirector.getResourceManager().getBase( IMAGE_LIBRARY );
@@ -443,7 +455,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
           Debug.signal(Debug.FAILURE, this, ex );
           Debug.exit();
        }
-    
+
+       pMonitor.setProgress(10);
+
     // 2 - Set Client Configuration Choices
        ClientConfiguration clientConfiguration = ClientDirector.getClientConfiguration();
     
@@ -456,6 +470,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
        if(clientConfiguration.getSoundVolume()>0)
          SoundLibrary.getSoundLibrary().setSoundVolume((short) clientConfiguration.getSoundVolume());
+
+       pMonitor.setProgress(15);
     
     // 3 - Create Graphics Director
        WindowPolicy wPolicy = null;
@@ -473,11 +489,15 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        Debug.signal(Debug.NOTICE, null, "Graphics Engine is using hardware mode : "+
                                          clientConfiguration.getUseHardwareAcceleration() );
 
+       pMonitor.setProgress(20);
+
     // 4 - Creation of the GUI components
        clientScreen = new JClientScreen(gDirector, this );
 
        if(SHOW_DEBUG)
           System.out.println("JClientScreen created");
+
+       pMonitor.setProgress(30);
 
     // 5 - We retrieve our player's own data
        myPlayer = null;
@@ -502,9 +522,12 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        myPlayer.tick();                // we tick the player to validate data recreation
        addPlayer(myPlayer);
 
+       createWotlasMenu(); // we init the in-game menus
+
        if (SHOW_DEBUG)
           System.out.println("POSITION set to x:"+myPlayer.getX()+" y:"+myPlayer.getY()+" location is "+myPlayer.getLocation());
 
+       pMonitor.setProgress(80);
 
     // 6 - Final GUI inits
        personality.setPingListener( (NetPingListener) clientScreen.getPingPanel() );
@@ -514,6 +537,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        if ( (clientConfiguration.getClientWidth()>0) && (clientConfiguration.getClientHeight()>0) )
           clientScreen.setSize(clientConfiguration.getClientWidth(),clientConfiguration.getClientHeight());
 
+       pMonitor.setProgress(85);
 
     // 7 - Init the map display...
        changeMapData();
@@ -521,11 +545,15 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        if(SHOW_DEBUG)
          System.out.println("Changed map data !");
 
+       pMonitor.setProgress(95);
+
     // 8 - Start the tick thread.
        start();
        Debug.signal( Debug.NOTICE, null, "Started the tick thread..." );
 
        clientScreen.show();
+       pMonitor.setProgress(100);
+       pMonitor.close();
 
        if (SHOW_DEBUG)
            System.out.println("Frame displayed on screen...");
@@ -584,6 +612,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
        myPlayer.setIsMaster( true );   // this player is controlled by the user.
        myPlayer.tick();
        addPlayer(myPlayer);
+
+       createWotlasMenu(); // we init the in-game menus
 
        if(SHOW_DEBUG)
           System.out.println("POSITION set to x:"+myPlayer.getX()+" y:"+myPlayer.getY()+" location is "+myPlayer.getLocation());
@@ -736,6 +766,14 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       if(updatingMapData)
          return; // updating Map Location
 
+   // Menu clicked ?
+      if( menuManager.isVisible() )
+          if( !menuManager.mouseClicked( e ) )
+               menuManager.hide();
+          else
+               return;
+
+   // what was the object clicked ?
       Rectangle screen = gDirector.getScreenRectangle();
       Object object = gDirector.findOwner( e.getX(), e.getY() );
 
@@ -846,6 +884,17 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    public void onRightClicJMapPanel(MouseEvent e) {
       if (SHOW_DEBUG)
         System.out.println("DataManager::onRightClicJMapPanel");
+
+      if( menuManager.isVisible() )
+          menuManager.hide();
+      else {
+      	  if(selectedPlayer==null)
+             changePlayerNameInRootMenu("none selected");
+          else
+             changePlayerNameInRootMenu( selectedPlayer.getFullPlayerName() );
+
+          menuManager.show( new Point( e.getX(), e.getY() ) );
+      }
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -856,7 +905,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    * @param dy delta y since mouse pressed
    * @param finalMov movement type as describe in JMapPanel, INIT_MOUSE_MOVEMENT, etc...
    */
-   public void onLeftButtonMoved( MouseEvent e, int dx, int dy, byte movementType ) {
+   public void onLeftButtonDragged( MouseEvent e, int dx, int dy, byte movementType ) {
 
      // if the player is moving we return
        if(myPlayer.getMovementComposer().isMoving())
@@ -885,6 +934,20 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
           ghostOrientation = orientation;
        }
    }
+
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Called when the mouse cursor is moved.
+   * @param x mouse's x
+   * @param y mouse's y
+   */
+    public void onLeftButtonMoved( int x, int y ) {
+        if( !menuManager.isVisible() )
+            return;
+
+        menuManager.mouseMoved( x, y );
+    }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -1018,4 +1081,83 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
  /*------------------------------------------------------------------------------------*/
+
+  /** Creates the wotlas menu
+   */
+    private void createWotlasMenu() {
+    	if(menuManager!=null)
+    	   menuManager.hide();
+
+     // 1 - Creation of the Menu Manager and its root menu
+        menuManager = new Menu2DManager();
+        menuManager.init( gDirector );
+        menuManager.addMenu2DListener(this);
+
+        String rootItems[] = { "  Player Selected  ",
+                               "none selected",
+                               "-",
+                               "Use Weave",
+                               "Use Object",
+                               "Use Knowledge",
+                               "-",
+                               "Teach Knowledge",
+                               "Give Object",
+                               "-",
+                               "Description" };
+
+        SimpleMenu2D rootMenu = new SimpleMenu2D( "root", rootItems );
+        menuManager.setRootMenu(rootMenu);
+        rootMenu.setEnabled( "Use Knowledge", false );
+        rootMenu.setEnabled( "Teach Knowledge", false );
+        rootMenu.setEnabled( "Description", false );
+
+     // 2 - Weaves
+        String weaveItems[] = { "channel" };
+
+        SimpleMenu2D useWeaveMenu = new SimpleMenu2D( "use-weave", weaveItems );
+        rootMenu.addLink( "Use Weave", useWeaveMenu );
+
+     // 3 - Objects
+        String objectItems[] = { "Weapons ",
+                                 "Books",
+                                 "Armors" };
+
+        SimpleMenu2D useObjectMenu = new SimpleMenu2D( "use-object", objectItems );
+        rootMenu.addLink( "Use Object", useObjectMenu );
+
+        String bookItems[] = { "No books are available !" };
+
+        SimpleMenu2D useBooksMenu = new SimpleMenu2D( "use-books", bookItems );
+        useObjectMenu.addLink( "Books", useBooksMenu );
+
+        String weaponItems[] = { "Axe", "Sword", "Bow", "Dagger", "Rainbow", "Battle Axe",
+                               "-", "Cursed dagger", "Gun", "MachineGun", "Vibro Axe",
+                               "-", "CannonBall", "Jacusi" };
+
+        SimpleMenu2D useWeaponMenu = new SimpleMenu2D( "use-weapon", weaponItems );
+        useObjectMenu.addLink( "Weapons ", useWeaponMenu );
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To update the item name which is displayed in the root menu.
+   */
+    private void changePlayerNameInRootMenu( String newName ) {
+    	SimpleMenu2D rootMenu = (SimpleMenu2D) menuManager.getRootMenu();
+
+        rootMenu.changeItemName( rootMenu.getItemName(1), newName );
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** Method called when an item has been clicked on an item who is not a menu link.
+    *  @param e menu event generated.
+    */
+      public void menuItemClicked( Menu2DEvent e ) {
+//          if(SHOW_DEBUG)
+             System.out.println("Menu Item Clicked : "+e.toString());
+      }
+
+ /*------------------------------------------------------------------------------------*/
+
 }

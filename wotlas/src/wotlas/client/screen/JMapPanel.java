@@ -128,7 +128,7 @@ public class JMapPanel extends JPanel implements MouseListener, MouseMotionListe
            isLeftMouseButtonPressed = true;
            x=e.getX();
            y=e.getY();
-           dataManager.onLeftButtonMoved(e,0,0,INIT_MOUSE_MOVEMENT);
+           dataManager.onLeftButtonDragged(e,0,0,INIT_MOUSE_MOVEMENT);
        }
     }
 
@@ -150,7 +150,7 @@ public class JMapPanel extends JPanel implements MouseListener, MouseMotionListe
        }
        else {
           isLeftMouseButtonPressed = false;
-          dataManager.onLeftButtonMoved(e,e.getX()-x,e.getY()-y,END_MOUSE_MOVEMENT);
+          dataManager.onLeftButtonDragged(e,e.getX()-x,e.getY()-y,END_MOUSE_MOVEMENT);
 
           if (DataManager.SHOW_DEBUG)
              System.out.println("\tleft clic");
@@ -168,12 +168,13 @@ public class JMapPanel extends JPanel implements MouseListener, MouseMotionListe
         if(!isLeftMouseButtonPressed)
            return;
 
-        dataManager.onLeftButtonMoved( e, e.getX()-x, e.getY()-y, MOUSE_MOVEMENT );
+        dataManager.onLeftButtonDragged( e, e.getX()-x, e.getY()-y, MOUSE_MOVEMENT );
      }
 
    /** Called when the mouse is moved.
     */
      public void mouseMoved(MouseEvent e) {
+        dataManager.onLeftButtonMoved( e.getX(), e.getY() );
      }
 
  /*------------------------------------------------------------------------------------*/

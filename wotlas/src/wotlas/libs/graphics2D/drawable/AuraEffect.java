@@ -143,6 +143,20 @@ public class AuraEffect extends Drawable {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** To change the aura image.
+    * @param image new image identifier
+    */
+     public void setImage( ImageIdentifier image ) {
+          this.image = image;
+          
+          if(imageLib!=null) {
+             r.width = getImageLibrary().getWidth( image );
+             r.height = getImageLibrary().getHeight( image );
+          }
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
    /** To limit the rotation of this aura (in radians). If -1 there is no
     *  amplitude limit.
     * @param amplitudeLimit amplitude limit

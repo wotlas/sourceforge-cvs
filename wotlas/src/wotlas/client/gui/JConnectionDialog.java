@@ -181,14 +181,14 @@ public abstract class JConnectionDialog extends JDialog implements Runnable
                   }
 
                 // If the account was not found we try another server (happens only for the GameServer)
-                  if( errorCode==ErrorCodeList.ERR_UNKNOWN_ACCOUNT || (!retry && searchingOnServerID!=0)) {
+                  if( errorCode==ErrorCodeList.ERR_UNKNOWN_ACCOUNT || (!retry && searchingOnServerID>0)) {
                         l_info.setText( "Account not found on this server. Trying next server..." );
                         ServerConfigList configList = ClientManager.getDefaultClientManager().getServerConfigList();
 
                         do{
                               searchingOnServerID = configList.getNextServerID(searchingOnServerID);
                         }
-                        while(searchingOnServerID!=serverID);
+                        while(searchingOnServerID==serverID);
 
                         if(searchingOnServerID>0) {
                            // we update our server address & port

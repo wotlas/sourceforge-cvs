@@ -18,7 +18,7 @@
 
         <!-- Possible value are here 'classic' if you want to use Javac
              or 'jikes' if you want to use jikes -->
-        <property name="build.compiler" value="classic"/>
+        <property name="build.compiler" value="jikes"/>
 
 
         <property name="debug" value="off"/>
@@ -109,6 +109,12 @@
     <!-- COMPILE CLIENT -->
 
     <target name="client" depends="prepare,utils,libs,common,client-only">
+        <mkdir dir="${build.dest}/wotlas/libs/graphics2D/menu/images/"/>
+
+        <copy todir="${build.dest}/wotlas/libs/graphics2D/menu/images/" >
+            <fileset dir="${build.src}/wotlas/libs/graphics2D/menu/images" />
+        </copy>
+
         <echo message="Creating the ${wotlas-client-jar} JAR file..."/>
         <jar jarfile="${wotlas-client-jar}"
              basedir="${build.dest}"
@@ -200,6 +206,16 @@
 
     </target>
 
+    <!-- COMPILE MICROMODPLAYER -->
+
+    <target name="modplayer" depends="prepare">
+        <javac srcdir="${build.src}"
+            destdir="${build.dest}"
+            includes="org/mumart/**"
+            debug="${debug}"
+            deprecation="${deprecation}"
+            optimize="${optimize}"/>
+    </target>
 
     <!-- =================================================================== -->
     <!-- Creates the API documentation                                       -->

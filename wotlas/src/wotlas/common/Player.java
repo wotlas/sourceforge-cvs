@@ -22,6 +22,8 @@ package wotlas.common;
 import wotlas.common.character.*;
 import wotlas.common.universe.*;
 
+import wotlas.libs.net.NetMessage;
+
 import java.io.*;
 
 /** Interface of a Wotlas Player.
@@ -169,4 +171,15 @@ public interface Player
       public void setMovementComposer( MovementComposer movementComposer );
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To send a message to this player on the client or server side. If called on
+   *  the client side it sends the message to the server. If called on the server
+   *  side it sends the message to the client.
+   *
+   * @param message message to send to the player.
+   */
+     public void sendMessage( NetMessage message );
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }

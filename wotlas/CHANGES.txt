@@ -1,11 +1,11 @@
 CHANGES BETWEEN V1.2 AND V1.1.2
 -------------------------------
 
- - added new maps : "Shayol Ghul" (2 maps), "White Tower" (3 maps), and "South Tv Ruins" is no longer hidden
+ - added new maps : "Shayol Ghul" (2 maps), "White Tower" (3 maps), and "South Tv Ruins" is now "Braem Wood".
  - added multi-server support. A player account can now travel from one server to another.
    The game universe can now be shared between servers. Each server possesses a set of buildings.
  - added new characters to the game : Younglings, Warders, Tower Guard, Shaitan, Keeper of chronicles,
-   Children of the Light, Wolf Brother.
+   Children of the Light, Wolf Brother, Asha'man, Aiel Warrior.
  - added ServerConfigList buffer flush every six hour (to force update of the server table)
    The server's IP/DNS name is now stored in a separate file server-X.cfg.adr that has a short buffer life
    (twenty minutes) also our system is now on a "fail-first" mode. We don't check for a new server address
@@ -19,7 +19,7 @@ CHANGES BETWEEN V1.2 AND V1.1.2
  - added "sound" chat commands : /fanfare to play the fanfare, /bell to ring a bell,
    /knock to knock on a door... you have to wait 10 seconds between two sounds (error msg otherwise)
  - about 8 new musics for all the levels...
- - local password storage. Your passwords are now saved on disk. This option can be unset.
+ - local password storage. Your passwords are now saved on disk. This option can be unset (configuration panel).
  - corrected bugs in ServerConfigList : the previous code was sometimes attempting to reach a wrong URI.
  - behaviour part of some messages are now in the "invokeLater" mode to avoid events error.
    we made extensive use of the SwingUtilities.invokeLater() utility.
@@ -41,6 +41,7 @@ CHANGES BETWEEN V1.2 AND V1.1.2
  - added chat command to ring a server administrator (private chat command).
  - added pause/resume feature to the tick thread (client side). It corrected bugs that could happen during
    a player re-connection or player switching.
+ - added 2D graphic effect to see who is speaking.
 
 
 CHANGES BETWEEN V1.1.2 AND V1.1.1

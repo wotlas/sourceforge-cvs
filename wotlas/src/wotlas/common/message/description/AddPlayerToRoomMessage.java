@@ -23,62 +23,37 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import java.util.*;
-
 import wotlas.libs.net.NetMessage;
-import wotlas.common.Player;
 import wotlas.common.message.MessageRegistry;
-import wotlas.common.universe.WotlasLocation;
+import wotlas.common.Player;
 
 
 /** 
- * The messages the GameServer sends to give us the players data
- * of a room (Message Sent by Server).
+ * The message the GameServer sends to tell us to add a player... (Message Sent by Server).
  *
  * @author Aldiss
  */
 
-public class RoomPlayerDataMessage extends PlayerDataMessage
+public class AddPlayerToRoomMessage extends PlayerDataMessage
 {
- /*------------------------------------------------------------------------------------*/
-
-  /** Player reference.
-   */
-     private Player myPlayer;
-
-  /** Players.
-   */
-     protected Hashtable players;
-
-  /** Wotlas Location
-   */
-     protected WotlasLocation location;
-
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. Just initializes the message category and type.
    */
-     public RoomPlayerDataMessage() {
+     public AddPlayerToRoomMessage() {
           super( MessageRegistry.DESCRIPTION_CATEGORY,
-                 DescriptionMessageCategory.ROOM_PLAYER_DATA_MSG );
+                 DescriptionMessageCategory.ADD_PLAYER_TO_ROOM_MSG );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor with the Players object and our Player ( myPlayer ). The 'myPlayer'
-   *  parameter is needed as we don't want to send our Player's data with the other
-   *  players.
+  /** Constructor with the Player object.
    *
-   * @param location WotlasLocation from which the player's list comes from.
-   * @param myPlayer our player.
-   * @param players our players.
+   * @param player Player object to send.
    */
-     public RoomPlayerDataMessage( WotlasLocation location, Player myPlayer,
-                                   Hashtable players ) {
+     public AddPlayerToRoomMessage( Player player ) {
          this();
-         this.myPlayer = myPlayer;
-         this.location = location;
-         this.players = players;
+         this.player = player;
          this.publicInfoOnly = true;
      }
 
@@ -91,27 +66,7 @@ public class RoomPlayerDataMessage extends PlayerDataMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void encode( DataOutputStream ostream ) throws IOException {
-
-      // Wotlas Location
-         ostream.writeInt( location.getWorldMapID() );
-         ostream.writeInt( location.getTownMapID() );
-         ostream.writeInt( location.getBuildingID() );
-         ostream.writeInt( location.getInteriorMapID() );
-         ostream.writeInt( location.getRoomID() );
-
-      // Players
-         synchronized( players ) {
-            ostream.writeInt( players.size() );
-            
-            Iterator it = players.values().iterator();
-            
-            while( it.hasNext() ) {
-            	player = (Player) it.next();
-
-                if( myPlayer!=player )
-                    super.encode( ostream );
-            }
-         }
+     	super.encode( ostream );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -123,24 +78,7 @@ public class RoomPlayerDataMessage extends PlayerDataMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void decode( DataInputStream istream ) throws IOException {
-
-         // Wotlas Location
-            location = new WotlasLocation();
-
-            location.setWorldMapID( istream.readInt() );
-            location.setTownMapID( istream.readInt() );
-            location.setBuildingID( istream.readInt() );
-            location.setInteriorMapID( istream.readInt() );
-            location.setRoomID( istream.readInt() );
-
-         // Players
-            int nbPlayers = istream.readInt();
-            players = new Hashtable(nbPlayers*2);
-
-            for( int i=0; i<nbPlayers; i++ ) {
-                 super.decode( istream );
-                 players.put( player.getPrimaryKey(), player );
-            }
+     	super.decode( istream );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

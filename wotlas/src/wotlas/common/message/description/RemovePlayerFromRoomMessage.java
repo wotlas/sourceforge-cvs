@@ -16,70 +16,52 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.message.description;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import java.util.*;
-
 import wotlas.libs.net.NetMessage;
-import wotlas.common.Player;
 import wotlas.common.message.MessageRegistry;
-import wotlas.common.universe.WotlasLocation;
-
+import wotlas.common.universe.*;
 
 /** 
- * The messages the GameServer sends to give us the players data
- * of a room (Message Sent by Server).
+ * To ask the client to remove player data (Message Sent by Server).
  *
  * @author Aldiss
  */
 
-public class RoomPlayerDataMessage extends PlayerDataMessage
+public class RemovePlayerFromRoomMessage extends NetMessage
 {
  /*------------------------------------------------------------------------------------*/
 
-  /** Player reference.
+  /** Primary Key
    */
-     private Player myPlayer;
-
-  /** Players.
+    protected String primaryKey;
+  
+  /** WotlasLocation
    */
-     protected Hashtable players;
-
-  /** Wotlas Location
-   */
-     protected WotlasLocation location;
+    protected WotlasLocation location;
 
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. Just initializes the message category and type.
    */
-     public RoomPlayerDataMessage() {
+     public RemovePlayerFromRoomMessage() {
           super( MessageRegistry.DESCRIPTION_CATEGORY,
-                 DescriptionMessageCategory.ROOM_PLAYER_DATA_MSG );
+                 DescriptionMessageCategory.REMOVE_PLAYER_FROM_ROOM_MSG );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor with the Players object and our Player ( myPlayer ). The 'myPlayer'
-   *  parameter is needed as we don't want to send our Player's data with the other
-   *  players.
-   *
-   * @param location WotlasLocation from which the player's list comes from.
-   * @param myPlayer our player.
-   * @param players our players.
+  /** Constructor with Player's primaryKey.
    */
-     public RoomPlayerDataMessage( WotlasLocation location, Player myPlayer,
-                                   Hashtable players ) {
-         this();
-         this.myPlayer = myPlayer;
-         this.location = location;
-         this.players = players;
-         this.publicInfoOnly = true;
+     public RemovePlayerFromRoomMessage(String primaryKey, WotlasLocation location) {
+          this();
+          this.primaryKey = primaryKey;
+          this.location = new WotlasLocation(location);
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -92,26 +74,13 @@ public class RoomPlayerDataMessage extends PlayerDataMessage
    */
      public void encode( DataOutputStream ostream ) throws IOException {
 
-      // Wotlas Location
+         writeString( primaryKey, ostream );
+
          ostream.writeInt( location.getWorldMapID() );
          ostream.writeInt( location.getTownMapID() );
          ostream.writeInt( location.getBuildingID() );
          ostream.writeInt( location.getInteriorMapID() );
          ostream.writeInt( location.getRoomID() );
-
-      // Players
-         synchronized( players ) {
-            ostream.writeInt( players.size() );
-            
-            Iterator it = players.values().iterator();
-            
-            while( it.hasNext() ) {
-            	player = (Player) it.next();
-
-                if( myPlayer!=player )
-                    super.encode( ostream );
-            }
-         }
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -124,23 +93,15 @@ public class RoomPlayerDataMessage extends PlayerDataMessage
    */
      public void decode( DataInputStream istream ) throws IOException {
 
-         // Wotlas Location
-            location = new WotlasLocation();
+         primaryKey = readString( istream );
 
-            location.setWorldMapID( istream.readInt() );
-            location.setTownMapID( istream.readInt() );
-            location.setBuildingID( istream.readInt() );
-            location.setInteriorMapID( istream.readInt() );
-            location.setRoomID( istream.readInt() );
+         location = new WotlasLocation();
 
-         // Players
-            int nbPlayers = istream.readInt();
-            players = new Hashtable(nbPlayers*2);
-
-            for( int i=0; i<nbPlayers; i++ ) {
-                 super.decode( istream );
-                 players.put( player.getPrimaryKey(), player );
-            }
+         location.setWorldMapID( istream.readInt() );
+         location.setTownMapID( istream.readInt() );
+         location.setBuildingID( istream.readInt() );
+         location.setInteriorMapID( istream.readInt() );
+         location.setRoomID( istream.readInt() );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -32,6 +32,12 @@ public interface MovementMessageCategory extends NetMessageCategory {
 
        public final static byte MOVEMENT_UPDATE_MSG         = 0;
        public final static byte PATH_MOVEMENT_UPDATE_MSG    = 1;
-
+       public final static byte LOCATION_CHANGE_MSG         = 2;
+       public final static byte ENTERING_ROOM_MSG           = 3;
+       public final static byte CAN_LEAVE_INTMAP_MSG        = 4;
+       public final static byte CAN_LEAVE_TOWNMAP_MSG       = 5;
+       public final static byte CAN_LEAVE_WORLDMAP_MSG      = 6;
+       public final static byte YOU_CAN_LEAVE_MAP_MSG       = 7;
+       public final static byte RESET_POSITION_MSG          = 8;
 }
 

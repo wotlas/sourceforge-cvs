@@ -76,10 +76,10 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
               HashMap onlinePlayers = DataManager.getDefaultDataManager().getAccountManager().getOnlinePlayers();
               Iterator it = onlinePlayers.values().iterator();
               PlayerImpl onlinePlayer;
-              message += onlinePlayers.size() + " online players:";
+              message += "There are " + onlinePlayers.size() + " online players:";
               while ( it.hasNext() ) {
                 onlinePlayer = (PlayerImpl) it.next();
-                message += "<br>" + onlinePlayer.getPlayerName() + " <i> ( " + onlinePlayer.getPrimaryKey() + " )</i>";
+                message += "<br> &nbsp;&nbsp;&nbsp; " + onlinePlayer.getPlayerName() + " &nbsp; <i> ( " + onlinePlayer.getPrimaryKey() + " )</i>";
               }     
               player.sendMessage(this);
               return;                   
@@ -155,6 +155,16 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
               	  message += "#error: bad location! "+flocation;
               }
 
+              player.sendMessage(this);
+              return;
+          }
+          else if(message.startsWith("/print:")) {
+
+              message = message.substring(7);
+              message = ""+player.getFullPlayerName()+" says: "+message;
+              Debug.signal(Debug.NOTICE,null,message);
+
+              message = "<font color='red'>"+message+"</font>";
               player.sendMessage(this);
               return;
           }

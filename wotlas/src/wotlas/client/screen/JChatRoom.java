@@ -19,8 +19,12 @@
 
 package wotlas.client.screen;
 
-import wotlas.common.chat.ChatRoom;
 import wotlas.client.*;
+
+import wotlas.common.chat.ChatRoom;
+
+import wotlas.utils.MyHTMLEditorKit;
+import wotlas.utils.MyImageView;
 import wotlas.utils.Tools;
 
 import javax.swing.*;
@@ -100,9 +104,44 @@ public class JChatRoom extends JPanel
 
 //    messagesPane = new JTextPane(doc_chat); ALDISS
     messagesPane = new JEditorPane();
+    
+    /*
     messagesPane.setContentType("text/html");
     messagesPane.setEditable(false);
-
+    */
+    
+    MyHTMLEditorKit kit = new MyHTMLEditorKit();
+    messagesPane.setEditorKit(kit);
+    
+    /*Document doc = messagesPane.getDocument();
+    
+    strBuffer = "<font color='green'><i>new chat created</i> <img src='file:../base/gui/chat/cry.gif'></font>";
+    StringReader reader = new StringReader(strBuffer);
+    try {
+      kit.read(reader, doc, 0);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    System.out.println("doc.getLength() = " + doc.getLength());
+    try {
+      System.out.println("doc = " + doc.getText(0, doc.getLength()));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    
+    reader = new StringReader("<br>toto <i>est</i> beau!!<br>Eh <b>oui</b>");
+    try {
+      kit.read(reader, doc, doc.getLength());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    System.out.println("doc.getLength() = " + doc.getLength());
+    try {
+      System.out.println("doc = " + doc.getText(0, doc.getLength()));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }*/
+    
     JScrollPane displayScroller = new JScrollPane(messagesPane);
     
     attribut = new SimpleAttributeSet();
@@ -167,7 +206,7 @@ public class JChatRoom extends JPanel
     Runnable runnable = new Runnable() {
       public void run() {
         if (!strNewName.equals(DataManager.getDefaultDataManager().getMyPlayer().getFullPlayerName()))
-          appendText("<font color='green'>" + strNewName + " entered the chat...</font>");
+          ;//appendText("<font color='green'>" + strNewName + " entered the chat...</font>");
         playersListModel.addElement(strNewName);
         revalidate();
         repaint();

@@ -19,6 +19,7 @@
 
 package wotlas.common.character;
 
+import java.io.*;
 
 /** A Female Wotlas Character.
  *
@@ -29,5 +30,35 @@ package wotlas.common.character;
 public abstract class Female extends Human {
 
 // TO ADD: one power use
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+ /** To put the WotCharacter's data on the network stream. You don't need
+   * to invoke this method yourself, it's done automatically.
+   *
+   * @param ostream data stream where to put your data (see java.io.DataOutputStream)
+   * @param publicInfoOnly if false we write the player's full description, if true
+   *                     we only write public info
+   * @exception IOException if the stream has been closed or is corrupted.
+   */
+     public void encode( DataOutputStream ostream, boolean publicInfoOnly ) throws IOException {
+     	super.encode( ostream, publicInfoOnly );
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To retrieve your WotCharacter's data from the stream. You don't need
+   * to invoke this method yourself, it's done automatically.
+   *
+   * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
+   * @param publicInfoOnly if false it means the available data is the player's full description,
+   *                     if true it means we only have public info here.
+   * @exception IOException if the stream has been closed or is corrupted.
+   */
+     public void decode( DataInputStream istream, boolean publicInfoOnly ) throws IOException {
+     	super.decode( istream, publicInfoOnly );
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

@@ -34,11 +34,19 @@ public interface Player
 {
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To get the player location
+   /** To get the player location.
     *
     *  @return player WotlasLocation
     */
       public WotlasLocation getLocation();
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the player location.
+    *
+    *  @param wotlasLocation
+    */
+      public void setLocation( WotlasLocation wotlasLocation );
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -58,6 +66,22 @@ public interface Player
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To set the player's X position.
+   *
+   *  @param x
+   */
+      public void setX( int x );
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To set the player's Y position.
+   *
+   *  @return y
+   */
+      public void setY( int y );
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
    /** To get the player name ( short name )
     *
     *  @return player name
@@ -66,11 +90,27 @@ public interface Player
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** To set the player name ( short name )
+    *
+    *  @param playerName
+    */
+      public void setPlayerName( String playerName );
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
    /** To get the player's full name.
     *
     *  @return player full name ( should contain the player name )
     */
       public String getFullPlayerName();
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the player's full name ( short name )
+    *
+    *  @param fullPlayerName
+    */
+      public void setFullPlayerName( String fullPlayerName );
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -87,6 +127,14 @@ public interface Player
     *  @return player character
     */
       public WotCharacter getWotCharacter();
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the player's character.
+    *
+    *  @return WotCharacter player character
+    */
+      public void setWotCharacter( WotCharacter wotCharacter );
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

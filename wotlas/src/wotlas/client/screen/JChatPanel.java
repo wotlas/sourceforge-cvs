@@ -35,6 +35,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+import java.net.*;
+
 import java.util.Hashtable;
 
 /** JPanel to show the chat engine
@@ -65,6 +67,10 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
   /** Button to get help on chat commands
    */
    private JButton b_helpChat;
+
+  /** Button to insert an image in the chat.
+   */
+   private JButton b_imageChat;
 
   /** TextField where player writes messages
    */
@@ -107,13 +113,19 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     b_leaveChatRoom.setToolTipText("Leave the current chat room");
     chatToolbar.add(b_leaveChatRoom);
 
-    //chatToolbar.add( new JToolBar.Separator(new Dimension(25,20)) );
+    chatToolbar.add( new JToolBar.Separator(new Dimension(30,14)) );
 
     b_helpChat = new JButton(new ImageIcon("../base/gui/chat-help.gif"));
     b_helpChat.setActionCommand("helpChat");
     b_helpChat.addActionListener(this);
     b_helpChat.setToolTipText("To display the available chat commands");
     chatToolbar.add(b_helpChat);
+
+    b_imageChat = new JButton(new ImageIcon("../base/gui/chat-image.gif"));
+    b_imageChat.setActionCommand("imageChat");
+    b_imageChat.addActionListener(this);
+    b_imageChat.setToolTipText("To insert an image in the chat");
+    chatToolbar.add(b_imageChat);
 
     // SOUTH
     JPanel bottomChat = new JPanel(false);
@@ -465,6 +477,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
 
     message = inputBox.getText();
 
+    // I - We control the length of the message the user wants to send.
     if(message.length()==0)
       return;
 
@@ -473,7 +486,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
 
     messageHistory.add(message);
 
-    // Shortcuts
+    // II - Any Shortcuts ?
     if (message.startsWith("/whisper")) {
       chatVoiceLevel.setValue(ChatRoom.WHISPERING_VOICE_LEVEL);
       message = message.substring(8);
@@ -488,6 +501,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     }
 
 
+    // III - We send the message
     DataManager dManager = DataManager.getDefaultDataManager();
 
     dManager.sendMessage( new SendTextMessage( dManager.getMyPlayer().getPrimaryKey(),
@@ -496,7 +510,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
                                                message,
                                                (byte)chatVoiceLevel.getValue() ));
 
-    // entry reset
+    // IV - entry reset
     inputBox.setText("");
     chatVoiceLevel.setValue(ChatRoom.NORMAL_VOICE_LEVEL);
   }
@@ -510,15 +524,17 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
   public void actionPerformed(ActionEvent e) {
       String actionCommand = e.getActionCommand();
 
+    // 0 - Command Control
       if (actionCommand == null)
           return;
 
       if (DataManager.SHOW_DEBUG)
         System.out.println("Action command : " + actionCommand);
+
       DataManager dataManager = DataManager.getDefaultDataManager();
       PlayerImpl myPlayer = dataManager.getMyPlayer();
 
-      if( !myPlayer.getLocation().isRoom() && !actionCommand.equals("helpChat")) {
+      if( !myPlayer.getLocation().isRoom() && actionCommand.equals("createChatRoom")) {
           JOptionPane.showMessageDialog(null, "Sorry, but you can not create/leave chat channels\n"
                                         +"on World/Town Maps.", "INFORMATION", JOptionPane.INFORMATION_MESSAGE);
           return;
@@ -531,7 +547,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
 
          String chatRoomName = JOptionPane.showInputDialog("Please enter a Name:");
 
-         if( chatRoomName.length()==0 )
+         if( chatRoomName==null || chatRoomName.length()==0 )
              return;
 
          if (tabbedPane.getTabCount()>=ChatRoom.MAXIMUM_CHATROOMS_PER_ROOM-1)
@@ -557,6 +573,50 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
                                                dManager.getMyPlayer().getPlayerName(),
                                                getMyCurrentChatPrimaryKey(),
                                                "/help",
+                                               ChatRoom.NORMAL_VOICE_LEVEL ));
+      }
+      else if (actionCommand.equals("imageChat")) {
+
+        // ask for an image URL
+           String imageURL = JOptionPane.showInputDialog("Please enter your image's URL:\nExample: http://wotlas.sf.net/images/wotlas.gif");
+
+           if( imageURL==null || imageURL.length()==0 )
+               return;
+
+        // control the URL & image
+           try {
+              URL url = new URL(imageURL);
+              URLConnection urlC = url.openConnection();
+              urlC.connect();
+
+              String ctype = urlC.getContentType();
+
+              if( !ctype.startsWith("image/") ) {
+                  JOptionPane.showMessageDialog(null, "The specified URL does not refer to an image !",
+                                                      "Information", JOptionPane.INFORMATION_MESSAGE);
+                  return;
+              }
+
+              if( urlC.getContentLength()> 50*1024 ) {
+                  JOptionPane.showMessageDialog(null, "The specified image is too big (above 50kB).",
+                                                      "Information", JOptionPane.INFORMATION_MESSAGE);
+                  return;
+              }
+
+           }catch(Exception ex) {
+              Debug.signal(Debug.ERROR,this,"Failed to get image: "+ex);
+              JOptionPane.showMessageDialog(null, "Failed to get the specified image...\nCheck your URL.",
+                                            "Error", JOptionPane.ERROR_MESSAGE);
+              return;
+           }
+
+        // send the Image URL to other players...
+           DataManager dManager = DataManager.getDefaultDataManager();
+
+           dManager.sendMessage( new SendTextMessage( dManager.getMyPlayer().getPrimaryKey(),
+                                               dManager.getMyPlayer().getPlayerName(),
+                                               getMyCurrentChatPrimaryKey(),
+                                               "<img src='"+imageURL+"'>",
                                                ChatRoom.NORMAL_VOICE_LEVEL ));
       }
       else {

@@ -49,12 +49,14 @@ public class TownMapData implements MapData
 
   /** True if we show debug informations
    */
-  public static boolean SHOW_DEBUG = false;
+  public static boolean SHOW_DEBUG = true;
 
   DataManager dataManager;
 
  /*------------------------------------------------------------------------------------*/
 
+  /** Set to true to show debug information
+   */
   public void showDebug(boolean value) {
     SHOW_DEBUG = value;
   }
@@ -170,6 +172,11 @@ public class TownMapData implements MapData
         }
       }
     }
+    
+    //   - We play music
+    String midiFile = townMap.getMusicName();
+    if (midiFile != null)
+      SoundLibrary.getSoundLibrary().playMusic( midiFile );
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -233,15 +240,36 @@ public class TownMapData implements MapData
         System.out.println("\t\tbuildingMap.getFullName() = " + buildingMap.getFullName());
         System.out.println("\t\tbuildingMap.getShortName() = " + buildingMap.getShortName());
         System.out.print("\t\tmyPlayer.getAngle() = ");
-        System.out.println(myPlayer.getAngle()*Math.PI/180);
+        System.out.println(myPlayer.getAngle()*180/Math.PI);
+        System.out.println("cosinus = " + Math.cos(myPlayer.getAngle()));
+        System.out.println("sinus = " + Math.sin(myPlayer.getAngle()));
       }
 
       mapExit = buildingMap.findTownMapExit( myPlayer.getAngle() );
+      
+      
 
       if (SHOW_DEBUG) {
         System.out.println("Which MapExit are we using ?");
-        System.out.println("\t\tmapExit.getType() = " + mapExit.getType());
-        System.out.println("\t\tmapExit.getMapExitSide() = " + mapExit.getMapExitSide());
+        System.out.println("\t\tmapExit.getType() = " + (int) mapExit.getType());
+        System.out.print("\t\tmapExit.getMapExitSide() = ");
+        switch( mapExit.getMapExitSide() ) {
+          case MapExit.NONE:
+            System.out.println("NONE");
+            break;
+          case MapExit.NORTH:
+            System.out.println("NORTH");
+            break;
+          case MapExit.SOUTH:
+            System.out.println("SOUTH");
+            break;
+          case MapExit.EAST:
+            System.out.println("EAST");
+            break;
+          case MapExit.WEST:
+            System.out.println("WEST");
+            break;
+          }        
         System.out.println("\t\tmapExit.getTargetWotlasLocation() = " + mapExit.getTargetWotlasLocation());
         System.out.println("\t\tmapExit.getMapExitLocation() = " + mapExit.getMapExitLocation());
       }

@@ -49,7 +49,7 @@ public class InteriorMapData implements MapData
 
   /** True if we show debug informations
    */
-  public static boolean SHOW_DEBUG = false;
+  public static boolean SHOW_DEBUG = true;
 
   DataManager dataManager;
 
@@ -63,6 +63,8 @@ public class InteriorMapData implements MapData
 
  /*------------------------------------------------------------------------------------*/
 
+  /** Set to true to show debug information
+   */
   public void showDebug(boolean value) {
     SHOW_DEBUG = value;
   }
@@ -197,7 +199,9 @@ public class InteriorMapData implements MapData
     myPlayer.initVisualProperties(gDirector);
 
     //   - We play music
-    SoundLibrary.getSoundLibrary().playMusic( "tar-valon-01.mid" );
+    String midiFile = imap.getMusicName();
+    if (midiFile != null)
+      SoundLibrary.getSoundLibrary().playMusic( midiFile );
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -321,7 +325,7 @@ public class InteriorMapData implements MapData
             break;
 
           default:
-            Debug.signal( Debug.CRITICAL, this, "Unknown mapExit : " + mapExit.getType() );
+            Debug.signal( Debug.CRITICAL, this, "Unknown mapExit of type : " + mapExit.getType() );
         }
       }
     } // End of part II

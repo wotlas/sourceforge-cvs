@@ -49,12 +49,14 @@ public class WorldMapData implements MapData
 
   /** True if we show debug informations
    */
-  public static boolean SHOW_DEBUG = false;
+  public static boolean SHOW_DEBUG = true;
 
   DataManager dataManager;
 
  /*------------------------------------------------------------------------------------*/
 
+  /** Set to true to show debug information
+   */
   public void showDebug(boolean value) {
     SHOW_DEBUG = value;
   }
@@ -159,7 +161,10 @@ public class WorldMapData implements MapData
       }
     }
 
-    ;
+    //   - We play music
+    String midiFile = worldMap.getMusicName();
+    if (midiFile != null)
+      SoundLibrary.getSoundLibrary().playMusic( midiFile );
   }
 
  /*------------------------------------------------------------------------------------*/

@@ -41,6 +41,7 @@ public class NpcOnTheScreen extends ScreenObject {
 
     transient private ScreenObjectPathFollower movementComposer; //= new ScreenObjectPathFollower();
     transient private MessageRouter routerMsg;
+    transient private byte trajectoryLock[] = new byte[0];
     
     public NpcOnTheScreen(int x,int y, String name,MessageRouter routerMsg) {
         this.x = x;
@@ -106,7 +107,8 @@ public class NpcOnTheScreen extends ScreenObject {
 
     public void init(GraphicsDirector gDirector) {
         gDirector.addDrawable( getDrawable() );
-        movementComposer = new ScreenObjectPathFollower();
+        trajectoryLock = new byte[0];
+        movementComposer = new ScreenObjectPathFollower(x,y,0);
         movementComposer.init( this );
     }
     
@@ -153,4 +155,34 @@ public class NpcOnTheScreen extends ScreenObject {
         return movementComposer;
     }
     
+    /** Tick
+    */
+    public void tick() {
+        // 1 - Movement Update
+        synchronized( trajectoryLock ) {
+            movementComposer.tick();
+        }
+    }
+    
+    /** To get the X image position.
+    *
+    * @return x image cordinate
+    */
+    public int getX() {
+        if( movementComposer == null )
+            return x;
+        else
+            return (int)movementComposer.getXPosition();
+    }
+    
+    /** To get the Y image position.
+    *
+    * @return y image cordinate
+    */
+    public int getY() {
+        if( movementComposer == null )
+            return y;
+        else
+            return (int)movementComposer.getYPosition();
+    }
 }

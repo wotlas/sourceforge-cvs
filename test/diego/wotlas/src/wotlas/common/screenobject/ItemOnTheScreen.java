@@ -166,4 +166,8 @@ public class ItemOnTheScreen extends ScreenObject {
         return null;
     }
     
+    /** Tick
+    */
+    public void tick() {
+    }
 }

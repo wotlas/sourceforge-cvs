@@ -809,6 +809,8 @@ public class EditorPlugIn extends JPanelPlugIn {
 
     private void ImportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ImportAllActionPerformed
         // Add your handling code here:
+        gDirector.removeAllDrawables();
+        EditTile.getDataManager().myMapData.initDisplayEditor( EditTile.getDataManager(), EditTile.workingOnThisTileMap.getLocation() );
         RefreshData();
     }//GEN-LAST:event_ImportAllActionPerformed
 
@@ -838,6 +840,8 @@ public class EditorPlugIn extends JPanelPlugIn {
             ,"Warning" , JOptionPane.WARNING_MESSAGE );
             return;
         }
+        gDirector.removeAllDrawables();
+        EditTile.getDataManager().myMapData.initDisplayEditor( EditTile.getDataManager(), EditTile.workingOnThisTileMap.getLocation() );
         RefreshData();
     }//GEN-LAST:event_ImportBackgroundActionPerformed
 
@@ -909,7 +913,13 @@ public class EditorPlugIn extends JPanelPlugIn {
     }//GEN-LAST:event_SuspendExitActionPerformed
 
     private void DeleteExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DeleteExitActionPerformed
+        // EditTile.workingOnThisTileMap.get ?? remove it from the array and remake the array 
+        // to fill the hole.
+        SetListExitMod();
         addListMapsForExitPan();
+        gDirector.removeAllDrawables();
+        EditTile.getDataManager().myMapData.initDisplayEditor( EditTile.getDataManager(), EditTile.workingOnThisTileMap.getLocation() );
+        RefreshData();
     }//GEN-LAST:event_DeleteExitActionPerformed
 
     private void AbortExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AbortExitActionPerformed
@@ -930,16 +940,16 @@ public class EditorPlugIn extends JPanelPlugIn {
         y = tmp1.y;
         if( x > tmp2.x ){
             x = tmp2.x;
-            xx = tmp1.x+1;
+            xx = tmp1.x-tmp2.x;
         }
         else
-        yy = tmp2.y+1;
+            xx = tmp2.x-tmp1.x;
         if( y > tmp2.y ){
             y = tmp2.y;
-            yy = tmp1.y+1;
+            yy = tmp1.y-tmp2.y;
         }
         else
-            yy = tmp2.y+1;
+            yy = tmp2.y-tmp1.y;
         MapExit mapExit1 = null;
 //        System.out.println( (x*32)+","+(y*32)+","+(xx*32)+","+(yy*32) );
         mapExit1 = EditTile.workingOnThisTileMap.getManager().addMapExit( new ScreenRectangle(x*32,y*32,(xx+1)*32,(yy+1)*32), ExitName.getText()  );
@@ -980,9 +990,9 @@ public class EditorPlugIn extends JPanelPlugIn {
         JComboBox basicTileSelect = new JComboBox();
         ImageLibrary imageLib = EditTile.getDataManager().getImageLibrary();
 //        JLabel tmp;
-        for( int i=0; i < GroupOfGraphics.ROGUE_SET[6].totalImage(); i++) {
+        for( int i=0; i < GroupOfGraphics.ROGUE_SET[0].totalImage(); i++) {
 //            tmp = new JLabel( GroupOfGraphics.ROGUE_SET[6].getAsIcon(i, imageLib), JLabel.LEFT );
-            basicTileSelect.addItem( GroupOfGraphics.ROGUE_SET[6].getAsIcon(i, imageLib) );
+            basicTileSelect.addItem( GroupOfGraphics.ROGUE_SET[0].getAsIcon(i, imageLib) );
         }
         message[4] = basicTileSelect;
         message[5] = "Select the basic tile to use";
@@ -1027,7 +1037,7 @@ public class EditorPlugIn extends JPanelPlugIn {
         destination.setMusicName("tar-valon.mid");
         destination.selectGraphicSet( EnvironmentManager.GRAPHICS_SET_ROGUE );
         TileManagerFlat manager = new TileManagerFlat( destination );
-        manager.setMap( gotDimX, gotDimY, TileMap.PIXEL_32,  (byte)6, (byte)basicTileSelect.getSelectedIndex() );
+        manager.setMap( gotDimX, gotDimY, TileMap.PIXEL_32,  (byte)0, (byte)basicTileSelect.getSelectedIndex() );
         destination.setManager( (TileMapManager)manager );
         EditTile.workingOnThisTileMap = destination;
         EditTile.getDataManager().myMapData.initDisplayEditor( EditTile.getDataManager(), EditTile.workingOnThisTileMap.getLocation() );

@@ -99,6 +99,8 @@ public abstract class ScreenObject implements FakeSpriteDataSupplier, SendObject
     
     abstract public MovementComposer getMovementComposer();
     
+    abstract public void tick();
+
  /*---------------------All the common functions---------------------------------------*/
 
     public WotlasLocation getLocation() {

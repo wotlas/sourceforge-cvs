@@ -38,7 +38,8 @@ import java.awt.Rectangle;
 public class PlayerOnTheScreen extends ScreenObject {
 
     transient private Player player;
-    transient private ScreenObjectPathFollower movementComposer;
+    transient private ScreenObjectPathFollower movementComposer;    
+    transient private byte trajectoryLock[] = new byte[0];
     
     public PlayerOnTheScreen(Player player) {
         this.player = player;
@@ -108,8 +109,9 @@ public class PlayerOnTheScreen extends ScreenObject {
 
     public void init(GraphicsDirector gDirector) {
         gDirector.addDrawable( getDrawable() );
-        movementComposer = new ScreenObjectPathFollower();
-        movementComposer.init( this );
+        trajectoryLock = new byte[0];
+        movementComposer = new ScreenObjectPathFollower(x,y,0);
+        movementComposer.init( this );        
     }
     
   /* - - - - - - - - - - - SYNC ID MANIPULATION - - - - - - - - - - - - - - - - - - - -*/
@@ -142,4 +144,34 @@ public class PlayerOnTheScreen extends ScreenObject {
         return movementComposer;
     }
     
+    /** Tick
+    */
+    public void tick() {
+        // 1 - Movement Update
+        synchronized( trajectoryLock ) {
+            movementComposer.tick();
+        }
+    }
+    
+    /** To get the X image position.
+    *
+    * @return x image cordinate
+    */
+    public int getX() {
+        if( movementComposer == null )
+            return x;
+        else
+            return (int)movementComposer.getXPosition();
+    }
+    
+    /** To get the Y image position.
+    *
+    * @return y image cordinate
+    */
+    public int getY() {
+        if( movementComposer == null )
+            return y;
+        else
+            return (int)movementComposer.getYPosition();
+    }
 }

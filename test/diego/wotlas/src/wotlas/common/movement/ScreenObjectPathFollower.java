@@ -445,12 +445,12 @@ public class ScreenObjectPathFollower implements MovementComposer,BackupReady {
    * @param updateMessage MovementUpdateMessage
    */
      public synchronized void setUpdate( MovementUpdateMessage updateMessage ) {
-           if( !(updateMessage instanceof PathUpdateMovementMessage) ) {
+           if( !(updateMessage instanceof ScreenObjectPathUpdateMovementMessage) ) {
                Debug.signal( Debug.ERROR, this, "Received bad update message :"+updateMessage.getClass());
                return;
            }
 
-           PathUpdateMovementMessage msg = (PathUpdateMovementMessage) updateMessage;
+           ScreenObjectPathUpdateMovementMessage msg = (ScreenObjectPathUpdateMovementMessage) updateMessage;
            useEndingOrientationValue=false;
 
 /* METHOD 1 : SIMPLE UPDATE : WE FORCE THE NEW POSITION
@@ -746,6 +746,7 @@ public class ScreenObjectPathFollower implements MovementComposer,BackupReady {
                 new ScreenObjectPathUpdateMovementMessage( this, screenObject.getPrimaryKey()
                 , screenObject.getSyncID()),null, MessageRouter.EXTENDED_GROUP );
  */
+        System.out.println(" diego_mov!");
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -780,8 +780,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
             Iterator it = screenObjects.values().iterator();
             while( it.hasNext() )
                 item = (ScreenObject) it.next();
-                if( item instanceof PlayerOnTheScreen )
-                    ((PlayerImpl)((PlayerOnTheScreen)item).getPlayer()).tick();
+                if( item instanceof PlayerOnTheScreen 
+                || item instanceof ItemOnTheScreen )
+                    item.tick();
        }
 
         if( circle!=null )
@@ -1000,6 +1001,31 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
         // We take a look at the selected object the user clicked
         // Is it a player ? a door ? an objecOnTheScreen
+        if( myPlayer.getLocation().isTileMap() ) {
+            Rectangle screen = gDirector.getScreenRectangle();
+            int tmpX = new Integer( (x+screen.x)/32 ).intValue();
+            int tmpY = new Integer( (y+screen.y)/32 ).intValue();
+            // ITS NOT GOOD FOR DOORS, HOWEVER I CAN USE IT FOR THE MOMENT
+            // THEN DOORS COMES, WE CAN GET ANOTHER.
+            try {
+                if( myPlayer.getMyTileMap().getManager().getMapMask()[tmpX][tmpY] == TileMap.TILE_NOT_FREE ) {
+                    getClientScreen().getMapPanel().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                    commandRequest = COMMAND_NOTHING;
+                    return true;
+                }
+            } catch (Exception e) {
+                /*
+                System.out.println("Error got : look at this. The error should(?)"
+                +" comes out 'because empty space (out of map) was clicked(?).");
+                e.printStackTrace();
+                 */
+                getClientScreen().getMapPanel().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                commandRequest = COMMAND_NOTHING;
+                return true;
+            }
+            x = new Integer( tmpX*32 ).intValue();
+            y = new Integer( tmpY*32 ).intValue();
+        }
 
         if( commandRequest != COMMAND_NOTHING ) {
             // init vars
@@ -1014,33 +1040,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
                     System.out.println("The ground has been clicked...");
                 indexForMaskTarget = UserAction.TARGET_TYPE_GROUND;
                 targetKey = "";
-            } 
+            }
             else if ( object instanceof ScreenObject ) {
                 if (SHOW_DEBUG)
                     System.out.println("A screenobject has been clicked...");
                 indexForMaskTarget = ((ScreenObject) object).getTargetType();
                 targetKey = ((ScreenObject) object).getPrimaryKey();
-            } 
-            /*
-            else if ( object instanceof ItemOnTheScreen ) {
-                if (SHOW_DEBUG)
-                    System.out.println("An item has been clicked...");
-                indexForMaskTarget = UserAction.TARGET_ITEM;
-                targetKey = ((ScreenObject) object).getPrimaryKey();
-            } 
-            else if ( object instanceof NpcOnTheScreen ) {
-                if (SHOW_DEBUG)
-                    System.out.println("An npc has been clicked...");
-                indexForMaskTarget = UserAction.TARGET_NPC;
-                targetKey = ((ScreenObject) object).getPrimaryKey();
-            } 
-            else if ( object instanceof PlayerOnTheScreen ) {
-                if (SHOW_DEBUG)
-                    System.out.println("A player has been clicked...");
-                indexForMaskTarget = UserAction.TARGET_PLAYER;
-                targetKey = ((ScreenObject) object).getPrimaryKey();
-            } 
-             */
+            }
             else  {
                 commandRequest = COMMAND_NOTHING;
                 if (SHOW_DEBUG) {

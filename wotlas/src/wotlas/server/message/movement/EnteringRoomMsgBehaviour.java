@@ -160,40 +160,48 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
               player.sendMessage( new CleanGhostsMessage( primaryKey, location ) );
           }
 
-       // 3 - We change our location & send ADD messages
+       // 3 - We change our location & send ADD messages or ChangeLocation Messages
           Hashtable players = targetRoom.getPlayers();
           player.setLocation( location );
 
           AddPlayerToRoomMessage aMsg = new AddPlayerToRoomMessage( player );
+          LocationChangeMessage lMsg = new LocationChangeMessage( player.getPrimaryKey(),
+                                           player.getLocation(), 0, 0 );
 
           synchronized( players ) {
               players.put( primaryKey, player );
-              
-              if(mapEnter) {
-                 Iterator it = players.values().iterator();
+              Iterator it = players.values().iterator();
               	 
                  while( it.hasNext() ) {
-                       PlayerImpl p = (PlayerImpl)it.next();
-                       if(p!=player) {
+                     PlayerImpl p = (PlayerImpl)it.next();
+                     if(p!=player) {
                        	System.out.println("To player "+p+":");
-                          p.sendMessage( aMsg );
-                       }
+                        if(mapEnter)
+                           p.sendMessage( aMsg );
+                        else
+                           p.sendMessage( lMsg );
+                     }
               	 }
-              }
           }
 
        // 4 - We send ADD player messages to neighbour rooms & RoomPlayerDataMessages
        // to ourseleves
-          if(targetRoom.getRoomLinks()==null) return;
-
-          for( int i=0; i<targetRoom.getRoomLinks().length; i++ ) {
+          WotlasLocation destLocation = new WotlasLocation( player.getLocation() );
+       
+          if(targetRoom.getRoomLinks()!=null)
+            for( int i=0; i<targetRoom.getRoomLinks().length; i++ ) {
                Room otherRoom = targetRoom.getRoomLinks()[i].getRoom1();
 
                if( otherRoom==targetRoom )
                    otherRoom = targetRoom.getRoomLinks()[i].getRoom2();
 
-               if( otherRoom==currentRoom )
-                   continue;
+            // Doors state
+               if( mapEnter || otherRoom!=currentRoom ) {
+                   destLocation.setRoomID( otherRoom.getRoomID() );
+             
+                   DoorsStateMessage dMsg = new DoorsStateMessage( destLocation, otherRoom );
+                   player.sendMessage( dMsg );
+               }
 
             // AddPlayerDataMessages
                players = otherRoom.getPlayers();
@@ -203,21 +211,23 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
               	 
                      while( it.hasNext() ) {
               	          PlayerImpl p = (PlayerImpl)it.next();
-                       	System.out.println("To player "+p+":");
-                          p.sendMessage( aMsg );
+
+                          if(otherRoom!=currentRoom)
+                             p.sendMessage( aMsg ); // new room seen, AddPlayer...
+                          else
+                             p.sendMessage( lMsg ); // if it's our old current room we send an changeLocMsg
               	     }
                }
 
             // RoomPlayerDataMessages ( already received if mapEnter state... ( via AllDataLeftMsg))
-               if( !mapEnter ) {
+               if( !mapEnter && otherRoom!=currentRoom ) {
                   WotlasLocation roomLoc = new WotlasLocation( player.getLocation() );
                   roomLoc.setRoomID( otherRoom.getRoomID() );
 
                   player.sendMessage( new RoomPlayerDataMessage( roomLoc,
-                                       player, otherRoom.getPlayers() ) );
+                                      player, otherRoom.getPlayers() ) );
                }
-          }
-
+            }
 
        // 5 - We send a RemovePlayerFromChatMsg if not in the mapEnter state
           if( !mapEnter ) {
@@ -259,10 +269,8 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
 
           ChatList myChatList = player.getChatList();
           
-          if( myChatList == null ) {
-System.out.println("NO CHAT LIST AVAILABLE !!!");
+          if( myChatList == null )
               return; // no chats in the room
-          }
 
        // 7 - We send the chats available to our client...
           Hashtable chatRooms = myChatList.getChatRooms();

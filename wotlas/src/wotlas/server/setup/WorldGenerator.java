@@ -240,7 +240,7 @@ public class WorldGenerator {
              roomLink.setRoom1ID(1);
              roomLink.setRoom2ID(2);
 
-             rooms[1].addRoomLink( rooms[0].getRoomLink(0) );
+             rooms[1].addRoomLink( rooms[0].getRoomLinks()[0] );
 
            rooms[2].setFullName("West Gate Entry");
            rooms[2].setShortName("entry");
@@ -253,16 +253,16 @@ public class WorldGenerator {
              roomLink = rooms[2].addRoomLink( new ScreenRectangle( 695, 770, 60, 25 ) );
              roomLink.setRoom1ID(2);
              roomLink.setRoom2ID(14);  
-             roomLink.setDoor( new Door( 705, 777, halfPI, (byte)ImageLibRef.HORIZONTAL_RIGHT_PIVOT,
+             roomLink.setDoor( new Door( 705, 777, -halfPI, (byte)ImageLibRef.HORIZONTAL_RIGHT_PIVOT,
                                new ImageIdentifier((short)2,(short)0,(short)2,ImageLibRef.HORIZONTAL_RIGHT_PIVOT) ) );
 
              roomLink = rooms[2].addRoomLink( new ScreenRectangle( 700, 505, 50, 25) );
              roomLink.setRoom1ID(5);
              roomLink.setRoom2ID(2);
-             roomLink.setDoor( new Door( 705, 514, -halfPI, (byte)ImageLibRef.HORIZONTAL_RIGHT_PIVOT,
+             roomLink.setDoor( new Door( 705, 514, halfPI, (byte)ImageLibRef.HORIZONTAL_RIGHT_PIVOT,
                                new ImageIdentifier((short)2,(short)0,(short)2,ImageLibRef.HORIZONTAL_RIGHT_PIVOT) ) );
 
-             rooms[2].addRoomLink( rooms[1].getRoomLink(0) );
+             rooms[2].addRoomLink( rooms[1].getRoomLinks()[0] );
 
            rooms[3].setFullName("Tar Valon West Entry");
            rooms[3].setShortName("tarval-entry");
@@ -276,7 +276,7 @@ public class WorldGenerator {
              roomLink.setRoom1ID(3);
              roomLink.setRoom2ID(10);  
 
-             rooms[3].addRoomLink( rooms[2].getRoomLink(0) );
+             rooms[3].addRoomLink( rooms[2].getRoomLinks()[0] );
 
                mapExit = rooms[3].addMapExit( new ScreenRectangle(1020,485,30,330) );
                mapExit.setType( MapExit.BUILDING_EXIT );
@@ -292,12 +292,12 @@ public class WorldGenerator {
              roomLink = rooms[4].addRoomLink( new ScreenRectangle( 780, 150, 20, 40) );
              roomLink.setRoom1ID(8);
              roomLink.setRoom2ID(4);  
-             roomLink.setDoor( new Door( 786, 154, halfPI,(byte)ImageLibRef.VERTICAL_TOP_PIVOT,
+             roomLink.setDoor( new Door( 786, 154, -halfPI,(byte)ImageLibRef.VERTICAL_TOP_PIVOT,
                                new ImageIdentifier((short)2,(short)0,(short)1,ImageLibRef.VERTICAL_TOP_PIVOT) ) );
 
-             rooms[4].addRoomLink( rooms[3].getRoomLink(0) );
+             rooms[4].addRoomLink( rooms[3].getRoomLinks()[0] );
 
-               mapExit = rooms[4].addMapExit( new ScreenRectangle(1000,0,50,460) );
+               mapExit = rooms[4].addMapExit( new ScreenRectangle(1020,0,30,460) );
                mapExit.setType( MapExit.BUILDING_EXIT );
                mapExit.setMapExitSide( MapExit.NORTH );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
@@ -318,7 +318,7 @@ public class WorldGenerator {
              roomLink.setRoom1ID(6);
              roomLink.setRoom2ID(5);  
 
-             rooms[5].addRoomLink( rooms[2].getRoomLink(2) );
+             rooms[5].addRoomLink( rooms[2].getRoomLinks()[2] );
 
 
            rooms[6].setFullName("West Gate - North Tower");
@@ -333,13 +333,13 @@ public class WorldGenerator {
              roomLink.setRoom1ID(8);
              roomLink.setRoom2ID(6);  
 
-             rooms[6].addRoomLink( rooms[5].getRoomLink(0) );
+             rooms[6].addRoomLink( rooms[5].getRoomLinks()[0] );
 
            rooms[7].setFullName("West Gate - North Tower - Meeting Room");
            rooms[7].setShortName("build-north-central");
            rooms[7].setInsertionPoint( new ScreenPoint(670,290) );
 
-             rooms[7].addRoomLink( rooms[6].getRoomLink(0) );
+             rooms[7].addRoomLink( rooms[6].getRoomLinks()[0] );
 
            rooms[8].setFullName("West Gate - North Tower");
            rooms[8].setShortName("build-north-corridor");
@@ -348,17 +348,17 @@ public class WorldGenerator {
              roomLink = rooms[8].addRoomLink( new ScreenRectangle( 680, 120, 40, 20) );
              roomLink.setRoom1ID(9);
              roomLink.setRoom2ID(8);
-             roomLink.setDoor( new Door( 685, 127, -halfPI,(byte)ImageLibRef.HORIZONTAL_RIGHT_PIVOT,
+             roomLink.setDoor( new Door( 685, 127, halfPI,(byte)ImageLibRef.HORIZONTAL_RIGHT_PIVOT,
                                new ImageIdentifier((short)2,(short)0,(short)0,ImageLibRef.HORIZONTAL_RIGHT_PIVOT) ) );
 
-             rooms[8].addRoomLink( rooms[6].getRoomLink(1) );
-             rooms[8].addRoomLink( rooms[4].getRoomLink(0) );
+             rooms[8].addRoomLink( rooms[6].getRoomLinks()[1] );
+             rooms[8].addRoomLink( rooms[4].getRoomLinks()[0] );
 
            rooms[9].setFullName("West Gate - North Tower's Store");
            rooms[9].setShortName("build-north-store");
            rooms[9].setInsertionPoint( new ScreenPoint(630,80) );
 
-             rooms[9].addRoomLink( rooms[8].getRoomLink(0) );
+             rooms[9].addRoomLink( rooms[8].getRoomLinks()[0] );
 
            rooms[10].setFullName("South-West Street");
            rooms[10].setShortName("sw-street");
@@ -367,18 +367,18 @@ public class WorldGenerator {
              roomLink = rooms[10].addRoomLink( new ScreenRectangle( 780, 1110, 25, 40) );
              roomLink.setRoom1ID(14);
              roomLink.setRoom2ID(10);  
-             roomLink.setDoor( new Door( 786, 1114, -halfPI, (byte)ImageLibRef.VERTICAL_BOTTOM_PIVOT,
+             roomLink.setDoor( new Door( 786, 1114, halfPI, (byte)ImageLibRef.VERTICAL_BOTTOM_PIVOT,
                                new ImageIdentifier((short)2,(short)0,(short)1,ImageLibRef.VERTICAL_BOTTOM_PIVOT) ) );
 
-             rooms[10].addRoomLink( rooms[3].getRoomLink(1) );
+             rooms[10].addRoomLink( rooms[3].getRoomLinks()[1] );
 
-               mapExit = rooms[10].addMapExit( new ScreenRectangle(1000,840,50,360) );
+               mapExit = rooms[10].addMapExit( new ScreenRectangle(1020,840,30,360) );
                mapExit.setType( MapExit.BUILDING_EXIT );
                mapExit.setMapExitSide( MapExit.SOUTH );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
                mapExit.setTargetPosition( new ScreenPoint(223,510) );
 
-               mapExit = rooms[10].addMapExit( new ScreenRectangle(790,1150,230,50) );
+               mapExit = rooms[10].addMapExit( new ScreenRectangle(790,1170,230,30) );
                mapExit.setType( MapExit.BUILDING_EXIT );
                mapExit.setMapExitSide( MapExit.NONE );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
@@ -391,7 +391,7 @@ public class WorldGenerator {
              roomLink = rooms[11].addRoomLink( new ScreenRectangle( 570, 1110, 40, 20) );
              roomLink.setRoom1ID(16);
              roomLink.setRoom2ID(11);
-             roomLink.setDoor( new Door( 575, 1118, halfPI, (byte)ImageLibRef.HORIZONTAL_RIGHT_PIVOT,
+             roomLink.setDoor( new Door( 575, 1118, -halfPI, (byte)ImageLibRef.HORIZONTAL_RIGHT_PIVOT,
                                new ImageIdentifier((short)2,(short)0,(short)0,ImageLibRef.HORIZONTAL_RIGHT_PIVOT) ) );
 
            rooms[12].setFullName("West Gate - South Tower - Room");
@@ -401,6 +401,8 @@ public class WorldGenerator {
              roomLink = rooms[12].addRoomLink( new ScreenRectangle( 670, 990, 20, 40) );
              roomLink.setRoom1ID(12);
              roomLink.setRoom2ID(14);  
+             roomLink.setDoor( new Door( 676, 995, halfPI, (byte)ImageLibRef.VERTICAL_BOTTOM_PIVOT,
+                               new ImageIdentifier((short)2,(short)0,(short)0,ImageLibRef.VERTICAL_BOTTOM_PIVOT) ) );
 
            rooms[13].setFullName("West Gate - South Tower's Store");
            rooms[13].setShortName("bsouth-store");
@@ -409,7 +411,7 @@ public class WorldGenerator {
              roomLink = rooms[13].addRoomLink( new ScreenRectangle( 670, 850, 20, 40) );
              roomLink.setRoom1ID(13);
              roomLink.setRoom2ID(14);  
-             roomLink.setDoor( new Door( 677, 854, halfPI, (byte)ImageLibRef.VERTICAL_BOTTOM_PIVOT,
+             roomLink.setDoor( new Door( 677, 854, -halfPI, (byte)ImageLibRef.VERTICAL_BOTTOM_PIVOT,
                                new ImageIdentifier((short)2,(short)0,(short)0,ImageLibRef.VERTICAL_BOTTOM_PIVOT) ) );
 
            rooms[14].setFullName("West Gate - South Tower Hall");
@@ -424,10 +426,10 @@ public class WorldGenerator {
              roomLink.setRoom1ID(16);
              roomLink.setRoom2ID(14);
 
-             rooms[14].addRoomLink( rooms[2].getRoomLink(1) );
-             rooms[14].addRoomLink( rooms[10].getRoomLink(0) );
-             rooms[14].addRoomLink( rooms[12].getRoomLink(0) );
-             rooms[14].addRoomLink( rooms[13].getRoomLink(0) );
+             rooms[14].addRoomLink( rooms[2].getRoomLinks()[1] );
+             rooms[14].addRoomLink( rooms[10].getRoomLinks()[0] );
+             rooms[14].addRoomLink( rooms[12].getRoomLinks()[0] );
+             rooms[14].addRoomLink( rooms[13].getRoomLinks()[0] );
 
            rooms[15].setFullName("West Gate - South Tower");
            rooms[15].setShortName("bsouth-corridor1");
@@ -439,7 +441,7 @@ public class WorldGenerator {
              roomLink.setDoor( new Door( 528, 915, -halfPI, (byte)ImageLibRef.VERTICAL_TOP_PIVOT,
                                new ImageIdentifier((short)2,(short)0,(short)0,ImageLibRef.VERTICAL_TOP_PIVOT) ) );
 
-             rooms[15].addRoomLink( rooms[14].getRoomLink(0) );
+             rooms[15].addRoomLink( rooms[14].getRoomLinks()[0] );
 
            rooms[16].setFullName("West Gate - South Tower");
            rooms[16].setShortName("bsouth-corridor2");
@@ -448,18 +450,18 @@ public class WorldGenerator {
              roomLink = rooms[16].addRoomLink( new ScreenRectangle( 520, 1060, 20, 40) );
              roomLink.setRoom1ID(17);
              roomLink.setRoom2ID(16);
-             roomLink.setDoor( new Door( 528, 1065, halfPI, (byte)ImageLibRef.VERTICAL_BOTTOM_PIVOT,
+             roomLink.setDoor( new Door( 528, 1065, -halfPI, (byte)ImageLibRef.VERTICAL_BOTTOM_PIVOT,
                                new ImageIdentifier((short)2,(short)0,(short)0,ImageLibRef.VERTICAL_BOTTOM_PIVOT) ) );
 
-             rooms[16].addRoomLink( rooms[11].getRoomLink(0) );
-             rooms[16].addRoomLink( rooms[14].getRoomLink(1) );
+             rooms[16].addRoomLink( rooms[11].getRoomLinks()[0] );
+             rooms[16].addRoomLink( rooms[14].getRoomLinks()[1] );
 
            rooms[17].setFullName("West Gate - South Tower's Office");
            rooms[17].setShortName("bsouth-office");
            rooms[17].setInsertionPoint( new ScreenPoint(480,980) );
 
-             rooms[17].addRoomLink( rooms[15].getRoomLink(0) );
-             rooms[17].addRoomLink( rooms[16].getRoomLink(0) );
+             rooms[17].addRoomLink( rooms[15].getRoomLinks()[0] );
+             rooms[17].addRoomLink( rooms[16].getRoomLinks()[0] );
 
 
         // STEP 7 - Tar Valon NW Clearing InteriorMap
@@ -498,7 +500,7 @@ public class WorldGenerator {
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
                mapExit.setTargetPosition( new ScreenPoint(60,250) );
 
-               mapExit = rooms[0].addMapExit( new ScreenRectangle(20,310,400,40) );
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(20,330,400,20) );
                mapExit.setType( MapExit.BUILDING_EXIT );
                mapExit.setMapExitSide( MapExit.SOUTH );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
@@ -510,7 +512,7 @@ public class WorldGenerator {
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );
                mapExit.setTargetPosition( new ScreenPoint(65,225) );
 
-               mapExit = rooms[0].addMapExit( new ScreenRectangle(510,20,40,240) );
+               mapExit = rooms[0].addMapExit( new ScreenRectangle(530,20,20,240) );
                mapExit.setType( MapExit.BUILDING_EXIT );
                mapExit.setMapExitSide( MapExit.EAST );
                mapExit.setTargetWotlasLocation( new WotlasLocation(0,0) );

@@ -74,6 +74,10 @@ public class MultiLineText extends Drawable {
     /** Space between lines
      */
      private int gap;
+     
+    /** Space around the text
+     */
+     private int textSpace = 6;
 
     /** y coordinate of each line
      */
@@ -234,8 +238,8 @@ public class MultiLineText extends Drawable {
                   gc.drawString(this.text[i], xs-widthText, ys+heightsText[i]);
               }
               
-              r.width = widthText;
-              r.height = heightsText[text.length-1];
+              r.width = widthText + 12;
+              r.height = heightsText[text.length-1] + 12;
               r.x = xs;
               r.y = ys;
 
@@ -245,10 +249,13 @@ public class MultiLineText extends Drawable {
                gc.setColor( Color.white );
                gc.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f ) );
 
-               if (isLeftAligned)
-                   gc.fillRect(xs,ys,r.width,r.height);
-               else
-                   gc.fillRect(xs-widthText,ys,r.width,r.height);
+               if (isLeftAligned) {
+                 gc.fillRect(xs-6,ys-3,r.width,r.height);
+                 gc.draw3DRect(xs-6,ys-3,r.width,r.height,false);
+               } else {
+                 gc.fillRect(xs-widthText-6,ys-3,r.width,r.height);
+                 gc.draw3DRect(xs-widthText-6,ys-3,r.width,r.height,false);
+               }
 
                gc.setComposite( AlphaComposite.SrcOver ); // restore
 

@@ -206,6 +206,11 @@ public class PlayerImpl implements Player, NetConnectionListener
     */
       public void setLocation( WotlasLocation myLocation ){
              location = myLocation;
+
+             if( location.isRoom() )
+                 myRoom = DataManager.getDefaultDataManager().getWorldManager().getRoom( location );
+              else
+                 myRoom = null;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -92,7 +92,8 @@ public class PathFollower implements MovementComposer {
 
   /** Current position
    */
-    private float xPosition, yPosition;
+    private float xPosition;
+    private float yPosition;
 
   /** Current Orientation (our angle in rads)
    */

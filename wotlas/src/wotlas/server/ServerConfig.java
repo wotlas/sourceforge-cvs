@@ -40,7 +40,7 @@ package wotlas.server;
  * @see wotlas.server.ServerManager
  */
 
-class ServerConfig
+public class ServerConfig
 {
  /*------------------------------------------------------------------------------------*/
 
@@ -94,6 +94,17 @@ class ServerConfig
    *  Data is loaded by the PersistenceManager.
    */
      public ServerConfig() {
+        serverName = new String("nope");
+        serverID = -1;
+        accountServerPort = 25500;
+        gameServerPort = 26500;
+        gatewayServerPort = 27500;
+        maxNumberOfGameConnections = 110;
+        maxNumberOfAccountConnections = 20;
+        maxNumberOfGatewayConnections = 20;
+        description = new String("Enter a server description");
+        location = new String("nope");
+        adminEmail = new String("myAdress@foobar.net");
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

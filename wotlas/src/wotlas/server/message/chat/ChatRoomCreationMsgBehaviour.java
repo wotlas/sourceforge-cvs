@@ -20,11 +20,18 @@
 package wotlas.server.message.chat;
 
 import java.io.IOException;
+import java.util.*;
 
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.common.message.chat.*;
+
 import wotlas.common.Player;
+import wotlas.common.universe.*;
+
+import wotlas.server.DataManager;
 import wotlas.server.PlayerImpl;
+
+import wotlas.utils.Debug;
 
 /**
  * Associated behaviour to the ChatRoomCreationMessage...
@@ -50,13 +57,60 @@ public class ChatRoomCreationMsgBehaviour extends ChatRoomCreationMessage implem
    */
   public void doBehaviour( Object context ) {
     // The context is here a PlayerImpl.
-    // PlayerImpl player = (PlayerImpl) context;
+    PlayerImpl player = (PlayerImpl) context;
 
-    // We send the player's data
-    //player.sendMessage(  );
     System.out.println("public ChatRoomCreationMsgBehaviour()");
+    String primaryKey = name+creatorPrimaryKey;
+    System.out.println("primaryKey = " + primaryKey);
+    System.out.println("name = " + name);
+    System.out.println("creatorPrimaryKey = " + creatorPrimaryKey);
+    ChatRoomCreatedMessage crcMsg = new ChatRoomCreatedMessage(primaryKey, name, creatorPrimaryKey);
+    player.sendMessage(crcMsg);
+    
+    // We send the information to all players of the same room or town or world
+    WotlasLocation location = player.getLocation();
+    
+    Hashtable players;
+    
+    if ( location.isWorld() ) {
+      WorldMap world = DataManager.getDefaultDataManager().getWorldManager().getWorldMap(location);
+      if (world!=null)
+        players = world.getPlayers();
+      else
+        return;
+    } else if ( location.isTown() ) {
+      TownMap town = DataManager.getDefaultDataManager().getWorldManager().getTownMap(location);
+      if (town!=null)
+        players = town.getPlayers();
+      else
+        return;
+    } else if ( location.isRoom() ) {
+      Room currentRoom = player.getMyRoom();    
+      if (currentRoom==null) {
+        Debug.signal( Debug.ERROR, this, "Error could not get current room ! "+player.getLocation() );
+        player.sendMessage( new wotlas.common.message.account.WarningMessage("Error could not get current room ! "+player.getLocation()) );
+        return;
+      }
+      players = currentRoom.getPlayers();
+    } else {
+      return;
     }
-
+    
+    synchronized(players) {
+      Iterator it = players.values().iterator();
+      PlayerImpl p;
+              	 
+      while ( it.hasNext() ) {
+        p = (PlayerImpl)it.next();
+        if (p!=player) {
+          System.out.println("To player "+p+":");
+          p.sendMessage( crcMsg );
+        }
+      }
+    }
+    
+  }
+  
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
 }

@@ -231,9 +231,17 @@ public class NetReceiver extends NetThread
    * @exception IOException if something goes wrong
    */
      public void waitForAMessageToArrive() throws IOException{
-        if(sync)
-          while( in_stream.available()==0 )
-                Tools.waitTime( 100 );
+        if(!sync)
+           return;
+
+      // We mark the stream
+         in_stream.mark( 10 );
+ 
+      // Wait for data...
+         in_stream.readByte();
+
+      // Reset Stream state
+         in_stream.reset();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -24,7 +24,7 @@ import wotlas.utils.Debug;
 
  /** Server Config List. Loaded using the provided persistence manager.
   *
-  * @author Aldiss
+  * @author Aldiss, Petrus
   * @see wotlas.common.ServerConfig
   */
  
@@ -76,4 +76,25 @@ public class ServerConfigList
      }
 
  /*------------------------------------------------------------------------------------*/
+ 
+  /** To get the number of servers.
+   */  
+  public int size() {
+    if (configs==null)
+      return 0;
+    return configs.length;
+  }
+  
+ /*------------------------------------------------------------------------------------*/
+  
+  /** To get a ServerConfig file from its index in array <b>configs</b>
+   *
+   * @param index server index.
+   */
+  public ServerConfig ServerConfigAt(int index) {
+    return configs[index];
+  }
+
+ /*------------------------------------------------------------------------------------*/
+
 }

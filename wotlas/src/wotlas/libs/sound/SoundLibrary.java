@@ -205,13 +205,16 @@ public class SoundLibrary implements MetaEventListener, ControllerEventListener 
    *        we search in the databasePath/sounds.
    */
     public void playSound( String soundName ) {
-        if(noSoundDevice || noSound)
+        if(noSoundDevice || noSound || soundName==null)
            return;
 
         Clip sound = loadSound( dataBasePath+File.separator+"sounds"+File.separator+soundName);
         setGain( sound, soundVolume );
-        sound.setFramePosition(0);         
-        sound.start();
+
+        if(sound!=null) {
+           sound.setFramePosition(0);
+           sound.start();
+        }
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

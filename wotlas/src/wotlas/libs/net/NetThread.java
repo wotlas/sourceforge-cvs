@@ -192,9 +192,9 @@ abstract public class NetThread extends Thread
           {
             // new localID ? array not big enough ?
               if( localID>=threadCounter.length ) {
-                 int tmp[] = new int[threadCounter.length+1];
+                 int tmp[] = new int[localID+1];
                 
-                 for( byte i=0; i<threadCounter.length; i++ )
+                 for( int i=0; i<threadCounter.length; i++ )
                       tmp[i] = threadCounter[i];
                 
                  threadCounter = tmp;

@@ -19,6 +19,7 @@
 
 // TODO :
 // - remplacer currentProfile par playerImpl
+// - utiliser une hashtable pour les players
 
 package wotlas.client;
 
@@ -27,6 +28,8 @@ import wotlas.client.screen.*;
 
 import wotlas.common.ImageLibRef;
 import wotlas.common.message.account.*;
+import wotlas.common.message.description.*;
+import wotlas.common.Player;
 import wotlas.common.Tickable;
 
 import wotlas.libs.graphics2D.*;
@@ -51,6 +54,8 @@ import java.awt.MediaTracker;
 
 import java.io.File;
 
+import java.lang.Byte;
+
 import javax.swing.*;
 
 /** A DataManager manages Game Data and client's connection.
@@ -71,6 +76,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** size of a mask's cell (in pixels)
    */
   public final static int TILE_SIZE = 10;
+  
+  private static final int CONNECTION_TIMEOUT = 5000;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -98,6 +105,10 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** Our NetPersonality, useful if we want to send messages !
    */
   private NetPersonality personality;
+  
+  /** Game Lock (unlocked by client.message.description.YourPlayerDataMsgBehaviour)
+   */
+  private byte startGameLock[] = new byte[1];
 
  /*------------------------------------------------------------------------------------*/
 
@@ -105,10 +116,12 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
   private ProfileConfig currentProfileConfig;
 
-  /** Our current playerImpl.
+  /** Our playerImpl.
    */
-  private PlayerImpl myPlayerImpl;
+  private PlayerImpl myPlayer;
   
+  /** List of players
+   */
   private List players;
 
   /** Our ImageLibrary.
@@ -169,8 +182,17 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   }
 
  /*------------------------------------------------------------------------------------*/
+  
+  /** To get startGameLock
+   */
+  public byte[] getStartGameLock() {
+    return startGameLock;
+  }
+  
+ /*------------------------------------------------------------------------------------*/
 
-  /** To set the current profileConfig.
+  /** To set the current profileConfig<br>
+   * (called by client.message.account.AccountCreatedMsgBehaviour)
    */
   public void setCurrentProfileConfig(ProfileConfig currentProfileConfig) {
     this.currentProfileConfig = currentProfileConfig;
@@ -276,8 +298,23 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
   public void showInterface() {
     
+    // Create Graphics Director
+    System.out.println("Creating gDirector");
     gDirector = new GraphicsDirector( new LimitWindowPolicy() );
+    
+    System.out.println("Retreiving player's informations");
+    // Retreive player's informations
+    try {
+      synchronized(startGameLock) {   
+        personality.queueMessage(new MyPlayerDataPleaseMessage());
+        startGameLock.wait(CONNECTION_TIMEOUT);
+      }
+    } catch (InterruptedException ie) {
+      showWarningMessage("Cannot retreive your informations from the Game Server !");
+      Debug.exit();
+    }
 
+    
     // Background
     ImageIdentifier groundImId = new ImageIdentifier( ImageLibRef.MAPS_CATEGORY,
                                            (short) 2,
@@ -309,17 +346,17 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     aStar.initMask(maskBuffImg, 80, 56);
 
     // Creation of the drawable reference    
-    myPlayerImpl = new PlayerImpl();
-    myPlayerImpl.init();
-    myPlayerImpl.setX(groundSpr.getWidth()/2);
-    myPlayerImpl.setY(groundSpr.getHeight()/2);    
+    myPlayer = new PlayerImpl();
+    myPlayer.init();
+    myPlayer.setX(groundSpr.getWidth()/2);
+    myPlayer.setY(groundSpr.getHeight()/2);    
     players = new List();
-    players.addElement(myPlayerImpl);
+    players.addElement(myPlayer);
     
     // Init of the GraphicsDirector
      gDirector.init(
                       (Drawable) groundSpr,         // background drawable
-                      myPlayerImpl.getDrawable(),   // reference for screen movements
+                      myPlayer.getDrawable(),   // reference for screen movements
                       new Dimension( JClientScreen.leftWidth, JClientScreen.mapHeight )   // screen default dimension
                     );
 
@@ -349,7 +386,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     Object lock = new Object();
     while( true ) {
       tick();
-      Tools.waitTime(50);
+      Tools.waitTime(100);
     }
   }
 
@@ -384,16 +421,16 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     Object object = gDirector.findOwner( e.getX(), e.getY());
     if (object != null) {
       System.out.println(object.getClass());
-      myPlayerImpl = (PlayerImpl) object;
+      myPlayer = (PlayerImpl) object;
     }
     
     int newX = e.getX() + (int)screen.getX();
     int newY = e.getY() + (int)screen.getY();
     System.out.println("newPosition : " + newX + ", " + newY);
-    myPlayerImpl.setEndPosition(newX, newY);
+    myPlayer.setEndPosition(newX, newY);
     
     // Create the trajectory
-    myPlayerImpl.setTrajectory(aStar.findPath(new Point(myPlayerImpl.getX()/TILE_SIZE, myPlayerImpl.getY()/TILE_SIZE), new Point(newX/TILE_SIZE, newY/TILE_SIZE)));
+    myPlayer.setTrajectory(aStar.findPath(new Point(myPlayer.getX()/TILE_SIZE, myPlayer.getY()/TILE_SIZE), new Point(newX/TILE_SIZE, newY/TILE_SIZE)));
 
   }
 
@@ -406,13 +443,36 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     
     System.out.println("playerImpl creation : ");
     
-    myPlayerImpl = new PlayerImpl();
-    myPlayerImpl.init();
-    myPlayerImpl.setX(e.getX() + (int)screen.getX());
-    myPlayerImpl.setY(e.getY() + (int)screen.getY());        
-    players.addElement(myPlayerImpl);
+    myPlayer = new PlayerImpl();
+    myPlayer.init();
+    myPlayer.setX(e.getX() + (int)screen.getX());
+    myPlayer.setY(e.getY() + (int)screen.getY());        
+    players.addElement(myPlayer);
     
-    gDirector.addDrawable(myPlayerImpl.getDrawable());
+    gDirector.addDrawable(myPlayer.getDrawable());
                   
   }
+  
+ /*------------------------------------------------------------------------------------*/
+
+  /** To add a new player to the screen<br>
+   * (called by client.message.description.PlayerDataMsgBehaviour)
+   *
+   * @player the player to add
+   */
+  public void addPlayer(Player player) {
+    players.addElement((PlayerImpl) player);
+  }
+  
+  /** To set our player<br>
+   * (called by client.message.description.YourPlayerDataMsgBehaviour)
+   *
+   * @param player Our player
+   */
+  public void setCurrentPlayer(Player player) {
+    myPlayer = (PlayerImpl) player;
+  }
+
+ /*------------------------------------------------------------------------------------*/
+  
 }

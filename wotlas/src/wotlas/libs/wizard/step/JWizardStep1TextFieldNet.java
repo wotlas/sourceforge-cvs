@@ -72,6 +72,12 @@ public class JWizardStep1TextFieldNet extends JWizardStep1TextField {
     parameters.setProperty("data.text0", getText0());
     
     NetPersonality personality = (NetPersonality) context;
+    
+    if( !personality.isConnected() ) {
+       JOptionPane.showMessageDialog( null, "The account server seems to have shutdown !\nPlease cancel & restart this wizard later...", "Connection Closed", JOptionPane.ERROR_MESSAGE);
+       return false;
+    }
+
     personality.queueMessage(new AccountStepMessage(parameters)); 
     await();
      
@@ -84,6 +90,12 @@ public class JWizardStep1TextFieldNet extends JWizardStep1TextField {
    */
    protected boolean onPrevious(Object context, JWizard wizard) {
     NetPersonality personality = (NetPersonality) context;
+
+    if( !personality.isConnected() ) {
+       JOptionPane.showMessageDialog( null, "The account server seems to have shutdown !\nPlease cancel & restart this wizard later...", "Connection Closed", JOptionPane.ERROR_MESSAGE);
+       return false;
+    }
+
     personality.queueMessage(new PreviousStepMessage());
     await();
     

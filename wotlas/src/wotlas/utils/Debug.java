@@ -21,7 +21,8 @@ package wotlas.utils;
 
 import java.io.PrintStream;
 
-/** A Debug Utility. ( a tracer support would be interessant to add )
+/** A Debug Utility.<br>
+ *( a tracer support would be interessant to add )
  * 
  * @author Aldiss
  */

@@ -215,7 +215,7 @@ public class ServerDirector implements Runnable, NetServerErrorListener {
            Debug.signal( Debug.NOTICE, null, "*-----------------------------------*" );
            Debug.signal( Debug.NOTICE, null, "|   Wheel Of Time - Light & Shadow  |" );
            Debug.signal( Debug.NOTICE, null, "|  Copyright (C) 2001 - WOTLAS Team |" );
-           Debug.signal( Debug.NOTICE, null, "|           Server v1.2.2           |" );
+           Debug.signal( Debug.NOTICE, null, "|           Server v1.2.3           |" );
            Debug.signal( Debug.NOTICE, null, "*-----------------------------------*\n");
 
 
@@ -283,7 +283,12 @@ public class ServerDirector implements Runnable, NetServerErrorListener {
               }
 
               Debug.signal( Debug.NOTICE, null, "Leaving in 30s..." );
-              Runtime.getRuntime().removeShutdownHook(shutdownThread);
+
+              try{
+                  Runtime.getRuntime().removeShutdownHook(shutdownThread);
+              }catch(Exception e) {
+              	  return;
+              }
               serverDirector.stopThread();
            }
      }

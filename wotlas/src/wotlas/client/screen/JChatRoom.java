@@ -145,10 +145,16 @@ public class JChatRoom extends JPanel implements MouseListener {
     Hashtable playersTable = ClientDirector.getDataManager().getPlayers();
     Player newPlayer = (Player) playersTable.get(primaryKey);
 
-    final PlayerState newPlayerItem = new PlayerState(senderFullName, newPlayer.isConnectedToGame());
+    final PlayerState newPlayerItem;
+
+    if(newPlayer!=null)
+       newPlayerItem = new PlayerState(senderFullName, newPlayer.isConnectedToGame());
+    else
+       newPlayerItem = new PlayerState(senderFullName, true );
+
     players.put( primaryKey, newPlayerItem);  
 
-    if ( (newPlayer!=null) && newPlayer.isConnectedToGame() ) {
+    if ( newPlayer!=null && newPlayer.isConnectedToGame() ) {
       Runnable runnable = new Runnable() {
         public void run() {
           if (!newPlayerItem.fullName.equals(ClientDirector.getDataManager().getMyPlayer().getFullPlayerName()))

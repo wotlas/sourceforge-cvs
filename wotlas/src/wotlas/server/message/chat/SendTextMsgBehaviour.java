@@ -237,7 +237,9 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
           return;
        }
 
-       synchronized( mRouter.getPlayers() ) {
+       players = mRouter.getPlayers();
+
+       synchronized( players ) {
           Iterator it = players.values().iterator();
 
             while ( it.hasNext() ) {

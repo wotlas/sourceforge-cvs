@@ -259,7 +259,7 @@ public class ServerAddressSetup extends JWizard {
 
            JLabel label3 = new JLabel("Enter your password :");
            label3.setAlignmentX(LEFT_ALIGNMENT);
-           t_passw = new JPasswordField(remoteServersProperties.getProperty( "transfer.serverHomePassw",""));
+           t_passw = new JPasswordField(password);
            t_passw.setAlignmentX(LEFT_ALIGNMENT);
 
            group3.add( label3 );
@@ -541,8 +541,11 @@ public class ServerAddressSetup extends JWizard {
                     if(workingDir.length()!=0)
                        workingDirPath = new File(workingDir);
 
+                    Debug.signal(Debug.NOTICE,null,"Command run :\n"+cmd);
+                    System.out.println("\nThis is the command we are trying to run (the $PASSW$ has been replaced by your password) :\n\n");
+                    System.out.println(""+cmd);
+
                     try{
-                       Debug.signal(Debug.NOTICE,null,"Command run :\n"+cmd);
                        Process pr = Runtime.getRuntime().exec( fullCmd.toString(), null, workingDirPath );
                        result = pr.waitFor();
                     }

@@ -228,6 +228,9 @@ public class NetReceiver extends NetThread
   /** Waits for a message to arrive. Useful in some cases when the NetReceiver
    *  is synchronous. This method does nothing if the NetReceiver is asynchronous.
    *
+   * IMPORTANT: this method locks forever if there is no incoming message...
+   *            sorry... no timeout.
+   *
    * @exception IOException if something goes wrong
    */
      public void waitForAMessageToArrive() throws IOException{
@@ -242,6 +245,16 @@ public class NetReceiver extends NetThread
 
       // Reset Stream state
          in_stream.reset();
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** is the NetReceiver synchronous ?
+   *
+   * @return true if synchronous, false if asynchronous
+   */
+     public boolean isSynchronous() {
+         return sync;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

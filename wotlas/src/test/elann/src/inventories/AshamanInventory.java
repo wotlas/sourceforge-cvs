@@ -48,9 +48,9 @@ public class AshamanInventory extends Inventory
   /** Set the body armor. Ignored.
    * @param bodyArmor the new body armor
    */
-    public void setBodyArmor(BodyArmor bodyArmor)
+    public void setBodyArmor(BodyArmor bodyArmor) throws InventoryException
     {
-		// no op - should warn somehow
+	 throw InventoryException;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -66,9 +66,9 @@ public class AshamanInventory extends Inventory
   /** Set the head armor. Ignored.
    * @param headArmor the new head armor
    */
-    public void setHeadArmor(HeadArmor headArmor)
+    public void setHeadArmor(HeadArmor headArmor) throws InventoryException
     {
-		// no op - should warn somehow
+	 throw InventoryException;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -84,9 +84,9 @@ public class AshamanInventory extends Inventory
   /** Set the bow. Ignored.
    * @param bow the new bow
    */
-    public void setBow(Bow bow)
+    public void setBow(Bow bow) throws InventoryException
     {
-		// no op - should warn somehow
+	 throw InventoryException;
     }
 	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -103,9 +103,9 @@ public class AshamanInventory extends Inventory
   /** Set the weapon hidden in right sleeve. Ignored.
    * @param rightSleeveWeapon the new weapon hidden in right sleeve
    */
-    public void setRightSleeveWeapon(LightWeapon rightSleeveWeapon)
+    public void setRightSleeveWeapon(LightWeapon rightSleeveWeapon) throws InventoryException
     {
-		// no op - should warn somehow
+	 throw InventoryException;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -121,9 +121,9 @@ public class AshamanInventory extends Inventory
   /** Set the weapon hidden in left sleeve. Ignored.
    * @param leftSleeveWeapon the new weapon hidden in left sleeve
    */
-    public void setLeftSleeveWeapon(LightWeapon leftSleeveWeapon)
+    public void setLeftSleeveWeapon(LightWeapon leftSleeveWeapon) throws InventoryException
     {
-		// no op - should warn somehow
+	 throw InventoryException;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -139,9 +139,9 @@ public class AshamanInventory extends Inventory
   /** Set the weapon hidden in right boot. Ignored.
    * @param rightBootWeapon the new weapon hidden in right boot
    */
-    public void setRightBootWeapon(LightWeapon rightBootWeapon)
+    public void setRightBootWeapon(LightWeapon rightBootWeapon) throws InventoryException
     {
-		// no op - should warn somehow
+	 throw InventoryException;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -157,9 +157,9 @@ public class AshamanInventory extends Inventory
   /** Set the weapon hidden in left boot. Ignored.
    * @param leftBootWeapon the new weapon hidden in left boot
    */
-    public void setLeftBootWeapon(LightWeapon leftBootWeapon)
+    public void setLeftBootWeapon(LightWeapon leftBootWeapon) throws InventoryException
     {
-		// no op - should warn somehow
+	 throw InventoryException;
     }
 	
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

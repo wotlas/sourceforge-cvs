@@ -77,21 +77,4 @@ public class JAccountConnectionDialog extends JConnectionDialog
 
  /*------------------------------------------------------------------------------------*/
 
-   /** Main. TEST
-    *
-    * @param argv this default param is not used.
-    *
-    static public void main( String argv[] ) {
-     if(argv.length!=2) {
-        System.out.println("JAccountConnectionDialog <login> <password>");
-        System.exit(1);
-     }
-
-       wotlas.client.Client.FalseClient falseC = new wotlas.client.Client.FalseClient( argv[0], argv[1] );
-       new JAccountConnectionDialog( new Frame(), "aldiss", 25500, falseC );
-        System.out.println("finmain");
-    }
-
- *------------------------------------------------------------------------------------*/
-
 }

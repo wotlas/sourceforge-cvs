@@ -25,6 +25,7 @@ import wotlas.common.universe.WotlasLocation;
 import wotlas.utils.Debug;
 
 import java.util.Hashtable;
+import java.util.Set;
 
 /** A chat room of the Chat Engine
  *
@@ -40,7 +41,7 @@ public class ChatRoom
    */
   private String primaryKey;
   
-  /** Name
+  /** Name of the ChatRoom
    */
   private String name;
   
@@ -56,16 +57,15 @@ public class ChatRoom
    */
   private int maxPlayers;
   
-  /** List of players in the ChatRoom
+  /** List of players' primary key in the ChatRoom
    */
-  private transient Hashtable players;
+  private transient Set players;
   
  /*------------------------------------------------------------------------------------*/  
  
   /** Constructor
    */
   public ChatRoom() {
-    players = new Hashtable(10);
   }
   
  /*------------------------------------------------------------------------------------*/  
@@ -105,7 +105,7 @@ public class ChatRoom
     this.location = location;
   }
   
-  public Hashtable getPlayers() {
+  public Set getPlayers() {
     return players;
   }
 
@@ -113,18 +113,27 @@ public class ChatRoom
   
   /** Add a player to this ChatRoom. The player must have been previously initialized.  
    *
-   * @param player player to add
+   * @param player player's primary key to add
    * @return false if the player already exists on this ChatRoom, true otherwise
    */
-  public boolean addPlayer(Player player) {
-    if ( players.containsKey( player.getPrimaryKey() ) ) {
-      Debug.signal( Debug.CRITICAL, this, "addPlayer failed: key "+player.getPrimaryKey()
+  public boolean addPlayer(String primaryKey) {
+    if ( players.contains(primaryKey) ) {
+      Debug.signal( Debug.CRITICAL, this, "addPlayer failed: key "+primaryKey
                          +" already in "+this );
       return false;
     }
 
-    players.put( player.getPrimaryKey(), player );
+    players.add(primaryKey);
     return true;
+  }
+  
+  /** Add a player to this ChatRoom. The player must have been previously initialized.  
+   *
+   * @param player player to add
+   * @return false if the player already exists on this ChatRoom, true otherwise
+   */
+  public boolean addPlayer(Player player) {
+    return addPlayer(player.getPrimaryKey());
   }
     
  /*------------------------------------------------------------------------------------*/  
@@ -134,14 +143,23 @@ public class ChatRoom
    * @param player player to remove
    * @return false if the player doesn't exists in this ChatRoom, true otherwise
    */
-  public boolean removePlayer(Player player) {
-    if ( !players.containsKey( player.getPrimaryKey() ) ) {
-      Debug.signal( Debug.CRITICAL, this, "removePlayer failed: key "+player.getPrimaryKey()
+  public boolean removePlayer(String primaryKey) {
+    if ( !players.contains(primaryKey) ) {
+      Debug.signal( Debug.CRITICAL, this, "removePlayer failed: key "+primaryKey
                          +" not found in "+this );
       return false;
     }
-    players.remove( player.getPrimaryKey() );
+    players.remove( primaryKey );
     return true;
+  }
+  
+  /** Removes a player from this ChatRoom.   
+   *
+   * @param player player to remove
+   * @return false if the player doesn't exists in this ChatRoom, true otherwise
+   */
+  public boolean removePlayer(Player player) {
+    return removePlayer(player.getPrimaryKey());
   }
     
  /*------------------------------------------------------------------------------------*/  

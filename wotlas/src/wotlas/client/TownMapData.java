@@ -53,7 +53,7 @@ public class TownMapData implements MapData
 
   /** True if we show debug informations
    */
-  public static boolean SHOW_DEBUG = true;
+  public static boolean SHOW_DEBUG = false;
 
  /** if true, the player can change its MapData
    * otherwise, the server didn't send a message to do so => player stay where he is
@@ -147,12 +147,6 @@ public class TownMapData implements MapData
       e.printStackTrace();
       return;
     }
-    /*if (SHOW_DEBUG) {
-      System.out.println("\tbufIm.width = " + bufIm.getWidth());
-      System.out.println("\tbufIm.height = " + bufIm.getHeight());
-      System.out.println("\tbackground.width = " + background.getWidth());
-      System.out.println("\tbackground.height = " + background.getHeight());
-    }*/
 
     // 5 - We initialize the AStar algo
     myPlayer.getMovementComposer().setMovementMask( BinaryMask.create( bufIm ), 5, 1 );
@@ -255,8 +249,6 @@ public class TownMapData implements MapData
 
       myPlayer.getMovementComposer().resetMovement();
 
-      //myPlayer.setLocation( mapExit.getTargetWotlasLocation() );
-
 /* NETMESSAGE */      
       if (SEND_NETMESSAGE) {
         try {
@@ -339,9 +331,11 @@ public class TownMapData implements MapData
       
 
       if (true) {
-        System.out.println("Which MapExit are we using ?");
-        System.out.println("\t\tmapExit.getType() = " + (int) mapExit.getType());
-        System.out.print("\t\tmapExit.getMapExitSide() = ");        
+        if (SHOW_DEBUG) {
+          System.out.println("Which MapExit are we using ?");
+          System.out.println("\t\tmapExit.getType() = " + (int) mapExit.getType());
+          System.out.print("\t\tmapExit.getMapExitSide() = ");        
+        }
         switch( mapExit.getMapExitSide() ) {
           case MapExit.NONE:
             System.out.println("NONE");
@@ -369,8 +363,10 @@ public class TownMapData implements MapData
             myPlayer.setY( mapExit.getY() + mapExit.getHeight()/2 );
             break;
           }        
-        System.out.println("\t\tmapExit.getTargetWotlasLocation() = " + mapExit.getTargetWotlasLocation());
-        System.out.println("\t\tmapExit.getMapExitLocation() = " + mapExit.getMapExitLocation());
+        if (SHOW_DEBUG) {
+          System.out.println("\t\tmapExit.getTargetWotlasLocation() = " + mapExit.getTargetWotlasLocation());
+          System.out.println("\t\tmapExit.getMapExitLocation() = " + mapExit.getMapExitLocation());
+        }
       }
 
       myPlayer.setLocation(mapExit.getMapExitLocation());

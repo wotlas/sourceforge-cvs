@@ -750,7 +750,7 @@ System.out.println("Frame show");
    */
   public void changeMapData() {
     if ( myPlayer.getLocation().isRoom() ) {
-      myMapData = new InteriorMapData();
+      myMapData = new InteriorMapData();      
     }
     else if ( myPlayer.getLocation().isTown() ) {
       myMapData = new TownMapData();
@@ -758,6 +758,7 @@ System.out.println("Frame show");
     else if ( myPlayer.getLocation().isWorld() ) {
       myMapData = new WorldMapData();
     }
+    myMapData.showDebug(SHOW_DEBUG);
     myMapData.initDisplay(myPlayer);
   }
 

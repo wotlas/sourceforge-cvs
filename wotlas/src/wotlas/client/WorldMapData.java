@@ -53,7 +53,7 @@ public class WorldMapData implements MapData
 
   /** True if we show debug informations
    */
-  public static boolean SHOW_DEBUG = true;
+  public static boolean SHOW_DEBUG = false;
   
   /** if true, the player can change its MapData
    * otherwise, the server didn't send a message to do so => player stay where he is
@@ -111,7 +111,6 @@ public class WorldMapData implements MapData
       System.out.println("\tshortName = " + worldMap.getShortName());
     }
     dataManager.getChatPanel().changeMainJChatRoom(worldMap.getShortName());
-    //dataManager.getInfosPanel().setLocation(worldMap.getFullName());
 
     dataManager.addPlayer(myPlayer);
     
@@ -147,14 +146,6 @@ public class WorldMapData implements MapData
       e.printStackTrace();
       return;
     }
-    /*if (SHOW_DEBUG) {
-      System.out.println("\tbufIm.width = " + bufIm.getWidth());
-      System.out.println("\tbufIm.height = " + bufIm.getHeight());
-      System.out.println("\tbackground.width = " + background.getWidth());
-      System.out.println("\tbackground.height = " + background.getHeight());
-    }*/
-
-///////////////////////////// ALDISS : changement de l'initialisation de Astar
 
     // 5 - We initialize the AStar algo
     myPlayer.getMovementComposer().setMovementMask( BinaryMask.create( bufIm ), 5, 1 );
@@ -247,8 +238,6 @@ public class WorldMapData implements MapData
       myPlayer.getMovementComposer().resetMovement();
 
       MapExit mapExit = townMap.findTownMapExit( myPlayer.getCurrentRectangle() );
-
-      //myPlayer.setLocation( mapExit.getMapExitLocation() );
 
 /* NETMESSAGE */      
       if (SEND_NETMESSAGE) {

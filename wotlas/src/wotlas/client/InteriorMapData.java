@@ -55,7 +55,7 @@ public class InteriorMapData implements MapData
 
   /** True if we show debug informations
    */
-  public static boolean SHOW_DEBUG = true;
+  public static boolean SHOW_DEBUG = false;
 
  /** if true, the player can change its MapData
    * otherwise, the server didn't send a message to do so => player stay where he is
@@ -138,8 +138,6 @@ public class InteriorMapData implements MapData
     }
     dataManager.getChatPanel().changeMainJChatRoom(room.getShortName());
 
-    //dataManager.getInfosPanel().setLocation(room.getFullName());
-
 /* NETMESSAGE */
     if (SHOW_DEBUG)
       System.out.println("dataManager.sendMessage( new EnteringRoomMessage(...) )");
@@ -193,18 +191,10 @@ public class InteriorMapData implements MapData
       e.printStackTrace();
       return;
     }
-    /*if (SHOW_DEBUG) {
-      System.out.println("\tbufIm.width = " + bufIm.getWidth());
-      System.out.println("\tbufIm.height = " + bufIm.getHeight());
-      System.out.println("\tbackground.width = " + background.getWidth());
-      System.out.println("\tbackground.height = " + background.getHeight());
-    }*/
 
     // 5 - We initialize the AStar algo
     myPlayer.getMovementComposer().setMovementMask( BinaryMask.create( bufIm ), 5, 4 );
     bufIm.flush(); // free image resource
-
-///////////////////////////// FIN ALDISS
 
     // 6 - We init the GraphicsDirector
     GraphicsDirector gDirector = dataManager.getGraphicsDirector();
@@ -240,9 +230,9 @@ public class InteriorMapData implements MapData
     }
 
     //   - We add visual properties to the player (shadows...)
-System.out.println("Player init visual properties");
+    if (SHOW_DEBUG)
+      System.out.println("Player init visual properties");
     myPlayer.initVisualProperties(gDirector);
-
 
     //   - We show some informations on the screen
     String[] strTemp = { myPlayer.getFullPlayerName() };
@@ -268,12 +258,15 @@ System.out.println("Player init visual properties");
     String midiFile = imap.getMusicName();
     if (midiFile != null)
       SoundLibrary.getSoundLibrary().playMusic( midiFile );
-System.out.println("Sending final AllDataLeftMessage");
+
+    if (SHOW_DEBUG)
+      System.out.println("Sending final AllDataLeftMessage");
       
     //   - We retreive other players informations
     if( dataManager.isAlive() ) {
-    	System.out.println("DATAMANAGER ALLIVE !!!");
-        dataManager.sendMessage(new AllDataLeftPleaseMessage());
+      if (SHOW_DEBUG)
+    	  System.out.println("DATAMANAGER ALLIVE !!!");
+      dataManager.sendMessage(new AllDataLeftPleaseMessage());
     }
   }
 
@@ -284,7 +277,8 @@ System.out.println("Sending final AllDataLeftMessage");
    */
   public void canChangeMapLocation( boolean canChangeMap ) {
     synchronized( changeMapLock ) {
-System.out.println("NOTIFYING");
+      if (SHOW_DEBUG)
+        System.out.println("NOTIFYING");
       this.canChangeMap = canChangeMap;
       changeMapLock.notify();
     }
@@ -347,7 +341,7 @@ System.out.println("NOTIFYING");
         if (SHOW_DEBUG)
           System.out.println("Adding a new player : " + myPlayer + "to room : " + room);
 //        room.addPlayer( myPlayer );
-        //dataManager.getInfosPanel().setLocation(room.getFullName());
+        
         String[] strTemp = { room.getFullName() };
         mltLocationName.setText(strTemp);
         if (SHOW_DEBUG)

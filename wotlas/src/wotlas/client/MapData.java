@@ -42,7 +42,9 @@ public interface MapData
    */
   public static final int CONNECTION_TIMEOUT = 5000;
   
-  
+  /** Set to true to show debug information
+   */
+  public void showDebug(boolean value);
   
   /** To get changeMap lock<br>
    * called by client.message.movement.YourCanLeaveMsgBehaviour

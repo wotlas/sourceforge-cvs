@@ -163,7 +163,12 @@ public class Debug
      static public String getStackTrace(Exception e) {
        java.io.StringWriter s = new java.io.StringWriter();    
        e.printStackTrace(new java.io.PrintWriter(s));
-       return s.toString();
+       String trace = s.toString();
+       
+       if(trace==null || trace.length()==0 || trace.equals("null"))
+          return e.toString();
+       else
+          return trace;
      }
 
  /*------------------------------------------------------------------------------------*/

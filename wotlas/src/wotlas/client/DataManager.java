@@ -528,12 +528,12 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       }
     }
     Iterator it = players.values().iterator();
-    System.out.println("tick players");
+    //System.out.println("tick players");
     while( it.hasNext() ) {
-      System.out.println("tick");
+      //System.out.println("tick");
       ( (PlayerImpl) it.next() ).tick();
     }
-    System.out.println("end tick");
+    //System.out.println("end tick");
     gDirector.tick();
   }
 

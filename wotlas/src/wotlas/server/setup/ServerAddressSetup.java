@@ -88,6 +88,7 @@ public class ServerAddressSetup extends JWizard {
           catch( WizardException we ) {
                we.printStackTrace();
                dispose(); // init failed !
+               ServerAdminGUI.setAdminGUI();
           }
     }
 
@@ -97,6 +98,7 @@ public class ServerAddressSetup extends JWizard {
    */
    protected void onFinished(Object context) {
            dispose();
+           ServerAdminGUI.setAdminGUI();
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -105,6 +107,7 @@ public class ServerAddressSetup extends JWizard {
    */
    protected void onCanceled(Object context) {
          dispose();
+         ServerAdminGUI.setAdminGUI();
    }
 
  /*------------------------------------------------------------------------------------*/

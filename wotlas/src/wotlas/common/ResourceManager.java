@@ -932,4 +932,20 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** To get the path to the OS dependent scripts.
+    *  @return full path to where the scripts are. This method uses the system
+    *    property "os.name" to return a path to the right script.
+    */
+     public String getExternalScriptsDir() {
+     	 if( inClientJar )
+     	     return null; // this method is for the server side only
+
+         if( Tools.isWindowsOS() )
+             return DEFAULT_BIN_PATH+File.separator+WIN_BINARY_DIR+File.separator;
+         else
+             return DEFAULT_BIN_PATH+File.separator+UNIX_BINARY_DIR+File.separator;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }

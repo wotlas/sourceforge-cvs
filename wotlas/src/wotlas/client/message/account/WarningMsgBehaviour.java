@@ -59,7 +59,7 @@ public class WarningMsgBehaviour extends WarningMessage implements NetMessageBeh
   public void doBehaviour( Object sessionContext ) {
       DataManager dataManager = (DataManager) sessionContext;
 
-       if( invokeLater ) {
+       if( invokeLater && dataManager.isRunning() ) {
            invokeLater = false;
            dataManager.invokeLater( this );
            return;

@@ -179,7 +179,6 @@ public class NetServer extends Thread implements NetConnectionListener, NetError
                     while( hostIP ==null );
               }
               else {
-                synchronized( systemNetLock ){     // <-- to prevent servers from accessing net info at the same time
                  // ok, we have an interface name
                     int separatorIndex = serverInterface.indexOf(',');
                     int ipIndex = -1;
@@ -193,9 +192,13 @@ public class NetServer extends Thread implements NetConnectionListener, NetError
 
                  // We wait for the interface to be up
                     do{
-                       String itfIP[] = NetInterface.getInterfaceAddresses( serverInterface.substring(0,separatorIndex) );
-                       
-                       if(itfIP.length<=ipIndex) {
+                       String itfIP[] = null;
+
+                       synchronized( systemNetLock ){     // <-- to prevent servers from accessing net info at the same time
+                          itfIP = NetInterface.getInterfaceAddresses( serverInterface.substring(0,separatorIndex) );
+                       }
+
+                       if(itfIP==null || itfIP.length<=ipIndex) {
                            // Interface is not ready
                               if(server==null) {
                                  Debug.signal(Debug.FAILURE,this,"Network Interface MUST be enabled at start-up so that we load appropriate libraries !");
@@ -229,7 +232,6 @@ public class NetServer extends Thread implements NetConnectionListener, NetError
                           return server;
                     }
                     while( hostIP ==null );
-                }
               }
 
            // 2 - Has the state of the network interface changed ?

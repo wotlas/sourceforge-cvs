@@ -31,6 +31,9 @@ import wotlas.libs.sound.SoundLibrary;
 import wotlas.common.*;
 import wotlas.common.RemoteServersPropertiesFile;
 
+import wotlas.libs.aswing.ALoginDialog;
+import java.awt.Frame;
+
 import java.io.File;
 import java.util.Properties;
 import java.net.*;
@@ -107,9 +110,17 @@ public class ServerDirector implements Runnable, NetServerListener {
     */
       public static boolean immediatePersistenceThreadStop = false;
 
+   /** Default password for transfer
+    */
+      private static String password;
+
    /** To stop the persistence thread.
     */
       private boolean mustStop = false;
+
+   /** To tell if the server is enabled or not (network interfaces available).
+    */
+      private boolean serverEnabled = true;
 
    /** Show debug information ?
     */
@@ -486,7 +497,8 @@ public class ServerDirector implements Runnable, NetServerListener {
     * @param itf the network interface we tried which is NOT available.
     */
      public void serverInterfaceIsDown( String itf ) {
-          Debug.signal( Debug.NOTICE, null, "Network interface "+itf+" is down... we'll retry later.");
+          Debug.signal( Debug.NOTICE, null, "Network interface "+itf+" is down... we'll retry a connection in three minutes.");
+          serverEnabled = false;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -498,8 +510,110 @@ public class ServerDirector implements Runnable, NetServerListener {
     *        and its state has not changed (since last check).
     */
      public void serverInterfaceIsUp( String ipAddress, boolean stateChanged ) {
-         if(stateChanged)
-            Debug.signal( Debug.NOTICE, null, "Network interface "+ipAddress+" is up...");
+          if(!stateChanged) {
+             if(!serverEnabled) {
+                serverEnabled = true;
+                Debug.signal( Debug.NOTICE, null, "Network interface "+ipAddress+" is up... IP has not changed.");
+             }
+
+             return;
+          }
+
+          Debug.signal( Debug.NOTICE, null, "Network interface "+ipAddress+" is up...");
+
+       // We save the new IP
+          if( !serverManager.getServerConfigManager().updateServerConfig(
+                              null, ipAddress, serverManager.getServerConfig() ) ) {
+              Debug.signal( Debug.CRITICAL, this, "Failed to save new IP ("+ipAddress+") to the local server-"
+                                                  +getServerID()+".cfg.adr file ! Please perform a manual update!"
+                                                  +"Your server's IP has changed !" );
+              return;
+          }
+          else
+              Debug.signal( Debug.NOTICE, null, "IP saved to server-"+getServerID()+".cfg.adr file");
+
+          if( getServerID()==0 )
+              return; // local server
+
+       // Manual update ?
+          if( !serverProperties.getBooleanProperty("init.automaticUpdate") ) {
+              Debug.signal( Debug.NOTICE, null, "Your server's IP has changed, you should do a manual update on the wotlas web server!"
+                            +"Your server will be unreachable until then");
+              return;
+          }
+
+       // Automatic Update via a Thread
+          Thread updateThread = new Thread() {
+             public void run() {
+              // We get the login
+                 String login = remoteServersProperties.getProperty("transfer.serverHomeLogin");
+
+              // Need password ?
+                 if(password==null) {
+                    ALoginDialog dialog = new ALoginDialog( new Frame(), "File Transfer Login (asked once):", login, resourceManager );
+                    
+                    if( dialog.okWasClicked() ) {
+                        login = dialog.getLogin();
+                        remoteServersProperties.setProperty("transfer.serverHomeLogin",login);
+                        password = dialog.getPassword();
+                    }
+                    else {
+                       Debug.signal( Debug.ERROR, null, "No password set. Transfer aborted");
+                       return; // no transfer
+                    }
+                 }
+
+              // Runtime... we execute the transfert command
+                 int result=1;
+                 String cmd = resourceManager.getExternalTransferScript();
+                 File wDir = new File(resourceManager.getExternalScriptsDir());
+
+                    try{
+                      cmd = new File( cmd ).getCanonicalPath();
+                    }catch(Exception ex ) {
+                      Debug.signal( Debug.ERROR, this, "Failed to find scripts ! Err: "+ex+" Cmd:"+cmd);
+                      return;
+                    }
+
+                 // We replace the login & password values
+                    String script = resourceManager.loadText( cmd );
+                    if( script==null ) {
+                        Debug.signal( Debug.ERROR, this, "Failed to load "+script+" !" );
+                        return;
+                    }
+
+                    script = FileTools.updateProperty( "SET WEB_LOGIN", login, script );
+                    script = FileTools.updateProperty( "SET WEB_PASSWORD", password, script );
+
+                    if( !resourceManager.saveText( cmd, script ) ) {
+                        Debug.signal( Debug.ERROR, this, "Failed to save "+script+" !" );
+                        return;
+                    }
+
+                    Debug.signal(Debug.NOTICE,null,"Launching transfer script...");
+
+                    try{
+                       Process pr = Runtime.getRuntime().exec( cmd, null, wDir );
+                       result = pr.waitFor();
+                    }
+                    catch( Exception ex ) {
+                       Debug.signal( Debug.ERROR, this, "Command Line Failed : "+ex.getMessage() );
+                       return;
+                    }
+
+                 Debug.signal(Debug.NOTICE,null,"Transfer script ended with value '"+result+"'.");
+
+                 script = FileTools.updateProperty( "SET WEB_LOGIN", "You will be prompted for your login.", script );
+                 script = FileTools.updateProperty( "SET WEB_PASSWORD", "You will be prompted for your passsword.", script );
+
+                 if( !resourceManager.saveText( cmd, script ) ) {
+                     Debug.signal( Debug.ERROR, this, "Failed to save "+script+" to clean entries !" );
+                     return;
+                 }
+             }
+          };
+
+          updateThread.start();
      }
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

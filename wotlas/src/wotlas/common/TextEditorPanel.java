@@ -193,4 +193,25 @@ public class TextEditorPanel extends JPanel {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** To get the current text displayed in this editor.
+    */
+    public String getText() {
+        if(!a_text.isEnabled())
+           return null;
+        
+        return a_text.getText();
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the current text displayed in this editor.
+    */
+    public void setText(String text) {
+        originalText = text;
+        a_text.setText( text );
+        a_text.setEnabled( true );
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }

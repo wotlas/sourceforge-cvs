@@ -41,7 +41,7 @@ public class ServerManager {
 
    /** Our server config files.
     */
-      private ServerConfigManager configs;
+      private ServerConfigManager serverConfigManager;
 
    /** Config of this server.
     */
@@ -69,14 +69,14 @@ public class ServerManager {
        // 1 - we load the ServerConfig files...
           Debug.signal( Debug.NOTICE, null, "Updating server config files from Internet home... please wait...");
        
-          configs = new ServerConfigManager( rManager );
-          configs.setRemoteServerConfigHomeURL( ServerDirector.getRemoteServerConfigHomeURL() );
-          configs.setLocalServerID( ServerDirector.getServerID() );
+          serverConfigManager = new ServerConfigManager( rManager );
+          serverConfigManager.setRemoteServerConfigHomeURL( ServerDirector.getRemoteServerConfigHomeURL() );
+          serverConfigManager.setLocalServerID( ServerDirector.getServerID() );
 
           if(ServerDirector.getServerID()!=0)
-             configs.getLatestConfigFiles(null);  // we retrieve all the server files
+             serverConfigManager.getLatestConfigFiles(null);  // we retrieve all the server files
 
-          ourConfig = configs.getServerConfig( ServerDirector.getServerID() );
+          ourConfig = serverConfigManager.getServerConfig( ServerDirector.getServerID() );
 
           if( ourConfig == null ) {
               Debug.signal( Debug.FAILURE, this, "Can't init servers without a ServerConfig !" );
@@ -108,7 +108,7 @@ public class ServerManager {
                                              ourConfig.getGatewayServerPort(),
                                              gateway_packages,
                                              ourConfig.getMaxNumberOfGatewayConnections(),
-                                             configs );
+                                             serverConfigManager );
 
        // Everything is ready on the network side...
    }
@@ -140,7 +140,7 @@ public class ServerManager {
        accountServer = null;
        gatewayServer = null;
        ourConfig = null;
-       configs = null;
+       serverConfigManager = null;
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -225,6 +225,15 @@ public class ServerManager {
    */
     public ServerConfig getServerConfig() {
          return ourConfig;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the ServerConfigManager of this server.
+   * @return the ServerConfigManager
+   */
+    public ServerConfigManager getServerConfigManager() {
+         return serverConfigManager;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

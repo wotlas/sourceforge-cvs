@@ -48,6 +48,10 @@ public class ServerAdminGUI extends JFrame {
    */
     private static WorldManager worldManager;
 
+  /** TextEditorPanel for our transfer script
+   */
+    private static TextEditorPanel transferScript;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Our tabbed pane.
@@ -62,7 +66,7 @@ public class ServerAdminGUI extends JFrame {
          super("Server Administration");
 
       // 1 - GUI construction
-         setGUI();
+         Font f = FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter");
 
          JPanel mainPanel = new JPanel();
          mainPanel.setLayout(new BorderLayout());
@@ -117,6 +121,7 @@ public class ServerAdminGUI extends JFrame {
            taInfo.setWrapStyleWord(true);
            taInfo.setEditable(false);
            taInfo.setBackground(Color.white);
+           taInfo.setFont(f.deriveFont(14f));
            setupPanel.add( taInfo );
 
            JPanel launchWizardPanel = new JPanel();
@@ -126,11 +131,12 @@ public class ServerAdminGUI extends JFrame {
 
            AButton b_wizard = new AButton("Click here to launch the Setup Wizard.");
            b_wizard.setPreferredSize(new Dimension(200,30));
-           b_wizard.setFont(new Font("Dialog", Font.PLAIN, 12));
+           b_wizard.setFont(f.deriveFont(14f));
            launchWizardPanel.add( b_wizard );
 
            b_wizard.addActionListener(new ActionListener() {
               public void actionPerformed (ActionEvent e) {
+                  setGUI();
                   new ServerSetup();
               }
            });
@@ -143,11 +149,14 @@ public class ServerAdminGUI extends JFrame {
                                  setupPanel,
                                  "Register & Setup your Server Config" );
 
+
+         transferScript = new TextEditorPanel( ServerDirector.getResourceManager(),
+                           ServerDirector.getResourceManager().getExternalTransferScript(),
+                           "This is the script we'll use for automatic config transfer :", true );
+
          adminTabbedPane.addTab( "Transfer Script",
                                  ServerDirector.getResourceManager().getImageIcon("pin.gif"),
-                                 new TextEditorPanel( ServerDirector.getResourceManager(),
-                                                      ServerDirector.getResourceManager().getExternalTransferScript(),
-                                                      "This is the script we'll use for automatic config transfer :",true),
+                                 transferScript,
                                  "Edit/View your file transfer script:" );
 
          JPanel manualPanel = new JPanel();
@@ -163,6 +172,7 @@ public class ServerAdminGUI extends JFrame {
            taInfo2.setWrapStyleWord(true);
            taInfo2.setEditable(false);
            taInfo2.setBackground(Color.white);
+           taInfo2.setFont(f.deriveFont(14f));
            manualPanel.add( taInfo2 );
 
            JPanel launchWizardPanel2 = new JPanel();
@@ -172,8 +182,8 @@ public class ServerAdminGUI extends JFrame {
 
            AButton b_wizard2 = new AButton("Click here to launch the Manual Transfer Wizard.");
            b_wizard2.setPreferredSize(new Dimension(200,30));
-           b_wizard2.setFont(new Font("Dialog", Font.PLAIN, 12));
-          launchWizardPanel2.add( b_wizard2 );
+           b_wizard2.setFont(f.deriveFont(14f));
+           launchWizardPanel2.add( b_wizard2 );
 
            b_wizard2.addActionListener(new ActionListener() {
               public void actionPerformed (ActionEvent e) {
@@ -252,6 +262,14 @@ public class ServerAdminGUI extends JFrame {
 
  /*------------------------------------------------------------------------------------*/
 
+  /** To get our transfer script.
+   */
+    static public TextEditorPanel getTransferScript() {
+        return transferScript;
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
   /** Set the colors and fonts
    */
   static public void setGUI() {
@@ -260,13 +278,19 @@ public class ServerAdminGUI extends JFrame {
     f = new Font("Monospaced", Font.PLAIN, 12);
     UIManager.put("Button.font", f);
 
-    f = FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter");
-
     UIManager.put("ComboBox.font", f.deriveFont(14f));
     UIManager.put("ComboBox.foreground", Color.black);
 
+    f = FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter");
+
     UIManager.put("Label.font", f.deriveFont(14f));
     UIManager.put("Label.foreground", Color.black);
+
+    UIManager.put("TextArea.font", f.deriveFont(14f));
+    UIManager.put("TextArea.foreground", Color.black);
+
+    UIManager.put("TextField.font", f.deriveFont(14f));
+    UIManager.put("TextField.foreground", Color.black);
     
     UIManager.put("PasswordField.font", f.deriveFont(14f));
     UIManager.put("PasswordField.foreground", Color.black);
@@ -280,11 +304,45 @@ public class ServerAdminGUI extends JFrame {
     UIManager.put("TableHeader.font", f.deriveFont(16f));
     UIManager.put("TableHeader.foreground", Color.black);
     
+    UIManager.put("CheckBox.font", f.deriveFont(14f));
+    UIManager.put("CheckBox.foreground", Color.black);
+  }
+  
+ /*--------------------------------------------------------------------------*/
+
+  /** Set the colors and fonts
+   */
+  static public void setAdminGUI() {
+    Font f;
+    
+    f = new Font("Dialog", Font.PLAIN, 12);
+    UIManager.put("Button.font", f);
+
+    UIManager.put("Label.font", f.deriveFont(14f));
+    UIManager.put("Label.foreground", Color.black);
+
     UIManager.put("TextArea.font", f.deriveFont(14f));
     UIManager.put("TextArea.foreground", Color.black);
-    
+
     UIManager.put("TextField.font", f.deriveFont(14f));
     UIManager.put("TextField.foreground", Color.black);
+
+//    f = FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter");
+
+    UIManager.put("ComboBox.font", f.deriveFont(14f));
+    UIManager.put("ComboBox.foreground", Color.black);
+    
+    UIManager.put("PasswordField.font", f.deriveFont(14f));
+    UIManager.put("PasswordField.foreground", Color.black);
+    
+    UIManager.put("RadioButton.font", f.deriveFont(14f));
+    UIManager.put("RadioButton.foreground", Color.black);
+            
+    UIManager.put("Table.font", f.deriveFont(14f));
+    UIManager.put("Table.foreground", Color.black);    
+    
+    UIManager.put("TableHeader.font", f.deriveFont(16f));
+    UIManager.put("TableHeader.foreground", Color.black);
     
     UIManager.put("CheckBox.font", f.deriveFont(14f));
     UIManager.put("CheckBox.foreground", Color.black);

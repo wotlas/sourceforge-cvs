@@ -28,7 +28,7 @@ import wotlas.common.ResourceManager;
 import wotlas.utils.Debug;
 import wotlas.utils.FileTools;
 
-import java.io.IOException;
+import java.io.File;
 import java.util.Properties;
 
 /** Wotlas Account Server. Its role is to wait clients and connect them to a new
@@ -85,13 +85,17 @@ public class AccountServer extends NetServer implements ErrorCodeList {
         ResourceManager rManager = ServerDirector.getResourceManager();
 
      // we load the clientCounter from the ACCOUNT_CONFIG
-        Properties props = rManager.loadProperties( rManager.getExternalConfigsDir()+ACCOUNT_CONFIG );
+        
+        Properties props = null;
+        
+        if( new File(rManager.getExternalConfigsDir()+ACCOUNT_CONFIG).exists() )
+           props = rManager.loadProperties( rManager.getExternalConfigsDir()+ACCOUNT_CONFIG );
 
         if(props==null) {
            // file not found, we create one...
-              Debug.signal( Debug.WARNING, this, "Could not find file: "
+              Debug.signal( Debug.WARNING, null, "Could not find file: "
                             +rManager.getExternalConfigsDir()+ACCOUNT_CONFIG
-                            +"\n   Creating a new "+ACCOUNT_CONFIG+" file..." );
+                            +"\n   Creating a new one..." );
 
               props = new Properties();
               props.setProperty( "clientCounter", "0" );

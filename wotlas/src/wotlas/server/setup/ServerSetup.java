@@ -111,7 +111,8 @@ public class ServerSetup extends JWizard {
           }
           catch( WizardException we ) {
                we.printStackTrace();
-               Debug.exit(); // init failed !
+               dispose(); // init failed !
+               ServerAdminGUI.setAdminGUI();
           }
     }
 
@@ -121,6 +122,7 @@ public class ServerSetup extends JWizard {
    */
    protected void onFinished(Object context) {
            dispose();
+           ServerAdminGUI.setAdminGUI();
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -129,6 +131,7 @@ public class ServerSetup extends JWizard {
    */
    protected void onCanceled(Object context) {
          dispose();
+         ServerAdminGUI.setAdminGUI();
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -627,7 +630,7 @@ public class ServerSetup extends JWizard {
             mainPanel.add( publishPanel, BorderLayout.CENTER );
 
          // Third Radio section
-            r_automaticUpdate = new ARadioButton("Automatically when the IP changes (please edit the transfer script).");
+            r_automaticUpdate = new ARadioButton("Automatically when the IP changes (via the transfer script).");
             r_manualUpdate = new ARadioButton("Never. I will do it manually via the Server Address Wizard.");
 
             btGroupItf = new ButtonGroup();
@@ -685,9 +688,13 @@ public class ServerSetup extends JWizard {
            }
            else if( name.equals("publishItf") ) {
                t_itfPublish.setEnabled(false);
+               r_automaticUpdate.setEnabled(true);
            }
            else if( name.equals("publishOther") ) {
                t_itfPublish.setEnabled(true);
+               r_automaticUpdate.setSelected(false);
+               r_manualUpdate.setSelected(true);
+               r_automaticUpdate.setEnabled(false);
            }
            else if( name.equals("itf") ) {
                if( c_itfName.getItemCount()==0 || l_itfDesc==null || c_ipName==null)
@@ -1057,9 +1064,6 @@ public class ServerSetup extends JWizard {
              param.setProperty("init.info0", "\n      Your server config has been successfully saved."
                                            +" You can now start your server. Because your server is"
                                            +" local you don't need to use the setup program.");
-
-             ServerDirector.getResourceManager().saveText(
-                 ServerDirector.getResourceManager().getExternalServerConfigsDir()+"server-0.cfg.adr", "localhost" );
           } else {
              param.setProperty("init.info0", "\n      Your server config has been successfully saved.\n\n"
                                            +"      You must now send it to the wotlas manager : just"
@@ -1096,6 +1100,34 @@ public class ServerSetup extends JWizard {
       *  @return return true to validate the "Next" button action, false to cancel it...
       */
        protected boolean onNext(Object context, JWizard wizard) {
+         // We create a default address file
+           String text = "localhost";
+
+           String publishAddress = ServerDirector.getServerProperties().getProperty("init.publishAddress");
+           
+           if( publishAddress!=null && publishAddress.length()!=0 )
+               text = publishAddress;
+
+           ServerDirector.getResourceManager().saveText(
+                ServerDirector.getResourceManager().getExternalServerConfigsDir()
+                +ServerConfigManager.SERVERS_PREFIX+serverID
+                +ServerConfigManager.SERVERS_SUFFIX+ServerConfigManager.SERVERS_ADDRESS_SUFFIX,
+                text );
+
+           if( ServerDirector.getServerProperties().getProperty("init.automaticUpdate","").equals("false") )
+               return true; // no need to configure script
+
+           String oldScript = ServerAdminGUI.getTransferScript().getText();
+
+           if( oldScript==null ) {
+               Debug.signal( Debug.ERROR, this, "Failed to get transfer script !" );
+               return true;
+           }
+
+           oldScript = FileTools.updateProperty( "SET SERVER_ID", ""+serverID, oldScript );
+
+           ServerAdminGUI.getTransferScript().setText(oldScript);
+           ServerAdminGUI.getTransferScript().save();
        	   return true;
        }
 

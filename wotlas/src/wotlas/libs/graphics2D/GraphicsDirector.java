@@ -70,11 +70,15 @@ public class GraphicsDirector extends JPanel {
 
   /** Lock for repaint...
    */
-    private byte lockPaint[] = new byte[0];
+    private Object lockPaint = new Object();
 
   /** OffScreen image for the GraphicsDirector. 
    */
     private Image backBufferImage;
+
+  /** To repaint the screen.
+   */
+    private Thread paintThread;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -142,19 +146,28 @@ public class GraphicsDirector extends JPanel {
     public void repaint() {      
        if(lockPaint==null) return;
        
-       Thread paintThread;
        synchronized( lockPaint ) {
+
+          if(paintThread!=null)
+              try{
+                 lockPaint.wait( 200 );
+              }catch( Exception e ) {}
+
           paintThread =new Thread() {
              public void run() {
                 try{                  
-                   //synchronized( lockPaint ) {                   
-                   GraphicsDirector.this.paint( GraphicsDirector.this.getGraphics() );
-                   //}
+                    GraphicsDirector.this.paint( GraphicsDirector.this.getGraphics() );
+
+                    synchronized( lockPaint ) {
+                    	paintThread = null;
+                    	lockPaint.notify();
+                    }
                 }catch( Exception e ) {
                    System.out.println("Exception in repaint() : "+e);
                 }
             }
           };
+
        }
 
        paintThread.start();       

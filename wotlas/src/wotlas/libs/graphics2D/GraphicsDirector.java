@@ -164,8 +164,7 @@ public class GraphicsDirector extends JPanel {
 
   /** To avoid flickering.
    */
-    public void update( Graphics g ) {
-      System.err.println("\tupdate");
+    public void update( Graphics g ) {      
        paint( g );
     }
 
@@ -175,8 +174,7 @@ public class GraphicsDirector extends JPanel {
    *
    * @param gc graphics object.
    */
-    public void paint(Graphics gc) {
-      System.err.println("\tpaint");
+    public void paint(Graphics gc) {      
          if(gc==null) return;
 
        // double-buffer init

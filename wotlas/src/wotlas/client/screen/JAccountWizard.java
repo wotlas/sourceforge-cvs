@@ -113,13 +113,16 @@ public class JAccountWizard extends JWizard
 
     /** called when Next button is clicked
      */
-    public void onNext(Object context) {
+    public boolean onNext(Object context) {
       personality.queueMessage( new WotCharacterClassMessage(btGroup.getSelection().getActionCommand(), wotCharacterStatus) );
+      return true;
     }
 
     /** called when Previous button is clicked
      */
-    public void onPrevious(Object context) {}
+    public boolean onPrevious(Object context) {
+      return true;
+    }
 
     /** Constructor
      */
@@ -285,15 +288,37 @@ public class JAccountWizard extends JWizard
 
     /** called when Next button is clicked
      */
-    public void onNext(Object context) {
+    public boolean onNext(Object context) {
+      if( tf_nickname.getText().length()==0 ) {
+         JOptionPane.showMessageDialog( this, "Nickname can not be empty !", "Nickname", JOptionPane.ERROR_MESSAGE);
+         return false;
+      }
+
+      if( tf_nickname.getText().length()>20 ) {
+         JOptionPane.showMessageDialog( this, "Nickname can not have more than 20 characters !", "NickName", JOptionPane.ERROR_MESSAGE);
+         return false;
+      }
+
+      if( tf_fullname.getText().length()==0 ) {
+         JOptionPane.showMessageDialog( this, "Full Name can not be empty !", "Full Name", JOptionPane.ERROR_MESSAGE);
+         return false;
+      }
+
+      if( tf_fullname.getText().length()>20 ) {
+         JOptionPane.showMessageDialog( this, "Full Name can not have more than 20 characters !", "Full Name", JOptionPane.ERROR_MESSAGE);
+         return false;
+      }
+
       DataManager.getDefaultDataManager().getCurrentProfileConfig().setPlayerName(tf_fullname.getText());
       personality.queueMessage( new PlayerNamesMessage(tf_nickname.getText(), tf_fullname.getText(), tf_email.getText()));
+      return true;      
     }
 
     /** called when Previous button is clicked
      */
-    public void onPrevious(Object context) {
+    public boolean onPrevious(Object context) {
       personality.queueMessage( new RevertToPreviousStateMessage() );
+      return true;
     }
 
     /** Consctructor
@@ -313,15 +338,15 @@ public class JAccountWizard extends JWizard
       mainPanel.setBackground(Color.white);
       formPanel = new JPanel(new GridLayout(3,2,10,2));
       formPanel.setBackground(Color.white);
-        lbl_nickname = new ALabel("Nickname: ");
+        lbl_nickname = new ALabel("Character Nickname: ");
         formPanel.add(lbl_nickname);
         tf_nickname = new ATextField(10);
         formPanel.add(tf_nickname);
-        lbl_fullname = new ALabel("Full name: ");
+        lbl_fullname = new ALabel("Character Full name: ");
         formPanel.add(lbl_fullname);
         tf_fullname = new ATextField(10);
         formPanel.add(tf_fullname);
-        lbl_email = new ALabel("Email: ");
+        lbl_email = new ALabel("Your Email: ");
         formPanel.add(lbl_email);
         tf_email = new ATextField(10);
         formPanel.add(tf_email);
@@ -356,14 +381,16 @@ public class JAccountWizard extends JWizard
 
     /** called when Next button is clicked
      */
-    public void onNext(Object context) {
+    public boolean onNext(Object context) {
       personality.queueMessage( new wotlas.common.message.account.PlayerPastMessage(ta_past.getText()));
+      return true;
     }
 
     /** called when Previous button is clicked
      */
-    public void onPrevious(Object context) {
+    public boolean onPrevious(Object context) {
       personality.queueMessage( new RevertToPreviousStateMessage() );
+      return true;
     }
 
     /** Consctructor
@@ -438,14 +465,16 @@ public class JAccountWizard extends JWizard
 
     /** called when Next button is clicked
      */
-    public void onNext(Object context) {
+    public boolean onNext(Object context) {
       personality.queueMessage( new VisualPropertiesMessage(hairColor) );
+      return true;
     }
 
     /** called when Previous button is clicked
      */
-    public void onPrevious(Object context) {
+    public boolean onPrevious(Object context) {
       personality.queueMessage( new RevertToPreviousStateMessage() );
+      return true;
     }
 
     /** Consctructor

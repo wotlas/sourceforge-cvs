@@ -22,6 +22,7 @@ package wotlas.client.screen;
 import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.sound.*;
 import wotlas.utils.*;
+import wotlas.client.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -50,7 +51,7 @@ public class JOptionsPanel extends JPanel implements MouseListener, ChangeListen
     
     JPanel innerPanel = new JPanel();
     innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
-    innerPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+    innerPanel.setBorder(BorderFactory.createEmptyBorder(3,3,5,5)); // all 10s
     
     ALabel label1 = new ALabel("Configuration");
     label1.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -58,9 +59,9 @@ public class JOptionsPanel extends JPanel implements MouseListener, ChangeListen
 // Volume Panel
     JPanel vPanel = new JPanel();
     vPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-    vPanel.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
+    vPanel.setBorder(BorderFactory.createEmptyBorder(1,1,1,1));
     
-    ALabel volTitle = new ALabel("volume : ");
+    ALabel volTitle = new ALabel("Volume : ");
     vPanel.add(volTitle);
 
     JLabel soundMin = new JLabel(new ImageIcon("../base/gui/volume16.gif"));
@@ -89,10 +90,23 @@ public class JOptionsPanel extends JPanel implements MouseListener, ChangeListen
     cButton.setSelected(false);
     cButton.addItemListener(this);
     qTextPanel.add(cButton);
-    
+
+// Help button
+   JButton b_help = new JButton( "Help" );
+   b_help.setPreferredSize( new Dimension(90,30) );
+    b_help.setAlignmentX(Component.CENTER_ALIGNMENT);
+      b_help.addActionListener(new ActionListener() {
+          public void actionPerformed (ActionEvent e) {
+             new JHTMLWindow( DataManager.getDefaultDataManager().getClientScreen(), "Help", "../docs/help/game-window.html", 340, 450, false );
+          }
+        }
+      );
+
     innerPanel.add(label1);
     innerPanel.add(vPanel);
     innerPanel.add(qTextPanel);
+    innerPanel.add(new JLabel(" "));
+    innerPanel.add(b_help);
         
     add(innerPanel);
   }

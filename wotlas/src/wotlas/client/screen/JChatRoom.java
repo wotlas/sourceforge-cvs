@@ -104,7 +104,7 @@ public class JChatRoom extends JPanel
 
 //    messagesPane = new JTextPane(doc_chat); ALDISS
     messagesPane = new JEditorPane();
-    
+    messagesPane.setEditable(false);
     /*
     messagesPane.setContentType("text/html");
     messagesPane.setEditable(false);
@@ -264,7 +264,9 @@ public class JChatRoom extends JPanel
 
   synchronized public void appendText(String text) {
     
-    if ( (text.toLowerCase().indexOf("<html")>-1) || (text.toLowerCase().indexOf("</html")>-1) ) {
+    if ( (text.toLowerCase().indexOf("<html")>-1)
+         || (text.toLowerCase().indexOf("</html")>-1)
+         || (text.toLowerCase().indexOf("<pre")>-1) ) {
       return;
     }
     

@@ -149,7 +149,7 @@ public class JClientScreen extends JFrame
       JPanel rightPanel = new JPanel();//new GridLayout(1,1,5,5));
       rightPanel.setPreferredSize(new Dimension(mainWidth-leftWidth, mainHeight-northHeight));
       rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
-      rightPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+      rightPanel.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
       rightPanel.setBackground(Color.black);
       
       // *** Preview Panel ***
@@ -157,7 +157,7 @@ public class JClientScreen extends JFrame
       optionsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
       rightPanel.add(optionsPanel, BorderLayout.NORTH);
 
-      rightPanel.add(Box.createRigidArea(new Dimension(0,5)));
+      rightPanel.add(Box.createRigidArea(new Dimension(0,2)));
       
       // *** Player Panel ***
       //playerPanel.setPreferredSize(new Dimension(mainWidth-leftWidth, playerHeight));

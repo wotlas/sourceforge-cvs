@@ -680,12 +680,14 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
       if ( newRoomID>=0 ) {
         // Ok, we move to this new Room
-        Debug.signal( Debug.NOTICE, this, "Removing an existing player : " + myPlayer + "to room : " + myRoom);
+        if (SHOW_DEBUG)
+          System.out.println("Removing an existing player : " + myPlayer + "to room : " + myRoom);
         myRoom.removePlayer( myPlayer );
         myPlayer.getLocation().setRoomID( newRoomID );
-// Not sure : update myRoom ??
-        myRoom.addPlayer( myPlayer );
         Room room = worldManager.getRoom(myPlayer.getLocation()); 
+        if (SHOW_DEBUG)
+          System.out.println("Adding a new player : " + myPlayer + "to room : " + room);
+        room.addPlayer( myPlayer );
         infosPanel.setLocation(room.getFullName());
         if (SHOW_DEBUG)
           System.out.print("Move to another room : " + newRoomID + " -> " + room.getFullName());                    
@@ -910,10 +912,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
     infosPanel.setLocation(room.getFullName());
 
-    Debug.signal( Debug.NOTICE, this, "Adding a new player : " + myPlayer + "to room : " + room);
-    room.addPlayer(myPlayer);
-    room.removePlayer(myPlayer);
-    room.addPlayer(myPlayer);
+    if (SHOW_DEBUG)
+      System.out.println("Adding a new player : " + myPlayer + "to room : " + room);
+    room.addPlayer(myPlayer);    
 
     // 2 - We set player's position if his position is incorrect
     if (myPlayer.getX() == -1) {

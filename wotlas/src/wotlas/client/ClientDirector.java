@@ -20,15 +20,15 @@
 package wotlas.client;
 
 import wotlas.libs.log.*;
-
 import wotlas.libs.persistence.*;
-
 import wotlas.libs.sound.SoundLibrary;
+import wotlas.libs.graphics2D.FontFactory;
 
 import wotlas.utils.Debug;
 import wotlas.utils.FileTools;
 import wotlas.utils.Tools;
 
+import java.io.File;
 import java.util.Properties;
 import java.util.Iterator;
 
@@ -177,19 +177,23 @@ public class ClientDirector {
     persistenceManager = PersistenceManager.createPersistenceManager(databasePath);
     Debug.signal( Debug.NOTICE, null, "Persistence Manager Created..." );
                 
-    // STEP 3 - Creation of Sound Library
-    SoundLibrary.createSoundLibrary(databasePath);    
-    
-    // STEP 4 - We ask the ClientManager to get ready
+    // STEP 4 - Creation of Sound Library
+    SoundLibrary.createSoundLibrary(databasePath);
+
+    // STEP 5 - Creation of our Font Factory
+    FontFactory.createDefaultFontFactory( databasePath + File.separator + "fonts" );
+    Debug.signal( Debug.NOTICE, null, "Font factory created..." );
+ 
+    // STEP 6 - We ask the ClientManager to get ready
     clientManager = ClientManager.createClientManager(databasePath);
     Debug.signal( Debug.NOTICE, null, "Client Created (but not started)..." );
 
-    // STEP 5 - We ask the DataManager to get ready
+    // STEP 7 - We ask the DataManager to get ready
     dataManager = DataManager.createDataManager(databasePath);
     dataManager.showDebug(SHOW_DEBUG);
     Debug.signal( Debug.NOTICE, null, "DataManager created..." );
     
-    // STEP 6 - Start the ClientManager
+    // STEP 8 - Start the ClientManager
     clientManager.start(-1);
     Debug.signal( Debug.NOTICE, null, "WOTLAS Client started with success..." );
         

@@ -20,7 +20,7 @@
 package wotlas.libs.wizard;
 
 import wotlas.utils.aswing.*;
-
+import wotlas.libs.graphics2D.FontFactory;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
@@ -33,6 +33,8 @@ import wotlas.utils.SwingTools;
  *  onCanceled().
  *
  *  This class uses images found in the GUI_IMAGES_PATH.
+ *  To display fonts we use our wotlas.libs.graphics2D FontFactory. To change that
+ *  just replace calls to the factory by 'new Font(...)'.
  *
  * @author Petrus, Aldiss
  * @see wotlas.libs.wizard.JWizardStep
@@ -48,7 +50,7 @@ public abstract class JWizard extends JFrame {
 
   /** Title font to use.
    */
-  public static final String TITLE_FONT = "../base/fonts/Lblack.ttf";
+  public static final String TITLE_FONT = "Lucida Blackletter";
 
  /*------------------------------------------------------------------------------------*/
 
@@ -150,7 +152,7 @@ public abstract class JWizard extends JFrame {
       titlePanel.setPreferredSize( new Dimension(width-10,24) );
 
       t_title = new ALabel(title);
-      t_title.setFont( SwingTools.loadFont(TITLE_FONT).deriveFont(18f) );
+      t_title.setFont( FontFactory.getDefaultFontFactory().getFont(TITLE_FONT).deriveFont(18f) );
 
       t_title.setAlignmentX(LEFT_ALIGNMENT);
       titlePanel.add(t_title);
@@ -305,6 +307,7 @@ public abstract class JWizard extends JFrame {
     // *** Add buttonsPanel ***
       JPanel southPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
       southPanel.setBackground(Color.white);
+      southPanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,10));
       southPanel.add(buttonsPanel);
       wizardPanel.add(southPanel, BorderLayout.SOUTH);
 

@@ -28,6 +28,8 @@ import wotlas.libs.wizard.*;
 import wotlas.libs.wizard.step.*;
 import wotlas.libs.log.*;
 
+import wotlas.libs.graphics2D.FontFactory;
+
 import java.io.*;
 import javax.swing.*;
 import java.awt.*;
@@ -885,7 +887,11 @@ public class ServerSetup extends JWizard {
            serverConfigPrefixPath = databasePath+File.separator+PersistenceManager.SERVERS_HOME
                                +File.separator+PersistenceManager.SERVERS_PREFIX;
 
-         // STEP 4 - Start the wizard
+         // STEP 4 - Creation of our Font Factory
+           FontFactory.createDefaultFontFactory( databasePath + File.separator + "fonts" );
+           Debug.signal( Debug.NOTICE, null, "Font factory created..." );
+
+         // STEP 5 - Start the wizard
            new ServerSetup();
     }
 
@@ -899,8 +905,8 @@ public class ServerSetup extends JWizard {
     f = new Font("Monospaced", Font.PLAIN, 10);
     UIManager.put("Button.font", f);
 
-    f = SwingTools.loadFont("../base/fonts/Lblack.ttf");
-    
+    f = FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter");
+
     UIManager.put("ComboBox.font", f.deriveFont(14f));
     UIManager.put("ComboBox.foreground", Color.black);
 

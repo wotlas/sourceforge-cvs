@@ -479,7 +479,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     DataManager dManager = DataManager.getDefaultDataManager();
 
     dManager.sendMessage( new SendTextMessage( dManager.getMyPlayer().getPrimaryKey(),
-                                               dManager.getMyPlayer().getFullPlayerName(),
+                                               dManager.getMyPlayer().getPlayerName(),
                                                getMyCurrentChatPrimaryKey(),
                                                message,
                                                (byte)chatVoiceLevel.getValue() ));
@@ -542,7 +542,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
            DataManager dManager = DataManager.getDefaultDataManager();
 
            dManager.sendMessage( new SendTextMessage( dManager.getMyPlayer().getPrimaryKey(),
-                                               dManager.getMyPlayer().getFullPlayerName(),
+                                               dManager.getMyPlayer().getPlayerName(),
                                                getMyCurrentChatPrimaryKey(),
                                                "/help",
                                                ChatRoom.NORMAL_VOICE_LEVEL ));

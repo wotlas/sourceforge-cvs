@@ -43,7 +43,7 @@ public class TextDrawable extends Drawable {
 
    /** Default Font Name used.
     */
-    static private String defaultFontName = "Lblack.ttf";
+    static private String defaultFontName = "Lucida Blackletter";
 
  /*------------------------------------------------------------------------------------*/
 
@@ -247,6 +247,7 @@ public class TextDrawable extends Drawable {
     this.size = size;
     font = font.deriveFont(Font.PLAIN, size);
     Map fontAttributes = font.getAttributes();
+    recalculate=true;
    }
 
 
@@ -257,19 +258,10 @@ public class TextDrawable extends Drawable {
   * To set the font for this Drawable.
   */
   public void setFont(String fontName){
-   try {
-      String fontPath = getImageLibrary().getUserFontPath();
-
-      FileInputStream fis = new FileInputStream(fontPath+File.separator+fontName);
-      font = Font.createFont(Font.TRUETYPE_FONT, fis);
-      //System.out.println("Font=" + font);
+      font = FontFactory.getDefaultFontFactory().getFont(fontName);
       font = font.deriveFont(Font.PLAIN, size);
       Map fontAttributes = font.getAttributes();
-      //System.out.println("Attrihbutes=" + fontAttributes);
-    } catch (Exception e) {
-      font = new Font("Dialog", Font.PLAIN, (int)size);
-      e.printStackTrace();
-    }
+      recalculate=true;
   }
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -292,8 +284,8 @@ public class TextDrawable extends Drawable {
    */
     public void paint( Graphics2D gc, Rectangle screen ) {
 
-        if( !r.intersects(screen) )
-            return;
+       //        if( !r.intersects(screen) )
+       //            return;
 
         if (font != null) {
           gc.setFont(font);

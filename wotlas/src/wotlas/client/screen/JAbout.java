@@ -183,7 +183,7 @@ public class JAbout extends JCroppedWindow implements ActionListener
     public JAbout(Frame owner)
     {
          super(owner,"About");
-         setFont("Lblack.ttf");
+         setFont("Lucida Blackletter");
          calculTextWidth();
          c_text = new Color(40,50,60);
          c_title = new Color(80,100,190);
@@ -448,23 +448,10 @@ public class JAbout extends JCroppedWindow implements ActionListener
   * To define the font for the title and the text
   */
   public void setFont(String fontName){
-   try {
-      String fontPath = "../base/fonts";
-      FileInputStream fis = new FileInputStream(fontPath+File.separator+fontName);
-      f_text = Font.createFont(Font.TRUETYPE_FONT, fis);
-      FileInputStream fis2 = new FileInputStream(fontPath+File.separator+fontName);
-      f_title = Font.createFont(Font.TRUETYPE_FONT, fis2);
-      //System.out.println("Font=" + font);
-      f_text = f_text.deriveFont(Font.BOLD, 15f);
-      f_title = f_title.deriveFont(Font.BOLD, 20f);
-      //Map fontAttributes1 = f_text.getAttributes();
-      //Map fontAttributes2 = f_title.getAttributes();
-      //System.out.println("Attrihbutes=" + fontAttributes);
-    } catch (Exception e) {
-      f_text = new Font("dialog", Font.PLAIN, 15);
-      f_title = new Font("dialog", Font.PLAIN, 20);
-      e.printStackTrace();
-    }
+      Font f = FontFactory.getDefaultFontFactory().getFont(fontName);
+
+      f_text = f.deriveFont(Font.BOLD, 15f);
+      f_title = f.deriveFont(Font.BOLD, 20f);
   }
 
 

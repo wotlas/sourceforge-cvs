@@ -42,7 +42,7 @@ public class MultiLineText extends Drawable {
 
    /** Default Font Name used.
     */
-    static private String defaultFontName = "Lblack.ttf";
+    static private String defaultFontName = "Lucida Blackletter";
 
  /*------------------------------------------------------------------------------------*/
 
@@ -208,23 +208,14 @@ public class MultiLineText extends Drawable {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- /**
-  * To set the current font.
-  */
-  public void setFont(String fontName) {
-    try {
-      String fontPath = getImageLibrary().getUserFontPath();
-
-      FileInputStream fis = new FileInputStream(fontPath+File.separator+fontName);
-      font = Font.createFont(Font.TRUETYPE_FONT, fis);
+  /** To set the current font.
+   */
+   public void setFont(String fontName) {
+      font = FontFactory.getDefaultFontFactory().getFont(fontName);
       font = font.deriveFont(Font.PLAIN, size);
       Map fontAttributes = font.getAttributes();
       recalculate = true;
-    } catch (Exception e) {
-      font = new Font("Dialog", Font.PLAIN, (int)size);
-      e.printStackTrace();
-    }
-  }
+   }
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

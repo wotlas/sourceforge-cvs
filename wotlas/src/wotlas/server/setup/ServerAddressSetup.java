@@ -22,6 +22,7 @@ package wotlas.server.setup;
 import wotlas.server.ServerDirector;
 import wotlas.common.PersistenceManager;
 import wotlas.libs.wizard.*;
+import wotlas.libs.graphics2D.FontFactory;
 import wotlas.utils.*;
 
 import wotlas.utils.Debug;
@@ -643,6 +644,10 @@ public class ServerAddressSetup extends JWizard {
                                +File.separator+PersistenceManager.SERVERS_PREFIX
                                +serverID+PersistenceManager.SERVERS_SUFFIX
                                +PersistenceManager.SERVERS_ADDRESS_SUFFIX;
+
+         // STEP 4 - Creation of our Font Factory
+           FontFactory.createDefaultFontFactory( databasePath + File.separator + "fonts" );
+           Debug.signal( Debug.NOTICE, null, "Font factory created..." );
 
          // STEP 4 - Start the wizard
            new ServerAddressSetup();

@@ -66,7 +66,7 @@ public class GraphicPingPanel extends JPanel implements NetPingListener
   */
     public GraphicPingPanel()
     {
-         setFont("Lblack.ttf");
+         setFont("Lucida Blackletter");
 
          MediaTracker mediaTracker = new MediaTracker(this);
          red  = getToolkit().getImage("../base/gui/ping-red.jpg");
@@ -159,15 +159,8 @@ public class GraphicPingPanel extends JPanel implements NetPingListener
   * To define the font for the title and the text
   */
   public void setFont(String fontName){
-    try {
-      String fontPath = "../base/fonts";
-      FileInputStream fis = new FileInputStream(fontPath+File.separator+fontName);
-      f_text = Font.createFont(Font.TRUETYPE_FONT, fis);
-      f_text = f_text.deriveFont(Font.BOLD, 10f);
-    } catch (Exception e) {
-      f_text = new Font("dialog", Font.PLAIN, 10);
-      e.printStackTrace();
-    }
+    f_text = FontFactory.getDefaultFontFactory().getFont(fontName);
+    f_text = f_text.deriveFont(Font.PLAIN, 10f);
   }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

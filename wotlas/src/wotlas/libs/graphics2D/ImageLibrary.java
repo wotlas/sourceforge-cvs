@@ -138,10 +138,6 @@ public class ImageLibrary {
    */
      protected ImageLibDir rootDir;
 
-  /** Path where user fonts are stored (ex: ../base/fonts that contains "Lucida.ttf").
-   */
-     protected String userFontPath;
-
  /*------------------------------------------------------------------------------------*/
   
   /** Do we have to display db entries with bad format ?
@@ -158,13 +154,10 @@ public class ImageLibrary {
   /** Constructor with the image database path. We load all the images in memory.
    *
    * @param imageDataBasePath the path to the image database.
-   * @param userFontPath the path where user fonts are stored (ex: lucida.ttf).
    * @exception ImageLibraryException if an error occurs while loading the images.
    */
-   protected ImageLibrary( String imageDataBasePath, String userFontPath )
+   protected ImageLibrary( String imageDataBasePath )
    throws ImageLibraryException {
-   
-          this.userFontPath = userFontPath;
 
        // 1 - Check DataBase
           File homeDir = new File(imageDataBasePath);
@@ -193,19 +186,9 @@ public class ImageLibrary {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the font path where all the user Fonts are stored. This path is used by
-   *  some of the classes of the wotlas.libs.graphics2D.drawable package that draw text.
-   *
-   * @return the default font path.
-   */
-   public String getUserFontPath() {
-         return userFontPath;
-   }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Creates an ImageLibrary or returned the previously created one.
-   *  We load all the images from the specified image database.<p>
+  /** Creates an ImageLibrary or returned the previously created one ( with its associated
+   *  font factory if there is not one already). We load all the images from the specified
+   *  image database.<p>
    *
    *  <p>To manually load directories/images which parent directories have the format
    *  "-XX-jit" or "-XX-exc" you can use the loadImage() method.<br>
@@ -217,14 +200,20 @@ public class ImageLibrary {
    *  at zero and increment with no jumps between numbers.
    *
    * @param imageDataBasePath the path to the image database.
+   * @param userFontPath the path where user fonts are stored (ex: lucida.ttf).
    * @return the created (or previously created) image library.
    * @exception ImageLibraryException if an error occurs while loading the images.
    */
    public static ImageLibrary createImageLibrary( String imageDataBasePath, String userFontPath )
    throws ImageLibraryException {
-         if( defaultImageLibrary==null )
-             defaultImageLibrary = new ImageLibrary( imageDataBasePath, userFontPath );
 
+         if( defaultImageLibrary==null ) {
+           // 1 - Create default image library
+              defaultImageLibrary = new ImageLibrary( imageDataBasePath );
+
+           // 2 - Create a default font factory
+              FontFactory.createDefaultFontFactory( userFontPath );
+         }
          return defaultImageLibrary;
    }
 

@@ -23,6 +23,7 @@ import wotlas.client.ClientManager;
 import wotlas.client.DataManager;
 
 import wotlas.utils.SwingTools;
+import wotlas.libs.graphics2D.FontFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -173,7 +174,7 @@ public class JIntroWizard extends JFrame
     f = new Font("Monospaced", Font.PLAIN, 10);
     UIManager.put("Button.font", f);
 
-    f = SwingTools.loadFont("../base/fonts/Lblack.ttf");
+    f = FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter");
     
     UIManager.put("ComboBox.font", f.deriveFont(14f));
     UIManager.put("ComboBox.foreground", Color.black);

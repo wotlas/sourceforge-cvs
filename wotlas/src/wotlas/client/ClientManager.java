@@ -31,6 +31,7 @@ import wotlas.common.ServerConfigListTableModel;
 import wotlas.libs.net.*;
 import wotlas.libs.net.personality.*;
 
+import wotlas.libs.graphics2D.FontFactory;
 import wotlas.libs.sound.SoundLibrary;
 import wotlas.libs.wizard.*;
 
@@ -173,7 +174,7 @@ public class ClientManager implements ActionListener {
     // 3 - We create the wizard to connect Wotlas
     screenIntro = new JIntroWizard();
     screenIntro.setGUI();
-    f = SwingTools.loadFont("../base/fonts/Lblack.ttf");
+    f = FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter");
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -581,7 +582,7 @@ public class ClientManager implements ActionListener {
 
       b_exitProfile.addActionListener(new ActionListener() {
           public void actionPerformed (ActionEvent e) {
-            DataManager.getDefaultDataManager().exit();
+                DataManager.getDefaultDataManager().exit();
           }
         }
       );
@@ -877,7 +878,7 @@ public class ClientManager implements ActionListener {
       
       // *** Left JPanel ***
 
-      label1 = new ALabel("Welcome,");
+      label1 = new ALabel("To recover an existing account, please enter :");
       label1.setAlignmentX(Component.CENTER_ALIGNMENT);
       label1.setFont(f.deriveFont(18f));
       leftPanel.add(label1);
@@ -914,42 +915,52 @@ public class ClientManager implements ActionListener {
       b_ok.addActionListener(new ActionListener() {
         public void actionPerformed (ActionEvent e) {
           char charPasswd[] = pfield1.getPassword();
+
           if (charPasswd.length < 4) {
             JOptionPane.showMessageDialog( screenIntro, "Password must have at least 5 characters !", "Password", JOptionPane.ERROR_MESSAGE);
           } else {
                     
-            if (currentProfileConfig==null) {
-              currentProfileConfig = new ProfileConfig();
-            }
+            currentProfileConfig = new ProfileConfig();
             
             String tempKey = atf_key.getText();
             int index = tempKey.indexOf('-');
             if (index<0) {
-              JOptionPane.showMessageDialog( screenIntro, "Your key must have the following format : TEXT-NN-MM.\nExample: bob-1-36", "Bad Format", JOptionPane.ERROR_MESSAGE);
+              JOptionPane.showMessageDialog( screenIntro, "Your key must have the following format : login-xx-yy.\nExample: bob-1-36", "Bad Format", JOptionPane.ERROR_MESSAGE);
               start(0);
               return;
             }
+
             currentProfileConfig.setLogin(tempKey.substring(0,index));
+            currentProfileConfig.setPlayerName("");
+            currentProfileConfig.setPassword(new String(charPasswd));
+
             tempKey = tempKey.substring(index+1);
             index = tempKey.indexOf('-');
+
             if (index<0) {
-              JOptionPane.showMessageDialog( screenIntro, "Your key must have the following format : TEXT-NN-MM.\nExample: bob-1-36", "Bad Format", JOptionPane.ERROR_MESSAGE);
+              JOptionPane.showMessageDialog( screenIntro, "Your key must have the following format : login-xx-yy.\nExample: bob-1-36", "Bad Format", JOptionPane.ERROR_MESSAGE);
               start(0);   
               return;
             }         
+
             try {
               currentProfileConfig.setServerID(Integer.parseInt(tempKey.substring(0,index)));
               currentProfileConfig.setOriginalServerID(Integer.parseInt(tempKey.substring(0,index)));
               currentProfileConfig.setLocalClientID(Integer.parseInt(tempKey.substring(index+1)));
             } catch (NumberFormatException nfes) {
-              JOptionPane.showMessageDialog( screenIntro, "Your key must have the following format : TEXT-NN-MM.\nExample: bob-1-36", "Bad Format", JOptionPane.ERROR_MESSAGE);
+              JOptionPane.showMessageDialog( screenIntro, "Your key must have the following format : login-xx-yy.\nExample: bob-1-36", "Bad Format", JOptionPane.ERROR_MESSAGE);
               start(0);
               return;
-            }       
+            }
             
             DataManager.getDefaultDataManager().setCurrentProfileConfig(currentProfileConfig);
-
             currentServerConfig = serverConfigList.getServerConfig(currentProfileConfig.getServerID());
+
+            if(currentServerConfig==null) {
+              JOptionPane.showMessageDialog( screenIntro, "Failed to find the associated server.", "ERROR", JOptionPane.ERROR_MESSAGE);
+              start(0);
+              return;
+            }
 
             JGameConnectionDialog jgconnect = new JGameConnectionDialog( screenIntro,
                     currentServerConfig.getServerName(), currentServerConfig.getGameServerPort(),
@@ -996,8 +1007,7 @@ public class ClientManager implements ActionListener {
     // ***********************************
 
     case 10:
-     
-      
+           
       // screenIntro.setTitle("Wotlas - Account creation...");
 
       // Loading Server Configs
@@ -1008,219 +1018,6 @@ public class ClientManager implements ActionListener {
       JAccountCreationWizard accountCreationWz = new JAccountCreationWizard();
       break;
       
-      /*
-      // Create panels
-      leftPanel = new JPanel();
-      leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
-      rightPanel = new JPanel();
-      rightPanel.setLayout(new FlowLayout(FlowLayout.CENTER, screenIntro.getRightWidth(), 10));
-
-      // Create buttons
-      b_ok = new JButton(im_okup);
-      b_ok.setRolloverIcon(im_okdo);
-      b_ok.setPressedIcon(im_okdo);
-      b_ok.setDisabledIcon(im_okun);
-      b_ok.setBorderPainted(false);
-      b_ok.setContentAreaFilled(false);
-      b_ok.setFocusPainted(false);
-
-      b_cancel = new JButton(im_cancelup);
-      b_cancel.setRolloverIcon(im_canceldo);
-      b_cancel.setPressedIcon(im_canceldo);
-      b_cancel.setDisabledIcon(im_cancelun);
-      b_cancel.setBorderPainted(false);
-      b_cancel.setContentAreaFilled(false);
-      b_cancel.setFocusPainted(false);
-
-      b_help = new JButton(im_helpup);
-      b_help.setRolloverIcon(im_helpdo);
-      b_help.setPressedIcon(im_helpdo);
-      b_help.setBorderPainted(false);
-      b_help.setContentAreaFilled(false);
-      b_help.setFocusPainted(false);
-
-      // *** Left JPanel ***
-
-      imgLabel1 = new JLabel(new ImageIcon("../base/gui/complete-info.gif"));
-      imgLabel1.setAlignmentX(Component.CENTER_ALIGNMENT);
-      leftPanel.add(imgLabel1);
-
-      leftPanel.add(Box.createRigidArea(new Dimension(0,10)));
-
-      JPanel mainPanel_10 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        mainPanel_10.setAlignmentX(Component.CENTER_ALIGNMENT);
-        mainPanel_10.setBackground(Color.white);
-        JPanel formPanel_10 = new JPanel(new GridLayout(3,2,5,5));
-          formPanel_10.setBackground(Color.white);
-          formPanel_10.add(new JLabel(new ImageIcon("../base/gui/login.gif")));
-          atf_login = new ATextField(10);
-          atf_login.setSelectionColor(Color.lightGray);
-          atf_login.setSelectedTextColor(Color.white);
-          formPanel_10.add(atf_login);
-          formPanel_10.add(new JLabel(new ImageIcon("../base/gui/password.gif")));
-          pfield1 = new APasswordField(10);
-          pfield1.setFont(f.deriveFont(18f));
-          pfield1.setSelectionColor(Color.lightGray);
-          pfield1.setSelectedTextColor(Color.white);
-          formPanel_10.add(pfield1);
-          formPanel_10.add(new JLabel(new ImageIcon("../base/gui/password.gif")));
-          pfield2 = new APasswordField(10);
-          pfield2.setFont(f.deriveFont(18f));
-          pfield2.setSelectionColor(Color.lightGray);
-          pfield2.setSelectedTextColor(Color.white);
-          formPanel_10.add(pfield2);
-        mainPanel_10.add(formPanel_10);
-      leftPanel.add(mainPanel_10);
-
-      leftPanel.add(Box.createRigidArea(new Dimension(0,10)));
-
-      imgLabel2 = new JLabel(new ImageIcon("../base/gui/choose-server.gif"));
-      imgLabel2.setAlignmentX(Component.CENTER_ALIGNMENT);
-      leftPanel.add(imgLabel2);
-
-      // Creates a table of servers
-      // data
-      ServerConfigListTableModel serverConfigListTabModel = new ServerConfigListTableModel(serverConfigList);
-      serversTable = new JTable(serverConfigListTabModel);
-      serversTable.setDefaultRenderer(Object.class, new ATableCellRenderer());
-      serversTable.setBackground(Color.white);
-      serversTable.setForeground(Color.black);
-      serversTable.setSelectionBackground(Color.lightGray);
-      serversTable.setSelectionForeground(Color.white);
-      serversTable.setRowHeight(24);
-      serversTable.getColumnModel().getColumn(2).setPreferredWidth(-1);
-      // selection
-      serversTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-      ListSelectionModel rowServerSM = serversTable.getSelectionModel();
-      rowServerSM.addListSelectionListener(new ListSelectionListener()
-      {
-        private JHTMLWindow htmlDescr;
-
-        public void valueChanged(ListSelectionEvent e)
-        {
-           ListSelectionModel lsm = (ListSelectionModel) e.getSource();
-           if (lsm.isSelectionEmpty())
-               return; //no rows were selected
-
-           int selectedRow = lsm.getMinSelectionIndex();
-
-          //selectedRow is selected
-            currentServerConfig = serverConfigList.ServerConfigAt(selectedRow);
-
-            if(htmlDescr==null)
-               htmlDescr = new JHTMLWindow( screenIntro, "Wotlas Server", "text:"+currentServerConfig.toHTML(), 350, 250, false );
-            else {
-               htmlDescr.setText( currentServerConfig.toHTML() );
-               if( !htmlDescr.isShowing() ) htmlDescr.show();
-            }
-          //Ignore extra messages.
-            if (e.getValueIsAdjusting())
-              return;
-
-            //selectedRow is selected
-            currentServerConfig = serverConfigList.ServerConfigAt(selectedRow);
-            //serversTable.setToolTipText(currentServerConfig.getDescription());
-            currentProfileConfig.setOriginalServerID(currentServerConfig.getServerID());
-            currentProfileConfig.setServerID(currentServerConfig.getServerID());
-            b_ok.setEnabled(true);
-        }
-      });
-      // show table
-      scrollPane = new JScrollPane(serversTable);
-      serversTable.setPreferredScrollableViewportSize(new Dimension(0, 100));
-      scrollPane.getViewport().setBackground(Color.white);
-      leftPanel.add(scrollPane);
-
-      // *** Right Panel ***
-
-      b_ok.setEnabled(false);
-      b_ok.addActionListener(new ActionListener() {
-        public void actionPerformed (ActionEvent e) {
-          // Verify the fields
-          if (atf_login.getText().length() == 0) {
-            JOptionPane.showMessageDialog( screenIntro, "Login cannot be empty !", "New Login", JOptionPane.ERROR_MESSAGE);
-            return;
-          }          
-          char charPasswd1[] = pfield1.getPassword();          
-          char charPasswd2[] = pfield2.getPassword();          
-          if ( (charPasswd1.length < 4) || (charPasswd2.length < 4) ) {
-            JOptionPane.showMessageDialog( screenIntro, "Password must have at least 5 characters !", "New Password", JOptionPane.ERROR_MESSAGE);
-            return;
-          } else {
-            //b_ok.setEnabled(false);
-            String passwd = "";            
-            if (charPasswd1.length != charPasswd2.length) {
-              JOptionPane.showMessageDialog( screenIntro, "Password are not identical", "New Password", JOptionPane.ERROR_MESSAGE);
-              pfield1.setText("");
-              pfield2.setText("");
-              return;
-            }            
-            
-            for (int i=0; i<charPasswd1.length; i++) {
-              if (charPasswd1[i] != charPasswd2[i]) {
-                JOptionPane.showMessageDialog( screenIntro, "Password are not identical", "New Password", JOptionPane.ERROR_MESSAGE);
-                pfield1.setText("");
-                pfield2.setText("");
-                return;
-              }   
-              passwd += charPasswd1[i];
-            }
-
-            // Account creation
-
-            currentProfileConfig.setLogin(atf_login.getText());
-            currentProfileConfig.setPassword(passwd);
-
-            DataManager dataManager = DataManager.getDefaultDataManager();
-            dataManager.setCurrentProfileConfig(currentProfileConfig);
-
-            screenIntro.hide();
-            
-            JAccountConnectionDialog jaconnect = new JAccountConnectionDialog( screenIntro,
-                       currentServerConfig.getServerName(), currentServerConfig.getAccountServerPort(),
-                       currentServerConfig.getServerID(), dataManager);
-
-            if ( jaconnect.hasSucceeded() ) {
-              Debug.signal( Debug.NOTICE, null, "ClientManager connected to AccountServer");
-            } else {
-              Debug.signal( Debug.NOTICE, null, "ClientManager ejected from AccountServer");
-              screenIntro.show(); // line added by Aldiss
-              return;
-            }
-
-          }
-        }
-      });
-      rightPanel.add(b_ok);
-
-
-      b_cancel.addActionListener(new ActionListener() {
-          public void actionPerformed (ActionEvent e) {
-            start(0);
-          }
-        }
-      );
-      rightPanel.add(b_cancel);
-
-      b_help.addActionListener(new ActionListener() {
-          public void actionPerformed (ActionEvent e) {
-             new JHTMLWindow( screenIntro, "Help", "../docs/help/new-account.html", 330, 450, false );
-          }
-        }
-      );
-      rightPanel.add(b_help);
-
-      if (profileConfigList.size() == 0) {
-        b_cancel.setEnabled(false);
-      }
-
-      // *** Adding the panels ***
-
-      screenIntro.setLeftPanel(leftPanel);
-      screenIntro.setRightPanel(rightPanel);
-      screenIntro.showScreen();
-      break;
-    */
     
     // **************************************
     // *** A new account has been created ***

@@ -64,9 +64,8 @@
         <echo message="   server --> compiles the server side only (server,common,libs)"/>
         <echo message="   server-only --> compiles the server packages only"/>
         <echo message=""/>
-        <echo message="   client --> compiles the client side only (client,common,libs)"/>
+        <echo message="   client --> compiles the client side only and creates a JAR."/>
         <echo message="   client-only --> compiles the client packages only"/>
-        <echo message="   client-jar --> compiles the client packages and build the client JAR."/>
         <echo message=""/>
         <echo message="   libs --> compiles the wotlas libs only"/>
         <echo message="   common --> compiles the common wotlas packages only"/>
@@ -110,9 +109,6 @@
     <!-- COMPILE CLIENT -->
 
     <target name="client" depends="prepare,utils,libs,common,client-only">
-    </target>
-
-    <target name="client-jar" depends="prepare,utils,libs,common,client-only">
         <echo message="Creating the ${wotlas-client-jar} JAR file..."/>
         <jar jarfile="${wotlas-client-jar}"
              basedir="${build.dest}"

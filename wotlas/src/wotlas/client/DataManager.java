@@ -715,6 +715,12 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     public void showWarningMessage(String warningMsg) {
          JOptionPane.showMessageDialog( clientScreen, warningMsg, "Warning message!", JOptionPane.WARNING_MESSAGE);
     }
+    
+  /** To ear a warning beep
+   */
+    public void playerWarningBeep() {
+         SoundLibrary.getSoundLibrary().playSound("bell.wav");
+    }
 
  /*------------------------------------------------------------------------------------*/
 

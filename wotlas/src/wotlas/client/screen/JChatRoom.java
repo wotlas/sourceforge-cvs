@@ -141,19 +141,19 @@ public class JChatRoom extends JPanel implements MouseListener {
         return; // already in this chat
     if (DataManager.SHOW_DEBUG)
       System.out.println("ADDING PLAYER "+primaryKey);
-
-    final String strNewName = senderFullName;
-    players.put( primaryKey, senderFullName );
-
+    
     Hashtable playersTable = ClientDirector.getDataManager().getPlayers();
     Player newPlayer = (Player) playersTable.get(primaryKey);
+
+    final PlayerState newPlayerItem = new PlayerState(senderFullName, newPlayer.isConnectedToGame());
+    players.put( primaryKey, newPlayerItem);  
 
     if ( (newPlayer!=null) && newPlayer.isConnectedToGame() ) {
       Runnable runnable = new Runnable() {
         public void run() {
-          if (!strNewName.equals(ClientDirector.getDataManager().getMyPlayer().getFullPlayerName()))
-            appendText("<font color='green'>" + strNewName + " entered the chat...</font>");
-          playersListModel.addElement(strNewName);
+          if (!newPlayerItem.fullName.equals(ClientDirector.getDataManager().getMyPlayer().getFullPlayerName()))
+            appendText("<font color='green'>" + newPlayerItem.fullName + " entered the chat...</font>");
+          playersListModel.addElement(newPlayerItem);
           revalidate();
           repaint();
         }
@@ -162,7 +162,7 @@ public class JChatRoom extends JPanel implements MouseListener {
     } else {
       Runnable runnable = new Runnable() {
         public void run() {          
-          playersListModel.addElement(strNewName);       
+          playersListModel.addElement(newPlayerItem);       
           revalidate();
           repaint();
         }
@@ -178,15 +178,15 @@ public class JChatRoom extends JPanel implements MouseListener {
         return; // not in this chat
     if (DataManager.SHOW_DEBUG)
       System.out.println("REMOVING PLAYER "+primaryKey);
-
-    final String strOldName = (String) players.get(primaryKey);
+     
+    final PlayerState oldPlayerItem = (PlayerState) players.get(primaryKey);
     players.remove(primaryKey);
 
     Runnable runnable = new Runnable() {
       public void run() {
-        if (!strOldName.equals(ClientDirector.getDataManager().getMyPlayer().getFullPlayerName()))
-          appendText("<font color='green'><i>" + strOldName + " left the chat...</i></font>");
-        playersListModel.removeElement(strOldName);
+        if (!oldPlayerItem.fullName.equals(ClientDirector.getDataManager().getMyPlayer().getFullPlayerName()))
+          appendText("<font color='green'><i>" + oldPlayerItem.fullName + " left the chat...</i></font>");
+        playersListModel.removeElement(oldPlayerItem);
         revalidate();
         repaint();
       }
@@ -194,7 +194,7 @@ public class JChatRoom extends JPanel implements MouseListener {
     SwingUtilities.invokeLater( runnable );
   }
 
-  /** To update a player' full name from the JList.
+  /** To update a player's full name from the JList.
    */
   synchronized public void updatePlayer(String primaryKey, String newName) {
     if( !players.containsKey( primaryKey ) )
@@ -202,20 +202,42 @@ public class JChatRoom extends JPanel implements MouseListener {
     if (DataManager.SHOW_DEBUG)
       System.out.println("UPDATING PLAYER "+primaryKey);
 
-    final String strOldName = (String) players.get(primaryKey);
-    final String strNewName = newName;
-    players.put(primaryKey, newName);
+    final PlayerState oldPlayerItem = (PlayerState) players.get(primaryKey);
+    final PlayerState newPlayerItem = new PlayerState(newName, oldPlayerItem.isNotAway);
+    players.put(primaryKey, newPlayerItem);
 
     Runnable runnable = new Runnable() {
       public void run() {
-        playersListModel.removeElement(strOldName);
-        playersListModel.addElement(strNewName);
+        playersListModel.removeElement(oldPlayerItem);
+        playersListModel.addElement(newPlayerItem);
         revalidate();
         repaint();
       }
     };
     SwingUtilities.invokeLater( runnable );
+  }
+  
+  /** To update a player's state from the JList.
+   */
+  synchronized public void updatePlayer(String primaryKey, boolean isNotAway) {
+    if( !players.containsKey( primaryKey ) )
+        return; // not in this chat
+    if (DataManager.SHOW_DEBUG)
+      System.out.println("UPDATING PLAYER "+primaryKey);
 
+    final PlayerState oldPlayerItem = (PlayerState) players.get(primaryKey);
+    final PlayerState newPlayerItem = new PlayerState(oldPlayerItem.fullName, isNotAway);
+    players.put(primaryKey, newPlayerItem);
+
+    Runnable runnable = new Runnable() {
+      public void run() {
+        playersListModel.removeElement(oldPlayerItem);
+        playersListModel.addElement(newPlayerItem);
+        revalidate();
+        repaint();
+      }
+    };
+    SwingUtilities.invokeLater( runnable );
   }
 
   /** To remove all players from JList.
@@ -289,8 +311,8 @@ public class JChatRoom extends JPanel implements MouseListener {
        int index,               // cell index
        boolean isSelected,      // is the cell selected
        boolean cellHasFocus)    // the list and the cell have the focus
-     {
-        String s = value.toString();
+     {   
+        String s = ((PlayerState) value).fullName;
         setText(s);
          
         if (isSelected) {
@@ -298,7 +320,11 @@ public class JChatRoom extends JPanel implements MouseListener {
 	        setForeground(list.getSelectionForeground());
 	      } else {
           setBackground(list.getBackground());
-	        setForeground(list.getForeground());
+          if ( ((PlayerState) value).isNotAway ) {
+	          setForeground(list.getForeground());
+	        } else {
+	          setForeground(Color.gray);
+	        }
         }
         setEnabled(list.isEnabled());
         setFont(list.getFont());

@@ -41,7 +41,7 @@ import java.util.Hashtable;
 
 /** JPanel to show the chat engine
  *
- * @author Petrus
+ * @author Petrus, MasterBob
  */
 
 public class JChatPanel extends JPanel implements MouseListener, ActionListener
@@ -58,7 +58,6 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
   /** Button to create a new chatRoom
    */
    private JButton b_createChatRoom;
-
 
   /** Button to leave the chatRoom
    */
@@ -87,6 +86,19 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
   /** Last messages in input box
    */
    private ChatMessageHistory messageHistory;
+   
+   /** To iterate the players hashtable
+    */   
+   private Enumeration e = null;
+   
+   /** the name we want to autocomplete
+    */
+   private String autoName = "";
+   
+   /** content of textField
+    */
+   private String input;
+    
 
  /*------------------------------------------------------------------------------------*/
 
@@ -129,53 +141,40 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
 
     // SOUTH
     JPanel bottomChat = new JPanel(false);
-//    bottomChat.setLayout(new BorderLayout());
-      bottomChat.setLayout(new BoxLayout(bottomChat,BoxLayout.X_AXIS)); // MasterBob revision
+    bottomChat.setLayout(new BoxLayout(bottomChat,BoxLayout.X_AXIS));
 
-
-    inputBox = new JMyTextField();
+    inputBox = new NoFocusJTextField();
     inputBox.getCaret().setVisible(true);
-    inputBox.setInputVerifier(new MyFieldVerifier());
+    inputBox.setInputVerifier(new NoFocusInputVerifier());
     inputBox.addKeyListener(new KeyAdapter() {
-      
-
         public void keyPressed(KeyEvent keyEvent) {
+          // Tab key
           if ((keyEvent.getKeyCode() == KeyEvent.VK_TAB) || (keyEvent.getKeyChar() == '\t')) {
             inputBox.setText( nameCompletion() );
             keyEvent.consume();
             return;
           }
+          // Up key
+          if ( keyEvent.getKeyCode()==KeyEvent.VK_UP )  {
+            inputBox.setText( messageHistory.getPrevious(inputBox.getText()) );
+            return;
+          }
+          // Down key
+          if ( keyEvent.getKeyCode()==KeyEvent.VK_DOWN )  {
+            inputBox.setText( messageHistory.getNext(inputBox.getText()) );
+            return;
+          }
+          // Enter key
           if ( keyEvent.getKeyCode() == KeyEvent.VK_ENTER ) {
             okAction();
             return;
           }
-        }
-      
-
-        /*public void keyReleased(KeyEvent e) {          
-          if ( e.getKeyCode()==KeyEvent.VK_UP )  {
-            inputBox.setText( messageHistory.getPrevious(inputBox.getText()) );
-            return;
-          }
-          if ( e.getKeyCode()==KeyEvent.VK_DOWN )  {
-            inputBox.setText( messageHistory.getNext(inputBox.getText()) );
-            return;
-          }
-          if ( e.getKeyCode()==KeyEvent.VK_TAB || e.getKeyChar() == '\t') {
-            inputBox.setText( nameCompletion() );
-            return;
-          }
-          if ( e.getKeyCode()==KeyEvent.VK_ENTER ) {
-            okAction();
-            return;
-          }
-        }*/
+          // Default
+          e = null;
+        }      
     });
 
-//    bottomChat.add("Center", inputBox);
-
     chatVoiceLevel = new JSlider(JSlider.HORIZONTAL, 0, 2, ChatRoom.NORMAL_VOICE_LEVEL);
-//    chatVoiceLevel = new JSlider(JSlider.VERTICAL, 0, 2, ChatRoom.NORMAL_VOICE_LEVEL);
     chatVoiceLevel.setMajorTickSpacing(1);
     chatVoiceLevel.setMinorTickSpacing(1);
     chatVoiceLevel.setSnapToTicks(true);
@@ -183,8 +182,6 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     chatVoiceLevel.setMaximumSize(new Dimension(80,30)); // MasterBob revision
     chatVoiceLevel.setMinimumSize(new Dimension(80,30));  // MasterBob revision
     chatVoiceLevel.setPreferredSize(new Dimension(80,30));  // MasterBob revision
-
-    /**MB**/ //bottomChat.add("West", chatLevel);
 
     bottomChat.add( new ALabel(ClientDirector.getResourceManager().getImageIcon("chat-sound-level.gif")) );
     bottomChat.add(chatVoiceLevel); // MasterBob revision
@@ -422,7 +419,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
   /** To add a player to a JChatRoom.
    *
    * @param primaryKey primary key of ChatRoom to modify
-   * @param playerPrimaryKey primary key of Player to add
+   * @param player player to add
    */
   public boolean addPlayer(String primaryKey, PlayerImpl player) {
     for (int i=0; i<tabbedPane.getTabCount();i++) {
@@ -440,7 +437,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
   /** To remove a player from a ChatRoom.
    *
    * @param primaryKey primary key of ChatRoom to modify
-   * @param playerPrimaryKey primary key of Player to remove
+   * @param player player to remove
    */
   public boolean removePlayer(String primaryKey, PlayerImpl player) {
     for (int i=0; i<tabbedPane.getTabCount();i++) {
@@ -483,11 +480,6 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
       System.out.println("ERROR : Couldn't get players");
     return null;
   }
-
- /*------------------------------------------------------------------------------------*/
-
-  /** To write some text in client's window
-   */
 
  /*------------------------------------------------------------------------------------*/
 
@@ -540,23 +532,29 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
 
   /** To auto complete the name of a player
    */
-  private String nameCompletion() {
-    String input = inputBox.getText();
+  private String nameCompletion() {                      
+    if (e==null) {     
+      input = inputBox.getText(); 
+      if (input.length()==0)
+        return input;    
+      int lastIndex = input.lastIndexOf(' ');      
+      autoName = input.substring(lastIndex+1, input.length());
+      input = input.substring(0, lastIndex+1);
+      e = getPlayers(currentPrimaryKey).elements();
+    }
     
-    if (input.length()==0)
-      return input;
-    
-    // find the last space
-    int lastIndex = input.lastIndexOf(' ');    
-    String autoName = input.substring(lastIndex+1, input.length());        
-    for (Enumeration e = getPlayers(currentPrimaryKey).elements() ; e.hasMoreElements() ;) {
-      String playerKey = (String) e.nextElement();
-      if ( playerKey.startsWith(autoName)) {
-        input = input.substring(0, lastIndex+1) + playerKey;
-        return input;
+    String playerKey;
+    for (; e.hasMoreElements() ;) {
+      playerKey = ((PlayerState) e.nextElement()).fullName;
+      if ( playerKey.startsWith(autoName)) {  
+        // player found      
+        return input + playerKey;
       }
-    }    
-    return input;
+    }
+    
+    // no player found
+    e = getPlayers(currentPrimaryKey).elements();
+    return input + autoName;
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -670,6 +668,17 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
         }
       }
   }
+  
+  /** To update players lists of all chat rooms
+   *
+   * @param searchedPlayer player we want to update the state
+   */
+  public void updateAllChatRooms(Player searchedPlayer) {
+    for (int i=0; i<tabbedPane.getTabCount();i++) {      
+      JChatRoom jchatRoom = (JChatRoom) tabbedPane.getComponentAt(i);
+      jchatRoom.updatePlayer(searchedPlayer.getPrimaryKey(), searchedPlayer.isConnectedToGame());
+    }
+  }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -700,17 +709,30 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
 
 }
 
+ /*------------------------------------------------------------------------------------*/
 
-   class MyFieldVerifier extends InputVerifier {
-      public boolean verify(JComponent c) {
-         // returning prevents loss of focus
-         return false;
-      }
-   }
+/**
+ * Private class to prevent loss of focus of a JComponent
+ */
+class NoFocusInputVerifier extends InputVerifier {
+  /** Checks whether the JComponent's input is valid.
+   */
+  public boolean verify(JComponent input) {      
+    // returning false prevents loss of focus
+    return false;
+  }
+}
 
-   class JMyTextField extends JTextField {
-      // Override to inform focus manager
-      // that component is managing focus changes
-      public boolean isManagingFocus() { return true; }
+ /*------------------------------------------------------------------------------------*/
 
-   }
+/**
+ * Private class to prevent loss of focus of a JComponent
+ */
+class NoFocusJTextField extends JTextField {
+  /** Override this method and return true if your JComponent manages focus    
+   */
+  public boolean isManagingFocus() {
+    // return true to inform focus manager that component is managing focus changes
+    return true;
+  }
+}

@@ -207,12 +207,8 @@ public class NetServer extends Thread
     * @param key a string given by the client to identify itself.
     */
       public void accessControl( NetPersonality personality, String key ) {
-            try{
-                acceptClient( personality ); // we accept every client
-            }
-            catch(IOException e) {
-                Debug.signal( Debug.WARNING, this, e );
-            }
+           // we accept every client
+              acceptClient( personality );
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -233,7 +229,7 @@ public class NetServer extends Thread
     *
     * @param personality a previously created personality for this connection.
     */
-      protected void acceptClient( NetPersonality personality ) throws IOException{
+      protected void acceptClient( NetPersonality personality ) {
               personality.queueMessage( new ServerWelcomeMessage() );
               personality.pleaseSendAllMessagesNow();
       }
@@ -245,8 +241,7 @@ public class NetServer extends Thread
     *
     * @param personality a previously created personality for this connection.
     */
-      protected void refuseClient( NetPersonality personality, String error_message )
-      throws IOException{
+      protected void refuseClient( NetPersonality personality, String error_message ) {
               personality.queueMessage( new ServerErrorMessage( error_message ) );
               personality.closeConnection();
       }

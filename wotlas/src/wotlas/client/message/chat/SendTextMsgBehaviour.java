@@ -26,6 +26,7 @@ import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.libs.sound.*;
 import wotlas.common.message.chat.*;
 import wotlas.common.character.*;
+import wotlas.common.PlayerState;
 
 import wotlas.client.*;
 import wotlas.client.screen.*;
@@ -124,6 +125,20 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
           else if (message.startsWith("/me")) {
             message = "<font color='blue'><i>" + senderFullName + " " + message.substring(3) + " </i></font>";
           }
+          else if (message.startsWith("/away")) {
+            message = message.substring(5);
+            if (message.length()==0) {
+              // no parameter : player is no longer away
+              sender.getPlayerState().value = PlayerState.CONNECTED;
+            } else {
+              // player is away
+              sender.getPlayerState().value = PlayerState.AWAY;
+              sender.setPlayerAwayMessage(message);
+              message = "<font color='blue'><i>" + senderFullName + " is away (" + message + " )</i></font>";
+              
+            }
+            dataManager.getClientScreen().getChatPanel().updateAllChatRooms((Player) sender);
+          }          
           else if (message.startsWith("/to:")) {
             message = message.substring(4);
             int index = message.indexOf(':');
@@ -138,7 +153,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
           else if( sender!=null && sender.getWotCharacter() instanceof DarkOne ) {
              // display the message in the "dark one manner..."
               message = "<b>[DARK ONE] "+message.toUpperCase()+" </b>";
-          }
+          }          
           else {
              // We add sender name
                 message = "["+senderFullName+"] " + message;

@@ -29,6 +29,7 @@ import wotlas.common.character.*;
 import wotlas.common.*;
 import wotlas.common.message.account.*;
 import wotlas.common.message.description.*;
+import wotlas.common.PlayerState;
 import wotlas.common.universe.*;
 
 import wotlas.libs.graphics2D.*;
@@ -846,13 +847,19 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         // Away Message
            String awayMessage = selectedPlayer.getPlayerAwayMessage();
 
-           if( selectedPlayer.isConnectedToGame() )  return; 
+           //if( selectedPlayer.isConnectedToGame() )  return; 
+           if( selectedPlayer.getPlayerState().value == PlayerState.CONNECTED ) return;
            if( !selectedPlayer.canDisplayAwayMessage() )  return;
 
            if( awayMessage!=null ) {
                JChatRoom chatRoom = clientScreen.getChatPanel().getCurrentJChatRoom();
-               chatRoom.appendText("<font color='gray'> "+selectedPlayer.getFullPlayerName()+" (away) says: <i> "
+                if ( selectedPlayer.getPlayerState().value==PlayerState.DISCONNECTED ) {
+                  chatRoom.appendText("<font color='gray'> "+selectedPlayer.getFullPlayerName()+" (disconnected) says: <i> "
                                                      +selectedPlayer.getPlayerAwayMessage()+" </i></font>");
+                } else {
+                  chatRoom.appendText("<font color='gray'> "+selectedPlayer.getFullPlayerName()+" (away) says: <i> "
+                                                     +selectedPlayer.getPlayerAwayMessage()+" </i></font>");
+                }
            }
 
            return;

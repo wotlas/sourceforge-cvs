@@ -193,6 +193,18 @@ public interface Player extends PreciseLocationOwner
     * @return true if the player is in the game, false if the client is not connected.
     */
       public boolean isConnectedToGame();
+    
+    /** To get the player's state (disconnected/connected/away)
+     *
+     * @return player state
+     */  
+      public PlayerState getPlayerState();
+
+    /** To set the player's state (disconnected/connected/away)
+     *
+     * @param value player state
+     */        
+      public void setPlayerState(PlayerState playerState);
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

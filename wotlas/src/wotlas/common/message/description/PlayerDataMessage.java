@@ -134,6 +134,7 @@ public class PlayerDataMessage extends NetMessage
          }
 
          ostream.writeBoolean( player.isConnectedToGame() );
+         ostream.writeByte( player.getPlayerState().value );
 
       // Sync ID
          if(!publicInfoOnly)
@@ -189,6 +190,7 @@ public class PlayerDataMessage extends NetMessage
          }
 
          player.setIsConnectedToGame( istream.readBoolean() );
+         player.getPlayerState().value = istream.readByte();
 
       // Sync ID
          if( !publicInfoOnly )

@@ -690,7 +690,8 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
   public void updateAllChatRooms(Player searchedPlayer) {
     for (int i=0; i<tabbedPane.getTabCount();i++) {      
       JChatRoom jchatRoom = (JChatRoom) tabbedPane.getComponentAt(i);
-      jchatRoom.updatePlayer(searchedPlayer.getPrimaryKey(), searchedPlayer.isConnectedToGame());
+      //jchatRoom.updatePlayer(searchedPlayer.getPrimaryKey(), searchedPlayer.isConnectedToGame());
+      jchatRoom.updatePlayer(searchedPlayer.getPrimaryKey(), searchedPlayer.getPlayerState().value);
     }
   }
 

@@ -22,6 +22,7 @@ package wotlas.server;
 import wotlas.common.character.*;
 import wotlas.common.chat.*;
 import wotlas.common.movement.*;
+import wotlas.common.PlayerState;
 import wotlas.common.router.*;
 import wotlas.common.message.chat.SendTextMessage;
 import wotlas.server.message.chat.*;
@@ -82,6 +83,10 @@ public class PlayerImpl implements Player, NetConnectionListener {
    /** WotCharacter Class
     */
        protected WotCharacter wotCharacter;
+   
+   /** Player state
+    */
+       protected PlayerState playerState = new PlayerState();
 
    /** Movement Composer
     */
@@ -633,6 +638,22 @@ public class PlayerImpl implements Player, NetConnectionListener {
                return false;
             return true;
       }
+      
+    /** To get the player's state (disconnected/connected/away)
+     *
+     * @return player state
+     */        
+      public PlayerState getPlayerState() {
+        return playerState;
+      }      
+      
+    /** To set the player's state (disconnected/connected/away)
+     *
+     * @param playerState player state
+     */     
+      public void setPlayerState(PlayerState playerState) {
+        this.playerState = playerState;
+      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -661,6 +682,9 @@ public class PlayerImpl implements Player, NetConnectionListener {
              else
                 lieManager.removeMeet(LieManager.FORGET_RECONNECT);
 
+          // We update our state
+             playerState.value = PlayerState.CONNECTED;
+             
           // We signal our connection to players in the game
           // ... and players in the rooms near us
              if(location.isRoom()) {
@@ -671,7 +695,7 @@ public class PlayerImpl implements Player, NetConnectionListener {
 
                // are we present in this room already ?
                  if( myRoom.getMessageRouter().getPlayer(primaryKey)!=null ) {
-                   // We send an update to players near us...
+                   // We send an update to players near us...                      
                       PlayerConnectedToGameMessage pMsg = new PlayerConnectedToGameMessage(primaryKey,true);
                       myRoom.getMessageRouter().sendMessage( pMsg, this, MessageRouter.EXTENDED_GROUP );
                  }
@@ -694,6 +718,9 @@ public class PlayerImpl implements Player, NetConnectionListener {
                  this.personality = null;
              }
              lastDisconnectedTime = System.currentTimeMillis();
+             
+         // 0.1 - We update our state
+             playerState.value = PlayerState.DISCONNECTED;
 
              Debug.signal(Debug.NOTICE, null, "Connection closed on player: "+playerName+" at "+Tools.getLexicalTime());
 

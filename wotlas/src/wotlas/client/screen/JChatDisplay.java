@@ -60,7 +60,7 @@ public class JChatDisplay extends LogStream {
      /**   smiley        width   height  file name         **/
         {  "0:)",        "16",   "20",   "angel.gif"     },
         {  ":,(",        "15",   "15",   "cry.gif"       },
-        {  "<,(",        "16",   "16",   "cry2.gif"       },
+        {  "<,(",        "16",   "16",   "cry2.gif"      },
         {  ":o",         "15",   "15",   "eek.gif"       },
         {  ":D",         "15",   "15",   "laugh.gif"     },
         {  ":(",         "15",   "15",   "mad.gif"       },
@@ -88,11 +88,13 @@ public class JChatDisplay extends LogStream {
         {  ":sleep:",    "15",   "24",   "sleep.gif"     },
         {  ":storm:",    "31",   "34",   "storm.gif"     },
         {  ":agree:",    "15",   "15",   "agree.gif"     },
+        {  ":coffee:",   "15",   "15",   "coffee.gif"    },
         {  ":disagree:", "15",   "15",   "disagree.gif"  },
+        {  ":help:",     "23",   "15",   "help.gif"      },
         {  ":warning:",  "15",   "15",   "warning.gif"   },
         {  ":idea:",     "60",   "60",   "idea.gif"      },
         {  ":music:",    "18",   "22",   "note.gif"      },
-        {  ":phone:",    "25",   "22",   "phone.gif"      },
+        {  ":phone:",    "25",   "22",   "phone.gif"     },
      };
 
 

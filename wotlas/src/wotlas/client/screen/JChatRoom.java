@@ -23,6 +23,7 @@ import wotlas.client.*;
 
 import wotlas.common.chat.ChatRoom;
 import wotlas.common.Player;
+import wotlas.common.PlayerState;
 
 import wotlas.libs.log.*;
 
@@ -146,12 +147,18 @@ public class JChatRoom extends JPanel implements MouseListener {
     Player newPlayer = (Player) playersTable.get(primaryKey);
 
     final PlayerState newPlayerItem;
-
-    if(newPlayer!=null)
+    
+    /*if(newPlayer!=null)
        newPlayerItem = new PlayerState(senderFullName, newPlayer.isConnectedToGame());
     else
        newPlayerItem = new PlayerState(senderFullName, true );
-
+    */
+    if(newPlayer!=null)
+       newPlayerItem = new PlayerState(senderFullName, newPlayer.getPlayerState().value);
+    else {       
+       newPlayerItem = new PlayerState(senderFullName, PlayerState.CONNECTED );
+    }
+    
     players.put( primaryKey, newPlayerItem);  
 
     if ( newPlayer!=null && newPlayer.isConnectedToGame() ) {
@@ -209,7 +216,8 @@ public class JChatRoom extends JPanel implements MouseListener {
       System.out.println("UPDATING PLAYER "+primaryKey);
 
     final PlayerState oldPlayerItem = (PlayerState) players.get(primaryKey);
-    final PlayerState newPlayerItem = new PlayerState(newName, oldPlayerItem.isNotAway);
+    //final PlayerState newPlayerItem = new PlayerState(newName, oldPlayerItem.isNotAway);
+    final PlayerState newPlayerItem = new PlayerState(newName, oldPlayerItem.value);
     players.put(primaryKey, newPlayerItem);
 
     Runnable runnable = new Runnable() {
@@ -225,7 +233,7 @@ public class JChatRoom extends JPanel implements MouseListener {
   
   /** To update a player's state from the JList.
    */
-  synchronized public void updatePlayer(String primaryKey, boolean isNotAway) {
+  /*synchronized public void updatePlayer(String primaryKey, boolean isNotAway) {
     if( !players.containsKey( primaryKey ) )
         return; // not in this chat
     if (DataManager.SHOW_DEBUG)
@@ -233,6 +241,29 @@ public class JChatRoom extends JPanel implements MouseListener {
 
     final PlayerState oldPlayerItem = (PlayerState) players.get(primaryKey);
     final PlayerState newPlayerItem = new PlayerState(oldPlayerItem.fullName, isNotAway);
+    players.put(primaryKey, newPlayerItem);
+
+    Runnable runnable = new Runnable() {
+      public void run() {
+        playersListModel.removeElement(oldPlayerItem);
+        playersListModel.addElement(newPlayerItem);
+        revalidate();
+        repaint();
+      }
+    };
+    SwingUtilities.invokeLater( runnable );
+  }*/
+  
+  /** To update a player's state from the JList.
+   */
+  synchronized public void updatePlayer(String primaryKey, byte value) {
+    if( !players.containsKey( primaryKey ) )
+        return; // not in this chat
+    if (DataManager.SHOW_DEBUG)
+      System.out.println("UPDATING PLAYER "+primaryKey);
+
+    final PlayerState oldPlayerItem = (PlayerState) players.get(primaryKey);
+    final PlayerState newPlayerItem = new PlayerState(oldPlayerItem.fullName, value);
     players.put(primaryKey, newPlayerItem);
 
     Runnable runnable = new Runnable() {
@@ -324,10 +355,20 @@ public class JChatRoom extends JPanel implements MouseListener {
          
           this.setBackground(list.getBackground());
 
+          /*
           if ( ((PlayerState) value).isNotAway )
 	      this.setForeground(list.getForeground());
 	  else
 	      this.setForeground(Color.gray);
+	  */
+	  
+	  if ( ((PlayerState) value).value == PlayerState.CONNECTED )
+	      this.setForeground(list.getForeground());
+	  else
+	      if ( ((PlayerState) value).value == PlayerState.DISCONNECTED )
+	          this.setForeground(Color.lightGray);
+	      else
+	          this.setForeground(Color.gray);
 
         this.setEnabled(list.isEnabled());
         this.setFont(list.getFont());

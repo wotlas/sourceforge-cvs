@@ -87,6 +87,10 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
    */
   private WotCharacter wotCharacter;
   
+  /** Player state
+   */
+  transient private PlayerState playerState = new PlayerState();
+  
   /** Current Chat PrimaryKey : the chat we are currently connected to.
    */
   private String currentChatPrimaryKey = ChatRoom.DEFAULT_CHAT; // everlasting chat set as default
@@ -142,7 +146,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
 
   /** Is this player representing a client that is connected to the game ?
    */
-  private boolean isConnectedToGame = false;
+  private boolean isConnectedToGame = false; 
 
   /** SyncID for client & server. See the getter of this field for explanation.
    * This field is an array and not a byte because we want to be able to
@@ -719,6 +723,22 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
             return isConnectedToGame;
       }
 
+    /** To get the player's state (disconnected/connected/away)
+     *
+     * @return player state
+     */        
+      public PlayerState getPlayerState() {
+        return playerState;
+      }      
+      
+    /** To set the player's state (disconnected/connected/away)
+     *
+     * @param playerState player state
+     */     
+      public void setPlayerState(PlayerState playerState) {
+        this.playerState = playerState;
+      }      
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To set if this player is connected to the game.
@@ -726,6 +746,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
     */
       public void setIsConnectedToGame( boolean isConnectedToGame ) {
       	 this.isConnectedToGame = isConnectedToGame;
+      	 playerState.value = PlayerState.CONNECTED;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

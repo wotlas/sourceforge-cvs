@@ -31,6 +31,7 @@ import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.common.message.description.*;
 import wotlas.common.universe.*;
 import wotlas.common.Player;
+import wotlas.common.PlayerState;
 
 import wotlas.client.*;
 
@@ -71,14 +72,20 @@ public class PlayerConnectedToGameMsgBehaviour extends PlayerConnectedToGameMess
 
         // 2 - Update of the player
            searchedPlayer.setIsConnectedToGame( isConnectedToGame );
+           if (isConnectedToGame) {
+             searchedPlayer.getPlayerState().value = PlayerState.CONNECTED;
+           } else {
+             searchedPlayer.getPlayerState().value = PlayerState.DISCONNECTED;
+           }
         
         // 3 - Update the Chat players list about searchedPlayer's state
            dataManager.getClientScreen().getChatPanel().updateAllChatRooms(searchedPlayer);
       	 
-           if(isConnectedToGame)
+           if (isConnectedToGame) {              
               SoundLibrary.getSoundLibrary().playSound("gong.wav");
-           else
+           } else {              
               SoundLibrary.getSoundLibrary().playSound("man-yawn.wav");
+           }
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

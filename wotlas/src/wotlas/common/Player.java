@@ -19,6 +19,7 @@
 
 package wotlas.common;
 
+import wotlas.common.character.*;
 import wotlas.common.universe.*;
 
 
@@ -31,14 +32,14 @@ import wotlas.common.universe.*;
 
 public interface Player
 {
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** When this method is called, the player can intialize its own fields safely : all
     *  the game data has been loaded.
     */
       public void init();
 
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To get the player location
     *
@@ -46,7 +47,7 @@ public interface Player
     */
       public WotlasLocation getLocation();
 
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To get the player name ( short name )
     *
@@ -54,7 +55,7 @@ public interface Player
     */
       public String getPlayerName();
 
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To get the player's full name.
     *
@@ -62,13 +63,21 @@ public interface Player
     */
       public String getFullPlayerName();
 
- /*------------------------------------------------------------------------------------*/
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To get the player primary Key ( account name or any unique ID )
     *
     *  @return player primary key
     */
       public String getPrimaryKey();
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the player's character.
+    *
+    *  @return player character
+    */
+      public WotCharacter getWotCharacter();
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

@@ -19,6 +19,7 @@
 
 package wotlas.server;
 
+import wotlas.common.character.*;
 import wotlas.common.Player;
 
 import wotlas.libs.net.NetConnectionListener;
@@ -182,6 +183,16 @@ public class PlayerImpl implements Player, NetConnectionListener
     */
       public void setFullPlayerName( String fullPlayerName ) {
           this.fullPlayerName = fullPlayerName;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the player's character.
+    *
+    *  @return player character
+    */
+      public WotCharacter getWotCharacter() {
+        return null; // for now
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

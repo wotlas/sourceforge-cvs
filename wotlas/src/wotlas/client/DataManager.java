@@ -168,6 +168,10 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** Our Graphics Director.
    */
   private GraphicsDirector gDirector;
+  
+  /** True if player was diconnected end resumed the game
+   */
+  private boolean isResuming = false;
 
   /** Our MapData.
    */
@@ -337,6 +341,20 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     return aStar;
   }
 
+  /** To test if player was diconnected
+   *
+   * @return true if player was disconnected
+   */
+  public boolean isResuming() {
+    return isResuming;
+  }
+  
+  /** To set whether player has finished resuming the game
+   */
+  public void setIsResuming(boolean value) {
+    this.isResuming = value;
+  }
+  
  /*------------------------------------------------------------------------------------*/
 
   /** This method is called when a new network connection is created

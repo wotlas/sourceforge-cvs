@@ -1,0 +1,1 @@
+This is the directory where are stored the user's macros.

@@ -68,8 +68,10 @@ public class NetMessageFactory
    */
      public static NetMessageFactory createMessageFactory( String msg_packages[] )
      {
-        if(msg_factory!=null)
+        if(msg_factory!=null) {
+           msg_factory.addMessageClasses( msg_packages );           
            return msg_factory;  // there is one already
+        }
 
         String package_list[];
 
@@ -88,7 +90,7 @@ public class NetMessageFactory
 
      // We create the factory
         NetMessageFactory factory = new NetMessageFactory();
-        factory.loadMessageClasses( package_list );
+        factory.addMessageClasses( package_list );
 
         return factory;
      }
@@ -112,7 +114,7 @@ public class NetMessageFactory
    *
    * @param package_list a list of packages where we can find NetMsgBehaviour Classes.
    */
-     private void loadMessageClasses( String package_list[] )
+     private void addMessageClasses( String package_list[] )
      {
           NetMessage msg_list[] = new NetMessage[1];
      	  int nb_msg = 0;
@@ -196,7 +198,35 @@ public class NetMessageFactory
 
 
        // ... the dynamic load has succeed
-          this.msg_class = msg_class;
+       // We merge the new packages with the old ones
+          if( this.msg_class == null ) {
+              this.msg_class = msg_class;
+          }
+          else {
+            // we merge the loaded Classes arrays
+             if( this.msg_class.length<msg_class.length ) {
+                 Class tmp[][] = new Class[msg_class.length][];
+                 System.arraycopy( this.msg_class, 0, tmp, 0, this.msg_class.length );
+             	 this.msg_class = tmp;
+             }
+             
+             for( int i=0; i<msg_class.length; i++)
+             	 if(msg_class[i]!=null) {
+                    if( this.msg_class[i]==null )
+                        this.msg_class[i] = msg_class[i];
+                    else {
+                        if( this.msg_class[i].length<msg_class[i].length ) {
+                            Class tmp[] = new Class[msg_class[i].length];
+                            System.arraycopy( this.msg_class[i], 0, tmp, 0, this.msg_class[i].length );
+             	            this.msg_class[i] = tmp;
+                        }
+                        
+                        for( int j=0; j<msg_class[i].length; j++ )
+                             if(msg_class[i][j]!=null)
+                                this.msg_class[i][j] = msg_class[i][j]; // we eventually erase previously
+                    }                                                   // loaded classes with the new ones
+             	 }
+          }
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

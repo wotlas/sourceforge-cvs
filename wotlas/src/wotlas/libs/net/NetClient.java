@@ -78,10 +78,6 @@ public class NetClient
        public NetClient() {
              stop = false;
              validConnection = false;
-
-          // We delete the eventual old NetMessageFactory
-             if( NetMessageFactory.getDefaultMessageFactory() != null )
-                 NetMessageFactory.getDefaultMessageFactory().deleteFactory();
        }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -75,6 +75,10 @@ public class JChatRoom extends JPanel
   /** Player list
    */
   private Hashtable players;
+  
+  /** New name to display in JList.
+   */
+  String strNewName;
 
  /*------------------------------------------------------------------------------------*/  
  
@@ -143,6 +147,7 @@ public class JChatRoom extends JPanel
 
       // ok, we add this one...
          playersListModel.addElement(players[i].getFullPlayerName());
+         repaint();
          this.players.put( players[i].getPrimaryKey(), players[i] );
     }
   }
@@ -150,11 +155,16 @@ public class JChatRoom extends JPanel
   /** To add a player to the JList.
    */
   synchronized public void addPlayer(PlayerImpl player) {
-
     if( players.containsKey( player.getPrimaryKey() ) )
         return; // already in this chat
-
-    playersListModel.addElement(player.getFullPlayerName());
+    //playersListModel.addElement(player.getFullPlayerName());
+    strNewName = player.getFullPlayerName();
+    Runnable runnable = new Runnable() {
+      public void run() {
+        playersListModel.addElement(strNewName);
+      }
+    };
+    SwingUtilities.invokeLater( runnable );
     this.players.put( player.getPrimaryKey(), player );    
   }
   
@@ -211,8 +221,7 @@ System.out.println("REMOVING PLAYER "+player.getPrimaryKey());
         System.out.println("Chat Error:"+e.getMessage());*/
       } 
 
-      // Search for smiles
-
+      // Search for smileys
       text = Tools.subString(text, ":D", "<img src='file:..\\base\\graphics\\gui\\chat\\biggrin.gif'>");
       text = Tools.subString(text, ":)", "<img src='file:..\\base\\graphics\\gui\\chat\\smile.gif'>");
       text = Tools.subString(text, ":(", "<img src='file:..\\base\\graphics\\gui\\chat\\perplexed.gif'>");

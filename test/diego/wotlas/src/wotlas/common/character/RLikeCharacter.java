@@ -23,19 +23,33 @@ import wotlas.common.*;
 import wotlas.common.universe.*;
 import wotlas.common.objects.inventories.Inventory;
 import wotlas.libs.graphics2D.*;
+import wotlas.libs.persistence.*;
 
 import java.io.*;
 import java.awt.Color;
 
-/** basic Interface of a Character.Each Player object possess
- * one Character object, that should (actually) be a wotChar or a rlikeChar.
- * rLikeChar = rogueLike character
+/** basic Interface for a rogue like Character
  *
- * @author Aldiss, Elann, Diego
+ * @author Diego
  * @see wotlas.common.Player
  * @see wotlas.libs.graphics2D.Drawable
  */
 
-public abstract class WotCharacter extends BasicChar {
-
+public abstract class RLikeCharacter extends BasicChar {
+/*
+    public void init(){
+        maskCharAttributes = new int[ATTR_LAST_ATTR];
+        charAttributes = new short[ATTR_LAST_ATTR][2];
+        levels = new byte[1];
+        classes = new classes[1];
+        gold = new long[2];
+        exp = new long[2];
+        maskCharSkills = new int[SKILL_LAST_SKILL];
+        charSkills = new byte[SKILL_LAST_SKILL];
+        maskCharKnownledge = new int[KNOW_LAST_KNOWN];
+        charKnownledge = new boolean[KNOW_LAST_KNOWN];
+        maskCharFlags = new int[FLAG_LAST_FLAG];
+        charFlags = new boolean[FLAG_LAST_FLAG];
+    }
+*/
 }

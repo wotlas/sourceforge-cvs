@@ -994,7 +994,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
           // Deselect ?
              if ( previouslySelectedPlayerKey.equals(selectedPlayer.getPrimaryKey()) && isLeftClick ) {
                 gDirector.addDrawable(selectedPlayer.getTextDrawable());
-                gDirector.addDrawable(selectedPlayer.getWotCharacter().getAura());
+                gDirector.addDrawable(selectedPlayer.getBasicChar().getAura());
                 selectedPlayer=null;
 
                 if(infoPanel!=null) infoPanel.reset();
@@ -1003,11 +1003,11 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
           // Select
              circle = new CircleDrawable( selectedPlayer.getDrawable(), 20,
-                                       selectedPlayer.getWotCharacter().getColor(), true,
+                                       selectedPlayer.getBasicChar().getColor(), true,
                                        ImageLibRef.AURA_PRIORITY );
              gDirector.addDrawable(circle);
              gDirector.addDrawable(selectedPlayer.getTextDrawable());
-             gDirector.addDrawable(selectedPlayer.getWotCharacter().getAura());
+             gDirector.addDrawable(selectedPlayer.getBasicChar().getAura());
 
              if(infoPanel!=null)
                 infoPanel.setPlayerInfo( selectedPlayer );

@@ -155,11 +155,11 @@ public class InventoryLayout {
 
   /** To save this client configuration.
    */
-     public boolean save(WotCharacter character) {
+     public boolean save(BasicChar character) {
      	ResourceManager rManager = ClientDirector.getResourceManager();
      	
         if( !rManager.saveObject(this, rManager.getLayoutsDir()+character.getClass().getName() ) ) {
-            Debug.signal( Debug.ERROR, null, "Failed to save WotCharacter Layout.");
+            Debug.signal( Debug.ERROR, null, "Failed to save BasicChar Layout.");
             return false;
         }
         
@@ -170,7 +170,7 @@ public class InventoryLayout {
 
   /** To load the default client configuration.
    */
-     public static InventoryLayout load(WotCharacter character) {
+     public static InventoryLayout load(BasicChar character) {
      	ResourceManager rManager = ClientDirector.getResourceManager();
         String fileName = rManager.getLayoutsDir()+character.getClass().getName();
         InventoryLayout cfg = null;
@@ -180,7 +180,7 @@ public class InventoryLayout {
          }
          
          if(cfg==null) {
-            Debug.signal( Debug.ERROR, null, "Failed to load WotCharacter Layout. Creating a new one." );
+            Debug.signal( Debug.ERROR, null, "Failed to load BasicChar Layout. Creating a new one." );
             return new InventoryLayout();
          }
          
@@ -188,7 +188,6 @@ public class InventoryLayout {
 
          return cfg;
     }
-  
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

@@ -328,7 +328,8 @@ public class AccountManager {
                  continue;
              }
 
-             PlayerImpl player = (PlayerImpl) rManager.loadObject( latest );
+             // PlayerImpl player = (PlayerImpl) rManager.loadObject( latest );
+             PlayerImpl player = (PlayerImpl) rManager.RestoreObject( latest );
 
              if(player!=null)
                 accounts[i].setPlayer( player );
@@ -381,7 +382,10 @@ public class AccountManager {
 
       String accountHome =  rManager.getExternalPlayersHomeDir();
 
-      if( !rManager.saveObject( account.getPlayer(),
+//      if( !rManager.saveObject( account.getPlayer(),
+//                                    accountHome + account.getAccountName() + File.separator
+//                                    +PLAYER_PREFIX+Tools.getLexicalDate()+PLAYER_SUFFIX ) ) {
+      if( !rManager.BackupObject( account.getPlayer(),
                                     accountHome + account.getAccountName() + File.separator
                                     +PLAYER_PREFIX+Tools.getLexicalDate()+PLAYER_SUFFIX ) ) {
           Debug.signal( Debug.ERROR, this, "Failed to save account: "
@@ -453,7 +457,7 @@ public class AccountManager {
           return false;
       }
 
-    // we create the client's "profile.cfg"
+      // we create the client's "profile.cfg"
       if( !rManager.saveObject( account,
                            accountHome + account.getAccountName() + File.separator + CLIENT_PROFILE ) ) {
           Debug.signal( Debug.ERROR, this, "Failed to save account's profile: "

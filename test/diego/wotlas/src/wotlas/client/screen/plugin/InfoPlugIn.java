@@ -185,14 +185,14 @@ public class InfoPlugIn extends JPanelPlugIn {
 
       if( player!=ClientDirector.getDataManager().getMyPlayer() )
          setText(   
-            "Community: "+player.getWotCharacter().getCommunityName()+"\n"+
-            "Rank: "+player.getWotCharacter().getCharacterRank()+"\n\n"+
+            "Community: "+player.getBasicChar().getCommunityName()+"\n"+
+            "Rank: "+player.getBasicChar().getCharacterRank()+"\n\n"+
             "Player Past: "+player.getPlayerPast() );
       else
          setText(
             "Nickname: "+player.getPlayerName()+"\n"+
-            "Community: "+player.getWotCharacter().getCommunityName()+"\n"+
-            "Rank: "+player.getWotCharacter().getCharacterRank()+"\n\n"+
+            "Community: "+player.getBasicChar().getCommunityName()+"\n"+
+            "Rank: "+player.getBasicChar().getCharacterRank()+"\n\n"+
             "Player Past: "+player.getPlayerPast() );
     }
 

@@ -101,7 +101,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
           if( sender==null )
               Debug.signal( Debug.WARNING, this, "Couldnot find the sender of this message : "+senderPrimaryKey);
           else {
-              if(sender.getWotCharacter() instanceof DarkOne && fanfare)
+              if(sender.getBasicChar() instanceof DarkOne && fanfare)
                  return;
               dataManager.addWaveDrawable(sender);
               senderFullName = sender.getFullPlayerName();
@@ -109,7 +109,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
 
        // Is there a modifier in this message ?
           if(message.equals("/BLACKAJAH") && voiceSoundLevel==ChatRoom.SHOUTING_VOICE_LEVEL) {
-             WotCharacter wotC = sender.getWotCharacter();
+             BasicChar wotC = sender.getBasicChar();
        
              if( wotC instanceof AesSedai ) {
                  if( ((AesSedai) wotC).toggleBlackAjah() )
@@ -151,7 +151,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
             else
                message = "/to:" +message+" <font color='red'>ERROR: bad format</font>";
           }
-          else if( sender!=null && sender.getWotCharacter() instanceof DarkOne ) {
+          else if( sender!=null && sender.getBasicChar() instanceof DarkOne ) {
              // display the message in the "dark one manner..."
               message = "<b>[DARK ONE] "+message.toUpperCase()+" </b>";
           }          

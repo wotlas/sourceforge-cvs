@@ -4,4 +4,7 @@
     <fileobject name="AllDataLeftPleaseMessage.java">
         <attr name="class_dependency_wotlas.libs.net.NetMessage" stringvalue="AllDataLeftPleaseMessage"/>
     </fileobject>
+    <fileobject name="PlayerDataMessage.java">
+        <attr name="class_dependency_wotlas.libs.net.NetMessage" stringvalue="PlayerDataMessage"/>
+    </fileobject>
 </attributes>

@@ -1,6 +1,6 @@
 /*
  * Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
- * Copyright (C) 2001-2002 WOTLAS Team
+ * Copyright (C) 2001-2003 WOTLAS Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -30,7 +30,7 @@ import java.io.*;
 
 /** Interface of a Wotlas Player.
  *
- * @author Aldiss, Elann
+ * @author Aldiss, Elann, Diego
  * @see wotlas.server.PlayerImpl
  * @see wotlas.client.PlayerImpl
  */
@@ -155,7 +155,8 @@ public interface Player extends PreciseLocationOwner
     *
     *  @return player character
     */
-      public WotCharacter getWotCharacter();
+      // public WotCharacter getWotCharacter();
+      public BasicChar getBasicChar();
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -163,7 +164,7 @@ public interface Player extends PreciseLocationOwner
     *
     *  @param wotCharacter player character
     */
-      public void setWotCharacter( WotCharacter wotCharacter );
+      public void setBasicChar( BasicChar basicChar );
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

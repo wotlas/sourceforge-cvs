@@ -1,6 +1,6 @@
 /*
  * Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
- * Copyright (C) 2001-2002 WOTLAS Team
+ * Copyright (C) 2001-2003 WOTLAS Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,7 +32,7 @@ import wotlas.libs.graphics2D.filter.*;
 
 /** A Wolf Brother character.
  *
- * @author Aldiss, Elann
+ * @author Aldiss, Elann, Diego
  * @see wotlas.common.character.Male
  */
 
@@ -310,34 +310,61 @@ public class WolfBrother extends Male {
 	 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- /** To put the WotCharacter's data on the network stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param ostream data stream where to put your data (see java.io.DataOutputStream)
-   * @param publicInfoOnly if false we write the player's full description, if true
-   *                     we only write public info
-   * @exception IOException if the stream has been closed or is corrupted.
+  /** write object data with serialize.
    */
-     public void encode( DataOutputStream ostream, boolean publicInfoOnly ) throws IOException {
-        super.encode( ostream, publicInfoOnly );
-        ostream.writeUTF( characterRank );
-     }
+    public void writeExternal(java.io.ObjectOutput objectOutput)
+    throws java.io.IOException {
+        objectOutput.writeInt( ExternalizeGetVersion() );
+        super.writeExternal( objectOutput );
+        objectOutput.writeUTF( characterRank );
+    }
+    
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** read object data with serialize.
+   */
+    public void readExternal(java.io.ObjectInput objectInput)
+    throws java.io.IOException, java.lang.ClassNotFoundException {
+        int IdTmp = objectInput.readInt();
+        if( IdTmp == ExternalizeGetVersion() ){
+            super.readExternal( objectInput );
+            characterRank = objectInput.readUTF();
+        } else {
+            // to do.... when new version
+        }
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To retrieve your WotCharacter's data from the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
-   * @param publicInfoOnly if false it means the available data is the player's full description,
-   *                     if true it means we only have public info here.
-   * @exception IOException if the stream has been closed or is corrupted.
+  /** id version of data, used in serialized persistance.
    */
-     public void decode( DataInputStream istream, boolean publicInfoOnly ) throws IOException {
-        super.decode( istream, publicInfoOnly );
-        characterRank = istream.readUTF();
-     }
+    public int ExternalizeGetVersion(){
+        return 1;
+    }
 
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** write object data to a stream to send data.
+   */
+    public void writeObject(java.io.ObjectOutputStream objectOutput)
+    throws java.io.IOException {
+        objectOutput.writeInt( ExternalizeGetVersion() );
+        super.writeExternal( objectOutput );
+        objectOutput.writeUTF( characterRank );
+    }
+    
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** read object data from a stream to recive data.
+   */
+    public void readObject(java.io.ObjectInputStream objectInput)
+    throws java.io.IOException, java.lang.ClassNotFoundException {
+        int IdTmp = objectInput.readInt();
+        if( IdTmp == ExternalizeGetVersion() ){
+            super.readExternal( objectInput );
+            characterRank = objectInput.readUTF();
+        } else {
+            // to do.... when new version
+        }
+    }
 }

@@ -1,6 +1,6 @@
 /*
  * Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
- * Copyright (C) 2001-2002 WOTLAS Team
+ * Copyright (C) 2001-2003 WOTLAS Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -28,6 +28,8 @@ import wotlas.common.universe.*;
 
 import wotlas.utils.*;
 
+import wotlas.libs.persistence.*;
+
 import java.awt.Point;
 
 /** 
@@ -37,11 +39,15 @@ import java.awt.Point;
  * IMPORTANT : this implementation is NOT synchronized... please avoid the situation
  *             when one thread is invoking the tick() method and the other a setXXX()...
  *
- * @author Petrus, Aldiss
+ * @author Petrus, Aldiss, Diego
  */
 
-public class PathFollower implements MovementComposer {
+public class PathFollower implements MovementComposer,BackupReady {
 
+    /** id used in Serialized interface.
+     */
+    private static final long serialVersionUID = 556565L;
+ 
  /*------------------------------------------------------------------------------------*/
 
   /** Distance in pixels before we consider the slave replica too far from its
@@ -569,7 +575,7 @@ public class PathFollower implements MovementComposer {
          if ( player.getLocation().isRoom() )
               realisticRotations = true;
 
-         speed = player.getWotCharacter().getSpeed( player.getLocation() );
+         speed = player.getBasicChar().getSpeed( player.getLocation() );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -945,5 +951,41 @@ public class PathFollower implements MovementComposer {
     }
 
  /*------------------------------------------------------------------------------------*/
-}
+  /** write object data with serialize.
+   */
+    public void writeExternal(java.io.ObjectOutput objectOutput)
+    throws java.io.IOException {
+        objectOutput.writeInt( ExternalizeGetVersion() );
+        objectOutput.writeFloat( xPosition );
+        objectOutput.writeFloat( yPosition );
+        objectOutput.writeLong( movementTimeStamp );
+        objectOutput.writeBoolean( walkingAlongPath );
+        objectOutput.writeDouble( orientationAngle );
+    }
+    
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** read object data with serialize.
+   */
+    public void readExternal(java.io.ObjectInput objectInput)
+    throws java.io.IOException, java.lang.ClassNotFoundException {
+        int IdTmp = objectInput.readInt();
+        if( IdTmp == ExternalizeGetVersion() ){
+            xPosition = objectInput.readFloat();
+            yPosition = objectInput.readFloat();
+            movementTimeStamp = objectInput.readLong();
+            walkingAlongPath = objectInput.readBoolean();
+            orientationAngle = objectInput.readDouble();
+        } else {
+            // to do.... when new version
+        }
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** id version of data, used in serialized persistance.
+   */
+    public int ExternalizeGetVersion(){
+        return 1;
+    }    
+}

@@ -1,6 +1,6 @@
 /*
  * Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
- * Copyright (C) 2001-2002 WOTLAS Team
+ * Copyright (C) 2001-2003 WOTLAS Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -94,7 +94,7 @@ public class KillChatCommand implements ChatCommand
     */
       public boolean exec( String message, PlayerImpl player, SendTextMessage response ) {
 
-              if( !(player.getWotCharacter() instanceof DarkOne) )
+              if( !(player.getBasicChar() instanceof DarkOne) )
                   return true; // not the Dark One
 
               if(message.indexOf(' ')!=5)

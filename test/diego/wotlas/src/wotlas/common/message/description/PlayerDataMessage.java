@@ -1,6 +1,6 @@
 /*
  * Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
- * Copyright (C) 2001-2002 WOTLAS Team
+ * Copyright (C) 2001-2003 WOTLAS Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -26,11 +26,14 @@ import java.io.IOException;
 import wotlas.libs.net.NetMessage;
 import wotlas.common.message.movement.*;
 import wotlas.common.*;
-import wotlas.common.character.WotCharacter;
+// import wotlas.common.character.WotCharacter;
+import wotlas.common.character.BasicChar;
 import wotlas.common.universe.WotlasLocation;
 import wotlas.common.movement.*;
 
 import wotlas.utils.Tools;
+
+import java.io.*;
 
 /** 
  * To send player data (Message Sent by Server).
@@ -150,8 +153,14 @@ public class PlayerDataMessage extends NetMessage
          updateMsg.encode( ostream );
 
       // Wotlas Character Data
-         ostream.writeUTF( player.getWotCharacter().getClass().getName() );
-         player.getWotCharacter().encode( ostream, publicInfoOnly ); // call to encode character's data
+         ostream.writeUTF( player.getBasicChar().getClass().getName() );
+         System.out.println( player.getBasicChar().getClass().getName() );
+      //   player.getBasicChar().writeObject( ostream ); // call to encode character's data
+         try{
+             new ObjectOutputStream(ostream).writeObject( player.getBasicChar() ); // call to encode character's data
+         } catch (Exception e) {
+             System.out.println(" diego: error");
+         }   
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -204,10 +213,15 @@ public class PlayerDataMessage extends NetMessage
          uMsg.decode( istream );
 
       // Wotlas Character
-         WotCharacter wotChar = (WotCharacter) Tools.getInstance( istream.readUTF() );
-         
-         wotChar.decode( istream, publicInfoOnly );
-         player.setWotCharacter( wotChar );
+         BasicChar wotChar = (BasicChar) Tools.getInstance( istream.readUTF() );
+         System.out.println( wotChar.getClass().getName() );
+      //   wotChar.readObject( istream );
+      //   player.setBasicChar( wotChar );
+         try {
+             player.setBasicChar( (BasicChar) new ObjectInputStream(istream).readObject() );
+         } catch (Exception e) {
+             System.out.println(" diego: error");
+         }
 
       // Movement Composer init
          mvComposer.init( player );
@@ -222,7 +236,4 @@ public class PlayerDataMessage extends NetMessage
      public Player getPlayer() {
      	return player;
      }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

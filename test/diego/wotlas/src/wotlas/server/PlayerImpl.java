@@ -1,6 +1,6 @@
 /*
  * Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
- * Copyright (C) 2001-2002 WOTLAS Team
+ * Copyright (C) 2001-2003 WOTLAS Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -33,6 +33,7 @@ import wotlas.libs.net.NetConnection;
 import wotlas.libs.net.NetMessage;
 
 import wotlas.libs.pathfinding.*;
+import wotlas.libs.persistence.*;
 
 import wotlas.common.*;
 import wotlas.common.chat.*;
@@ -42,17 +43,24 @@ import wotlas.common.universe.*;
 import wotlas.common.objects.*;
 import wotlas.utils.*;
 
+import wotlas.libs.persistence.*;
+
 import java.util.*;
+import java.io.*;
 
 /** Class of a Wotlas Player. It is the class that, in certain way, a client gets connected to.
  *  All the client messages have a server PlayerImpl context.
  *
- * @author Aldiss, Elann
+ * @author Aldiss, Elann, Diego
  * @see wotlas.common.Player
  * @see wotlas.common.NetConnectionListener
  */
 
-public class PlayerImpl implements Player, NetConnectionListener {
+public class PlayerImpl implements Player, NetConnectionListener,BackupReady {
+
+    /** id used in Serialized interface.
+     */
+    private static final long serialVersionUID = 556565L;
 
    /** Period between two focus sounds. Focus sounds can be send by players two draw
     *  attention.
@@ -83,7 +91,7 @@ public class PlayerImpl implements Player, NetConnectionListener {
 
    /** WotCharacter Class
     */
-       protected WotCharacter wotCharacter;
+       protected BasicChar wotCharacter;
       
    /** Player state
     */
@@ -186,7 +194,7 @@ public class PlayerImpl implements Player, NetConnectionListener {
          setMovementComposer( playerToClone.getMovementComposer() );
          movementComposer.init( this );
 
-         setWotCharacter( playerToClone.getWotCharacter() );
+         setBasicChar( playerToClone.getBasicChar() );
          setLieManager( playerToClone.getLieManager() );
 
          setChatList( playerToClone.getChatList() );
@@ -427,7 +435,7 @@ public class PlayerImpl implements Player, NetConnectionListener {
     *
     *  @return player character
     */
-      public WotCharacter getWotCharacter() {
+      public BasicChar getBasicChar() {
         return wotCharacter; 
       }
 
@@ -437,7 +445,7 @@ public class PlayerImpl implements Player, NetConnectionListener {
     *
     *  @param wotCharacter new player character
     */
-      public void setWotCharacter( WotCharacter wotCharacter ) {
+      public void setBasicChar( BasicChar wotCharacter ) {
          this.wotCharacter = wotCharacter;
       }
 
@@ -887,5 +895,63 @@ public class PlayerImpl implements Player, NetConnectionListener {
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+  /** write object data with serialize.
+   */
+    public void writeExternal(java.io.ObjectOutput objectOutput)
+    throws java.io.IOException {
+        objectOutput.writeInt( ExternalizeGetVersion() );
+        objectOutput.writeUTF(primaryKey);
+        objectOutput.writeObject(location);
+        objectOutput.writeUTF(playerName);
+        objectOutput.writeUTF(playerPast);
+        objectOutput.writeUTF(playerAwayMessage);
+        objectOutput.writeObject(wotCharacter);
+        objectOutput.writeLong(lastDisconnectedTime);
+ 
+        objectOutput.writeObject(lieManager);
+        objectOutput.writeObject(playerState);
+        objectOutput.writeObject(movementComposer);
+        /*
+        PlayerState playerState = new PlayerState());
+        MovementComposer movementComposer = (MovementComposer) new PathFollower());
+        LieManager lieManager = new LieManager());
+         */
+   }
+    
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** read object data with serialize.
+   */
+    public void readExternal(java.io.ObjectInput objectInput)
+    throws java.io.IOException, java.lang.ClassNotFoundException {
+        int IdTmp = objectInput.readInt();
+        if( IdTmp == ExternalizeGetVersion() ){
+            primaryKey = objectInput.readUTF();
+            location = ( WotlasLocation ) objectInput.readObject();
+            playerName = objectInput.readUTF();
+            playerPast = objectInput.readUTF();
+            playerAwayMessage = objectInput.readUTF();
+            wotCharacter = ( BasicChar ) objectInput.readObject();
+            lastDisconnectedTime = objectInput.readLong();;
+
+            lieManager = ( LieManager ) objectInput.readObject();
+            playerState = ( PlayerState ) objectInput.readObject();
+            movementComposer = ( MovementComposer ) objectInput.readObject();
+            /*
+            PlayerState playerState = new PlayerState();
+            MovementComposer movementComposer = (MovementComposer) new PathFollower();
+            LieManager lieManager = new LieManager();
+            */
+        } else {
+            // to do.... when new version
+        }
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** id version of data, used in serialized persistance.
+   */
+    public int ExternalizeGetVersion(){
+        return 1;
+    }
 }

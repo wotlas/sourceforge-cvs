@@ -1,6 +1,6 @@
 /*
  * Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
- * Copyright (C) 2001-2002 WOTLAS Team
+ * Copyright (C) 2001-2003 WOTLAS Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -53,7 +53,7 @@ import java.util.Properties;
  * If the creation is successful, the accountServer sends a AccountCreationEndedMessage
  * containing the player's IDs.
  *
- * @author Aldiss
+ * @author Aldiss, Diego
  * @see wotlas.server.AccountServer
  */
 
@@ -413,7 +413,7 @@ public class AccountBuilder implements NetConnectionListener
         account.setLastConnectionTimeNow();
         player.setPrimaryKey( account.getAccountName() );
 
-        Inventory inventory = player.getWotCharacter().createInventory();
+        Inventory inventory = player.getBasicChar().createInventory();
         ServerObjectManager objectManager = new ServerObjectManager();
         objectManager.setInventory( inventory );
         player.setObjectManager( objectManager );
@@ -499,12 +499,12 @@ public class AccountBuilder implements NetConnectionListener
       // 2 - Create Instance
         Object obj = Tools.getInstance( className );
 
-        if( obj==null || !(obj instanceof WotCharacter) )
+        if( obj==null || !(obj instanceof BasicChar) )
            throw new AccountException("Error during character class creation !");
 
       // 3 - Set the player's character
-        WotCharacter wotCharacter = (WotCharacter) obj;
-     	player.setWotCharacter( wotCharacter );
+        BasicChar wotCharacter = (BasicChar) obj;
+     	player.setBasicChar( wotCharacter );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -514,7 +514,7 @@ public class AccountBuilder implements NetConnectionListener
      public void setWotCharacterRank( String data ) throws AccountException {
 
       // 1 - Set the rank
-        WotCharacter wotCharacter = (WotCharacter) player.getWotCharacter();
+        BasicChar wotCharacter = (BasicChar) player.getBasicChar();
 
         if(wotCharacter==null)
            throw new AccountException("No character created !");
@@ -533,7 +533,7 @@ public class AccountBuilder implements NetConnectionListener
      public void setHairColor( String data ) throws AccountException {
      
        // 1 - Get Human character
-        WotCharacter wotCharacter = (WotCharacter) player.getWotCharacter(); 
+        BasicChar wotCharacter = (BasicChar) player.getBasicChar(); 
 
         if(wotCharacter==null)
            throw new AccountException("No character created !");
@@ -612,7 +612,7 @@ public class AccountBuilder implements NetConnectionListener
 
         if( data.equals( props.getProperty("key.shaitan","shaitan") ) ) {
           // We create a great lord of the dark...
-             player.setWotCharacter(new DarkOne());
+             player.setBasicChar(new DarkOne());
 
              setPlayerName("Great Lord Of the Dark");
              setFullPlayerName("Shai'tan");
@@ -625,18 +625,18 @@ public class AccountBuilder implements NetConnectionListener
         }
         else if(data.equals( props.getProperty("key.amyrlin","amyrlin") )) {
           // We create an Amyrlin...
-             player.setWotCharacter(new AesSedai());
-             player.getWotCharacter().setCharacterRank("Amyrlin");
+             player.setBasicChar(new AesSedai());
+             player.getBasicChar().setCharacterRank("Amyrlin");
         }
         else if(data.equals( props.getProperty("key.chronicles","chronicles") )) {
           // We create a Keeper of chronicles...
-             player.setWotCharacter(new AesSedai());
-             player.getWotCharacter().setCharacterRank("Keeper of the Chronicles");
+             player.setBasicChar(new AesSedai());
+             player.getBasicChar().setCharacterRank("Keeper of the Chronicles");
         }
         else if(data.equals( props.getProperty("key.mhael","mhael") )) {
           // We create a M'Hael...
-             player.setWotCharacter(new Ashaman());
-             player.getWotCharacter().setCharacterRank("M'Hael");
+             player.setBasicChar(new Ashaman());
+             player.getBasicChar().setCharacterRank("M'Hael");
         }
         else
            throw new AccountException("Wrong Special Character Key !");
@@ -649,7 +649,7 @@ public class AccountBuilder implements NetConnectionListener
      public void setCloakColor( String data ) throws AccountException {
      
        // 1 - Get Human character
-        WotCharacter wotCharacter = (WotCharacter) player.getWotCharacter(); 
+        BasicChar wotCharacter = (BasicChar) player.getBasicChar(); 
 
         if(wotCharacter==null)
            throw new AccountException("No character created !");
@@ -692,9 +692,9 @@ public class AccountBuilder implements NetConnectionListener
          str.append("        Player Name  \t:  ");
          str.append( player.getFullPlayerName() );
          str.append("\n        Player Class \t:  ");
-         str.append( player.getWotCharacter().getCommunityName() );
+         str.append( player.getBasicChar().getCommunityName() );
          str.append("\n        Player Rank  \t:  ");
-         str.append( player.getWotCharacter().getCharacterRank() );
+         str.append( player.getBasicChar().getCharacterRank() );
 
          return str.toString();
      }

@@ -86,7 +86,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
 
   /** Wotlas Character
    */
-  private WotCharacter wotCharacter;
+  private BasicChar wotCharacter;
   
   /** Object manager
    */
@@ -309,7 +309,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
    *
    *  @return player character
    */
-  public WotCharacter getWotCharacter() {
+  public BasicChar getBasicChar() {
     return wotCharacter;
   }
 
@@ -317,7 +317,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
    *
    *  @return WotCharacter player character
    */
-  public void setWotCharacter(WotCharacter wotCharacter) {
+  public void setBasicChar(BasicChar wotCharacter) {
     this.wotCharacter = wotCharacter;
   }
 

@@ -1,6 +1,6 @@
 /*
  * Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
- * Copyright (C) 2001-2002 WOTLAS Team
+ * Copyright (C) 2001-2003 WOTLAS Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -102,7 +102,7 @@ public class FanfareChatCommand implements ChatCommand
 
        // We make sure the voice level is on shouting
        // So that the sound command is sent to everybody near
-          response.setMessage( "/fanfare "+player.getWotCharacter().getFanfareSound() );
+          response.setMessage( "/fanfare "+player.getBasicChar().getFanfareSound() );
           response.setVoiceSoundLevel( ChatRoom.SHOUTING_VOICE_LEVEL );
           return false; // we let the message continue its way...
       }

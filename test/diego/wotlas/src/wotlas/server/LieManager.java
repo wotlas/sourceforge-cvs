@@ -1,6 +1,6 @@
 /*
  * Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
- * Copyright (C) 2001-2002 WOTLAS Team
+ * Copyright (C) 2001-2003 WOTLAS Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -25,6 +25,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import wotlas.libs.persistence.*;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -33,8 +35,11 @@ import java.util.Date;
  * @author Petrus
  */
 
-public class LieManager 
-{
+public class LieManager implements BackupReady{
+
+    /** id used in Serialized interface.
+     */
+    private static final long serialVersionUID = 556565L;
  
  /*------------------------------------------------------------------------------------*/
 
@@ -518,5 +523,73 @@ public class LieManager
     currentFakeNameIndex = 0;
   }
 
+  /** write object data with serialize.
+   */
+    public void writeExternal(java.io.ObjectOutput objectOutput)
+    throws java.io.IOException {
+        objectOutput.writeInt( ExternalizeGetVersion() );
+        int fakeNamesLength = fakeNames.length;
+        // Transfering fakeNames  
+        objectOutput.writeInt(fakeNamesLength);       
+        for (int i=0; i<fakeNamesLength; i++) {
+            objectOutput.writeUTF(fakeNames[i]);
+        }
+        // Transfering currentFakeNameIndex
+        objectOutput.writeShort(currentFakeNameIndex);
+        // Transfering memories 
+        if (memories==null) {
+            objectOutput.writeInt(0);
+        } else {
+            objectOutput.writeInt(memories.getSize());
+            LieMemory memory;
+            synchronized(memories) {
+                memories.resetIterator();
+                while (memories.hasNext()) {
+                    memory = memories.next();
+                    objectOutput.writeUTF(memory.otherPlayerKey);
+                    objectOutput.writeShort(memory.otherPlayerFakeNameIndex);
+                    objectOutput.writeInt(memory.meetsNumber);
+                    objectOutput.writeLong(memory.lastMeetTime);
+                }
+            }
+        }
+    }
+    
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** read object data with serialize.
+   */
+    public void readExternal(java.io.ObjectInput objectInput)
+    throws java.io.IOException, java.lang.ClassNotFoundException {
+        int IdTmp = objectInput.readInt();
+        if( IdTmp == ExternalizeGetVersion() ){
+            int fakeNamesLength = objectInput.readInt();      
+            for (int i=0; i<fakeNamesLength; i++) {
+                fakeNames[i] = objectInput.readUTF();
+            }
+            currentFakeNameIndex = objectInput.readShort();
+            int myMemoriesSize = objectInput.readInt();
+            if (myMemoriesSize==0) {
+                ;
+            } else {
+                LieMemoryIterator myMemories = getMemoriesIterator();
+                myMemories.resetIterator();
+                LieMemory myMemory;
+                for (int i=0; i<myMemoriesSize; i++) {
+                    myMemory = new LieMemory(objectInput.readUTF(), objectInput.readShort(), objectInput.readInt(), objectInput.readLong());
+                    myMemories.add(myMemory);
+                }
+            }       
+        } else {
+            // to do.... when new version
+        }
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** id version of data, used in serialized persistance.
+   */
+    public int ExternalizeGetVersion(){
+        return 1;
+    }
 }

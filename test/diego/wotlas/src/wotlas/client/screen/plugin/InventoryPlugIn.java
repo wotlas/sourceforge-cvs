@@ -1,5 +1,5 @@
 /* Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
- * Copyright (C) 2001-2002 WOTLAS Team
+ * Copyright (C) 2001-2003 WOTLAS Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -40,7 +40,7 @@ import javax.swing.event.*;
 
 /** Plug In that shows inventory of the player.
  *
- * @author Petrus
+ * @author Petrus, Diego
  */
 
 // TODO:
@@ -73,7 +73,7 @@ public class InventoryPlugIn extends JPanelPlugIn {
        Graphics2D g = dstIm.createGraphics();     
               
        PlayerImpl player = ClientDirector.getDataManager().getMyPlayer();
-       inventoryLayout = InventoryLayout.load(player.getWotCharacter());
+       inventoryLayout = InventoryLayout.load(player.getBasicChar());
        
        ScreenRectangle slot;
        
@@ -81,7 +81,6 @@ public class InventoryPlugIn extends JPanelPlugIn {
        ImageLibrary imLib = ClientDirector.getDataManager().getImageLibrary();
        BufferedImage background = imLib.getImage(inventoryLayout.getBackgroundId());
        g.drawImage(background, 0, 0, null);
-       
        
 // Debug
        BaseObject bObject = new BaseObject();
@@ -102,9 +101,7 @@ public class InventoryPlugIn extends JPanelPlugIn {
        drawSlot(dstIm, inventoryLayout.getRightBootSlot());               
        drawSlot(dstIm, inventoryLayout.getRightHandSlot());    
        //drawSlot(dstIm, inventoryLayout.getPurseSlot());               
-       //drawSlot(dstIm, inventoryLayout.getSleeveSlot());     
-       
-                    
+       //drawSlot(dstIm, inventoryLayout.getSleeveSlot());                    
     }
 
  /*------------------------------------------------------------------------------------*/

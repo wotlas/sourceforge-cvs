@@ -44,22 +44,25 @@ public class Warrior extends RLikeClass {
     public void init(RLikeCharacter myChar){
         super.init(myChar);
         myChar.setCharClass( CharData.CLASSES_RL_WARRIOR );
-        myChar.setCharAttr(CharData.ATTR_HP, myChar.getCharAttrActual(CharData.ATTR_HP)+10 );
-
+        myChar.addCharAttr( CharData.ATTR_HP, 10 );
+        RollStat();
+    }
+    
+    public void RollStat() {
         short[] stats;
         stats = rollStat();
         
-        try {
         myChar.setCharAttr( CharData.ATTR_STR, stats[0] );
         myChar.setCharAttr( CharData.ATTR_INT, stats[4] );
         myChar.setCharAttr( CharData.ATTR_WIS, stats[5] );
         myChar.setCharAttr( CharData.ATTR_CON, stats[1] );
         myChar.setCharAttr( CharData.ATTR_DEX, stats[2] );
         myChar.setCharAttr( CharData.ATTR_CHA, stats[3] );
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-        //        classes[0] = CLASSES_RLIKE_WARRIOR;
+
     }
+    
+    public int getHitDice() {
+         return 10;
+   }
+    
 }

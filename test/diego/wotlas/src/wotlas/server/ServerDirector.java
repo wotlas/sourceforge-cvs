@@ -43,6 +43,7 @@ import java.awt.Frame;
 import java.io.File;
 import java.util.Properties;
 import java.net.*;
+import java.util.*;
 
 import org.python.util.PythonInterpreter;
 import org.python.core.*; 
@@ -149,6 +150,9 @@ public class ServerDirector implements Runnable, NetServerListener {
         /*  first of all Manage the Preloader for WorldGenerator*/
         WorldManager.PRELOADER_STATUS = PreloaderEnabled.LOAD_SERVER_DATA;
         UserAction.InitAllActions();
+        // set random variable to roll dices
+        initRoll();
+        
         // STEP 0 - We parse the command line options
         boolean isDaemon = false;
         boolean displayAdminGUI = false;
@@ -261,7 +265,7 @@ public class ServerDirector implements Runnable, NetServerListener {
            Debug.signal( Debug.NOTICE, null, "| Every times a new comes up u need     |" );
            Debug.signal( Debug.NOTICE, null, "| to delete universe and home directory |" );
            Debug.signal( Debug.NOTICE, null, "| and reload server-world-generator     |" );
-           Debug.signal( Debug.NOTICE, null, "|                            Diego      |" );
+           Debug.signal( Debug.NOTICE, null, "|                            Shra       |" );
            Debug.signal( Debug.NOTICE, null, "*---------------------------------------*" );
 
            Debug.signal( Debug.NOTICE, null, "Code version       : "+resourceManager.WOTLAS_VERSION );
@@ -702,7 +706,27 @@ public class ServerDirector implements Runnable, NetServerListener {
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-     static synchronized public String GenUniqueKeyId() {
-         return System.currentTimeMillis()+""+genUniqueKeyId++;
-     }
+    static synchronized public String GenUniqueKeyId() {
+        return System.currentTimeMillis()+""+genUniqueKeyId++;
+    }
+
+  /* - - - - - - - - ROLL DICE SECTION - - - - - - - - - - - - - - - - -*/
+
+    static private Random Dice;
+    static private boolean needInit = true;
+    
+    static public final short roll(int dices, int diceSize) {
+        short value = 0;
+        for(int i=0; i < dices ; i++){
+            value += new Double( 1+(Dice.nextDouble()*(diceSize) ) ).shortValue() ;;
+        }
+        return value;
+    }
+    
+    static private void initRoll() {
+        if(!needInit)
+            return;
+        Dice = new Random( System.currentTimeMillis() ) ;
+        needInit = false;        
+    }
 }

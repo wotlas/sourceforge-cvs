@@ -24,6 +24,7 @@ import wotlas.common.character.*;
 import wotlas.libs.persistence.*;
 
 import wotlas.utils.*;
+import wotlas.server.ServerDirector;
 
 import java.io.*;
 import java.awt.Color;
@@ -44,7 +45,11 @@ public abstract class RLikeClass implements BackupReady {
     public void init(RLikeCharacter myChar) {
         this.myChar = myChar;
     }
-
+    
+    abstract public void RollStat();
+    
+    abstract public int getHitDice();
+    
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** write object data with serialize.
@@ -92,25 +97,21 @@ public abstract class RLikeClass implements BackupReady {
         }
     }
     
-    public void reConnect(RLikeCharacter myChar) {
-        this.myChar = myChar;
-    }
-    
     static protected short[] rollStat() {
-        initRoll();
+        // ServerDirector.initRoll();
 
         short[] stats = new short [6];
         short[] prevStats = new short [6];
         int prevTotal = 0,total = 0;
         short stat;
         for(int a=0; a < 6 ; a++){
-            stat = roll(3,6);
+            stat = ServerDirector.roll(3,6);
             prevStats[a] = stat;
             prevTotal += stat;
         }
         for(int b=0; b < 4 ; b++){
             for(int i=0; i < 6 ; i++){
-                stat = roll(3,6);
+                stat = ServerDirector.roll(3,6);
                 stats[i] = stat;
                 total += stat;
             }
@@ -120,38 +121,29 @@ public abstract class RLikeClass implements BackupReady {
 
         // order 'em
         stats =  (short[]) prevStats.clone();
-        boolean choosed;
+        int bestIndex;
         for(int a=0; a < 6 ; a++){
-            choosed = false;
-            prevStats[a] = stats[0];
-            for(int b=1; b < 6 ; b++){
-                if( prevStats[a] < stats[b] ){
-                    prevStats[a] = stats[b];
-                    stats[b] = -1;
-                    choosed = true;
+            bestIndex = 0;
+            for(int thisIndex=0; thisIndex < 6 ; thisIndex++){
+                if( stats[bestIndex] < stats[thisIndex] ){
+                    bestIndex = thisIndex;
+                    prevStats[a] = stats[bestIndex];
                 }
             }
-            if(!choosed)
-                stats[0] = -1;
+            stats[bestIndex] = -1;
         }
         return prevStats;
     }
-    
-    static private final short roll(int dices, int diceSize) {
-        short value = 0;
-        for(int i=0; i < dices ; i++){
-            value += new Double( 1+(Dice.nextDouble()*(diceSize) ) ).shortValue() ;;
-        }
-        return value;
+        
+    public void setMyChar(RLikeCharacter myChar) {
+        this.myChar = myChar;
     }
-
-    static private Random Dice;
-    static private boolean needInit = true;
     
-    static private void initRoll(){
-        if(!needInit)
-            return;
-        Dice = new Random( System.currentTimeMillis() ) ;
-        needInit = false;        
+    /** used to manage level gain
+     * to add hp, mana ; to add skills and spells and knowledge
+     */
+    public void gainLevel() {
+        short value = ServerDirector.roll( 1, getHitDice() );
+        myChar.addCharAttr( CharData.ATTR_HP, value );
     }
 }

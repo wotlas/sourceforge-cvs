@@ -27,6 +27,7 @@ import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.persistence.*;
 import wotlas.utils.*;
 import wotlas.common.objects.inventories.*;
+import wotlas.server.ServerDirector;
 
 import java.io.*;
 import java.awt.Color;
@@ -51,6 +52,8 @@ public abstract class RLikeCharacter extends BasicChar {
     transient protected Sprite sprite;
     transient protected FakeSprite fakeSprite;
 
+    abstract public void RollStat();
+
     /** return enviroment type : Actually are RogueLike or Wheel of Time
     *
     */
@@ -66,7 +69,6 @@ public abstract class RLikeCharacter extends BasicChar {
         this.setCharAttr(CharData.ATTR_THIRSTY,100);
         this.setCharAttr(CharData.ATTR_HP,10);
         this.setCharAttr(CharData.ATTR_MOVEMENT,100);
-
     }
 
   /** Returns an image for this character.
@@ -87,7 +89,7 @@ public abstract class RLikeCharacter extends BasicChar {
     * any other diffent environment class.
     */
     public int[] showMaskCharAttributes() {
-        int[] tmp = new int[ATTR_LAST_ATTR];
+        int[] tmp = new int[ATTR_LAST_ATTR/4];
         tmp = MaskTools.set( tmp, ATTR_STR );
         tmp = MaskTools.set( tmp, ATTR_INT );
         tmp = MaskTools.set( tmp, ATTR_WIS );
@@ -128,7 +130,7 @@ public abstract class RLikeCharacter extends BasicChar {
         if( IdTmp == ExternalizeGetVersion() ){
             super.readExternal( objectInput );
             myClass = (RLikeClass) objectInput.readObject();
-            myClass.reConnect(this);
+            myClass.setMyChar(this);
         } else {
             // to do.... when new version
         }
@@ -157,7 +159,7 @@ public abstract class RLikeCharacter extends BasicChar {
         if( IdTmp == ExternalizeGetVersion() ){
             super.readExternal( objectInput );
             myClass = (RLikeClass) objectInput.readObject();
-            myClass.reConnect(this);
+            myClass.setMyChar(this);
         } else {
             // to do.... when new version
         }
@@ -208,5 +210,12 @@ public abstract class RLikeCharacter extends BasicChar {
     */
     public String getFanfareSound() {
         return "fanfare-special.wav";
+    }
+    
+    /** used to manage level gain
+     * to add hp, mana ; to add skills and spells and knowledge
+     */
+    public void gainLevel() {
+        this.myClass.gainLevel();
     }
 }

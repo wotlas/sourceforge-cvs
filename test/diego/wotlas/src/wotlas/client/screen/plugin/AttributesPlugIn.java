@@ -42,60 +42,6 @@ public class AttributesPlugIn extends JPanelPlugIn  {
     /** Creates new form AttributesPlugIn */
     public AttributesPlugIn() {
         super();
-        initComponents();
-        PlayerImpl player = ClientDirector.getDataManager().getMyPlayer();
-
-        /*  show attributes */
-        int[] data = player.getBasicChar().showMaskCharAttributes();
-        JPanel tmp;
-        JPanel box;
-        JPanel boxFill;
-        JLabel text;
-        int spaceCounter = 0;
-        for(int index = 0; index < CharData.ATTR_LAST_ATTR; index++){
-            if( !MaskTools.isSet(data,index) )
-                continue;
-            // no means to show a stat with 0 : cause a division by zero.
-            if( player.getBasicChar().getCharAttrMax(index) == 0 )
-                continue;
-            tmp = new JPanel();
-            // tmp.setLayout( null );
-            box = new JPanel();
-            boxFill = new JPanel();
-            // box.setBorder( new javax.swing.border.LineBorder(new java.awt.Color(0, 204, 204)) );
-            box.setLayout( null );
-            box.setForeground( Color.blue );
-            box.setBackground( Color.black );
-            box.setPreferredSize( new Dimension(BARSIZE,10) );
-            box.setSize( new Dimension(BARSIZE,10) );
-            boxFill.setForeground( Color.red );
-            boxFill.setBackground( Color.red );
-            boxFill.setSize( new Dimension( -1 + new Integer( player.getBasicChar().getCharAttrActual(index)*BARSIZE
-            / player.getBasicChar().getCharAttrMax(index) ).intValue(),9) );
-//            boxFill.setSize( new Dimension( 80, 9 ) );
-            text = new JLabel(CharData.ATTR_NAMES[index]);
-            text.setFont(new java.awt.Font("Dialog", 1, 12));
-            tmp.add( text );
-            tmp.add( box );
-            box.add( boxFill );
-            text = new JLabel(""+player.getBasicChar().getCharAttrActual(index));
-            text.setFont(new java.awt.Font("Dialog", 1, 12));
-            tmp.add( text );
-            tmp.setLocation( 3, 5+(spaceCounter*18) );
-            tmp.setSize( new Dimension(160,20) );
-            panAttrib.add(tmp);
-            spaceCounter++;
-        }
-
-        /*  show flags (if any) */
-        String textToShow = new String("");
-        for(int index = 0; index < CharData.FLAG_LAST_FLAG; index++){
-            if( !player.getBasicChar().isFlagSet(index) )
-                continue;
-            textToShow += CharData.FLAG_NAMES[index]+"\n";
-        }
-        jFlags.setFont(new java.awt.Font("Dialog", 1, 12));
-        jFlags.setText(textToShow);
     }
     
     /** This method is called from within the constructor to
@@ -209,7 +155,67 @@ public class AttributesPlugIn extends JPanelPlugIn  {
    *          this init(), this way the plug-in won't be displayed.
    */
     public boolean init() {
-       return true; // nothing special to init...
+        initComponents();
+        PlayerImpl player = ClientDirector.getDataManager().getMyPlayer();
+
+        /*  show attributes */
+        int[] data = player.getBasicChar().showMaskCharAttributes();
+        JPanel tmp;
+        JPanel box;
+        JPanel boxFill;
+        JLabel text;
+        int spaceCounter = 0;
+        
+        // only to debug
+        for(int index = 0; index < CharData.ATTR_LAST_ATTR; index++){
+            System.out.println( " debug this : "+player.getBasicChar().getCharAttrWihDescr(index) );
+        }
+
+        for(int index = 0; index < CharData.ATTR_LAST_ATTR; index++){
+            if( !MaskTools.isSet(data,index) )
+                continue;
+            // no means to show a stat with 0 : cause a division by zero.
+            if( player.getBasicChar().getCharAttrMax(index) == 0 )
+                continue;
+            tmp = new JPanel();
+            // tmp.setLayout( null );
+            box = new JPanel();
+            boxFill = new JPanel();
+            // box.setBorder( new javax.swing.border.LineBorder(new java.awt.Color(0, 204, 204)) );
+            box.setLayout( null );
+            box.setForeground( Color.blue );
+            box.setBackground( Color.black );
+            box.setPreferredSize( new Dimension(BARSIZE,10) );
+            box.setSize( new Dimension(BARSIZE,10) );
+            boxFill.setForeground( Color.red );
+            boxFill.setBackground( Color.red );
+            boxFill.setSize( new Dimension( -1 + new Integer( player.getBasicChar().getCharAttrActual(index)*BARSIZE
+            / player.getBasicChar().getCharAttrMax(index) ).intValue(),9) );
+//            boxFill.setSize( new Dimension( 80, 9 ) );
+            text = new JLabel(CharData.ATTR_NAMES[index]);
+            text.setFont(new java.awt.Font("Dialog", 1, 12));
+            tmp.add( text );
+            tmp.add( box );
+            box.add( boxFill );
+            text = new JLabel(""+player.getBasicChar().getCharAttrActual(index));
+            text.setFont(new java.awt.Font("Dialog", 1, 12));
+            tmp.add( text );
+            tmp.setLocation( 3, 5+(spaceCounter*18) );
+            tmp.setSize( new Dimension(160,20) );
+            panAttrib.add(tmp);
+            spaceCounter++;
+        }
+
+        /*  show flags (if any) */
+        String textToShow = new String("");
+        for(int index = 0; index < CharData.FLAG_LAST_FLAG; index++){
+            if( !player.getBasicChar().isFlagSet(index) )
+                continue;
+            textToShow += CharData.FLAG_NAMES[index]+"\n";
+        }
+        jFlags.setFont(new java.awt.Font("Dialog", 1, 12));
+        jFlags.setText(textToShow);
+        return true; // nothing special to init...
     }
 
  /*------------------------------------------------------------------------------------*/
@@ -217,6 +223,8 @@ public class AttributesPlugIn extends JPanelPlugIn  {
   /** Called when we need to reset the content of this plug-in.
    */
     public void reset() {
+        removeAll();
+        revalidate();
         /*
         jTabbArea.removeAll();
         remove(jTabbArea);
@@ -229,5 +237,7 @@ public class AttributesPlugIn extends JPanelPlugIn  {
         panAttrib = null;
         jScrollPane3 = null;
          */
+        init();
+        revalidate();
     }
 }

@@ -64,7 +64,7 @@ public abstract class WotCharacter extends BasicChar {
     * change for Rogue Like classes, and 
     * any other diffent environment class.
     */
-    public int[] showMaskCharAttributes(){
+    public int[] showMaskCharAttributes() {
         int[] tmp = new int[ATTR_LAST_ATTR];
         tmp = MaskTools.set( tmp, ATTR_STR );
         tmp = MaskTools.set( tmp, ATTR_INT );
@@ -77,5 +77,12 @@ public abstract class WotCharacter extends BasicChar {
         tmp = MaskTools.set( tmp, ATTR_MANA );
         tmp = MaskTools.set( tmp, ATTR_HP );
         return tmp;
+    }
+    
+    /** used to manage level gain
+     */
+    public void gainLevel() {
+        // add hp
+        // add mana
     }
 }

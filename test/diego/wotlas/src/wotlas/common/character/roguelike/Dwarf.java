@@ -108,4 +108,12 @@ public class Dwarf extends RLikeCharacter {
             return fakeSprite;
         }
     }
+    
+    public void RollStat() {
+        myClass.RollStat();
+        addCharAttr(CharData.ATTR_CON,2);
+        addCharAttr(CharData.ATTR_STR,1);
+        addCharAttr(CharData.ATTR_CHA,-2);
+        addCharAttr(CharData.ATTR_DEX,-1);
+    }
 }

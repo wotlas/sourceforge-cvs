@@ -69,6 +69,7 @@ public abstract class CharData implements BackupReady {
     final static public int IDX_SIZE    = 2;
 
     /* list of all the classes */
+    /* wheel of time classes */
     final static public short CLASSES_WOT_AES_SEDAI   = 1;
     final static public short CLASSES_WOT_WARDER      = 2;
     final static public short CLASSES_WOT_CHILDREN_OF_THE_LIGHT = 3;
@@ -76,17 +77,37 @@ public abstract class CharData implements BackupReady {
     final static public short CLASSES_WOT_DARK_ONE    = 5;
     final static public short CLASSES_WOT_WOLF_BROTHER= 6;
     final static public short CLASSES_WOT_AIEL_WARRIOR= 7;
-    final static public short CLASSES_RL_WARRIOR      = 8;
-    final static public short CLASSES_RL_WIZARD       = 9;
-    final static public short CLASSES_RL_HUMAN        = 10;
-    final static public short CLASSES_RL_DWARF        = 11;
-    final static public short CLASSES_LAST_CLASS      = 12;
-    
+    /* rogue like race */
+    final static public short CLASSES_RL_HUMAN        = 8;
+    final static public short CLASSES_RL_HALFELF      = 9;
+    final static public short CLASSES_RL_ELF          = 10;
+    final static public short CLASSES_RL_HALFLING     = 11;
+    final static public short CLASSES_RL_DWARF        = 12;
+    final static public short CLASSES_RL_ORC          = 13;
+    final static public short CLASSES_RL_HALFORC      = 14;
+    final static public short CLASSES_RL_GNOME        = 15;
+    final static public short CLASSES_RL_DROW         = 16;
+    final static public short CLASSES_RL_GOBLIN       = 17;
+    /* rogue like class */
+    final static public short CLASSES_RL_MONK         = 18;
+    final static public short CLASSES_RL_PSIONIST     = 19;
+    final static public short CLASSES_RL_WIZARD       = 20;
+    final static public short CLASSES_RL_WARRIOR      = 21;
+    final static public short CLASSES_RL_CLERIC       = 22;
+    final static public short CLASSES_RL_BARD         = 23;
+    final static public short CLASSES_RL_THIEF        = 24;
+    final static public short CLASSES_RL_RANGER       = 25;
+    /* used to check arrays */
+    final static public short CLASSES_LAST_CLASS      = 26;
+
     final static public String[] CLASSES_NAMES = {
         "NULL","Wot:Aes Sedai","Wot:Warder","Wot:Children of the Light","Wot:Ashaman"
         ,"Wot:Dark One","Wot:Wolf Brother","Wot:Aiel Warrior"
-        ,"Rl:Warrior","Rl:Wizard","Rl:Human","Rl:Dwarf"};
-    
+        ,"Rl: Human","Rl: Half-Elf","Rl: Elf","Rl Halfling: Dwarf","Rl: Orc"
+        ,"Rl: Half-Orc","Rl: Gnome","Rl:Drow","Rl: Goblin"
+        ,"Rl: Monk","Rl: Psionist","Rl: Wizard","Rl: Warrior"
+        ,"Rl: Cleric","Rl: Bard","Rl: Thief","Rl: Ranger"};
+
     /* spells and items, will point to this constant to maniupulate data flags*/
     final static public int FLAG_INVISIBLE = 0;
     final static public int FLAG_PARALIZED = 1;
@@ -339,48 +360,62 @@ public abstract class CharData implements BackupReady {
     /*  -------------- ATTRIBUTES SECTION ------------------------------- */
 
     public void setCharAttr(int index, int value ) {
-        if( ATTR_LAST_ATTR >= index )
+        if( index >= ATTR_LAST_ATTR ) {
             System.out.println("Impossible to set this ATTR: it doez not exist!");
+            return;
+        }
         charAttributes[IDX_ACTUAL][index] = (short)value;
         charAttributes[IDX_MAX][index]    = (short)value;
     }
 
     public void addCharAttr(int index, int value ) {
-        if( ATTR_LAST_ATTR >= index )
+        if( index >= ATTR_LAST_ATTR ) {
             System.out.println("Impossible to set this ATTR: it doez not exist!");
+            return;
+        }
         charAttributes[IDX_ACTUAL][index] += (short)value;
         charAttributes[IDX_MAX][index]    += (short)value;
     }
 
     public short getCharAttrActual(int index) {
-        if( ATTR_LAST_ATTR >= index )
+        if( index >= ATTR_LAST_ATTR ) {
             System.out.println("Impossible to set this ATTR: it doez not exist!");
+            return -1;
+        }
         return charAttributes[IDX_ACTUAL][index];
     }
 
     public short getCharAttrMax(int index) {
-        if( ATTR_LAST_ATTR >= index )
+        if( index >= ATTR_LAST_ATTR ) {
             System.out.println("Impossible to set this ATTR: it doez not exist!");
+            return -1;
+        }
         return charAttributes[IDX_MAX][index];
     }
  
     public void setCharAttrActualAdd(int index, int value) {
-        if( ATTR_LAST_ATTR >= index )
+        if( index >= ATTR_LAST_ATTR ) {
             System.out.println("Impossible to set this ATTR: it doez not exist!");
+            return;
+        }
         charAttributes[IDX_ACTUAL][index] += (short)value;
     }
 
     public void setCharAttrMaxAdd(int index, int value) {
-        if( ATTR_LAST_ATTR >= index )
+        if( index >= ATTR_LAST_ATTR ) {
             System.out.println("Impossible to set this ATTR: it doez not exist!");
+            return;
+        }
         charAttributes[IDX_MAX][index] += (short)value;
     }
 
     /*  -------------- CLASS SECTION ------------------------------- */
 
     public void setCharClass(int index) {
-        if( index >= CLASSES_LAST_CLASS )
+        if( index >= CLASSES_LAST_CLASS ) {
             System.out.println("Impossible to set this class : it doez not exist!");
+            return;
+        }
         maskCharClasses = MaskTools.set(maskCharClasses,index);
     }
     
@@ -492,8 +527,10 @@ public abstract class CharData implements BackupReady {
      *
      */
     public boolean isFlagSet(int index) {
-        if( FLAG_LAST_FLAG >= index )
+        if( index >= FLAG_LAST_FLAG ) {
             System.out.println("Impossible to set this FLAG: it doez not exist!");
+            return false;
+        }
         return MaskTools.isSet(maskCharFlags,index);
     }
     
@@ -501,8 +538,10 @@ public abstract class CharData implements BackupReady {
      * let's make an example a devil can't be blessed.
      */
     public void setFlag(int index) {
-        if( FLAG_LAST_FLAG >= index )
+        if( index >= FLAG_LAST_FLAG ) {
             System.out.println("Impossible to set this FLAG: it doez not exist!");
+            return;
+        }
         MaskTools.set(maskCharFlags,index);
     }
 }

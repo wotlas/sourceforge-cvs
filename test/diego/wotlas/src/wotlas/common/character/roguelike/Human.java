@@ -107,4 +107,8 @@ public class Human extends RLikeCharacter {
             return fakeSprite;
         }
     }
+
+    public void RollStat() {
+        myClass.RollStat();
+    }
 }

@@ -41,20 +41,27 @@ public class Wizard extends RLikeClass {
     public Wizard() {
     }
     
-    public void init(RLikeCharacter myChar){
+    public void init(RLikeCharacter myChar) {
         super.init(myChar);
         myChar.setCharClass( CharData.CLASSES_RL_WIZARD );
         myChar.setCharAttr(CharData.ATTR_MANA, myChar.getCharAttrActual(CharData.ATTR_MANA)+10 );
-
+        RollStat();
+    }
+    
+    public void RollStat() {
         short[] stats;
         stats = rollStat();
         
-        myChar.setCharAttr(CharData.ATTR_STR,stats[3]);
-        myChar.setCharAttr(CharData.ATTR_INT,stats[0]);
-        myChar.setCharAttr(CharData.ATTR_WIS,stats[4]);
-        myChar.setCharAttr(CharData.ATTR_CON,stats[2]);
-        myChar.setCharAttr(CharData.ATTR_DEX,stats[1]);
-        myChar.setCharAttr(CharData.ATTR_CHA,stats[5]);
-
+        myChar.setCharAttr( CharData.ATTR_STR, stats[3] );
+        myChar.setCharAttr( CharData.ATTR_INT, stats[0] );
+        myChar.setCharAttr( CharData.ATTR_WIS, stats[4] );
+        myChar.setCharAttr( CharData.ATTR_CON, stats[2] );
+        myChar.setCharAttr( CharData.ATTR_DEX, stats[1] );
+        myChar.setCharAttr( CharData.ATTR_CHA, stats[5] );
     }
+    
+    public int getHitDice() {
+        return 4;
+    }
+    
 }

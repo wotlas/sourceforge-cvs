@@ -698,17 +698,17 @@ public class AccountBuilder implements NetConnectionListener
             str.append( player.getBasicChar().getCharacterRank() );
         }
         else if ( player.getBasicChar().getEnvironment() == EnvironmentManager.ENVIRONMENT_ROGUE_LIKE ) {
-            str.append("        Player Name  \t:  ");
+            str.append("        Name  \t:  ");
             str.append( player.getFullPlayerName() );
-            str.append( "\n        Player Class \t:  ");
+            str.append( "\n        Class \t:  ");
             str.append( player.getBasicChar().getCommunityName() );
-            str.append( "\n        Player Stat  \t:  ");
-            str.append( "\n                        "+player.getBasicChar().getCharAttrWihDescr(CharData.ATTR_STR) );
-            str.append( "\n                        "+player.getBasicChar().getCharAttrWihDescr(CharData.ATTR_INT) );
-            str.append( "\n                        "+player.getBasicChar().getCharAttrWihDescr(CharData.ATTR_WIS) );
-            str.append( "\n                        "+player.getBasicChar().getCharAttrWihDescr(CharData.ATTR_CON) );
-            str.append( "\n                        "+player.getBasicChar().getCharAttrWihDescr(CharData.ATTR_DEX) );
-            str.append( "\n                        "+player.getBasicChar().getCharAttrWihDescr(CharData.ATTR_CHA) );
+            str.append( "\n\n                         STAT   ");
+            str.append( "\n                  "+player.getBasicChar().getCharAttrWihDescr(CharData.ATTR_STR) );
+            str.append( "\n                  "+player.getBasicChar().getCharAttrWihDescr(CharData.ATTR_INT) );
+            str.append( "\n                  "+player.getBasicChar().getCharAttrWihDescr(CharData.ATTR_WIS) );
+            str.append( "\n                  "+player.getBasicChar().getCharAttrWihDescr(CharData.ATTR_CON) );
+            str.append( "\n                  "+player.getBasicChar().getCharAttrWihDescr(CharData.ATTR_DEX) );
+            str.append( "\n                  "+player.getBasicChar().getCharAttrWihDescr(CharData.ATTR_CHA) );
         }
         return str.toString();
         
@@ -769,10 +769,32 @@ public class AccountBuilder implements NetConnectionListener
             // 3 - Set the player's character
             RLikeClass rlClass = (RLikeClass) obj;
             ( (RLikeCharacter) player.getBasicChar() ).setClass(rlClass);
+//            ( (RLikeCharacter) player.getBasicChar() ).init( player.getBasicChar() );
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
+    
+    /** To get And Roll Stats.
+    */
+    public String getAndRollStats() throws AccountException {
+        StringBuffer str = new StringBuffer("");
+        if( player.getBasicChar().getEnvironment() == EnvironmentManager.ENVIRONMENT_WOT ) {
+            str.append(" xxxxxxxxxxxxx ");
+        }
+        else if ( player.getBasicChar().getEnvironment() == EnvironmentManager.ENVIRONMENT_ROGUE_LIKE ) {
+            ( (RLikeCharacter) player.getBasicChar() ).RollStat();
+//            System.out.println(" reroll : (str example) :"
+//            +player.getBasicChar().getCharAttrWihDescr(CharData.ATTR_STR));
+            str.append( "\n                         STAT   ");
+            str.append( "\n                  "+player.getBasicChar().getCharAttrWihDescr(CharData.ATTR_STR) );
+            str.append( "\n                  "+player.getBasicChar().getCharAttrWihDescr(CharData.ATTR_INT) );
+            str.append( "\n                  "+player.getBasicChar().getCharAttrWihDescr(CharData.ATTR_WIS) );
+            str.append( "\n                  "+player.getBasicChar().getCharAttrWihDescr(CharData.ATTR_CON) );
+            str.append( "\n                  "+player.getBasicChar().getCharAttrWihDescr(CharData.ATTR_DEX) );
+            str.append( "\n                  "+player.getBasicChar().getCharAttrWihDescr(CharData.ATTR_CHA) );
+        }
+        return str.toString();
+    }
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

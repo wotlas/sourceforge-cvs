@@ -1,3 +1,5 @@
 #!/bin/sh
 
-java -classpath ../classes wotlas.server.setup.WorldGenerator
+cd ..
+cd classes
+java -classpath . wotlas.server.setup.WorldGenerator

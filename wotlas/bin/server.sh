@@ -1,3 +1,5 @@
 #!/bin/sh
 
-java -classpath ../classes wotlas.server.ServerDirector
+cd ..
+cd classes
+java -classpath . wotlas.server.ServerDirector

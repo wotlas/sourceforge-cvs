@@ -1,1 +1,3 @@
-java -classpath ../classes wotlas.server.setup.ServerSetup
+cd ..
+cd classes
+java -classpath . wotlas.server.setup.ServerSetup

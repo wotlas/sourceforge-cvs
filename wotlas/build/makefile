@@ -40,18 +40,26 @@ COMMON_PACKAGES = wotlas/common \
                   wotlas/common/message \
                   wotlas/common/message/account
 
-COMMON_PACKAGES2 = wotlas/common/message/description
+COMMON_PACKAGES2 = wotlas/common/message/description \
+                   wotlas/common/message/movement
+
 
 SERVER_PACKAGES = wotlas/server \
                   wotlas/server/setup \
                   wotlas/server/message/account \
                   wotlas/server/message/description
 
+SERVER_PACKAGES2 = wotlas/server/message/movement
+
+
 CLIENT_PACKAGES = wotlas/client \
                   wotlas/client/screen \
                   wotlas/client/message/account \
                   wotlas/client/message/description \
                   wotlas/client/gui
+
+CLIENT_PACKAGES2 = wotlas/client/message/movement
+
 
 GRAPHICS_DEMO_PACKAGE = test/graphics/color
 
@@ -75,13 +83,17 @@ SRC_COMMON2 = $(foreach dir,$(COMMON_PACKAGES2),$(SRCDIR)/$(dir)/*.java)
 
 SRC_SERVER = $(foreach dir,$(SERVER_PACKAGES),$(SRCDIR)/$(dir)/*.java)
 
+SRC_SERVER2 = $(foreach dir,$(SERVER_PACKAGES2),$(SRCDIR)/$(dir)/*.java)
+
 SRC_CLIENT = $(foreach dir,$(CLIENT_PACKAGES),$(SRCDIR)/$(dir)/*.java)
+
+SRC_CLIENT2 = $(foreach dir,$(CLIENT_PACKAGES2),$(SRCDIR)/$(dir)/*.java)
 
 SRC_GRDEMO = $(foreach dir,$(GRAPHICS_DEMO_PACKAGE),$(SRCDIR)/$(dir)/*.java)
 
 
 # And we compile it all
-all: utils libs libs2 common common2 server client
+all: utils libs libs2 common common2 server server2 client client2
 
 utils:
 	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_UTILS)
@@ -101,8 +113,14 @@ common2:
 server:
 	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_SERVER)
 
+server2:
+	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_SERVER2)
+
 client:
 	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_CLIENT)
+
+client2:
+	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_CLIENT2)
 
 grdemo:
 	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_GRDEMO)

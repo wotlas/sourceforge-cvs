@@ -45,8 +45,7 @@ Some players (Forsaken, some powerful Aes Sedai) will be able to change complete
 We need to memorize visual attributes of character (hair, eyes color, class, status) plus its name and nickname. We will then enable a JDialog "Appearance" for players having the adequate knowledge. This JDialog will allow him to select his new appearance. Once validated, it will be changed client side and saved server side. Once one has changed appearance, the JDialog "Appearance" only allows to switch back to normal appearance.
 </p>
 <p>
-It is only a starting point ... everything is possible.<br>
-See package wotlas.common.character and class wotlas.server.PlayerImpl.
+It is only a starting point ... everything is possible.<br>See package wotlas.common.character and class wotlas.server.PlayerImpl.
 </p>
 
 <p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
@@ -518,6 +517,27 @@ Study et modify the current system of moving on the world map. Study makability.
 Display the remaining time to destination on world map, find a way to propose a choice of mean of transport to the player (add a special map Transports on the town map ? choice when starting travel ?). In short, all ideas are welcome ...
 </p>
 
+<p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
+
+<h1>31 - Tel'aran'riod and other parallel worlds</h1>
+</p>
+<p>
+<b>Status :</b> <font color="#0033CC"><i>non developped</i></font><br>
+<b>Draft reference :</b> none<br>
+<b>Pre-requisite :</b> sleeping state of players (#42)<br>
+</p>
+<p>
+<b>Description :</b>
+In Jordan's books, there are many parallel worlds (The Ways', the Gate Stone's, the World of Dreams). The point here is to see if they could apply in Wotlas : is it only new maps ? or is there more to this than simply passing from a map to another ? In Tel'aran'riod (the World of Dreams - the Unseen World), moving is ruled by necessity and will : to think about a place enables to go there ; sometimes sleeping players can find themselves in Tel'aran'riod but leave when wakening. 
+</p>
+<p>
+<b>Development :</b>
+to be seen. Without doubt there are interesting aspects to develop. Make proposals.
+<br>
+In any case, we must take into account that the player's body stays in the waking world when another image of the player moves in the World of Dreams. To do this we must : (1) modify GameAccount to enable a second persistent "player" field representing the player in Tel'aran'riod, (2) this second player is created when the character enters Tel'aran'riod and destroyed when he leaves, (3) if the player disconnect when in Tel'aran'riod, his char stays there, anyway the server will save both "player" fields of the client account if they both exist, (4) when the player re-connects the server sends him his Tel'aran'riod instance, (5) if another player does "wake-up" on the sleeping char who is in Tel'aran'riod and connected the player is immediatly taken out of Tel'aran'riod and comes back to waking state. 
+</p>
+
+
 </body>
 </html>
 
@@ -525,7 +545,6 @@ Display the remaining time to destination on world map, find a way to propose a 
 <p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
 
 <h1>X - Title</h1>
-</p>
 <p>
 <b>Status :</b> <font color="#0033CC"><i>non developped</i></font><br>
 <b>Draft reference :</b> none<br>

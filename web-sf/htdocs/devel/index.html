@@ -98,7 +98,7 @@ p	{text-align:justify}
   on pourra aussi ouvrir une carte d&eacute;j&agrave; cr&eacute;&eacute;e et l'&eacute;diter.</p>
 <p>Plus tard quand le syst&egrave;me de gestion des objets sera cr&eacute;&eacute; 
   on pourra aussi rajouter des objets sur les cartes.</p>
-<p>D&eacute;veloppement: C'est un travail de d&eacute;veloppement assez cons&eacute;quent 
+<p><b>D&eacute;veloppement :</b> C'est un travail de d&eacute;veloppement assez cons&eacute;quent 
   qu'il faudra bien analyser/d&eacute;composer afin d'&eacute;viter qu'il ne devienne 
   chaotique. L'&eacute;dition des cartes pourra se faire en de nombreuses &eacute;tapes 
   distinctes ( &eacute;dition des RoomLinks PUIS cr&eacute;ation des Rooms... 
@@ -121,8 +121,8 @@ p	{text-align:justify}
   &agrave; sa cible.</p>
 <p>On pourra envisager d'autres effets graphiques : explosions, oiseaux traversant 
   l'&eacute;cran, nuages, etc...</p>
-<p><b>D&eacute;veloppement :</b> Pour representer l'effet graphique des brins 
-  on pourra utiliser les possibit&eacute;s de dessin vectoriel de Java2D (cf. 
+<p><b>D&eacute;veloppement :</b> Pour représenter l'effet graphique des brins 
+  on pourra utiliser les possibilit&eacute;s de dessin vectoriel de Java2D (cf. 
   d&eacute;mo de sun dans le jdk1.3) en y ajoutant un flou ou tout autre effet... 
   On pourra ainsi cr&eacute;er un effet 2D g&eacute;n&eacute;rique qui s'initialise 
   en donnant le nombre de brins et leur couleur.</p>
@@ -261,9 +261,9 @@ p	{text-align:justify}
   11 - Ajout du journal de bord.</b></p>
 <p><b>Statut</b> <b>:</b> <font color="#0033CC"><i>non d&eacute;velopp&eacute;</i></font><br>
   <b>R&eacute;f&eacute;rence Draft :</b> partie 2.3.8 p13.<br>
-  <b>Pr&eacute;-requis wotlas :</b> aucun.</p>
+  <b>Pr&eacute;-requis wotlas :</b> aucun mais peut être lié aux livres.</p>
 <p><b>Description :</b> La possibilit&eacute; pour le joueur de disposer d'un 
-  carnet de notes personel. Possibiliter d'y d&eacute;clarer les connaissances 
+  carnet de notes personel. Possibilité d'y d&eacute;clarer les connaissances 
   qu'on a faites dans le jeu ( attributs nom + cl&eacute; ), ce qui permettra &eacute;ventuellement 
   de leur envoyer du courrier ( cf. projet 41 ).</p>
 <p>Une autre possibilité serait de créer une liste de contacts : pour conserver l'info sur les joueurs, et les retrouver dans le monde.</p>
@@ -283,7 +283,7 @@ p	{text-align:justify}
   <b>R&eacute;f&eacute;rence Draft :</b> partie 2.6 p 29.<br>
   <b>Pr&eacute;-requis wotlas :</b> aucun.</p>
 <p><b>Description :</b> Pour que le jeu puisse s'enrichir facilement de nouveaux 
-  types de personnages, il faut qu'on puisse le faire rapidement. Plutot que de 
+  types de personnages, il faut qu'on puisse le faire rapidement. Plut&ocirc;t que de 
   d&eacute;velopper 1500 &eacute;crans diff&eacute;rents pour la cr&eacute;ation 
   des comptes on pourrait utiliser des &eacute;tapes g&eacute;n&eacute;riques 
   :<br>
@@ -514,7 +514,7 @@ p	{text-align:justify}
   graphiques &agrave; utiliser : oiseau survolant al&eacute;atoirement la carte, 
   nuages, pluie, etc...</p>
 <p><b>D&eacute;veloppement :</b> Une InteriorMap pourrait poss&eacute;der une 
-  liste de XXXDrawables &agrave; utiliser. Ces XXXDrawable serainent rajout&eacute;s 
+  liste de XXXDrawables &agrave; utiliser. Ces XXXDrawable seraient rajout&eacute;s 
   au moteur graphique lors du chargement de la carte... le BirdDrawable afficherait 
   une animation d'oiseau survolant la carte par exemple.</p>
 <p align="center"><img src="../images/separator.gif" width="300" height="2"></p>
@@ -607,7 +607,7 @@ p	{text-align:justify}
 <p>En tout cas il faut prendre en compte que le corps du personnage reste dans 
   le monde de d&eacute;part pendant qu'une autre image du joueur &eacute;volue 
   dans Tel'aran'riod. Pour r&eacute;aliser &ccedil;a il faudra : (1) modifier 
-  le GameAccount pour qu'il puisse poss&eacute;der un deuxi&egrave;me champs &quot;player&quot; 
+  le GameAccount pour qu'il puisse poss&eacute;der un deuxi&egrave;me champ &quot;player&quot; 
   persistant representant le joueur &eacute;voluant dans Tel'aran'riod, (2) ce 
   deuxi&egrave;me joueur est cr&eacute;&eacute; quand le personnage entre dans 
   Tel'aran'riod et est d&eacute;truit quand celui-ci le quitte, (3) si le joueur 

@@ -10,17 +10,17 @@
 	if ($pass!="Bob") // the Creator ;-)
 		die("No op !</body></html>");
 		
-	include("connect.inc");
+	include("../connect.inc");
 	
 	$connect=Connect();
 	
-	$query="DROP TABLE news";
+	$query="DROP TABLE todo";
 	mysql_query($query,$connect);
 
-	$query="CREATE TABLE news (num INT UNSIGNED NOT NULL AUTO_INCREMENT,date DATE,titre VARCHAR(128) NOT NULL,contenu BLOB, PRIMARY KEY(num))";
+	$query="CREATE TABLE todo (num INT UNSIGNED NOT NULL AUTO_INCREMENT,title VARCHAR(128) NOT NULL,status TINYINT UNSIGNED,draft_ref VARCHAR(128), pre_req VARCHAR(128),descr BLOB, devel BLOB, PRIMARY KEY(num))";
 	mysql_query($query,$connect) or die("<br>SQL query failure : $query</body></html>");
 	
-	echo "Table news créée<br>";
+	echo "Table todo créée<br>";
 	
 	mysql_close($connect);
 ?>

@@ -141,6 +141,7 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
             // 3  - LOCATION UPDATE
                WotlasLocation oldLocation = player.getLocation();
                player.setLocation( location );
+               player.updateSyncID();
                player.getMovementComposer().resetMovement();
                player.setX( x );
                player.setY( y );
@@ -150,7 +151,7 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
                }
 
             // 4 - SEND MESSAGE TO PLAYER
-               player.sendMessage( new YouCanLeaveMapMessage( primaryKey, location, x, y ) );
+               player.sendMessage( new YouCanLeaveMapMessage( primaryKey, location, x, y, player.getSyncID() ) );
 
             // 5 - SENDING REMOVE_PLAYER_MSG TO OTHER PLAYERS
                RemovePlayerFromRoomMessage rMsg = new RemovePlayerFromRoomMessage(primaryKey, oldLocation );
@@ -173,6 +174,7 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
 
       // We search for a valid insertion point
          ScreenPoint pReset = null;
+         player.updateSyncID();
 
          if( player.getLocation().isRoom() )
              pReset = player.getMyRoom().getInsertionPoint();
@@ -200,7 +202,7 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
 
       // We send the message...
          player.sendMessage( new ResetPositionMessage( primaryKey, player.getLocation(),
-                                                       pReset.x, pReset.y ) );
+                                                       pReset.x, pReset.y, player.getSyncID() ) );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

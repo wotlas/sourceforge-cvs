@@ -262,6 +262,7 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
 
       // We search for a valid insertion point
          ScreenPoint pReset = null;
+         player.updateSyncID();
 
          if( player.getLocation().isRoom() )
              pReset = player.getMyRoom().getInsertionPoint();
@@ -289,7 +290,7 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
 
       // We send the message...
          player.sendMessage( new ResetPositionMessage( primaryKey, player.getLocation(),
-                                                       pReset.x, pReset.y ) );
+                                                       pReset.x, pReset.y, player.getSyncID() ) );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

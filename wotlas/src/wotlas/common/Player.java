@@ -212,4 +212,20 @@ public interface Player
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** To get the synchronization ID. This ID is used to synchronize this player on the
+    *  client & server side. The ID is incremented only when the player changes its map.
+    *  Movement messages that have a bad syncID are discarded.
+    * @return sync ID
+    */
+     public byte getSyncID();
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the synchronization ID. See the getter for an explanation on this ID.
+    *  @param syncID new syncID
+    */
+     public void setSyncID(byte syncID);
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }

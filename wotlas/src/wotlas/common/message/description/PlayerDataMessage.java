@@ -112,6 +112,10 @@ public class PlayerDataMessage extends NetMessage
 
          ostream.writeBoolean( player.isConnectedToGame() );
 
+      // Sync ID
+         if(!publicInfoOnly)
+            ostream.writeByte( player.getSyncID() );
+
       // Movement Composer
          writeString( player.getMovementComposer().getClass().getName(), ostream );
 
@@ -161,6 +165,10 @@ public class PlayerDataMessage extends NetMessage
              player.setPlayerPast(  readString( istream ) );
 
          player.setIsConnectedToGame( istream.readBoolean() );
+
+      // Sync ID
+         if( !publicInfoOnly )
+            player.setSyncID( istream.readByte() );
 
       // Movement Composer
          MovementComposer mvComposer = (MovementComposer) Tools.getInstance( readString( istream ) );

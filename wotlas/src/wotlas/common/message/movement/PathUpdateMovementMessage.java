@@ -68,6 +68,10 @@ public class PathUpdateMovementMessage extends MovementUpdateMessage
    */
      public String primaryKey;
 
+  /** SyncID of our player.
+   */
+     public byte syncID;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. Just initializes the message category and type.
@@ -84,10 +88,13 @@ public class PathUpdateMovementMessage extends MovementUpdateMessage
    * @param pFollower player's path follower.
    * @param primaryKey if set we also send this player's primary key so that
    *        the message's destination will be easily identified on the other side.
+   * @param syncID the player's synchronization ID. See the player.getSyncID() method
+   *        for more details.
    */
-     public PathUpdateMovementMessage( PathFollower pFollower, String primaryKey ) {
+     public PathUpdateMovementMessage( PathFollower pFollower, String primaryKey, byte syncID ) {
          this();
          this.primaryKey = primaryKey;
+         this.syncID = syncID;
 
          srcPoint = new Point();
          srcPoint.x = (int)pFollower.getXPosition();
@@ -114,6 +121,9 @@ public class PathUpdateMovementMessage extends MovementUpdateMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void encode( DataOutputStream ostream ) throws IOException {
+
+         ostream.writeByte( syncID );
+
          ostream.writeInt( srcPoint.x );
          ostream.writeInt( srcPoint.y );
 
@@ -143,6 +153,9 @@ public class PathUpdateMovementMessage extends MovementUpdateMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void decode( DataInputStream istream ) throws IOException {
+
+         syncID = istream.readByte();
+
          srcPoint = new Point();
 
          srcPoint.x = istream.readInt();

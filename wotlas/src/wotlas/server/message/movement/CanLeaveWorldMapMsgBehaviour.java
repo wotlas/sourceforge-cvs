@@ -126,6 +126,7 @@ public class CanLeaveWorldMapMsgBehaviour extends CanLeaveWorldMapMessage implem
 
                 // 3  - LOCATION UPDATE
                    player.setLocation( location );
+                   player.updateSyncID();
                    player.getMovementComposer().resetMovement();
                    player.setX( x );
                    player.setY( y );
@@ -135,7 +136,7 @@ public class CanLeaveWorldMapMsgBehaviour extends CanLeaveWorldMapMessage implem
                    }
 
                 // 4 - SEND MESSAGE TO PLAYER
-                   player.sendMessage( new YouCanLeaveMapMessage( primaryKey, location, x, y ) );
+                   player.sendMessage( new YouCanLeaveMapMessage( primaryKey, location, x, y, player.getSyncID() ) );
                    return;
                 }
               }
@@ -153,6 +154,7 @@ public class CanLeaveWorldMapMsgBehaviour extends CanLeaveWorldMapMessage implem
 
       // We search for a valid insertion point
          ScreenPoint pReset = null;
+         player.updateSyncID();
 
          if( player.getLocation().isRoom() )
              pReset = player.getMyRoom().getInsertionPoint();
@@ -180,7 +182,7 @@ public class CanLeaveWorldMapMsgBehaviour extends CanLeaveWorldMapMessage implem
 
       // We send the message...
          player.sendMessage( new ResetPositionMessage( primaryKey, player.getLocation(),
-                                                       pReset.x, pReset.y ) );
+                                                       pReset.x, pReset.y, player.getSyncID() ) );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

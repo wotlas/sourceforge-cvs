@@ -91,6 +91,7 @@ public class YouCanLeaveMapMsgBehaviour extends YouCanLeaveMapMessage implements
            myPlayer.setX(x);
            myPlayer.setY(y);
            myPlayer.setLocation( location );
+           myPlayer.setSyncID( syncID );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -116,6 +116,12 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
    */
   private boolean isConnectedToGame = false;
 
+  /** SyncID for client & server. See the getter of this field for explanation.
+   * This field is an array and not a byte because we want to be able to
+   * synchronize the code that uses it.
+   */
+  private byte syncID[] = new byte[1];
+
  /*------------------------------------------------------------------------------------*/
 
   /** Locks
@@ -587,6 +593,30 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     */
       public void setIsConnectedToGame( boolean isConnectedToGame ) {
       	 this.isConnectedToGame = isConnectedToGame;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the synchronization ID. This ID is used to synchronize this player on the
+    *  client & server side. The ID is incremented only when the player changes its map.
+    *  Movement messages that have a bad syncID are discarded.
+    * @return sync ID
+    */
+      public byte getSyncID(){
+      	synchronized( syncID ) {
+          return syncID[0];
+        }
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the synchronization ID. See the getter for an explanation on this ID.
+    *  @param syncID new syncID
+    */
+      public void setSyncID(byte syncID){
+      	synchronized( this.syncID ) {
+           this.syncID[0] = syncID;
+        }
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

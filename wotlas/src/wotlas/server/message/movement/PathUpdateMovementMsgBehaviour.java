@@ -71,10 +71,14 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
               return;
            }
 
+       // 0 - Is the syncID of this message the same as ours ?
+          if( syncID!=player.getSyncID() ) {
+              Debug.signal( Debug.NOTICE, this, "Message discarded: bad sync ID." );
+              return;
+          }
 
        // 1 - We update our player
           player.getMovementComposer().setUpdate( (MovementUpdateMessage)this );
-
        
        // 2 - We send the update to other players
        // ... in the current Room & other rooms near me

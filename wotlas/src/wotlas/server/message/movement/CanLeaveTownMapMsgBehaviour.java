@@ -120,6 +120,7 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
 
               // 3  - LOCATION UPDATE
                  player.setLocation( location );
+                 player.updateSyncID();
                  player.getMovementComposer().resetMovement();
                  player.setX( x );
                  player.setY( y );
@@ -129,7 +130,7 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
                  }
 
               // 4 - SEND MESSAGE TO PLAYER
-                 player.sendMessage( new YouCanLeaveMapMessage( primaryKey, location, x ,y ) );
+                 player.sendMessage( new YouCanLeaveMapMessage( primaryKey, location, x ,y, player.getSyncID() ) );
                  return;
               }
 
@@ -174,6 +175,7 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
 
                 // 3  - LOCATION UPDATE
                    player.setLocation( location );
+                   player.updateSyncID();
                    player.getMovementComposer().resetMovement();
                    player.setX( x );
                    player.setY( y );
@@ -183,7 +185,7 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
                    }
 
                 // 4 - SEND MESSAGE TO PLAYER
-                   player.sendMessage( new YouCanLeaveMapMessage( primaryKey, location, x, y ) );
+                   player.sendMessage( new YouCanLeaveMapMessage( primaryKey, location, x, y, player.getSyncID() ) );
                    return;
                 }
               }
@@ -201,6 +203,7 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
 
       // We search for a valid insertion point
          ScreenPoint pReset = null;
+         player.updateSyncID();
 
          if( player.getLocation().isRoom() )
              pReset = player.getMyRoom().getInsertionPoint();
@@ -228,7 +231,7 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
 
       // We send the message...
          player.sendMessage( new ResetPositionMessage( primaryKey, player.getLocation(),
-                                                       pReset.x, pReset.y ) );
+                                                       pReset.x, pReset.y, player.getSyncID() ) );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

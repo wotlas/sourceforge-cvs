@@ -88,6 +88,12 @@ public class PlayerImpl implements Player, NetConnectionListener
     */
        transient private Room myRoom;
 
+   /** SyncID for client & server. See the getter of this field for explanation.
+    * This field is an array and not a byte because we want to be able to
+    * synchronize the code that uses it.
+    */
+       transient private byte syncID[] = new byte[1];
+
  /*------------------------------------------------------------------------------------*/
 
    /** Player ChatRooms : is the list of the current room.
@@ -383,6 +389,41 @@ public class PlayerImpl implements Player, NetConnectionListener
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** To get the synchronization ID. This ID is used to synchronize this player on the
+    *  client & server side. The ID is incremented only when the player changes its map.
+    *  Movement messages that have a bad syncID are discarded.
+    * @return sync ID
+    */
+      public byte getSyncID(){
+      	synchronized( syncID ) {
+          return syncID[0];
+        }
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To update the synchronization ID. See the getter for an explanation on this ID.
+    *  The new updated syncID is (syncID+1)%100.
+    */
+      public void updateSyncID(){
+      	synchronized( syncID ) {
+           syncID[0] = (byte) ( (syncID[0]+1)%100 );
+        }
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the synchronization ID. See the getter for an explanation on this ID.
+    *  @param syncID new syncID
+    */
+      public void setSyncID(byte syncID){
+      	synchronized( this.syncID ) {
+          this.syncID[0] = syncID;
+        }
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
    /** To set the player's chatList.
     */
       public void setChatList( ChatList chatList ) {
@@ -501,7 +542,7 @@ public class PlayerImpl implements Player, NetConnectionListener
                  this.personality = null;
              }
 
-             Debug.signal(Debug.NOTICE, null, "Connection closed on player: "+playerName);
+             Debug.signal(Debug.NOTICE, null, "Connection closed on player: "+playerName+" at "+Tools.getLexicalTime());
 
          // 1 - Leave any current chat...
             if( !currentChatPrimaryKey.equals( ChatRoom.DEFAULT_CHAT ) ) {

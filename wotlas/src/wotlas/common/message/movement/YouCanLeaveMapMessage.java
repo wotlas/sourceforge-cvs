@@ -37,6 +37,12 @@ public class YouCanLeaveMapMessage extends LocationChangeMessage
 {
  /*------------------------------------------------------------------------------------*/
 
+  /** SyncID of our player.
+   */
+     protected byte syncID;
+
+ /*------------------------------------------------------------------------------------*/
+
   /** Constructor. Just initializes the message category and type.
    */
      public YouCanLeaveMapMessage() {
@@ -46,14 +52,16 @@ public class YouCanLeaveMapMessage extends LocationChangeMessage
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor with Player's primaryKey & location.
+  /** Constructor with Player's primaryKey & location.  The syncID is the new synchronization
+   *  ID that needs to be set for the player.
    */
-     public YouCanLeaveMapMessage(String primaryKey, WotlasLocation location, int x, int y) {
+     public YouCanLeaveMapMessage(String primaryKey, WotlasLocation location, int x, int y, byte syncID) {
           this();
           this.primaryKey = primaryKey;
           this.location = location;
           this.x = x;
           this.y = y;
+          this.syncID = syncID;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -66,6 +74,7 @@ public class YouCanLeaveMapMessage extends LocationChangeMessage
    */
      public void encode( DataOutputStream ostream ) throws IOException {
             super.encode( ostream );
+            ostream.writeByte( syncID );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -78,6 +87,7 @@ public class YouCanLeaveMapMessage extends LocationChangeMessage
    */
      public void decode( DataInputStream istream ) throws IOException {
             super.decode( istream );
+            syncID = istream.readByte();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

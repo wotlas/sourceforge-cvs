@@ -355,7 +355,7 @@ public class PathFollower implements MovementComposer {
       resetMovement();
       
       if(player.isMaster())
-         player.sendMessage( new PathUpdateMovementMessage( this, player.getPrimaryKey() ) );
+         player.sendMessage( new PathUpdateMovementMessage( this, player.getPrimaryKey(), player.getSyncID() ) );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -392,9 +392,9 @@ public class PathFollower implements MovementComposer {
    */
      public MovementUpdateMessage getUpdate() {
          if(AStarDouble.isInitialized())
-            return (MovementUpdateMessage) new PathUpdateMovementMessage( this, null );
+            return (MovementUpdateMessage) new PathUpdateMovementMessage( this, null, player.getSyncID() );
          else
-            return (MovementUpdateMessage) new PathUpdateMovementMessage( this, player.getPrimaryKey() );
+            return (MovementUpdateMessage) new PathUpdateMovementMessage( this, player.getPrimaryKey(), player.getSyncID() );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -629,7 +629,7 @@ public class PathFollower implements MovementComposer {
             initMovement( path );
 
             if(player.isMaster())
-               player.sendMessage( new PathUpdateMovementMessage( this, player.getPrimaryKey() ) );
+               player.sendMessage( new PathUpdateMovementMessage( this, player.getPrimaryKey(), player.getSyncID() ) );
      }
 
 

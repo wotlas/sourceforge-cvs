@@ -22,7 +22,6 @@ package wotlas.server;
 import wotlas.common.objects.ObjectManager;
 
 import wotlas.common.objects.inventories.Inventory;	
-import wotlas.common.objects.inventories.RoomInventory;	
 
 import wotlas.common.universe.WotlasLocation;
 
@@ -77,22 +76,6 @@ public class ServerObjectManager implements ObjectManager
 	{
 	 this.inventory=inventory; 
 	}
-
-
-  /** Get the RoomInventory object of the given room
-   *  @return the room's RoomInventory
-   *  @param roomID the WotlasLocation of the room
-   *
-    public RoomInventory getInventory(WotlasLocation roomID) 
-	{ 
-	 RoomInventory ret=new RoomInventory();
-
-	 * no op *
-	 * should read on disk the stored inventory to rebuild one *
-	 
-	 return ret; 	
-	}
-   */
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

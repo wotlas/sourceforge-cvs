@@ -114,7 +114,7 @@ public class Tools
                Class myClass = Class.forName(className);
                return myClass.newInstance();
           }catch(Exception ex) {
-               Debug.signal( Debug.ERROR, null, "Faied to create new instance of "+className+", "+ex );
+               Debug.signal( Debug.ERROR, null, "Failed to create new instance of "+className+", "+ex );
                return null;
           }
       }

@@ -52,6 +52,9 @@ public class CenterWindowPolicy implements WindowPolicy{
    /** Tick method that signals to the WindowPolicy that it can update its parameters.
     */
      public void tick() {
+        if( gDirector.getRefDrawable() == null )
+            return;
+
         Rectangle screen = gDirector.getScreenRectangle();
         Dimension background = gDirector.getBackgroundDimension();
         Rectangle refDrawable = gDirector.getRefDrawable().getRectangle();
@@ -63,8 +66,8 @@ public class CenterWindowPolicy implements WindowPolicy{
       // we correct the center if it's out of the backround dimension.
         if(screen.x<0) screen.x = 0;
         if(screen.y<0) screen.y = 0;
-        if(screen.x>=background.width-screen.width) screen.x = background.width-screen.width-1;
-        if(screen.y>=background.height-screen.height) screen.y = background.height-screen.height-1;
+        if( (screen.x+screen.width)>=background.width ) screen.x = background.width-screen.width-1;
+        if( (screen.y+screen.height)>=background.height ) screen.y = background.height-screen.height-1;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

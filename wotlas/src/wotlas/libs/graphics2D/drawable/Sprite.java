@@ -20,7 +20,9 @@
 package wotlas.libs.graphics2D.drawable;
 
 import wotlas.libs.graphics2D.*;
+
 import java.awt.*;
+import java.awt.geom.*;
 
 /** A Sprite is mainly an image displayed on the GraphicsDirector. The sprite data is 
  *  given by an object implementing the SpriteDataSupplier interface. Because a sprite
@@ -35,6 +37,28 @@ public class Sprite extends Drawable {
 
  /*------------------------------------------------------------------------------------*/
 
+  /** Rotation Anchor Point set to sprite's center.
+   */
+     public final static byte CENTER_ANCHOR_POINT = 0;
+
+  /** Rotation Anchor Point set to left upper corner.
+   */
+     public final static byte UPPER_LEFT_ANCHOR_POINT = 1;
+
+  /** Rotation Anchor Point set to right upper corner.
+   */
+     public final static byte UPPER_RIGHT_ANCHOR_POINT = 2;
+
+  /** Rotation Anchor Point set to right lower corner.
+   */
+     public final static byte LOWER_RIGHT_ANCHOR_POINT = 3;
+
+  /** Rotation Anchor Point set to left upper corner.
+   */
+     public final static byte LOWER_LEFT_ANCHOR_POINT = 4;
+
+ /*------------------------------------------------------------------------------------*/
+
   /** Our SpriteDataSupplier.
    */
      private SpriteDataSupplier dataSupplier;
@@ -43,16 +67,39 @@ public class Sprite extends Drawable {
    */
      private ImageIdentifier image;
 
+  /** Our anchor mode for rotations ( see static fields : CENTER_ANCHOR_POINT ).
+   */
+     private byte anchorMode;
+
  /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
+  /** Constructor. The anchor mode for rotations is set to CENTER_ANCHOR_POINT.
    *
-   * @param dataSupplier 
+   * @param dataSupplier Sprite's data supplier
+   * @param priority sprite's priority
    */
     public Sprite(SpriteDataSupplier dataSupplier, short priority) {
     	super();
         this.dataSupplier = dataSupplier;
         this.priority = priority;
+        anchorMode = CENTER_ANCHOR_POINT;
+        tick();
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Constructor with anchor mode ( see public static fields ). 
+   *
+   * @param dataSupplier Sprite's data supplier
+   * @param priority sprite's priority
+   * @param anchorMode tells which anchor point to use for rotations ( CENTER_ANCHOR_POINT, ... )
+   */
+    public Sprite(SpriteDataSupplier dataSupplier, short priority, byte anchorMode ) {
+    	super();
+        this.dataSupplier = dataSupplier;
+        this.priority = priority;
+        this.anchorMode = anchorMode;
+        tick();
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -76,10 +123,74 @@ public class Sprite extends Drawable {
    */
     public void paint( Graphics2D gc, Rectangle screen ) {
 
-        if( !r.intersects(screen) )
-            return;
+      // 1 - Need to display this sprite ?
+         if( !r.intersects(screen) )
+             return;
 
-        gc.drawImage( ImageLibrary.getDefaultImageLibrary().getImage( image ), r.x, r.y, null );
+      // 2 - any affine transform ?
+         AffineTransform affTr = null;
+
+         if( dataSupplier.getAngle()!=0.0 ) {
+           // Rotation Transformation
+              affTr = new AffineTransform();
+              int anchorX=0, anchorY=0;
+
+              switch( anchorMode ) {
+                  default:
+                  case CENTER_ANCHOR_POINT:
+                       anchorX = r.x + r.width/2;
+                       anchorY = r.y + r.height/2;
+                       break;
+
+                  case UPPER_LEFT_ANCHOR_POINT:
+                       anchorX = r.x;
+                       anchorY = r.y;
+                       break;
+
+                  case UPPER_RIGHT_ANCHOR_POINT:
+                       anchorX = r.x + r.width;
+                       anchorY = r.y;
+                       break;
+
+                  case LOWER_RIGHT_ANCHOR_POINT:
+                       anchorX = r.x + r.width;
+                       anchorY = r.y + r.height;
+                       break;
+
+                  case LOWER_LEFT_ANCHOR_POINT:
+                       anchorX = r.x;
+                       anchorY = r.y + r.height;
+                       break;
+              }
+
+              affTr.rotate( dataSupplier.getAngle(), anchorX-screen.x, anchorY-screen.y );
+         }
+
+         if( dataSupplier.getScaleX()!=1.0 || dataSupplier.getScaleY()!=1.0) {
+           // Scale Transformation
+              if(affTr==null)
+                 affTr = new AffineTransform();
+
+              affTr.scale( dataSupplier.getScaleX(), dataSupplier.getScaleY() );
+         }
+
+      // 3 - Any alpha ?
+
+
+      // 4 - image display
+         if( affTr==null ) {
+             gc.drawImage( ImageLibrary.getDefaultImageLibrary().getImage( image ),
+                           r.x-screen.x, r.y-screen.y, null );
+         }
+         else {
+             affTr.translate( r.x-screen.x, r.y-screen.y );
+
+             gc.drawImage( ImageLibrary.getDefaultImageLibrary().getImage( image ),
+                           affTr, null );
+         }
+
+      // 5 - alpha cleaning
+
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -95,7 +206,7 @@ public class Sprite extends Drawable {
 
         r.x = dataSupplier.getX();
         r.y = dataSupplier.getY();
-        
+
         image = dataSupplier.getImageIdentifier();
 
         r.width = ImageLibrary.getDefaultImageLibrary().getWidth( image );

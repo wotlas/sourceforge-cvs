@@ -19,6 +19,9 @@
 
 package wotlas.libs.graphics2D;
 
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 
 /** A GraphicsDirector is the root class of this graphics2D engine. It manages
  *  Drawables and has a WindowPolicy for scrollings.
@@ -31,10 +34,6 @@ package wotlas.libs.graphics2D;
  * @see wotlas.libs.graphics2D.Drawable
  * @see wotlas.libs.graphics2D.DrawableIterator
  */
-
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
 
 public class GraphicsDirector extends JPanel {
 
@@ -65,6 +64,10 @@ public class GraphicsDirector extends JPanel {
    */
     WindowPolicy windowPolicy;
 
+  /** Can we display our drawables ?
+   */
+    private boolean display;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. The window policy is not supposed to change during the life of the
@@ -77,27 +80,41 @@ public class GraphicsDirector extends JPanel {
       super(true);
       drawables = new DrawableIterator();
       setWindowPolicy( windowPolicy );
+      display = false;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To initialize the GraphicsDirector. A call to this method suppresses all the
-   *  possessed Drawable Objects.
+   *  possessed Drawable Objects. The backDrawable & refDrawable are automatically
+   *  added to the GraphicsDirector Drawable list.
    *
-   * @param background dimension of the biggest drawable that you use as a reference
-   *        for your 2D cordinates.
+   * @param backDrawable the drawable that you will use as a reference for your 2D cordinates.
+   * @param refDrawable reference Drawable for screen movements. The way the screen moves
+   *        is dictated by the WindowPolicy and refers to this drawable.
    * @param screen initial dimension for this JPanel
-   * @param refDrawable Drawable that will always be the center of the screen. This
-   *        drawable is not automatically added to our drawables. You also have to call
-   *        the addDrawable method to add it to the GraphicsDirector.
    */
-    public void init( Dimension background, Dimension screen, Drawable refDrawable ) {
-      this.background = background;
-      this.screen = new Rectangle( screen );
-      this.refDrawable = refDrawable;
+    public void init( Drawable backDrawable,  Drawable refDrawable, Dimension screen) {
 
-      drawables.clear();
-      windowPolicy.tick();
+      // Background dims
+         background = new Dimension( backDrawable.getWidth(), backDrawable.getHeight() );
+
+      // Screen defaults
+         this.screen = new Rectangle( screen );
+         setPreferredSize( screen );
+         setMaximumSize( background );
+         setMinimumSize( new Dimension(10,10) );
+
+
+      // we reset the GraphicsDirector's drawables
+         drawables.clear();
+         addDrawable( backDrawable );
+         addDrawable( refDrawable );
+
+      // We set the new drawable reference an tick our WindowPolicy.
+         this.refDrawable = refDrawable;
+         windowPolicy.tick();
+         display = true;
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -115,13 +132,22 @@ public class GraphicsDirector extends JPanel {
    *
    * @param gc graphics object.
    */
-    public synchronized void paint(Graphics gc) {
+    public void paint(Graphics gc) {
+
+        if(!display) {
+           gc.setColor( Color.white );
+           gc.fillRect( 0, 0, getWidth(), getHeight() );
+           return;
+        }
 
         Graphics2D gc2D = (Graphics2D) gc;
-        drawables.resetIterator();
+
+        synchronized( drawables ) {
+            drawables.resetIterator();
         
-        while( drawables.hasNext() )
-           drawables.next().paint( gc2D, screen );
+            while( drawables.hasNext() )
+                   drawables.next().paint( gc2D, new Rectangle( screen ) );
+        }
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -130,19 +156,21 @@ public class GraphicsDirector extends JPanel {
    *
    * @param dr drawable to add.
    */
-    public void addDrawable( Drawable dr ) {
-        drawables.resetIterator();
+    public synchronized void addDrawable( Drawable dr ) {
+        synchronized( drawables ) {
+            drawables.resetIterator();
 
-        while( drawables.hasNext() ) {
-          Drawable current = drawables.next();
+            while( drawables.hasNext() ) {
+                 Drawable current = drawables.next();
           
-          if( current.getPriority() > dr.getPriority() ) {
-              drawables.insert( dr );
-              return;
-          }
-        }
+                 if( current.getPriority() > dr.getPriority() ) {
+                     drawables.insert( dr );
+                     return;
+                 }
+            }
 
-        drawables.add( dr );
+            drawables.add( dr );
+        }
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -152,27 +180,27 @@ public class GraphicsDirector extends JPanel {
    * @param dr drawable to remove.
    */
    public void removeDrawable( Drawable dr ) {
-        drawables.resetIterator();
+        synchronized( drawables ) {
+            drawables.resetIterator();
 
-        while( drawables.hasNext() ) {
-          Drawable current = drawables.next();
-
-          if( current == dr ) {
-              drawables.insert( dr );
-              return;
-          }
+            while( drawables.hasNext() )
+                if( drawables.next() == dr ) {
+                    drawables.remove();
+                    return;
+                }
         }
-
-        drawables.add( dr );
-
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To remove all the drawables.
    */
-    public void removeAllDrawables() {
-       drawables.clear();
+    public synchronized void removeAllDrawables() {
+        synchronized( drawables ) {
+           drawables.clear();
+           refDrawable = null;
+           display = false;
+        }
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -180,21 +208,25 @@ public class GraphicsDirector extends JPanel {
   /** The tick method updates our screen position, drawables and repaint the whole thing.
    *  Never call repaint on the graphics director, call tick() !
    */
-    public synchronized void tick() {
+    public void tick() {
 
       // 1 - We update our screen dimension.
-         screen.width = getWidth();
-         screen.width = getHeight();
+         synchronized( drawables ) {
+             screen.width = getWidth();
+             screen.height = getHeight();
+         }
 
       // 2 - We update our WindowPolicy
          windowPolicy.tick();
       
       // 3 - We tick all our sprites
-         drawables.resetIterator();
+         synchronized( drawables ) {
+            drawables.resetIterator();
 
-         while( drawables.hasNext() )
-            if( !drawables.next().tick() )
-                 drawables.remove();
+            while( drawables.hasNext() )
+                if( !drawables.next().tick() )
+                    drawables.remove();
+         }
 
       // 4 - We repaint all our prites
          repaint();

@@ -40,6 +40,10 @@ public class ImageLibrary {
     */
      private static ImageLibrary imageLibrary;
 
+   /** An image counter.
+    */
+     private static int nbImagesLoaded;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Image classified by Category/Set/Action/Index
@@ -154,7 +158,7 @@ public class ImageLibrary {
 
          // 2.1 - We get the category ID
             int catID = getIDFromName( cats[c].getName() );
-            
+
             if(catID<0 || catID >= cats.length )
                throw new IOException( "Category ID in "+cats[c].getName()+" has bad range." );
 
@@ -211,7 +215,7 @@ public class ImageLibrary {
                  // 2.2.2.3 - Image loading
                     if( !sets[s].getName().endsWith("-jit") && !sets[s].getName().endsWith("-exc") ) {
                         String imagesHome = imageDataBasePath+File.separator+cats[c].getName()
-                                   +File.separator+sets[s].getName()+File.separator+actions[a];
+                                   +File.separator+sets[s].getName()+File.separator+actions[a].getName();
 
                         images[catID][setID][actID] = loadBufferedImages( imagesHome );
                         
@@ -221,6 +225,9 @@ public class ImageLibrary {
                 }
             }
        }
+
+      Debug.signal( Debug.NOTICE, this, "Loaded "+nbImagesLoaded+" Images in database");
+      nbImagesLoaded=0;
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -247,16 +254,16 @@ public class ImageLibrary {
 
            if(first<0)
               throw new IOException("Invalid format :"+name+". Should be <name>-<number>-<option>]");
-           
-           s_val = name.substring( first, last );
+
+           s_val = name.substring( first+1, last );
        }
        else {
            int first = name.lastIndexOf('-');
 
-           if(first<0)
+           if( first<0 || first==name.length()-1 )
               throw new IOException("Invalid format :"+name+". Should be <name>-<number>-<option>]");
            
-           s_val = name.substring( first, name.length() );
+           s_val = name.substring( first+1, name.length() );
        }
 
     // 2 - We parse the substring
@@ -348,7 +355,11 @@ public class ImageLibrary {
 
            if( images[imID.imageCategory][imID.imageSet][imID.imageAction] == null)
                Debug.signal( Debug.ERROR, this, "No images loaded from "+imagesHome);
-       }          
+       }
+
+   // 4 - We print some stats...
+      Debug.signal( Debug.NOTICE, this, "Loaded "+nbImagesLoaded+ " Images in database");
+      nbImagesLoaded=0;
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -403,6 +414,10 @@ public class ImageLibrary {
 
        if( images[imID.imageCategory][imID.imageSet][imID.imageAction] == null)
            throw new IOException("No images loaded from "+imagesHome );
+
+   // 5 - Print some stats
+      Debug.signal( Debug.NOTICE, this, "Loaded "+nbImagesLoaded+ " Images in database");
+      nbImagesLoaded=0;
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -471,7 +486,7 @@ public class ImageLibrary {
    */
     static Image loadImage( String path ) {
        Image im;
-       MediaTracker tracker = new MediaTracker(null);
+       MediaTracker tracker = new MediaTracker(new Label());
 
          im = Toolkit.getDefaultToolkit().getImage(path);
          tracker.addImage(im,0);
@@ -481,6 +496,7 @@ public class ImageLibrary {
          }
          catch(InterruptedException e) { e.printStackTrace(); }
 
+       nbImagesLoaded++;
        return im;
   }
 
@@ -503,7 +519,7 @@ public class ImageLibrary {
          return null;
 
       Image im[] = new Image[list.length];
-      MediaTracker tracker = new MediaTracker(null);
+      MediaTracker tracker = new MediaTracker(new Label());
       Toolkit tk = Toolkit.getDefaultToolkit();
 
          for( int i=0; i<list.length; i++)
@@ -514,8 +530,9 @@ public class ImageLibrary {
 
             im[i] = tk.getImage( path+File.separator+list[i].getName() );
             tracker.addImage(im[i],i);
+            nbImagesLoaded++;
          }
-         
+
          try{
              tracker.waitForAll();
          }catch(InterruptedException e) { e.printStackTrace(); }

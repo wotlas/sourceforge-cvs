@@ -62,18 +62,6 @@ public interface SpriteDataSupplier {
    */
     public double getAngle();
 
-  /** To get the X cordinate of the rotation center.
-   *
-   * @return X rotation center
-   */
-    public int getRotationXCenter();
-
-  /** To get the X cordinate of the rotation center.
-   *
-   * @return Y rotation center
-   */
-    public int getRotationYCenter();
-
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To get the X factor for scaling... 1.0 means no X scaling

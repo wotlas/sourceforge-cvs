@@ -55,7 +55,22 @@ public class ImageIdentifier {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor with ids.
+  /** Constructor with the first three ids. The last id ( imageIndex ) is set to 0.
+   *
+   * @param cat image category
+   * @param set image set
+   * @param act image action
+   */
+   public ImageIdentifier( short imCat, short imSet, short imAct) {
+      imageCategory = imCat;
+      imageSet = imSet;
+      imageAction = imAct;
+      imageIndex = 0;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Constructor with all ids.
    *
    * @param cat image category
    * @param set image set

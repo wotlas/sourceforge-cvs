@@ -123,4 +123,23 @@ public abstract class Drawable {
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the current width of the drawable.
+   * @return current width
+   */
+     public int getWidth() {
+         return r.width;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the current height of the drawable.
+   * @return current height
+   */
+     public int getHeight() {
+         return r.height;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }

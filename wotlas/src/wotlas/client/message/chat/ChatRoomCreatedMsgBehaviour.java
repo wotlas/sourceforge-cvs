@@ -62,7 +62,7 @@ public class ChatRoomCreatedMsgBehaviour extends ChatRoomCreatedMessage implemen
     chatRoom.setPrimaryKey(primaryKey);
     chatRoom.setName(name);
     chatRoom.setCreatorPrimaryKey(creatorPrimaryKey);
-    player.addChatRoom(chatRoom);
+    player.getChatList().addChatRoom(chatRoom);
     dataManager.getChatPanel().addChatRoom(chatRoom);
 
     }

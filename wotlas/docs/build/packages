@@ -35,3 +35,4 @@ wotlas.client.message.description
 wotlas.client.message.chat
 wotlas.client.message.movement
 wotlas.utils
+wotlas.utils.aswing

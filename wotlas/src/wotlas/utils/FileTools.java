@@ -203,7 +203,7 @@ public class FileTools
       }
       catch(IOException e) {
          Debug.signal( Debug.ERROR, null, "Error: "+e );
-         text = null;
+         return null;
       }
 
       return text.toString();

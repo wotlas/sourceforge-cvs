@@ -97,42 +97,46 @@ public class WorldManager extends wotlas.common.WorldManager
   *  If something fails a debug information will be printed, this method will return
   *  false and the player's location will not have been changed.
   *
+  *  Other important point : we don't check if the movement is correct...
+  *
   *  @param player player to move
   *  @param destination destination
   *  @return true in case of success
   */
      public boolean movePlayer( PlayerImpl player, WotlasLocation destination )
      {
-         WotlasLocation source = player.getLocation();
+          WotlasLocation source = player.getLocation();
 
-      // EASY - is it a room to room move ?
-         if( source.isRoom() ) {
+       // 1 - do we have to move the account on another server
+          if( destination.isRoom() ) {
+              Building building = getBuilding( destination );
 
-             if( destination.isRoom() ) {
-                // 1 - let's find the RoomLink between the two rooms
+              if(building==null)
+                 return false;
 
-                // 2 - let's check the player is in this RoomLink
-                //     and that there are no doors...
+              int buildingServerID = building.getServerID();
+        
+              int thisServerID = ServerManager.getDefaultServerManager().getServerConfig().getServerID();
 
-                // 3 - move the player
-                   editPlayer( player, false );                   
-                   player.setLocation( destination );
-                   editPlayer( player, true );
-             }
+              if( buildingServerID != thisServerID ) {
+                // Building is on another server :
+                // functionality not for this release
+          
+                  /**
+                   **  Add Gateway Server Code Here
+                   **/
+          
+                   Debug.signal( Debug.ERROR, this, "Building serverID points out another server");
+                   return false;
+              }
+          }
 
+       // 2 - we move the player if the destination is on this server
+          editPlayer( player, false );
+          player.setLocation( destination );
+          editPlayer( player, true );
 
-         }
-
-      // EASY - is it a xxxx to town move ?
-
-      // EASY - is it a xxxx to world move ?
-
-
-      // MEDIUM - is it a interiorMap to interiorMap move ?
-
-      // COMPLEX - is it a xxxx to building move ?
-     
-        return false;
+          return true;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

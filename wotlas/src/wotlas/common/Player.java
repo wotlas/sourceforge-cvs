@@ -21,6 +21,7 @@ package wotlas.common;
 
 import wotlas.common.character.*;
 import wotlas.common.universe.*;
+import wotlas.common.movement.*;
 
 import wotlas.libs.net.NetMessage;
 

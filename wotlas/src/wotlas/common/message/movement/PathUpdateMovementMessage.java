@@ -29,6 +29,7 @@ import wotlas.common.message.MessageRegistry;
 import wotlas.common.Player;
 import wotlas.common.character.WotCharacter;
 import wotlas.common.universe.WotlasLocation;
+import wotlas.common.movement.*;
 
 import wotlas.libs.pathfinding.*;
 

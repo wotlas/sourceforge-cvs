@@ -29,6 +29,7 @@ import wotlas.common.message.movement.*;
 import wotlas.common.*;
 import wotlas.common.character.WotCharacter;
 import wotlas.common.universe.WotlasLocation;
+import wotlas.common.movement.*;
 
 import wotlas.utils.Tools;
 

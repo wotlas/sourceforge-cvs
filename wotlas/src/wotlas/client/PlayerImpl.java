@@ -23,6 +23,7 @@ package wotlas.client;
 import wotlas.common.character.*;
 import wotlas.common.chat.*;
 import wotlas.common.universe.*;
+import wotlas.common.movement.*;
 import wotlas.common.*;
 
 import wotlas.common.message.description.PlayerPastMessage;

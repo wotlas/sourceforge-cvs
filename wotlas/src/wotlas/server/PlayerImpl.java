@@ -21,6 +21,7 @@ package wotlas.server;
 
 import wotlas.common.character.*;
 import wotlas.common.chat.*;
+import wotlas.common.movement.*;
 import wotlas.server.message.chat.*;
 
 import wotlas.libs.net.NetConnectionListener;

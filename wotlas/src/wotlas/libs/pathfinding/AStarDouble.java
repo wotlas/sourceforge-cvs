@@ -367,7 +367,7 @@ public class AStarDouble
     if ( (x<0) || (x+SPRITE_SIZE>=mapWidth) || (y<0) || (y+SPRITE_SIZE>=mapHeight) )
       return false;
 
-    return (map[x][y] && map[x][y+SPRITE_SIZE] && map[x+SPRITE_SIZE][y] && map[x+SPRITE_SIZE][y+SPRITE_SIZE]);
+    return (map[x][y] && map[x][y+SPRITE_SIZE] && map[x+SPRITE_SIZE][y] && map[x+SPRITE_SIZE][y+SPRITE_SIZE] && map[x+SPRITE_SIZE/2][y+SPRITE_SIZE/2]);
   }
 
   /** test if a point is valid for the path

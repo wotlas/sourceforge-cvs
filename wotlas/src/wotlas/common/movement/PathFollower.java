@@ -157,7 +157,7 @@ public class PathFollower implements MovementComposer {
     * @param b second point
     * @return path
     */
-     public static List findPath(  Point a, Point b ) {
+     public static List findPath(  Point a, Point b, boolean pathInRoom ) {
            int tileSize = AStarDouble.getTileSize();
         
            List path = AStarDouble.findPath( new Point( a.x/tileSize, a.y/tileSize ),
@@ -170,8 +170,14 @@ public class PathFollower implements MovementComposer {
            if(path!=null)
               for (int i=0; i<path.size(); i++) {
                    Point p = (Point) path.elementAt(i);
-                   p.x *= tileSize;
-                   p.y *= tileSize;
+                   if(pathInRoom) {
+                      p.x = p.x*tileSize-5;
+                      p.y = p.y*tileSize-5;
+                   }
+                   else {
+                      p.x *= tileSize;
+                      p.y *= tileSize;
+                   }
               }
 
            return path;
@@ -485,7 +491,7 @@ public class PathFollower implements MovementComposer {
 
                     if( msg.isMoving ) {
                         if( distance( msg.srcPoint, getPosition() )>200 ||
-                            findPath( getPosition(), msg.dstPoint )==null )
+                            findPath( getPosition(), msg.dstPoint, player.getLocation().isRoom() )==null )
                             takeUpdate = true;
                         else
                             recreateTrajectory( msg.dstPoint, 0 );
@@ -672,7 +678,7 @@ public class PathFollower implements MovementComposer {
                 startPt.y = pReset.y;              
             }
             
-            path = findPath( startPt, new Point( endPosition.x, endPosition.y ) );
+            path = findPath( startPt, new Point( endPosition.x, endPosition.y ),player.getLocation().isRoom() );
 
             if( path==null ) {
             	if( walkingAlongPath )
@@ -697,8 +703,8 @@ public class PathFollower implements MovementComposer {
    */
      public void recreateTrajectory( Point pDst, int movementDeltaTime ) {
             path = findPath( new Point( (int)xPosition, (int)yPosition ),
-                             new Point( pDst.x, pDst.y ) );
-                     
+                             new Point( pDst.x, pDst.y ), player.getLocation().isRoom() );
+
             if( path==null ) {
                 Debug.signal( Debug.ERROR, this, "Failed to re-create path !" );
                 

@@ -127,8 +127,8 @@ public class JConfigurationDlg extends JDialog {
       getContentPane().setBackground(Color.white);
 
    // We load the images
-      ImageIcon im_okup = new ImageIcon("../base/gui/ok-up.gif");
-      ImageIcon im_okdo = new ImageIcon("../base/gui/ok-do.gif");
+      ImageIcon im_okup = ClientDirector.getResourceManager().getImageIcon("ok-up.gif");
+      ImageIcon im_okdo = ClientDirector.getResourceManager().getImageIcon("ok-do.gif");
 
    // JPanel Tabs
       JGeneralTab generalTab = new JGeneralTab();
@@ -182,7 +182,7 @@ public class JConfigurationDlg extends JDialog {
         clientConfiguration.setCenterScreenPolicy(policyButton.isSelected());
         clientConfiguration.setUseHardwareAcceleration(hardwareButton.isSelected());
 
-        ClientDirector.saveClientConfiguration();
+        ClientDirector.getClientConfiguration().save();
         dispose();
       }
     });
@@ -264,8 +264,8 @@ public class JConfigurationDlg extends JDialog {
       //setAlignmentX(Component.CENTER_ALIGNMENT);
       setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
       
-      ImageIcon minVolIcon = new ImageIcon("../base/gui/volume16.gif");
-      ImageIcon maxVolIcon = new ImageIcon("../base/gui/volume24.gif");
+      ImageIcon minVolIcon = ClientDirector.getResourceManager().getImageIcon("volume16.gif");
+      ImageIcon maxVolIcon = ClientDirector.getResourceManager().getImageIcon("volume24.gif");
       
       /*ALabel lbl_title = new ALabel("Sound");      
       lbl_title.setForeground(Color.white);

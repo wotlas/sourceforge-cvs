@@ -20,7 +20,7 @@
 package wotlas.client;
 
 import wotlas.common.ServerConfig;
-import wotlas.common.ServerConfigList;
+import wotlas.common.ServerConfigManager;
 
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
@@ -32,8 +32,7 @@ import javax.swing.table.AbstractTableModel;
  * @see wotlas.common.ServerConfig
  */
 
-public class ProfileConfigListTableModel extends AbstractTableModel
-{
+public class ProfileConfigListTableModel extends AbstractTableModel {
 
  /*------------------------------------------------------------------------------------*/
 
@@ -43,7 +42,7 @@ public class ProfileConfigListTableModel extends AbstractTableModel
 
   /** Array of servers
    */
-  private ServerConfigList servers;
+  private ServerConfigManager servers;
 
   /** temporary server
    */
@@ -57,12 +56,12 @@ public class ProfileConfigListTableModel extends AbstractTableModel
 
   /** Constructor
    *
-   * @param ProfileConfigList client's accounts
-   * @param ServerConfigList list of servers
+   * @param profileConfigList client's accounts
+   * @param serverConfigList list of servers
    */
-  ProfileConfigListTableModel(ProfileConfigList profileConfigList, ServerConfigList serverConfigList) {
+  public ProfileConfigListTableModel( ProfileConfigList profileConfigList,
+                                      ServerConfigManager serverConfigList) {
     this.profiles = profileConfigList.getProfiles();
-    
     if(profiles==null) profiles = new ProfileConfig[0];
     
     this.servers  = serverConfigList;
@@ -111,14 +110,6 @@ public class ProfileConfigListTableModel extends AbstractTableModel
         return null;
     }
   }
-
-  /* JTable uses this method to determine the default renderer/
-   * editor for each cell
-   */
-  /*public Class getColumnClass(int c) {
-    String dummy = "";
-    return dummy.getClass();
-  }*/
 
  /*------------------------------------------------------------------------------------*/
 

@@ -94,7 +94,7 @@ public class ServerChatCommand implements ChatCommand
     */
       public boolean exec( String message, PlayerImpl player, SendTextMessage response ) {
 
-          ServerConfig ourConfig = ServerManager.getDefaultServerManager().getServerConfig();
+          ServerConfig ourConfig = ServerDirector.getServerManager().getServerConfig();
 
           if(message.equals("/server bell")) {
                SoundLibrary.createSoundLibrary("../base").playSound("server.wav");

@@ -62,7 +62,7 @@ public class YourFakeNamesMsgBehaviour extends YourFakeNamesMessage implements N
     DataManager dataManager = (DataManager) sessionContext;
     
     // Update of the panel
-    Component c_lie = dataManager.getPlayerPanel().getTab("-lie-");
+    Component c_lie = dataManager.getClientScreen().getPlayerPanel().getTab("-lie-");
    
     if ( c_lie==null || !(c_lie instanceof LiePanel) ) {
       Debug.signal( Debug.ERROR, this, "LiePanel not found !");

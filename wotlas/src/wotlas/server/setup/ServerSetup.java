@@ -20,7 +20,7 @@
 package wotlas.server.setup;
 
 import wotlas.common.*;
-import wotlas.server.PersistenceManager;
+import wotlas.server.*;
 import wotlas.utils.*;
 import wotlas.utils.aswing.*;
 
@@ -49,11 +49,24 @@ public class ServerSetup extends JWizard {
 
   /** Database Config.
    */
-    private final static String DATABASE_CONFIG = "../src/config/server.cfg";
+    private final static String DEFAULT_BASE_PATH = "../base";
 
-  /** Remote servers config file.
+  /** Setup Command Line Help
    */
-    private final static String REMOTE_SERVER_CONFIG = "../src/config/remote-servers.cfg";
+    public final static String SETUP_COMMAND_LINE_HELP =
+            "Usage: ServerSetup -[help|base <path>]\n\n"
+           +"Examples : \n"
+           +"  ServerSetup -base ../base : sets the data location.\n\n"
+           +"If the -base option is not set we search for data in "+DEFAULT_BASE_PATH
+           +"\n\n";
+
+  /** Format of the server log name.
+   */
+    public final static String SERVER_LOGS = "logs";
+
+  /** Format of the configs path name
+   */
+    public final static String SERVER_CONFIGS = "configs";
 
  /*------------------------------------------------------------------------------------*/
 
@@ -87,9 +100,9 @@ public class ServerSetup extends JWizard {
 
  /*------------------------------------------------------------------------------------*/
 
-   /** Database Relative Path.
+   /** Our base path.
     */
-     private static String databasePath;
+     private static String basePath = DEFAULT_BASE_PATH;
 
    /** Our serverID
     */
@@ -97,7 +110,11 @@ public class ServerSetup extends JWizard {
 
    /** Remote server config properties
     */
-     private static Properties serverProperties;
+     private static ServerPropertiesFile serverProperties;
+
+   /** Remote server config properties
+    */
+     private static RemoteServersPropertiesFile remoteServersProperties;
 
    /** Server Config file path.
     */
@@ -108,7 +125,10 @@ public class ServerSetup extends JWizard {
   /** Constructor.
    */
     public ServerSetup() {
-         super("Server Config",470,450);
+         super("Server Config",
+               basePath+File.separator+"gui",
+               FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter").deriveFont(18f),
+               470,450);
          setLocation(200,100);
          setGUI();
 
@@ -326,7 +346,7 @@ public class ServerSetup extends JWizard {
           param.setProperty("init.label0", "Enter your server ID :");
 
           param.setProperty("init.info0", "\n      To obtain a valid server Id you should contact this address : "
-                                         +""+serverProperties.getProperty("REMOTE_SERVER_ADMIN_EMAIL","")
+                                         +""+remoteServersProperties.getProperty("info.remoteServerAdminEmail","")
                                          +". Just send a mail to that address and ask for an Id."
                                          +" Once you have your Id enter it here and click on 'next'.");
           return param;
@@ -404,10 +424,10 @@ public class ServerSetup extends JWizard {
           param.setIsDynamic(true);
 
           param.setProperty("init.label0", "Wotlas web server's URL:");
-          param.setProperty("init.text0", serverProperties.getProperty("REMOTE_SERVER_CONFIG_HOME_URL","") );
+          param.setProperty("init.text0", remoteServersProperties.getProperty("info.remoteServerHomeURL","") );
 
           param.setProperty("init.label1", "Wotlas manager's email:");
-          param.setProperty("init.text1", serverProperties.getProperty("REMOTE_SERVER_ADMIN_EMAIL","") );
+          param.setProperty("init.text1", remoteServersProperties.getProperty("info.remoteServerAdminEmail","") );
 
           param.setProperty("init.info0", "\n      We need this information to know how to contact a specified"
                                          +" wotlas network. If you don't know them please refer to the"
@@ -443,27 +463,8 @@ public class ServerSetup extends JWizard {
           int value = JOptionPane.showConfirmDialog(null, "Save this information ? (required for next step)", "Save", JOptionPane.YES_NO_OPTION);
           if( value != JOptionPane.YES_OPTION ) return false;
 
-          serverProperties.setProperty( "REMOTE_SERVER_CONFIG_HOME_URL", getText0() );
-          serverProperties.setProperty( "REMOTE_SERVER_ADMIN_EMAIL", getText1() );
-
-              String oldConfig = FileTools.loadTextFromFile( REMOTE_SERVER_CONFIG );
-
-              if( oldConfig!=null && oldConfig.length()!=0 ) {
-                  oldConfig = FileTools.updateProperty( "REMOTE_SERVER_CONFIG_HOME_URL", getText0(), oldConfig );
-                  oldConfig = FileTools.updateProperty( "REMOTE_SERVER_ADMIN_EMAIL", getText1(), oldConfig );
-
-                  if( !FileTools.saveTextToFile( REMOTE_SERVER_CONFIG, oldConfig ) ) {
-                      JOptionPane.showMessageDialog( null, "Failed to save file : "+REMOTE_SERVER_CONFIG,
-                                                       "Error", JOptionPane.ERROR_MESSAGE);
-                      return false;
-                  }
-              }
-              else {
-                  JOptionPane.showMessageDialog( null, "Failed to load file : "+REMOTE_SERVER_CONFIG,
-                                                      "Error", JOptionPane.ERROR_MESSAGE);
-                  return false;
-              }
-
+          remoteServersProperties.setProperty( "info.remoteServerHomeURL", getText0() );
+          remoteServersProperties.setProperty( "info.remoteServerAdminEmail", getText1() );
 
           wizard.setNextStep( ServerIdWizardStep.getStaticParameters()  );
           return true;
@@ -520,9 +521,9 @@ public class ServerSetup extends JWizard {
        */
       private ServerConfig config;
 
-      /** Persistence Manager to save the config.
+      /** Server config Manager to save/load configs
        */
-      private PersistenceManager pm;
+      private ServerConfigManager serverConfigManager;
 
      /* -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  */
 
@@ -531,14 +532,13 @@ public class ServerSetup extends JWizard {
        public ServerConfigWizardStep() {
            super();
 
-        // I - we build a persistence manager
-           pm = PersistenceManager.createPersistenceManager( databasePath );
-
         // II - we load the default server config.
            Debug.setLevel( Debug.CRITICAL );
            Debug.displayExceptionStack( false );
 
-           config = pm.loadServerConfig( serverID );
+           ResourceManager rManager = new ResourceManager(basePath,"","","");
+           serverConfigManager = new ServerConfigManager( rManager );
+           config = serverConfigManager.loadServerConfig( serverID );
 
            Debug.setLevel( Debug.NOTICE );
            Debug.displayExceptionStack( true );
@@ -695,7 +695,7 @@ public class ServerSetup extends JWizard {
             }
 
          // We save the config
-            if( !pm.saveServerConfig(config) ) {
+            if( !serverConfigManager.saveServerConfig(config) ) {
                 JOptionPane.showMessageDialog( null, "Failed to save server config in database",
                                                "Error", JOptionPane.ERROR_MESSAGE);
                 return false;
@@ -704,26 +704,8 @@ public class ServerSetup extends JWizard {
          // set this server as default ?
             int value = JOptionPane.showConfirmDialog(null, "Set this server as default ?", "Update Startup Config", JOptionPane.YES_NO_OPTION);
 
-            if( value == JOptionPane.YES_OPTION ) {
-                // we load the server config file
-                   String oldConfig = FileTools.loadTextFromFile( DATABASE_CONFIG );      	
-
-                // config loaded ?
-                   if(oldConfig==null || oldConfig.length()==0 ) {
-                      JOptionPane.showMessageDialog( null, "Failed to load file : "+DATABASE_CONFIG,
-                                                      "Error", JOptionPane.ERROR_MESSAGE);
-                      return false;
-                   }
-
-                // search for property
-                   oldConfig = FileTools.updateProperty( "SERVER_ID", ""+serverID, oldConfig );
-
-                   if( !FileTools.saveTextToFile( DATABASE_CONFIG, oldConfig ) ) {
-                       JOptionPane.showMessageDialog( null, "Failed to save "+DATABASE_CONFIG,
-                                                      "Error", JOptionPane.ERROR_MESSAGE );
-                       return false;
-                   }
-            }
+            if( value == JOptionPane.YES_OPTION )
+                serverProperties.setProperty( "init.serverID", ""+serverID );
 
             wizard.setNextStep(  FinalWizardStep.getStaticParameters() );
             return true;
@@ -769,14 +751,15 @@ public class ServerSetup extends JWizard {
                                            +" You can now start your server. Because your server is"
                                            +" local you don't need to use the setup program.");
 
-             FileTools.saveTextToFile( databasePath+File.separator+"servers"+File.separator
+             FileTools.saveTextToFile( basePath
+                                       +File.separator+"servers"+File.separator
                                        +"server-0.cfg.adr", "localhost" );
           } else {
              param.setProperty("init.info0", "\n      Your server config has been successfully saved.\n\n"
                                            +"      You must now send it to the wotlas manager : just"
-                                           +" attach the \"base/servers/server-"+serverID+".cfg\" file"
+                                           +" attach the \""+basePath+"/servers/server-"+serverID+".cfg\" file"
                                            +" to a mail and send it to the address "
-                                           +serverProperties.getProperty("REMOTE_SERVER_ADMIN_EMAIL","")
+                                           +serverProperties.getProperty("info.remoteServerAdminEmail","")
                                            +". You will then receive the up- to-date universe data and be"
                                            +" able to start your server." );
           }
@@ -826,72 +809,65 @@ public class ServerSetup extends JWizard {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Main. We don't expect any parameters.
-   *  @param argv none
+  /** Main. Starts the setup utility.
+   * @param argv enter -help to get some help info.
    */
     static public void main( String argv[] ) {
-        // STEP 0 - Log Creation
+
+        // STEP 1 - We parse the command line options
+           basePath = DEFAULT_BASE_PATH;
+           Debug.displayExceptionStack( true );
+
+           for( int i=0; i<argv.length; i++ ) {
+
+              if( !argv[i].startsWith("-") )
+                  continue;
+
+              if(argv[i].equals("-base")) {   // -- TO SET THE CONFIG FILES LOCATION --
+
+                   if(i==argv.length-1) {
+                      System.out.println("Location missing.");
+                      System.out.println(SETUP_COMMAND_LINE_HELP);
+                      return;
+                   }
+
+                   basePath = argv[i+1];
+              }
+              else if(argv[i].equals("-help")) {   // -- TO DISPLAY THE HELP --
+
+                   System.out.println(SETUP_COMMAND_LINE_HELP);
+                   return;
+              }
+           }
+
+        // STEP 2 - Log Creation
            try {
-              Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(), "../log/register-setup.log", "../base/gui/log-title-dark.jpg" ) );
+              Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(),
+                basePath+File.separator+SERVER_LOGS+File.separator+"register-setup.log",
+                "log-title-dark.jpg", basePath+File.separator+"gui" ) );
            } catch( java.io.FileNotFoundException e ) {
               e.printStackTrace();
               Debug.exit();
            }
-           
+
            Debug.signal(Debug.NOTICE,null,"Starting Register Setup...");
 
-        // STEP 1 - We load the database path. Where is the data ?
-           Properties properties = FileTools.loadPropertiesFile( DATABASE_CONFIG );
 
-             if( properties==null ) {
-                Debug.signal( Debug.FAILURE, null, "No valid server-database.cfg file found !" );
-                Debug.exit();
-             }
+           serverProperties = new ServerPropertiesFile(basePath+File.separator+SERVER_CONFIGS);
+           remoteServersProperties = new RemoteServersPropertiesFile(basePath+File.separator+SERVER_CONFIGS);
 
-           databasePath = properties.getProperty( "DATABASE_PATH","" );
-
-           if( databasePath.length()==0 ) {
-               Debug.signal( Debug.FAILURE, null, "No Database Path specified in config file !" );
-               Debug.exit();
-           }
-
-           Debug.signal( Debug.NOTICE, null, "DataBase Path Found : "+databasePath );
-
-        // STEP 2 - What is the current server ID ?
-           String s_serverID = properties.getProperty( "SERVER_ID","" );
-
-           if( s_serverID.length()==0 ) {
-               Debug.signal( Debug.FAILURE, null, "No ServerID specified in config file !" );
-               Debug.exit();
-           }
-
-           try{
-              serverID = Integer.parseInt( s_serverID );
-           }catch( Exception e ) {
-                Debug.signal( Debug.FAILURE, null, "Bad ServerID specified in config file !" );
-                Debug.exit();
-           }
-
+           serverID = serverProperties.getIntegerProperty("init.serverID");
            Debug.signal( Debug.NOTICE, null, "Current Default Server ID is : "+serverID );
 
+           serverConfigPrefixPath = basePath
+                               +File.separator+ServerConfigManager.SERVERS_HOME
+                               +File.separator+ServerConfigManager.SERVERS_PREFIX;
 
-        // STEP 3 - We get the remote server properties
-           serverProperties = FileTools.loadPropertiesFile( REMOTE_SERVER_CONFIG );
-
-             if( serverProperties==null ) {
-                Debug.signal( Debug.FAILURE, null, "No valid "+REMOTE_SERVER_CONFIG+" file found !" );
-                Debug.exit();
-             }
-
-
-           serverConfigPrefixPath = databasePath+File.separator+PersistenceManager.SERVERS_HOME
-                               +File.separator+PersistenceManager.SERVERS_PREFIX;
-
-         // STEP 4 - Creation of our Font Factory
-           FontFactory.createDefaultFontFactory( databasePath + File.separator + "fonts" );
+         // STEP 3 - Creation of our Font Factory
+           FontFactory.createDefaultFontFactory( basePath+File.separator+"fonts" );
            Debug.signal( Debug.NOTICE, null, "Font factory created..." );
 
-         // STEP 5 - Start the wizard
+         // STEP 4 - Start the wizard
            new ServerSetup();
     }
 

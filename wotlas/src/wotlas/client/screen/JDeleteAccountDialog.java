@@ -27,6 +27,7 @@ import wotlas.utils.aswing.*;
 import wotlas.common.ErrorCodeList;
 
 import wotlas.client.gui.JConnectionDialog;
+import wotlas.client.ClientDirector;
 
 import javax.swing.*;
 import java.awt.*;
@@ -92,7 +93,8 @@ public class JDeleteAccountDialog extends JConnectionDialog
 
         Runnable runnable = new Runnable() {
            public void run() {
-              new AInfoDialog( frame, ferror, true );
+              new AInfoDialog( frame, ferror, true,
+                               ClientDirector.getResourceManager().getBase("gui") );
            }
         };
 

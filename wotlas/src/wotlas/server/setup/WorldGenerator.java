@@ -40,27 +40,6 @@ public class WorldGenerator {
 
  /*------------------------------------------------------------------------------------*/
 
-   /** Static Link to Server Config File.
-    */
-    public final static String SERVER_CONFIG = "../src/config/server.cfg";
-
- /*------------------------------------------------------------------------------------*/
-
-   /** Complete Path to the database where are stored the universe and the client
-    *  accounts.
-    */
-      private static String databasePath;
-
-   /** Other eventual properties.
-    */
-      private static Properties properties;
-
-   /** Our Persistence Manager.
-    */
-      private static wotlas.server.PersistenceManager persistenceManager;
-
- /*------------------------------------------------------------------------------------*/
-
   /** Main method.
    *  @param argv not used
    */
@@ -69,21 +48,8 @@ public class WorldGenerator {
            float halfPI = (float)(Math.PI/2);
 
         // STEP 1 - We load the database path. Where is the data ?
-           properties = FileTools.loadPropertiesFile( SERVER_CONFIG );
+           String databasePath = "../base";
 
-             if( properties==null ) {
-                Debug.signal( Debug.FAILURE, null, "No valid server.cfg file found !" );
-                System.exit(1);
-             }
-
-           databasePath = properties.getProperty( "DATABASE_PATH" );
-
-             if( databasePath==null ) {
-                Debug.signal( Debug.FAILURE, null, "No Database Path specified in config file !" );
-                System.exit(1);
-             }
-
-           Debug.signal( Debug.NOTICE, null, "DataBase Path Found : "+databasePath );
 
         // STEP 2 - WORLD CREATION : RANDLAND
            WorldMap worldMaps[] = new WorldMap[1];
@@ -2284,10 +2250,10 @@ public class WorldGenerator {
              rooms[3].addRoomLink( rooms[2].getRoomLinks()[1] );
 
         // STEP XX - We save this simple universe.
-           persistenceManager = wotlas.server.PersistenceManager.createPersistenceManager( databasePath );
-           Debug.signal( Debug.NOTICE, null, "Persistence Manager Created..." );
+           ResourceManager rManager = new ResourceManager(databasePath,"","","");
+           WorldManager wManager = new WorldManager( worldMaps, rManager );
 
-           if( persistenceManager.saveLocalUniverse( worldMaps, true ) )
+           if( wManager.saveUniverse( true ) )
                Debug.signal( Debug.NOTICE, null, "World Save Succeeded..." );
            else
                Debug.signal( Debug.NOTICE, null, "World Save Failed..." );

@@ -19,11 +19,6 @@
 
 package wotlas.libs.log;
 
-import wotlas.utils.SwingTools;
-import wotlas.utils.JCroppedWindow;
-import wotlas.libs.graphics2D.ImageLibrary;
-import wotlas.utils.Tools;
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -36,8 +31,7 @@ import java.io.*;
  * @see wotlas.libs.log.LogStream
  */
 
-public class JLogStream extends LogStream
-{
+public class JLogStream extends LogStream {
  /*------------------------------------------------------------------------------------*/
 
    /** Max number of messages we display...
@@ -48,7 +42,6 @@ public class JLogStream extends LogStream
 
    /** Our CroppedWindow
     */
-     // private JDialog dialog;
      private JCroppedWindow dialog;
      
    /** Our JTextArea
@@ -66,24 +59,28 @@ public class JLogStream extends LogStream
  /*------------------------------------------------------------------------------------*/
 
    /** Constructor with file name. The log is saved to disk every 3 minutes.
+    *  Example : new JLogStream( frame, "client.log", "back.jpg", "../data/gui" );<br>
+    *
+    *  The "back.jpg" image given in the example is taken from "../data/gui".
     *
     * @param owner frame parent
     * @param logFileName log file to create or use if already existing.
-    * @param imageFileName image to display
+    * @param imageName image to display. The image is taken from the guiImagesPath.
+    * @param guiImagesPath path to the gui images.
     * @exception FileNotFoundException if we cannot use or create the given log file.
     */
-     public JLogStream( Frame owner, String logFileName, String imageFileName )
+     public JLogStream( Frame owner, String logFileName, String imageFileName,
+                        String guiImagesPath )
      throws FileNotFoundException {
           super( logFileName, false, 180*1000 );
 
-         // dialog = new JDialog( owner, false );
             if(imageFileName.indexOf("dark")<0)
-               dialog = new JCroppedWindow( owner, "Wotlas Log Window", false );
+               dialog = new JCroppedWindow( owner, "Wotlas Log Window", false, guiImagesPath );
             else
-               dialog = new JCroppedWindow( owner, "Wotlas Log Window", true );
+               dialog = new JCroppedWindow( owner, "Wotlas Log Window", true, guiImagesPath );
 
        // 1 - image panel
-          image = ImageLibrary.loadImage( imageFileName );
+          image = dialog.loadImage( guiImagesPath+File.separator+imageFileName );
 
           JPanel imPanel = new JPanel( true ) {
                 public void paint( Graphics g ) {
@@ -121,9 +118,12 @@ public class JLogStream extends LogStream
 
        // 4 - display
           dialog.pack();
-          SwingTools.centerComponent( dialog );
+
+          Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+          dialog.setLocation( (int) ((screenSize.getWidth() - dialog.getWidth()) / 2),
+                   (int) ((screenSize.getHeight() - dialog.getHeight()) / 2) );
+
           dialog.show();
-          Tools.waitTime(1000); // just some time to display the logo
      }
 
  /*------------------------------------------------------------------------------------*/

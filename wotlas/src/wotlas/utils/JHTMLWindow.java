@@ -70,8 +70,8 @@ public class JHTMLWindow extends JDialog implements ActionListener
     * @param height initial window height
     * @param center tells if the JDialog must be centered on screen
     */
-    public JHTMLWindow(Frame frame, String title, String fileName, int width, int height, boolean center ) {
-        this( frame, null, title, fileName, width, height, center, false );
+    public JHTMLWindow(Frame frame, String title, String fileName, int width, int height, boolean center, String guiImagesPath ) {
+        this( frame, null, title, fileName, width, height, center, false, guiImagesPath );
     }
 
  /*------------------------------------------------------------------------------------*/
@@ -88,10 +88,12 @@ public class JHTMLWindow extends JDialog implements ActionListener
     * @param center tells if the JDialog must be centered on screen
     * @param modal modal window ?
     */
-    public JHTMLWindow(Frame frame, String header, String title, String fileName, int width, int height, boolean center, boolean modal ) {
+    public JHTMLWindow(Frame frame, String header, String title, String fileName, int width, int height,
+                       boolean center, boolean modal, String guiImagesPath ) {
         super( frame, title, modal );
         String htmlText = null;
         URL url = null;
+        guiImagesPath = guiImagesPath + File.separator;
 
         if(header==null) header="";
 
@@ -121,8 +123,8 @@ public class JHTMLWindow extends JDialog implements ActionListener
          setBackground(Color.white);
 
       // We load the images
-         ImageIcon im_okup = new ImageIcon("../base/gui/ok-up.gif");
-         ImageIcon im_okdo = new ImageIcon("../base/gui/ok-do.gif");
+         ImageIcon im_okup = new ImageIcon(guiImagesPath+"ok-up.gif");
+         ImageIcon im_okdo = new ImageIcon(guiImagesPath+"ok-do.gif");
 
       // OK Button
          JButton b_ok = new JButton(im_okup);

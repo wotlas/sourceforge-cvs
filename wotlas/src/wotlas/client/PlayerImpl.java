@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-
 package wotlas.client;
 
 import wotlas.common.character.*;
@@ -215,7 +214,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
     location = myLocation;
 
     if ( location.isRoom() )
-      myRoom = DataManager.getDefaultDataManager().getWorldManager().getRoom( location );
+      myRoom = ClientDirector.getDataManager().getWorldManager().getRoom( location );
     else
       myRoom = null;
   }
@@ -339,7 +338,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
     *  @return player away Message
     */
       public String getPlayerAwayMessage() {
-      	     if(isConnectedToGame && this!=DataManager.getDefaultDataManager().getMyPlayer())
+      	     if(isConnectedToGame && this!=ClientDirector.getDataManager().getMyPlayer())
       	        return null;
 
              if(playerAwayMessage==null)
@@ -481,59 +480,59 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
 
   /** To set player's speed
    */
-  public void setSpeed( float speed ) {
-     movementComposer.setSpeed( (float)speed );
-  }
+   public void setSpeed( float speed ) {
+      movementComposer.setSpeed( (float)speed );
+   }
 
   /** To get player's speed
    */
-  public float getSpeed() {
-    return movementComposer.getSpeed();
-  }
+   public float getSpeed() {
+      return movementComposer.getSpeed();
+   }
 
   /** To set player's angular speed
    */
-  public void setAngularSpeed(float angularSpeed) {
-    movementComposer.setAngularSpeed( angularSpeed );
-  }
+   public void setAngularSpeed(float angularSpeed) {
+      movementComposer.setAngularSpeed( angularSpeed );
+   }
 
   /** To get player's angular speed
    */
-  public float getAngularSpeed() {
-    return movementComposer.getAngularSpeed();
-  }
+    public float getAngularSpeed() {
+       return movementComposer.getAngularSpeed();
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To get destination of trajectory
    */
-   public Point getEndPosition() {
-     return movementComposer.getTargetPosition();
-   }
+    public Point getEndPosition() {
+       return movementComposer.getTargetPosition();
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To set the player's movement.
    */
-   public void moveTo( Point endPoint ) {
+    public void moveTo( Point endPoint, WorldManager worldManager ) {
       synchronized( trajectoryLock ) {
-         movementComposer.moveTo( endPoint );
+         movementComposer.moveTo( endPoint, worldManager );
       }
-  }
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Returns true if the player is moving
    */
-  public boolean isMoving() {
-    return movementComposer.isMoving();
-  }
+    public boolean isMoving() {
+        return movementComposer.isMoving();
+    }
 
   /** To stop the player's movement
    */
-  public void stopMovement() {
-    movementComposer.stopMovement();
-  }
+    public void stopMovement() {
+        movementComposer.stopMovement();
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -612,7 +611,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
    * @param message message to send to the player.   
    */
      public void sendMessage( NetMessage message ) {
-        DataManager.getDefaultDataManager().sendMessage( message );             
+        ClientDirector.getDataManager().sendMessage( message );             
      }
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

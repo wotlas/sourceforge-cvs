@@ -67,7 +67,9 @@ public class JWizardTestingBench extends JWizard {
    */
    public JWizardTestingBench( int stepID ) {
 
-        super("Wizard Testing Bench",420,410);
+        super("Wizard Testing Bench","../base/gui",
+              new Font("Dialog",Font.BOLD,18), 420, 410 );
+
         setLocation(200,100);
         this.stepID = stepID;
 

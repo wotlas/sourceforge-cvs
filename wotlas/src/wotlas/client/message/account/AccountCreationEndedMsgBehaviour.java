@@ -55,7 +55,7 @@ public class AccountCreationEndedMsgBehaviour extends AccountCreationEndedMessag
      public void doBehaviour( Object sessionContext ) {
 
            Debug.signal(Debug.NOTICE,null,"Creation Succeeded !");
-           ClientManager.getDefaultClientManager().addNewProfile(clientID,serverID,login,password,playerName);
+           ClientDirector.getClientManager().addNewProfile(clientID,serverID,login,password,playerName);
 
         // the sessionContext is here a JWizard
            JAccountCreationWizard wizard = (JAccountCreationWizard) sessionContext;

@@ -24,7 +24,7 @@ import wotlas.libs.net.NetClient;
 import wotlas.libs.net.NetPersonality;
 
 import wotlas.common.ServerConfig;
-import wotlas.common.ServerConfigList;
+import wotlas.common.ServerConfigManager;
 import wotlas.common.ErrorCodeList;
 
 import wotlas.utils.Debug;
@@ -42,13 +42,13 @@ import java.io.IOException;
  * @author Aldiss
  */
 
-public class GatewayServer extends NetServer implements ErrorCodeList
-{
+public class GatewayServer extends NetServer implements ErrorCodeList {
+
  /*------------------------------------------------------------------------------------*/
 
    /** Server config list.
     */
-     private ServerConfigList configList;
+     private ServerConfigManager serverConfigManager;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -58,14 +58,14 @@ public class GatewayServer extends NetServer implements ErrorCodeList
    *  @param server_port port on which the server listens to clients.
    *  @param msg_packages a list of packages where we can find NetMsgBehaviour Classes.
    *  @param nbMaxSockets maximum number of sockets that can be opened on this server
-   *  @param configList config of all the servers.
+   *  @param serverConfigManager config of all the servers.
    */
     public GatewayServer( String host, int port, String packages[], int nbMaxSockets,
-                          ServerConfigList configList ) {
+                          ServerConfigManager serverConfigManager ) {
        super( host, port, packages );
        setMaximumOpenedSockets( nbMaxSockets );
 
-       this.configList = configList;
+       this.serverConfigManager = serverConfigManager;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -127,7 +127,7 @@ public class GatewayServer extends NetServer implements ErrorCodeList
           Debug.signal( Debug.NOTICE, null, "Starting "+accountPrimaryKey+" account transfert to server "+remoteServerID+"." );
 
        // STEP 1 - Get the remote server config
-          ServerConfig remoteServer = configList.getServerConfig( remoteServerID );
+          ServerConfig remoteServer = serverConfigManager.getServerConfig( remoteServerID );
 
           if(remoteServer==null) {
              Debug.signal(Debug.ERROR, this, "Server Config "+remoteServerID+" not found !" );
@@ -152,7 +152,7 @@ public class GatewayServer extends NetServer implements ErrorCodeList
             // We analyze the error returned
                if( client.getErrorCode()==ErrorCodeList.ERR_CONNECT_FAILED ) {
                   // we report the deadlink and try the eventualy new address
-                     String newServerName = configList.reportDeadServer(remoteServerID);
+                     String newServerName = serverConfigManager.reportDeadServer(remoteServerID);
                      if(newServerName!=null)
                         Debug.signal( Debug.NOTICE, null, "Server dead link. Trying "+newServerName+":"+remoteServer.getGatewayServerPort() );
 

@@ -113,7 +113,7 @@ public class JChatDisplay extends LogStream
          || (text.toLowerCase().indexOf("<pre")>-1) ) {
       return;
     }      
-      
+
     // Search for smileys
     text = Tools.subString(text, "0:)",  "<img width=16 height=20 src='file:../base/gui/chat/angel.gif'>");      
     text = Tools.subString(text, ":,(", "<img width=15 height=15 src='file:../base/gui/chat/cry.gif'>");

@@ -27,7 +27,7 @@ import wotlas.utils.*;
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.common.message.movement.*;
 import wotlas.common.universe.*;
-import wotlas.common.Player;
+import wotlas.common.*;
 import wotlas.server.*;
 import wotlas.common.message.description.*;
 import wotlas.common.message.account.*;
@@ -77,7 +77,7 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
            }
 
        // Is the movement possible ?
-          WorldManager wManager = DataManager.getDefaultDataManager().getWorldManager();
+          WorldManager wManager = ServerDirector.getDataManager().getWorldManager();
           TownMap currentTown = wManager.getTownMap( player.getLocation() );
 
        // which of them is the right mapExit ?
@@ -169,7 +169,7 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
 
                    if( targetServerID!=ServerDirector.getServerID() ) {
                     // ok ! we must transfert this account to another server !!   
-                       GatewayServer gateway = ServerManager.getDefaultServerManager().getGatewayServer();
+                       GatewayServer gateway = ServerDirector.getServerManager().getGatewayServer();
 
                         WotlasLocation oldLocation = player.getLocation();
                         int oldX = player.getX();
@@ -269,7 +269,7 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
              pReset = player.getMyRoom().getInsertionPoint();
          else {
            // We get the world manager
-             WorldManager wManager = DataManager.getDefaultDataManager().getWorldManager();
+             WorldManager wManager = ServerDirector.getDataManager().getWorldManager();
 
              if( player.getLocation().isTown() ) {
                  TownMap myTown = wManager.getTownMap( location );

@@ -62,13 +62,13 @@ public class AwayPanel extends JPanel
       playerTextArea.setWrapStyleWord(true);    
       playerTextArea.setEditable(true);
       playerTextArea.setAlignmentX(0.5f);
-      PlayerImpl player = DataManager.getDefaultDataManager().getMyPlayer();
+      PlayerImpl player = ClientDirector.getDataManager().getMyPlayer();
       playerTextArea.setText(player.getPlayerAwayMessage());
       centerPanel.add(new JScrollPane(playerTextArea),BorderLayout.CENTER);
       add(centerPanel, BorderLayout.CENTER);
 
-      ImageIcon im_saveup  = new ImageIcon("../base/gui/save-up.gif");
-      ImageIcon im_savedo  = new ImageIcon("../base/gui/save-do.gif");
+      ImageIcon im_saveup  = ClientDirector.getResourceManager().getImageIcon("save-up.gif");
+      ImageIcon im_savedo  = ClientDirector.getResourceManager().getImageIcon("save-do.gif");
       savePastButton = new AButton(im_saveup);
       savePastButton.setRolloverIcon(im_savedo);
       savePastButton.setPressedIcon(im_savedo);
@@ -79,7 +79,7 @@ public class AwayPanel extends JPanel
 
         savePastButton.addActionListener(new ActionListener() {
             public void actionPerformed (ActionEvent e) {                    	
-                PlayerImpl player = DataManager.getDefaultDataManager().getMyPlayer();
+                PlayerImpl player = ClientDirector.getDataManager().getMyPlayer();
 
                 String awayMessage = playerTextArea.getText();
                 
@@ -107,7 +107,7 @@ public class AwayPanel extends JPanel
   /** To reset this panel.
    */
    public void reset() {
-      PlayerImpl player = DataManager.getDefaultDataManager().getMyPlayer();
+      PlayerImpl player = ClientDirector.getDataManager().getMyPlayer();
       playerTextArea.setText(player.getPlayerAwayMessage());
    }
  }

@@ -24,9 +24,7 @@ import wotlas.client.screen.*;
 
 import wotlas.common.message.account.*;
 import wotlas.common.message.description.*;
-import wotlas.common.ServerConfig;
-import wotlas.common.ServerConfigList;
-import wotlas.common.ServerConfigListTableModel;
+import wotlas.common.*;
 
 import wotlas.libs.net.*;
 import wotlas.libs.net.personality.*;
@@ -53,17 +51,30 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import javax.swing.*;
 
-public class ClientManager implements ActionListener {
+/** The main small windows of the game : welcome, accounts, login, recover, delete.
+ *  The ClientManager is here to link the different GUIs between them. It also
+ *  possesses the client player profiles and server configs.
+ *
+ * @author Petrus
+ * @see wotlas.client.gui.JIntroWizard
+ */
+
+public class ClientManager extends JIntroWizard implements ActionListener {
 
  /*------------------------------------------------------------------------------------*/
   
-  /** Indexs of wizard step
+  /** Available steps for this Client Manager
    */
-  static private int RECOVER_ACCOUNT = 3;
-  
-  /** Our Default ClientManager.
-   */
-  private static ClientManager clientManager;
+    final static public int FIRST_INIT              = -1;
+    final static public int MAIN_SCREEN             =  0;
+    final static public int ACCOUNT_LOGIN_SCREEN    =  1;
+    final static public int DELETE_ACCOUNT_SCREEN   =  2;
+    final static public int RECOVER_ACCOUNT_SCREEN  =  3;
+    final static public int ACCOUNT_CREATION_SCREEN = 10;
+    final static public int ACCOUNT_INFO_SCREEN     = 11;
+    final static public int DATAMANAGER_DISPLAY     = 20;
+
+ /*------------------------------------------------------------------------------------*/
 
   /** Do we have to remember passwords ? i.e. save them to disk. (default is true).
    */
@@ -73,48 +84,40 @@ public class ClientManager implements ActionListener {
 
   /** Our ProfileConfigList file.
    */
-  private ProfileConfigList profileConfigList;
+    private ProfileConfigList profileConfigList;
 
   /** Current profileConfig
    */
-  private ProfileConfig currentProfileConfig;
+    private ProfileConfig currentProfileConfig;
   
-  /** Our ServerConfigList file.
+  /** Our ServerConfigManager file.
    */
-  private ServerConfigList serverConfigList;
+    private ServerConfigManager serverConfigManager;
 
   /** Current serverConfig
    */
-  ServerConfig currentServerConfig;
-
-  /** Generic interface of Wotlas client
-   */
-  public JIntroWizard screenIntro;
+    private ServerConfig currentServerConfig;
 
   /** Index of current screen shown
    */
-  private int indexScreen;
+    private int indexScreen;
 
-  /** Path to the local server database.
+  /** Number of tries to reach wotlas *web* server
    */
-  private String databasePath;
-
-  /** Number of tries to reach wotlas web server
-   */
-  private short nbTry;
+    private short nbTry;
 
   /** pictures of buttons
    */
-  private ImageIcon im_okup, im_okdo, im_okun;
-  private ImageIcon im_cancelup, im_canceldo, im_cancelun;
-  private ImageIcon im_newup, im_newdo;
-  private ImageIcon im_loadup, im_loaddo, im_loadun;
-  private ImageIcon im_recoverup, im_recoverdo, im_recoverun;
-  private ImageIcon im_delup, im_deldo, im_delun;
-  private ImageIcon im_exitup, im_exitdo;
-  private ImageIcon im_aboutup, im_aboutdo;
-  private ImageIcon im_helpup, im_helpdo;
-  private ImageIcon im_optionsup, im_optionsdo;
+    private ImageIcon im_okup, im_okdo, im_okun;
+    private ImageIcon im_cancelup, im_canceldo, im_cancelun;
+    private ImageIcon im_newup, im_newdo;
+    private ImageIcon im_loadup, im_loaddo, im_loadun;
+    private ImageIcon im_recoverup, im_recoverdo, im_recoverun;
+    private ImageIcon im_delup, im_deldo, im_delun;
+    private ImageIcon im_exitup, im_exitdo;
+    private ImageIcon im_aboutup, im_aboutdo;
+    private ImageIcon im_helpup, im_helpdo;
+    private ImageIcon im_optionsup, im_optionsdo;
 
   /** Default font
    */
@@ -145,81 +148,63 @@ public class ClientManager implements ActionListener {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Constructor. Attemps to load the config/client-profiles.cfg file...
+  /** Constructor. Loads/create the different config files but does not display anything.
    */
-  private ClientManager(String databasePath) {
-    this.databasePath = databasePath;
-    automaticLogin = false;
-
-    PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
+   public ClientManager( ResourceManager rManager ) {
+       super();
+       automaticLogin = false;
 
     // 1 - We load the ProfileConfigList
-    if( new File("../src/config/client-profiles.cfg").exists() )
-        profileConfigList = pm.loadProfileConfigs();
+       profileConfigList = ProfileConfigList.load();
 
-    if (profileConfigList == null) {
-      Debug.signal( Debug.NOTICE, this, "no client's profile found : creating a new one..." );
-    } else {
-      Debug.signal( Debug.NOTICE, null, "Client Configs loaded with success !" );
-    }
+       if ( profileConfigList == null ) {
+           Debug.signal( Debug.NOTICE, this, "no client's profile found : creating a new one..." );
+           profileConfigList = new ProfileConfigList();
+       }
+       else
+           Debug.signal( Debug.NOTICE, null, "Client Configs loaded with success !" );
 
-    if(!rememberPasswords)
-       profileConfigList.deletePasswords(); // make sure we don't save any password here
+       if(!rememberPasswords) {
+          profileConfigList.deletePasswords(); // make sure we don't save any password here
+          profileConfigList.save();
+       }
 
-    // 2 - We load the ServerConfigList
-    serverConfigList = new ServerConfigList(pm);
-    Debug.signal( Debug.NOTICE, null, "Server Configs loaded with success !" );
-    serverConfigList.setRemoteServerConfigHomeURL( ClientDirector.getRemoteServerConfigHomeURL() );
+    // 2 - We load the ServerConfigManager
+       serverConfigManager = new ServerConfigManager( rManager );
+       serverConfigManager.setRemoteServerConfigHomeURL( ClientDirector.getRemoteServerConfigHomeURL() );
+       Debug.signal( Debug.NOTICE, null, "Server config Manager started with success !" );
 
-    // 3 - We create the wizard to connect Wotlas
-    screenIntro = new JIntroWizard();
-    screenIntro.setGUI();
-    f = FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter");
+    // 3 - We get the font we are going to use...
+       f = FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter");
   }
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Creates a client manager. Attemps to load the config/client.cfg file...
-   *
-   * @return the created (or previously created) client manager.
+  /** To get the Profile Config.
+   * @return the Profile Config
    */
-  public static ClientManager createClientManager(String databasePath) {
-    if (clientManager == null)
-      clientManager = new ClientManager(databasePath);
-    return clientManager;
+   public ProfileConfigList getProfileConfigList() {
+        return profileConfigList;
+   }
+
+  /** To get the current Profile Config.
+   * @return the ProfilesConfig
+   */
+   public ProfileConfig getCurrentProfileConfig() {
+        return currentProfileConfig;
    }
 
  /*------------------------------------------------------------------------------------*/
 
-  /** To get the default client manager.
+  /** To get the ServerConfigManager.
    *
-   * @return the default client manager.
+   * @return the ServerConfigManager
    */
-  public static ClientManager getDefaultClientManager() {
-    return clientManager;
-  }
+   public ServerConfigManager getServerConfigManager() {
+        return serverConfigManager;
+   }
 
  /*------------------------------------------------------------------------------------*/
-
-  /** To get the ProfilesConfig.
-   *
-   * @return the ProfilesConfig
-   */
-  public ProfileConfigList getProfileConfigList() {
-    return profileConfigList;
-  }
-  
-  public ProfileConfig getCurrentProfileConfig() {
-    return currentProfileConfig;
-  }
-
-  /** To get the ServerConfigList.
-   *
-   * @return the ServerConfigList
-   */
-  public ServerConfigList getServerConfigList() {
-    return serverConfigList;
-  }
 
   /** To set automatic login or not.
    *  Automatic login makes that the password prompt doesn't displays if
@@ -237,25 +222,16 @@ public class ClientManager implements ActionListener {
    public boolean getAutomaticLogin() {
       return automaticLogin;
    }
-   
- /*------------------------------------------------------------------------------------*/
-  
-  /** To get client screen
-   */
-  public JIntroWizard getScreenIntro() {
-    return screenIntro;
-  }  
 
  /*------------------------------------------------------------------------------------*/
 
   /** Starts the Wizard at the beginning of the game
    */
-  public void start(int state)
-  {
+  public void start(int state) {
+
     JPanel leftPanel;
     JPanel rightPanel;
 
-    JPanel tempPanel;
     JScrollPane scrollPane;
 
     ALabel label1;
@@ -295,17 +271,17 @@ public class ClientManager implements ActionListener {
       // *** First Screen ***
       // ********************
 
-      case -1:
+      case FIRST_INIT:
          // We try to contact the wotlas web server...
         nbTry=1;
         Timer timer = new Timer(5000,this);
         timer.start();
 
-        serverConfigList.getLatestConfigFiles(screenIntro);
+        serverConfigManager.getLatestConfigFiles(this);
         timer.stop();
 
-        if( serverConfigList.getRemoteServerTable()==null )
-            JOptionPane.showMessageDialog( screenIntro, "We failed to contact the wotlas web server. So we could not update\n"+
+        if( !serverConfigManager.hasRemoteServersInfo() )
+            JOptionPane.showMessageDialog( this, "We failed to contact the wotlas web server. So we could not update\n"+
                                                  "our servers addresses. If this is not the first time you start wotlas on\n"+
                                                  "your computer, you can try to connect with the previous server config\n"+
                                                  "files. Otherwise please restart wotlas later.\n\n"+
@@ -313,56 +289,58 @@ public class ClientManager implements ActionListener {
                                                  "more details ( from the help section or 'wotlas.html' local file ).",
                                                  "Warning", JOptionPane.WARNING_MESSAGE);
         else  // Wotlas News
-            new JHTMLWindow( screenIntro, "Wotlas News", ClientDirector.getRemoteServerConfigHomeURL()+"news.html", 320, 400, false );
+            new JHTMLWindow( this, "Wotlas News", ClientDirector.getRemoteServerConfigHomeURL()+"news.html",
+                             320, 400, false, ClientDirector.getResourceManager().getBase("gui") );
 
          // Load images of buttons
-      im_cancelup    = new ImageIcon("../base/gui/cancel-up.gif");
-      im_canceldo    = new ImageIcon("../base/gui/cancel-do.gif");
-      im_cancelun    = new ImageIcon("../base/gui/cancel-un.gif");
-      im_okup    = new ImageIcon("../base/gui/ok-up.gif");
-      im_okdo    = new ImageIcon("../base/gui/ok-do.gif");
-      im_okun    = new ImageIcon("../base/gui/ok-un.gif");
-      im_recoverup = new ImageIcon("../base/gui/recover-up.gif");
-      im_recoverdo = new ImageIcon("../base/gui/recover-do.gif");
-      im_recoverun = new ImageIcon("../base/gui/recover-un.gif");
-      im_delup    = new ImageIcon("../base/gui/delete-up.gif");
-      im_deldo    = new ImageIcon("../base/gui/delete-do.gif");
-      im_delun    = new ImageIcon("../base/gui/delete-un.gif");
-      im_exitup   = new ImageIcon("../base/gui/exit-up.gif");
-      im_exitdo   = new ImageIcon("../base/gui/exit-do.gif");      
-      im_loadup   = new ImageIcon("../base/gui/load-up.gif");
-      im_loaddo   = new ImageIcon("../base/gui/load-do.gif");
-      im_loadun   = new ImageIcon("../base/gui/load-un.gif");
-      im_newup    = new ImageIcon("../base/gui/new-up.gif");
-      im_newdo    = new ImageIcon("../base/gui/new-do.gif");
-      im_aboutup  = new ImageIcon("../base/gui/about-up.gif");
-      im_aboutdo  = new ImageIcon("../base/gui/about-do.gif");
-      im_helpup  = new ImageIcon("../base/gui/help-up.gif");
-      im_helpdo  = new ImageIcon("../base/gui/help-do.gif");
-      im_optionsup = new ImageIcon("../base/gui/options-up.gif");
-      im_optionsdo  = new ImageIcon("../base/gui/options-do.gif");
+        im_cancelup    = ClientDirector.getResourceManager().getImageIcon("cancel-up.gif");
+        im_canceldo    = ClientDirector.getResourceManager().getImageIcon("cancel-do.gif");
+        im_cancelun    = ClientDirector.getResourceManager().getImageIcon("cancel-un.gif");
+        im_okup    = ClientDirector.getResourceManager().getImageIcon("ok-up.gif");
+        im_okdo    = ClientDirector.getResourceManager().getImageIcon("ok-do.gif");
+        im_okun    = ClientDirector.getResourceManager().getImageIcon("ok-un.gif");
+        im_recoverup = ClientDirector.getResourceManager().getImageIcon("recover-up.gif");
+        im_recoverdo = ClientDirector.getResourceManager().getImageIcon("recover-do.gif");
+        im_recoverun = ClientDirector.getResourceManager().getImageIcon("recover-un.gif");
+        im_delup    = ClientDirector.getResourceManager().getImageIcon("delete-up.gif");
+        im_deldo    = ClientDirector.getResourceManager().getImageIcon("delete-do.gif");
+        im_delun    = ClientDirector.getResourceManager().getImageIcon("delete-un.gif");
+        im_exitup   = ClientDirector.getResourceManager().getImageIcon("exit-up.gif");
+        im_exitdo   = ClientDirector.getResourceManager().getImageIcon("exit-do.gif");      
+        im_loadup   = ClientDirector.getResourceManager().getImageIcon("load-up.gif");
+        im_loaddo   = ClientDirector.getResourceManager().getImageIcon("load-do.gif");
+        im_loadun   = ClientDirector.getResourceManager().getImageIcon("load-un.gif");
+        im_newup    = ClientDirector.getResourceManager().getImageIcon("new-up.gif");
+        im_newdo    = ClientDirector.getResourceManager().getImageIcon("new-do.gif");
+        im_aboutup  = ClientDirector.getResourceManager().getImageIcon("about-up.gif");
+        im_aboutdo  = ClientDirector.getResourceManager().getImageIcon("about-do.gif");
+        im_helpup  = ClientDirector.getResourceManager().getImageIcon("help-up.gif");
+        im_helpdo  = ClientDirector.getResourceManager().getImageIcon("help-do.gif");
+        im_optionsup = ClientDirector.getResourceManager().getImageIcon("options-up.gif");
+        im_optionsdo  = ClientDirector.getResourceManager().getImageIcon("options-do.gif");
 
-        indexScreen = 0;
-        state = 0;
+        indexScreen = MAIN_SCREEN;
+        state = MAIN_SCREEN;
 
-      case 0:
-      screenIntro.setTitle("Wotlas - Account selection...");
 
-      if( SoundLibrary.getSoundLibrary()!=null )
+     case MAIN_SCREEN:
+
+       setTitle("Wotlas - Account selection...");
+
+       if( SoundLibrary.getSoundLibrary()!=null )
           SoundLibrary.getSoundLibrary().stopMusic();
 
       // Test if an account exists
-      if (profileConfigList==null) {
-        profileConfigList = new ProfileConfigList();
-        start(10);
-        return;
-      }
+       if ( profileConfigList.size()==0 ) {
+         start(ACCOUNT_CREATION_SCREEN);
+         return;
+       }
 
       // Create panels
-      leftPanel = new JPanel();
-      leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
-      rightPanel = new JPanel();
-      rightPanel.setLayout(new FlowLayout(FlowLayout.CENTER, screenIntro.getRightWidth(), 5));
+       leftPanel = new JPanel();
+       leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
+       rightPanel = new JPanel();
+       rightPanel.setLayout(new FlowLayout(FlowLayout.CENTER, getRightWidth(), 5));
 
       // Create buttons
       b_about = new JButton(im_aboutup);
@@ -443,30 +421,18 @@ public class ClientManager implements ActionListener {
 
       // *** Left JPanel ***
 
-      imgLabel1 = new JLabel(new ImageIcon("../base/gui/welcome-title.jpg"));
+      imgLabel1 = new JLabel(ClientDirector.getResourceManager().getImageIcon("welcome-title.jpg"));
       imgLabel1.setAlignmentX(Component.CENTER_ALIGNMENT);
       leftPanel.add(imgLabel1);
 
-      imgLabel2 = new JLabel(new ImageIcon("../base/gui/choose.gif"));
+      imgLabel2 = new JLabel(ClientDirector.getResourceManager().getImageIcon("choose.gif"));
       imgLabel2.setAlignmentX(Component.CENTER_ALIGNMENT);
       leftPanel.add(imgLabel2);
 
       leftPanel.add(Box.createRigidArea(new Dimension(0,10)));
 
       // Creates a table of profiles
-      // data
-      ProfileConfigListTableModel profileConfigListTabModel = new ProfileConfigListTableModel(profileConfigList, serverConfigList);
-      /*profilesTable = new JTable(profileConfigListTabModel) {
-        public String getToolTipText(MouseEvent event) {
-          if (getSelectedRow() > -1) {
-            currentServerConfig = serverConfigList.ServerConfigAt(getSelectedRow());
-            String str = currentServerConfig.getServerName() + " : " + currentServerConfig.getDescription() + " .";
-            return str;
-          } else {
-            return null;
-          }
-        }
-      };*/
+      ProfileConfigListTableModel profileConfigListTabModel = new ProfileConfigListTableModel(profileConfigList, serverConfigManager);
       profilesTable = new JTable(profileConfigListTabModel);
       profilesTable.setDefaultRenderer(Object.class, new ATableCellRenderer());
       profilesTable.setBackground(Color.white);
@@ -490,15 +456,13 @@ public class ClientManager implements ActionListener {
             //no rows are selected
           } else {
             int selectedRow = lsm.getMinSelectionIndex();
-            //selectedRow is selected
-            //currentServerConfig = serverConfigList.ServerConfigAt(selectedRow);
-            //profilesTable.setToolTipText(currentServerConfig.getDescription());
             currentProfileConfig = profileConfigList.getProfiles()[selectedRow];
             b_load.setEnabled(true);
             b_delProfile.setEnabled(true);
           }
         }
       });
+
       // show table
       scrollPane = new JScrollPane(profilesTable);
       profilesTable.setPreferredScrollableViewportSize(new Dimension(0, 170));
@@ -511,7 +475,7 @@ public class ClientManager implements ActionListener {
       b_load.setEnabled(false);
       b_load.addActionListener(new ActionListener() {
           public void actionPerformed (ActionEvent e) {
-            start(indexScreen+1);
+            start(ACCOUNT_LOGIN_SCREEN);
           }
         }
       );
@@ -519,18 +483,18 @@ public class ClientManager implements ActionListener {
 
       b_newProfile.addActionListener(new ActionListener() {
           public void actionPerformed (ActionEvent e) {
-            start(10);
+            start(ACCOUNT_CREATION_SCREEN);
           }
         }
       );
       rightPanel.add(b_newProfile);
 
-      rightPanel.add( new JLabel( new ImageIcon("../base/gui/separator.gif") ) );  // SEPARATOR
+      rightPanel.add( new JLabel( ClientDirector.getResourceManager().getImageIcon("separator.gif") ) );  // SEPARATOR
 
       b_recoverProfile.setEnabled(true);
       b_recoverProfile.addActionListener(new ActionListener() {
           public void actionPerformed (ActionEvent e) {
-            start(RECOVER_ACCOUNT);
+            start(RECOVER_ACCOUNT_SCREEN);
           }
         }
       );
@@ -540,18 +504,18 @@ public class ClientManager implements ActionListener {
 
       b_delProfile.addActionListener(new ActionListener() {
           public void actionPerformed (ActionEvent e) {
-            start(2);
+            start(DELETE_ACCOUNT_SCREEN);
           }
         }
       );
 
       rightPanel.add(b_delProfile);
 
-      rightPanel.add( new JLabel( new ImageIcon("../base/gui/separator.gif") ) );  // SEPARATOR
+      rightPanel.add( new JLabel( ClientDirector.getResourceManager().getImageIcon("separator.gif") ) );  // SEPARATOR
 
       b_option.addActionListener(new ActionListener() {
           public void actionPerformed (ActionEvent e) {
-             new JConfigurationDlg( screenIntro );
+             new JConfigurationDlg( ClientManager.this );
           }
         }
       );
@@ -560,18 +524,21 @@ public class ClientManager implements ActionListener {
 
       b_help.addActionListener(new ActionListener() {
           public void actionPerformed (ActionEvent e) {
-             new JHTMLWindow( screenIntro, "Help", "../docs/help/index.html", 640, 340, false );
+             new JHTMLWindow( ClientManager.this, "Help",
+                 ClientDirector.getResourceManager().getHelp("index.html"),
+                 640, 340, false,
+                 ClientDirector.getResourceManager().getBase("gui") );
           }
         }
       );
       rightPanel.add(b_help);
 
-      rightPanel.add( new JLabel( new ImageIcon("../base/gui/separator.gif") ) );  // SEPARATOR
+      rightPanel.add( new JLabel( ClientDirector.getResourceManager().getImageIcon("separator.gif") ) );  // SEPARATOR
 
       b_about.addActionListener(new ActionListener() {
           public void actionPerformed (ActionEvent e) {
             try{
-              new JAbout( screenIntro );
+              new JAbout( ClientManager.this );
             }catch(Exception ei ) {
               Debug.signal( Debug.ERROR, this, ei );
             }
@@ -581,8 +548,8 @@ public class ClientManager implements ActionListener {
       rightPanel.add(b_about);
 
       b_exitProfile.addActionListener(new ActionListener() {
-          public void actionPerformed (ActionEvent e) {
-                DataManager.getDefaultDataManager().exit();
+          public void actionPerformed(ActionEvent e) {
+             ClientDirector.getDataManager().exit();
           }
         }
       );
@@ -590,23 +557,22 @@ public class ClientManager implements ActionListener {
       
       // *** Adding the panels ***
 
-      screenIntro.setLeftPanel(leftPanel);
-      screenIntro.setRightPanel(rightPanel);
-      screenIntro.showScreen();
+      setLeftPanel(leftPanel);
+      setRightPanel(rightPanel);
+      showScreen();
       break;
 
     // ********************************
     // *** Connection to GameServer ***
     // ********************************
 
-    case 1:
-      screenIntro.setTitle("Wotlas - Login...");
+    case ACCOUNT_LOGIN_SCREEN:
+      setTitle("Wotlas - Login...");
 
       // Create panels
       leftPanel = new JPanel();
       leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
       rightPanel = new JPanel();
-      //rightPanel.setLayout(new FlowLayout(FlowLayout.CENTER, screenIntro.getRightWidth(), 10));
 
       // Create buttons
       b_ok = new JButton(im_okup);
@@ -628,9 +594,6 @@ public class ClientManager implements ActionListener {
       // *** Left JPanel ***
 
       label1 = new ALabel("Welcome " + currentProfileConfig.getLogin() + ",");
-
-
-//      label1 = new ALabel("Welcome " + currentProfileConfig.getLogin() + ",");
       label1.setAlignmentX(Component.CENTER_ALIGNMENT);
       leftPanel.add(label1);
       label1.setFont(f.deriveFont(18f));
@@ -641,8 +604,8 @@ public class ClientManager implements ActionListener {
 
         JPanel formPanel_01_left = new JPanel(new GridLayout(2,1,5,5));
           formPanel_01_left.setBackground(Color.white);
-          formPanel_01_left.add(new JLabel(new ImageIcon("../base/gui/enter-password.gif")));
-          formPanel_01_left.add(new JLabel(new ImageIcon("../base/gui/your-key.gif")));
+          formPanel_01_left.add(new JLabel(ClientDirector.getResourceManager().getImageIcon("enter-password.gif")));
+          formPanel_01_left.add(new JLabel(ClientDirector.getResourceManager().getImageIcon("your-key.gif")));
         mainPanel_01.add(formPanel_01_left);
         JPanel formPanel_01_right = new JPanel(new GridLayout(2,1,5,10));
           formPanel_01_right.setBackground(Color.white);
@@ -672,31 +635,31 @@ public class ClientManager implements ActionListener {
         public void actionPerformed (ActionEvent e) {
           char charPasswd[] = pfield1.getPassword();
           if (charPasswd.length < 4) {
-            JOptionPane.showMessageDialog( screenIntro, "Password must have at least 5 characters !", "New Password", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog( ClientManager.this, "Password must have at least 5 characters !", "New Password", JOptionPane.ERROR_MESSAGE);
           } else {
             String passwd = new String(charPasswd);
 
-            DataManager.getDefaultDataManager().setCurrentProfileConfig(currentProfileConfig);
+            ClientDirector.getDataManager().setCurrentProfileConfig(currentProfileConfig);
 
-            currentServerConfig = serverConfigList.getServerConfig(currentProfileConfig.getServerID());
+            currentServerConfig = serverConfigManager.getServerConfig(currentProfileConfig.getServerID());
 
-            JGameConnectionDialog jgconnect = new JGameConnectionDialog( screenIntro,
+            JGameConnectionDialog jgconnect = new JGameConnectionDialog( ClientManager.this,
                     currentServerConfig.getServerName(), currentServerConfig.getGameServerPort(),
                     currentServerConfig.getServerID(),
                     currentProfileConfig.getLogin(), passwd, currentProfileConfig.getLocalClientID(),
-                    currentProfileConfig.getOriginalServerID(), DataManager.getDefaultDataManager());
+                    currentProfileConfig.getOriginalServerID(), ClientDirector.getDataManager());
 
             if ( jgconnect.hasSucceeded() ) {
               currentProfileConfig.setPassword(passwd);
 
               if(rememberPasswords)
-                 PersistenceManager.getDefaultPersistenceManager().saveProfilesConfig(profileConfigList);
+                 profileConfigList.save();
 
               Debug.signal( Debug.NOTICE, null, "ClientManager connected to GameServer");
-              start(100);
+              start(DATAMANAGER_DISPLAY);
             } else {
               Debug.signal( Debug.ERROR, this, "ClientManager ejected from GameServer");
-              start(0);
+              start(MAIN_SCREEN);
             }
           }
         }
@@ -706,16 +669,16 @@ public class ClientManager implements ActionListener {
 
       b_cancel.addActionListener(new ActionListener() {
         public void actionPerformed (ActionEvent e) {
-            start(0);
+            start(MAIN_SCREEN);
         }
       }
       );
       rightPanel.add(b_cancel);
 
       // *** Adding the panels ***
-      screenIntro.setLeftPanel(leftPanel);
-      screenIntro.setRightPanel(rightPanel);
-      screenIntro.showScreen();
+      setLeftPanel(leftPanel);
+      setRightPanel(rightPanel);
+      showScreen();
 
       if( automaticLogin && currentProfileConfig.getPassword()!=null ) {
       	 automaticLogin = false;  // works only once...
@@ -728,8 +691,8 @@ public class ClientManager implements ActionListener {
     // ***   To Delete An Account   ***
     // ********************************
 
-    case 2:
-      screenIntro.setTitle("Wotlas - Delete Account...");
+    case DELETE_ACCOUNT_SCREEN:
+      setTitle("Wotlas - Delete Account...");
 
       // Create panels
       leftPanel = new JPanel();
@@ -766,8 +729,8 @@ public class ClientManager implements ActionListener {
         mainPanel_02.setBackground(Color.white);
         JPanel formPanel_02_left = new JPanel(new GridLayout(2,1,5,5));
           formPanel_02_left.setBackground(Color.white);
-          formPanel_02_left.add(new JLabel(new ImageIcon("../base/gui/enter-password.gif")));
-          formPanel_02_left.add(new JLabel(new ImageIcon("../base/gui/your-key.gif")));
+          formPanel_02_left.add(new JLabel(ClientDirector.getResourceManager().getImageIcon("enter-password.gif")));
+          formPanel_02_left.add(new JLabel(ClientDirector.getResourceManager().getImageIcon("your-key.gif")));
         mainPanel_02.add(formPanel_02_left);
         JPanel formPanel_02_right = new JPanel(new GridLayout(2,1,5,10));
           formPanel_02_right.setBackground(Color.white);
@@ -798,15 +761,15 @@ public class ClientManager implements ActionListener {
           char charPasswd[] = pfield1.getPassword();
           String passwd = "";
           if (charPasswd.length < 4) {
-            JOptionPane.showMessageDialog( screenIntro, "Password must have at least 5 characters !", "New Password", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog( ClientManager.this, "Password must have at least 5 characters !", "New Password", JOptionPane.ERROR_MESSAGE);
           } else {
             for (int i=0; i<charPasswd.length; i++) {
               passwd += charPasswd[i];
             }
 
-            currentServerConfig = serverConfigList.getServerConfig(currentProfileConfig.getServerID());
+            currentServerConfig = serverConfigManager.getServerConfig(currentProfileConfig.getServerID());
 
-            JDeleteAccountDialog jdconnect = new JDeleteAccountDialog( screenIntro,
+            JDeleteAccountDialog jdconnect = new JDeleteAccountDialog( ClientManager.this,
                     currentServerConfig.getServerName(), currentServerConfig.getAccountServerPort(),
                     currentServerConfig.getServerID(),
                     currentProfileConfig.getLogin()+"-"+
@@ -820,10 +783,10 @@ public class ClientManager implements ActionListener {
                  if( !profileConfigList.removeProfile(currentProfileConfig) )
                     Debug.signal( Debug.ERROR, this, "Failed to delete player profile !" );
                  else
-                    PersistenceManager.getDefaultPersistenceManager().saveProfilesConfig(profileConfigList);
+                    profileConfigList.save();
             }
 
-            start(0); // return to main screen
+            start(MAIN_SCREEN); // return to main screen
           }
         }
       }
@@ -832,26 +795,24 @@ public class ClientManager implements ActionListener {
 
       b_cancel.addActionListener(new ActionListener() {
         public void actionPerformed (ActionEvent e) {
-            start(0);
+            start(MAIN_SCREEN);
         }
-      }
-      );
+      });
       rightPanel.add(b_cancel);
 
       // *** Adding the panels ***
-
-      screenIntro.setLeftPanel(leftPanel);
-      screenIntro.setRightPanel(rightPanel);
-      screenIntro.showScreen();
+      setLeftPanel(leftPanel);
+      setRightPanel(rightPanel);
+      showScreen();
       break;
 
     // *********************************
     // *** Recover an existing account ****
     // *********************************
     
-    case 3:
-    
-    screenIntro.setTitle("Wotlas - Recover Login");
+    case RECOVER_ACCOUNT_SCREEN:
+
+      setTitle("Wotlas - Recover Login");
 
       // Create panels
       leftPanel = new JPanel();
@@ -889,8 +850,8 @@ public class ClientManager implements ActionListener {
         mainPanel_03.setBackground(Color.white);
         JPanel formPanel_03_left = new JPanel(new GridLayout(2,1,5,5));
           formPanel_03_left.setBackground(Color.white);
-          formPanel_03_left.add(new JLabel(new ImageIcon("../base/gui/your-key.gif")));
-          formPanel_03_left.add(new JLabel(new ImageIcon("../base/gui/enter-password.gif")));
+          formPanel_03_left.add(new JLabel(ClientDirector.getResourceManager().getImageIcon("your-key.gif")));
+          formPanel_03_left.add(new JLabel(ClientDirector.getResourceManager().getImageIcon("enter-password.gif")));
         mainPanel_03.add(formPanel_03_left);
         JPanel formPanel_03_right = new JPanel(new GridLayout(2,1,5,10));
           formPanel_03_right.setBackground(Color.white);
@@ -917,7 +878,7 @@ public class ClientManager implements ActionListener {
           char charPasswd[] = pfield1.getPassword();
 
           if (charPasswd.length < 4) {
-            JOptionPane.showMessageDialog( screenIntro, "Password must have at least 5 characters !", "Password", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog( ClientManager.this, "Password must have at least 5 characters !", "Password", JOptionPane.ERROR_MESSAGE);
           } else {
                     
             currentProfileConfig = new ProfileConfig();
@@ -925,8 +886,8 @@ public class ClientManager implements ActionListener {
             String tempKey = atf_key.getText();
             int index = tempKey.indexOf('-');
             if (index<0) {
-              JOptionPane.showMessageDialog( screenIntro, "Your key must have the following format : login-xx-yy.\nExample: bob-1-36", "Bad Format", JOptionPane.ERROR_MESSAGE);
-              start(0);
+              JOptionPane.showMessageDialog( ClientManager.this, "Your key must have the following format : login-xx-yy.\nExample: bob-1-36", "Bad Format", JOptionPane.ERROR_MESSAGE);
+              start(MAIN_SCREEN);
               return;
             }
 
@@ -938,8 +899,8 @@ public class ClientManager implements ActionListener {
             index = tempKey.indexOf('-');
 
             if (index<0) {
-              JOptionPane.showMessageDialog( screenIntro, "Your key must have the following format : login-xx-yy.\nExample: bob-1-36", "Bad Format", JOptionPane.ERROR_MESSAGE);
-              start(0);   
+              JOptionPane.showMessageDialog( ClientManager.this, "Your key must have the following format : login-xx-yy.\nExample: bob-1-36", "Bad Format", JOptionPane.ERROR_MESSAGE);
+              start(MAIN_SCREEN);   
               return;
             }         
 
@@ -948,38 +909,34 @@ public class ClientManager implements ActionListener {
               currentProfileConfig.setOriginalServerID(Integer.parseInt(tempKey.substring(0,index)));
               currentProfileConfig.setLocalClientID(Integer.parseInt(tempKey.substring(index+1)));
             } catch (NumberFormatException nfes) {
-              JOptionPane.showMessageDialog( screenIntro, "Your key must have the following format : login-xx-yy.\nExample: bob-1-36", "Bad Format", JOptionPane.ERROR_MESSAGE);
-              start(0);
+              JOptionPane.showMessageDialog( ClientManager.this, "Your key must have the following format : login-xx-yy.\nExample: bob-1-36", "Bad Format", JOptionPane.ERROR_MESSAGE);
+              start(MAIN_SCREEN);
               return;
             }
             
-            DataManager.getDefaultDataManager().setCurrentProfileConfig(currentProfileConfig);
-            currentServerConfig = serverConfigList.getServerConfig(currentProfileConfig.getServerID());
+            ClientDirector.getDataManager().setCurrentProfileConfig(currentProfileConfig);
+            currentServerConfig = serverConfigManager.getServerConfig(currentProfileConfig.getServerID());
 
             if(currentServerConfig==null) {
-              JOptionPane.showMessageDialog( screenIntro, "Failed to find the associated server.", "ERROR", JOptionPane.ERROR_MESSAGE);
-              start(0);
+              JOptionPane.showMessageDialog( ClientManager.this, "Failed to find the associated server.", "ERROR", JOptionPane.ERROR_MESSAGE);
+              start(MAIN_SCREEN);
               return;
             }
 
-            JGameConnectionDialog jgconnect = new JGameConnectionDialog( screenIntro,
+            JGameConnectionDialog jgconnect = new JGameConnectionDialog( ClientManager.this,
                     currentServerConfig.getServerName(), currentServerConfig.getGameServerPort(),
                     currentServerConfig.getServerID(),
                     currentProfileConfig.getLogin(), new String(charPasswd), currentProfileConfig.getLocalClientID(),
-                    currentProfileConfig.getOriginalServerID(), DataManager.getDefaultDataManager());
+                    currentProfileConfig.getOriginalServerID(), ClientDirector.getDataManager());
 
             if ( jgconnect.hasSucceeded() ) {
-              Debug.signal( Debug.NOTICE, null, "ClientManager connected to GameServer");
-              // Save accounts informations
-              //profileConfigList.addProfile(currentProfileConfig);
-              //PersistenceManager.getDefaultPersistenceManager().saveProfilesConfig(profileConfigList);
-              
+              Debug.signal( Debug.NOTICE, null, "ClientManager connected to GameServer");              
               jgconnect.getPersonality().queueMessage(new AccountRecoverMessage( atf_key.getText()) );
               
-              start(100);
+              start(DATAMANAGER_DISPLAY);
             } else {
               Debug.signal( Debug.ERROR, this, "ClientManager ejected from GameServer");
-              start(0);
+              start(MAIN_SCREEN);
             }
           }
         }
@@ -989,7 +946,7 @@ public class ClientManager implements ActionListener {
 
       b_cancel.addActionListener(new ActionListener() {
         public void actionPerformed (ActionEvent e) {
-            start(0);
+            start(MAIN_SCREEN);
         }
       }
       );
@@ -997,24 +954,21 @@ public class ClientManager implements ActionListener {
 
       // *** Adding the panels ***
 
-      screenIntro.setLeftPanel(leftPanel);
-      screenIntro.setRightPanel(rightPanel);
-      screenIntro.showScreen();
+      setLeftPanel(leftPanel);
+      setRightPanel(rightPanel);
+      showScreen();
       break;
     
     // ***********************************
     // *** Connection to AccountServer ***
     // ***********************************
 
-    case 10:
-           
-      // screenIntro.setTitle("Wotlas - Account creation...");
+    case ACCOUNT_CREATION_SCREEN:
 
-      // Loading Server Configs
-      serverConfigList.getLatestConfigFiles(screenIntro);
+      serverConfigManager.getLatestConfigFiles(this);
 
       // Launching Wizard
-      screenIntro.hide();
+      hide();
       JAccountCreationWizard accountCreationWz = new JAccountCreationWizard();
       break;
       
@@ -1023,17 +977,18 @@ public class ClientManager implements ActionListener {
     // *** A new account has been created ***
     // **************************************
 
-    case 11:
-      screenIntro.setTitle("Wotlas - Account creation...");
+    case ACCOUNT_INFO_SCREEN:
+
+      setTitle("Wotlas - Account creation...");
 
       // Set the appropriate server config.
-      currentServerConfig = serverConfigList.getServerConfig(currentProfileConfig.getServerID());
+      currentServerConfig = serverConfigManager.getServerConfig(currentProfileConfig.getServerID());
 
       // Create panels
       leftPanel = new JPanel();
       //leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
       leftPanel.setLayout(new GridLayout(1,1,5,5));
-      rightPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, screenIntro.getRightWidth(), 10));
+      rightPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, getRightWidth(), 10));
 
       // Create buttons
       b_ok = new JButton(im_okup);
@@ -1065,16 +1020,16 @@ public class ClientManager implements ActionListener {
 
       b_ok.addActionListener(new ActionListener() {
         public void actionPerformed (ActionEvent e) {       
-            JGameConnectionDialog jgconnect = new JGameConnectionDialog( screenIntro,
+            JGameConnectionDialog jgconnect = new JGameConnectionDialog( ClientManager.this,
               currentServerConfig.getServerName(), currentServerConfig.getGameServerPort(),
               currentServerConfig.getServerID(),
               currentProfileConfig.getLogin(), currentProfileConfig.getPassword(),
               currentProfileConfig.getLocalClientID(), currentProfileConfig.getOriginalServerID(),
-              DataManager.getDefaultDataManager());
+              ClientDirector.getDataManager());
 
             if ( jgconnect.hasSucceeded() ) {
               Debug.signal( Debug.NOTICE, null, "ClientManager connected to GameServer");
-              start(100);
+              start(DATAMANAGER_DISPLAY);
             } else {
               Debug.signal( Debug.ERROR, this, "ClientManager ejected from GameServer");
             }
@@ -1085,7 +1040,7 @@ public class ClientManager implements ActionListener {
 
       b_cancel.addActionListener(new ActionListener() {
           public void actionPerformed (ActionEvent e) {
-            start(0);
+            start(MAIN_SCREEN);
           }
         }
       );
@@ -1093,29 +1048,28 @@ public class ClientManager implements ActionListener {
 
       // *** Adding the panels ***
 
-      screenIntro.setLeftPanel(leftPanel);
-      screenIntro.setRightPanel(rightPanel);
-      screenIntro.showScreen();
+      setLeftPanel(leftPanel);
+      setRightPanel(rightPanel);
+      showScreen();
       break;
 
     // ********************
     // *** Final screen ***
     // ********************
 
-    case 100:
+    case DATAMANAGER_DISPLAY:
 
-      screenIntro.dispose();
-      DataManager dataManager = DataManager.getDefaultDataManager();
-      dataManager.showInterface();
+      hide();
+      ClientDirector.getDataManager().showInterface();
+
       break;
 
     default:
-
-      // end of the wizard
-      screenIntro.closeScreen();
+      // We should never arrive here
+      // --> return to main screen
+         start(MAIN_SCREEN);
     }
   }
-
 
  /*------------------------------------------------------------------------------------*/
 
@@ -1136,11 +1090,10 @@ public class ClientManager implements ActionListener {
       
       // Save profile informations
       profileConfigList.addProfile(currentProfileConfig);
-      PersistenceManager.getDefaultPersistenceManager().saveProfilesConfig(profileConfigList);
+      profileConfigList.save();
 
       // Set Data Manager ready
-      DataManager dataManager = DataManager.getDefaultDataManager();
-      dataManager.setCurrentProfileConfig(currentProfileConfig);
+      ClientDirector.getDataManager().setCurrentProfileConfig(currentProfileConfig);
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -1149,10 +1102,9 @@ public class ClientManager implements ActionListener {
   * @param e supposed timer event
   */
    public void actionPerformed( ActionEvent e) {
-     Debug.signal(Debug.WARNING,null,"Wotlas Web Server unreachable. Trying again... ("+nbTry+"/12)");
-     nbTry++;
+       Debug.signal(Debug.WARNING,null,"Wotlas Web Server unreachable. Trying again... ("+nbTry+"/12)");
+       nbTry++;
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

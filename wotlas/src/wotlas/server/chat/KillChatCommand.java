@@ -108,7 +108,7 @@ public class KillChatCommand implements ChatCommand
                  return true;
               }
 
-              GameAccount account = DataManager.getDefaultDataManager().getAccountManager().getAccount(message);
+              GameAccount account = ServerDirector.getDataManager().getAccountManager().getAccount(message);
          
               if(account==null) {
                  response.setMessage("/cmd:/kill command error:<font color='red'> unknown player</font>");
@@ -135,7 +135,7 @@ public class KillChatCommand implements ChatCommand
               }
 
               account.getPlayer().sendMessage(new WarningMessage("You try to scream but it's too late...\nThe last words of the Dark One ring into\nyour head... the darkness has come for you.") );
-              DataManager.getDefaultDataManager().getAccountManager().changeToDeadAccount(account);
+              ServerDirector.getDataManager().getAccountManager().changeToDeadAccount(account);
 
               message = "/cmd:"+account.getPlayer().getFullPlayerName()+" killed.";
               response.setMessage(message);

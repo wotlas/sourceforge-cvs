@@ -19,8 +19,7 @@
 
 package wotlas.client.screen;
 
-import wotlas.client.DataManager;
-import wotlas.client.PlayerImpl;
+import wotlas.client.*;
 
 import wotlas.common.chat.*;
 import wotlas.common.character.*;
@@ -49,7 +48,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
 
  /*------------------------------------------------------------------------------------*/
 
-   private ImageIcon iconUp = new ImageIcon("../base/gui/pin.gif");
+   private ImageIcon iconUp = ClientDirector.getResourceManager().getImageIcon("pin.gif");
 
   /** Our tabbedPane
    */
@@ -101,13 +100,13 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     JToolBar chatToolbar = new JToolBar();
     chatToolbar.setFloatable(false);
 
-    b_createChatRoom = new JButton(new ImageIcon("../base/gui/chat-new.gif"));
+    b_createChatRoom = new JButton(ClientDirector.getResourceManager().getImageIcon("chat-new.gif"));
     b_createChatRoom.setActionCommand("createChatRoom");
     b_createChatRoom.addActionListener(this);
     b_createChatRoom.setToolTipText("Create a new chat room");
     chatToolbar.add(b_createChatRoom);
 
-    b_leaveChatRoom = new JButton(new ImageIcon("../base/gui/chat-leave.gif"));
+    b_leaveChatRoom = new JButton(ClientDirector.getResourceManager().getImageIcon("chat-leave.gif"));
     b_leaveChatRoom.setActionCommand("leaveChatRoom");
     b_leaveChatRoom.addActionListener(this);
     b_leaveChatRoom.setToolTipText("Leave the current chat room");
@@ -115,13 +114,13 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
 
     chatToolbar.add( new JToolBar.Separator(new Dimension(30,14)) );
 
-    b_helpChat = new JButton(new ImageIcon("../base/gui/chat-help.gif"));
+    b_helpChat = new JButton(ClientDirector.getResourceManager().getImageIcon("chat-help.gif"));
     b_helpChat.setActionCommand("helpChat");
     b_helpChat.addActionListener(this);
     b_helpChat.setToolTipText("To display the available chat commands");
     chatToolbar.add(b_helpChat);
 
-    b_imageChat = new JButton(new ImageIcon("../base/gui/chat-image.gif"));
+    b_imageChat = new JButton(ClientDirector.getResourceManager().getImageIcon("chat-image.gif"));
     b_imageChat.setActionCommand("imageChat");
     b_imageChat.addActionListener(this);
     b_imageChat.setToolTipText("To insert an image in the chat");
@@ -166,7 +165,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
 
     /**MB**/ //bottomChat.add("West", chatLevel);
 
-    bottomChat.add( new ALabel( new ImageIcon("../base/gui/chat-sound-level.gif")) );
+    bottomChat.add( new ALabel(ClientDirector.getResourceManager().getImageIcon("chat-sound-level.gif")) );
     bottomChat.add(chatVoiceLevel); // MasterBob revision
     bottomChat.add(inputBox); // MasterBob revision
 
@@ -183,7 +182,8 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
     JChatRoom jchatRoom = addJChatRoom(mainChat);
     currentPrimaryKey = ChatRoom.DEFAULT_CHAT;
 
-    jchatRoom.addPlayer(DataManager.getDefaultDataManager().getMyPlayer().getPrimaryKey(), DataManager.getDefaultDataManager().getMyPlayer().getFullPlayerName());
+    jchatRoom.addPlayer(ClientDirector.getDataManager().getMyPlayer().getPrimaryKey(),
+                        ClientDirector.getDataManager().getMyPlayer().getFullPlayerName());
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -502,7 +502,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
 
 
     // III - We send the message
-    DataManager dManager = DataManager.getDefaultDataManager();
+    DataManager dManager = ClientDirector.getDataManager();
 
     dManager.sendMessage( new SendTextMessage( dManager.getMyPlayer().getPrimaryKey(),
                                                dManager.getMyPlayer().getPlayerName(),
@@ -531,7 +531,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
       if (DataManager.SHOW_DEBUG)
         System.out.println("Action command : " + actionCommand);
 
-      DataManager dataManager = DataManager.getDefaultDataManager();
+      DataManager dataManager = ClientDirector.getDataManager();
       PlayerImpl myPlayer = dataManager.getMyPlayer();
 
       if( !myPlayer.getLocation().isRoom() && actionCommand.equals("createChatRoom")) {
@@ -567,7 +567,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
                                                                      currentPrimaryKey) );
       }
       else if (actionCommand.equals("helpChat")) {
-           DataManager dManager = DataManager.getDefaultDataManager();
+           DataManager dManager = ClientDirector.getDataManager();
 
            dManager.sendMessage( new SendTextMessage( dManager.getMyPlayer().getPrimaryKey(),
                                                dManager.getMyPlayer().getPlayerName(),
@@ -611,7 +611,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
            }
 
         // send the Image URL to other players...
-           DataManager dManager = DataManager.getDefaultDataManager();
+           DataManager dManager = ClientDirector.getDataManager();
 
            dManager.sendMessage( new SendTextMessage( dManager.getMyPlayer().getPrimaryKey(),
                                                dManager.getMyPlayer().getPlayerName(),
@@ -620,7 +620,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener
                                                ChatRoom.NORMAL_VOICE_LEVEL ));
       }
       else {
-        if (DataManager.SHOW_DEBUG) {
+        if(DataManager.SHOW_DEBUG) {
           System.out.println("Err : unknown actionCommand");
           System.out.println("No action command found!");
         }

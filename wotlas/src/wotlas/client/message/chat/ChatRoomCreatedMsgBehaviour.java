@@ -99,20 +99,20 @@ public class ChatRoomCreatedMsgBehaviour extends ChatRoomCreatedMessage implemen
        chatRoom.setName(name);
        chatRoom.setCreatorPrimaryKey(creatorPrimaryKey);
 
-       dataManager.getChatPanel().addJChatRoom(chatRoom);
+       dataManager.getClientScreen().getChatPanel().addJChatRoom(chatRoom);
        
        if( player.getPrimaryKey().equals( creatorPrimaryKey ) ) {
        	 // We created this chat !
-            boolean success = dataManager.getChatPanel().setCurrentJChatRoom( primaryKey );
+            boolean success = dataManager.getClientScreen().getChatPanel().setCurrentJChatRoom( primaryKey );
 
             if( success )
-                dataManager.getChatPanel().addPlayer(primaryKey, player);
+                dataManager.getClientScreen().getChatPanel().addPlayer(primaryKey, player);
             else
                 Debug.signal( Debug.ERROR, this, "Failed to create owner's new ChatRoom");
        }
        else {
        	 // someone else created the chatroom
-            dataManager.getChatPanel().setEnabledAt(primaryKey,false);
+            dataManager.getClientScreen().getChatPanel().setEnabledAt(primaryKey,false);
        }
        
     }

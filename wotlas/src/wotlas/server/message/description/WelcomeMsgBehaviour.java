@@ -28,8 +28,7 @@ import wotlas.common.message.chat.SendTextMessage;
 import wotlas.common.message.description.*;
 import wotlas.common.Player;
 import wotlas.common.universe.*;
-import wotlas.server.DataManager;
-import wotlas.server.PlayerImpl;
+import wotlas.server.*;
 
 /**
  * Associated behaviour to the WelcomeMessage...
@@ -63,7 +62,7 @@ public class WelcomeMsgBehaviour extends WelcomeMessage implements NetMessageBeh
            String message = "/cmd:<b>Welcome to Wotlas !</b><br> ";
         
         // Get the list of online players
-           HashMap onlinePlayers = DataManager.getDefaultDataManager().getAccountManager().getOnlinePlayers();
+           HashMap onlinePlayers = ServerDirector.getDataManager().getAccountManager().getOnlinePlayers();
            message += "There are currently " + onlinePlayers.size() + " online players on this server...";
 
            player.sendMessage( new SendTextMessage( player.getPrimaryKey(),

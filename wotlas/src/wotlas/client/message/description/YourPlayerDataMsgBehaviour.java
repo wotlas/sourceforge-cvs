@@ -55,10 +55,6 @@ public class YourPlayerDataMsgBehaviour extends YourPlayerDataMessage implements
   public void doBehaviour( Object sessionContext ) {
     DataManager dataManager = (DataManager) sessionContext;
     dataManager.setCurrentPlayer( player );
-
-    synchronized(dataManager.getStartGameLock()) {
-      dataManager.getStartGameLock().notify();      
-    }
   }
 
  /*------------------------------------------------------------------------------------*/

@@ -28,6 +28,8 @@ import wotlas.utils.Debug;
 import wotlas.utils.FileTools;
 import wotlas.utils.Tools;
 
+import wotlas.common.*;
+
 import java.io.File;
 import java.util.Properties;
 import java.util.Iterator;
@@ -43,189 +45,166 @@ import java.util.Iterator;
 public class ClientDirector {
 
  /*------------------------------------------------------------------------------------*/
-  
-  /** Static Link to Database Config File.
-   */
-  public final static String DATABASE_CONFIG = "../src/config/client.cfg";
 
-  /** Static Link to Log File.
+  /** Default location where are stored config files ( 'client.cfg',
+   *  'remote-servers.cfg', etc...).
    */
-  public final static String CLIENT_LOG = "../log/wot-client.log";
+    public final static String DEFAULT_BASE_PATH = "../base";
 
-  /** Static Link to Remote Servers Config File.
+  /** Server Command Line Help
    */
-  public final static String REMOTE_SERVER_CONFIG = "../src/config/remote-servers.cfg";
-  
-  /** Client options and configuration
-   */
-  public final static String CLIENT_OPTIONS = "../src/config/client-options.cfg";
-  
-  /** Complete Path to the database where are stored the client's profiles
-   */
-  private static String databasePath;
+    public final static String CLIENT_COMMAND_LINE_HELP =
+            "Usage: ClientDirector -[debug|classic|help] -[base <path>]\n\n"
+           +"Examples : \n"
+           +"  ClientDirector -classic      : displays the classic log window.\n"
+           +"  ClientDirector -base ../base : sets the data location.\n\n"
+           +"If the -base option is not set we search for configs in "+DEFAULT_BASE_PATH
+           +"\n\n";
 
-  /** Remote server home URL : where the server list is stored on the internet.
+  /** Name of the client log file.
    */
-  private static String remoteServerConfigHomeURL;
-  
-  /** Other eventual properties.
+    public final static String CLIENT_LOGS = "logs";
+    public final static String CLIENT_LOG_NAME = "wot-client.log";
+
+  /** Format of the configs path name
    */
-  private static Properties properties;
-      
-  /** Our Persistence Manager.
+    public final static String CLIENT_CONFIGS = "configs";
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Our client properties.
    */
-  private static PersistenceManager persistenceManager;
-  
+    private static ClientPropertiesFile clientProperties;
+
+  /** Our remote server properties.
+   */
+    private static RemoteServersPropertiesFile remoteServersProperties;
+
+  /** Our resource manager
+   */
+    private static ResourceManager resourceManager;
+
+ /*------------------------------------------------------------------------------------*/
+
   /** Our Client Manager.
    */
-  private static ClientManager clientManager;
+    private static ClientManager clientManager;
   
   /** Our Data Manager.
    */
-  private static DataManager dataManager;
+    private static DataManager dataManager;
 
   /** Client configuration (window size, sound volume, etc... )
    */
-  private static ClientConfiguration clientConfiguration;
+    private static ClientConfiguration clientConfiguration;
 
   /** True if we show debug informations
    */
-  public static boolean SHOW_DEBUG = false;
-  
+    public static boolean SHOW_DEBUG = false;
+
  /*------------------------------------------------------------------------------------*/
 
-  /** Main Class. Starts the WHOLE Client<br>
-   * Use flag -debug to display debug informations.
+  /** Main Class. Starts the Wotlas Client.
+   *  @param argv enter -help to get some help info.
    */
-  public static void main(String argv[])
-  {
-    // Parse command line arguments
-    int i=0;
-    String arg;
-    boolean classicLogWindow = false;
-    
-    while (i<argv.length && argv[i].startsWith("-")) {
-      arg = argv[i];
-      i++;
-      if (arg.equals("-debug")) {
-        System.out.println("mode DEBUG on");
-        SHOW_DEBUG = true;
-      }
-      else if (arg.equals("-classic")) {
-        classicLogWindow = true;
-      }
-      /*if (arg.equals("-nosound")) {
-        System.out.println("sound off");
-        wotlas.libs.sound.SoundLibrary.setNoSoundDevice();
-      }*/
-    }
-    
-    if (SHOW_DEBUG)
-      System.out.println("Log started");
-      
-    // STEP 0 - Start a JLogStream to display our Debug messages
-    try {
-      if(classicLogWindow)
-         Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(), CLIENT_LOG, "../base/gui/log-title.jpg" ) );
-      else
-         Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(), CLIENT_LOG, "../base/gui/log-title-dark.jpg" ) );
-    } catch( java.io.FileNotFoundException e ) {
-      e.printStackTrace();
-      return;
-    }    
-    if (SHOW_DEBUG)
-      System.out.println("Log created");
-    
-    Debug.signal( Debug.NOTICE, null, "*-----------------------------------*" );
-    Debug.signal( Debug.NOTICE, null, "|   Wheel Of Time - Light & Shadow  |" );
-    Debug.signal( Debug.NOTICE, null, "|  Copyright (C) 2001 - WOTLAS Team |" );
-    Debug.signal( Debug.NOTICE, null, "*-----------------------------------*\n");
-    
-    // STEP 1 - We load the database path. Where is the data ?
-    properties = FileTools.loadPropertiesFile( DATABASE_CONFIG );
+   public static void main(String argv[]) {
 
-    if (properties==null) {
-      Debug.signal( Debug.FAILURE, null, "No valid client.cfg file found !" );
-      Debug.exit();
-    }
-    
-    databasePath = properties.getProperty( "DATABASE_PATH","" );
+    // STEP 0 - We parse the command line options
+       boolean classicLogWindow = false;
+       String basePath = DEFAULT_BASE_PATH;
+       Debug.displayExceptionStack( true );
 
-    if (databasePath.length()==0) {
-      Debug.signal( Debug.FAILURE, null, "No Database Path specified in config file !" );
-      Debug.exit();
-    }
-    
-    Debug.signal( Debug.NOTICE, null, "DataBase Path Found : "+databasePath );
+       for( int i=0; i<argv.length; i++ ) {
 
-    // STEP 2 - We load the remote servers config file to get the admin email.
-    Properties remoteProps = FileTools.loadPropertiesFile( REMOTE_SERVER_CONFIG );
+            if( !argv[i].startsWith("-") )
+                continue;
 
-    if( remoteProps==null ) {
-        Debug.signal( Debug.CRITICAL, null, "No valid remote-servers.cfg file found !" );
-        Debug.exit();
-    }
-    else {
-        remoteServerConfigHomeURL = remoteProps.getProperty( "REMOTE_SERVER_CONFIG_HOME_URL","" );
+            if( argv[i].equals("-debug") ) {    // -- TO SET THE DEBUG MODE --
+                System.out.println("mode DEBUG on");
+                SHOW_DEBUG = true;
+            }
+            else if (argv[i].equals("-classic")) {
+                classicLogWindow = true;
+            }
+            else if(argv[i].equals("-base")) {   // -- TO SET THE CONFIG FILES LOCATION --
 
-        if( remoteServerConfigHomeURL.length()==0 ) {
-            Debug.signal( Debug.CRITICAL, null, "No URL for remote server config home !" );
-            Debug.exit();
-        }
-        
-        if( !remoteServerConfigHomeURL.endsWith("/") )
-             remoteServerConfigHomeURL += "/";
-    }
+                if(i==argv.length-1) {
+                   System.out.println("Location missing.");
+                   System.out.println(CLIENT_COMMAND_LINE_HELP);
+                   return;
+                }
 
-    // STEP 3 - Creation of the PersistenceManager
-    persistenceManager = PersistenceManager.createPersistenceManager(databasePath);
-    Debug.signal( Debug.NOTICE, null, "Persistence Manager Created..." );
-                
+                basePath = argv[i+1];
+            }
+            else if(argv[i].equals("-help")) {   // -- TO DISPLAY THE HELP --
+
+                System.out.println(CLIENT_COMMAND_LINE_HELP);
+                return;
+            }
+       }
+
+    // STEP 1 - Start a JLogStream to display our Debug messages
+       try {
+         if(classicLogWindow)
+            Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(),
+                  basePath+File.separator+CLIENT_LOGS+File.separator+CLIENT_LOG_NAME,
+                  "log-title.jpg", basePath+File.separator+"gui" ) );
+         else
+            Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(),
+                  basePath+File.separator+CLIENT_LOGS+File.separator+CLIENT_LOG_NAME,
+                  "log-title-dark.jpg", basePath+File.separator+"gui" ) );
+       }
+       catch( java.io.FileNotFoundException e ) {
+         e.printStackTrace();
+         return;
+       }
+
+       if(SHOW_DEBUG)
+          System.out.println("Log created.");
+
+    // STEP 2 - We control the VM version and load our vital config files.
+       Debug.signal( Debug.NOTICE, null, "*-----------------------------------*" );
+       Debug.signal( Debug.NOTICE, null, "|   Wheel Of Time - Light & Shadow  |" );
+       Debug.signal( Debug.NOTICE, null, "|  Copyright (C) 2001 - WOTLAS Team |" );
+       Debug.signal( Debug.NOTICE, null, "*-----------------------------------*\n");
+
+
+       clientProperties = new ClientPropertiesFile(basePath+File.separator+CLIENT_CONFIGS);
+       Debug.signal( Debug.NOTICE, null, "Data directory     : "+basePath );
+
+       remoteServersProperties = new RemoteServersPropertiesFile(basePath+File.separator+CLIENT_CONFIGS);
+
+
+    // STEP 3 - Creation of the ResourceManager
+       resourceManager = new ResourceManager( basePath,
+                                          basePath+File.separator+CLIENT_CONFIGS,
+                                          clientProperties.getProperty("init.helpPath"),
+                                          basePath+File.separator+CLIENT_LOGS
+                                      );
+
     // STEP 4 - Creation of Sound Library
-    SoundLibrary.createSoundLibrary(databasePath);
+       SoundLibrary.createSoundLibrary( basePath );
 
     // STEP 5 - Creation of our Font Factory
-    FontFactory.createDefaultFontFactory( databasePath + File.separator + "fonts" );
-    Debug.signal( Debug.NOTICE, null, "Font factory created..." );
+       FontFactory.createDefaultFontFactory( resourceManager.getBase("fonts") );
+       Debug.signal( Debug.NOTICE, null, "Font Factory created..." );
 
-    // STEP 6 - We load the client configuration
-    try {
-         if(new File(CLIENT_OPTIONS).exists())
-            clientConfiguration = (ClientConfiguration) PropertiesConverter.load(CLIENT_OPTIONS);
-         else {
-            Debug.signal( Debug.ERROR, null, "Failed to load client configuration. Creating a new one." );
-            clientConfiguration = new ClientConfiguration();
-         }
-    }
-    catch (PersistenceException pe) {
-         Debug.signal( Debug.ERROR, null, "Failed to load client configuration : " + pe.getMessage()+". Creating a new one." );
-         clientConfiguration = new ClientConfiguration();
-    }
- 
+    // STEP 6 - We load the client configuration. There is always a config returned.
+       clientConfiguration = ClientConfiguration.load();
+
     // STEP 7 - We ask the ClientManager to get ready
-    clientManager = ClientManager.createClientManager(databasePath);
-    Debug.signal( Debug.NOTICE, null, "Client Created (but not started)..." );
+       clientManager = new ClientManager( resourceManager );
+       Debug.signal( Debug.NOTICE, null, "Client Manager created..." );
 
     // STEP 8 - We ask the DataManager to get ready
-    dataManager = DataManager.createDataManager(databasePath);
-    dataManager.showDebug(SHOW_DEBUG);
-    Debug.signal( Debug.NOTICE, null, "DataManager created..." );
-    
-    // STEP 9 - Start the ClientManager
-    clientManager.start(-1);
-    Debug.signal( Debug.NOTICE, null, "WOTLAS Client started with success..." );
-  }
-  
-  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+       dataManager = new DataManager( resourceManager );
+       dataManager.showDebug(SHOW_DEBUG);
+       Debug.signal( Debug.NOTICE, null, "DataManager created..." );
 
-  /** To get the complete path to the database where are stored the universe and the client
-   *  accounts.
-   *
-   * @return databasePath
-   */
-  public static String getDatabasePath() {
-    return databasePath;
-  }
+    // STEP 9 - Start the ClientManager
+       clientManager.start( ClientManager.FIRST_INIT );
+       Debug.signal( Debug.NOTICE, null, "WOTLAS Client started with success..." );
+   }
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -234,34 +213,46 @@ public class ClientDirector {
    *
    * @return remoteServerConfigHomeURL
    */
-   public static String getRemoteServerConfigHomeURL() {
-      return remoteServerConfigHomeURL;
-   }
+     public static String getRemoteServerConfigHomeURL() {
+        return remoteServersProperties.getProperty("info.remoteServerHomeURL");
+     }
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To get client Configuration and get some user preferences ( window size, etc... )
    *  @return Client Config, you can use the save() method to save it to disk...
    */
-   public static ClientConfiguration getClientConfiguration() {
-      return clientConfiguration;
-   }
+     public static ClientConfiguration getClientConfiguration() {
+         return clientConfiguration;
+     }
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To close the client.
+  /** To get our resource manager.
+   *  @return our resource manager.
    */
-   public static void saveClientConfiguration() {
-      try{
-         PropertiesConverter.save(clientConfiguration, CLIENT_OPTIONS );
-      }
-      catch (PersistenceException pe) {
-         Debug.signal( Debug.ERROR, null, "Failed to save client configuration : " + pe.getMessage() );
-      }
-   }
+     public static ResourceManager getResourceManager() {
+         return resourceManager;
+     }
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-}
+  /** To get our Client manager. the client manager possesses the server configs
+   *  and client profiles.
+   *  @return our ClientManager
+   */
+     public static ClientManager getClientManager() {
+         return clientManager;
+     }
 
-   
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get our data manager. The data manager manages the game process.
+   *  @return our data manager.
+   */
+     public static DataManager getDataManager() {
+         return dataManager;
+     }
+
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+}

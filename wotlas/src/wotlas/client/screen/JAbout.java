@@ -20,8 +20,11 @@
 package wotlas.client.screen;
 
 import wotlas.utils.*;
-import wotlas.libs.graphics2D.*;
 
+import wotlas.client.ClientDirector;
+
+import wotlas.libs.graphics2D.*;
+import wotlas.libs.log.JCroppedWindow;
 import wotlas.libs.sound.SoundLibrary;
 
 import java.awt.*;
@@ -38,33 +41,31 @@ import java.awt.geom.*;
  *  @author  Aldiss, MasterBob
  */
 
-public class JAbout extends JCroppedWindow implements ActionListener
-{
+public class JAbout extends JCroppedWindow implements ActionListener {
+
  // back= about.jpg, back2=about-back.jpg
-  private Image back, back2;
+   private Image back, back2;
 
  // Panel (zone of the screen) where we'll draw the text.
-  private JPanel j_drawzone;
+   private JPanel j_drawzone;
 
  // Panel j_drawzone size
-  private static int DRAWZONE_WIDTH = 297;
-  private static int DRAWZONE_HEIGHT = 147;
+   private static int DRAWZONE_WIDTH = 297;
+   private static int DRAWZONE_HEIGHT = 147;
 
-
-  private Font f_text, f_title;
-  private Color c_text, c_title, c_shadow;
+   private Font f_text, f_title;
+   private Color c_text, c_title, c_shadow;
 
  // double-buffer. Off screen image for the j_drawzone panel.
-  private Image offScreenImage;
+   private Image offScreenImage;
 
-  private Image backorigin;
-  private Image backorigin2;
+   private Image backorigin;
+   private Image backorigin2;
 
 
  // Text to display.
  // each line beginning with a space is considered as a title
-  private String text[] =
-    {
+  private String text[] = {
     	" ",
     	"Robert Jordan's",
   	" Wheel of Time",
@@ -74,8 +75,11 @@ public class JAbout extends JCroppedWindow implements ActionListener
   	" ",
   	" ",
   	" Project Management",
-  	"Valère",
   	"Aldiss",
+  	"Valère",
+  	" ",
+  	" Project Mentor",
+  	"Fred McMaster",
         " ",
   	" Developers - Release 1",
   	"Aldiss",
@@ -84,7 +88,7 @@ public class JAbout extends JCroppedWindow implements ActionListener
   	"Hari Coplin",
   	" ",
   	" Developers - 2nd Team",
-  	"Valère",
+        "Fred MacMaster",
         "Blackhole",
         "Vasaldo",
         " ",
@@ -101,6 +105,7 @@ public class JAbout extends JCroppedWindow implements ActionListener
         "Logain",
         "Felherid",
         "Knut Hamson",
+        "Fred MacMaster",
         " ",
         " 2D Graphics",
         "Aldiss",
@@ -167,22 +172,22 @@ public class JAbout extends JCroppedWindow implements ActionListener
         " ",
     };
 
-  private int[] textWidth;
+   private int[] textWidth;
 
 
-// a Timer generates a regular event (caught by the ActionListener)
-// we use it to redraw the screen regularly, performin the text animation
- private javax.swing.Timer timer;
+  // a Timer generates a regular event (caught by the ActionListener)
+  // we use it to redraw the screen regularly, performin the text animation
+   private javax.swing.Timer timer;
 
-// current text y position relative to the j_drawzone panel.
- private int y0;
+  // current text y position relative to the j_drawzone panel.
+   private int y0;
 
 
-// In the previous "text" array not all the lines appear on screen at the same time.
-// So the following variable indicates the first line number to display
- private int first_line;
+  // In the previous "text" array not all the lines appear on screen at the same time.
+  // So the following variable indicates the first line number to display
+   private int first_line;
 
- static final FontRenderContext frc = new FontRenderContext(new AffineTransform(),false,false);
+   static final FontRenderContext frc = new FontRenderContext(new AffineTransform(),false,false);
 
  /**
   * constructor for this dialog
@@ -190,9 +195,9 @@ public class JAbout extends JCroppedWindow implements ActionListener
   * @param owner the frame owner of this JDialog
   * @param title the title of this JDialog
   */
-    public JAbout(Frame owner)
-    {
-         super(owner,"About");
+    public JAbout(Frame owner) {
+
+         super(owner,"About", ClientDirector.getResourceManager().getBase("gui") );
          setFont("Lucida Blackletter");
          calculTextWidth();
          c_text = new Color(40,50,60);
@@ -201,11 +206,10 @@ public class JAbout extends JCroppedWindow implements ActionListener
 
          y0 = DRAWZONE_HEIGHT;  // y0 initialisation on j_drawzone's screen bottom
 
-         this.setImage("about.jpg","about-back.jpg");
+         this.setImage("gui/about.jpg","gui/about-back.jpg");
 
       // Frame properties
          getContentPane().setLayout(new BoxLayout(getContentPane(),BoxLayout.X_AXIS));
-         //getContentPane().setBounds(0,0,640,480);
          getContentPane().setBackground(Color.black);
          setBackground(Color.black);
 
@@ -340,29 +344,19 @@ public class JAbout extends JCroppedWindow implements ActionListener
 
       // jframe properties
          setResizable(false);
-/*
-         this.addComponentListener(new ComponentListener(){
-           public void componentHidden(ComponentEvent e){}
-           public void componentMoved(ComponentEvent e){}
-           public void componentResized(ComponentEvent e){
-            resize();
-           }
-           public void componentShown(ComponentEvent e){}
-         });
-*/
+
       // Ok button
-         JButton b_ok = new JButton(new ImageIcon("../base/gui/close-up.jpg"));
+         JButton b_ok = new JButton(ClientDirector.getResourceManager().getImageIcon("close-up.jpg"));
          b_ok.setBounds(158,258,80,40);
-         b_ok.setRolloverIcon(new ImageIcon("../base/gui/close-do.jpg"));
-         b_ok.setPressedIcon(new ImageIcon("../base/gui/close-do.jpg"));
+         b_ok.setRolloverIcon(ClientDirector.getResourceManager().getImageIcon("close-do.jpg"));
+         b_ok.setPressedIcon(ClientDirector.getResourceManager().getImageIcon("close-do.jpg"));
 
          b_ok.setBorderPainted(false);
          b_ok.setContentAreaFilled(false);
 
          jp.add(b_ok);
 
-          b_ok.addActionListener(new ActionListener()
-           {
+          b_ok.addActionListener(new ActionListener() {
               public void actionPerformed (ActionEvent e) {
               	timer.stop();
                 dispose();
@@ -386,17 +380,13 @@ public class JAbout extends JCroppedWindow implements ActionListener
 /**
  * to get the image back and back2
  */
-   public void setImage(String imageBack, String imageBack2)
-    {
+   public void setImage(String imageBack, String imageBack2) {
      // MediaTracker for efficient image loading.
      MediaTracker mediaTracker = new MediaTracker(this);
-     //backorigin = getToolkit().getImage("../base/gui/"+imageBack);
-     //backorigin2 = getToolkit().getImage("../base/gui/"+imageBack2);
-     back  = getToolkit().getImage("../base/gui/"+imageBack);
-     back2 = getToolkit().getImage("../base/gui/"+imageBack2);     mediaTracker.addImage(back,0);
+     back  = ClientDirector.getResourceManager().getBaseImage(imageBack);
+     back2 = ClientDirector.getResourceManager().getBaseImage(imageBack2);
+     mediaTracker.addImage(back,0);
      mediaTracker.addImage(back2,1);
-//     back = backorigin.getScaledInstance(640,480,Image.SCALE_REPLICATE);
-//     back2 = backorigin2.getScaledInstance(DRAWZONE_WIDTH,DRAWZONE_HEIGHT,Image.SCALE_REPLICATE);
 
      try{
          mediaTracker.waitForAll(); // wait for all images to be in memory
@@ -405,22 +395,6 @@ public class JAbout extends JCroppedWindow implements ActionListener
            e.printStackTrace();
      }
     }
-
-
- /**
-  * action to be done if the jdialog is resized
-  *
- private void resize()
-  {
-   back = backorigin.getScaledInstance(this.getWidth(),this.getHeight(),Image.SCALE_REPLICATE);
-   DRAWZONE_WIDTH = this.getWidth()/3;
-   DRAWZONE_HEIGHT = this.getHeight()/3;
-   back2 = backorigin2.getScaledInstance(DRAWZONE_WIDTH,DRAWZONE_HEIGHT,Image.SCALE_REPLICATE);
-   j_drawzone.setBounds(this.getWidth()/3,this.getHeight()/3,DRAWZONE_WIDTH,DRAWZONE_HEIGHT);
-
-   offScreenImage = null;//pour to recalculate it
-  }
-*/
 
  /**
   * we calculate the text width

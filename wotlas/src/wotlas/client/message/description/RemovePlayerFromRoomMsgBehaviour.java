@@ -86,7 +86,7 @@ public class RemovePlayerFromRoomMsgBehaviour extends RemovePlayerFromRoomMessag
                   System.out.println("REMOVING PLAYER "+primaryKey);
 
               players.remove( primaryKey );
-              dataManager.getChatPanel().removePlayerFromAllchatRooms(primaryKey);
+              dataManager.getClientScreen().getChatPanel().removePlayerFromAllchatRooms(primaryKey);
            }
                       
            playerImpl.cleanVisualProperties(dataManager.getGraphicsDirector());

@@ -73,7 +73,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
 
     // 0.1 - test shortcut/commands...
        if(message.charAt(0)=='/') {
-          ChatCommandProcessor processor = DataManager.getDefaultDataManager().getChatCommandProcessor();
+          ChatCommandProcessor processor = ServerDirector.getDataManager().getChatCommandProcessor();
 
           if( processor.processCommand( message, player, this ) )
              return; // end of message process if the command returns true
@@ -230,7 +230,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
 
        if ( myLocation.isTown() ) {
        	 // 2.2.1 - Get Town
-            TownMap town = DataManager.getDefaultDataManager().getWorldManager().getTownMap(myLocation);
+            TownMap town = ServerDirector.getDataManager().getWorldManager().getTownMap(myLocation);
 
             if (town==null) {
             	Debug.signal( Debug.ERROR, this, "Town not Found : "+myLocation+" Player:"+player.getPrimaryKey());
@@ -245,7 +245,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
     // 2.3 - WORLD CASE
        if ( myLocation.isWorld() ) {
        	 // 2.3.1 - Get World
-            WorldMap world = DataManager.getDefaultDataManager().getWorldManager().getWorldMap(myLocation);
+            WorldMap world = ServerDirector.getDataManager().getWorldManager().getWorldMap(myLocation);
 
             if (world==null) {
             	Debug.signal( Debug.ERROR, this, "World not Found : "+myLocation+" Player:"+player.getPrimaryKey());

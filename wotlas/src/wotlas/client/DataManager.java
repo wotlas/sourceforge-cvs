@@ -23,34 +23,20 @@ import wotlas.client.gui.*;
 import wotlas.client.screen.*;
 
 import wotlas.common.character.*;
-import wotlas.common.ImageLibRef;
+import wotlas.common.*;
 import wotlas.common.message.account.*;
 import wotlas.common.message.description.*;
-import wotlas.common.Player;
-import wotlas.common.Tickable;
 import wotlas.common.universe.*;
 
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.graphics2D.drawable.*;
 import wotlas.libs.graphics2D.policy.*;
-
-import wotlas.libs.net.NetConnectionListener;
-import wotlas.libs.net.NetMessage;
-import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.libs.net.NetPersonality;
-import wotlas.libs.net.NetPingListener;
+import wotlas.libs.net.*;
 import wotlas.libs.net.utils.NetQueue;
-
 import wotlas.libs.persistence.*;
-
 import wotlas.libs.sound.SoundLibrary;
 
-import wotlas.utils.Debug;
-import wotlas.utils.FileTools;
-import wotlas.utils.List;
-import wotlas.utils.ScreenPoint;
-import wotlas.utils.ScreenRectangle;
-import wotlas.utils.Tools;
+import wotlas.utils.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -72,298 +58,239 @@ import java.util.Properties;
  * @see wotlas.common.NetConnectionListener
  */
 
-public class DataManager extends Thread implements NetConnectionListener, Tickable
-{
+public class DataManager extends Thread implements NetConnectionListener, Tickable {
+
  /*------------------------------------------------------------------------------------*/
 
   /** Image Library
    */
-  public final static String IMAGE_LIBRARY = "graphics/imagelib";
+    public final static String IMAGE_LIBRARY = "graphics/imagelib";
 
   /** size of a mask's cell (in pixels)
    */
-  public final static int TILE_SIZE = 5;
+    public final static int TILE_SIZE = 5;
 
   /** TIMEOUT to the Account Server
    */
-  private static final int CONNECTION_TIMEOUT = 5000;
+    private static final int CONNECTION_TIMEOUT = 5000;
 
   /** Number of tick before destroying the circle
    */
-  private static final int CIRCLE_LIFETIME = 20;
+    private static final int CIRCLE_LIFETIME = 20;
 
   /** True if we show debug informations
    */
-  public static boolean SHOW_DEBUG = false;
+    public static boolean SHOW_DEBUG = false;
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Path to the local server database.
-   */
-  private String databasePath;
-
-  /** Path to the local images database.
-   */
-  private String imageDBHome;
-
- /*------------------------------------------------------------------------------------*/
-
-  /** Our Default Data Manager
-   */
-  static private DataManager dataManager;
+  /*** THE MAIN DATA WE MANAGE ***/
 
   /** Our World Manager
    */
-  private WorldManager worldManager;
+    private WorldManager worldManager;
 
- /*------------------------------------------------------------------------------------*/
-
-  /** Personality Lock
+  /** Our MapData : data of the current map displayed on screen.
    */
-  private byte personalityLock[] = new byte[1];
+    private MapData myMapData;
 
-  /** Our NetPersonality, useful if we want to send messages !
+  /** Our NetPersonality, represents the connection with the server.
    */
-  private NetPersonality personality;
+    private NetPersonality personality;
 
-  /** Game Lock (unlocked by client.message.description.YourPlayerDataMsgBehaviour)
+  /** Our player's profile ( serverID, login, etc... ).
    */
-  private Object startGameLock = new Object();
-
-  /** Tick Thread Lock.
-   */
-  private Object pauseTickThreadLock = new Object();
-
-  /** Do we have to pause the tick thread ?
-   */
-  private boolean pauseTickThread;
-
-  /** Are we changing the MapData ?
-   */
-  private boolean updatingMapData = false;
-
- /*------------------------------------------------------------------------------------*/
-
-  /** Our current player.
-   */
-  private ProfileConfig currentProfileConfig;
-
-  /** Our playerImpl.
-   */
-  private PlayerImpl myPlayer;
-  
-  /** Selected player.
-   */
-  private PlayerImpl selectedPlayer;
-
-  /** List of players
-   */
-  private Hashtable players;
-
-  /** Circle selection
-   */
-  private CircleDrawable circle;
-
-  /** Number of tick since circle creation
-   */
-  private int circleLife = 0;
-
-  /** Circle Lock
-   */
-  private byte circleLock[] = new byte[1];
+    private ProfileConfig currentProfileConfig;
 
   /** Our ImageLibrary.
    */
-  private ImageLibrary imageLib;
+    private ImageLibrary imageLib;
 
   /** Our Graphics Director.
    */
-  private GraphicsDirector gDirector;
-  
-  /** True if player was diconnected end resumed the game
-   */
-  private boolean isResuming = false;
-
-  /** Our MapData.
-   */
-  private MapData myMapData;
+    private GraphicsDirector gDirector;
 
   /** Our client interface frame.
    */
-  private JClientScreen mFrame;
-  private JInfosPanel infosPanel;
-  private JMapPanel mapPanel;
-  private JChatPanel chatPanel;
-  private JOptionsPanel optionsPanel;
-  private JPlayerPanel playerPanel;
-  private JLogPanel logPanel;
-  private GraphicPingPanel pingPanel;
+    private JClientScreen clientScreen;
 
- /*------------------------------------------------------------------------------------*/
-
-   /** NetQueue for synchronous messages. Messages that want to be run after the current
-    *  tick should call a queueMessage() on this NetQueue.
-    *  NetMessageBehaviours should use the invokeLater() method to queue a message.
-    */
-      private NetQueue syncMessageQueue = new NetQueue(1,3);
-
- /*------------------------------------------------------------------------------------*/
-
-  /** Constructor.
+  /** NetQueue for synchronous messages. Messages that want to be run after the current
+   *  tick should call a queueMessage() on this NetQueue.
+   *  NetMessageBehaviours should use the invokeLater() method to queue a message.
    */
-  private DataManager(String databasePath) {
-    this.databasePath = databasePath;
-    worldManager = new WorldManager();
-  }
+    private NetQueue syncMessageQueue;
+
+  /** Our player data.
+   */
+    private PlayerImpl myPlayer;
+  
+  /** The selected player on screen.
+   */
+    private PlayerImpl selectedPlayer;
+
+  /** List of all the players displayed on screen.
+   */
+    private Hashtable players;
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Creates a new DataManager.
-   *
-   * @return the created (or previously created) data manager.
+  /*** DATA ACCESS CONTROLLER ***/
+
+  /** Personality Lock
    */
-  public static DataManager createDataManager(String databasePath) {
-    if (dataManager == null)
-      dataManager = new DataManager(databasePath);
-    return dataManager;
-  }
+    private byte personalityLock[] = new byte[1];
+
+  /** Game Lock (unlocked by client.message.description.YourPlayerDataMsgBehaviour)
+   */
+    private Object startGameLock = new Object();
+
+  /** Tick Thread Lock.
+   */
+    private Object pauseTickThreadLock = new Object();
+
+  /** Do we have to pause the tick thread ?
+   */
+    private boolean pauseTickThread;
+
+  /** Are we changing the MapData ?
+   */
+    private boolean updatingMapData = false;
+
+  /** True if player was diconnected end resumed the game
+   */
+    private boolean isResuming = false;
 
  /*------------------------------------------------------------------------------------*/
 
-  /** To get the default data manager.
-   *
-   * @return the default data manager.
+  /*** SELECTION CIRCLE ***/
+
+  /** Circle selection
    */
-  public static DataManager getDefaultDataManager() {
-    return dataManager;
-  }
+    private CircleDrawable circle;
+
+  /** Number of tick since circle creation
+   */
+    private int circleLife = 0;
+
+  /** Circle Lock
+   */
+    private byte circleLock[] = new byte[1];
+
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Constructor with resource manager.
+   */
+    public DataManager( ResourceManager rManager ) {
+
+      // 1 - We create our world Manager. It will load the universe data.
+         worldManager = new WorldManager( rManager, false );
+
+      // 2 - Misc inits
+         syncMessageQueue = new NetQueue(1,3);
+         players = new Hashtable();
+         personalityLock = new byte[1];
+         startGameLock = new Object();
+
+         pauseTickThreadLock = new Object();
+         pauseTickThread = false;
+         updatingMapData = false;
+         isResuming = false;
+
+         circleLife = 0;
+         circleLock= new byte[1];
+    }
+
+ /*------------------------------------------------------------------------------------*/
 
   /** To get the world manager.
    *
    * @return the world manager.
    */
-  public WorldManager getWorldManager() {
-    return worldManager;
-  } 
+    public WorldManager getWorldManager() {
+      return worldManager;
+    } 
+
+ /*------------------------------------------------------------------------------------*/
 
   /** To get the graphicsDirector
    *
    * @return the graphicsDirector
    */
-  public GraphicsDirector getGraphicsDirector() {
-    return gDirector;
-  }
+    public GraphicsDirector getGraphicsDirector() {
+       return gDirector;
+    }
 
  /*------------------------------------------------------------------------------------*/
 
-  /** To get startGameLock
+  /** To get the image Library
+   *
+   * @return the image library
    */
-  public Object getStartGameLock() {
-    return startGameLock;
-  }
+    public ImageLibrary getImageLibrary() {
+       return imageLib;
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /*** GETTERS ***/
 
   /** To get MapData
    */
-  public MapData getMapData() {
-    return myMapData;
-  }
-  
-  /** To get JInfosPanel.
-   */
-  public JInfosPanel getInfosPanel() {
-    return infosPanel;
-  }
-
+    public MapData getMapData() {
+      return myMapData;
+    }
   /** To get JClientScreen.
    */
-  public JClientScreen getClientScreen() {
-    return mFrame;
-  }
-
-  /** To get JMapPanel.
-   */
-  public JMapPanel getMapPanel() {
-    return mapPanel;
-  }
-
-  /** To get JChatPanel.
-   */
-  public JChatPanel getChatPanel() {
-    return chatPanel;
-  }
-
-  /** To get JPreviewPanel.
-   */
-  public JOptionsPanel getOptionsPanel() {
-    return optionsPanel;
-  }
-
-  /** To get JPlayerPanel.
-   */
-  public JPlayerPanel getPlayerPanel() {
-    return playerPanel;
-  }
-
-  /** To get JLogPanel.
-   */
-  public JLogPanel getLogPanel() {
-    return logPanel;
-  }
+    public JClientScreen getClientScreen() {
+      return clientScreen;
+    }
 
  /*------------------------------------------------------------------------------------*/
 
   /** Set to true to show debug information
    */
-  public void showDebug(boolean value) {
-    SHOW_DEBUG = value;
-  }
+    public void showDebug(boolean value) {
+      SHOW_DEBUG = value;
+    }
 
  /*------------------------------------------------------------------------------------*/
   
   /** To get the hashtable players
    */
-  public Hashtable getPlayers() {
-    return players;
-  }
+    public Hashtable getPlayers() {
+      return players;
+    }
  
   /** To get selected player
    */
-  public String getSelectedPlayerKey() {
-    if (selectedPlayer!=null)
-      return selectedPlayer.getPrimaryKey();
-    return null;
-  }
+    public String getSelectedPlayerKey() {
+      if (selectedPlayer!=null)
+          return selectedPlayer.getPrimaryKey();
+      return null;
+    }
   
   /** To remove the circle
    */
-  public void removeCircle() {
-    gDirector.removeDrawable(circle);
-    circle = null;
-  }
+    public void removeCircle() {
+      gDirector.removeDrawable(circle);
+      circle = null;
+    }
+
  /*------------------------------------------------------------------------------------*/
 
   /** To set the current profileConfig<br>
    * (called by client.message.account.AccountCreatedMsgBehaviour)
    */
-  public void setCurrentProfileConfig(ProfileConfig currentProfileConfig) {
-    this.currentProfileConfig = currentProfileConfig;
-  }
+    public void setCurrentProfileConfig(ProfileConfig currentProfileConfig) {
+      this.currentProfileConfig = currentProfileConfig;
+    }
 
   /** To get the current profileConfig.
    */
-  public ProfileConfig getCurrentProfileConfig() {
-    return currentProfileConfig;
-  }
-
- /*------------------------------------------------------------------------------------*/
-
-  public String getDatabasePath() {
-    return databasePath;
-  }
-
-  public String getImageDBHome() {
-    return imageDBHome;
-  }
+    public ProfileConfig getCurrentProfileConfig() {
+      return currentProfileConfig;
+    }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -371,15 +298,15 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    *
    * @return true if player was disconnected
    */
-  public boolean isResuming() {
-    return isResuming;
-  }
+    public boolean isResuming() {
+      return isResuming;
+    }
   
   /** To set whether player has finished resuming the game
    */
-  public void setIsResuming(boolean value) {
-    this.isResuming = value;
-  }
+    public void setIsResuming(boolean value) {
+      this.isResuming = value;
+    }
   
  /*------------------------------------------------------------------------------------*/
 
@@ -387,41 +314,41 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    *
    * @param personality the NetPersonality object associated to this connection.
    */
-  public void connectionCreated( NetPersonality personality ) {
-    synchronized( personalityLock ) {
-      this.personality = personality;
-      personalityLock.notifyAll();
-    }
+    public void connectionCreated( NetPersonality personality ) {
 
-    personality.setContext(this);
-
-    if (currentProfileConfig.getLocalClientID() == -1) {  
-      if (personality==null) {
-        Debug.signal( Debug.ERROR, this, "Connection closed by AccountServer" );
-        return;
+      synchronized( personalityLock ) {
+        this.personality = personality;
+        personalityLock.notifyAll();
       }
 
-      Debug.signal( Debug.NOTICE, null, "New account created !" );
-      return;
+      personality.setContext(this);
 
+      if (currentProfileConfig.getLocalClientID() == -1) {  
+          if (personality==null) {
+              Debug.signal( Debug.ERROR, this, "Connection closed by AccountServer" );
+              return;
+          }
+
+          Debug.signal( Debug.NOTICE, null, "New account created !" );
+          return;
+      }
+
+      // The key is valid, we are connected to the GameServer
+       Debug.signal( Debug.NOTICE, null, "DataManager connected to GameServer" );
     }
-
-    // The key is valid, we are connected to the GameServer
-     Debug.signal( Debug.NOTICE, null, "DataManager connected to GameServer" );
-  }
 
  /*------------------------------------------------------------------------------------*/
 
   /** To wait (timeout max) for the connection to be established.
    */
    public void waitForConnection(long timeout) {
-    synchronized( personalityLock ) {
-      if(personality==null)
-         try{
-           personalityLock.wait(timeout);
-        }catch(Exception e ) {
-        }
-    }
+
+      synchronized( personalityLock ) {
+         if(personality==null)
+            try{
+               personalityLock.wait(timeout);
+            }catch(Exception e ) {}
+      }
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -439,22 +366,24 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
     pauseTickThread();
 
-     if ( (mFrame!=null) && (mFrame.isShowing()) ) {
+     if ( (clientScreen!=null) && (clientScreen.isShowing()) ) {
 
-        if( !ClientManager.getDefaultClientManager().getAutomaticLogin() ) {
+        if( !ClientDirector.getClientManager().getAutomaticLogin() ) {
            gDirector.removeAllDrawables();
            showWarningMessage("Connection to Server lost ! Re-connect to the game...");
         }
 
         Runnable runnable = new Runnable() {
            public void run() {
-              ClientManager.getDefaultClientManager().start(1);  // we restart the ClientManager
-           }                                                     // on the Login entry
+              ClientDirector.getClientManager().start(ClientManager.ACCOUNT_LOGIN_SCREEN);  // we restart the ClientManager
+           }                                                                                // on the Login entry
         };
 
         SwingUtilities.invokeLater( runnable );
      }
   }
+
+ /*------------------------------------------------------------------------------------*/
 
   /** Use this method to send a NetMessage to the server.
    *
@@ -468,6 +397,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
   }
 
+ /*------------------------------------------------------------------------------------*/
+
   /** To close the network connection if any.
    */
   public void closeConnection() {
@@ -479,245 +410,221 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
  /*------------------------------------------------------------------------------------*/
 
-  /** To set the ID of currentProfileConfig<br>
-   * called by wotlas.client.message.account.AccountCreatedMsgBehaviour
-   */
-  public void setCurrentProfileConfigID(int clientID, int serverID) {
-    currentProfileConfig.setLocalClientID(clientID);
-    currentProfileConfig.setOriginalServerID(serverID);
-    closeConnection();
-    ClientManager.getDefaultClientManager().start(11);
-  }
-
- /*------------------------------------------------------------------------------------*/
-
-  /** To show the client's interface
+  /** To show the client's interface.
    */
   public void showInterface() {
-    Debug.signal( Debug.NOTICE, null, "DataManager::ShowInterface");
 
-    if (imageLib !=null) {
-      // All data have already been initialized
-      // => there was a disconnexion and player has resumed the game
-      resumeInterface();
-      return;
-    }
+       Debug.signal( Debug.NOTICE, null, "DataManager call to ShowInterface");
+
+       if (imageLib !=null) {
+          // All data have already been initialized
+          // => there was a disconnection and player has resumed the game
+          resumeInterface();
+          return;
+       }
     
-    // 0 - Create Image Library
-    imageDBHome = databasePath + File.separator + IMAGE_LIBRARY;
-    try {
-      imageLib = ImageLibrary.createImageLibrary( imageDBHome, databasePath+File.separator+"fonts");
-    } catch( Exception ex ) {
-      ex.printStackTrace();
-      Debug.exit();
-    }
+    // 1 - Create Image Library
+       String imageDBHome = ClientDirector.getResourceManager().getBase( IMAGE_LIBRARY );
+       String fontsHome = ClientDirector.getResourceManager().getBase( "fonts" );
+
+       try {
+          imageLib = ImageLibrary.createImageLibrary( imageDBHome, fontsHome );
+       }
+       catch( Exception ex ) {
+          Debug.signal(Debug.FAILURE, this, ex );
+          Debug.exit();
+       }
     
-    // 0 - Set Client Configuration Choices
-    ClientConfiguration clientConfiguration = ClientDirector.getClientConfiguration();
+    // 2 - Set Client Configuration Choices
+       ClientConfiguration clientConfiguration = ClientDirector.getClientConfiguration();
     
-    SoundLibrary.getSoundLibrary().setNoMusic(clientConfiguration.getNoMusic());
+       SoundLibrary.getSoundLibrary().setNoMusic(clientConfiguration.getNoMusic());
 
-    if (clientConfiguration.getMusicVolume()>0)
-      SoundLibrary.getSoundLibrary().setMusicVolume((short) clientConfiguration.getMusicVolume());
+       if( clientConfiguration.getMusicVolume()>0 )
+          SoundLibrary.getSoundLibrary().setMusicVolume((short) clientConfiguration.getMusicVolume());
 
-    SoundLibrary.getSoundLibrary().setNoSound(clientConfiguration.getNoSound());
+       SoundLibrary.getSoundLibrary().setNoSound(clientConfiguration.getNoSound());
 
-    if (clientConfiguration.getSoundVolume()>0)
-      SoundLibrary.getSoundLibrary().setSoundVolume((short) clientConfiguration.getSoundVolume());
+       if(clientConfiguration.getSoundVolume()>0)
+         SoundLibrary.getSoundLibrary().setSoundVolume((short) clientConfiguration.getSoundVolume());
     
-    // 1 - Create Graphics Director
-    WindowPolicy wPolicy = null;
+    // 3 - Create Graphics Director
+       WindowPolicy wPolicy = null;
     
-    if( clientConfiguration.getCenterScreenPolicy() )
-        wPolicy = new CenterWindowPolicy();
-    else
-        wPolicy = new LimitWindowPolicy();
+       if( clientConfiguration.getCenterScreenPolicy() )
+           wPolicy = new CenterWindowPolicy();
+       else
+           wPolicy = new LimitWindowPolicy();
 
-    if( clientConfiguration.getUseHardwareAcceleration() )
-        gDirector = new EnhancedGraphicsDirector( wPolicy, imageLib );
-    else
-        gDirector = new GraphicsDirector( wPolicy, imageLib );
+       if( clientConfiguration.getUseHardwareAcceleration() )
+           gDirector = new EnhancedGraphicsDirector( wPolicy, imageLib );
+       else
+           gDirector = new GraphicsDirector( wPolicy, imageLib );
 
-    Debug.signal(Debug.NOTICE, null, "Graphics Engine is using hardware mode : "+
-                                      clientConfiguration.getUseHardwareAcceleration() );
+       Debug.signal(Debug.NOTICE, null, "Graphics Engine is using hardware mode : "+
+                                         clientConfiguration.getUseHardwareAcceleration() );
 
-    // 2 - Retrieve player's informations
-    myPlayer = new PlayerImpl();
+    // 4 - Retrieve player's informations
+       myPlayer = null;
 
-    waitForConnection(5000); // 5s max...
+       waitForConnection(10000); // 10s max...
 
-    try {
-      synchronized(startGameLock) {
-        personality.queueMessage(new MyPlayerDataPleaseMessage());
-        startGameLock.wait(CONNECTION_TIMEOUT);
-      }
-    } catch (InterruptedException ie) {
-    }
+       try {
+         synchronized(startGameLock) {
+            personality.queueMessage(new MyPlayerDataPleaseMessage());
+            startGameLock.wait(CONNECTION_TIMEOUT);
+         }
+       } catch (InterruptedException ie) {
+       }
 
-    if(myPlayer.getPlayerName()==null) {
-      showWarningMessage("Failed to retrieve your player data from the Game Server !\nPlease retry later...");
-      closeConnection();
-      return;
-    }
+       if(myPlayer==null) {
+          showWarningMessage("Failed to retrieve your player data from the Game Server !\nPlease retry later...");
+          closeConnection();
+          return;
+       }
 
-    myPlayer.setIsMaster( true );   // this player is controlled by the user.
-    myPlayer.tick();
+       myPlayer.setIsMaster( true );   // this player is controlled by the user.
+       myPlayer.tick();                // we tick the player to validate data recreation
+       addPlayer(myPlayer);
 
-    // 3 - Retreive player's location
-    WotlasLocation location = myPlayer.getLocation();
-    if (SHOW_DEBUG)
-        System.out.println("POSITION set to x:"+myPlayer.getX()+" y:"+myPlayer.getY()+" location is "+location);
+       WotlasLocation location = myPlayer.getLocation();  // we get the player's location
 
-    players = new Hashtable();
-    
-    // 4 - Create the panels
-    infosPanel = new JInfosPanel(myPlayer);
-    mapPanel = new JMapPanel(gDirector, this);
-    chatPanel = new JChatPanel();
-    optionsPanel = new JOptionsPanel();
-    playerPanel = new JPlayerPanel();
-    logPanel = new JLogPanel();    
-    pingPanel = new GraphicPingPanel();
-    personality.setPingListener( (NetPingListener) pingPanel );
+       if (SHOW_DEBUG)
+          System.out.println("POSITION set to x:"+myPlayer.getX()+" y:"+myPlayer.getY()+" location is "+location);
 
-    if (SHOW_DEBUG)
-        System.out.println("Displaying window");
-    
-    // Welcome message
-    sendMessage(new WelcomeMessage());
+    // 5 - Creation of  the GUI
+       clientScreen = new JClientScreen(gDirector, this );
+       clientScreen.init();
+       personality.setPingListener( (NetPingListener) clientScreen.getPingPanel() );
 
-    // 5 - Create main Frame
-    mFrame = new JClientScreen(infosPanel, mapPanel, chatPanel, optionsPanel, playerPanel, logPanel, pingPanel);
+       if ( (clientConfiguration.getClientWidth()>0) && (clientConfiguration.getClientHeight()>0) )
+          clientScreen.setSize(clientConfiguration.getClientWidth(),clientConfiguration.getClientHeight());
 
-    if (SHOW_DEBUG)
-       System.out.println("JClient created");
-    mFrame.init();
-    
-    // 6 - Client configuration
-    if ( (clientConfiguration.getClientWidth()>0) && (clientConfiguration.getClientHeight()>0) )
-      mFrame.setSize(clientConfiguration.getClientWidth(),clientConfiguration.getClientHeight());
+       if(SHOW_DEBUG)
+          System.out.println("JClientScreen created");
 
-    // 7 - Init map display
-    if (SHOW_DEBUG)
-       System.out.println("Changing map data");
-    changeMapData();
+    // 6 - Init the map display
+       changeMapData();
 
+       if(SHOW_DEBUG)
+         System.out.println("Changed map data !");
 
-    // 8 - Start main loop tick
-    Debug.signal( Debug.NOTICE, null, "Beginning to tick Graphics Director" );
-    this.start();
+    // 7 - Start the tick thread.
+       start();
+       Debug.signal( Debug.NOTICE, null, "Started the tick thread..." );
 
-    if (SHOW_DEBUG)
-        System.out.println("Frame show");
-    mFrame.show();
-    
-    // 9 - Retrieve other players informations        
-    addPlayer(myPlayer);
+       clientScreen.show();
 
-    // 10 - We can now ask for eventual remaining data
+       if (SHOW_DEBUG)
+           System.out.println("Frame displayed on screen...");
+
+    // 8 - We can now ask for the remaining data : chat groups, players, doors...
     // This step should have been done in the current MapData.init() but it was not
     // the cas because our DataManager thread was not started...
-    if (SHOW_DEBUG)
-        System.out.println("sending AllDataLeftPleaseMessage");
-    sendMessage(new AllDataLeftPleaseMessage());
+       sendMessage(new AllDataLeftPleaseMessage());
+
+    // Welcome message
+       sendMessage(new WelcomeMessage());
+
+       if(SHOW_DEBUG)
+          System.out.println("End of DataManager's showInterface !");
   }
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Resume play in case of server deconnection
+  /** Resumes the game screen in case of server connection shut.
    */
-  public void resumeInterface() {
-    Debug.signal( Debug.NOTICE, null, "DataManager::ResumeInterface");
+    public void resumeInterface() {
+       Debug.signal( Debug.NOTICE, null, "DataManager::ResumeInterface");
 
-    // wait for connection
-    waitForConnection(5000); // 5s max...
+     // wait for connection
+       waitForConnection(10000); // 10s max...
 
     // Reset the data
-    chatPanel.reset();    
-    personality.setPingListener( (NetPingListener) pingPanel );
+       clientScreen.getChatPanel().reset();
+       personality.setPingListener( (NetPingListener) clientScreen.getPingPanel() );
 
     // We recreate the graphics director...
-    WindowPolicy wPolicy = null;
+       WindowPolicy wPolicy = null;
     
-    if( ClientDirector.getClientConfiguration().getCenterScreenPolicy() )
-        wPolicy = new CenterWindowPolicy();
-    else
-        wPolicy = new LimitWindowPolicy();
+       if( ClientDirector.getClientConfiguration().getCenterScreenPolicy() )
+           wPolicy = new CenterWindowPolicy();
+       else
+           wPolicy = new LimitWindowPolicy();
 
-    if( ClientDirector.getClientConfiguration().getUseHardwareAcceleration() )
-        gDirector = new EnhancedGraphicsDirector( wPolicy, imageLib );
-    else
-        gDirector = new GraphicsDirector( wPolicy, imageLib );
+       if( ClientDirector.getClientConfiguration().getUseHardwareAcceleration() )
+           gDirector = new EnhancedGraphicsDirector( wPolicy, imageLib );
+       else
+           gDirector = new GraphicsDirector( wPolicy, imageLib );
 
-    Debug.signal(Debug.NOTICE, null, "Graphics Engine is using hardware mode : "+
-                 ClientDirector.getClientConfiguration().getUseHardwareAcceleration() );
+       Debug.signal(Debug.NOTICE, null, "Graphics Engine is using hardware mode : "+
+                    ClientDirector.getClientConfiguration().getUseHardwareAcceleration() );
 
-    mapPanel.updateGraphicsDirector(gDirector);
-    mFrame.show();
+       clientScreen.getMapPanel().updateGraphicsDirector(gDirector);
+       clientScreen.show();
 
     // Retrieve player's informations
-    myPlayer = new PlayerImpl();
+       myPlayer = null;
     
-    try {
-      synchronized(startGameLock) {
-        personality.queueMessage(new MyPlayerDataPleaseMessage());
-        startGameLock.wait(CONNECTION_TIMEOUT);
-      }
-    } catch (InterruptedException ie) {
-    }
+       try {
+         synchronized(startGameLock) {
+             personality.queueMessage(new MyPlayerDataPleaseMessage());
+             startGameLock.wait(CONNECTION_TIMEOUT);
+         }
+       } catch (InterruptedException ie) {
+       }
 
-    if(myPlayer.getPlayerName()==null) {
-      showWarningMessage("Failed to retrieve your player data from the Game Server !\nPlease retry later...");
-      closeConnection();
-      return;
-    }
+       if(myPlayer==null) {
+          showWarningMessage("Failed to retrieve your player data from the Game Server !\nPlease retry later...");
+          closeConnection();
+          return;
+       }
 
-    myPlayer.setIsMaster( true );   // this player is controlled by the user.
-    myPlayer.tick();
+       myPlayer.setIsMaster( true );   // this player is controlled by the user.
+       myPlayer.tick();
+       players.clear();
+       addPlayer(myPlayer);
 
     // Retreive player's location
-    WotlasLocation location = myPlayer.getLocation();
-    if (SHOW_DEBUG)
-        System.out.println("POSITION set to x:"+myPlayer.getX()+" y:"+myPlayer.getY()+" location is "+location);
+       WotlasLocation location = myPlayer.getLocation();
+       if(SHOW_DEBUG)
+          System.out.println("POSITION set to x:"+myPlayer.getX()+" y:"+myPlayer.getY()+" location is "+location);
 
-    players = new Hashtable();
-    
-     // Init map display
-    changeMapData();
-
-    addPlayer(myPlayer);
-    playerPanel.reset();
-
-    // Resume Tick Thread
-    resumeTickThread();
+    // Init map display
+       changeMapData();
+       clientScreen.getPlayerPanel().reset();
+       resumeTickThread();
 
     // We can now ask for eventual remaining data
     // This step should have been done in the current MapData.init() but it was not
     // the cas because our DataManager thread was not started...
-    sendMessage(new AllDataLeftPleaseMessage());
-  }
+       sendMessage(new AllDataLeftPleaseMessage());
+
+    // Welcome message
+       sendMessage(new WelcomeMessage());
+   }
   
  /*------------------------------------------------------------------------------------*/
 
-  /** Main loop to tick the graphics director every 10ms
+  /** Main loop to tick the graphics director every 50ms.
    */
-  public void run() {
-    long now;
-    int deltaT;
-    int delay;
+    public void run() {
+      long now;
+      int deltaT;
+      int delay;
 
-    String os   = System.getProperty( "os.name" );
-    String arch = System.getProperty( "os.arch" );
-    String vers = System.getProperty( "os.version" );
+      String os   = System.getProperty( "os.name" );
+      String arch = System.getProperty( "os.arch" );
+      String vers = System.getProperty( "os.version" );
 
-    Debug.signal( Debug.NOTICE, this, "OS INFO :\n\nOS NAME : <"+os+">\nOS ARCH: <"+arch+">\nOS VERSION: <"+vers+">\n" );
+      Debug.signal( Debug.NOTICE, this, "OS INFO :\n\nOS NAME : <"+os+">\nOS ARCH: <"+arch+">\nOS VERSION: <"+vers+">\n" );
 
-    delay = 50;
+      delay = 50;
 
-    //if ( os.equals("Windows 2000") || os.equals("Windows XP") )
-    //  delay = 40;
+      //if ( os.equals("Windows 2000") || os.equals("Windows XP") )
+      //  delay = 40;
 
-    pauseTickThread = false;
+      pauseTickThread = false;
 
       while( true ) {
           now = System.currentTimeMillis();
@@ -738,17 +645,16 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
           if (deltaT<delay)
               Tools.waitTime(delay-deltaT);
       }
-  }
+   }
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Tick
+  /** Tick Action. We propagate the tick on the players & GraphicsDirector.
    */
-  public void tick() {
+    public void tick() {
 
     // I - Update myPlayer's location
        myMapData.locationUpdate(myPlayer);
-   
      
     // II - Update players drawings    
        synchronized(players) {
@@ -758,73 +664,76 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
               ( (PlayerImpl) it.next() ).tick();
        }
 
-       if ( circle!=null ) {
+       if( circle!=null )
           circle.tick();
-       }
           
     // III - Graphics Director update & redraw
        gDirector.tick();
-
 
     // IV - Sync Messages Execution
        NetMessageBehaviour syncMessages[] = syncMessageQueue.pullMessages();
        
        for( int i=0; i<syncMessages.length; i++)
             syncMessages[i].doBehaviour( this );
-  }
+   }
 
  /*------------------------------------------------------------------------------------*/
 
   /** To pause the tick thread.
    */
-   private void pauseTickThread() {
+    private void pauseTickThread() {
           synchronized( pauseTickThreadLock ) {
-                   pauseTickThread=true;
+                pauseTickThread=true;
           }
-   }
+    }
 
  /*------------------------------------------------------------------------------------*/
 
   /** To resume the tick thread.
    */
-   private void resumeTickThread() {
+    private void resumeTickThread() {
           synchronized( pauseTickThreadLock ) {
-                   pauseTickThread=false;
-                   pauseTickThreadLock.notify();
+                pauseTickThread=false;
+                pauseTickThreadLock.notify();
           }
-   }
+    }
 
  /*------------------------------------------------------------------------------------*/
 
   /** To invoke the code of the specified message just after the current tick.
    *  This method can be called multiple times and is synchronized.
    */
-   public void invokeLater( NetMessageBehaviour msg ) {
-      syncMessageQueue.queueMessage( msg );
-   }
+    public void invokeLater( NetMessageBehaviour msg ) {
+         syncMessageQueue.queueMessage( msg );
+    }
 
  /*------------------------------------------------------------------------------------*/
 
   /** To show a warning message
    */
-  public void showWarningMessage(String warningMsg) {
-    JOptionPane.showMessageDialog( mFrame, warningMsg, "Warning message!", JOptionPane.WARNING_MESSAGE);
-  }
+    public void showWarningMessage(String warningMsg) {
+         JOptionPane.showMessageDialog( clientScreen, warningMsg, "Warning message!", JOptionPane.WARNING_MESSAGE);
+    }
 
  /*------------------------------------------------------------------------------------*/
 
   /** Called when user left-clic on JMapPanel
    */
-  public void onLeftClicJMapPanel(MouseEvent e) {
-    if (SHOW_DEBUG)
-      System.out.println("DataManager::onLeftClicJMapPanel");
+    public void onLeftClicJMapPanel(MouseEvent e) {
 
-    if(updatingMapData) return; // updating Map Location
+      if(SHOW_DEBUG)
+         System.out.println("DataManager::onLeftClicJMapPanel");
 
-    Rectangle screen = gDirector.getScreenRectangle();
-    Object object = gDirector.findOwner( e.getX(), e.getY() );
+      if(updatingMapData)
+         return; // updating Map Location
 
-    if ( object instanceof PlayerImpl ) {
+      Rectangle screen = gDirector.getScreenRectangle();
+      Object object = gDirector.findOwner( e.getX(), e.getY() );
+
+   // We take a look at the selected object the user clicked
+   // Is it a player ? a door ? or the current map ?
+
+      if ( object instanceof PlayerImpl ) {
       	// We display selection and player info
            String previouslySelectedPlayerKey = "";
 
@@ -833,57 +742,57 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
            selectedPlayer = (PlayerImpl) object; // new player selected      
 
-       // We get the InfoPanel
-          Component c_info = dataManager.getPlayerPanel().getTab("-info-");
-           
-          if( c_info==null || !(c_info instanceof InfoPanel) ) {
-              Debug.signal( Debug.ERROR, this, "InfoPanel not found !");
-              return;
-          }
+        // We get the InfoPanel
+           Component c_info = clientScreen.getPlayerPanel().getTab("-info-");
 
-          InfoPanel infoPanel = (InfoPanel) c_info;
-
-       // We erase the previous selection circle
-          if (circle!=null) {
-              gDirector.removeDrawable(circle);
-              circle=null;
-          }
-
-       // Deselect ?
-          if ( previouslySelectedPlayerKey.equals(selectedPlayer.getPrimaryKey()) ) {
-               gDirector.addDrawable(selectedPlayer.getTextDrawable());
-               gDirector.addDrawable(selectedPlayer.getWotCharacter().getAura());
-               selectedPlayer=null;
-               infoPanel.reset();
+           if( c_info==null || !(c_info instanceof InfoPanel) ) {
+               Debug.signal( Debug.ERROR, this, "InfoPanel not found !");
                return;
-          }
+           }
 
-       // Select
-          circle = new CircleDrawable( selectedPlayer.getDrawable(),
+           InfoPanel infoPanel = (InfoPanel) c_info;
+
+        // We erase the previous selection circle
+           if (circle!=null) {
+               gDirector.removeDrawable(circle);
+               circle=null;
+           }
+
+        // Deselect ?
+           if ( previouslySelectedPlayerKey.equals(selectedPlayer.getPrimaryKey()) ) {
+                gDirector.addDrawable(selectedPlayer.getTextDrawable());
+                gDirector.addDrawable(selectedPlayer.getWotCharacter().getAura());
+                selectedPlayer=null;
+                infoPanel.reset();
+                return;
+           }
+
+        // Select
+           circle = new CircleDrawable( selectedPlayer.getDrawable(),
                                        20,
                                        selectedPlayer.getWotCharacter().getColor(),
                                        true,
                                        ImageLibRef.AURA_PRIORITY);
-          gDirector.addDrawable(circle);
-          gDirector.addDrawable(selectedPlayer.getTextDrawable());
-          gDirector.addDrawable(selectedPlayer.getWotCharacter().getAura());
-          infoPanel.setPlayerInfo( selectedPlayer );
+           gDirector.addDrawable(circle);
+           gDirector.addDrawable(selectedPlayer.getTextDrawable());
+           gDirector.addDrawable(selectedPlayer.getWotCharacter().getAura());
+           infoPanel.setPlayerInfo( selectedPlayer );
 
-       // Away Message
-          String awayMessage = selectedPlayer.getPlayerAwayMessage();
+        // Away Message
+           String awayMessage = selectedPlayer.getPlayerAwayMessage();
 
-          if( selectedPlayer.isConnectedToGame() )  return;
-          if( !selectedPlayer.canDisplayAwayMessage() )  return;
+           if( selectedPlayer.isConnectedToGame() )  return; 
+           if( !selectedPlayer.canDisplayAwayMessage() )  return;
 
-          if( awayMessage!=null ) {
-              JChatRoom chatRoom = chatPanel.getCurrentJChatRoom();
-              chatRoom.appendText("<font color='gray'> "+selectedPlayer.getFullPlayerName()+" (away) says: <i> "
-                                                    +selectedPlayer.getPlayerAwayMessage()+" </i></font>");
-          }
+           if( awayMessage!=null ) {
+               JChatRoom chatRoom = clientScreen.getChatPanel().getCurrentJChatRoom();
+               chatRoom.appendText("<font color='gray'> "+selectedPlayer.getFullPlayerName()+" (away) says: <i> "
+                                                     +selectedPlayer.getPlayerAwayMessage()+" </i></font>");
+           }
 
-          return;
-    }
-    else if( object instanceof Door ) {
+           return;
+     }
+     else if( object instanceof Door ) {
         // We open/close the door IF the player is near enough...
            Door door = (Door) object;
            
@@ -900,32 +809,34 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
                 Point doorPoint = door.getPointNearDoor( myPlayer.getCurrentRectangle() );
 
                 if( doorPoint!=null )
-                    myPlayer.moveTo( doorPoint );
+                    myPlayer.moveTo( doorPoint, worldManager );
            }
 
            return;
     }
 
-    synchronized( players ) {
+  // Clicked object is the game screen...
+  // We move the player to that location.
+     synchronized( players ) {
        if (object == null) {
           int newX = e.getX() + (int)screen.getX();
           int newY = e.getY() + (int)screen.getY();
-          myPlayer.moveTo( new Point(newX,newY) );
+          myPlayer.moveTo( new Point(newX,newY), worldManager );
        }
-    }
-    
-    if (SHOW_DEBUG)
-      System.out.println("END of DataManager::onLeftClicJMapPanel");
+     }
+
+     if (SHOW_DEBUG)
+        System.out.println("END of DataManager::onLeftClicJMapPanel");
   }
 
  /*------------------------------------------------------------------------------------*/
 
  /** Called when user right-clic on JMapPanel
-   */
-  public void onRightClicJMapPanel(MouseEvent e) {
-    if (SHOW_DEBUG)
-      System.out.println("DataManager::onRightClicJMapPanel");
-  }
+  */
+   public void onRightClicJMapPanel(MouseEvent e) {
+      if (SHOW_DEBUG)
+        System.out.println("DataManager::onRightClicJMapPanel");
+   }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -943,64 +854,69 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    *
    * @player the player to add
    */
-  public synchronized void addPlayer(PlayerImpl player) {
-    players.put( player.getPrimaryKey(), player );
-  }
+    public synchronized void addPlayer(PlayerImpl player) {
+       players.put( player.getPrimaryKey(), player );
+    }
 
   /** To remove a player
    *
    * @player the player to remove
    */
-  public synchronized boolean removePlayer(PlayerImpl player) {
-    players.remove(player.getPrimaryKey());
-    return true;
-  }
+    public synchronized boolean removePlayer(PlayerImpl player) {
+       players.remove(player.getPrimaryKey());
+       return true;
+    }
 
   /** To set our player<br>
    * (called by client.message.description.YourPlayerDataMsgBehaviour)
    *
    * @param player Our player
    */
-  public void setCurrentPlayer(Player player) {
-    myPlayer = (PlayerImpl) player;
-  }
+    public void setCurrentPlayer(Player player) {
+      myPlayer = (PlayerImpl) player;
+
+       synchronized(startGameLock) {
+           startGameLock.notify();      
+       }
+    }
 
  /*------------------------------------------------------------------------------------*/
 
-  /** To change type of MapData
+  /** To change the current MapData ( TownMap, WorldMap, InteriorMap ).
    */
-  public void changeMapData() {
-    updatingMapData=true;
+    public void changeMapData() {
+      updatingMapData=true;
 
-    try{
-      if ( myPlayer.getLocation().isRoom() ) {
-         myMapData = new InteriorMapData();      
-      }
-      else if ( myPlayer.getLocation().isTown() ) {
-         myMapData = new TownMapData();
-      }
-      else if ( myPlayer.getLocation().isWorld() ) {
-         myMapData = new WorldMapData();
-      }
-      myMapData.showDebug(SHOW_DEBUG);
-      myMapData.initDisplay(myPlayer, this);
-    }
-    catch(Exception e ) {
-      Debug.signal(Debug.ERROR, this, e);
-    }
+      try{
+        if ( myPlayer.getLocation().isRoom() ) {
+            myMapData = new InteriorMapData();      
+        }
+        else if ( myPlayer.getLocation().isTown() ) {
+            myMapData = new TownMapData();
+        }
+        else if ( myPlayer.getLocation().isWorld() ) {
+            myMapData = new WorldMapData();
+        }
 
-    updatingMapData=false;
-  }
+        myMapData.showDebug(SHOW_DEBUG);
+        myMapData.initDisplay(myPlayer, this);
+      }
+      catch(Exception e ) {
+         Debug.signal(Debug.ERROR, this, e);
+      }
+
+      updatingMapData=false;
+   }
 
  /*------------------------------------------------------------------------------------*/
 
   /** To suppress drawables, shadows, data
    */
-  public void cleanInteriorMapData() {
-    gDirector.removeAllDrawables();
-    circle = null;
-    selectedPlayer = null;
-  }
+    public void cleanInteriorMapData() {
+      gDirector.removeAllDrawables();
+      circle = null;
+      selectedPlayer = null;
+    }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -1008,50 +924,50 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    *
    * @param rect the rectangle to display
    */
-  public void drawScreenRectangle(Rectangle rect, Color color) {
-    Point p[] = new Point[5];
-    int x = (int) rect.getX();
-    int y = (int) rect.getY();
-    int width = (int) rect.getWidth();
-    int height = (int) rect.getHeight();
-    p[0] = new Point(x,y);
-    p[1] = new Point(x+width, y);
-    p[2] = new Point(x+width, y+height);
-    p[3] = new Point(x, y+height);
-    p[4] = new Point(x,y);
-    Drawable pathDrawable = (Drawable) new PathDrawable( p, color, (short) ImageLibRef.AURA_PRIORITY );
-    gDirector.addDrawable( pathDrawable);
-  }
+    public void drawScreenRectangle(Rectangle rect, Color color) {
+        Point p[] = new Point[5];
+        int x = (int) rect.getX();
+        int y = (int) rect.getY();
+        int width = (int) rect.getWidth();
+        int height = (int) rect.getHeight();
+        p[0] = new Point(x,y);
+        p[1] = new Point(x+width, y);
+        p[2] = new Point(x+width, y+height);
+        p[3] = new Point(x, y+height);
+        p[4] = new Point(x,y);
+
+        Drawable pathDrawable = (Drawable) new PathDrawable( p, color, (short) ImageLibRef.AURA_PRIORITY );
+        gDirector.addDrawable( pathDrawable);
+    }
 
  /*------------------------------------------------------------------------------------*/
 
-  /** To close the client.
+  /** To exit wotlas.
    */
-  public void exit() {
+    public void exit() {
     
-    if (mFrame!=null) {
-      int mFrameWidth =  mFrame.getWidth();
-      int mFrameHeight = mFrame.getHeight();
+        if(clientScreen!=null) {
+           int clientScreenWidth =  clientScreen.getWidth();
+           int clientScreenHeight = clientScreen.getHeight();
 
-        if (mFrameWidth>100)
-          ClientDirector.getClientConfiguration().setClientWidth(mFrameWidth);
+            if(clientScreenWidth>100)
+               ClientDirector.getClientConfiguration().setClientWidth(clientScreenWidth);
 
-        if (mFrameHeight>100)
-          ClientDirector.getClientConfiguration().setClientHeight(mFrameHeight);
+            if(clientScreenHeight>100)
+               ClientDirector.getClientConfiguration().setClientHeight(clientScreenHeight);
+        }
+
+       ClientDirector.getClientConfiguration().save();
+       Debug.exit();
     }
-
-    ClientDirector.saveClientConfiguration();
-    Debug.exit();
-  }
 
  /*------------------------------------------------------------------------------------*/
 
   /** To get the master player.
    */
-  public PlayerImpl getMyPlayer() {
-    return myPlayer;
-  }
+    public PlayerImpl getMyPlayer() {
+        return myPlayer;
+    }
 
  /*------------------------------------------------------------------------------------*/
-
 }

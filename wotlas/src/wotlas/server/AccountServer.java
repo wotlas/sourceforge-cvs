@@ -48,7 +48,7 @@ public class AccountServer extends NetServer implements ErrorCodeList
 
    /** Static Link to Account Server Config File.
     */
-    public final static String ACCOUNT_CONFIG = "../src/config/account-server.cfg";
+    public final static String ACCOUNT_CONFIG = "account-server.cfg";
 
  /*------------------------------------------------------------------------------------*/
 
@@ -74,7 +74,7 @@ public class AccountServer extends NetServer implements ErrorCodeList
        setMaximumOpenedSockets( nbMaxSockets );
 
      // we create our wizars step factory
-        stepFactory = new AccountStepFactory( ServerDirector.getDatabasePath() );
+        stepFactory = new AccountStepFactory( ServerDirector.getResourceManager() );
 
         if(stepFactory.getStep(AccountStepFactory.FIRST_STEP)==null ) {
            Debug.signal(Debug.FAILURE, this, "First step missing in the account wizard !");
@@ -82,19 +82,22 @@ public class AccountServer extends NetServer implements ErrorCodeList
         }
 
      // we load the clientCounter from the ACCOUNT_CONFIG
-        Properties props = FileTools.loadPropertiesFile( ACCOUNT_CONFIG );
+        Properties props = FileTools.loadPropertiesFile(
+                   ServerDirector.getResourceManager().getConfig(ACCOUNT_CONFIG) );
 
         if(props==null) {
            // file not found, we create one...
-              Debug.signal( Debug.WARNING, this, "Could not find file: "+ACCOUNT_CONFIG
-                            +"\n   Creating a new account-server.cfg file..." );
+              Debug.signal( Debug.WARNING, this, "Could not find file: "
+                            +ServerDirector.getResourceManager().getConfig(ACCOUNT_CONFIG)
+                            +"\n   Creating a new "+ACCOUNT_CONFIG+" file..." );
 
               props = new Properties();
               props.setProperty( "clientCounter", "0" );
               clientCounter=0;
               
-              if( !FileTools.savePropertiesFile( props, ACCOUNT_CONFIG, "Do not remove or modify this file !") ){
-                  Debug.signal( Debug.FAILURE, this,"Cannot create or get account-server.cfg file!");
+              if( !FileTools.savePropertiesFile( props,
+                       ServerDirector.getResourceManager().getConfig(ACCOUNT_CONFIG), "Do not remove or modify this file !") ){
+                  Debug.signal( Debug.FAILURE, this,"Cannot create or get "+ACCOUNT_CONFIG+" file!");
                   Debug.exit();
               }
         }
@@ -104,7 +107,7 @@ public class AccountServer extends NetServer implements ErrorCodeList
                 Debug.signal( Debug.NOTICE, null, "AccountServer Client Counter set to "+clientCounter+"." );
              }
              catch( Exception e ){
-                  Debug.signal( Debug.FAILURE, this,"Bad account-server.cfg clientCounter property!");
+                  Debug.signal( Debug.FAILURE, this,"Bad "+ACCOUNT_CONFIG+" clientCounter property!");
                   Debug.exit();
              }
         }
@@ -119,12 +122,12 @@ public class AccountServer extends NetServer implements ErrorCodeList
     * @param key a string given by the client to identify itself. The key should be
     *        equal to "AccountServerPlease!".
     */
-    public void accessControl( NetPersonality personality, String key )
-    {
+    public void accessControl( NetPersonality personality, String key ) {
+
        // The key is there to prevent wrong connections
 
-          if( key.equals("AccountServerPlease!") )
-          {
+          if( key.equals("AccountServerPlease!") ) {
+
             // ok, let's create an AccountBuilder for this future client.
                AccountBuilder accountBuilder = new AccountBuilder(this);
 
@@ -136,7 +139,7 @@ public class AccountServer extends NetServer implements ErrorCodeList
                acceptClient( personality );
                Debug.signal( Debug.NOTICE, this, "A new client is building a GameAccount...");
           }
-          else if(key.startsWith("deleteAccount:") && !key.endsWith(":") ){
+          else if(key.startsWith("deleteAccount:") && !key.endsWith(":") ) {
             // we retrieve the account name & password
                int basepos = key.indexOf(':');
                int basepos2 = key.indexOf(':',basepos+1);
@@ -151,7 +154,7 @@ public class AccountServer extends NetServer implements ErrorCodeList
                String password = key.substring( basepos2+1, key.length() );
 
             // We try to erase the account
-               AccountManager manager = DataManager.getDefaultDataManager().getAccountManager();
+               AccountManager manager = ServerDirector.getDataManager().getAccountManager();
                GameAccount account = manager.getAccount( accountName );
 
                if( account==null ) {
@@ -204,9 +207,10 @@ public class AccountServer extends NetServer implements ErrorCodeList
          Properties props = new Properties();
          props.setProperty( "clientCounter", ""+clientCounter );
               
-         if( !FileTools.savePropertiesFile( props, ACCOUNT_CONFIG, "Do not remove or modify this file !") ){
+         if( !FileTools.savePropertiesFile( props,
+                   ServerDirector.getResourceManager().getConfig(ACCOUNT_CONFIG), "Do not remove or modify this file !") ){
              Debug.signal( Debug.CRITICAL, this,"Cannot save clientCounter (="
-                           +clientCounter+") to account-server.cfg file!");
+                           +clientCounter+") to "+ACCOUNT_CONFIG+" file!");
          }
 
       // we return the new value

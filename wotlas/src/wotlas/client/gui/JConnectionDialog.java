@@ -26,10 +26,10 @@ import wotlas.utils.SwingTools;
 import wotlas.utils.Tools;
 
 import wotlas.common.ErrorCodeList;
-import wotlas.common.ServerConfigList;
+import wotlas.common.ServerConfigManager;
 import wotlas.common.ServerConfig;
 
-import wotlas.client.ClientManager;
+import wotlas.client.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -43,8 +43,8 @@ import javax.swing.*;
  * @see wotlas.libs.net.NetClient
  */
 
-public abstract class JConnectionDialog extends JDialog implements Runnable
-{
+public abstract class JConnectionDialog extends JDialog implements Runnable {
+
  /*------------------------------------------------------------------------------------*/
 
     private ALabel l_info;    // information label
@@ -110,9 +110,9 @@ public abstract class JConnectionDialog extends JDialog implements Runnable
          getContentPane().add( l_info, BorderLayout.CENTER );
 
       // Cancel Button
-         ImageIcon im_cancelup = new ImageIcon("../base/gui/cancel-up.gif");
-         ImageIcon im_canceldo = new ImageIcon("../base/gui/cancel-do.gif");
-         ImageIcon im_cancelun = new ImageIcon("../base/gui/cancel-un.gif");
+         ImageIcon im_cancelup = ClientDirector.getResourceManager().getImageIcon("cancel-up.gif");
+         ImageIcon im_canceldo = ClientDirector.getResourceManager().getImageIcon("cancel-do.gif");
+         ImageIcon im_cancelun = ClientDirector.getResourceManager().getImageIcon("cancel-un.gif");
          b_cancel = new JButton(im_cancelup);
          b_cancel.setRolloverIcon(im_canceldo);
          b_cancel.setPressedIcon(im_canceldo);
@@ -169,7 +169,7 @@ public abstract class JConnectionDialog extends JDialog implements Runnable
                   if( errorCode==ErrorCodeList.ERR_CONNECT_FAILED ) {
                      // we report the deadlink and try the eventualy new address
                         l_info.setText( "Connection failed. Trying to update server address..." );
-                        ServerConfigList configList = ClientManager.getDefaultClientManager().getServerConfigList();
+                        ServerConfigManager configList = ClientDirector.getClientManager().getServerConfigManager();
 
                         if(searchingOnServerID<=0)
                            server = configList.reportDeadServer(serverID);
@@ -183,7 +183,7 @@ public abstract class JConnectionDialog extends JDialog implements Runnable
                 // If the account was not found we try another server (happens only for the GameServer)
                   if( errorCode==ErrorCodeList.ERR_UNKNOWN_ACCOUNT || (!retry && searchingOnServerID>0)) {
                         l_info.setText( "Account not found on this server. Trying next server..." );
-                        ServerConfigList configList = ClientManager.getDefaultClientManager().getServerConfigList();
+                        ServerConfigManager configList = ClientDirector.getClientManager().getServerConfigManager();
 
                         do{
                               searchingOnServerID = configList.getNextServerID(searchingOnServerID);
@@ -229,7 +229,8 @@ public abstract class JConnectionDialog extends JDialog implements Runnable
 
         Runnable runnable = new Runnable() {
            public void run() {
-              new AInfoDialog( frame, ferror, true );
+              new AInfoDialog( frame, ferror, true,
+              ClientDirector.getResourceManager().getBase("gui") );
            }
         };
 

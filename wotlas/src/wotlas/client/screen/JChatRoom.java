@@ -44,8 +44,7 @@ import java.util.*;
  * @author Petrus, Aldiss
  */
 
-public class JChatRoom extends JPanel implements MouseListener
-{
+public class JChatRoom extends JPanel implements MouseListener {
 
  /*------------------------------------------------------------------------------------*/
 
@@ -144,13 +143,13 @@ public class JChatRoom extends JPanel implements MouseListener
     final String strNewName = senderFullName;
     players.put( primaryKey, senderFullName );
 
-   Hashtable playersTable = DataManager.getDefaultDataManager().getPlayers();
+   Hashtable playersTable = ClientDirector.getDataManager().getPlayers();
    Player newPlayer = (Player) playersTable.get(primaryKey);
 
    if ( (newPlayer!=null) && newPlayer.isConnectedToGame() ) {
       Runnable runnable = new Runnable() {
         public void run() {
-          if (!strNewName.equals(DataManager.getDefaultDataManager().getMyPlayer().getFullPlayerName()))
+          if (!strNewName.equals(ClientDirector.getDataManager().getMyPlayer().getFullPlayerName()))
             appendText("<font color='green'>" + strNewName + " entered the chat...</font>");
           playersListModel.addElement(strNewName);
           revalidate();
@@ -183,7 +182,7 @@ public class JChatRoom extends JPanel implements MouseListener
 
     Runnable runnable = new Runnable() {
       public void run() {
-        if (!strOldName.equals(DataManager.getDefaultDataManager().getMyPlayer().getFullPlayerName()))
+        if (!strOldName.equals(ClientDirector.getDataManager().getMyPlayer().getFullPlayerName()))
           appendText("<font color='green'><i>" + strOldName + " left the chat...</i></font>");
         playersListModel.removeElement(strOldName);
         revalidate();
@@ -275,8 +274,7 @@ public class JChatRoom extends JPanel implements MouseListener
       if (DataManager.SHOW_DEBUG)
         System.out.println("\tleft clic");
       String selectedPlayerName = (String) playersJList.getSelectedValue();      
-      DataManager.getDefaultDataManager().getChatPanel().setInputBoxText("/to:"+selectedPlayerName+":");
-      
+      ClientDirector.getDataManager().getClientScreen().getChatPanel().setInputBoxText("/to:"+selectedPlayerName+":");
     }
   }
 

@@ -31,8 +31,8 @@ package wotlas.common;
  *     game servers and publish a up-to-date list of active servers. Wotlas Client Software
  *     can then download this list and display it to the user.<br><p>
  *
- * The ServerConfig class is saved by the PersistenceManager in base/servers/server-<id>.cfg.
- * base/servers/server-<id>-adr.cfg
+ * The ServerConfig class is saved in $base$/servers/server-<id>.cfg. and
+ * $base$/servers/server-<id>-adr.cfg
  *
  * When you install a wotlas server you need to create this file. To help you a setup tool
  * is provided in the package : wotlas.server.setup.ServerSetup
@@ -412,7 +412,7 @@ public class ServerConfig
     * @return configVersion
     */
       public String getConfigVersion() {
-         return configVersion;
+         return configVersion.trim();
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -431,7 +431,7 @@ public class ServerConfig
     * @param configVersion version.
     */
       public void setConfigVersion( String configVersion ) {
-         this.configVersion = configVersion;
+         this.configVersion = configVersion.trim();
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

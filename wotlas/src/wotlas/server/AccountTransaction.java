@@ -109,7 +109,7 @@ public class AccountTransaction implements NetConnectionListener
           Debug.signal( Debug.NOTICE, null, "Server "+serverID+" sent us "+account.getPrimaryKey()+"'s account." );
 
        // 1 - Account already exists ?
-          AccountManager manager = DataManager.getDefaultDataManager().getAccountManager();
+          AccountManager manager = ServerDirector.getDataManager().getAccountManager();
 
           if( manager.checkAccountName( account.getPrimaryKey() ) ) {
               reportError( "Account "+account.getPrimaryKey()+" already exists !" );
@@ -127,7 +127,7 @@ public class AccountTransaction implements NetConnectionListener
              Debug.signal( Debug.NOTICE, null, account.getPrimaryKey()+" account transaction succeeded." );
              account.getPlayer().init();
               
-             DataManager.getDefaultDataManager().getWorldManager().addNewPlayer( account.getPlayer() );
+             ServerDirector.getDataManager().getWorldManager().addNewPlayer( account.getPlayer() );
              Debug.signal( Debug.NOTICE, this, "Added the received client account to the game." );
 
              personality.queueMessage( new AccountTrSuccessMessage() );
@@ -159,7 +159,7 @@ public class AccountTransaction implements NetConnectionListener
           transactionLock = new Object();
           transactionSucceeded = false;
 
-          AccountManager manager = DataManager.getDefaultDataManager().getAccountManager();
+          AccountManager manager = ServerDirector.getDataManager().getAccountManager();
           GameAccount account = manager.getAccount(accountPrimaryKey);
 
           if(account==null) {
@@ -187,10 +187,9 @@ public class AccountTransaction implements NetConnectionListener
           if(transactionSucceeded) {
             // we remove the account hashmap entry
                manager.removeAccount( account.getPrimaryKey() );
-               PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
 
             // and delete the account...
-               if( pm.deleteAccount( account.getPrimaryKey() ) ) // we delete the original account
+               if( manager.deleteAccountFiles( account.getPrimaryKey() ) ) // we delete the original account
                    Debug.signal( Debug.NOTICE, null, account.getPrimaryKey()+" account transaction succeeded." );
                else
                    Debug.signal( Debug.CRITICAL, this, "Failed to delete account "

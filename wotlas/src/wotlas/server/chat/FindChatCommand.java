@@ -103,8 +103,8 @@ public class FindChatCommand implements ChatCommand
                  return true;
               }
 
-              GameAccount account = DataManager.getDefaultDataManager().getAccountManager().getAccount(message);
-         
+              GameAccount account = ServerDirector.getDataManager().getAccountManager().getAccount(message);
+
               if(account==null) {
                  response.setMessage("/cmd:/find command error:<font color='red'> unknown player</font>");
                  player.sendMessage(response);
@@ -115,17 +115,17 @@ public class FindChatCommand implements ChatCommand
               WotlasLocation flocation = account.getPlayer().getLocation();
 
               if( flocation.isRoom() ) {
-                  Room r = DataManager.getDefaultDataManager().getWorldManager().getRoom(flocation);
+                  Room r = ServerDirector.getDataManager().getWorldManager().getRoom(flocation);
                   if(r!=null)
                      message += r.getFullName();
               }
               else if( flocation.isTown() ) {
-                  TownMap t = DataManager.getDefaultDataManager().getWorldManager().getTownMap(flocation);
+                  TownMap t = ServerDirector.getDataManager().getWorldManager().getTownMap(flocation);
                   if(t!=null)
                      message += t.getFullName();
               }
               else if( flocation.isWorld() ) {
-                  WorldMap w = DataManager.getDefaultDataManager().getWorldManager().getWorldMap(flocation);
+                  WorldMap w = ServerDirector.getDataManager().getWorldManager().getWorldMap(flocation);
                   if(w!=null)
                      message += w.getFullName();
               }

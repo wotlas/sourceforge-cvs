@@ -54,7 +54,7 @@ public class YourAccountDataMsgBehaviour extends YourAccountDataMessage implemen
    */
      public void doBehaviour( Object sessionContext ) {      
         DataManager dataManager = (DataManager) sessionContext;
-        ClientManager clientManager = ClientManager.getDefaultClientManager();
+        ClientManager clientManager = ClientDirector.getClientManager();
         
         ProfileConfig currentProfileConfig = clientManager.getCurrentProfileConfig();
 
@@ -63,8 +63,7 @@ public class YourAccountDataMsgBehaviour extends YourAccountDataMessage implemen
 
         ProfileConfigList profileConfigList = clientManager.getProfileConfigList();
         profileConfigList.updateProfile(currentProfileConfig);
-        
-        PersistenceManager.getDefaultPersistenceManager().saveProfilesConfig(profileConfigList);
+        profileConfigList.save();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

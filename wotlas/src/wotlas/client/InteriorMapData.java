@@ -47,8 +47,7 @@ import java.io.IOException;
 
 import java.util.Hashtable;
 
-public class InteriorMapData implements MapData
-{
+public class InteriorMapData implements MapData {
 
  /*------------------------------------------------------------------------------------*/
 
@@ -129,56 +128,60 @@ public class InteriorMapData implements MapData
     Drawable background = null;                 // background image
 
     GraphicsDirector gDirector = dataManager.getGraphicsDirector();
-    String imageDBHome = dataManager.getImageDBHome();
 
     // 0 - Some inits...
     myPlayer.init();
 
     // 1 - We load the InteriorMap
     WotlasLocation location = myPlayer.getLocation();
-
     currentInteriorMapID = location.getInteriorMapID();
     currentRoomID = location.getRoomID();
 
     imap = dataManager.getWorldManager().getInteriorMap(location);
-    if (SHOW_DEBUG) {
-      System.out.println("InteriorMap");
-      System.out.println("\tfullName = "  + imap.getFullName());
-      System.out.println("\tshortName = " + imap.getShortName());
-    }
 
-    //   - We load the room
+      if (SHOW_DEBUG) {
+         System.out.println("InteriorMap");
+         System.out.println("\tfullName = "  + imap.getFullName());
+         System.out.println("\tshortName = " + imap.getShortName());
+      }
+
+    // 2 - We load the room ...
+    //     ... and set the player's position (if his position is incorrect)
     Room room = dataManager.getWorldManager().getRoom(location);
 
-    if (SHOW_DEBUG) {
-      System.out.println("Room");
-      System.out.println("\tfullName = "       + room.getFullName());
-      System.out.println("\tshortName = "      + room.getShortName());
-    }
-    dataManager.getChatPanel().changeMainJChatRoom(room.getShortName());
+      if (SHOW_DEBUG) {
+         System.out.println("Room");
+         System.out.println("\tfullName = "       + room.getFullName());
+         System.out.println("\tshortName = "      + room.getShortName());
+      }
 
-/* NETMESSAGE */
-    if (SHOW_DEBUG)
-      System.out.println("dataManager.sendMessage( new EnteringRoomMessage(...) )");
+    dataManager.getClientScreen().getChatPanel().changeMainJChatRoom(room.getShortName());
 
-    if (SHOW_DEBUG)
-      System.out.println("Adding a new player : " + myPlayer + "to dataManager");
+      if (SHOW_DEBUG)
+         System.out.println("dataManager.sendMessage( new EnteringRoomMessage(...) )");
+
+      if (SHOW_DEBUG)
+         System.out.println("Adding a new player : " + myPlayer + "to dataManager");
+
     dataManager.addPlayer(myPlayer);
 
-    // 2 - We set player's position if his position is incorrect
     if (myPlayer.getX() == -1) {
-      ScreenPoint insertionPoint = room.getInsertionPoint();
-      if (SHOW_DEBUG)
-        System.out.println("\tinsertionPoint = " + insertionPoint);
-      myPlayer.setX(insertionPoint.x);
-      myPlayer.setY(insertionPoint.y);
-      myPlayer.setPosition(insertionPoint);
+       ScreenPoint insertionPoint = room.getInsertionPoint();
+
+       if (SHOW_DEBUG)
+          System.out.println("\tinsertionPoint = " + insertionPoint);
+
+       myPlayer.setX(insertionPoint.x);
+       myPlayer.setY(insertionPoint.y);
+       myPlayer.setPosition(insertionPoint);
     }
 
     // 3 - We load the image
     backgroundImageID = imap.getInteriorMapImage();
+
     if (SHOW_DEBUG)
       System.out.println("\tbackgroundImageID = " + backgroundImageID);
+
     background = (Drawable) new MultiRegionImage( myPlayer.getDrawable(),              // our reference for image loading
                                                   500,                                 // perception radius
                                                   imap.getImageRegionWidth(),          // grid deltax
@@ -347,10 +350,8 @@ public class InteriorMapData implements MapData
 
       dataManager.getPlayers().clear();
       dataManager.cleanInteriorMapData(); // suppress drawables, shadows, data
-      dataManager.getChatPanel().reset();
+      dataManager.getClientScreen().getChatPanel().reset();
 
-      //myPlayer.setPosition( new ScreenPoint(myPlayer.getX(), myPlayer.getY()) );
-      
       //  - We clean eventual doors data...
       Room rooms[] = imap.getRooms();
 
@@ -425,8 +426,8 @@ public class InteriorMapData implements MapData
         if (SHOW_DEBUG)
           System.out.println("Changing main ChatRoom");
 
-        dataManager.getChatPanel().reset();
-        dataManager.getChatPanel().changeMainJChatRoom(room.getShortName());
+        dataManager.getClientScreen().getChatPanel().reset();
+        dataManager.getClientScreen().getChatPanel().changeMainJChatRoom(room.getShortName());
 
         String[] strTemp = { room.getFullName() };
         mltLocationName.setText(strTemp);

@@ -95,7 +95,7 @@ public class WhoChatCommand implements ChatCommand
     */
       public boolean exec( String message, PlayerImpl player, SendTextMessage response ) {
 
-          HashMap onlinePlayers = DataManager.getDefaultDataManager().getAccountManager().getOnlinePlayers();
+          HashMap onlinePlayers = ServerDirector.getDataManager().getAccountManager().getOnlinePlayers();
 
           Iterator it = onlinePlayers.values().iterator();
           StringBuffer result = new StringBuffer("/cmd:There are <b>"+onlinePlayers.size() + "</b> online players on this server :");
@@ -117,12 +117,12 @@ public class WhoChatCommand implements ChatCommand
                     flocation.setBuildingID(-1);
 
                 if( flocation.isTown() ) {
-                    TownMap t = DataManager.getDefaultDataManager().getWorldManager().getTownMap(flocation);
+                    TownMap t = ServerDirector.getDataManager().getWorldManager().getTownMap(flocation);
                     if(t!=null)
                        slocation = t.getFullName();
                 }
                 else if( flocation.isWorld() ) {
-                    WorldMap w = DataManager.getDefaultDataManager().getWorldManager().getWorldMap(flocation);
+                    WorldMap w = ServerDirector.getDataManager().getWorldManager().getWorldMap(flocation);
                     if(w!=null)
                        slocation = w.getFullName();
                 }

@@ -78,11 +78,11 @@ public class RemPlayerFromChatRoomMsgBehaviour extends RemPlayerFromChatRoomMess
        }
 
     // We remove the player
-       dataManager.getChatPanel().removePlayer(chatRoomPrimaryKey,sender);
+       dataManager.getClientScreen().getChatPanel().removePlayer(chatRoomPrimaryKey,sender);
 
        if( player.getPrimaryKey().equals( senderPrimaryKey ) ) {
        	 // It's our player we remove from this chat !
-            dataManager.getChatPanel().setCurrentJChatRoom( ChatRoom.DEFAULT_CHAT );
+            dataManager.getClientScreen().getChatPanel().setCurrentJChatRoom( ChatRoom.DEFAULT_CHAT );
        }
   }
   

@@ -46,8 +46,7 @@ import java.io.IOException;
 
 import java.util.Hashtable;
 
-public class WorldMapData implements MapData
-{
+public class WorldMapData implements MapData {
 
  /*------------------------------------------------------------------------------------*/
 
@@ -107,7 +106,6 @@ public class WorldMapData implements MapData
     Drawable background = null;                 // background image
 
     GraphicsDirector gDirector = dataManager.getGraphicsDirector();
-    String imageDBHome = dataManager.getImageDBHome();
 
     // 0 - some inits...
     myPlayer.init();
@@ -118,12 +116,14 @@ public class WorldMapData implements MapData
     currentWorldMapID = location.getWorldMapID();
 
     WorldMap worldMap = dataManager.getWorldManager().getWorldMap(location);
-    if (SHOW_DEBUG) {
-      System.out.println("WorldMap");
-      System.out.println("\tfullName = "  + worldMap.getFullName());
-      System.out.println("\tshortName = " + worldMap.getShortName());
-    }
-    dataManager.getChatPanel().changeMainJChatRoom(worldMap.getShortName());
+
+      if (SHOW_DEBUG) {
+         System.out.println("WorldMap");
+         System.out.println("\tfullName = "  + worldMap.getFullName());
+         System.out.println("\tshortName = " + worldMap.getShortName());
+      }
+
+    dataManager.getClientScreen().getChatPanel().changeMainJChatRoom(worldMap.getShortName());
 
     dataManager.addPlayer(myPlayer);
 
@@ -178,11 +178,15 @@ public class WorldMapData implements MapData
 
     //   - We add towns' images
     TownMap towns[] = worldMap.getTownMaps();
+
     if (towns!=null) {
+
       if (SHOW_DEBUG)
         System.out.println("\tDrawing Towns");
+
       ImageIdentifier townImageID = null;   // town image identifier
       Drawable townImage = null;            // town image
+
       for (int i=0; i<towns.length; i++) {        
         townImageID = towns[i].getSmallTownImage();
         Rectangle position = towns[i].toRectangle();
@@ -214,18 +218,6 @@ public class WorldMapData implements MapData
 
  /*------------------------------------------------------------------------------------*/
 
-  /** canChangeMap is set to true if player can change its MapData<br>
-   * called by wotlas.client.message.YouCanLeaveMapMessage
-   */
-  /*public void canChangeMapLocation( boolean canChangeMap ) {
-    synchronized( changeMapLock ) {
-      this.canChangeMap = canChangeMap;
-      changeMapLock.notify();
-    }
-  }*/
-
- /*------------------------------------------------------------------------------------*/
-
   /** To update the location<br>
    * - test if player is intersecting a screenZone<br>
    * - test if player is entering a new WotlasLocation<br>
@@ -244,7 +236,7 @@ public class WorldMapData implements MapData
 
       dataManager.getPlayers().clear();
       dataManager.cleanInteriorMapData(); // suppress drawables, shadows, data
-      dataManager.getChatPanel().reset();
+      dataManager.getClientScreen().getChatPanel().reset();
       
       //myPlayer.setPosition( new ScreenPoint(myPlayer.getX(), myPlayer.getY()) );
       

@@ -46,8 +46,7 @@ import java.io.IOException;
 
 import java.util.Hashtable;
 
-public class TownMapData implements MapData
-{
+public class TownMapData implements MapData {
 
  /*------------------------------------------------------------------------------------*/
 
@@ -105,7 +104,6 @@ public class TownMapData implements MapData
     ImageIdentifier backgroundImageID = null;   // background image identifier
     Drawable background = null;                 // background image
 
-    String imageDBHome = dataManager.getImageDBHome();
     GraphicsDirector gDirector = dataManager.getGraphicsDirector();
 
     // 0 - Some inits...
@@ -117,12 +115,14 @@ public class TownMapData implements MapData
     currentTownMapID = location.getTownMapID();
 
     TownMap townMap = dataManager.getWorldManager().getTownMap(location);
-    if (SHOW_DEBUG) {
-      System.out.println("TownMap");
-      System.out.println("\tfullName = "  + townMap.getFullName());
-      System.out.println("\tshortName = " + townMap.getShortName());
-    }
-    dataManager.getChatPanel().changeMainJChatRoom(townMap.getShortName());
+
+      if (SHOW_DEBUG) {
+         System.out.println("TownMap");
+         System.out.println("\tfullName = "  + townMap.getFullName());
+         System.out.println("\tshortName = " + townMap.getShortName());
+      }
+
+    dataManager.getClientScreen().getChatPanel().changeMainJChatRoom(townMap.getShortName());
 
     dataManager.addPlayer(myPlayer);
 
@@ -130,7 +130,6 @@ public class TownMapData implements MapData
 
     // 3 - We load the image
     backgroundImageID = townMap.getTownImage();
-
     gDirector.getImageLibrary().loadImage( backgroundImageID );
 
     if (SHOW_DEBUG)
@@ -178,11 +177,15 @@ public class TownMapData implements MapData
 
     //   - We add buildings' images
     Building buildings[] = townMap.getBuildings();
+
     if (buildings!=null) {
+
       if (SHOW_DEBUG)
         System.out.println("\tDrawing Buildings");
+
       ImageIdentifier buildingImageID = null;   // building image identifier
       Drawable buildingImage = null;            // building image
+
       for (int i=0; i<buildings.length; i++) {
         buildingImageID = buildings[i].getSmallBuildingImage();
         
@@ -230,18 +233,6 @@ public class TownMapData implements MapData
 
  /*------------------------------------------------------------------------------------*/
 
-  /** canChangeMap is set to true if player can change its MapData<br>
-   * called by wotlas.client.message.YouCanLeaveMapMessage
-   */
-  /*public void canChangeMapLocation( boolean canChangeMap ) {
-    synchronized( changeMapLock ) {
-      this.canChangeMap = canChangeMap;
-      changeMapLock.notify();
-    }
-  }*/
-
- /*------------------------------------------------------------------------------------*/
-
   /** To update the location<br>
    * - test if player is intersecting a screenZone<br>
    * - test if player is entering a new WotlasLocation<br>
@@ -263,10 +254,7 @@ public class TownMapData implements MapData
 
       dataManager.getPlayers().clear();
       dataManager.cleanInteriorMapData();
-      dataManager.getChatPanel().reset();
-      
-      //myPlayer.setPosition( new ScreenPoint(myPlayer.getX(), myPlayer.getY()) );
-      
+      dataManager.getClientScreen().getChatPanel().reset();
       dataManager.changeMapData();
       return;
     }

@@ -31,7 +31,7 @@ import wotlas.common.message.movement.*;
 import wotlas.common.message.chat.*;
 import wotlas.common.universe.*;
 import wotlas.common.chat.*;
-import wotlas.common.Player;
+import wotlas.common.*;
 
 import wotlas.server.*;
 
@@ -121,7 +121,7 @@ public class DoorStateMsgBehaviour extends DoorStateMessage implements NetMessag
              pReset = player.getMyRoom().getInsertionPoint();
          else {
            // We get the world manager
-             WorldManager wManager = DataManager.getDefaultDataManager().getWorldManager();
+             WorldManager wManager = ServerDirector.getDataManager().getWorldManager();
 
              if( player.getLocation().isTown() ) {
                  TownMap myTown = wManager.getTownMap( location );

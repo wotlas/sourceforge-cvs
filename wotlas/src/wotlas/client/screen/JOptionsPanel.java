@@ -39,7 +39,6 @@ public class JOptionsPanel extends JPanel implements MouseListener
 
  /*------------------------------------------------------------------------------------*/
 
-
    private Image menu;
 
   /** Consctructor.
@@ -50,21 +49,21 @@ public class JOptionsPanel extends JPanel implements MouseListener
     JPanel innerPanel = new JPanel();
     innerPanel.setOpaque(false);
     innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
-    //innerPanel.setBorder(BorderFactory.createEmptyBorder(3,3,5,5)); // all 10s
 
-// Title
+  // Title
     ALabel lbl_title = new ALabel(" ");
     lbl_title.setAlignmentX(Component.CENTER_ALIGNMENT);
     innerPanel.add(lbl_title);
 
-// Space
+  // Space
     innerPanel.add(new JLabel(" "));
 
-// Options button
-    ImageIcon im_optionsup = new ImageIcon("../base/gui/options-up.gif");
-    ImageIcon im_optionsdo  = new ImageIcon("../base/gui/options-do.gif");
+  // Options button
+    ImageIcon im_optionsup = ClientDirector.getResourceManager().getImageIcon("options-up.gif");
+    ImageIcon im_optionsdo  = ClientDirector.getResourceManager().getImageIcon("options-do.gif");
     JButton b_options = new JButton(im_optionsup);
     b_options.setRolloverIcon(im_optionsdo);
+    
     b_options.setPressedIcon(im_optionsdo);
     b_options.setBorderPainted(false);
     b_options.setContentAreaFilled(false);
@@ -72,15 +71,15 @@ public class JOptionsPanel extends JPanel implements MouseListener
     b_options.setAlignmentX(Component.CENTER_ALIGNMENT);
     b_options.addActionListener(new ActionListener() {
       public void actionPerformed (ActionEvent e) {
-        new JConfigurationDlg(DataManager.getDefaultDataManager().getClientScreen());
+        new JConfigurationDlg(ClientDirector.getDataManager().getClientScreen());
       }
     });
     innerPanel.add(b_options);
 
 
 // Help buttons
-    ImageIcon im_helpup  = new ImageIcon("../base/gui/help-up.gif");
-    ImageIcon im_helpdo  = new ImageIcon("../base/gui/help-do.gif");
+    ImageIcon im_helpup  = ClientDirector.getResourceManager().getImageIcon("help-up.gif");
+    ImageIcon im_helpdo  = ClientDirector.getResourceManager().getImageIcon("help-do.gif");
     JButton b_help = new JButton(im_helpup);
     b_help.setRolloverIcon(im_helpdo);
     b_help.setPressedIcon(im_helpdo);
@@ -88,10 +87,13 @@ public class JOptionsPanel extends JPanel implements MouseListener
     b_help.setContentAreaFilled(false);
     b_help.setFocusPainted(false);
     b_help.setAlignmentX(Component.CENTER_ALIGNMENT);
-    //b_help.setPreferredSize( new Dimension(90,30) );    
+
     b_help.addActionListener(new ActionListener() {
       public void actionPerformed (ActionEvent e) {
-        new JHTMLWindow( DataManager.getDefaultDataManager().getClientScreen(), "Help", "../docs/help/index.html", 640, 340, false );
+        new JHTMLWindow( ClientDirector.getDataManager().getClientScreen(), "Help",
+                         ClientDirector.getResourceManager().getHelp("index.html"),
+                         640, 340, false,
+                         ClientDirector.getResourceManager().getBase("gui") );
       }
     });
     innerPanel.add(b_help);
@@ -100,7 +102,7 @@ public class JOptionsPanel extends JPanel implements MouseListener
 
   // We load the image
      MediaTracker mediaTracker = new MediaTracker(this);
-     menu  = getToolkit().getImage("../base/gui/menu.jpg");
+     menu  = ClientDirector.getResourceManager().getBaseImage("gui/menu.jpg");
      mediaTracker.addImage(menu,0);
 
          try{

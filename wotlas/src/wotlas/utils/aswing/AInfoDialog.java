@@ -19,19 +19,18 @@
 
 package wotlas.utils.aswing;
 
-import wotlas.utils.SwingTools;
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
+import java.io.File;
 
 /** A small utility to display an information message
  *
  * @author Aldiss
  */
 
-public class AInfoDialog extends JDialog
-{
+public class AInfoDialog extends JDialog {
  /*------------------------------------------------------------------------------------*/
 
    /** Constructor.
@@ -40,9 +39,9 @@ public class AInfoDialog extends JDialog
     * @param message msg to display
     * @param modal if the dialog is modal or not
     */
-   public AInfoDialog(Frame frame,String message, boolean modal) {
+   public AInfoDialog(Frame frame, String message, boolean modal, String guiImagesPath) {
          super(frame,"Information", modal);
-
+         guiImagesPath = guiImagesPath + File.separator;
       // some inits
          getContentPane().setLayout( new BorderLayout() );
          getContentPane().setBackground(Color.white);
@@ -52,9 +51,9 @@ public class AInfoDialog extends JDialog
          getContentPane().add( label1, BorderLayout.CENTER );
 
       // Ok Button
-         ImageIcon im_okup = new ImageIcon("../base/gui/ok-up.gif");
-         ImageIcon im_okdo = new ImageIcon("../base/gui/ok-do.gif");
-         ImageIcon im_okun = new ImageIcon("../base/gui/ok-un.gif");
+         ImageIcon im_okup = new ImageIcon(guiImagesPath+"gui/ok-up.gif");
+         ImageIcon im_okdo = new ImageIcon(guiImagesPath+"gui/ok-do.gif");
+         ImageIcon im_okun = new ImageIcon(guiImagesPath+"gui/ok-un.gif");
          JButton b_ok = new JButton(im_okup);
          b_ok.setRolloverIcon(im_okdo);
          b_ok.setPressedIcon(im_okdo);
@@ -73,7 +72,9 @@ public class AInfoDialog extends JDialog
 
          pack();
 
-         SwingTools.centerComponent(this);
+         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+         setLocation( (int) ((screenSize.getWidth() - getWidth()) / 2),
+                   (int) ((screenSize.getHeight() - getHeight()) / 2) );
          show();
    }
 

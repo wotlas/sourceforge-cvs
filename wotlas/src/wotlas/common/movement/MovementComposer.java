@@ -147,7 +147,7 @@ public interface MovementComposer extends Tickable {
 
   /** To set a player's movement : movement from current position to the given point.
    */
-     public void moveTo( Point endPosition );
+     public void moveTo( Point endPosition, WorldManager wManager );
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

@@ -78,7 +78,7 @@ public class AddPlayerToChatRoomMsgBehaviour extends AddPlayerToChatRoomMessage 
        }
 
     // We add the player
-       dataManager.getChatPanel().addPlayer(chatRoomPrimaryKey,sender);
+       dataManager.getClientScreen().getChatPanel().addPlayer(chatRoomPrimaryKey,sender);
   }
   
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -25,8 +25,12 @@ import wotlas.utils.FileTools;
 
 import wotlas.libs.log.*;
 import wotlas.libs.net.*;
+
+import wotlas.common.*;
+import wotlas.common.RemoteServersPropertiesFile;
 import wotlas.common.message.account.WarningMessage;
 
+import java.io.File;
 import java.util.Properties;
 import java.util.Iterator;
 import java.net.*;
@@ -39,45 +43,50 @@ import java.net.*;
  * @see wotlas.server.PersistenceManager
  */
 
-public class ServerDirector implements Runnable, NetServerErrorListener
-{
- /*------------------------------------------------------------------------------------*/
-
-   /** Static Link to Server Config File.
-    */
-    public final static String SERVER_CONFIG = "../src/config/server.cfg";
-
-   /** Static Link to Server Log File.
-    */
-    public final static String SERVER_LOG_PREFIX = "../log/wot-server-";
-    public final static String SERVER_LOG_SUFFIX = ".log";
-
-   /** Persistence period in ms.
-    */
-    public final static long PERSISTENCE_PERIOD = 1000*3600*6; // 6h
-
-   /** Static Link to Remote Servers Config File.
-    */
-    public final static String REMOTE_SERVER_CONFIG = "../src/config/remote-servers.cfg";
+public class ServerDirector implements Runnable, NetServerErrorListener {
 
  /*------------------------------------------------------------------------------------*/
 
-   /** Complete Path to the database where are stored the universe and the client
-    *  accounts.
+   /** Default location where are stored base data.
     */
-      private static String databasePath;
+      public final static String DEFAULT_BASE_PATH = "../base";
 
-   /** Our Server ID
+   /** Server Command Line Help
     */
-      private static int serverID;
+      public final static String SERVER_COMMAND_LINE_HELP =
+            "Usage: ServerDirector -[debug|erroronly|daemon|help] -[base <path>]\n\n"
+           +"Examples : \n"
+           +"  ServerDirector -daemon       : the server will display nothing.\n"
+           +"  ServerDirector -erroronly    : the server will only print errors.\n"
+           +"  ServerDirector -base ../base : sets the data location.\n\n"
+           +"If the -base option is not set we search for data in "+DEFAULT_BASE_PATH
+           +"\n\n";
 
-   /** Other eventual properties.
+   /** Format of the server log name.
     */
-      private static Properties properties;
+      public final static String SERVER_LOGS = "logs";
+      public final static String SERVER_LOG_PREFIX = "wot-server-";
+      public final static String SERVER_LOG_SUFFIX = ".log";
 
-   /** Our Persistence Manager.
+   /** Format of the configs path name
     */
-      private static PersistenceManager persistenceManager;
+      public final static String SERVER_CONFIGS = "configs";
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** Our server properties.
+    */
+      private static ServerPropertiesFile serverProperties;
+
+   /** Our remote server properties.
+    */
+      private static RemoteServersPropertiesFile remoteServersProperties;
+
+   /** Our resource manager
+    */
+      private static ResourceManager resourceManager;
+
+ /*------------------------------------------------------------------------------------*/
 
    /** Our Server Manager.
     */
@@ -87,83 +96,118 @@ public class ServerDirector implements Runnable, NetServerErrorListener
     */
       private static DataManager dataManager;
 
-   /** Our default ServerDirector.
+   /** Our default ServerDirector (Peristence Thread).
     */
       private static ServerDirector serverDirector;
 
-   /** Remote server home URL : where the server list is stored on the internet.
-    */
-      private static String remoteServerConfigHomeURL;
-
-   /** Show debug information ?
-    */
-      public static boolean SHOW_DEBUG = false;
-
-   /** Period for changing the keys.
-    */
-      public static byte updateKeysPeriod =0;
+ /*------------------------------------------------------------------------------------*/
 
    /** Shutdown Thread.
     */
       public static Thread shutdownThread;
 
+   /** Period for changing the keys.
+    */
+      public static byte updateKeysPeriod =0;
+
    /** Immediate stop of persistence thread ?
     */
       public static boolean immediatePersistenceThreadStop = false;
-
- /*------------------------------------------------------------------------------------*/
 
    /** To stop the persistence thread.
     */
       private boolean mustStop = false;
 
+   /** Show debug information ?
+    */
+      public static boolean SHOW_DEBUG = false;
+
  /*------------------------------------------------------------------------------------*/
 
-  /** Main Class. Starts the WHOLE Server from the latest database version.
-   *  Yeah, some kind of magic is in work there.
-   *
-   * @param argv useless... sorry but we don't like command line options... if you
-   *             want to set some options take a look at config/server.cfg & database.cfg
+  /** Main Class. Starts the Wotlas Server.
+   * @param argv enter -help to get some help info.
    */
      public static void main( String argv[] ) {
-           boolean isDaemon = false;
 
+        // STEP 0 - We parse the command line options
+           boolean isDaemon = false;
+           String basePath = DEFAULT_BASE_PATH;
            Debug.displayExceptionStack( false );
 
-        // Parse command line arguments
-           int i=0;
-           String arg;
-           while (i<argv.length && argv[i].startsWith("-")) {
-              arg = argv[i];
-              i++;
-                 if (arg.equals("-debug")) {
-                     System.out.println("mode DEBUG on");
-                     SHOW_DEBUG = true;
-                     Debug.displayExceptionStack( true );
-                 }
-                 else if (arg.equals("-erroronly")) {
-                     Debug.displayExceptionStack( false );
-                     Debug.setLevel(Debug.ERROR);
-                 }
-                 else if (arg.equals("-daemon")) {
-                     isDaemon = true;
-                     Debug.displayExceptionStack( true );
-                     Debug.setLevel(Debug.NOTICE);
-                 }
+           for( int i=0; i<argv.length; i++ ) {
+
+              if( !argv[i].startsWith("-") )
+                  continue;
+
+              if (argv[i].equals("-debug")) {    // -- TO SET THE DEBUG MODE --
+                  if(isDaemon) {
+                      System.out.println("Incompatible options.");
+                      System.out.println(SERVER_COMMAND_LINE_HELP);
+                      return;
+                  }
+
+                  System.out.println("mode DEBUG on");
+                  SHOW_DEBUG = true;
+                  Debug.displayExceptionStack( true );
+              }
+              else if (argv[i].equals("-erroronly")) {  // -- TO ONLY DISPLAY ERRORS --
+                  if(SHOW_DEBUG) {
+                     System.out.println("Incompatible options.");
+                     System.out.println(SERVER_COMMAND_LINE_HELP);
+                     return;
+                   }
+
+                   Debug.displayExceptionStack( false );
+                   Debug.setLevel(Debug.ERROR);
+              }
+              else if (argv[i].equals("-daemon")) {   // -- DAEMON MODE --
+                   if(SHOW_DEBUG) {
+                      System.out.println("Incompatible options.");
+                      System.out.println(SERVER_COMMAND_LINE_HELP);
+                      return;
+                   }
+
+                   isDaemon = true;
+                   Debug.displayExceptionStack( true );
+                   Debug.setLevel(Debug.NOTICE);
+              }
+              else if(argv[i].equals("-base")) {   // -- TO SET THE CONFIG FILES LOCATION --
+
+                   if(i==argv.length-1) {
+                      System.out.println("Location missing.");
+                      System.out.println(SERVER_COMMAND_LINE_HELP);
+                      return;
+                   }
+
+                   basePath = argv[i+1];
+              }
+              else if(argv[i].equals("-help")) {   // -- TO DISPLAY THE HELP --
+
+                   System.out.println(SERVER_COMMAND_LINE_HELP);
+                   return;
+              }
            }
 
-        // STEP 0 - Start a ServerLogStream to save our Debug messages           
+        // STEP 1 - We create a LogStream to save our Debug messages to disk.
            try{
-               if(isDaemon)
-                  Debug.setPrintStream( new DaemonLogStream( SERVER_LOG_PREFIX
-                                +System.currentTimeMillis()+SERVER_LOG_SUFFIX ) );
-               else
-                  Debug.setPrintStream( new ServerLogStream( SERVER_LOG_PREFIX
-                                +System.currentTimeMillis()+SERVER_LOG_SUFFIX ) );
-           }catch( java.io.FileNotFoundException e ) {
+               if(isDaemon) {
+               	// We don't print the Debug messages on System.err
+                  Debug.setPrintStream( new DaemonLogStream( basePath+File.separator+SERVER_LOGS
+                           +File.separator+SERVER_LOG_PREFIX+System.currentTimeMillis()+SERVER_LOG_SUFFIX ) );
+               }
+               else {
+               	// We also print the Debug messages on System.err
+                  Debug.setPrintStream( new ServerLogStream( basePath+File.separator+SERVER_LOGS
+                           +File.separator+SERVER_LOG_PREFIX+System.currentTimeMillis()+SERVER_LOG_SUFFIX ) );
+               }
+           }
+           catch( java.io.FileNotFoundException e ) {
                e.printStackTrace();
                return;
            }
+
+
+        // STEP 2 - We control the VM version and load our vital config files.
 
            if( !Tools.javaVersionHigherThan( "1.3.0" ) )
                Debug.exit();
@@ -171,85 +215,39 @@ public class ServerDirector implements Runnable, NetServerErrorListener
            Debug.signal( Debug.NOTICE, null, "*-----------------------------------*" );
            Debug.signal( Debug.NOTICE, null, "|   Wheel Of Time - Light & Shadow  |" );
            Debug.signal( Debug.NOTICE, null, "|  Copyright (C) 2001 - WOTLAS Team |" );
-           Debug.signal( Debug.NOTICE, null, "|            Server v1.2            |" );
+           Debug.signal( Debug.NOTICE, null, "|           Server v1.2.2           |" );
            Debug.signal( Debug.NOTICE, null, "*-----------------------------------*\n");
 
-        // STEP 1 - We load the database path. Where is the data ?
-           properties = FileTools.loadPropertiesFile( SERVER_CONFIG );
 
-             if( properties==null ) {
-                Debug.signal( Debug.FAILURE, null, "No valid server.cfg file found !" );
-                Debug.exit();
-             }
+           serverProperties = new ServerPropertiesFile(basePath+File.separator+SERVER_CONFIGS);
+           Debug.signal( Debug.NOTICE, null, "Data directory     : "+basePath );
 
-           databasePath = properties.getProperty( "DATABASE_PATH" );
-
-             if( databasePath==null ) {
-                Debug.signal( Debug.FAILURE, null, "No Database Path specified in config file !" );
-                Debug.exit();
-             }
-
-           Debug.signal( Debug.NOTICE, null, "DataBase Path Found : "+databasePath );
-
-           String s_serverID = properties.getProperty( "SERVER_ID" );
-
-           if( s_serverID==null ) {
-               Debug.signal( Debug.FAILURE, null, "No ServerID specified in config file !" );
-               Debug.exit();
-           }
-
-           try{
-              serverID = Integer.parseInt( s_serverID );
-           }catch( Exception e ) {
-                Debug.signal( Debug.FAILURE, null, "Bad ServerID specified in config file !" );
-                Debug.exit();
-           }
-
-           Debug.signal( Debug.NOTICE, null, "Server ID set to : "+serverID );
+           remoteServersProperties = new RemoteServersPropertiesFile(basePath+File.separator+SERVER_CONFIGS);
 
 
-        // STEP 1.1 - We load remote props (server table base URL)
-           Properties remoteProps = FileTools.loadPropertiesFile( REMOTE_SERVER_CONFIG );
+        // STEP 3 - Creation of the ResourceManager
+           resourceManager = new ResourceManager( basePath,
+                                             basePath+File.separator+SERVER_CONFIGS,
+                                             serverProperties.getProperty("init.helpPath"),
+                                             basePath+File.separator+SERVER_LOGS
+                                         );
 
-           if( remoteProps==null ) {
-               Debug.signal( Debug.FAILURE, null, "No valid remote-servers.cfg file found !" );
-               Debug.exit();
-           }
-           else {
-               remoteServerConfigHomeURL = remoteProps.getProperty( "REMOTE_SERVER_CONFIG_HOME_URL","" );
+        // STEP 4 - We ask the ServerManager to get ready
+           serverManager = new ServerManager(resourceManager);
+           Debug.signal( Debug.NOTICE, null, "Server Manager created..." );
 
-               if( remoteServerConfigHomeURL.length()==0 ) {
-                   Debug.signal( Debug.FAILURE, null, "No URL for remote server config home !" );
-                   Debug.exit();
-               }
-        
-               if( !remoteServerConfigHomeURL.endsWith("/") )
-                   remoteServerConfigHomeURL += "/";
-           }
+        // STEP 5 - We ask the DataManager to load the worlds & client accounts
+           dataManager = new DataManager(resourceManager);
+           dataManager.init();
 
-
-        // STEP 2 - Creation of the PersistenceManager
-           persistenceManager = PersistenceManager.createPersistenceManager( databasePath );
-           Debug.signal( Debug.NOTICE, null, "Persistence Manager Created..." );
-
-
-        // STEP 3 - We ask the ServerManager to get ready
-           serverManager = ServerManager.createServerManager();
-           Debug.signal( Debug.NOTICE, null, "Servers Created (but not started)..." );
-
-
-        // STEP 4 - We ask the DataManager to load the worlds & client accounts
-           dataManager = DataManager.createDataManager();
-           Debug.signal( Debug.NOTICE, null, "World Data Loaded..." );
-        
-        // STEP 5 - Start of the GameServer, AccountServer & GatewayServer !
+        // STEP 6 - Start of the GameServer, AccountServer & GatewayServer !
+           Debug.signal( Debug.NOTICE, null, "Starting Game server, Account server & Gateway server..." );
            serverManager.start();
-           Debug.signal( Debug.NOTICE, null, "WOTLAS Servers started with success..." );
 
-        // STEP 6 - We generate new keys for special characters
+        // STEP 7 - We generate new keys for special characters
            updateKeys();
 
-        // STEP 7 - Adding Shutdown Hook           
+        // STEP 8 - Adding Shutdown Hook
            shutdownThread = new Thread() {
            	public void run() {
            	   immediatePersistenceThreadStop = true;
@@ -262,8 +260,9 @@ public class ServerDirector implements Runnable, NetServerErrorListener
 
            Runtime.getRuntime().addShutdownHook(shutdownThread);
 
+
         // Everything is ok ! we enter the persistence loop
-           Debug.signal( Debug.NOTICE, null, "Everything is Ok. Creating persistence thread..." );
+           Debug.signal( Debug.NOTICE, null, "Starting persistence thread..." );
 
            serverDirector = new ServerDirector();
            serverManager.getGameServer().setErrorListener( serverDirector );
@@ -271,6 +270,9 @@ public class ServerDirector implements Runnable, NetServerErrorListener
            Thread persistenceThread = new Thread( serverDirector );
            persistenceThread.start();
 
+
+        // If we are in "daemon" mode the only way to stop the server is via signals.
+        // Otherwise we wait 2s and wait for a key to be pressed to shutdown...
            if(!isDaemon) {
               Tools.waitTime( 2000 ); // 2s
               Debug.signal( Debug.NOTICE, null, "Press <ENTER> if you want to shutdown this server." );
@@ -288,27 +290,6 @@ public class ServerDirector implements Runnable, NetServerErrorListener
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To get the complete path to the database where are stored the universe and the client
-    *  accounts.
-    *
-    * @return databasePath
-    */
-      public static String getDatabasePath() {
-         return databasePath;
-      }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-   /** To get the server ID of this server.
-    *
-    * @return serverID
-    */
-      public static int getServerID() {
-         return serverID;
-      }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
    /** Run method for Thread. 
     */
       public void run(){
@@ -318,7 +299,7 @@ public class ServerDirector implements Runnable, NetServerErrorListener
              // 1 - we wait the persistence period minus 2 minutes
                 synchronized( this ) {
                   try{
-                     wait( PERSISTENCE_PERIOD-1000*120 );
+                     wait( serverProperties.getIntegerProperty("init.persistencePeriod")*1000*3600-1000*120 );
                   }catch(Exception e) {}
                 }
 
@@ -417,7 +398,7 @@ public class ServerDirector implements Runnable, NetServerErrorListener
 
 
            // 4 - We save the world data
-              if( !dataManager.getWorldManager().saveLocalUniverse() )
+              if( !dataManager.getWorldManager().saveUniverse(false) )
                   Debug.signal( Debug.WARNING, null, "Failed to save world data..." );
               else
                   Debug.signal( Debug.NOTICE, null, "Saved world data..." );
@@ -477,7 +458,7 @@ public class ServerDirector implements Runnable, NetServerErrorListener
               }
 
            // 5 - We save the world data
-              if( !dataManager.getWorldManager().saveLocalUniverse() )
+              if( !dataManager.getWorldManager().saveUniverse(false) )
                   Debug.signal( Debug.WARNING, null, "Failed to save world data..." );
      }
 
@@ -521,13 +502,23 @@ public class ServerDirector implements Runnable, NetServerErrorListener
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** To get the server ID of this server.
+    *
+    * @return serverID
+    */
+      public static int getServerID() {
+         return serverProperties.getIntegerProperty("init.serverID");
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** To get the URL where are stored the remote server configs. This URL can also contain
    *  a news.html file to display some news.
    *
    * @return remoteServerConfigHomeURL
    */
    public static String getRemoteServerConfigHomeURL() {
-      return remoteServerConfigHomeURL;
+      return remoteServersProperties.getProperty("info.remoteServerHomeURL");
    }
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -536,7 +527,7 @@ public class ServerDirector implements Runnable, NetServerErrorListener
    * @return server properties
    */
    public static Properties getServerProperties() {
-      return properties;
+      return (Properties)serverProperties;
    }
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -553,29 +544,41 @@ public class ServerDirector implements Runnable, NetServerErrorListener
         else
            updateKeysPeriod++;
 
-        String oldConfig = FileTools.loadTextFromFile( SERVER_CONFIG );
-
-        if( oldConfig!=null ) {
-
-            properties.setProperty( "key.shaitan", Tools.keyGenerator(23, serverID+1) );
-            properties.setProperty( "key.amyrlin", Tools.keyGenerator(23, serverID+2) );
-            properties.setProperty( "key.chronicles", Tools.keyGenerator(23, serverID+3) );
-            properties.setProperty( "key.mhael", Tools.keyGenerator(23, serverID+4) );
-
-            oldConfig = FileTools.updateProperty( "key.shaitan", properties.getProperty( "key.shaitan"), oldConfig);
-            oldConfig = FileTools.updateProperty( "key.amyrlin", properties.getProperty( "key.amyrlin"), oldConfig);
-            oldConfig = FileTools.updateProperty( "key.chronicles", properties.getProperty( "key.chronicles"), oldConfig);
-            oldConfig = FileTools.updateProperty( "key.mhael", properties.getProperty( "key.mhael"), oldConfig);
-
-            if( !FileTools.saveTextToFile( SERVER_CONFIG, oldConfig ) )
-                Debug.signal(Debug.ERROR,null,"Failed to save characters keys in "+SERVER_CONFIG);
-            else
-                Debug.signal( Debug.NOTICE, null, "Generated new keys for special characters..." );
-        }
-        else
-            Debug.signal(Debug.ERROR,null,"Failed to open "+SERVER_CONFIG);
+        serverProperties.setProperty( "key.shaitan", Tools.keyGenerator(23, getServerID()+1) );
+        serverProperties.setProperty( "key.amyrlin", Tools.keyGenerator(23, getServerID()+2) );
+        serverProperties.setProperty( "key.chronicles", Tools.keyGenerator(23, getServerID()+3) );
+        serverProperties.setProperty( "key.mhael", Tools.keyGenerator(23, getServerID()+4) );
+        Debug.signal( Debug.NOTICE, null, "Generated new keys for special characters..." );
    }
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get our resource manager.
+   *  @return our resource manager.
+   */
+     public static ResourceManager getResourceManager() {
+         return resourceManager;
+     }
+
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get our server manager.
+   *  @return our server manager.
+   */
+     public static ServerManager getServerManager() {
+         return serverManager;
+     }
+
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get our data manager.
+   *  @return our data manager.
+   */
+     public static DataManager getDataManager() {
+         return dataManager;
+     }
+
+  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }
 

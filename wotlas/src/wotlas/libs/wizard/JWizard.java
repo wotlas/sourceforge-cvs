@@ -20,21 +20,18 @@
 package wotlas.libs.wizard;
 
 import wotlas.utils.aswing.*;
-import wotlas.libs.graphics2D.FontFactory;
+
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
-
-import wotlas.utils.SwingTools;
+import java.io.File;
 
 /** A generic setup wizard that possesses buttons (previous/cancel/next) and displays
  *  a panel (JWizardStep) that can react when these buttons are pressed. <br>
  *  JWizard is abstract : the subclass must implement the method : onFinished() and
  *  onCanceled().
  *
- *  This class uses images found in the GUI_IMAGES_PATH.
- *  To display fonts we use our wotlas.libs.graphics2D FontFactory. To change that
- *  just replace calls to the factory by 'new Font(...)'.
+ *  This class uses images found in the specified guiImagesPath directory.
  *
  * @author Petrus, Aldiss
  * @see wotlas.libs.wizard.JWizardStep
@@ -44,19 +41,13 @@ public abstract class JWizard extends JFrame {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Where the images are stored. Note the existence of an ending '/'.
+  /** Where the images are stored.
    */
-  public static final String GUI_IMAGES_PATH = "../base/gui/";
-
-  /** Title font to use.
-   */
-  public static final String TITLE_FONT = "Lucida Blackletter";
-
- /*------------------------------------------------------------------------------------*/
+  private String guiImagesPath;
 
   /** The current wizard step
    */
-  private JWizardStep currentStep;
+  protected JWizardStep currentStep;
 
   /** The next wizard step
    */
@@ -128,18 +119,26 @@ public abstract class JWizard extends JFrame {
    *  show() or setVisible().
    *
    * @param title wizard title
+   * @param guiImagesPath where to take the images from
+   * @param titleFont font to use for the title
    * @param width wizard width
-   * @param height wizard height
+   * @param height wizard height   
    */
-  public JWizard(String title, int width, int height) {
+  public JWizard(String title, String guiImagesPath, Font titleFont, int width, int height) {
       super(title);
+      guiImagesPath = guiImagesPath+File.separator;
+      this.guiImagesPath = guiImagesPath;
 
       stepFactory = new JWizardStepFactory();
 
       setSize(width+100,height);
-      SwingTools.centerComponent(this);
+
+      Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+      setLocation( (int) ((screenSize.getWidth() - getWidth()) / 2),
+                   (int) ((screenSize.getHeight() - getHeight()) / 2) );
+
       setBackground(Color.white);
-      setIconImage(Toolkit.getDefaultToolkit().getImage( GUI_IMAGES_PATH+"icon.gif" ));
+      setIconImage(Toolkit.getDefaultToolkit().getImage( guiImagesPath+"icon.gif" ));
 
       JPanel wizardPanel = new JPanel();
       wizardPanel.setBackground(Color.white);
@@ -152,7 +151,7 @@ public abstract class JWizard extends JFrame {
       titlePanel.setPreferredSize( new Dimension(width-10,24) );
 
       t_title = new ALabel(title);
-      t_title.setFont( FontFactory.getDefaultFontFactory().getFont(TITLE_FONT).deriveFont(18f) );
+      t_title.setFont( titleFont );
 
       t_title.setAlignmentX(LEFT_ALIGNMENT);
       titlePanel.add(t_title);
@@ -165,7 +164,7 @@ public abstract class JWizard extends JFrame {
 
    // We load the wizard image
       MediaTracker mediaTracker = new MediaTracker(this);
-      wizardImage  = getToolkit().getImage("../base/gui/wizard.jpg");
+      wizardImage  = getToolkit().getImage(guiImagesPath+"wizard.jpg");
       mediaTracker.addImage(wizardImage,0);
 
       try{
@@ -191,18 +190,18 @@ public abstract class JWizard extends JFrame {
       buttonsPanel.setBackground(Color.white);
 
     // *** Load images of buttons
-      im_cancelup   = new ImageIcon(GUI_IMAGES_PATH+"cancel-up.gif");
-      im_canceldo   = new ImageIcon(GUI_IMAGES_PATH+"cancel-do.gif");
-      im_cancelun   = new ImageIcon(GUI_IMAGES_PATH+"cancel-un.gif");
-      im_okup       = new ImageIcon(GUI_IMAGES_PATH+"ok-up.gif");
-      im_okdo       = new ImageIcon(GUI_IMAGES_PATH+"ok-do.gif");
-      im_okun       = new ImageIcon(GUI_IMAGES_PATH+"ok-un.gif");
-      im_nextup     = new ImageIcon(GUI_IMAGES_PATH+"next-up.gif");
-      im_nextdo     = new ImageIcon(GUI_IMAGES_PATH+"next-do.gif");
-      im_nextun     = new ImageIcon(GUI_IMAGES_PATH+"next-un.gif");
-      im_previousup = new ImageIcon(GUI_IMAGES_PATH+"previous-up.gif");
-      im_previousdo = new ImageIcon(GUI_IMAGES_PATH+"previous-do.gif");
-      im_previousun = new ImageIcon(GUI_IMAGES_PATH+"previous-un.gif");
+      im_cancelup   = new ImageIcon(guiImagesPath+"cancel-up.gif");
+      im_canceldo   = new ImageIcon(guiImagesPath+"cancel-do.gif");
+      im_cancelun   = new ImageIcon(guiImagesPath+"cancel-un.gif");
+      im_okup       = new ImageIcon(guiImagesPath+"ok-up.gif");
+      im_okdo       = new ImageIcon(guiImagesPath+"ok-do.gif");
+      im_okun       = new ImageIcon(guiImagesPath+"ok-un.gif");
+      im_nextup     = new ImageIcon(guiImagesPath+"next-up.gif");
+      im_nextdo     = new ImageIcon(guiImagesPath+"next-do.gif");
+      im_nextun     = new ImageIcon(guiImagesPath+"next-un.gif");
+      im_previousup = new ImageIcon(guiImagesPath+"previous-up.gif");
+      im_previousdo = new ImageIcon(guiImagesPath+"previous-do.gif");
+      im_previousun = new ImageIcon(guiImagesPath+"previous-un.gif");
 
     // *** Previous ***
       b_previous = new JButton(im_previousup);

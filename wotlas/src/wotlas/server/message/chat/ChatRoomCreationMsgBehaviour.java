@@ -72,11 +72,11 @@ public class ChatRoomCreationMsgBehaviour extends ChatRoomCreationMessage implem
        Hashtable players = null;
     
        if ( location.isWorld() ) {
-            WorldMap world = DataManager.getDefaultDataManager().getWorldManager().getWorldMap(location);
+            WorldMap world = ServerDirector.getDataManager().getWorldManager().getWorldMap(location);
             if(world!=null)
                 players = world.getPlayers();
        } else if ( location.isTown() ) {
-            TownMap town = DataManager.getDefaultDataManager().getWorldManager().getTownMap(location);
+            TownMap town = ServerDirector.getDataManager().getWorldManager().getTownMap(location);
             if (town!=null)
                 players = town.getPlayers();
        } else if ( location.isRoom() ) {

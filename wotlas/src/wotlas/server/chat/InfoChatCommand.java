@@ -98,7 +98,7 @@ public class InfoChatCommand implements ChatCommand
 
           String commandName = message.substring(6);
 
-          ChatCommandProcessor processor = DataManager.getDefaultDataManager().getChatCommandProcessor();
+          ChatCommandProcessor processor = ServerDirector.getDataManager().getChatCommandProcessor();
 
           message = processor.getCommandDocumentation( commandName );
 

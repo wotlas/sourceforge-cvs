@@ -20,6 +20,11 @@
 package wotlas.client;
 
 import wotlas.libs.sound.*;
+import wotlas.libs.persistence.*;
+import wotlas.utils.Debug;
+
+import java.io.*;
+
 
 /** ClientConfiguration contains the configuration and options of the client
  *
@@ -28,6 +33,12 @@ import wotlas.libs.sound.*;
  */
 
 public class ClientConfiguration {
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** The file name in which we store the client options.
+   */
+   public static final String CLIENT_CONFIG_FILENAME = "client-options.cfg";
 
  /*------------------------------------------------------------------------------------*/
 
@@ -218,5 +229,39 @@ public class ClientConfiguration {
   }
 
  /*------------------------------------------------------------------------------------*/ 
-  
+
+  /** To save this client configuration.
+   */
+     public void save() {
+        try{
+           PropertiesConverter.save(this, ClientDirector.getResourceManager().getConfig(CLIENT_CONFIG_FILENAME) );
+        }
+        catch (PersistenceException pe) {
+           Debug.signal( Debug.ERROR, null, "Failed to save client configuration : " + pe.getMessage() );
+        }
+     }
+
+ /*------------------------------------------------------------------------------------*/ 
+
+  /** To load the default client configuration.
+   */
+     public static ClientConfiguration load() {
+       String fileName = ClientDirector.getResourceManager().getConfig(CLIENT_CONFIG_FILENAME);
+
+       try {
+         if(new File(fileName).exists())
+            return (ClientConfiguration) PropertiesConverter.load(fileName);
+         else {
+            Debug.signal( Debug.ERROR, null, "Failed to load client configuration. Creating a new one." );
+            return new ClientConfiguration();
+         }
+       }
+       catch (PersistenceException pe) {
+           Debug.signal( Debug.ERROR, null, "Failed to load client configuration : " + pe.getMessage()+". Creating a new one." );
+           return new ClientConfiguration();
+       }
+    }
+
+ /*------------------------------------------------------------------------------------*/ 
+
 }

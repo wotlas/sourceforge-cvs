@@ -98,7 +98,7 @@ public class HelpChatCommand implements ChatCommand
           if( message.endsWith(" all") )
               displayAll = true;
 
-          ChatCommandProcessor processor = DataManager.getDefaultDataManager().getChatCommandProcessor();
+          ChatCommandProcessor processor = ServerDirector.getDataManager().getChatCommandProcessor();
           message = "/cmd:Here are the commands you can use:<br><b>"
                        + processor.getCommandList( displayAll )+"</b><br>"
                        + "Use the /info command to get more information on the other commands."

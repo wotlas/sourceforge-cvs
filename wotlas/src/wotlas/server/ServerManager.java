@@ -23,7 +23,7 @@ import wotlas.common.*;
 import wotlas.utils.Debug;
 
  /** A Server Manager manages three servers : A GameServer, a AccountServer and
-  *  a GatewayServer. The parameters for these servers are gathered in config/server.cfg.
+  *  a GatewayServer..
   *
   * @author Aldiss
   * @see wotlas.server.GameServer
@@ -32,19 +32,13 @@ import wotlas.utils.Debug;
   * @see wotlas.common.Serverconfig
   */
  
-public class ServerManager
-{
- /*------------------------------------------------------------------------------------*/
- 
-   /** Our Default ServerManager.
-    */
-      private static ServerManager serverManager;
+public class ServerManager {
 
  /*------------------------------------------------------------------------------------*/
- 
+
    /** Our server config files.
     */
-      private ServerConfigList configs;
+      private ServerConfigManager configs;
 
    /** Config of this server.
     */
@@ -64,17 +58,15 @@ public class ServerManager
 
  /*------------------------------------------------------------------------------------*/
   
-  /** Constructor. Attemps to load the config/server.cfg file... and then constructs
-   *  the different servers ( but doesnot start them).
+  /** Constructor. Attemps to load the server config files... then constructs
+   *  the different servers ( but does not start them).
    */
-   private ServerManager() {
+   public ServerManager( ResourceManager rManager ) {
 
        // 1 - we load the ServerConfig files...
           Debug.signal( Debug.NOTICE, null, "Updating server config files from Internet home... please wait...");
        
-          PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();          
-
-          configs = new ServerConfigList( pm );
+          configs = new ServerConfigManager( rManager );
           configs.setRemoteServerConfigHomeURL( ServerDirector.getRemoteServerConfigHomeURL() );
           configs.setLocalServerID( ServerDirector.getServerID() );
 
@@ -84,8 +76,8 @@ public class ServerManager
           ourConfig = configs.getServerConfig( ServerDirector.getServerID() );
 
           if( ourConfig == null ) {
-               Debug.signal( Debug.FAILURE, this, "Can't init servers without a ServerConfig !" );
-               Debug.exit();
+              Debug.signal( Debug.FAILURE, this, "Can't init servers without a ServerConfig !" );
+              Debug.exit();
           }
 
        // 2 - We create the AccountServer
@@ -130,31 +122,6 @@ public class ServerManager
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  
-  /** Creates a server manager. Attemps to load the config/server.cfg file... and then
-   * constructs the different servers ( but doesnot start them ).
-   *
-   * @return the created (or previously created) server manager.
-   */
-   public static ServerManager createServerManager() {
-         if( serverManager == null )
-             serverManager = new ServerManager();
-         
-         return serverManager;
-   }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To get the default server manager.
-   *
-   * @return the default server manager.
-   */
-   public static ServerManager getDefaultServerManager() {
-         return serverManager;
-   }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
   /** To get the GameServer.
    *
    * @return the game server.
@@ -185,7 +152,7 @@ public class ServerManager
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the ServerConfig.
+  /** To get the ServerConfig of this server.
    *
    * @return the serverConfig
    */

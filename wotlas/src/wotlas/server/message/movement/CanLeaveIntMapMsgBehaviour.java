@@ -29,7 +29,7 @@ import wotlas.common.message.account.*;
 import wotlas.common.message.movement.*;
 import wotlas.common.message.description.*;
 import wotlas.common.universe.*;
-import wotlas.common.Player;
+import wotlas.common.*;
 import wotlas.server.*;
 
 /**
@@ -77,7 +77,7 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
            }
 
        // Is the movement possible ?
-          WorldManager wManager = DataManager.getDefaultDataManager().getWorldManager();
+          WorldManager wManager = ServerDirector.getDataManager().getWorldManager();
           Room currentRoom = player.getMyRoom();
 
        // which of them is the right mapExit ?
@@ -117,7 +117,7 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
 
                         if( targetServerID!=ServerDirector.getServerID() ) {
                           // ok ! we must transfert this account to another server !!   
-                             GatewayServer gateway = ServerManager.getDefaultServerManager().getGatewayServer();
+                             GatewayServer gateway = ServerDirector.getServerManager().getGatewayServer();
 
                              WotlasLocation oldLocation = player.getLocation();
                              int oldX = player.getX();
@@ -243,7 +243,7 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
              pReset = player.getMyRoom().getInsertionPoint();
          else {
            // We get the world manager
-             WorldManager wManager = DataManager.getDefaultDataManager().getWorldManager();
+             WorldManager wManager = ServerDirector.getDataManager().getWorldManager();
 
              if( player.getLocation().isTown() ) {
                  TownMap myTown = wManager.getTownMap( location );

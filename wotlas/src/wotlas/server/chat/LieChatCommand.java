@@ -103,7 +103,7 @@ public class LieChatCommand implements ChatCommand
                  return true;
               }
 
-              GameAccount account = DataManager.getDefaultDataManager().getAccountManager().getAccount(message);
+              GameAccount account = ServerDirector.getDataManager().getAccountManager().getAccount(message);
 
               if(account==null) {
                  response.setMessage("/cmd:/lie command error:<font color='red'> unknown player</font>");

@@ -22,6 +22,8 @@ package wotlas.server;
 import wotlas.libs.wizard.*;
 import wotlas.utils.Debug;
 
+import wotlas.common.ResourceManager;
+
 import java.util.Hashtable;
 import java.io.*;
 
@@ -56,13 +58,14 @@ public class AccountStepFactory {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Constructor. We load
-   * @param databasePath path to the database where all kind of data is stored.
+  /** Constructor. We load the wizard steps.
+   *
+   * @param rManager our resource manager
    */
-   public AccountStepFactory(String databasePath) {
+   public AccountStepFactory( ResourceManager rManager ) {
          staticStepParameters = new Hashtable(20);
 
-         String accountWizardHome = databasePath+File.separator+WIZARD_HOME;
+         String accountWizardHome = rManager.getBase(WIZARD_HOME);
 
       // We load all the step parameters in our hashtable
          File list[] = new File(accountWizardHome).listFiles();

@@ -650,7 +650,7 @@ public class PathFollower implements MovementComposer {
 
   /** To set a player's movement : movement from current position to the given point.
    */
-     public void moveTo( Point endPosition ) {                       
+     public void moveTo( Point endPosition, WorldManager wManager ) {
 
          // Test if xPosition,yPosition is a valid point
             Point startPt = new Point( (int)xPosition, (int)yPosition );            
@@ -667,9 +667,6 @@ public class PathFollower implements MovementComposer {
                 if ( location.isRoom() )
                   pReset = player.getMyRoom().getInsertionPoint();
                 else {
-                  // We get the world manager
-                  WorldManager wManager = WorldManager.getRootInstance();
-
                   if ( location.isTown() ) {
                     TownMap myTown = wManager.getTownMap( location );
                     if (myTown!=null) 

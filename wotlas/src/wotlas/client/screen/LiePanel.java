@@ -96,8 +96,8 @@ public class LiePanel extends JPanel
     final ATextField a_newFakeName = new ATextField();
     form2.add(a_newFakeName);
     
-    ImageIcon im_saveup  = new ImageIcon("../base/gui/new-up.gif");
-    ImageIcon im_savedo  = new ImageIcon("../base/gui/new-do.gif");
+    ImageIcon im_saveup  = ClientDirector.getResourceManager().getImageIcon("new-up.gif");
+    ImageIcon im_savedo  = ClientDirector.getResourceManager().getImageIcon("new-do.gif");
     saveNameButton = new AButton(im_saveup);
     saveNameButton.setRolloverIcon(im_savedo);
     saveNameButton.setPressedIcon(im_savedo);
@@ -120,7 +120,7 @@ public class LiePanel extends JPanel
              return;
           } 
 
-          PlayerImpl player = DataManager.getDefaultDataManager().getMyPlayer();
+          PlayerImpl player = ClientDirector.getDataManager().getMyPlayer();
           player.sendMessage( new CreateFakeNameMessage(a_newFakeName.getText().trim()) );
           a_newFakeName.setText("");
         }
@@ -176,10 +176,13 @@ public class LiePanel extends JPanel
   class RadioListener implements ActionListener  {
     public void actionPerformed(ActionEvent e) {
       int currentFakeName = Integer.parseInt(e.getActionCommand());
-      PlayerImpl player = DataManager.getDefaultDataManager().getMyPlayer(); 
+
+      PlayerImpl player = ClientDirector.getDataManager().getMyPlayer(); 
+
       player.sendMessage(new ChangeFakeNameMessage((short) currentFakeName));
       player.setFullPlayerName(b_fakeNames[currentFakeName].getText());
-      DataManager.getDefaultDataManager().getChatPanel().getCurrentJChatRoom().updatePlayer(
+
+      ClientDirector.getDataManager().getClientScreen().getChatPanel().getCurrentJChatRoom().updatePlayer(
             player.getPrimaryKey(), b_fakeNames[currentFakeName].getText());
     }
   }

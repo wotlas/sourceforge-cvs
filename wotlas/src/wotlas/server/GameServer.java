@@ -37,8 +37,7 @@ import java.io.IOException;
  * @author Aldiss
  */
 
-public class GameServer extends NetServer implements ErrorCodeList
-{
+public class GameServer extends NetServer implements ErrorCodeList {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -78,7 +77,7 @@ public class GameServer extends NetServer implements ErrorCodeList
           String password = key.substring( key.indexOf(':')+1, key.length() );
 
        // does this client exists ?
-          AccountManager manager = DataManager.getDefaultDataManager().getAccountManager();
+          AccountManager manager = ServerDirector.getDataManager().getAccountManager();
           GameAccount account = manager.getAccount( accountName );
 
           if( account==null ) {

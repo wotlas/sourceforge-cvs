@@ -20,74 +20,94 @@
 package wotlas.common;
 
 import wotlas.common.universe.*;
-
 import wotlas.common.Player;
-
+import wotlas.common.ResourceManager;
+import wotlas.libs.persistence.*;
 import wotlas.utils.Debug;
+
+import java.io.*;
+
 
  /** A WorldManager provides all the methods needed to handle & manage the game world
   *  from its root.<p><br>
   *
   *  This class IS NOT directly persistent. The WorldMap instances are made persistent
-  *  by calling the PersistenceManager BUT the PersistenceManager save them in separated
-  *  files. This is why a WorldManager is not directly persistent : we don't want to save
+  *  by calling save() & load() methods. The files are saved separatly.
+  *  This is why a WorldManager is not directly persistent : we don't want to save
   *  all its data in one huge file.
   *
   * @author Petrus, Aldiss
   * @see wotlas.common.universe.WorldMap
+  * @see wotlas.libs.persistence.PropertiesConverter
   */
  
 public class WorldManager
 {
  /*------------------------------------------------------------------------------------*/
 
-  /** Root Instance
+  /** Game Universe Name Format
    */
-   private static WorldManager wManager;
+    public final static String UNIVERSE_HOME    = "universe";
+    public final static String DEFAULT_UNIVERSE = "default";
+    public final static String UNIVERSE_PREFIX  = "universe-save-";
+    public final static String UNIVERSE_SUFFIX  = "";
+
+    public final static String WORLD_FILE       = "world.cfg";
+    public final static String TOWN_FILE        = "town.cfg";
+    public final static String BUILDING_FILE    = "building.cfg";
+    public final static String MAP_SUFFIX       = "-map.cfg";
 
  /*------------------------------------------------------------------------------------*/
  
   /** array of WorldMap
    */
-   protected WorldMap[] worldMaps;
+    protected WorldMap[] worldMaps;
+
+  /** Our resource manager/
+   */
+    protected ResourceManager rManager;
 
  /*------------------------------------------------------------------------------------*/
 
-  /** To get the root instance of the WorldManager.
-   * @param root WorldManager
+  /** Constructor with resource Manager. We do not load universe data.
+   * @param rManager resource manager to get the data from.
    */
-   public static WorldManager getRootInstance() {
-   	return wManager;
-   }
-  
- /*------------------------------------------------------------------------------------*/
-
-  /** Constructor. Attemps to load the local universe data. Any error at this
-   * step will stop the program.
-   */
-
-   public WorldManager() {
-   	wManager = this;
-   }
+    public WorldManager( ResourceManager rManager ) {
+         this.rManager = rManager;
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor from a pre-loaded list of World Maps.
+  /** Constructor with resource manager. We attempt to load the local universe data.
+   * Any error at this step will stop the program.
+   *
+   * @param rManager resource manager to get the data from.
+   * @param loadDefault do we have to load the default universe data (true) or the
+   *                    current one ?
+   */
+    public WorldManager( ResourceManager rManager, boolean loadDefault ) {
+         this.rManager = rManager;
+         loadUniverse(loadDefault);
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Constructor with a pre-loaded list of World Maps.
    *  @param worldMaps list of worlds...
    */
-   public WorldManager( WorldMap worldMaps[] ) {
-   	wManager = this;
-   	this.worldMaps = worldMaps;
-   }
+    public WorldManager( WorldMap worldMaps[], ResourceManager rManager ) {
+         this.rManager = rManager;
+         this.worldMaps = worldMaps;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ /*------------------------------------------------------------------------------------*/
 
   /** To Get a World by its ID.
    *
    * @param id worldMapID
    * @return corresponding worldMap, null if ID does not exist.
    */
-   public WorldMap getWorldMapFromID( int id ) {
+    public WorldMap getWorldMapFromID( int id ) {
         if(worldMaps==null) {
            Debug.signal( Debug.ERROR, this, "No World data available." );
    	   return null;
@@ -99,7 +119,7 @@ public class WorldManager
    	}
    	
         return worldMaps[id];
-   }
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -202,8 +222,8 @@ public class WorldManager
    *
    * @return a new WorldMap object
    */
-   public WorldMap addWorldMap()
-   {
+   public WorldMap addWorldMap() {
+
      WorldMap myWorldMap = new WorldMap();
     
      if (worldMaps == null) {
@@ -233,6 +253,15 @@ public class WorldManager
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To remove a player from the universe.
+   * @param player the player to remove.
+   */
+   public void removePlayer( Player player ) {
+        editPlayer( player, false );
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** Add a player to this universe (addButNotRemove=true) or removes a player from
    *  this universe (addButNotRemove=false). The player must have been previously initialized.
    *  IMPORTANT: if the location points out a room we assume that the room is LOCAL, i.e.
@@ -242,8 +271,8 @@ public class WorldManager
    * @param addButNotRemove set to true if tou want to add this player, set to false
    *        if you want to remove the player.
    */
-   protected void editPlayer( Player player, boolean addButNotRemove )
-   {
+   protected void editPlayer( Player player, boolean addButNotRemove ) {
+
       // Get Location & location type
          WotlasLocation location = player.getLocation();
 
@@ -343,7 +372,7 @@ public class WorldManager
    *  and rooms.
    *
    *  IMPORTANT: You must ONLY call this method ONE time when ALL the world data has been
-   *  loaded by the persistence manger...
+   *  loaded...
    */
    protected void init() {
 
@@ -359,92 +388,263 @@ public class WorldManager
                 worldMaps[i].init();
    }
 
- /*------------------------------------------------------------------------------------*
+ /*------------------------------------------------------------------------------------*/
 
-   // TODO
-   
-   public WotlasLocation getWotlasLocation(String locationName) {
-   	return null;
+  /** To load the local game universe.
+   *
+   *  @param loadDefault do we have to load default data ?
+   */
+   public void loadUniverse( boolean loadDefault ) {
+      int worldCount=0, townCount=0, buildingCount=0, mapCount=0;
+
+      String universeHome =  rManager.getBase(UNIVERSE_HOME);
+
+    /*** STEP 1 - WE LOAD LOCATIONS (default data) ***/
+
+     // We search for the latest save...
+     //   String latest = FileTools.findSave( universeHome, UNIVERSE_PREFIX, UNIVERSE_SUFFIX, true );
+        String latest = null;
+
+        if( latest==null )
+            latest = DEFAULT_UNIVERSE;
+
+        universeHome += File.separator + latest;
+        File worldSaveList[] = new File( universeHome ).listFiles();
+
+        if( worldSaveList==null ) {
+            Debug.signal( Debug.ERROR, null, "No universe data found in: " + universeHome );
+            return;
+        }
+
+     // ok, here we go ! we load all the worlds we can find...
+        Debug.signal( Debug.NOTICE, null, "Loading Universe Data from :"+universeHome );
+        worldMaps = null;
+
+        for( int w=0; w<worldSaveList.length; w++ )
+        {
+           if( !worldSaveList[w].isDirectory() )
+               continue;
+
+           try
+           {
+             // we load the world object
+                String worldHome =  universeHome + File.separator + worldSaveList[w].getName();
+
+                if( ! new File(worldHome + File.separator + WORLD_FILE).exists() ) {
+                    Debug.signal(Debug.WARNING, this, "Found Empty World directory : "+worldHome);
+                    continue;
+                }
+
+                WorldMap world = (WorldMap) PropertiesConverter.load( worldHome + File.separator
+                                                                 + WORLD_FILE );
+
+                if (worldMaps == null) {
+                    worldMaps = new WorldMap[world.getWorldMapID()+1];
+                }
+                else if( worldMaps.length <= world.getWorldMapID() ) {
+                    WorldMap[] myWorldMaps = new WorldMap[world.getWorldMapID()+1];
+                    System.arraycopy( worldMaps, 0, myWorldMaps, 0, worldMaps.length );
+                    worldMaps = myWorldMaps;
+                }
+
+                worldMaps[world.getWorldMapID()] = world;
+                worldCount++;
+
+             // we load all the towns of this world
+                File townSaveList[] = new File( worldHome ).listFiles();
+
+                for( int t=0; t<townSaveList.length; t++ )
+                {
+                    if( townSaveList[t].getName().equals(WORLD_FILE) || !townSaveList[t].isDirectory())
+                        continue;
+
+                 // we load the town objects
+                    String townHome =  worldHome + File.separator + townSaveList[t].getName();
+
+                    TownMap town = (TownMap) PropertiesConverter.load( townHome + File.separator
+                                                                       + TOWN_FILE );
+                    world.addTownMap( town );
+                    townCount++;
+
+                 // we load all this town's buildings
+                    File buildingSaveList[] = new File( townHome ).listFiles();
+
+                    for( int b=0; b<buildingSaveList.length; b++ )
+                    {
+                        if( buildingSaveList[b].getName().equals(TOWN_FILE) || !buildingSaveList[b].isDirectory() )
+                            continue;
+
+                     // we load the building objects
+                        String buildingHome =  townHome + File.separator + buildingSaveList[b].getName();
+
+                        Building building = (Building) PropertiesConverter.load( buildingHome + File.separator
+                                                                         + BUILDING_FILE );
+                        town.addBuilding( building );
+                        buildingCount++;
+
+                     // we load all this building's maps
+                        File mapsSaveList[] = new File( buildingHome ).listFiles();
+
+                        for( int m=0; m<mapsSaveList.length; m++ )
+                        {
+                          if( mapsSaveList[m].getName().equals(BUILDING_FILE)
+                              || mapsSaveList[m].isDirectory()
+                              || !mapsSaveList[m].getName().endsWith(MAP_SUFFIX) )
+                            continue;
+
+                         // we load the building objects
+                            String mapName =  buildingHome + File.separator + mapsSaveList[m].getName();
+
+                            InteriorMap map = (InteriorMap) PropertiesConverter.load( mapName );
+                            building.addInteriorMap( map );
+                            mapCount++;
+                        }
+                    }
+                }
+           }
+           catch( PersistenceException pe ) {
+              Debug.signal( Debug.FAILURE, this, "Failed to load world: "
+                            + universeHome + File.separator
+                            + worldSaveList[w].getName() +"\n Message:"+pe.getMessage() );
+              Debug.exit();
+           }
+        }
+
+    /*** STEP 2 - WE LOAD OBJECTS (latest data) ***/
+     //   String latest = FileTools.findSave( universeHome+File.separator+OBJECTS_HOME,
+     //                                       OBJECTS_PREFIX, OBJECTS_SUFFIX, true );
+
+      Debug.signal( Debug.NOTICE, null, "World Manager loaded "+worldCount+" worlds, "+townCount+" towns, "
+                    +buildingCount+" buildings, "+mapCount+" maps." );
+                    
+    /*** STEP 3 - WE INIT THE WORLD ***/
+      init();
    }
 
- /*------------------------------------------------------------------------------------*
+ /*------------------------------------------------------------------------------------*/
 
-  // TODO
-  
-   public String[] getWorldList() {
+  /** To save the local game universe.
+   *
+   *  @param isDefault if true we save all data in their DEFAULT directory.
+   *  @return true in case of success, false otherwise
+   */
+   public boolean saveUniverse( boolean isDefault ) {
 
-     // How many maps do we have ?
-       int worldCount = 0;
+     int worldCount=0, townCount=0, buildingCount=0, mapCount=0;
+     boolean failed = false;
+
+   /*** STEP 1 - We only have to save location data if they are to be saved as default ***/
    	
-       for( int i=0; i<worldMaps.length; i++ )
-            if( worldMaps[i]!=null )
-                worldCount++;
-
-       String worldNames[] = new String[worldCount];
-
-     // We fill the array
-       worldCount=0;
+   // which home ?
+      String universeHome = null;
      
-       for( int i=0; i<worldMaps.length; i++ )
-            if( worldMaps[i]!=null ){
-            	worldNames[worldCount] = worldMaps[i].getFullName();
+      if( isDefault ) {
+        universeHome = rManager.getBase(UNIVERSE_HOME+File.separator+DEFAULT_UNIVERSE);
+        //  else
+        //    universeHome = databasePath+File.separator+UNIVERSE_HOME+File.separator
+        //                    +UNIVERSE_PREFIX+Tools.getLexicalDate()+UNIVERSE_SUFFIX;
+
+     // We create this directory...
+        new File(universeHome).mkdir();
+
+     // ok, here we go ! we load all the worlds we can find...
+        Debug.signal( Debug.NOTICE, this, "Saving Universe Data to :"+universeHome );
+
+        for( int w=0; w<worldMaps.length; w++ )
+        {
+           if( worldMaps[w]==null )
+               continue;
+
+           try
+           {
+             // we create the world directory
+                String worldHome =  universeHome + File.separator + worldMaps[w].getShortName();
+                new File(worldHome).mkdir();
+
+             // we save the world object
+                PropertiesConverter.save( worldMaps[w], worldHome + File.separator + WORLD_FILE );
                 worldCount++;
-            }
 
-       return worldNames;
-   }
+             // we save all the towns of this world
+                TownMap towns[] = worldMaps[w].getTownMaps();
 
- /*------------------------------------------------------------------------------------*
+                if( towns == null )
+                    continue;
 
-  // TODO
-  
-   public String[] getTownList(WotlasLocation world) {
+                for( int t=0; t<towns.length; t++ )
+                {
+                    if( towns[t]==null )
+                        continue;
 
-     // We search for the given world
+                 // we load the town objects
+                    String townHome =  worldHome + File.separator + towns[t].getShortName();
+                    new File(townHome).mkdir();
 
-     // How many maps do we have ?
-       int worldCount = 0;
-   	
-       for( int i=0; i<worldMaps.length; i++ )
-            if( worldMaps[i]!=null )
-                worldCount++;
+                    PropertiesConverter.save( towns[t], townHome + File.separator + TOWN_FILE );
+                    townCount++;
 
-       String worldNames[] = new String[worldCount];
+                 // we save all this town's buildings
+                    Building buildings[] = towns[t].getBuildings();
 
-     // We fill the array
-       worldCount=0;
-     
-       for( int i=0; i<worldMaps.length; i++ )
-            if( worldMaps[i]!=null ){
-            	worldNames[worldCount] = worldMaps[i].getFullName();
-                worldCount++;
-            }
+                    if( buildings==null )
+                        continue;
 
-       return worldNames;
-   }
+                    for( int b=0; b<buildings.length; b++ )
+                    {
+                        if( buildings[b]==null )
+                            continue;
 
- /*------------------------------------------------------------------------------------*
+                     // we load the building objects
+                        String buildingHome =  townHome + File.separator + buildings[b].getShortName();
+                        new File(buildingHome).mkdir();
 
-  // TODO
-  
-   public String[] getBuildingList(WotlasLocation town) {
-   	return null;
-   }
+                        PropertiesConverter.save( buildings[b], buildingHome + File.separator + BUILDING_FILE );
+                        buildingCount++;
 
- /*------------------------------------------------------------------------------------*
+                     // we save all this building's maps
+                        InteriorMap interiorMaps[] = buildings[b].getInteriorMaps();
 
-  // TODO
-  
-   public String[] getInteriorMapList(WotlasLocation building) {
-   	return null;
-   }
+                        if( interiorMaps==null )
+                            continue;
 
- /*------------------------------------------------------------------------------------*
+                        for( int m=0; m<interiorMaps.length; m++ )
+                        {
+                          if( interiorMaps[m]==null )
+                             continue;
 
-  // TODO
-  
-   public String[] getRoomList(WotlasLocation interiorMap) {
-   	return null;
+                         // we load the building objects
+                            String mapName =  buildingHome + File.separator
+                                              + interiorMaps[m].getShortName() + MAP_SUFFIX;
+
+                            PropertiesConverter.save( interiorMaps[m], mapName );
+                            mapCount++;
+                        }
+                    }
+                }
+           }
+           catch( PersistenceException pe ) {
+              failed = true;
+
+              Debug.signal( Debug.CRITICAL, this, "Failed to save world: "
+                            + universeHome + File.separator
+                            + worldMaps[w].getShortName() +"\n Message:"+pe.getMessage() );
+           }
+        }
+
+      }
+
+    /*** STEP 2 - WE SAVE OBJECTS DATA ***/
+
+      if(isDefault) {
+      }
+
+
+    /*** STEP 3 - Print some stats for control ***/
+      if(isDefault)
+         Debug.signal( Debug.NOTICE, this, "Saved "+worldCount+" worlds, "+townCount+" towns, "
+                       +buildingCount+" buildings, "+mapCount+" maps." );
+
+      return !failed;
    }
 
  /*------------------------------------------------------------------------------------*/

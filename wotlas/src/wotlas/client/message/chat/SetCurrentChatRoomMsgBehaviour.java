@@ -72,8 +72,8 @@ public class SetCurrentChatRoomMsgBehaviour extends SetCurrentChatRoomMessage im
 
        if( invokeLater ) {
          // We set the current chat for our player
-            if( dataManager.getChatPanel().setCurrentJChatRoom( chatRoomPrimaryKey ) ) {
-                dataManager.getChatPanel().addPlayer(chatRoomPrimaryKey, player );
+            if( dataManager.getClientScreen().getChatPanel().setCurrentJChatRoom( chatRoomPrimaryKey ) ) {
+                dataManager.getClientScreen().getChatPanel().addPlayer(chatRoomPrimaryKey, player );
             }
             else {
                 Debug.signal( Debug.ERROR, this, "Failed to set current chat for player... "+chatRoomPrimaryKey);
@@ -89,7 +89,7 @@ public class SetCurrentChatRoomMsgBehaviour extends SetCurrentChatRoomMessage im
        }
 
     // We seek the players to add
-       JChatRoom chatRoom = dataManager.getChatPanel().getJChatRoom( chatRoomPrimaryKey );
+       JChatRoom chatRoom = dataManager.getClientScreen().getChatPanel().getJChatRoom( chatRoomPrimaryKey );
 
        if(chatRoom==null) {
           Debug.signal( Debug.ERROR, this, "Failed to find chat : "+chatRoomPrimaryKey);

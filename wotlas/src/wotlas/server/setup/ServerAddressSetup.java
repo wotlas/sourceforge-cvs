@@ -19,8 +19,8 @@
  
 package wotlas.server.setup;
 
-import wotlas.server.ServerDirector;
-import wotlas.common.PersistenceManager;
+import wotlas.server.*;
+import wotlas.common.*;
 import wotlas.libs.wizard.*;
 import wotlas.libs.graphics2D.FontFactory;
 import wotlas.utils.*;
@@ -48,17 +48,30 @@ public class ServerAddressSetup extends JWizard {
 
   /** Database Config.
    */
-    private final static String DATABASE_CONFIG = "../src/config/server.cfg";
+    private final static String DEFAULT_BASE_PATH = "../base";
 
-  /** Remote servers config file.
+  /** Setup Command Line Help
    */
-    private final static String REMOTE_SERVER_CONFIG = "../src/config/remote-servers.cfg";
+    public final static String SETUP_COMMAND_LINE_HELP =
+            "Usage: ServerAddressSetup -[help|base <path>]\n\n"
+           +"Examples : \n"
+           +"  ServerAddressSetup -base ../base : sets the data location.\n\n"
+           +"If the -base option is not set we search for data in "+DEFAULT_BASE_PATH
+           +"\n\n";
+
+  /** Format of the server log name.
+   */
+    public final static String SERVER_LOGS = "logs";
+
+  /** Format of the configs path name
+   */
+    public final static String SERVER_CONFIGS = "configs";
 
  /*------------------------------------------------------------------------------------*/
 
-   /** Database Relative Path.
+   /** Our base path.
     */
-     private static String databasePath;
+     private static String basePath = DEFAULT_BASE_PATH;
 
    /** Our serverID
     */
@@ -66,7 +79,11 @@ public class ServerAddressSetup extends JWizard {
 
    /** Remote server config properties
     */
-     private static Properties serverProperties;
+     private static ServerPropertiesFile serverProperties;
+
+   /** Remote server config properties
+    */
+     private static RemoteServersPropertiesFile remoteServersProperties;
 
    /** Server Config Address file path.
     */
@@ -77,14 +94,17 @@ public class ServerAddressSetup extends JWizard {
   /** Constructor.
    */
     public ServerAddressSetup() {
-         super("Server Address Setup",470,550);
+         super("Server Address Setup",
+               basePath+File.separator+"gui",
+               FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter").deriveFont(18f),
+               470,550);
+
          setLocation(200,100);
 
          if(serverID==0)
             JOptionPane.showMessageDialog( null, "Your server ID is 0 ('localhost'). This setup program is only"
                                                 +"\nfor servers that need to publish their IP on the Internet.",
                                                 "Warning", JOptionPane.WARNING_MESSAGE);
-
 
        // We display first step
           try{
@@ -174,7 +194,7 @@ public class ServerAddressSetup extends JWizard {
                                           +" and move on to the next step. Your server ID is "+serverID+".");
            text0.setLineWrap(true);
            text0.setWrapStyleWord(true);
-           text0.setEditable(false);    
+           text0.setEditable(false);
            text0.setAlignmentX(LEFT_ALIGNMENT);
 
            group0.add( text0 );
@@ -206,7 +226,7 @@ public class ServerAddressSetup extends JWizard {
         // File Transfer Info
            JTextArea text2 = new JTextArea("\n      We need to know how to transfer your server's IP"
                                           +" address to the wotlas central web server : "
-                                          +serverProperties.getProperty("REMOTE_SERVER_CONFIG_HOME_URL") );
+                                          +remoteServersProperties.getProperty("info.remoteServerHomeURL") );
 
            text2.setAlignmentX(LEFT_ALIGNMENT);
            text2.setLineWrap(true);
@@ -221,7 +241,7 @@ public class ServerAddressSetup extends JWizard {
 
            JLabel label2 = new JLabel("Enter your login :");
            label2.setAlignmentX(LEFT_ALIGNMENT);
-           t_login = new JTextField(serverProperties.getProperty("SERVER_HOME_LOGIN",""));
+           t_login = new JTextField(remoteServersProperties.getProperty("transfer.serverHomeLogin",""));
            t_login.setAlignmentX(LEFT_ALIGNMENT);
 
            group2.add( label2 );
@@ -235,7 +255,7 @@ public class ServerAddressSetup extends JWizard {
 
            JLabel label3 = new JLabel("Enter your password :");
            label3.setAlignmentX(LEFT_ALIGNMENT);
-           t_passw = new JPasswordField(serverProperties.getProperty( "SERVER_HOME_PASSW",""));
+           t_passw = new JPasswordField(remoteServersProperties.getProperty( "transfer.serverHomePassw",""));
            t_passw.setAlignmentX(LEFT_ALIGNMENT);
 
            group3.add( label3 );
@@ -252,7 +272,7 @@ public class ServerAddressSetup extends JWizard {
            label4.setAlignmentX(LEFT_ALIGNMENT);
 
            String cmdProgList[] = {
-           	   serverProperties.getProperty("FILE_TRANSFER_PROG",""),
+           	   remoteServersProperties.getProperty("transfer.fileTransferProgram",""),
            	   "../bin/win32/pscp.exe",
            	   "\"../bin/win32/pscp.exe\"   (for win2000 & XP, don't remove the \" \" )",
            	   "scp",
@@ -282,7 +302,7 @@ public class ServerAddressSetup extends JWizard {
            text5.setEditable(false);
 
            String cmdOptList[] = {
-           	   serverProperties.getProperty("FILE_TRANSFER_OPT",""),
+           	   remoteServersProperties.getProperty("tranfer.fileTransferOptions",""),
            	   "-pw $PASSW$ $FILE$ $LOGIN$@shell.sf.net:/home/groups/w/wo/wotlas/htdocs/game",
            	   };
 
@@ -302,7 +322,7 @@ public class ServerAddressSetup extends JWizard {
            text6.setAlignmentX(LEFT_ALIGNMENT);
 
            String cmdWorkDirList[] = {
-           	   serverProperties.getProperty("FILE_TRANSFER_WORKING_DIR",""),
+           	   remoteServersProperties.getProperty("transfer.fileTransferWorkingDir",""),
            	   "../bin/win32",
            	   "../bin/unix"
            	   };
@@ -338,21 +358,11 @@ public class ServerAddressSetup extends JWizard {
               }
 
        	   // 1 - we retrieve the data and save it to disk.
-       	      serverProperties.setProperty( "SERVER_HOME_LOGIN", t_login.getText() );
-       	      serverProperties.setProperty( "SERVER_HOME_PASSW", new String(t_passw.getPassword()) );
-       	      serverProperties.setProperty( "FILE_TRANSFER_PROG", c_prog.getSelectedItem().toString() );
-       	      serverProperties.setProperty( "FILE_TRANSFER_OPT", c_options.getSelectedItem().toString() );
-       	      serverProperties.setProperty( "FILE_TRANSFER_WORKING_DIR", c_workdir.getSelectedItem().toString() );
-
-              String oldConfig = FileTools.loadTextFromFile( REMOTE_SERVER_CONFIG );
-
-              if( oldConfig!=null ) {
-                  oldConfig = FileTools.updateProperty( "SERVER_HOME_LOGIN", t_login.getText(), oldConfig);
-                  oldConfig = FileTools.updateProperty( "FILE_TRANSFER_PROG", c_prog.getSelectedItem().toString(), oldConfig);
-                  oldConfig = FileTools.updateProperty( "FILE_TRANSFER_OPT", c_options.getSelectedItem().toString(), oldConfig);
-                  oldConfig = FileTools.updateProperty( "FILE_TRANSFER_WORKING_DIR", c_workdir.getSelectedItem().toString(), oldConfig);
-                  FileTools.saveTextToFile( REMOTE_SERVER_CONFIG, oldConfig );
-              }
+       	      remoteServersProperties.setProperty( "transfer.serverHomeLogin", t_login.getText() );
+       	      remoteServersProperties.setProperty( "transfer.serverHomePassw", new String(t_passw.getPassword()) );
+       	      remoteServersProperties.setProperty( "transfer.fileTransferProgram", c_prog.getSelectedItem().toString() );
+       	      remoteServersProperties.setProperty( "tranfer.fileTransferOptions", c_options.getSelectedItem().toString() );
+       	      remoteServersProperties.setProperty( "transfer.fileTransferWorkingDir", c_workdir.getSelectedItem().toString() );
 
               if( !FileTools.saveTextToFile( serverAddressFile, t_ipAddress.getText() ) ) {
                   JOptionPane.showMessageDialog( null, "Failed to save IP address to\n"+serverAddressFile,
@@ -415,9 +425,10 @@ public class ServerAddressSetup extends JWizard {
            JTextArea taInfo = new JTextArea("\n\n\n      We will now run the command line you entered in the previous step. "
                                     +"It will send your 'server-"+serverID+".cfg.adr' file to the "
                                     +"web server hosting the following URL : "
-                                    +serverProperties.getProperty("REMOTE_SERVER_CONFIG_HOME_URL")
+                                    +remoteServersProperties.getProperty("info.remoteServerHomeURL")
                                     +"\n\n      Your '.adr' file will be available at this URL. "
-                                    +"This way other servers/client will be able to discover your server and connect to it.\n\n");
+                                    +"This way other servers/client will be able to discover your server and connect to it.\n\n"
+                                    +"If the transfer doesn't work take a look at server-side questions in our FAQ.\n\n");
 
            taInfo.setAlignmentX(LEFT_ALIGNMENT);
            taInfo.setLineWrap(true);
@@ -439,7 +450,7 @@ public class ServerAddressSetup extends JWizard {
                     StringBuffer fullCmd = new StringBuffer("");
                     boolean wrapFilePath = false; // need to wrap file path between " " ? (winXP needs it)
 
-                    String prog = serverProperties.getProperty("FILE_TRANSFER_PROG","");
+                    String prog = remoteServersProperties.getProperty("transfer.fileTransferProgram","");
 
                     if( prog.startsWith("\"") && prog.endsWith("\"") ) {
                         wrapFilePath = true;
@@ -460,7 +471,7 @@ public class ServerAddressSetup extends JWizard {
                         fullCmd.append(" "); // separator between program name & options
 
                  // We check the options command
-                    String cmd = serverProperties.getProperty("FILE_TRANSFER_OPT","");
+                    String cmd = remoteServersProperties.getProperty("tranfer.fileTransferOptions","");
                     cmd += " "; // makes our job easier
                  
                     if( cmd.indexOf("$FILE$")<0 ) {
@@ -506,7 +517,7 @@ public class ServerAddressSetup extends JWizard {
                     ind1 = cmd.indexOf("$LOGIN$");
 
                     fullCmd.append( cmd.substring(0,ind1) );
-                    fullCmd.append( serverProperties.getProperty("SERVER_HOME_LOGIN","") );
+                    fullCmd.append( remoteServersProperties.getProperty("transfer.serverHomeLogin","") );
                     fullCmd.append( cmd.substring(ind1+7,cmd.length() ) );
                     cmd = fullCmd.toString();
                     fullCmd = new StringBuffer("");
@@ -514,12 +525,12 @@ public class ServerAddressSetup extends JWizard {
                     ind1 = cmd.indexOf("$PASSW$");
 
                     fullCmd.append( cmd.substring(0,ind1) );
-                    fullCmd.append( serverProperties.getProperty("SERVER_HOME_PASSW","") );
+                    fullCmd.append( remoteServersProperties.getProperty("transfer.serverHomePassw","") );
                     fullCmd.append( cmd.substring(ind1+7,cmd.length() ) );
 
                  // Runtime... we execute the transfert command
                     int result=1;
-                    String workingDir = serverProperties.getProperty("FILE_TRANSFER_WORKING_DIR");
+                    String workingDir = remoteServersProperties.getProperty("transfer.fileTransferWorkingDir");
                     File workingDirPath = null;
                     
                     if(workingDir.length()!=0)
@@ -537,10 +548,16 @@ public class ServerAddressSetup extends JWizard {
                     }
 
                     if(result==0)
-                        JOptionPane.showMessageDialog( null, "Transfer done. You should check if it worked.",
+                        JOptionPane.showMessageDialog( null, "Transfer done ! You can\nnow start your server!",
                                                        "Success", JOptionPane.INFORMATION_MESSAGE);
                     else
-                        JOptionPane.showMessageDialog( null, "Command line seems to have failed.\nCheck transfer destination.",
+                        JOptionPane.showMessageDialog( null, "Transfer has failed. Please check (1) if the destination\n"
+                                                            +"web server is running, (2) if you have setup your firewall\n"
+                                                            +"properly, (3) if the command line is correct, (4) for pscp\n"
+                                                            +"users the encryption key of your target web server may have\n"
+                                                            +"changed, try to use pscp in a shell window to connect to\n"
+                                                            +"your web server, (5) ask the wotlas manager to check your\n"
+                                                            +"rights on the web server.",
                                                         "Error", JOptionPane.ERROR_MESSAGE);
               }
            });
@@ -581,14 +598,42 @@ public class ServerAddressSetup extends JWizard {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Main. We don't expect any parameters.
-   *  @param argv none
+  /** Main. Starts the setup utility.
+   * @param argv enter -help to get some help info.
    */
     static public void main( String argv[] ) {
 
-        // STEP 0 - Log Creation
+        // STEP 1 - We parse the command line options
+           basePath = DEFAULT_BASE_PATH;
+           Debug.displayExceptionStack( true );
+
+           for( int i=0; i<argv.length; i++ ) {
+
+              if( !argv[i].startsWith("-") )
+                  continue;
+
+              if(argv[i].equals("-base")) {   // -- TO SET THE CONFIG FILES LOCATION --
+
+                   if(i==argv.length-1) {
+                      System.out.println("Location missing.");
+                      System.out.println(SETUP_COMMAND_LINE_HELP);
+                      return;
+                   }
+
+                   basePath = argv[i+1];
+              }
+              else if(argv[i].equals("-help")) {   // -- TO DISPLAY THE HELP --
+
+                   System.out.println(SETUP_COMMAND_LINE_HELP);
+                   return;
+              }
+           }
+
+        // STEP 2 - Log Creation
            try {
-              Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(), "../log/server-setup.log", "../base/gui/log-title-dark.jpg" ) );
+              Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(),
+                basePath+File.separator+SERVER_LOGS+File.separator+"server-setup.log",
+                "log-title-dark.jpg", basePath+File.separator+"gui" ) );
            } catch( java.io.FileNotFoundException e ) {
               e.printStackTrace();
               Debug.exit();
@@ -596,57 +641,20 @@ public class ServerAddressSetup extends JWizard {
 
            Debug.signal(Debug.NOTICE,null,"Starting Server Address Setup...");
 
-        // STEP 1 - We load the database path. Where is the data ?
-           Properties properties = FileTools.loadPropertiesFile( DATABASE_CONFIG );
+           serverProperties = new ServerPropertiesFile(basePath+File.separator+SERVER_CONFIGS);
+           remoteServersProperties = new RemoteServersPropertiesFile(basePath+File.separator+SERVER_CONFIGS);
 
-             if( properties==null ) {
-                Debug.signal( Debug.FAILURE, null, "No valid server-database.cfg file found !" );
-                Debug.exit();
-             }
-
-           databasePath = properties.getProperty( "DATABASE_PATH","" );
-
-           if( databasePath.length()==0 ) {
-               Debug.signal( Debug.FAILURE, null, "No Database Path specified in config file !" );
-               Debug.exit();
-           }
-
-           Debug.signal( Debug.NOTICE, null, "DataBase Path Found : "+databasePath );
-
-        // STEP 2 - What is the current server ID ?
-           String s_serverID = properties.getProperty( "SERVER_ID","" );
-
-           if( s_serverID.length()==0 ) {
-               Debug.signal( Debug.FAILURE, null, "No ServerID specified in config file !" );
-               Debug.exit();
-           }
-
-           try{
-              serverID = Integer.parseInt( s_serverID );
-           }catch( Exception e ) {
-                Debug.signal( Debug.FAILURE, null, "Bad ServerID specified in config file !" );
-                Debug.exit();
-           }
-
+           serverID = serverProperties.getIntegerProperty("init.serverID");
            Debug.signal( Debug.NOTICE, null, "Current Default Server ID is : "+serverID );
 
+           serverAddressFile = basePath
+                               +File.separator+ServerConfigManager.SERVERS_HOME
+                               +File.separator+ServerConfigManager.SERVERS_PREFIX
+                               +serverID+ServerConfigManager.SERVERS_SUFFIX
+                               +ServerConfigManager.SERVERS_ADDRESS_SUFFIX;
 
-        // STEP 3 - We get the remote server properties
-           serverProperties = FileTools.loadPropertiesFile( REMOTE_SERVER_CONFIG );
-
-             if( serverProperties==null ) {
-                Debug.signal( Debug.FAILURE, null, "No valid remote-servers.cfg file found !" );
-                Debug.exit();
-             }
-
-
-           serverAddressFile = databasePath+File.separator+PersistenceManager.SERVERS_HOME
-                               +File.separator+PersistenceManager.SERVERS_PREFIX
-                               +serverID+PersistenceManager.SERVERS_SUFFIX
-                               +PersistenceManager.SERVERS_ADDRESS_SUFFIX;
-
-         // STEP 4 - Creation of our Font Factory
-           FontFactory.createDefaultFontFactory( databasePath + File.separator + "fonts" );
+         // STEP 3 - Creation of our Font Factory
+           FontFactory.createDefaultFontFactory( basePath+ File.separator + "fonts" );
            Debug.signal( Debug.NOTICE, null, "Font factory created..." );
 
          // STEP 4 - Start the wizard

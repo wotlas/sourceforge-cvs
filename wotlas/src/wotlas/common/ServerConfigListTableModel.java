@@ -30,20 +30,20 @@ import javax.swing.JOptionPane;
 import java.awt.*;
 import java.awt.event.*;
 
-/** An AbstractTableModel to diplay the servers in a JTable
+/** An AbstractTableModel to diplay a list of server configs in a JTable
  *
  * @author Petrus   
  * @see wotlas.common.ServerConfig
+ * @see wotlas.common.ServerConfigManager
  */
 
-public class ServerConfigListTableModel extends AbstractTableModel
-{
+public class ServerConfigListTableModel extends AbstractTableModel {
   
  /*------------------------------------------------------------------------------------*/
   
   /** Array of servers
    */
-  private ServerConfigList servers;
+  private ServerConfigManager servers;
     
   /** Names of the table columns
    */
@@ -55,7 +55,7 @@ public class ServerConfigListTableModel extends AbstractTableModel
    *   
    * @param ServerConfigList list of servers
    */
-  public ServerConfigListTableModel(ServerConfigList servers) {    
+  public ServerConfigListTableModel(ServerConfigManager servers) {    
     this.servers = servers;
   }
 
@@ -89,25 +89,18 @@ public class ServerConfigListTableModel extends AbstractTableModel
   public Object getValueAt(int row, int col) {
     switch(col) {
       case 0:
-        return servers.ServerConfigAt(row).getServerSymbolicName();
+        return servers.serverConfigAt(row).getServerSymbolicName();
         
       case 1:        
-        return servers.ServerConfigAt(row).getLocation();   
+        return servers.serverConfigAt(row).getLocation();
         
       case 2:
-        return new Integer(servers.ServerConfigAt(row).getServerID());
+        return new Integer(servers.serverConfigAt(row).getServerID());
         
       default:
         return null;
     }
   }
 
-  /* JTable uses this method to determine the default renderer/
-   * editor for each cell
-   */  
-  /*public Class getColumnClass(int c) {
-    String dummy = "";
-    return dummy.getClass();
-  }*/
-  
+ /*------------------------------------------------------------------------------------*/
 }  

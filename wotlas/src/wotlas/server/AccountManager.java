@@ -19,7 +19,15 @@
 
 package wotlas.server;
 
+import wotlas.common.*;
+import wotlas.common.universe.*;
+
+import wotlas.libs.persistence.*;
 import wotlas.utils.Debug;
+import wotlas.utils.FileTools;
+import wotlas.utils.Tools;
+
+import java.io.File;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,37 +42,52 @@ import java.util.Iterator;
  * @see wotlas.server.GameServer
  */
 
-public class AccountManager
-{
+public class AccountManager {
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Format of the account file names.
+   */
+    public final static String CLIENT_PROFILE = "profile.cfg";
+    public final static String ACCOUNTS_HOME  = "home";
+    public final static String PLAYER_PREFIX  = "player-save-";
+    public final static String PLAYER_SUFFIX  = ".cfg";
+
+   /** Maximum number of save in a client account. If this number is reached we delete
+    *  the oldest entry.
+    */
+      public final static int MAX_NUMBER_OF_SAVE = 5;
+
  /*------------------------------------------------------------------------------------*/
 
    /** Client Login ( equals to the client's directory name )
     */
       private HashMap accounts;
 
+   /** Our resource Manager
+    */
+      private ResourceManager rManager;
+
  /*------------------------------------------------------------------------------------*/
 
-  /** Constructor. Attemps to load the client accounts.
-   */
-   public AccountManager() {
-
-          loadAccounts();
-   }
+   /** Constructor. Attemps to load the client accounts.
+    */
+     public AccountManager( ResourceManager rManager ) {
+     	  this.rManager = rManager;
+     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To load the client Accounts.
    */
-   public void loadAccounts()
-   {
+     public void init() {
        int nbAccounts=0,nbAccountsLoaded=0;
 
        // Call to the PersistenceManager to load the accounts from the dataBase.
-          PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
-          GameAccount account_list[] = pm.loadAccounts();
+          GameAccount account_list[] = loadAccounts();
 
             if( account_list!=null )
-                  nbAccounts = account_list.length;
+                nbAccounts = account_list.length;
 
             // HashMap init. ( initial size is 1.5*Nb Accounts +10 )
             // The HashMap Load Factor is 75%. The size doubles after that.
@@ -78,21 +101,7 @@ public class AccountManager
                    }
 
           Debug.signal( Debug.NOTICE, null, "AccountManager loaded "+nbAccountsLoaded+" accounts." );
-   }
-  
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To save to disk a modified account. The account MUST ALREADY EXIST.
-   *
-   * @return true in case of success, false otherwise.
-   */
-
-   public boolean saveAccount( GameAccount account ) {
-       // Call to the PersistenceManager to save a new account in the dataBase.
-          PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
-
-          return pm.saveAccount( account );
-   }
+     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -114,10 +123,7 @@ public class AccountManager
    * @return true means success, false usually means that the account name already exists.
    */
      public synchronized boolean createAccount( GameAccount account ) {
-        // we create the persistence entry
-           PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
-
-           if( !pm.createAccount( account ) )
+           if( !createAccountFiles( account ) )
                return false;
 
         // we insert the account in our table
@@ -177,12 +183,11 @@ public class AccountManager
    * @return true if the account was deleted.
    */
      public synchronized boolean deleteAccount( String accountName, boolean closeIfConnected ) {
-           PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
-           WorldManager wManager = DataManager.getDefaultDataManager().getWorldManager();
+           WorldManager wManager = ServerDirector.getDataManager().getWorldManager();
 
         // We get the account
            GameAccount account = (GameAccount) accounts.get( accountName );
-           
+
            if( account==null ) {
                Debug.signal( Debug.ERROR, this, "Account "+accountName+" not found" );
                return false;
@@ -200,7 +205,7 @@ public class AccountManager
            wManager.removePlayer( account.getPlayer() );
 
         // we delete the files
-           if( !pm.deleteAccount( accountName ) ) {
+           if( !deleteAccountFiles( accountName ) ) {
                Debug.signal( Debug.ERROR, this, "Failed to delete Account files: "+accountName );
                return true; // account erased but some files remain !
            }
@@ -217,8 +222,7 @@ public class AccountManager
    * @return true if the account was deleted.
    */
      public synchronized boolean changeToDeadAccount( GameAccount account ) {
-           PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
-           WorldManager wManager = DataManager.getDefaultDataManager().getWorldManager();
+           WorldManager wManager = ServerDirector.getDataManager().getWorldManager();
 
         // We get the account           
            if( account==null || account.getIsDeadAccount() )
@@ -240,23 +244,214 @@ public class AccountManager
    *
    * @return a list of online players
    */
-   public synchronized HashMap getOnlinePlayers() {
+    public synchronized HashMap getOnlinePlayers() {
      // HashMap init. ( initial size is Nb Accounts/2 )
-     HashMap onlinePlayers = new HashMap((int)accounts.size()/2);
+       HashMap onlinePlayers = new HashMap((int)accounts.size()/2);
      
-     Iterator it = accounts.values().iterator();
-     PlayerImpl player;
-     
-     while ( it.hasNext() ) {
-       player = ( (GameAccount) it.next() ).getPlayer();
-       if (player.isConnectedToGame()) {
-         onlinePlayers.put(player.getPrimaryKey(), player);
+       Iterator it = accounts.values().iterator();
+       PlayerImpl player;
+
+       while ( it.hasNext() ) {
+         player = ( (GameAccount) it.next() ).getPlayer();
+         if (player.isConnectedToGame()) {
+            onlinePlayers.put(player.getPrimaryKey(), player);
+         }
        }
-     }
      
-     return onlinePlayers;
-   }
+      return onlinePlayers;
+    }
    
+ /*------------------------------------------------------------------------------------*/
+
+  /** To load all the client Accounts. Warning: the returned array can have null entries.
+   *
+   * @return all the client accounts found in the databasePath+"/"+ACCOUNTS_HOME
+   */
+   public GameAccount[] loadAccounts() {
+
+      String accountHome =  rManager.getBase( ACCOUNTS_HOME );
+      File accountList[] = new File( accountHome ).listFiles();
+
+     // no accounts ?
+        if( accountList==null ) {
+           Debug.signal( Debug.WARNING, this, "No accounts found in: "+accountHome );
+           return null;
+        }
+
+     // We load the different accounts...
+        GameAccount accounts[] = new GameAccount[accountList.length];
+
+        for( int i=0; i<accountList.length; i++ )
+        {
+           if( !accountList[i].isDirectory() || accountList[i].getName().indexOf('-')<0 )
+               continue;
+
+           try
+           {
+             // we load the client's profile
+                accounts[i] = (GameAccount) PropertiesConverter.load( accountHome + File.separator
+                                              + accountList[i].getName() + File.separator
+                                              + CLIENT_PROFILE );
+
+             // we now search for the latest saved player file.
+                String latest = FileTools.findSave( accountHome + File.separator
+                                                          + accountList[i].getName(),
+                                                          PLAYER_PREFIX, PLAYER_SUFFIX, true );
+
+              // have we found the latest saved file ?
+                 if( latest==null ) {
+                  // nope, then it's an invalid account, we delete it...
+                     Debug.signal( Debug.ERROR, this, "Failed to load account: "
+                                     + accountHome + File.separator
+                                     + accountList[i].getName() );
+                     accounts[i] = null;
+                     continue;
+                 }
+
+                 PlayerImpl player = (PlayerImpl) PropertiesConverter.load( accountHome + File.separator
+                                              + accountList[i].getName() + File.separator
+                                              + latest );
+
+              accounts[i].setPlayer( player );
+           }
+           catch( PersistenceException pe ) {
+              Debug.signal( Debug.ERROR, this, "Failed to load account: "
+                            + accountHome + File.separator
+                            + accountList[i].getName() +"\n Message:"+pe.getMessage() );
+              accounts[i] = null;
+           }
+        }
+
+      return accounts;
+   }
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To save a client Account. Deletes the oldest entry if the account has too many.
+   *
+   * @param account client account
+   * @return true if the account has been saved succesfully.
+   */
+   public boolean saveAccount( GameAccount account ) {
+
+      String accountHome =  rManager.getBase( ACCOUNTS_HOME );
+
+      try{
+            PropertiesConverter.save( account.getPlayer(),
+                                    accountHome + File.separator
+                                    + account.getAccountName() + File.separator
+                                    + PLAYER_PREFIX+Tools.getLexicalDate()+PLAYER_SUFFIX );
+
+         // ok, the save went ok... do we have to erase the oldest file ?
+            File accountFiles[] = new File( accountHome + File.separator
+                                            + account.getAccountName() ).listFiles();
+
+            if( accountFiles.length > MAX_NUMBER_OF_SAVE+1 )
+            {
+               // ok, let's delete the oldest save	
+                  String oldest = FileTools.findSave( accountHome + File.separator
+                                                      + account.getAccountName(),
+                                                      PLAYER_PREFIX, PLAYER_SUFFIX, false );
+
+              // have we found the latest saved file ?
+                 if( oldest!=null ) {
+                 	
+                    if( oldest.equals(PLAYER_PREFIX+Tools.getLexicalDate()+PLAYER_SUFFIX) )
+                        return true;  // it's the file we've just saved, so we don't delete it
+
+                    String oldestpath = accountHome + File.separator + account.getAccountName()
+                                        + File.separator + oldest;
+
+                    if( new File( oldestpath ).delete() )
+                        return true;
+                 }
+                      
+                 Debug.signal( Debug.WARNING, this, "Failed to find old account entry : "
+                                     + oldest );
+            }
+      }
+      catch( PersistenceException pe ) {
+          Debug.signal( Debug.ERROR, this, "Failed to save account: "
+                            + accountHome + File.separator
+                            + account.getAccountName() +"\n Message:"+pe.getMessage() );
+          return false;
+      }
+      
+      return true;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To create a client Account.
+   *
+   * @param account client account
+   * @return true if the account has been created succesfully.
+   */
+   public boolean createAccountFiles( GameAccount account ) {
+      String accountHome =  rManager.getBase( ACCOUNTS_HOME );
+      File accountDir = new File( accountHome+File.separator+account.getAccountName() );
+
+      if( !accountDir.mkdir() ) {
+          Debug.signal( Debug.ERROR, this, "Failed to create account: "
+                            + accountDir.getName() +"\n Account already exists!" );
+          return false;
+      }
+
+    // we create the client's "profile.cfg"
+      try{
+          PropertiesConverter.save( account,
+                                    accountHome + File.separator
+                                    + account.getAccountName() + File.separator
+                                    + CLIENT_PROFILE );
+      }
+      catch( PersistenceException pe ) {
+          Debug.signal( Debug.ERROR, this, "Failed to save account: "
+                            + accountHome + File.separator
+                            + account.getAccountName() +"\n Message:"+pe.getMessage() );
+          if( !deleteAccountFiles( account.getAccountName() ) )          
+               Debug.signal( Debug.WARNING, this, "Failed to delete bad account" );
+
+          return false;
+      }
+
+    // we save the player data in something like "player-save-2001-09-23.cfg"
+       if( !saveAccount( account ) ) {
+           if( !deleteAccountFiles( account.getAccountName() ) )          
+              Debug.signal( Debug.WARNING, this, "Failed to delete bad account" );
+
+           return false;
+       }
+       
+       return true;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To delete a client Account.
+   *
+   * @param accountName account name, use GameAccount.getAccountName().
+   * @return true if the account has been deleted succesfully.
+   */
+   public boolean deleteAccountFiles( String accountName ) {
+
+      String accountHome =  rManager.getBase( ACCOUNTS_HOME );
+      File accountDir = new File( accountHome+File.separator+accountName );
+
+      // account doesnot exists
+         if( !accountDir.exists() )
+             return true;
+     
+         File list[] = accountDir.listFiles();
+      
+      // we delete the account's file
+         if( list!=null )
+             for( int i=0; i<list.length; i++ )
+                  if( !list[i].delete() )
+                      return false;
+
+      return accountDir.delete();
+   }
+
+ /*------------------------------------------------------------------------------------*/
 }
 

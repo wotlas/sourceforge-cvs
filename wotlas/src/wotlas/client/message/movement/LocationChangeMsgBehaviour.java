@@ -87,7 +87,7 @@ public class LocationChangeMsgBehaviour extends LocationChangeMessage implements
            uPlayer.setLocation(location);
            
            if( !uPlayer.getLocation().equals(player.getLocation()) )
-               dataManager.getChatPanel().removePlayerFromAllchatRooms(primaryKey);
+               dataManager.getClientScreen().getChatPanel().removePlayerFromAllchatRooms(primaryKey);
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

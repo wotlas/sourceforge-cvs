@@ -402,12 +402,12 @@ public class AccountBuilder implements NetConnectionListener
     */
      public void createAccount() throws AccountException {
 
-        AccountManager accountManager = DataManager.getDefaultDataManager().getAccountManager();
+        AccountManager accountManager = ServerDirector.getDataManager().getAccountManager();
 
      // 1 - We finalize inits
         account.setPlayer( player );
         account.setLocalClientID( accountServer.getNewLocalClientID() );
-        account.setOriginalServerID( ServerManager.getDefaultServerManager().getServerConfig().getServerID() );
+        account.setOriginalServerID( ServerDirector.getServerID() );
         account.setLastConnectionTimeNow();
         player.setPrimaryKey( account.getAccountName() );
 
@@ -419,7 +419,7 @@ public class AccountBuilder implements NetConnectionListener
            // we add the player to the world...
               player.init();
               
-              DataManager.getDefaultDataManager().getWorldManager().addNewPlayer( account.getPlayer() );
+              ServerDirector.getDataManager().getWorldManager().addNewPlayer( account.getPlayer() );
               Debug.signal( Debug.NOTICE, this, "Added new client account to the game." );
 
            // we send a Success Message
@@ -666,7 +666,7 @@ public class AccountBuilder implements NetConnectionListener
    /** To get the server Name.
     */
      public String getServerName() throws AccountException {
-         return ServerManager.getDefaultServerManager().getServerConfig().getServerSymbolicName();
+         return ServerDirector.getServerManager().getServerConfig().getServerSymbolicName();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -674,7 +674,7 @@ public class AccountBuilder implements NetConnectionListener
    /** To get the admin email.
     */
      public String getAdminEmail() throws AccountException {
-         return ServerManager.getDefaultServerManager().getServerConfig().getAdminEmail();
+         return ServerDirector.getServerManager().getServerConfig().getAdminEmail();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

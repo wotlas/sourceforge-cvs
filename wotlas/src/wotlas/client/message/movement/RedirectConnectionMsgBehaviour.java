@@ -80,12 +80,12 @@ public class RedirectConnectionMsgBehaviour extends RedirectConnectionMessage im
       ProfileConfig currentProfile = dataManager.getCurrentProfileConfig();
       currentProfile.setServerID(remoteServerID);
 
-      ProfileConfigList profileConfigList = ClientManager.getDefaultClientManager().getProfileConfigList();
-      PersistenceManager.getDefaultPersistenceManager().saveProfilesConfig(profileConfigList);
+      ProfileConfigList profileConfigList = ClientDirector.getClientManager().getProfileConfigList();
+      profileConfigList.save();
 
       
    // 3 - Close current connection & wait reconnection to the new server
-      ClientManager.getDefaultClientManager().setAutomaticLogin(true);
+      ClientDirector.getClientManager().setAutomaticLogin(true);
       dataManager.closeConnection();
       Debug.signal(Debug.NOTICE, this, "Connection redirection succeeded...");
   }

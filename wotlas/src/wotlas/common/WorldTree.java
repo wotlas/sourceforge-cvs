@@ -181,31 +181,5 @@ public class WorldTree extends JPanel {
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Main - Test
-   */
-/*
-    static public void main( String argv[] ) {
-
-          PersistenceManager pm = new PersistenceManager( "../base" );
-          WorldMap worldMaps[] = pm.loadLocalUniverse(false);
-
-          if( worldMaps==null ) {
-              System.out.println("error: couldn't load world");
-              return;
-          }
-
-          for( int i=0; i<worldMaps.length; i++ )
-               if( worldMaps[i]!=null )
-                   worldMaps[i].init();
-
-          WorldManager wManager = new WorldManager(worldMaps);
-          JFrame frame = new JFrame("TEST");
-          frame.getContentPane().add( new WorldTree(wManager,BUILDING_LEVEL_ONLY) );
-          frame.pack();
-          frame.show();
-    }
-*/
- /*------------------------------------------------------------------------------------*/
-
 }
 

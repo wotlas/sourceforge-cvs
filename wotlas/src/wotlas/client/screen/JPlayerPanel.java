@@ -19,6 +19,8 @@
 
 package wotlas.client.screen;
 
+import wotlas.client.ClientDirector;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -28,8 +30,8 @@ import java.awt.event.*;
  * @author Petrus
  */
 
-public class JPlayerPanel extends JPanel implements MouseListener
-{
+public class JPlayerPanel extends JPanel implements MouseListener {
+
   JTabbedPane playerTabbedPane;
   
  /*------------------------------------------------------------------------------------*/ 
@@ -43,17 +45,17 @@ public class JPlayerPanel extends JPanel implements MouseListener
      playerTabbedPane = new JTabbedPane();
     
   // We add an Info Panel
-     playerTabbedPane.addTab("Info", new ImageIcon("../base/gui/pin.gif"),
+     playerTabbedPane.addTab("Info", ClientDirector.getResourceManager().getImageIcon("pin.gif"),
                                      new InfoPanel(), "Information on Selected Player" );
      playerTabbedPane.getComponentAt(0).setName("-info-");
 
   // We add an Away Panel
-     playerTabbedPane.addTab("Away", new ImageIcon("../base/gui/pin.gif"),
+     playerTabbedPane.addTab("Away", ClientDirector.getResourceManager().getImageIcon("pin.gif"),
                                      new AwayPanel(), "Not Connected Options" );
      playerTabbedPane.getComponentAt(1).setName("-away-");
   
   // We add a Lie Panel
-     playerTabbedPane.addTab("Lie", new ImageIcon("../base/gui/pin.gif"),
+     playerTabbedPane.addTab("Lie", ClientDirector.getResourceManager().getImageIcon("pin.gif"),
                                     new LiePanel(), "Lie on your name" );
      playerTabbedPane.getComponentAt(2).setName("-lie-");
 

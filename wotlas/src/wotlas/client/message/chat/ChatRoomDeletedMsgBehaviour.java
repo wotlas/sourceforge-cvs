@@ -66,11 +66,11 @@ public class ChatRoomDeletedMsgBehaviour extends ChatRoomDeletedMessage implemen
        PlayerImpl player = dataManager.getMyPlayer();
 
     // Do we have to reset our current chat selection ?
-       if( dataManager.getChatPanel().getMyCurrentChatPrimaryKey().equals(chatRoomPrimaryKey) )
-           dataManager.getChatPanel().setCurrentJChatRoom( ChatRoom.DEFAULT_CHAT );
+       if( dataManager.getClientScreen().getChatPanel().getMyCurrentChatPrimaryKey().equals(chatRoomPrimaryKey) )
+           dataManager.getClientScreen().getChatPanel().setCurrentJChatRoom( ChatRoom.DEFAULT_CHAT );
 
     // We seek for the chat to suppress
-       if( !dataManager.getChatPanel().removeJChatRoom(chatRoomPrimaryKey) ) {
+       if( !dataManager.getClientScreen().getChatPanel().removeJChatRoom(chatRoomPrimaryKey) ) {
             Debug.signal( Debug.ERROR, this, "failed to delete JChatRoom" );
             return;
        }       

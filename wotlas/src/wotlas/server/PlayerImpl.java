@@ -48,8 +48,8 @@ import java.util.*;
  * @see wotlas.common.NetConnectionListener
  */
 
-public class PlayerImpl implements Player, NetConnectionListener
-{
+public class PlayerImpl implements Player, NetConnectionListener {
+
    /** Period between two focus sounds. Focus sounds can be send by players two draw
     *  attention.
     */
@@ -169,7 +169,7 @@ public class PlayerImpl implements Player, NetConnectionListener
     */
       public void setDefaultPlayerLocation() {
           // 1 - player initial location : a World...
-             WorldManager worldManager = DataManager.getDefaultDataManager().getWorldManager();
+             WorldManager worldManager = ServerDirector.getDataManager().getWorldManager();
 
              int worldID = worldManager.getAValidWorldID();
              
@@ -181,7 +181,7 @@ public class PlayerImpl implements Player, NetConnectionListener
              location = new WotlasLocation(worldID);
 
           // we retrieve the default position.
-             ServerConfig cfg = ServerManager.getDefaultServerManager().getServerConfig();
+             ServerConfig cfg = ServerDirector.getServerManager().getServerConfig();
              setX( cfg.getWorldFirstXPosition() );
              setY( cfg.getWorldFirstYPosition() );
       }
@@ -268,8 +268,8 @@ public class PlayerImpl implements Player, NetConnectionListener
       public void setLocation( WotlasLocation myLocation ){
              location = myLocation;
 
-             if( location.isRoom() && DataManager.getDefaultDataManager()!=null )
-                 myRoom = DataManager.getDefaultDataManager().getWorldManager().getRoom( location );
+             if( location.isRoom() && ServerDirector.getDataManager()!=null )
+                 myRoom = ServerDirector.getDataManager().getWorldManager().getRoom( location );
              else {
              	 if( location.isRoom() )
               	     Debug.signal( Debug.CRITICAL, this, "Room not found !!! location is:"+location );

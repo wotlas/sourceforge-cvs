@@ -39,7 +39,7 @@ class UpdateServerTable {
 
   /** Static path to the local server table.
    */
-  static public final String SERVER_TABLE = "../src/config/remote/server-table.cfg";
+  static public final String SERVER_TABLE = "../base/configs/remote/server-table.cfg";
 
   /******************************************************************************/
 

@@ -19,6 +19,7 @@
 
 package wotlas.server;
 
+import wotlas.common.*;
 import wotlas.server.chat.ChatCommandProcessor;
 
 import java.util.Iterator;
@@ -30,13 +31,7 @@ import java.util.Iterator;
  * @see wotlas.server.GameServer
  */
 
-public class DataManager
-{
- /*------------------------------------------------------------------------------------*/
- 
-   /** Our Default Data Manager
-    */
-      static private DataManager dataManager;
+public class DataManager {
 
  /*------------------------------------------------------------------------------------*/
 
@@ -56,21 +51,31 @@ public class DataManager
 
   /** Constructor. Loads the world data and player accounts.
    */
-   private DataManager() {
+   public DataManager( ResourceManager rManager ) {
 
-       // 1 - We save our instance
-          dataManager = this;
+       // 1 - We load all the WotlasObjects, Knowledges, etc...
+          /** Not for wotlas release 1 **/
 
-       // 2 - We load all the WotlasObjects, Knowledges, etc...
-              /** Not for wotlas release 1 **/
+       // 2 - We create a WorldManager. Worlds data is automatically loaded.
+          worldManager = new WorldManager( rManager, false );
 
-       // 3 - We create a WorldManager. Worlds data is automatically loaded.
-          worldManager = new WorldManager();
+       // 3 - We create an AccountManager. Player Accounts are not loaded yet.
+          accountManager = new AccountManager( rManager );
 
-       // 4 - We create an AccountManager. Player Accounts are automatically loaded.
-          accountManager = new AccountManager();
-       
-       // 5 - We initialize the WorldManager with the Players ( Players are
+       // 4 - Creation of the Chat Command Processor.
+          chatCommandProcessor = new ChatCommandProcessor();
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Final init. We add our players to the world when everything's ready.
+   */
+   public void init() {
+
+       // 0 - Load accounts
+          accountManager.init();
+
+       // 1 - We initialize the WorldManager with the Players ( Players are
        // located on Maps, it's our game organization... ).
           Iterator it = accountManager.getIterator();
 
@@ -80,38 +85,14 @@ public class DataManager
                      worldManager.addNewPlayer( account.getPlayer() );
           }
 
-       // 6 - We initialize the player objects that we just placed in the world.
+       // 2 - We initialize the player objects that we just placed in the world.
           it = accountManager.getIterator();
 
           while( it.hasNext() )
                  ( (GameAccount) it.next() ).getPlayer().init();
 
-       // 7 - Creation of the Chat Command Processor.
-          chatCommandProcessor = new ChatCommandProcessor();
+       // 3 - Init of the Chat Command Processor.
           chatCommandProcessor.init();
-   }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Creates a new DataManager.
-   *
-   * @return the created (or previously created) data manager.
-   */
-   public static DataManager createDataManager() {
-     if( dataManager==null )
-         new DataManager();
-
-     return dataManager;
-   }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To get the default data manager.
-   *
-   * @return the default data manager.
-   */
-   public static DataManager getDefaultDataManager() {
-         return dataManager;
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

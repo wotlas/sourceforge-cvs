@@ -20,6 +20,13 @@
 
 package wotlas.client;
 
+import wotlas.common.*;
+import wotlas.libs.persistence.*;
+
+import wotlas.utils.Debug;
+
+import java.io.File;
+
 /** Profile Config List contains the list of the client's profiles:<br>
  * The ProfileConfigList class is saved by the PersistenceManager in config/client-profiles.cfg.
  *
@@ -27,18 +34,23 @@ package wotlas.client;
  * @see wotlas.client.ProfileConfig
  */
 
-public class ProfileConfigList
-{
+public class ProfileConfigList {
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** File Name we are stored the client profiles
+   */
+    public final static String CLIENT_PROFILES = "client-profiles.cfg";
 
  /*------------------------------------------------------------------------------------*/
 
   /** List of client's profiles
    */
-  private ProfileConfig[] profiles;
+    private ProfileConfig[] profiles;
 
   /** Index of the latest used client's profile
    */
-  private int currentProfileIndex;
+    private int currentProfileIndex;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -148,9 +160,9 @@ public class ProfileConfigList
    *
    * @param index of the profile to be removed
    */
-  public int removeProfile(int profileIndex) {
-    return 0;
-  }
+   public int removeProfile(int profileIndex) {
+      return 0;
+   }
 
   /** Remove a profile of the array profiles
    *
@@ -199,6 +211,45 @@ public class ProfileConfigList
     if (profiles==null)
       return 0;
     return profiles.length;
+  }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Loads all the client's profile config files located in CLIENT_PROFILES
+   *
+   * @return client's ProfileConfigList
+   */
+  public static ProfileConfigList load() {
+    try {
+      return (ProfileConfigList) PropertiesConverter.load( ClientDirector.getResourceManager().getConfig(CLIENT_PROFILES) );
+    }
+    catch (PersistenceException pe) {
+      Debug.signal( Debug.ERROR, null, "Failed to load client's profiles config: " + pe.getMessage() );
+      return null;
+    }
+  }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Saves the client's profiles config to "client-profiles.cfg"
+   * @return true in case of success, false if an error occured.
+   */
+  public boolean save() {
+     try {
+       if(!ClientManager.getRememberPasswords())
+           ProfileConfig.setPasswordAccess(false);
+
+       PropertiesConverter.save(this, ClientDirector.getResourceManager().getConfig(CLIENT_PROFILES) );
+
+       if(!ClientManager.getRememberPasswords())
+          ProfileConfig.setPasswordAccess(true);
+
+      return true;
+    }
+    catch (PersistenceException pe) {
+      Debug.signal( Debug.ERROR, this, "Failed to save client's profiles config: " + pe.getMessage() );
+      return false;
+    }
   }
 
  /*------------------------------------------------------------------------------------*/

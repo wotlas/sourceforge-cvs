@@ -74,7 +74,7 @@ public class PlayerPastMsgBehaviour extends PlayerPastMessage implements NetMess
            searchedPlayer.setPlayerPast( playerPast );
 
         // 3 - Update of the panel
-           Component c_info = dataManager.getPlayerPanel().getTab("-info-");
+           Component c_info = dataManager.getClientScreen().getPlayerPanel().getTab("-info-");
            
            if( c_info==null || !(c_info instanceof InfoPanel) ) {
                Debug.signal( Debug.ERROR, this, "InfoPanel not found !");

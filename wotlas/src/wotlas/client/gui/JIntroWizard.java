@@ -19,8 +19,7 @@
 
 package wotlas.client.gui;
 
-import wotlas.client.ClientManager;
-import wotlas.client.DataManager;
+import wotlas.client.*;
 
 import wotlas.utils.SwingTools;
 import wotlas.libs.graphics2D.FontFactory;
@@ -31,45 +30,46 @@ import java.awt.event.*;
 
 import java.io.*;
 
-/** A wizard to enter wotlas world
+
+/** A wizard that displays a content (left panel) and navigation buttons (right panel).
  *
  * @author Petrus
  */
 
-public class JIntroWizard extends JFrame
-{
+public class JIntroWizard extends JFrame {
 
  /*------------------------------------------------------------------------------------*/  
 
-  private JPanel leftPanel;
-  private JPanel rightPanel;
+  /** Left Panel ( content of the window )
+   */
+    private JPanel leftPanel;
 
-  private int width = 500;
-  private int rightWidth = 120;
-  private int leftWidth = 0;
-  private int height = 300;
-  private Dimension rightDimension = new Dimension(rightWidth, 0);
+  /** Right Panel ( buttons for navigation )
+   */
+    private JPanel rightPanel;
+
+  /** Some Dimensions
+   */
+    private int width = 500;
+    private int rightWidth = 120;
+    private int leftWidth = 0;
+    private int height = 300;
+    private Dimension rightDimension = new Dimension(rightWidth, 0);
 
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
    */
-  public JIntroWizard() {
-    super("Wotlas client");
-    //setDefaultCloseOperation(EXIT_ON_CLOSE);
-    setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-    addWindowListener( new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        //DataManager.getDefaultDataManager().exit();
-        DataManager.getDefaultDataManager().closeConnection();
-        ClientManager.getDefaultClientManager().start(0);
-      }
-    });
-    setBackground(Color.white);
-    setIconImage(Toolkit.getDefaultToolkit().getImage("../base/gui/icon.gif"));
-    setSize(width, height);
-    SwingTools.centerComponent(this);
-  }
+    public JIntroWizard() {
+        super("Wotlas Client");
+        setBackground(Color.white);
+        setIconImage(ClientDirector.getResourceManager().getBaseImage("gui/icon.gif"));
+        setGUI();
+
+        setSize( width, height );
+        SwingTools.centerComponent(this);
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+    }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -77,137 +77,140 @@ public class JIntroWizard extends JFrame
    *
    * @param leftPanel left panel to be added
    */
-  public void setLeftPanel(JPanel leftPanel) {
-    removeLeftPanel();
-    this.leftPanel = leftPanel;
-    this.leftPanel.setBackground(Color.white);
-    getContentPane().add(this.leftPanel, BorderLayout.CENTER);        
-  }
+    protected void setLeftPanel(JPanel leftPanel) {
+       removeLeftPanel();
+       this.leftPanel = leftPanel;
+       leftPanel.setBackground(Color.white);
+       getContentPane().add(this.leftPanel, BorderLayout.CENTER);        
+    }
+
+ /*------------------------------------------------------------------------------------*/
 
   /** Set the right JPanel of the interface
    *
    * @param rightPanel right panel to be added
    */
-  public void setRightPanel(JPanel rightPanel) {
-    removeRightPanel();
-    rightPanel.setPreferredSize(rightDimension);
-    this.rightPanel = rightPanel;
-    this.rightPanel.setBackground(Color.white);
-    getContentPane().add(this.rightPanel, BorderLayout.EAST);        
-  }
+    protected void setRightPanel(JPanel rightPanel) {
+       removeRightPanel();
+       rightPanel.setPreferredSize(rightDimension);
+       this.rightPanel = rightPanel;
+       rightPanel.setBackground(Color.white);
+       getContentPane().add(this.rightPanel, BorderLayout.EAST);        
+    }
+
+ /*------------------------------------------------------------------------------------*/
 
   /** Remove the left panel
    */
-  public void removeLeftPanel() {
-    if (this.leftPanel != null) {
-      getContentPane().remove(leftPanel);
-      leftPanel = null;
+    protected void removeLeftPanel() {
+       if(leftPanel != null) {
+          getContentPane().remove(leftPanel);
+          leftPanel = null;
+       }
     }
-  }
+
+ /*------------------------------------------------------------------------------------*/
 
   /** Remove the right panel
    */
-  public void removeRightPanel() {
-    if (this.rightPanel != null) {
-      getContentPane().remove(rightPanel);
-      rightPanel = null;
+    protected void removeRightPanel() {
+      if(rightPanel != null) {
+         getContentPane().remove(rightPanel);
+         rightPanel = null;
+      }
     }
-  }
 
  /*------------------------------------------------------------------------------------*/
 
   /** To get left panel width
    */
-  public int getLeftWidth() {
-    return leftWidth;
-  }
+    public int getLeftWidth() {
+       return leftWidth;
+    }
 
   /** To set left panel width
    */
-  public void setLeftWidth(int width) {
-    leftWidth = width;
-  }
+    public void setLeftWidth(int width) {
+       leftWidth = width;
+    }
 
   /** To get right panel width
    */
-  public int getRightWidth() {
-    return rightWidth;
-  }
+    public int getRightWidth() {
+       return rightWidth;
+    }
 
   /** To set right panel width
    */
-  public void setRightWidth(int width) {
-    rightWidth = width;
-  }
+    public void setRightWidth(int width) {
+       rightWidth = width;
+    }
 
  /*------------------------------------------------------------------------------------*/
 
   /** Show the interface
    */
-  public void showScreen() {  
-    validate();
-    pack();    
-    show();
-  }
+    public void showScreen() {  
+       validate();
+       pack();    
+       show();
+    }
 
  /*--------------------------------------------------------------------------*/
 
   /** Close the interface and remove the panels
    */
-  public void closeScreen() {
-    if (leftPanel != null) {
-      getContentPane().remove(leftPanel);
+    public void closeScreen() {
+       if (leftPanel != null)
+          getContentPane().remove(leftPanel);
+
+       if (rightPanel != null)
+          getContentPane().remove(rightPanel);
+
+       dispose();
     }
-    if (rightPanel != null) {
-      getContentPane().remove(rightPanel);
-    }
-    dispose();
-  }
 
  /*--------------------------------------------------------------------------*/
 
   /** Set the colors and fonts
    */
-  static public void setGUI() {
-    Font f;
-    
-    f = new Font("Monospaced", Font.PLAIN, 10);
-    UIManager.put("Button.font", f);
+    static public void setGUI() {
+        Font f;
 
-    f = FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter");
-    
-    UIManager.put("ComboBox.font", f.deriveFont(14f));
-    UIManager.put("ComboBox.foreground", Color.black);
+        f = new Font("Monospaced", Font.PLAIN, 10);
+        UIManager.put("Button.font", f);
 
-    UIManager.put("Label.font", f.deriveFont(14f));
-    UIManager.put("Label.foreground", Color.black);
+        f = FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter");
     
-    UIManager.put("PasswordField.font", f.deriveFont(14f));
-    UIManager.put("PasswordField.foreground", Color.black);
+        UIManager.put("ComboBox.font", f.deriveFont(14f));
+        UIManager.put("ComboBox.foreground", Color.black);
+
+        UIManager.put("Label.font", f.deriveFont(14f));
+        UIManager.put("Label.foreground", Color.black);
     
-    UIManager.put("RadioButton.font", f.deriveFont(14f));
-    UIManager.put("RadioButton.foreground", Color.black);
+        UIManager.put("PasswordField.font", f.deriveFont(14f));
+        UIManager.put("PasswordField.foreground", Color.black);
+    
+        UIManager.put("RadioButton.font", f.deriveFont(14f));
+        UIManager.put("RadioButton.foreground", Color.black);
             
-    UIManager.put("Table.font", f.deriveFont(14f));
-    UIManager.put("Table.foreground", Color.black);    
+        UIManager.put("Table.font", f.deriveFont(14f));
+        UIManager.put("Table.foreground", Color.black);    
     
-    UIManager.put("TableHeader.font", f.deriveFont(16f));
-    UIManager.put("TableHeader.foreground", Color.black);
+        UIManager.put("TableHeader.font", f.deriveFont(16f));
+        UIManager.put("TableHeader.foreground", Color.black);
     
-    UIManager.put("TextArea.font", f.deriveFont(14f));
-    UIManager.put("TextArea.foreground", Color.black);
+        UIManager.put("TextArea.font", f.deriveFont(14f));
+        UIManager.put("TextArea.foreground", Color.black);
     
-    UIManager.put("TextField.font", f.deriveFont(14f));
-    UIManager.put("TextField.foreground", Color.black);    
+        UIManager.put("TextField.font", f.deriveFont(14f));
+        UIManager.put("TextField.foreground", Color.black);    
     
-    UIManager.put("CheckBox.font", f.deriveFont(14f));
-    UIManager.put("CheckBox.foreground", Color.black);
-  }
+        UIManager.put("CheckBox.font", f.deriveFont(14f));
+        UIManager.put("CheckBox.foreground", Color.black);
+    }
   
  /*--------------------------------------------------------------------------*/
 
 }
 
-
-
-    

@@ -19,7 +19,6 @@
  
 package wotlas.server.setup;
 
-import wotlas.server.PersistenceManager;
 import wotlas.common.universe.*;
 import wotlas.common.*;
 import wotlas.libs.log.*;
@@ -28,6 +27,7 @@ import wotlas.utils.Debug;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 
  /** This a utility for server management: it displays all the buildings and let you
   * choose the server owner of each building.
@@ -43,37 +43,25 @@ public class ServerMapSetup extends WorldTree {
    */
     private final static String DATABASE_PATH = "../base";
 
-  /** Our persistence manager
-   */
-    private static wotlas.server.PersistenceManager pm;
-
   /** Our worldMaps...
    */
-    private static WorldMap worldMaps[];
-    
+    private static WorldManager wManager;
 
   /** Static Init.
    */    
     static{
      // STEP 0 - Log Creation
         try {
-           Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(), "../log/server-map-setup.log", "../base/gui/log-title-dark.jpg" ) );
+           Debug.setPrintStream( new JLogStream( new javax.swing.JFrame(),
+                   DATABASE_PATH+File.separator+"logs/server-map-setup.log",
+                   "log-title-dark.jpg", DATABASE_PATH+File.separator+"gui" ) );
         } catch( java.io.FileNotFoundException e ) {
            e.printStackTrace();
            Debug.exit();
         }
 
-        pm = wotlas.server.PersistenceManager.createPersistenceManager(DATABASE_PATH);
-        worldMaps = pm.loadLocalUniverse(false);
-
-        if( worldMaps==null ) {
-            Debug.signal(Debug.FAILURE,null,"Error: couldn't load world data.");
-            Debug.exit();
-        }
-
-        for( int i=0; i<worldMaps.length; i++ )
-             if( worldMaps[i]!=null )
-                 worldMaps[i].init();
+        ResourceManager rManager = new ResourceManager(DATABASE_PATH, "", "", "" );
+        wManager = new WorldManager(rManager,true);
     }
 
  /*------------------------------------------------------------------------------------*/
@@ -102,7 +90,7 @@ public class ServerMapSetup extends WorldTree {
 
           bSave.addActionListener(new ActionListener() {
               public void actionPerformed (ActionEvent e) {
-                  if( pm.saveLocalUniverse( worldMaps, true ) )
+                  if( ServerMapSetup.wManager.saveUniverse( true ) )
                       JOptionPane.showMessageDialog(frame, " World data saved", "Success", JOptionPane.INFORMATION_MESSAGE); 
                   else
                       JOptionPane.showMessageDialog(frame, " Failed to save world data.", "INFORMATION", JOptionPane.ERROR_MESSAGE);
@@ -162,10 +150,7 @@ public class ServerMapSetup extends WorldTree {
   /** Main
    */
     static public void main( String argv[] ) {
-
           Debug.signal(Debug.NOTICE,null,"Starting Server Map Setup...");
-
-          WorldManager wManager = new WorldManager(worldMaps);
           new ServerMapSetup(wManager);
     }
 

@@ -29,7 +29,7 @@ import wotlas.common.message.movement.*;
 import wotlas.common.message.chat.*;
 import wotlas.common.universe.*;
 import wotlas.common.chat.*;
-import wotlas.common.Player;
+import wotlas.common.*;
 import wotlas.server.*;
 import wotlas.common.message.description.*;
 
@@ -292,7 +292,7 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
              pReset = player.getMyRoom().getInsertionPoint();
          else {
            // We get the world manager
-             WorldManager wManager = DataManager.getDefaultDataManager().getWorldManager();
+             WorldManager wManager = ServerDirector.getDataManager().getWorldManager();
 
              if( player.getLocation().isTown() ) {
                  TownMap myTown = wManager.getTownMap( location );

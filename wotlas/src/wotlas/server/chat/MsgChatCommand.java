@@ -107,7 +107,7 @@ public class MsgChatCommand implements ChatCommand
               String key = message.substring(0,index);
               message = "/cmd:<i> "+player.getFullPlayerName()+" (far away) says: " +message.substring(index)+" </i>";
 
-              GameAccount account = DataManager.getDefaultDataManager().getAccountManager().getAccount(key);
+              GameAccount account = ServerDirector.getDataManager().getAccountManager().getAccount(key);
          
               if(account==null) {
                  response.setMessage("/cmd:/msg command error:<font color='red'> unknown player</font>");

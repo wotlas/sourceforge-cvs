@@ -67,7 +67,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
           
        // Return of a command ?
           if (message.startsWith("/cmd:")) {
-            JChatRoom chatRoom = dataManager.getChatPanel().getJChatRoom(chatRoomPrimaryKey);
+            JChatRoom chatRoom = dataManager.getClientScreen().getChatPanel().getJChatRoom(chatRoomPrimaryKey);
             chatRoom.appendText("<font color='purple'>"+message.substring(5)+"</font>");
             return;
           }
@@ -112,10 +112,10 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
        
              if( wotC instanceof AesSedai ) {
                  if( ((AesSedai) wotC).toggleBlackAjah() )
-                     dataManager.getChatPanel().getCurrentJChatRoom().appendText("<font color='black'><b>[DARK ONE]<i> NOW YOU ARE MINE "
+                     dataManager.getClientScreen().getChatPanel().getCurrentJChatRoom().appendText("<font color='black'><b>[DARK ONE]<i> NOW YOU ARE MINE "
                          +sender.getPlayerName().toUpperCase()+" !</i></b></font>");
                  else
-                     dataManager.getChatPanel().getCurrentJChatRoom().appendText("<font color='black'><b>[DARK ONE]<i> YOU CAN'T HIDE FROM ME. YOUR SOUL IS MINE "
+                     dataManager.getClientScreen().getChatPanel().getCurrentJChatRoom().appendText("<font color='black'><b>[DARK ONE]<i> YOU CAN'T HIDE FROM ME. YOUR SOUL IS MINE "
                          +sender.getPlayerName().toUpperCase()+".</i></b></font>");
              }
 
@@ -149,7 +149,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
 
        // We display the message
           if( voiceSoundLevel!=ChatRoom.SHOUTING_VOICE_LEVEL ) {
-              JChatRoom chatRoom = dataManager.getChatPanel().getJChatRoom(chatRoomPrimaryKey);
+              JChatRoom chatRoom = dataManager.getClientScreen().getChatPanel().getJChatRoom(chatRoomPrimaryKey);
           
               if(chatRoom!=null) {
                  chatRoom.addPlayer(senderPrimaryKey,senderFullName);   // we add the player to the member's list
@@ -166,7 +166,7 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
                  Debug.signal( Debug.ERROR, this, "No JChatRoom "+chatRoomPrimaryKey+" found !");
           }
           else {
-              JChatRoom chatRoom = dataManager.getChatPanel().getCurrentJChatRoom();
+              JChatRoom chatRoom = dataManager.getClientScreen().getChatPanel().getCurrentJChatRoom();
               chatRoom.appendText("<font color='red'>"+message+"</font>"); // if it wasn't already the case              
           }
 

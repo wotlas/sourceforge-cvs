@@ -75,7 +75,7 @@ public class InfoPanel extends JPanel
 
   public void setPlayerInfo( Player player ) {
 
-    if( player==DataManager.getDefaultDataManager().getMyPlayer() ) {
+    if( player==ClientDirector.getDataManager().getMyPlayer() ) {
 
        // Is there a valid past ?
           String past = player.getPlayerPast();
@@ -87,8 +87,8 @@ public class InfoPanel extends JPanel
                 this.setText("...");
                 savePastButtonDisplayed = true;
 
-                ImageIcon im_saveup  = new ImageIcon("../base/gui/save-up.gif");
-                ImageIcon im_savedo  = new ImageIcon("../base/gui/save-do.gif");
+                ImageIcon im_saveup  = ClientDirector.getResourceManager().getImageIcon("save-up.gif");
+                ImageIcon im_savedo  = ClientDirector.getResourceManager().getImageIcon("save-do.gif");
                 savePastButton = new AButton(im_saveup);
                 savePastButton.setRolloverIcon(im_savedo);
                 savePastButton.setPressedIcon(im_savedo);
@@ -100,7 +100,7 @@ public class InfoPanel extends JPanel
                 savePastButton.addActionListener(new ActionListener() {
                     public void actionPerformed (ActionEvent e) {                    	
                         savePastButton.setEnabled(false);
-                        PlayerImpl player = DataManager.getDefaultDataManager().getMyPlayer();
+                        PlayerImpl player = ClientDirector.getDataManager().getMyPlayer();
                     	player.setPlayerPast( playerTextArea.getText() );
                         player.sendMessage( new PlayerPastMessage( player.getPrimaryKey(), player.getPlayerPast() ) );
                         InfoPanel.this.reset();

@@ -19,7 +19,7 @@
 
 package wotlas.client.screen;
 
-import wotlas.client.DataManager;
+import wotlas.client.*;
 import wotlas.utils.*;
 import wotlas.libs.graphics2D.*;
 import wotlas.libs.net.NetPingListener;
@@ -64,14 +64,13 @@ public class GraphicPingPanel extends JPanel implements NetPingListener
  /** Constructor.
   *
   */
-    public GraphicPingPanel()
-    {
+    public GraphicPingPanel() {
          setFont("Lucida Blackletter");
 
          MediaTracker mediaTracker = new MediaTracker(this);
-         red  = getToolkit().getImage("../base/gui/ping-red.jpg");
-         green = getToolkit().getImage("../base/gui/ping-green.jpg");
-         yellow = getToolkit().getImage("../base/gui/ping-yellow.jpg");
+         red  = ClientDirector.getResourceManager().getBaseImage("gui/ping-red.jpg");
+         green = ClientDirector.getResourceManager().getBaseImage("gui/ping-green.jpg");
+         yellow = ClientDirector.getResourceManager().getBaseImage("gui/ping-yellow.jpg");
          mediaTracker.addImage(red,0);
          mediaTracker.addImage(green,1);
          mediaTracker.addImage(yellow,2);
@@ -176,7 +175,7 @@ public class GraphicPingPanel extends JPanel implements NetPingListener
      	repaint();
      	
      	if( ping==PING_FAILED && pleaseWait==null) {
-            DataManager dManager = DataManager.getDefaultDataManager();
+            DataManager dManager = ClientDirector.getDataManager();
             dManager.getMyPlayer().getMovementComposer().resetMovement();
             pleaseWait = new JPleaseWait( dManager.getClientScreen() );
         }

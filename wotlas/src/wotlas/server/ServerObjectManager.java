@@ -49,9 +49,7 @@ public class ServerObjectManager implements ObjectManager
   
   /** Default constructor.
    */
-   	public ServerObjectManager()
-	{
-	 inventory=null;
+   	public ServerObjectManager() {
 	}		
 	
   /** Parametric constructor.
@@ -80,20 +78,21 @@ public class ServerObjectManager implements ObjectManager
 	 this.inventory=inventory; 
 	}
 
-	
+
   /** Get the RoomInventory object of the given room
    *  @return the room's RoomInventory
    *  @param roomID the WotlasLocation of the room
-   */
+   *
     public RoomInventory getInventory(WotlasLocation roomID) 
 	{ 
 	 RoomInventory ret=new RoomInventory();
 
-	 /* no op */
-	 /* should read on disk the stored inventory to rebuild one */
+	 * no op *
+	 * should read on disk the stored inventory to rebuild one *
 	 
 	 return ret; 	
 	}
+   */
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

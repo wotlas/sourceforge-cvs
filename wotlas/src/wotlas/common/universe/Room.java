@@ -171,6 +171,7 @@ public class Room implements WotlasMap {
 
     public void setInventory(RoomInventory inventory) {
       this.inventory=inventory;
+      inventory.setOwnerRoom( this );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

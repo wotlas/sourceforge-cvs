@@ -41,11 +41,11 @@ public class ContainerObject extends BaseObject implements ContainerInterface
 
   /** The capacity of the container
    */
-      protected short capacity;
+      protected transient short capacity;
 
   /** The quantity contained
    */
-      protected short quantity;
+      protected transient short quantity;
 
   /** The content
    */
@@ -170,6 +170,18 @@ public class ContainerObject extends BaseObject implements ContainerInterface
 	public void getContent(BaseObject[] content)
 	{
 	 this.content=content;
+	 
+	 if(content!=null) {
+            capacity = (short) content.length;
+            
+            for(int i=0; i<content.length;i++)
+                if(content[i]==null) {
+                   quantity=(short)i;
+                   return;
+                }
+
+            quantity = capacity;
+	 }
 	}
 
 }

@@ -20,15 +20,19 @@
 package wotlas.common.objects.inventories;
 
 import wotlas.common.objects.containers.Ground;
+import wotlas.common.universe.WotlasLocation;
+import wotlas.common.universe.Room;
 
 /** 
  * This is the base class for all RoomInventories.<br>
  * It can also be considered as a standard Room with only the Ground for Container.
- * @author Elann
+ *
+ * The WotlasLocation field is needed for persistance purpose ( see WorldManager.load 
+ * and save )
+ * @author Elann, Aldiss
  */
 
-public class RoomInventory
-{
+public class RoomInventory {
 
  /*------------------------------------------------------------------------------------*/
 
@@ -36,14 +40,16 @@ public class RoomInventory
    */
       protected Ground ground;
 
+  /** Our location.
+   */
+      private WotlasLocation location;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Default constructor
    */
-    public RoomInventory()
-    {
-    }
- 
+    public RoomInventory() {
+    } 
  
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
  
@@ -64,8 +70,41 @@ public class RoomInventory
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
  
+  /** Get the Location of this room inventory
+   * @return location
+   */
+    public WotlasLocation getLocation()
+    {
+        return location;
+    }
+
+  /** Set the Location of this room inventory
+   * @param location Location of this room inventory
+   */
+    public void setLocation(WotlasLocation location)
+    {
+        this.location=location;
+    }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+ /** Set the room owner of the RoomInventory. 
+  * @param ownerRoom the new room owner
+  */
+  public void setOwnerRoom(Room ownerRoom) {
+     ground.setOwnerRoom(ownerRoom);
+     location = new WotlasLocation(ownerRoom.getLocation());
+  }
+
+ /** Get the room owner of the RoomInventory. 
+  * @return ownerRoom
+  */
+  public Room getOwnerRoom() {
+   return ground.getOwnerRoom();
+  }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/ 
  
 }
 

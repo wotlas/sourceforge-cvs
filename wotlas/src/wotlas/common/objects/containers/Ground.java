@@ -100,6 +100,7 @@ public class Ground extends ContainerObject
   public void setOwnerRoom(Room ownerRoom)
   {
    this.ownerRoom=ownerRoom;
+   updateName();
   }
 
  /** Get the room owner of the ground. 

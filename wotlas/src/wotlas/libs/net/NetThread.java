@@ -28,11 +28,12 @@ import wotlas.utils.Debug;
 
 
 /** A NetThread is an abstract class representing a thread that manages
- *  a socket connection.
+ *  a socket connection and is a part of a Network Personality ( NetPersonality ).
  * 
  * @author Aldiss
  * @see wotlas.libs.net.NetReceiver
  * @see wotlas.libs.net.NetSender
+ * @see wotlas.libs.net.NetPersonality
  */
 
 abstract class NetThread extends Thread
@@ -49,19 +50,27 @@ abstract class NetThread extends Thread
     */
        private Socket socket;
 
+   /** A link to our NetPersonality
+    */
+       private NetPersonality personality;
+
    /** tells the thread if it must stop.
     */ 
        private boolean stop_thread;
 
  /*------------------------------------------------------------------------------------*/
 
-   /** NetThread constructor
+   /** NetThread constructor.
     *
-    * @param sock an already opened socket. 
+    * @param socket an already opened socket. 
+    * @param personality a NetPersonality linked to this socket.
     */
-      protected NetThread( Socket sock ){
+      protected NetThread( Socket socket, NetPersonality personality ){
          super("NetThread"+count);
          count++;
+
+         this.socket = socket;
+         this.personality = personality;
          stop_thread = false;
       }
 
@@ -104,6 +113,9 @@ abstract class NetThread extends Thread
                  }
                  catch(IOException ioe ) {}
            }
+
+        // we ask the NetPersonality to perform some cleanup
+           personality.closeConnection();
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

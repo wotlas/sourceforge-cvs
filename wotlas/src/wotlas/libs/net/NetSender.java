@@ -98,15 +98,16 @@ public class NetSender extends NetThread
      *      - aggregation_msg_limit = 10 messages
      *
      * @param socket a previously created & connected socket.
+     * @param personality a NetPersonality linked to the specified socket.
      * @param sender_type NetSender type ( SEND_IMMEDIATELY, AGGREGATE_MESSAGES or USER_AGGREGATION )
      * @param buffer_size buffer size (in bytes) for the buffered output stream.
      * @exception IOException if the socket wasn't already connected.
      */
-      public NetSender( Socket socket, byte sender_type, int buffer_size )
-      throws IOException
+      public NetSender( Socket socket, NetPersonality personality,
+                        byte sender_type, int buffer_size ) throws IOException
       {
-          super(socket);
-          
+          super(socket, personality );
+
           if(sender_type<1 || 3<sender_type)
               this.sender_type = SEND_IMMEDIATELY;
            else
@@ -184,10 +185,9 @@ public class NetSender extends NetThread
            }
            else
                Debug.signal( Debug.ERROR, this, e ); // serious error while sending message
-
-           closeSocket();
         }
 
+       closeSocket();
        out_stream=null;
      }
 

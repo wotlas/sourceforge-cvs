@@ -26,9 +26,31 @@ import java.net.Socket;
  * A NetPersonality brings together a NetSender and NetReceiver to send and receive
  * messages. This class is abstract because there are many different types of
  * NetSender and NetReceiver. You have to create your own ones by redefining
- * the generatePersonality() method.
- * 
- * Default personalities are provided in the wotlas.libs.net.personality package.
+ * the generatePersonality() method. Default personalities are provided in the
+ * wotlas.libs.net.personality package.
+ *
+ * Useful methods you can invoke on NetSender :
+ *
+ *    - getNetSender().pleaseSendAllMessagesNow();
+ *      Asks the NetSender to send all his queued messages now. It's typically the method
+ *      you use in case of a USER_AGGREGATION NetSender or when you want to send all the
+ *      remaining messages before closing a connection with the AGGREGATION_MESSAGES NetSender.
+ *
+ *    - getNetSender().queueMessage( message );
+ *      To queue a message you want to send. 
+ *      Works with every personality type ( but with different behaviour ).
+ *
+ *
+ * Useful methods you can invoke on NetReceiver :
+ *
+ *    - getNetReceiver().pleaseReceiveAllMessagesNow();
+ *      Asks the NetReceiver to process all received messages now. This method
+ *      does nothing if the NetReceiver is in the asynchronous mode.
+ *
+ *    - getNetReceiver().waitForAMessageToArrive();
+ *      Waits for a message to arrive. Useful in some cases when the NetReceiver
+ *      is synchronous. This method does nothing if the NetReceiver is asynchronous.
+ *
  *
  * @author Aldiss
  * @see wotlas.libs.net.NetSender
@@ -47,20 +69,20 @@ public abstract class NetPersonality
     */
       protected NetReceiver my_netreceiver;
 
-   /** A key identifying our client.
+   /** An eventual connection listener
     */
-      private String key;
+      private NetConnectionListener listener;
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Constructor with an already opened socket. The context given to the first received
-   *  message will be this NetPersonality object.
+  /** Constructor with an already opened socket.
    *
    * @param socket an already opened socket
+   * @param context object to give to messages when they arrive.
    * @exception IOException if the socket wasn't already connected.
    */
-     public NetPersonality( Socket socket ) throws IOException {
-           generatePersonality( socket, this );
+     public NetPersonality( Socket socket, Object context ) throws IOException {
+           generatePersonality( socket, context );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -79,39 +101,25 @@ public abstract class NetPersonality
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Asks the NetSender to send all his queued messages now. It's typically the method
-   *  you use in case of a USER_AGGREGATION NetSender or when you want to send all the
-   *  remaining messages before closing a connection with the AGGREGATION_MESSAGES NetSender.
+  /** Starts this personality. When you create a new personality you can just
+   * send messages but not receives ones. By calling this start() method you
+   * launch your NetReceiver and thus can process incoming messages.
    */
-     public void pleaseSendAllMessagesNow() {
-           my_netsender.pleaseSendAllMessagesNow();
-     }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Asks the NetReceiver to process all received messages now. This method
-   *  does nothing if the NetReceiver is in the asynchronous mode.
-   */
-     public void pleaseReceiveAllMessagesNow() {
-           my_netreceiver.pleaseReceiveAllMessagesNow();
-     }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To queue a message you want to send. 
-   *  Works with every personality type ( but with different behaviour ).
-   *
-   * @param message message you want to send.
-   */
-     public void queueMessage( NetMessage message ) {
-          my_netsender.queueMessage( message );
+     public void start() {
+          my_netreceiver.start();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To close this connection. Erases all the allocated resources.
    */
-     public void closeConnection() {
+     synchronized public void closeConnection() {
+     	  if( my_netsender==null ||  my_netreceiver==null )
+     	      return;
+     	  
+     	  if( listener!=null )
+              listener.connectionClosed();
+
           my_netsender.stopThread();
           my_netreceiver.stopThread();
 
@@ -132,23 +140,40 @@ public abstract class NetPersonality
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To set the personality's key.
+  /** To get the NetSender.
    *
-   * @param key the personality's key.
+   * @return the personality's NetSender
    */
-     public void setKey( String key ) {
-         this.key = key;
+     public NetSender getNetSender() {
+         return my_netsender;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Waits for a message to arrive. Useful in some cases when the NetReceiver
-   *  is synchronous. This method does nothing if the NetReceiver is asynchronous.
+  /** To get the NetReceiver.
    *
-   * @exception IOException if an IO error occur.
+   * @return the personality's NetReceiver
    */
-     public void waitForAMessageToArrive() throws IOException{
-     	my_netreceiver.waitForAMessageToArrive();
+     public NetReceiver getNetReceiver() {
+         return my_netreceiver;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To set the NetConnectionListener destination for this personality.
+   *  The destination will receive information about the current NetSender,
+   *  NetReceiver... and will know when the connection will be closed.
+   *
+   * @param listener an object implementing the NetConnectionListener interface.
+   */
+     public void setConnectionListener( NetConnectionListener listener ) {
+         if( listener==null )
+             return;
+
+         this.listener = listener;
+
+         if( my_netsender!=null && my_netreceiver!=null )
+             listener.connectionCreated( my_netsender, my_netreceiver );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -23,11 +23,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.io.IOException;
 import java.io.InterruptedIOException;
-import java.util.HashMap;
 
 import wotlas.utils.Debug;
 import wotlas.libs.net.personality.TormPersonality;
 import wotlas.libs.net.message.ServerErrorMessage;
+import wotlas.libs.net.message.ServerWelcomeMessage;
 
 
 /** A NetServer awaits client connections. There are two types of Server :
@@ -57,12 +57,6 @@ abstract public class NetServer extends Thread
   /** Server Socket
    */
      private ServerSocket server;
-
-  /** NetServerEntries representing network connections.
-   *  The HashMap entries are NetServerEntry objects.
-   *  The key is a string provided by the client when he connects.
-   */
-     private HashMap connection_list;
 
   /** Current number of clients
    */
@@ -98,9 +92,6 @@ abstract public class NetServer extends Thread
            // we create a message factory
               NetMessageFactory.createMessageFactory();
 
-           // we construct or initialize our connection list
-              createConnectionList();
-
            // ServerSocket inits
               try{
                   server = new ServerSocket(server_port); 
@@ -110,34 +101,40 @@ abstract public class NetServer extends Thread
                   Debug.signal( Debug.FAILURE, this, e );
                   System.exit(1);
                }
-
-           start();
         }
 
-
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** Redefine this method to :
     *
-    *  
-    */
-      abstract protected void createConnectionList();
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-   /** Redefine this method to :
+    *  1) consider if the key ( personality.getKey() ) provided by the client is correct
+    *     for you ( you can bypass this if you don't want to provide any access control )
     *
-    *  
-    */
-      abstract protected void initializeConnection( NetPersonality personality );
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-   /** Redefine this method to :
+    *  2) initialize the client context ( personality.setContext() ). The context can be
+    *     any type of object and should be client dependent. It will be given to the messages
+    *     coming from the client.
     *
-    *  
+    *  3) MANDATORY : if you decide to accept this client call the acceptClient() method.
+    *     it will send a "Welcome!" to the client. If you decide to refuse the client call
+    *     the refuseClient() method with an appropriate error message. It will immediately
+    *     close the connection.
+    *
+    *
+    *  Example of implementation ( minimum ) : 
+    *
+    *     protected void accessControl( NetPersonality personality, String key )
+    *     throws IOException {
+    *         acceptClient( personality );  // we accept every client...
+    *     }
+    *
+    *
+    *  Never call accessControl() yourself. It's done automatically by the ClientRegisterMessage
+    *  behaviour.
+    *
+    * @param personality a previously created personality for this connection.
+    * @param key a string given by the client to identify itself.
     */
-      abstract protected void closeConnection();
+      abstract public void accessControl( NetPersonality personality, String key );
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -147,13 +144,38 @@ abstract public class NetServer extends Thread
     * @return a new TormPersonality associated to this socket.
     */
       protected NetPersonality getNewDefaultPersonality( Socket socket ) throws IOException{
-              return new TormPersonality( socket );
+              return new TormPersonality( socket, null );
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Sends a message to tell a client that he is welcome on this server.
+    *  Should be called by initializeConnection() if you decide to accept the client.
+    *
+    * @param personality a previously created personality for this connection.
+    */
+      protected void acceptClient( NetPersonality personality ) throws IOException{
+              personality.getNetSender().queueMessage( new ServerWelcomeMessage() );
+              personality.getNetSender().pleaseSendAllMessagesNow();
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Sends a message to tell a client that he is refused on this server.
+    *  Should be called by initializeConnection() if you decide to refuse the client.
+    *
+    * @param personality a previously created personality for this connection.
+    */
+      protected void refuseClient( NetPersonality personality, String error_message )
+      throws IOException{
+              personality.getNetSender().queueMessage( new ServerErrorMessage( error_message ) );
+              personality.getNetSender().pleaseSendAllMessagesNow();
+              personality.closeConnection();
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /**  Starts the server.
-    *   Never call this method it's done automatically.
     */
       public void start()
       {
@@ -189,21 +211,22 @@ abstract public class NetServer extends Thread
                      current_nb_clients++;
 
                   // we inspect our server state... do we really accept him ?
-                     if( current_nb_clients>=max_clients )
-                     {
+                     if( current_nb_clients>=max_clients ) {
                        // maximum clients reached...
-                          personality.queueMessage( new ServerErrorMessage("maximum number of clients reached for the moment.") );
-                          personality.pleaseSendAllMessagesNow();
-                          personality.closeConnection();
-
+                          refuseClient( personality, "maximum number of clients reached for the moment." );
                           Debug.signal(Debug.NOTICE,this,"maximum number of clients reached");
                      }
-                     else if(server_lock)
-                     {
+                     else if(server_lock) {
                        // we don't accept new connections for the moment
-                          personality.queueMessage( new ServerErrorMessage("Server does not accept connections for the moment.") );
-                          personality.pleaseSendAllMessagesNow();
-                          personality.closeConnection();
+                          refuseClient( personality, "Server does not accept connections for the moment." );
+                          Debug.signal(Debug.NOTICE,this,"Server Locked - just refused incoming connection");
+                     }
+                     else {
+                       // we can start this personality and inspect the client connection.
+                       // the context provided is an helper for the NetClientRegisterMessage
+                       // behaviour.
+                          personality.setContext( (Object) new NetServerEntry( this, personality ) );
+                          personality.start();
                      }
                }
                catch(IOException ioe) {
@@ -240,7 +263,6 @@ abstract public class NetServer extends Thread
     *
     *  @param lock server lock new value
     */
-
       public void setServerLock( boolean lock ) {
           server_lock = lock;
       }

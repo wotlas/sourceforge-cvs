@@ -34,5 +34,6 @@ public interface SystemMessageCategory extends NetMessageCategory {
 
        public final static byte CLIENT_REGISTER_MSG = 0;
        public final static byte SERVER_ERROR_MSG    = 1;
+       public final static byte SERVER_WELCOME_MSG  = 2;
 }
 

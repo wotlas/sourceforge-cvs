@@ -36,8 +36,8 @@ import wotlas.utils.Tools;
  * In the first case a thread is automatically started by the constructor.
  *
  * In the second case, no thread is started. The user has to call
- * the pleaseWork() method regularly to allow the NetReceiver to extract 
- * messages.
+ * the pleaseReceiveAllMessagesNow() method regularly to allow the
+ * NetReceiver to extract messages.
  *
  * @author Aldiss
  * @see wotlas.libs.net.NetMessageFactory
@@ -77,15 +77,16 @@ public class NetReceiver extends NetThread
      *   We assume that a NetMessageFactory has already been created.
      *
      * @param socket a previously created & connected socket.
+     * @param personality a NetPersonality linked to the specified socket.
      * @param sync do we have to work synchronously or asynchronously.
      * @param context object to give to messages when they arrive.
      * @param buffer_size buffer size (in bytes) for the buffered input stream.
      * @exception IOException if the socket wasn't already connected.
      */
-      public NetReceiver( Socket socket, boolean sync, Object context, int buffer_size )
-      throws IOException
+      public NetReceiver( Socket socket, NetPersonality personality, boolean sync,
+                          Object context, int buffer_size ) throws IOException
       {
-          super(socket);
+          super( socket, personality );
           this.sync = sync;
           this.context = context;
 
@@ -95,9 +96,6 @@ public class NetReceiver extends NetThread
        // we retrieve & construct some useful handles
           in_stream = new DataInputStream( getBufferedInputStream( buffer_size ) );
           factory = NetMessageFactory.getDefaultMessageFactory();
-          
-          if(!sync)
-             start();
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -124,7 +122,7 @@ public class NetReceiver extends NetThread
                      ((NetMessage) msg ).decode( in_stream );
                      msg.doBehaviour( context );
                 }
-                catch(ClassNotFoundException e) {                     
+                catch(ClassNotFoundException e) {
                       Debug.signal( Debug.WARNING, this, e );
                       in_stream.skipBytes( in_stream.available() );  // cleanse the source ;)
                 }
@@ -139,10 +137,9 @@ public class NetReceiver extends NetThread
            }
            else
                Debug.signal( Debug.ERROR, this, e ); // serious error while processing message
-
-           closeSocket();
         }
 
+       closeSocket();
        in_stream=null;
      }
 

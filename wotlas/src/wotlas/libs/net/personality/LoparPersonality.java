@@ -56,10 +56,11 @@ public class LoparPersonality extends NetPersonality
   /** Constructor with an already opened socket.
    *
    * @param socket an already opened socket
+   * @param context object to give to messages when they arrive.
    * @exception IOException if the socket wasn't already connected.
    */
-     public LoparPersonality( Socket socket ) throws IOException {
-           super( socket );
+     public LoparPersonality( Socket socket, Object context ) throws IOException {
+           super( socket, context );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -84,10 +85,10 @@ public class LoparPersonality extends NetPersonality
           }
 
        // NetSender.
-          my_netsender = new NetSender( socket, NetSender.USER_AGGREGATION, 128*1024 );
+          my_netsender = new NetSender( socket, this, NetSender.USER_AGGREGATION, 128*1024 );
 
        // NetReceiver
-          my_netreceiver = new NetReceiver( socket, true, context, 128*1024 );
+          my_netreceiver = new NetReceiver( socket, this, true, context, 128*1024 );
           my_netreceiver.setMaxMessageLimitPerUserCall( 20 );
      }
 

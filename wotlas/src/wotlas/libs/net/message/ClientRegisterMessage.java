@@ -55,7 +55,7 @@ public class ClientRegisterMessage extends NetMessage
 
   /** Constructor with the client's key.
    *
-   * @param key client key.
+   * @param key client key for access control.
    */
      public ClientRegisterMessage( String key ) {
          this();

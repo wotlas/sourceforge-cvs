@@ -58,8 +58,8 @@ public class TormPersonality extends NetPersonality
    * @param context an object to give to messages as they arrive.
    * @exception IOException if the socket wasn't already connected.
    */
-     public TormPersonality( Socket socket ) throws IOException {
-           super( socket );
+     public TormPersonality( Socket socket, Object context ) throws IOException {
+           super( socket, context );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -84,10 +84,10 @@ public class TormPersonality extends NetPersonality
           }
 
        // NetSender with default aggregation limit & timeout.
-          my_netsender = new NetSender( socket, NetSender.AGGREGATE_MESSAGES, 128*1024 );
+          my_netsender = new NetSender( socket, this, NetSender.AGGREGATE_MESSAGES, 128*1024 );
 
        // NetReceiver, asynchronous. It processes messages as they arrive.
-          my_netreceiver = new NetReceiver( socket, false, context, 128*1024 );
+          my_netreceiver = new NetReceiver( socket, this, false, context, 128*1024 );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

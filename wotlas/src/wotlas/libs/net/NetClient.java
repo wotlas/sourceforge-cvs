@@ -36,27 +36,11 @@ public class NetClient
 {
  /*------------------------------------------------------------------------------------*/
 
-   /** Latest error message...
+   /** Latest error message generated during the NetPersonality creation.
     */
-       static private String error_message;
+       private static String error_message;
 
  /*------------------------------------------------------------------------------------*/
-
-   /** NetClient personality;
-    */
-      private NetPersonality personality;
-
- /*------------------------------------------------------------------------------------*/
-
-     /**  Private Constructor.
-      *
-      *  @param personality a NetPersonality created during the connectToServer() call.
-      */
-        private NetClient( NetPersonality personality ) {
-           this.personality = personality;
-        }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** Creates a personality object for the new connection.
     *  Override this method if you don't want to use the LoparPersonality.
@@ -66,15 +50,7 @@ public class NetClient
     */
       protected static NetPersonality getNewDefaultPersonality( Socket socket )
       throws IOException {
-              return new LoparPersonality( socket );
-      }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-   /** To get the default personality of this NetClient.
-    */
-      public NetPersonality getPersonality() {
-              return personality;
+              return new LoparPersonality( socket, null );
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -87,10 +63,10 @@ public class NetClient
    * @param server_port port to reach
    * @param key key identifying this client on the server side.
    * @param context an optional context object (see NetReceiver for more details).
-   * @return a NetClient on success, null on failure.
+   * @return a NetPersonality on success, null on failure.
    */
-     public static NetClient connectToServer( String server_name, int server_port,
-                                              String key, Object context )
+     public static NetPersonality connectToServer( String server_name, int server_port,
+                                                   String key, Object context )
      {
        Socket socket;
        NetPersonality personality=null;
@@ -112,24 +88,49 @@ public class NetClient
             // We create a new personality and send our key.
                personality = getNewDefaultPersonality( socket );
 
-               personality.queueMessage( new ClientRegisterMessage( key ) );
-               personality.pleaseSendAllMessagesNow();
+               personality.getNetSender().queueMessage( new ClientRegisterMessage( key ) );
+               personality.getNetSender().pleaseSendAllMessagesNow();
 
             // We wait for the answer... and process it when it's there.
             // If something went wrong on the server the received message will
-            // probably generate an IOException and tell us more.
-               personality.waitForAMessageToArrive();
-               personality.pleaseReceiveAllMessagesNow();
+            // set an error_message.
+               personality.start();
+               personality.getNetReceiver().waitForAMessageToArrive();
+               personality.getNetReceiver().pleaseReceiveAllMessagesNow();
 
-            // Success !
+            // Success ?
+               if(error_message!=null)
+                  return null;
+            
                personality.setContext( context );
-               return new NetClient( personality );
+               return personality;
           }
           catch(IOException e){
+           // Hum ! this server doesn't want to hear from us...
               error_message = e.getMessage();
               return null;
  	  }
        }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the latest error_message generated during the NetPersonality creation
+    *
+    * @return the error message.
+    */
+      public static String getErrorMessage() {
+             return error_message;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set an error_message for the NetPersonality creation.
+    *
+    * @param error_message the new error message.
+    */
+      public static void setErrorMessage( String error_message) {
+             NetClient.error_message = error_message;
+      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

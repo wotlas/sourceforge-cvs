@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package wotlas.client.message.description;
+package wotlas.client.message.movement;
 
 import java.io.IOException;
 import java.util.*;
@@ -25,24 +25,24 @@ import java.util.*;
 import wotlas.utils.Debug;
 
 import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.message.description.*;
+import wotlas.common.message.movement.*;
 import wotlas.common.universe.*;
 import wotlas.common.Player;
 import wotlas.client.*;
 
 /**
- * Associated behaviour to the RemovePlayerFromRoomMessage...
+ * Associated behaviour to the YouCanLeaveMapMessage...
  *
  * @author Aldiss
  */
 
-public class RemovePlayerFromRoomMsgBehaviour extends RemovePlayerFromRoomMessage implements NetMessageBehaviour
+public class YouCanLeaveMapMsgBehaviour extends YouCanLeaveMapMessage implements NetMessageBehaviour
 {
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
    */
-     public RemovePlayerFromRoomMsgBehaviour() {
+     public YouCanLeaveMapMsgBehaviour() {
           super();
      }
 
@@ -57,37 +57,23 @@ public class RemovePlayerFromRoomMsgBehaviour extends RemovePlayerFromRoomMessag
 
         // The context is here a DataManager.
            DataManager dataManager = (DataManager) context;
-           PlayerImpl myPlayer = dataManager.getMyPlayer();
+           PlayerImpl player = dataManager.getMyPlayer();
 
-
-        // 1 - Control
-           if( !myPlayer.getLocation().isRoom() ) {
-               Debug.signal( Debug.ERROR, this, "Master player is not on an InteriorMap" );
-               return;
+           if(primaryKey==null) {
+              Debug.signal( Debug.ERROR, this, "No primary key to identify player !" );
+              return;
            }
 
-           if( myPlayer.getPrimaryKey().equals( primaryKey ) ) {
-               Debug.signal( Debug.ERROR, this, "ATTEMPT TO REMOVE MASTER PLAYER !!" );
-               return;
+           if( !player.getPrimaryKey().equals( primaryKey ) ) {
+              Debug.signal( Debug.ERROR, this, "This message is not for master player !" );
+              return;
            }
 
-        // 2 - We remove the player
-           Hashtable players = dataManager.getPlayers();
-           PlayerImpl playerImpl = null;
-           
-           synchronized( players ) {
-              playerImpl = (PlayerImpl) players.get( primaryKey );              
 
-              if(playerImpl==null)
-                 return;
+        // SUCCESS + DEST LOCATION VALUE + NOTIFY TO ADD
 
-              players.remove( primaryKey );
-           }
-
-           playerImpl.cleanVisualProperties(dataManager.getGraphicsDirector());
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }
 

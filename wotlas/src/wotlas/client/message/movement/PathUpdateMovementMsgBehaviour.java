@@ -82,12 +82,11 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
      
               synchronized( players ) {
               	 playerToUpdate = (Player) players.get( primaryKey );
-
+              }
                  if(playerToUpdate!=null) {
                     playerToUpdate.getMovementComposer().setUpdate( (MovementUpdateMessage)this );
                     return; // success !
                  }
-              }
 
            // Search in other rooms
               if(room.getRoomLinks()==null) return; // not found
@@ -102,12 +101,11 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
 
                    synchronized( players ) {
                        playerToUpdate = (Player) players.get( primaryKey );
-
-                       if(playerToUpdate!=null) {
-                          playerToUpdate.getMovementComposer().setUpdate( (MovementUpdateMessage)this );
-                          return; // success !
-                       }
                    }
+                     if(playerToUpdate!=null) {
+                        playerToUpdate.getMovementComposer().setUpdate( (MovementUpdateMessage)this );
+                        return; // success !
+                     }
               }
 
              return; // not found

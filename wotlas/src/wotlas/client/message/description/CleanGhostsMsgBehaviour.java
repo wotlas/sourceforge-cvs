@@ -36,13 +36,13 @@ import wotlas.client.*;
  * @author Aldiss
  */
 
-public class RemovePlayerFromRoomMsgBehaviour extends RemovePlayerFromRoomMessage implements NetMessageBehaviour
+public class CleanGhostsMsgBehaviour extends CleanGhostsMessage implements NetMessageBehaviour
 {
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor.
    */
-     public RemovePlayerFromRoomMsgBehaviour() {
+     public CleanGhostsMsgBehaviour() {
           super();
      }
 
@@ -66,25 +66,66 @@ public class RemovePlayerFromRoomMsgBehaviour extends RemovePlayerFromRoomMessag
                return;
            }
 
-           if( myPlayer.getPrimaryKey().equals( primaryKey ) ) {
-               Debug.signal( Debug.ERROR, this, "ATTEMPT TO REMOVE MASTER PLAYER !!" );
+           if( !myPlayer.getPrimaryKey().equals( primaryKey ) ) {
+               Debug.signal( Debug.ERROR, this, "bad primaryKey !!"+primaryKey );
                return;
            }
 
-        // 2 - We remove the player
+           if( !myPlayer.getLocation().equals( location ) ) {
+               Debug.signal( Debug.ERROR, this, "asked to clean ghosts for wrong base location !!" );
+               return;
+           }
+
+        // 2 - We compute the Rooms ID list of the visible rooms.
+           Room myRoom = myPlayer.getMyRoom();       
+           if( myRoom==null ) return;
+
+           int roomIDs[] = null;
+
+           if( myRoom.getRoomLinks()==null ) {
+              roomIDs = new int[myRoom.getRoomLinks().length+1];	
+           
+              for( int i=0; i<myRoom.getRoomLinks().length; i++ ) {
+                   Room otherRoom = myRoom.getRoomLinks()[i].getRoom1();
+                   
+                   if( otherRoom==myRoom )
+                       otherRoom = myRoom.getRoomLinks()[i].getRoom2();
+
+                   roomIDs[i] = otherRoom.getRoomID();
+              }
+           }
+           else
+              roomIDs = new int[1] ;  
+
+           roomIDs[roomIDs.length-1] = myRoom.getRoomID();
+
+
+        // 3 - We remove the ghosts players
            Hashtable players = dataManager.getPlayers();
            PlayerImpl playerImpl = null;
            
            synchronized( players ) {
-              playerImpl = (PlayerImpl) players.get( primaryKey );              
+              Iterator it = players.values().iterator();
+          
+              while( it.hasNext() ) {
+                   playerImpl = (PlayerImpl) it.next();
 
-              if(playerImpl==null)
-                 return;
+                // Is this player in our list ?
+                   boolean isInList = false;
+                   int roomIDToTest =playerImpl.getLocation().getRoomID();
 
-              players.remove( primaryKey );
+                     for( int i=0; i<roomIDs.length; i++ )
+                          if( roomIDToTest==roomIDs[i] ) {
+                              isInList = true;
+                      	      break;
+                          }
+                 
+                     if( !isInList ) {
+                         it.remove(); // GHOST !!
+                         playerImpl.cleanVisualProperties(dataManager.getGraphicsDirector());
+                     }
+              }
            }
-
-           playerImpl.cleanVisualProperties(dataManager.getGraphicsDirector());
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

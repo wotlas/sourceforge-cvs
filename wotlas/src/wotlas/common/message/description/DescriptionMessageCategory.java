@@ -37,5 +37,6 @@ public interface DescriptionMessageCategory extends NetMessageCategory {
        public final static byte ALL_DATA_LEFT_MSG           = 4;
        public final static byte REMOVE_PLAYER_FROM_ROOM_MSG = 5;
        public final static byte ADD_PLAYER_TO_ROOM_MSG      = 6;
+       public final static byte CLEAN_GHOST_PLAYERS_MSG     = 7;
 }
 

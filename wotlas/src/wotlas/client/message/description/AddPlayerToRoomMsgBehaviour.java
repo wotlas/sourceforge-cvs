@@ -80,11 +80,14 @@ public class AddPlayerToRoomMsgBehaviour extends AddPlayerToRoomMessage implemen
 
         // Search in Current Room
            if( myRoom.getRoomID() == player.getLocation().getRoomID() ) {
-               Hashtable players = myRoom.getPlayers();
+               Hashtable players = dataManager.getPlayers();
                
                synchronized( players ) {
-               	  if( !players.containsKey( player.getPrimaryKey() ) )
+               	  if( !players.containsKey( player.getPrimaryKey() ) ) {
                	       players.put( player.getPrimaryKey(), player );
+               	       ((PlayerImpl)player).init();
+               	       ((PlayerImpl)player).initVisualProperties(dataManager.getGraphicsDirector());
+               	  }
                }
 
                return;  // success
@@ -100,11 +103,14 @@ public class AddPlayerToRoomMsgBehaviour extends AddPlayerToRoomMessage implemen
                     otherRoom = myRoom.getRoomLinks()[i].getRoom2();
 
                 if( otherRoom.getRoomID() == player.getLocation().getRoomID() ) {
-                    Hashtable players = myRoom.getPlayers();
-          
+                    Hashtable players = dataManager.getPlayers();
+
                     synchronized( players ) {
-                       if( !players.containsKey( player.getPrimaryKey() ) )
+                       if( !players.containsKey( player.getPrimaryKey() ) ) {
                	           players.put( player.getPrimaryKey(), player );
+                           ((PlayerImpl)player).init();
+                           ((PlayerImpl)player).initVisualProperties(dataManager.getGraphicsDirector());
+                       }
                     }
 
                    return;  // success

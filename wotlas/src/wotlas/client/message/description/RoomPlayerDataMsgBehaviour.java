@@ -85,7 +85,7 @@ public class RoomPlayerDataMsgBehaviour extends RoomPlayerDataMessage implements
 
            // Search in Current Room
               if( myRoom.getRoomID() == location.getRoomID() ) {
-                  merge( myRoom.getPlayers(), players );
+                  merge( dataManager );
                   return;  // success
               }
 
@@ -99,7 +99,7 @@ public class RoomPlayerDataMsgBehaviour extends RoomPlayerDataMessage implements
                        otherRoom = myRoom.getRoomLinks()[i].getRoom2();
 
                    if( otherRoom.getRoomID() == location.getRoomID() ) {
-                       merge( otherRoom.getPlayers(), players );
+                       merge( dataManager );
                        return;  // success
                    }
               }
@@ -110,25 +110,27 @@ public class RoomPlayerDataMsgBehaviour extends RoomPlayerDataMessage implements
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To merge a hashtable in another...
+  /** To merge our players the DataManager's hashtable...
    */
-    private void merge( Hashtable dest, Hashtable src ) {
+    private void merge( DataManager dataManager ) {
+    	Hashtable dest = dataManager.getPlayers();
+    	
     	synchronized( dest ) {
-            Iterator it = src.values().iterator();
+            Iterator it = players.values().iterator();
             
             while( it.hasNext() ) {
-            	player = (Player) it.next();
+                PlayerImpl playerImpl = (PlayerImpl) it.next();
             	
-            	if( dest.containsKey( player.getPrimaryKey() ) )
+            	if( dest.containsKey( playerImpl.getPrimaryKey() ) )
             	    continue;
 
-                dest.put( player.getPrimaryKey(), player );
+                dest.put( playerImpl.getPrimaryKey(), playerImpl );
+                playerImpl.init();
+                playerImpl.initVisualProperties(dataManager.getGraphicsDirector());
             }
-
     	}
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

@@ -54,7 +54,7 @@ public class ServerMapSetup extends WorldTree {
    */    
     static{
         pm = wotlas.server.PersistenceManager.createPersistenceManager(DATABASE_PATH);
-        worldMaps = pm.loadLocalUniverse();
+        worldMaps = pm.loadLocalUniverse(false);
 
         if( worldMaps==null ) {
             System.out.println("Error: couldn't load world data.");

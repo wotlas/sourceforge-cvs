@@ -78,16 +78,21 @@ public class PersistenceManager
 
   /** To load the local game universe.
    *
+   *  @param loadDefault do we have to load default data ?
    *  @return a WorldMap array, null if an error occured.
    */
-   public WorldMap[] loadLocalUniverse()
+   public WorldMap[] loadLocalUniverse(boolean loadDefault)
    {
       int worldCount=0, townCount=0, buildingCount=0, mapCount=0;
 
       String universeHome =  databasePath+File.separator+UNIVERSE_HOME;
 
+
+    /*** STEP 1 - WE LOAD LOCATIONS (default data) ***/
+
      // We search for the latest save...
-        String latest = FileTools.findSave( universeHome, UNIVERSE_PREFIX, UNIVERSE_SUFFIX, true );
+     //   String latest = FileTools.findSave( universeHome, UNIVERSE_PREFIX, UNIVERSE_SUFFIX, true );
+        String latest = null;
 
         if( latest==null )
             latest = DEFAULT_UNIVERSE;
@@ -194,6 +199,11 @@ public class PersistenceManager
            }
         }
 
+    /*** STEP 2 - WE LOAD OBJECTS (latest data) ***/
+     //   String latest = FileTools.findSave( universeHome+File.separator+OBJECTS_HOME,
+     //                                       OBJECTS_PREFIX, OBJECTS_SUFFIX, true );
+
+
       Debug.signal( Debug.NOTICE, this, "Loaded "+worldCount+" worlds, "+townCount+" towns,"
                     +buildingCount+" buildings, "+mapCount+" maps." );
 
@@ -205,23 +215,26 @@ public class PersistenceManager
   /** To save the local game universe.
    *
    *  @param a WorldMap array.
-   *  @param isDefault if true we save the worlds in the universe/DEFAULT_UNIVERSE directory.
+   *  @param isDefault if true we save all data in their DEFAULT directory.
    *  @return true in case of success, fale otherwise
    */
    public boolean saveLocalUniverse( WorldMap worlds[], boolean isDefault )
    {
-       int worldCount=0, townCount=0, buildingCount=0, mapCount=0;
-       boolean failed = false;
+     int worldCount=0, townCount=0, buildingCount=0, mapCount=0;
+     boolean failed = false;
+
+   /*** STEP 1 - We only have to save location data if they are to be saved as default ***/
    	
-     // which home ?
-        String universeHome = null;
+   // which home ?
+      String universeHome = null;
      
-        if( isDefault )
-            universeHome = databasePath+File.separator+UNIVERSE_HOME+File.separator
+      if( isDefault )
+      {
+        universeHome = databasePath+File.separator+UNIVERSE_HOME+File.separator
                             +DEFAULT_UNIVERSE;
-        else
-            universeHome = databasePath+File.separator+UNIVERSE_HOME+File.separator
-                            +UNIVERSE_PREFIX+Tools.getLexicalDate()+UNIVERSE_SUFFIX;
+        //  else
+        //    universeHome = databasePath+File.separator+UNIVERSE_HOME+File.separator
+        //                    +UNIVERSE_PREFIX+Tools.getLexicalDate()+UNIVERSE_SUFFIX;
 
      // We create this directory...
         new File(universeHome).mkdir();
@@ -310,8 +323,16 @@ public class PersistenceManager
            }
         }
 
+      }
+
+    /*** STEP 2 - WE SAVE OBJECTS DATA ***/
+
+      if(isDefault) {
+      }
+
       Debug.signal( Debug.NOTICE, this, "Saved "+worldCount+" worlds, "+townCount+" towns,"
-                    +buildingCount+" buildings, "+mapCount+" maps." );
+                      +buildingCount+" buildings, "+mapCount+" maps." );
+
 
       return !failed;
    }

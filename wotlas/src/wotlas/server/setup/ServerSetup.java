@@ -51,10 +51,42 @@ public class ServerSetup extends JFrame
 
  /*------------------------------------------------------------------------------------*/
 
+   /** Towns Name & initial position
+    */
+    public final static String TOWNS_NAME[] = {
+          "Near Tar Valon",
+          "In the Blight",
+          "Near Shayol Ghul",
+          "Near Caemlyn",
+          "Near Cairhien",
+          "Near Tear",
+          "Near Illian",
+          "Near Edou Bar",
+          "Near Stedding Shangtai",
+          "Near Amador"
+    };
+
+    public final static int TOWNS_NEAR_POSITION[][] = {
+          { 743, 277 },  // position near Tar Valon on the World Map
+          { 778, 135 },  // position near the Blight on the World Map
+          { 815, 84  },  // ... etc ...
+          { 724, 441 },
+          { 811, 360 },
+          { 769, 608 },
+          { 651, 674 },
+          { 489, 443 },
+          { 935, 541 },
+          { 394, 565 }
+    };
+
+ /*------------------------------------------------------------------------------------*/
+
     private JTextField t_serverSymbolicName, t_serverName, t_serverID, t_accountServerPort,
                t_gameServerPort, t_gatewayServerPort, t_maxNumberOfGameConnections,
                t_maxNumberOfAccountConnections, t_maxNumberOfGatewayConnections,
                t_description, t_location, t_adminEmail;
+    
+    private JComboBox c_worldStartLocation;
     
     private JButton b_save, b_exit;
 
@@ -149,7 +181,7 @@ public class ServerSetup extends JFrame
          }
 
       // Main JPanel
-         JPanel mainPanel = new JPanel(new GridLayout(24,1,10,10));
+         JPanel mainPanel = new JPanel(new GridLayout(26,1,10,10));
 
       // Server Symbolic Name
          JLabel label0 = new JLabel("Server Symbolic Name :");
@@ -175,6 +207,23 @@ public class ServerSetup extends JFrame
          t_description = new JTextField( config.getDescription() );
          mainPanel.add( label3 );
          mainPanel.add( t_description );
+
+      // Players starting location :
+         JLabel label12 = new JLabel("Players starting location :");
+         c_worldStartLocation = new JComboBox( TOWNS_NAME );
+         c_worldStartLocation.setEditable(false);
+
+         for(int i=0; i<TOWNS_NAME.length; i++ ) {
+             if(TOWNS_NEAR_POSITION[i][0]==config.getWorldFirstXPosition()
+                && TOWNS_NEAR_POSITION[i][1]==config.getWorldFirstYPosition()) {
+                // we found the previous location
+                   c_worldStartLocation.setSelectedIndex(i);
+                   break;
+             }
+         }
+
+         mainPanel.add( label12 );
+         mainPanel.add( c_worldStartLocation );
 
       // Location
          JLabel label4 = new JLabel("Server's Country :");
@@ -260,6 +309,9 @@ public class ServerSetup extends JFrame
                       config.setMaxNumberOfGameConnections( val5 );
                       config.setMaxNumberOfAccountConnections( val6 );
                       config.setMaxNumberOfGatewayConnections( val7 );
+
+                      config.setWorldFirstXPosition( TOWNS_NEAR_POSITION[c_worldStartLocation.getSelectedIndex()][0] );
+                      config.setWorldFirstYPosition( TOWNS_NEAR_POSITION[c_worldStartLocation.getSelectedIndex()][1] );
                    }
                    catch(Exception ee) {
                        Debug.signal( Debug.ERROR, this, ""+ee );

@@ -183,10 +183,11 @@ public class WorldTree extends JPanel {
 
   /** Main - Test
    */
+/*
     static public void main( String argv[] ) {
 
           PersistenceManager pm = new PersistenceManager( "../base" );
-          WorldMap worldMaps[] = pm.loadLocalUniverse();
+          WorldMap worldMaps[] = pm.loadLocalUniverse(false);
 
           if( worldMaps==null ) {
               System.out.println("error: couldn't load world");
@@ -203,7 +204,7 @@ public class WorldTree extends JPanel {
           frame.pack();
           frame.show();
     }
-
+*/
  /*------------------------------------------------------------------------------------*/
 
 }

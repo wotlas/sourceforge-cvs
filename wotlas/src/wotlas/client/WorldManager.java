@@ -67,7 +67,7 @@ public class WorldManager extends wotlas.common.WorldManager
 
        // Call to the PersistenceManager to load the worlds from the dataBase.
           PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();
-          worldMaps = pm.loadLocalUniverse();
+          worldMaps = pm.loadLocalUniverse(false);
           return true;
    }
 

@@ -111,7 +111,12 @@ public class PersistenceManager extends wotlas.common.PersistenceManager
   public boolean saveProfilesConfig(ProfileConfigList profileConfigList)
   {
     try {
-      PropertiesConverter.save(profileConfigList, CLIENT_PROFILES);
+      if(!ClientManager.getRememberPasswords()) ProfileConfig.setPasswordAccess(false);
+
+       PropertiesConverter.save(profileConfigList, CLIENT_PROFILES);
+
+      if(!ClientManager.getRememberPasswords()) ProfileConfig.setPasswordAccess(true);
+
       return true;
     } catch (PersistenceException pe) {
       Debug.signal( Debug.ERROR, this, "Failed to save client's profiles config: " + pe.getMessage() );

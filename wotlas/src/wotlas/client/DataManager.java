@@ -167,6 +167,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
   private GraphicsDirector gDirector;
 
+  /** Our MapData.
+   */
   private MapData myMapData;
 
   /** Our AStar object.
@@ -222,19 +224,17 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     return dataManager;
   }
 
- /*------------------------------------------------------------------------------------*/
-
   /** To get the world manager.
    *
    * @return the world manager.
    */
   public WorldManager getWorldManager() {
     return worldManager;
-  }
-
- /*------------------------------------------------------------------------------------*/
+  } 
 
   /** To get the graphicsDirector
+   *
+   * @return the graphicsDirector
    */
   public GraphicsDirector getGraphicsDirector() {
     return gDirector;
@@ -248,7 +248,12 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     return startGameLock;
   }
 
-
+  /** To get MapData
+   */
+  public MapData getMapData() {
+    return myMapData;
+  }
+  
   public JInfosPanel getInfosPanel() {
     return infosPanel;
   }
@@ -459,15 +464,18 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     // 3 - Create the drawable reference
     location.setWorldMapID(0);
     location.setTownMapID(0);
-    location.setInteriorMapID(0);
-    location.setBuildingID(0);
-    location.setRoomID(0);
-    myPlayer.setX(70);
-    myPlayer.setY(640);
-    myPlayer.setPosition(new ScreenPoint(70,640));
+    location.setInteriorMapID(-1);
+    location.setBuildingID(-1);
+    location.setRoomID(-1);
+    //myPlayer.setX(70);
+    myPlayer.setX(31);
+    //myPlayer.setY(640);
+    myPlayer.setY(759);
+    //myPlayer.setPosition(new ScreenPoint(70,640));
+    myPlayer.setPosition(new ScreenPoint(31,759));
 
     // 4 - Create AStar
-    aStar = new AStarDouble();
+    //aStar = new AStarDouble();
 
     // 5 - Create the panels
     infosPanel = new JInfosPanel(myPlayer);
@@ -671,6 +679,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       myMapData = new InteriorMapData();
     }
     else if ( myPlayer.getLocation().isTown() ) {
+      System.out.println("town");
       myMapData = new TownMapData();
     }
     else if ( myPlayer.getLocation().isWorld() ) {

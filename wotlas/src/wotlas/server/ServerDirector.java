@@ -29,7 +29,7 @@ import wotlas.common.message.account.WarningMessage;
 
 import java.util.Properties;
 import java.util.Iterator;
-import java.net.BindException;
+import java.net.*;
 
 /** The MAIN server class. It starts the PersistenceManager, the ServerManager
  *  and the DataManager. So got it ? yeah, it's the boss on the server side...
@@ -103,6 +103,14 @@ public class ServerDirector implements Runnable, NetServerErrorListener
     */
       public static byte updateKeysPeriod =0;
 
+   /** Shutdown Thread.
+    */
+      public static Thread shutdownThread;
+
+   /** Immediate stop of persistence thread ?
+    */
+      public static boolean immediatePersistenceThreadStop = false;
+
  /*------------------------------------------------------------------------------------*/
 
    /** To stop the persistence thread.
@@ -117,8 +125,9 @@ public class ServerDirector implements Runnable, NetServerErrorListener
    * @param argv useless... sorry but we don't like command line options... if you
    *             want to set some options take a look at config/server.cfg & database.cfg
    */
-     public static void main( String argv[] )
-     {
+     public static void main( String argv[] ) {
+           boolean isDaemon = false;
+
            Debug.displayExceptionStack( false );
 
         // Parse command line arguments
@@ -136,11 +145,20 @@ public class ServerDirector implements Runnable, NetServerErrorListener
                      Debug.displayExceptionStack( false );
                      Debug.setLevel(Debug.ERROR);
                  }
+                 else if (arg.equals("-daemon")) {
+                     isDaemon = true;
+                     Debug.displayExceptionStack( true );
+                     Debug.setLevel(Debug.NOTICE);
+                 }
            }
 
         // STEP 0 - Start a ServerLogStream to save our Debug messages           
            try{
-               Debug.setPrintStream( new ServerLogStream( SERVER_LOG_PREFIX
+               if(isDaemon)
+                  Debug.setPrintStream( new DaemonLogStream( SERVER_LOG_PREFIX
+                                +System.currentTimeMillis()+SERVER_LOG_SUFFIX ) );
+               else
+                  Debug.setPrintStream( new ServerLogStream( SERVER_LOG_PREFIX
                                 +System.currentTimeMillis()+SERVER_LOG_SUFFIX ) );
            }catch( java.io.FileNotFoundException e ) {
                e.printStackTrace();
@@ -231,6 +249,19 @@ public class ServerDirector implements Runnable, NetServerErrorListener
         // STEP 6 - We generate new keys for special characters
            updateKeys();
 
+        // STEP 7 - Adding Shutdown Hook           
+           shutdownThread = new Thread() {
+           	public void run() {
+           	   immediatePersistenceThreadStop = true;
+                   Debug.signal(Debug.CRITICAL,null,"Received VM Shutdown Signal.");
+                   ServerDirector.immediatePersistenceAction();
+                   Debug.signal(Debug.CRITICAL,null,"Data Saved.");
+                   Debug.flushPrintStream();
+           	}
+           };
+
+           Runtime.getRuntime().addShutdownHook(shutdownThread);
+
         // Everything is ok ! we enter the persistence loop
            Debug.signal( Debug.NOTICE, null, "Everything is Ok. Creating persistence thread..." );
 
@@ -240,16 +271,19 @@ public class ServerDirector implements Runnable, NetServerErrorListener
            Thread persistenceThread = new Thread( serverDirector );
            persistenceThread.start();
 
-           Tools.waitTime( 2000 ); // 2s
-           Debug.signal( Debug.NOTICE, null, "Press <ENTER> if you want to shutdown this server." );
+           if(!isDaemon) {
+              Tools.waitTime( 2000 ); // 2s
+              Debug.signal( Debug.NOTICE, null, "Press <ENTER> if you want to shutdown this server." );
 
-           try{
-              System.in.read();
-           }catch( Exception e ) {
+              try{
+                 System.in.read();
+              }catch( Exception e ) {
+              }
+
+              Debug.signal( Debug.NOTICE, null, "Leaving in 30s..." );
+              Runtime.getRuntime().removeShutdownHook(shutdownThread);
+              serverDirector.stopThread();
            }
-
-           Debug.signal( Debug.NOTICE, null, "Leaving in 30s..." );
-           serverDirector.stopThread();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -279,6 +313,8 @@ public class ServerDirector implements Runnable, NetServerErrorListener
     */
       public void run(){
            do{
+                if(immediatePersistenceThreadStop) return;
+
              // 1 - we wait the persistence period minus 2 minutes
                 synchronized( this ) {
                   try{
@@ -286,8 +322,8 @@ public class ServerDirector implements Runnable, NetServerErrorListener
                   }catch(Exception e) {}
                 }
 
-                if(mustStopThread())
-                   break;
+                if(immediatePersistenceThreadStop) return;
+                if(mustStopThread()) break;
 
              // 2 - Start persistence action
                 persistenceAction(true);
@@ -298,6 +334,7 @@ public class ServerDirector implements Runnable, NetServerErrorListener
            persistenceAction(false);
 
         // We close the different servers
+           if(immediatePersistenceThreadStop) return;
            Debug.signal( Debug.NOTICE, null, "Shuting down servers..." );
            serverManager.getGameServer().stopServer();
            serverManager.getAccountServer().stopServer();
@@ -315,8 +352,10 @@ public class ServerDirector implements Runnable, NetServerErrorListener
     * @param maintenance if true we advertise clients with a "entering maintenance mode"
     *        message. If false we send a "server is shuting down" message.
     */
-     private static void persistenceAction( boolean maintenance )
-     {
+     private static void persistenceAction( boolean maintenance ) {
+
+              if(immediatePersistenceThreadStop) return;
+
            // We warn all the clients that the server is going to enter
            // maintenance mode for 2-3 minutes, in 2 minutes.
            // If we are not in maintenance mode ( maintenance=false )
@@ -330,8 +369,7 @@ public class ServerDirector implements Runnable, NetServerErrorListener
               else
                   Debug.signal( Debug.NOTICE, null, "Sending warning messages to connected clients...");
 
-              synchronized( dataManager.getAccountManager() )
-              {
+              synchronized( dataManager.getAccountManager() ) {
                  Iterator it = dataManager.getAccountManager().getIterator();
 
                  WarningMessage msg = null;
@@ -395,6 +433,52 @@ public class ServerDirector implements Runnable, NetServerErrorListener
 
                   updateKeys(); // we update the keys...
               }
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Saves the world & players immediately, closes all connection and stops server.
+    */
+     private static void immediatePersistenceAction() {
+     	  // 1 - Lock servers...
+              serverManager.getGameServer().setServerLock( true );
+              serverManager.getAccountServer().setServerLock( true );
+              serverManager.getGatewayServer().setServerLock( true );
+
+          // 2 - We warn connected clients
+              synchronized( dataManager.getAccountManager() ) {
+                 Iterator it = dataManager.getAccountManager().getIterator();
+
+                 WarningMessage msg = new WarningMessage( "Your server has been stopped.\n"
+                                           +"Try to reconnect in a few minutes.");
+
+                 while( it.hasNext() )
+                    ( (GameAccount) it.next() ).getPlayer().sendMessage( msg );
+              }
+
+           // 3 - We close all remaining connections on the GameServer
+              synchronized( dataManager.getAccountManager() ) {
+                 Iterator it = dataManager.getAccountManager().getIterator();
+
+                 while( it.hasNext() )
+                     ( (GameAccount) it.next() ).getPlayer().closeConnection();
+              }
+
+              serverManager.getGameServer().stopServer();
+              serverManager.getAccountServer().stopServer();
+              serverManager.getGatewayServer().stopServer();
+
+           // 4 - Saving Accounts
+              synchronized( dataManager.getAccountManager() ) {
+                 Iterator it = dataManager.getAccountManager().getIterator();
+
+                 while( it.hasNext() )
+                     dataManager.getAccountManager().saveAccount( (GameAccount) it.next() );
+              }
+
+           // 5 - We save the world data
+              if( !dataManager.getWorldManager().saveLocalUniverse() )
+                  Debug.signal( Debug.WARNING, null, "Failed to save world data..." );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

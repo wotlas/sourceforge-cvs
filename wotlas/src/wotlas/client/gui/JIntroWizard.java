@@ -175,6 +175,9 @@ public class JIntroWizard extends JFrame
 
     f = SwingTools.loadFont("../base/fonts/Lblack.ttf");
     
+    UIManager.put("ComboBox.font", f.deriveFont(16f));
+    UIManager.put("ComboBox.foreground", Color.black);
+        
     UIManager.put("Label.font", f.deriveFont(18f));
     UIManager.put("Label.foreground", Color.black);
     

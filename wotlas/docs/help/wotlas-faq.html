@@ -23,9 +23,9 @@
     often changed by my Internet provider. What can I do ?<br>
     <b><a href="#q15">1.5</a></b> - How do I get my server's IP ?<br>
     <b><a href="#q16">1.6</a></b> - I have a DSL Internet connection that works 
-    with a DSL hub which is connected to my server via an ethernet network.<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; How can I make my server 
-    be enabled from the Internet ?<br>
+    with a DSL hub which is connected to my server via<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;an&nbsp;ethernet network. 
+    How can I make my server be enabled from the Internet ?<br>
     <b><a href="#q17">1.7</a></b> - How can I move my wotlas server to another 
     computer ?<br>
     <b><a href="#q18">1.8</a></b> - I have a firewall on my computer what do I 
@@ -38,7 +38,9 @@
     <b><a href="#q112">1.12</a></b> - I want to delete someone's account. How 
     can I do that ?<br>
     <b><a href="#q113">1.13</a></b> - I'm using ports above 1024 for my wotlas 
-    server and it seems nobody can connect to my server ! what's happening ?<br>
+    server and it seems nobody can connect to my server !<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; what's happening 
+    ?<br>
     <b><a href="#q114">1.14</a></b> - Do I need to warn the wotlas network administrator 
     if I have to stop my server for some time ?<br>
     <b><a href="#q115">1.15</a></b> - Are there any start-up options I can use 
@@ -60,9 +62,9 @@
     <b><a href="#q24">2.4</a></b> - How do I know if my Internet connection uses 
     a proxy ?<br>
     <b><a href="#q25">2.5</a></b> - When I start wotlas I have a window telling 
-    me to choose a server to create an account, but the server's list<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; is empty ! What happened 
-    ?<br>
+    me to choose a server to create an account, but<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the server's list is empty 
+    ! What happened ?<br>
     <b><a href="#q26">2.6</a></b> - The game crashed after the final step of the 
     account creation. What happened ?<br>
     <b><a href="#q27">2.7</a></b> - My problem is not listed here <i>or</i> Wotlas 
@@ -74,17 +76,19 @@
 </blockquote>
 <p><font size="3" color="#006699"><b>III - FAQ - Wotlas Client - Playing Wotlas</b></font><font size="3"><br>
   </font><font size="2"> </font></p>
-<blockquote>
+<blockquote> 
   <p><font size="2"><b><a href="#q30">3.0</a> -</b> I'm searching for some help 
     on how to play wotlas, where can I find it ?<br>
     <b><a href="#q31">3.1</a></b> - Can I create more than one game account ?<br>
     <b><a href="#q32">3.2</a></b> - Ok I'm in the game. What can I do ?<br>
     <b><a href="#q33">3.3</a></b> - I'm trying to speak to someone in the chat 
-    but he doesn't seem to hear me. How does this damned chat work ?<br>
+    but he doesn't seem to hear me. How does this damned <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; chat work ?<br>
     <b><a href="#q34">3.4</a> </b> - Why are the movements on the world map so 
     slow ?<br>
     <b><a href="#q35">3.5</a></b> - I'm on a map where there seems to be an opening 
-    on a side, but it doesn't lead me to anywhere. What's this all about ?<br>
+    on a side, but it doesn't lead me to anywhere. <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; What's this all about ?<br>
     <b><a href="#q36">3.6</a></b> - I've been wandering on a map and I don't seem 
     to be able to leave it. What's happening ?<br>
     <b><a href="#q37">3.7</a></b> - I don't meet anybody in this game. Isn't it 
@@ -209,7 +213,8 @@
   <blockquote> 
     <p><font size="2">On Windows systems just open a MS-DOS window or command-line 
       window and enter <i>ipconfig</i>. It'll display all your IP interfaces. 
-      On unix systems enter <i>ifconfig</i> to obtain the same result. You may also open in your web browser this url : <a href="http://checkip.dyndns.org:8245">http://checkip.dyndns.org:8245</a><br>
+      On unix systems enter <i>ifconfig</i> to obtain the same result. You may 
+      also open this url in your web browser : <a href="http://checkip.dyndns.org:8245">http://checkip.dyndns.org:8245</a><br>
       <br>
       <a href="#top">back to the top</a></font></p>
   </blockquote>
@@ -217,25 +222,35 @@
     is connected to my server via an ethernet network. How can I make my server 
     be enabled from the Internet ?<a name="q16"></a></p>
   <blockquote>
-    <p><font size="2">If you use NAT (Network Address Translation) because you have only
-    one public IP address, you'll have to do port translation for the 3 ports (declared
-    in the <i>register</i> utility) to the computer where your server is running.<br>
-    For example, if the server private IP is 192.168.1.2, add the following NAT rules:
-    <li>ADD IP NAT TCP 763 192.168.1.2 (Game server)
+    <p>
+    <font size="2">If you use NAT (Network Address Translation) because you have 
+    only one public IP address, you'll have to do port translation ( for the 3 
+    ports declared in the <i>register</i> utility) to the computer where your 
+    server is running.<br>
+    <br>
+    For example, if the server private IP is 192.168.1.2, add the following NAT 
+    rules:<br>
+    <br>
+    <li>ADD IP NAT TCP 763 192.168.1.2 (Game server) <br>
     <li>ADD IP NAT TCP 764 192.168.1.2 (Account server)
-    <li>ADD IP NAT TCP 765 192.168.1.2 (Gateway server)<br>
-    1) Put your private server IP in the file base/servers/server-<i>N</i>.cfg.adr
-    (where <i>N</i> is your server id)<br>
-    2) Start your server<br>
-    3) Publish your public ip with the <i>setup</i> utility (cf. <a href="#q12">1.2</a>).<br>
-    Each time your public ip change, you can use the <i>setup</i> utility (cf. <a href="#q12">1.2</a>) to update your server's IP without having to restart
-    your server (cf. <a href="#q15">1.5</a>).<br>
-    <br>
-    To test the client from your private network, the file base/servers/server-<i>N</i>.cfg.adr
-    must contain the private ip address of your server (not the public address!).<br>
-    <br>
-      <a href="#top">back to the top</a></font></p>
-  </blockquote>
+    <li>A<font size="2">DD IP NAT TCP 765 192.168.1.2 (Gateway server)<br>
+      <br>
+      1) Put your private server IP in the file base/servers/server-<i>N</i>.cfg.adr 
+      (where <i>N</i> is your server id)<br>
+      2) Start your server<br>
+      3) Publish your public ip with the <i>setup</i> utility (cf. <a href="#q12">1.2</a>).<br>
+      <br>
+      Each time your public ip change, you can use the <i>setup</i> utility (cf. 
+      <a href="#q12">1.2</a>) to update your server's IP without having to restart 
+      your server (cf. <a href="#q15">1.5</a>).<br>
+      <br>
+      To test the client from your private network, the file base/servers/server-<i>N</i>.cfg.adr 
+      must contain the private ip address of your server (not the public address!). 
+      Good Luck !<br>
+      <br>
+      <a href="#top">back to the top</a></font> 
+      <p></p>
+    </font></blockquote>
   <p><b>1.7</b> - How can I move my wotlas server to another computer ?<a name="q17"></a></p>
   <blockquote> 
     <p><font size="2">The easiest way is to move the entire <i>wotlas server</i> 

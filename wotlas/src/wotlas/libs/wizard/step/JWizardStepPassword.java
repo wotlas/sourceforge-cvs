@@ -135,22 +135,36 @@ public class JWizardStepPassword extends JWizardStep {
       String passwd = new String(tfield2.getPassword());
       String passwd2 = new String(tfield3.getPassword());
 
-       if( tfield1.getText().length() <3) {
-           JOptionPane.showMessageDialog( null, "Your login must have at least 3 characters !", "New Password", JOptionPane.ERROR_MESSAGE);
-           return false;
-       }
+      char login[] = tfield1.getText().toCharArray();
+      
+      if(login.length>16) {
+         JOptionPane.showMessageDialog( null, "Your login is too long ! (max 16 chars)", "Login", JOptionPane.ERROR_MESSAGE);
+         return false;
+      }
 
-       if( passwd.length() < 4 ) {
+      if( login.length<3) {
+          JOptionPane.showMessageDialog( null, "Your login must have at least 3 characters !", "Login", JOptionPane.ERROR_MESSAGE);
+          return false;
+      }
+
+      for( int i=0; i<login.length; i++ )
+           if( (login[i]<'a' || login[i]>'z') && (login[i]<'A' || login[i]>'Z') &&
+               (login[i]<'0' || login[i]>'9') && login[i]!='-' ) {
+               JOptionPane.showMessageDialog( null, "Sorry your login must only contain the following\ncharacters : 'a'-'z', 'A'-'Z', '0'-'9', '-'", "Login", JOptionPane.ERROR_MESSAGE);
+               return false;
+           }
+
+      if( passwd.length() < 4 ) {
            JOptionPane.showMessageDialog( null, "Your password must have at least 5 characters !", "New Password", JOptionPane.ERROR_MESSAGE);
            return false;
-       }
+      }
 
-       if( !passwd.equals(passwd2) ) {
+      if( !passwd.equals(passwd2) ) {
            JOptionPane.showMessageDialog( null, "Passwords are not equal !", "New Password", JOptionPane.ERROR_MESSAGE);
            return false;
-       }
+      }
 
-       return true;
+      return true;
    }
 
   /** Called when Previous button is clicked.

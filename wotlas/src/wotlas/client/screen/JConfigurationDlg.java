@@ -43,12 +43,12 @@ import javax.swing.event.*;
  * @see wotlas.client.ClientConfiguration
  */
 
-public class JConfigurationDlg extends JDialog
-{
+public class JConfigurationDlg extends JDialog {
 
   protected JSlider soundVolLevel, musicVolLevel;
   protected JCheckBox cButton;
-    
+  protected JCheckBox savePassButton;
+
   /** To get the music volume.
    */
   public short getMusicVolume() {
@@ -105,31 +105,34 @@ public class JConfigurationDlg extends JDialog
 
     soundVolLevel = new JSlider(JSlider.HORIZONTAL, 0, SoundLibrary.MAX_SOUND_VOLUME,
                                 (short)clientConfiguration.getSoundVolume());
-    cButton = new JCheckBox();
+    cButton = new JCheckBox("High details for text details.");
     cButton.setSelected(clientConfiguration.getHighDetails());
     TextDrawable.setHighQualityTextDisplay(clientConfiguration.getHighDetails());
     
+    savePassButton = new JCheckBox("Remember passwords.");
+    savePassButton.setSelected( clientConfiguration.getRememberPasswords() );
+    ClientManager.setRememberPasswords( clientConfiguration.getRememberPasswords() );
+
     JPanel pane = (JPanel) getContentPane();
     
 // JDialog properties
     pane.setLayout(new BorderLayout());
     pane.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
-      
+    
     getContentPane().setBackground(Color.white);
-    //setBackground(Color.black);
          
 // We load the images
     ImageIcon im_okup = new ImageIcon("../base/gui/ok-up.gif");
     ImageIcon im_okdo = new ImageIcon("../base/gui/ok-do.gif");
 
-// JPanel Graphics
-    JGraphicsTab graphicsTab = new JGraphicsTab();
+// JPanel Tabs
+    JGeneralTab generalTab = new JGeneralTab();
     JVolumeTab volumeTab = new JVolumeTab();
     
     JTabbedPane tabbedPane = new JTabbedPane();
-    tabbedPane.addTab( "Graphics configuration",
+    tabbedPane.addTab( "General configuration",
                        null, 
-                       graphicsTab,   
+                       generalTab,   
                        "" ); //tooltip text
     tabbedPane.addTab( "Volume configuration",
                        null, 
@@ -147,7 +150,7 @@ public class JConfigurationDlg extends JDialog
     // Save the configuration
     b_ok.addActionListener(new ActionListener() {
       public void actionPerformed (ActionEvent e) {
-        ClientConfiguration clientConfiguration = new ClientConfiguration();        
+        ClientConfiguration clientConfiguration = new ClientConfiguration();
         
         clientConfiguration.setMusicVolume((short) musicVolLevel.getValue());
         clientConfiguration.setSoundVolume((short) soundVolLevel.getValue());
@@ -160,6 +163,7 @@ public class JConfigurationDlg extends JDialog
         SoundLibrary.getSoundLibrary().setNoSound(clientConfiguration.getNoSound());
         
         clientConfiguration.setHighDetails(cButton.isSelected());
+        clientConfiguration.setRememberPasswords(savePassButton.isSelected());
         
         try {
           PropertiesConverter.save(clientConfiguration, ClientDirector.CLIENT_OPTIONS);
@@ -174,17 +178,16 @@ public class JConfigurationDlg extends JDialog
 // Display
     SwingTools.centerComponent(this);
     show();
-    
   }
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Graphics Tab COnfiguration.
+  /** Graphics Tab Configuration.
    */
-  private class JGraphicsTab extends JPanel implements ItemListener {        
+  private class JGeneralTab extends JPanel implements ItemListener {        
     /** Constructor.
      */
-    public JGraphicsTab() {
+    public JGeneralTab() {
       super();
       setBackground(Color.white);
       setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -195,23 +198,34 @@ public class JConfigurationDlg extends JDialog
       qTextTitle.setForeground(Color.white);
       add(qTextTitle, BorderLayout.NORTH);*/
 
-      JPanel innerPanel = new JPanel(new GridLayout(1,2,10,10));
+      JPanel innerPanel = new JPanel(new GridLayout(2,1,10,10));
       innerPanel.setBackground(Color.white);
       add(innerPanel);
       
-      ALabel lbl_details = new ALabel("High details");
-      innerPanel.add(lbl_details);
+//      ALabel lbl_details = new ALabel("High details for text details.");
+//      innerPanel.add(lbl_details);
        
       cButton.setBackground(Color.white);      
       cButton.addItemListener(this);
       innerPanel.add(cButton);
+
+//      ALabel lbl_passw = new ALabel("Remember Passwords");
+//      innerPanel.add(lbl_passw);
+
+      savePassButton.setBackground(Color.white);      
+      savePassButton.addItemListener(this);
+      innerPanel.add(savePassButton);
     }
     
     /** Invoked when check box state is changed
      */
     public void itemStateChanged(ItemEvent e) {
       Object source = e.getItemSelectable();
-      TextDrawable.setHighQualityTextDisplay( (e.getStateChange() == ItemEvent.SELECTED) );
+
+      if(cButton==source)
+          TextDrawable.setHighQualityTextDisplay( (e.getStateChange() == ItemEvent.SELECTED) );
+      else if(savePassButton==source)
+          ClientManager.setRememberPasswords( (e.getStateChange() == ItemEvent.SELECTED) );
     }
   }
 
@@ -220,8 +234,7 @@ public class JConfigurationDlg extends JDialog
   /** Volume Tab Configuration.
    */
   private class JVolumeTab extends JPanel implements ChangeListener {
-    
-    
+
     /** Constructor.
      */
     public JVolumeTab() {

@@ -20,12 +20,14 @@
 package wotlas.server;
 
 import wotlas.common.character.*;
-import wotlas.common.Player;
 
 import wotlas.libs.net.NetConnectionListener;
 import wotlas.libs.net.NetPersonality;
 import wotlas.libs.net.NetMessage;
 
+import wotlas.libs.pathfinding.*;
+
+import wotlas.common.*;
 import wotlas.common.universe.*;
 import wotlas.utils.*;
 
@@ -75,10 +77,6 @@ public class PlayerImpl implements Player, NetConnectionListener
     */
        private boolean isMoving = false;
 
-   /** First Point of movement.
-    */
-       private ScreenPoint firstPoint;
-
    /** End Point of movement.
     */
        private ScreenPoint endPoint;
@@ -95,6 +93,10 @@ public class PlayerImpl implements Player, NetConnectionListener
 
  /*------------------------------------------------------------------------------------*/
 
+   /** Movement Composer
+    */
+       transient private MovementComposer movementComposer = (MovementComposer) new PathFollower();
+
    /** Our NetPersonality, useful if we want to send messages !
     */
        transient private NetPersonality personality;
@@ -108,6 +110,15 @@ public class PlayerImpl implements Player, NetConnectionListener
    /** Constructor for persistence.
     */
       public PlayerImpl() {
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Is this player a Master player ? ( directly controlled  by the client )
+    * @return true if this is a Master player, false otherwise.
+    */
+      public boolean isMaster() {
+      	return false; // Server PlayerImpl is only a slave player implementation
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -281,6 +292,25 @@ public class PlayerImpl implements Player, NetConnectionListener
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** To get the player's movement Composer.
+    *
+    *  @return player MovementComposer
+    */
+      public MovementComposer getMovementComposer() {
+      	  return movementComposer;
+      }
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the player's movement Composer.
+    *
+    *  @param movement MovementComposer.
+    */
+      public void setMovementComposer( MovementComposer movementComposer ) {
+      	  this.movementComposer = movementComposer;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
    // other getters & setters for persistence
 
       public void setIsMoving( boolean isMoving ) {
@@ -289,14 +319,6 @@ public class PlayerImpl implements Player, NetConnectionListener
 
       public boolean getIsMoving() {
       	return isMoving;
-      }
-
-      public void setFirstPoint( ScreenPoint firstPoint ) {
-      	this.firstPoint = firstPoint;
-      }
-
-      public ScreenPoint getFirstPoint() {
-      	return firstPoint;
       }
 
       public void setEndPoint( ScreenPoint endPoint ) {

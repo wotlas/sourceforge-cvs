@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.message.description;
 
 import java.io.DataInputStream;
@@ -25,7 +25,8 @@ import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
 import wotlas.common.message.MessageRegistry;
-import wotlas.common.Player;
+import wotlas.common.message.movement.*;
+import wotlas.common.*;
 import wotlas.common.character.WotCharacter;
 import wotlas.common.universe.WotlasLocation;
 
@@ -91,7 +92,6 @@ public class PlayerDataMessage extends NetMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void encode( DataOutputStream ostream ) throws IOException {
-
       // Wotlas Location
          ostream.writeInt( player.getLocation().getWorldMapID() );
          ostream.writeInt( player.getLocation().getTownMapID() );
@@ -100,18 +100,21 @@ public class PlayerDataMessage extends NetMessage
          ostream.writeInt( player.getLocation().getRoomID() );
 
       // Player Data
-         ostream.writeInt( player.getX() );
-         ostream.writeInt( player.getY() );
-         
          writeString( player.getPlayerName(), ostream );
          writeString( player.getFullPlayerName(), ostream );
-
          writeString( player.getPrimaryKey(), ostream );
+
+         writeString( player.getMovementComposer().getClass().getName(), ostream );
+
+         MovementUpdateMessage updateMsg = player.getMovementComposer().getUpdate();
+
+         writeString( updateMsg.getClass().getName(), ostream );
+         updateMsg.encode( ostream );
 
       // Wotlas Character Data
          writeString( player.getWotCharacter().getClass().getName(), ostream );
          ostream.writeBoolean( publicInfoOnly );
-         player.getWotCharacter().encode( ostream, publicInfoOnly );
+         player.getWotCharacter().encode( ostream, publicInfoOnly ); // call to encode character's data
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -140,13 +143,14 @@ public class PlayerDataMessage extends NetMessage
          player.setLocation( wotLoc );
 
       // Player Data
-         player.setX( istream.readInt() );
-         player.setY( istream.readInt() );
-
          player.setPlayerName( readString( istream ) );
          player.setFullPlayerName( readString( istream ) );
-
          player.setPrimaryKey( readString( istream ) );
+
+      // Movement Composer
+         MovementComposer mvComposer = (MovementComposer) Tools.getInstance( readString( istream ) );
+         MovementUpdateMessage uMsg = (MovementUpdateMessage) Tools.getInstance( readString( istream ) );
+         uMsg.decode( istream );
 
       // Wotlas Character
          WotCharacter wotChar = (WotCharacter) Tools.getInstance( readString( istream ) );
@@ -154,6 +158,11 @@ public class PlayerDataMessage extends NetMessage
          
          wotChar.decode( istream, publicInfoOnly );
          player.setWotCharacter( wotChar );
+
+      // Movement Composer init
+         mvComposer.init( player );
+         mvComposer.setUpdate( uMsg ); // in this order, because the player must have been fully initialized
+         player.setMovementComposer( mvComposer );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

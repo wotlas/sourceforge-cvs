@@ -19,7 +19,8 @@
  
 package wotlas.libs.pathfinding;
 
-import wotlas.common.Tickable;
+import wotlas.common.*;
+import wotlas.common.message.movement.*;
 import wotlas.utils.*;
 
 import java.awt.Point;
@@ -34,7 +35,17 @@ import java.awt.Point;
  * @author Petrus, Aldiss
  */
 
-public class PathFollower implements Tickable {
+public class PathFollower implements MovementComposer {
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** AStar algorithm for pathfinding.
+   */
+    private static AStarDouble aStar = new AStarDouble();
+
+  /** size of a mask's cell (in pixels)
+   */
+    private static int tileSize = -1;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -60,9 +71,10 @@ public class PathFollower implements Tickable {
    */
     private float nextAngle;
 
-  /** Our current movement walking ? turning ? have we the right to turn ?
+  /** what's our current movement  ? walking ? turning ? do we have to provide
+   *  realistic rotations ?
    */
-    private boolean walkingAlongPath, turningAlongPath, noRotations;
+    private boolean walkingAlongPath, turningAlongPath, realisticRotations;
 
   /** Last update time.
    */
@@ -92,6 +104,54 @@ public class PathFollower implements Tickable {
    */
     private byte angularDirection;
 
+  /** Time when we initialized the last movement.
+   */
+    private long movementTimeStamp;
+
+ /*------------------------------------------------------------------------------------*/
+ 
+  /** Asociated Player.
+   */
+    private Player player;
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To init the MovementComposer classes with the ground's mask.
+    * @param mask two dimension mask representing the zones where the players can go.
+    * @param maskTileSize mask tile size (in pixels).
+    * @param playerSize represents the average player size ( in maskTileSize unit )
+    */
+     public void setMovementMask( boolean mask[][], int maskTileSize, int playerSize ) {
+         aStar.setMask( mask );
+         tileSize = maskTileSize;
+         aStar.setSpriteSize( playerSize );
+     }
+
+ /*------------------------------------------------------------------------------------*/
+
+   /** To get a path between two points via Astar.
+    * @param a first point
+    * @param b second point
+    * @return path
+    */
+     public static List findPath(  Point a, Point b ) {
+           List path = aStar.findPath( new Point( a.x/tileSize, a.y/tileSize ),
+                                       new Point( b.x/tileSize, b.y/tileSize ) );
+           path = aStar.smoothPath(path);
+                     
+           if( path==null || path.size()<2 )
+               return null; // no movement
+
+           if(path!=null)
+              for (int i=0; i<path.size(); i++) {
+                   Point p = (Point) path.elementAt(i);
+                   p.x *= tileSize;
+                   p.y *= tileSize;
+              }
+
+           return path;
+     }
+
  /*------------------------------------------------------------------------------------*/
 
   /** Empty Constructor.
@@ -99,7 +159,7 @@ public class PathFollower implements Tickable {
     public PathFollower() {
         walkingAlongPath = false;
         turningAlongPath = false;
-        noRotations = false;
+        realisticRotations = false;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -116,6 +176,15 @@ public class PathFollower implements Tickable {
         this.yPosition = yPosition;
         this.orientationAngle = orientationAngle;
     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To init this MovementComposer.
+    * @param player associated player.
+    */
+     public void init( Player player ) {
+     	this.player = player;
+     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -189,16 +258,6 @@ public class PathFollower implements Tickable {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To set the position from a screenPoint.
-    * @param p ScreenPoint
-    */
-     public void setPosition( ScreenPoint p ) {
-        xPosition = (float) p.x;
-        yPosition = (float) p.y;
-     }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
    /** To set the position from a Point.
     * @param p Point
     */
@@ -249,6 +308,101 @@ public class PathFollower implements Tickable {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** To set if we want realistic rotations or not.
+   * @param realisticRotations true if you want realistic rotations.
+   */
+     public void setRealisticRotations( boolean realisticRotations ) {
+     	this.realisticRotations = realisticRotations;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the movement's timeStamp.
+   */
+     public long getMovementTimeStamp() {
+         return movementTimeStamp;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get an update message representing the current movement state.
+   *  IMPORTANT : We don't set any primaryKey.
+   *
+   * @return a MovementUpdateMessage 
+   */
+     public MovementUpdateMessage getUpdate() {
+         return (MovementUpdateMessage) new PathUpdateMovementMessage( this, null );
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To update the current movement.
+   * @param updateMessage MovementUpdateMessage
+   */
+     public void setUpdate( MovementUpdateMessage updateMessage ) {
+           if( !(updateMessage instanceof PathUpdateMovementMessage) ) {
+               Debug.signal( Debug.ERROR, this, "Received bad update message :"+updateMessage.getClass());
+               return;
+           }
+
+           PathUpdateMovementMessage msg = (PathUpdateMovementMessage) updateMessage;
+
+           xPosition = (float)msg.srcPoint.x;
+           yPosition = (float)msg.srcPoint.y;
+           orientationAngle = msg.orientationAngle;
+
+           boolean walkingAlongPath = msg.isMoving;
+
+           if( walkingAlongPath ) {
+               Point pDst = new Point( msg.dstPoint.x, msg.dstPoint.y );
+               
+               if( tileSize>=0 ) {
+               	  // Astar initialized, re-creating path
+               	     path = findPath( new Point( (int)xPosition, (int)yPosition ),
+               	                      new Point( pDst.x, pDst.y ) );
+                     
+                     if( path==null ) {
+                     	 stopMovement();
+                         return; // no movement
+                     }
+
+                     updateMovementAspect();
+                     initMovement( path, msg.movementDeltaTime );
+               }
+               else {
+               	  // Astar not initialized, just saving data
+               	     path = new List(1,0);
+               	     path.addElement( pDst );
+               	     movementTimeStamp = System.currentTimeMillis();
+               }
+           }
+           else
+               stopMovement();
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To update speed & rotations
+   */
+      private void updateMovementAspect() {
+         realisticRotations = false; // default
+         speed = 60.0f;             // default
+
+         if( player==null || player.getLocation()==null )
+             return;
+
+         if ( player.getLocation().isRoom() ) {
+              realisticRotations = true;
+              speed = 60.0f;
+         }
+         else if ( player.getLocation().isTown() )
+              speed = 10.0f;
+         else if ( player.getLocation().isWorld() )
+              speed = 5.0f;
+      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** Our Tick method. Call this method regularly to update the position along the path.
    */
     public void tick() {
@@ -261,7 +415,7 @@ public class PathFollower implements Tickable {
    *  Method to call each tick to update the entity's position.
    *  This method does nothing if there is no current move.
    */
-    private void updatePathMovement() {
+    private synchronized void updatePathMovement() {
        if(!turningAlongPath && !walkingAlongPath)
           return;
 
@@ -314,15 +468,32 @@ public class PathFollower implements Tickable {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  // MOVEMENT CONTROL
+
+  /** To set a player's movement : movement from current position to the given point.
+   */
+     public void moveTo( Point endPosition ) {
+            path = findPath( new Point( (int)xPosition, (int)yPosition ),
+                             new Point( endPosition.x, endPosition.y ) );
+
+            if( path==null ) {
+                stopMovement();
+                return; // no movement
+            }
+
+            updateMovementAspect();
+            initMovement( path );
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
    /** Initialize a path movement from the start. This is the most method you should
     *  use the most. This method modifies the entire state of the PathFollower.
     *  To test if the movement is finished, call the isMoving method after each tick.
     *
     * @param path a valid path returned by the Astar algorithm.
-    * @param noRotations if true we take orientation variations into consideration,
-    *        if false we only follow the path without turning on ourself.
     */
-    public void initMovement( List path, boolean noRotations ) {
+    synchronized public void initMovement( List path ) {
 
       // 1 - Control
          if( path==null || path.size()<1 ) {
@@ -334,31 +505,15 @@ public class PathFollower implements Tickable {
          this.path = path;
          pathIndex = 1;
          lastUpdateTime = System.currentTimeMillis();
+         movementTimeStamp = lastUpdateTime;
 
          prevPoint =  getPosition();
          nextPoint = (Point) path.elementAt(pathIndex);
 
-         this.noRotations = noRotations;
          updateAngularNode();
 
       // 3 - We validate the movement...
          walkingAlongPath = true;
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-   /** Initialize a path movement from the start. This is the most method you should
-    *  use the most. This method modifies the entire state of the PathFollower.
-    *  To test if the movement is finished, call the isMoving method after each tick.
-    *
-    *  By default we take into consideration orientation variations.
-    *
-    * @param path a valid path returned by the Astar algorithm.
-    * @param noRotations if true we take angle variations into consideration, if
-    *        false we only follow the path without turning on ourself.
-    */
-    public void initMovement( List path ) {
-         initMovement( path, false );
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -372,10 +527,8 @@ public class PathFollower implements Tickable {
    * @param path current path followed by a player.
    * @param deltaTime deltaTime in ms since the player begun to follow the path (starting
    *        at the first point given in the path parameter)
-   * @param noRotations if true we take orientation variations into consideration,
-   *        if false we only follow the path without turning on ourself.
    */
-    public void initMovement( List path, int deltaTime, boolean noRotations ) {
+    synchronized public void initMovement( List path, int deltaTime ) {
 
      // 1 - Control
    	if(path==null || path.size()<1 ) {
@@ -385,6 +538,8 @@ public class PathFollower implements Tickable {
 
         if(path.size()==1)
            return; // no movement
+
+        this.path = path;
 
      // 2 - Position evaluation
    	float totalDistance = (deltaTime/1000.0f)*speed;
@@ -410,8 +565,8 @@ public class PathFollower implements Tickable {
                  prevPoint =  a0;
                  nextPoint = (Point) path.elementAt(pathIndex);
                  lastUpdateTime = System.currentTimeMillis();
+                 movementTimeStamp = lastUpdateTime;
 
-                 this.noRotations = noRotations;
                  updateAngularNode();
 
               // We validate the movement
@@ -433,24 +588,6 @@ public class PathFollower implements Tickable {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Given a path followed by a player (1) and an elapsed time since the movement begun (2)
-   *  we initialize our path movement at the computed "current" position.
-   *
-   *  The "current" position is totaly dependent from the speed at which we move. So be
-   *  sure to correctly initialize the PathFollower's speed BEFORE calling this method.
-   *
-   *  By default we take into consideration orientation variations.
-   *
-   * @param path current path followed by a player.
-   * @param deltaTime deltaTime in ms since the player begun to follow the path (starting
-   *        at the first point given in the path parameter)
-   */
-    public void initMovement( List path, int deltaTime ) {
-          initMovement( path, deltaTime, false );
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
   /** To update the angular movement at a Path node.
    */
     private void updateAngularNode() {
@@ -467,7 +604,7 @@ public class PathFollower implements Tickable {
         if( orientationAngle > nextAngle )
             angularDirection = -1;
 
-        if (noRotations)
+        if (realisticRotations)
           turningAlongPath = true;   // we will turn progressively, using the angularSpeed
         else {
           turningAlongPath = false;

@@ -22,6 +22,7 @@ package wotlas.common;
 import wotlas.common.character.*;
 import wotlas.common.universe.*;
 
+import java.io.*;
 
 /** Interface of a Wotlas Player.
  *
@@ -32,6 +33,13 @@ import wotlas.common.universe.*;
 
 public interface Player
 {
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Is this player a Master player ? ( directly controlled  by the client )
+    * @return true if this is a Master player, false otherwise.
+    */
+      public boolean isMaster();
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To get the player location.
@@ -140,10 +148,25 @@ public interface Player
 
    /** To set the player's character.
     *
-    *  @return WotCharacter player character
+    *  @param wotCharacter player character
     */
       public void setWotCharacter( WotCharacter wotCharacter );
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** To get the player's movement Composer.
+    *
+    *  @return player MovementComposer
+    */
+      public MovementComposer getMovementComposer();
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To set the player's movement Composer.
+    *
+    *  @param movement MovementComposer.
+    */
+      public void setMovementComposer( MovementComposer movementComposer );
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

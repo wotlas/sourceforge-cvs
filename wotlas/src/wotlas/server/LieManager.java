@@ -130,16 +130,13 @@ public class LieManager
   /** To get memories
    */
   public LieMemory[] getMemoriesArray() {
-//System.out.println("LieManager::getMemoriesArray() for player "+fakeNames[0]);
     if (memories==null) {
       return null;
     }
-//System.out.println("memories=\n"+memories+"\nmemories.getSize()="+memories.getSize());
     memories.resetIterator();
     LieMemory[] myMemoriesArray = new LieMemory[memories.getSize()];
     for (int k=0; k<memories.getSize(); k++) {
       myMemoriesArray[k] = memories.next();        
-//System.out.println("\tk=" + k + " otherPlayerKey=" + myMemoriesArray[k].otherPlayerKey + " meetsNumber=" + myMemoriesArray[k].meetsNumber);
     }
     return myMemoriesArray;
   }
@@ -147,7 +144,6 @@ public class LieManager
   /** To set memories
    */
   public void setMemoriesArray(LieMemory[] memoriesArr) {
-//System.out.println("LieManager::setMemories() for player "+fakeNames[0]);    
     if (memories==null) {
       memories = new LieMemoryIterator();
     } else {
@@ -155,7 +151,6 @@ public class LieManager
       memories.resetIterator();
     }
     for (int k=0; k<memoriesArr.length; k++) {
-//System.out.println("\tk=" + k + " otherPlayerKey=" + memoriesArr[k].otherPlayerKey + " meetsNumber=" + memoriesArr[k].meetsNumber);      
       memories.add(memoriesArr[k]);
     }
   }
@@ -231,8 +226,7 @@ public class LieManager
                   // must remove the first element
                   memories.resetIterator();
                   memories.remove();
-                }
-System.out.println("\tmemories=\n"+this);                
+                }           
                 return otherPlayer.getLieManager().getFakeName(oldOtherPlayerFakeNameIndex);                                
               }
             }
@@ -246,7 +240,6 @@ System.out.println("\tmemories=\n"+this);
               memories.resetIterator();
               memories.remove();
             }  
-System.out.println("\tmemories=\n"+this);            
             return otherPlayer.getLieManager().getFakeName(oldOtherPlayerFakeNameIndex);                                
           }
         }
@@ -257,7 +250,6 @@ System.out.println("\tmemories=\n"+this);
         System.out.println("\tplayer never met");      
       if (k>MEETS_NUMBER) {
         // not enough place to remember player
-System.out.println("\tmemories=\n"+this);        
         return otherPlayer.getLieManager().getCurrentFakeName();
       } 
       // Add player at the beginning of the LieMemoryIterator
@@ -265,8 +257,7 @@ System.out.println("\tmemories=\n"+this);
         System.out.println("\tinserting player");      
       memories.resetIterator();
       LieMemory myMemory = new LieMemory(otherPlayerKey, otherPlayer.getLieManager().getCurrentFakeNameIndex(), 0);
-      memories.insert(myMemory);   
-System.out.println("\tmemories=\n"+this);           
+      memories.insert(myMemory);         
       return addMeet(otherPlayer, meetType);
     }
   }

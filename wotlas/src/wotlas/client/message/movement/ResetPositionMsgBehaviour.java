@@ -54,7 +54,9 @@ public class ResetPositionMsgBehaviour extends ResetPositionMessage implements N
    *        this message.
    */
      public void doBehaviour( Object context ) {
-System.out.println("RESET POSITION MESSAGE");
+           if (DataManager.SHOW_DEBUG)      
+             System.out.println("RESET POSITION MESSAGE");
+             
         // The context is here a DataManager.
            DataManager dataManager = (DataManager) context;
            PlayerImpl player = dataManager.getMyPlayer();

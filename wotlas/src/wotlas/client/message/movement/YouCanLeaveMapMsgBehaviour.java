@@ -54,7 +54,8 @@ public class YouCanLeaveMapMsgBehaviour extends YouCanLeaveMapMessage implements
    *        this message.
    */
      public void doBehaviour( Object context ) {
-System.out.println("YOU CAN LEAVE MAP MESSAGE");
+           if (DataManager.SHOW_DEBUG)
+             System.out.println("YOU CAN LEAVE MAP MESSAGE");
 
         // The context is here a DataManager.
            DataManager dataManager = (DataManager) context;

@@ -54,7 +54,8 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
    *        this message.
    */
      public void doBehaviour( Object context ) {
-System.out.println("PATH UPDATE MESSAGE FOR PLAYER "+primaryKey);
+           if (DataManager.SHOW_DEBUG)
+             System.out.println("PATH UPDATE MESSAGE FOR PLAYER "+primaryKey);
 
         // The context is here a DataManager.
            DataManager dataManager = (DataManager) context;
@@ -84,12 +85,15 @@ System.out.println("PATH UPDATE MESSAGE FOR PLAYER "+primaryKey);
               }
 
               if(playerToUpdate!=null && playerToUpdate.getPrimaryKey().equals(primaryKey) ) {
+if (DataManager.SHOW_DEBUG)
 System.out.println("Movement successfully updated for "+primaryKey);
                  playerToUpdate.getMovementComposer().setUpdate( (MovementUpdateMessage)this );
                  return; // success !
               }
-              else
+              else {
+if (DataManager.SHOW_DEBUG)
 System.out.println("Movement NOOOT updated for "+primaryKey);
+              }
           }
 
      }

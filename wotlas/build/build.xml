@@ -71,7 +71,7 @@
         <echo message="   utils --> compiles the wotlas utils only"/>
         <echo message=""/>
         <echo message="   alice  --> compiles the alice part of wotlas (you'll need alicebot)"/>
-        <echo message="   client-jws --> compiles the whole client and builds a JAR for Java Web Start"/>
+        <echo message="   client-jar --> compiles the whole client and builds a JAR for Java Web Start"/>
         <echo message=""/>
         <echo message="   javadoc  --> generates the API documentation in the docs/api directory"/>
         <echo message="   clean    --> cleans up the directory"/>
@@ -113,7 +113,7 @@
 
     <!-- COMPILE JWS CLIENT -->
 
-    <target name="client-jws" depends="prepare,clean,client">
+    <target name="client-jar" depends="prepare,clean,client">
 
         <!-- JAR DIRS -->
         <mkdir dir="${build.dest}/jws/"/>
@@ -183,6 +183,7 @@
 
         <echo message="Cleaning..."/>
         <delete dir="${build.dest}/jws"/>
+        <echo message="Success. Don't forget to sign the jar with JarSigner..."/>
     </target>
 
     <!-- COMPILE SERVER ONLY -->

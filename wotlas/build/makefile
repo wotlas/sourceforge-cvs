@@ -120,9 +120,9 @@ server2:
 	$(JAVAC) -O -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_SERVER2)
 
 client:
-	$(JAVAC) -O -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_CLIENT)
+	$(JAVAC) -deprecation -O -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_CLIENT)
 
 client2:
-	$(JAVAC) -O -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_CLIENT2)
+	$(JAVAC) -deprecation -O -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_CLIENT2)
 
 ##########################################################################

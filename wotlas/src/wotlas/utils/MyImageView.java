@@ -75,9 +75,9 @@ public class MyImageView extends View implements ImageObserver, MouseListener,
               String src =
                 (String) fElement.getAttributes().getAttribute
                    (HTML.Attribute.SRC);
-              System.out.println("before src: " + src);
+              //System.out.println("before src: " + src);
               src = processSrcPath(src);
-              System.out.println("after src: " + src);
+              //System.out.println("after src: " + src);
               fImage = Toolkit.getDefaultToolkit().createImage(src);
               try { waitForImage(); }
               catch (InterruptedException e) { fImage = null; }

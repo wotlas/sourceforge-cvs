@@ -389,7 +389,7 @@ public class InteriorMapData implements MapData
         newRoomID = myRoom.isInOtherRoom( latestRoomLink, myPlayer.getCurrentRectangle() );
       } else {
         newRoomID = myRoom.getRoomID();
-        System.out.println("Net congestion => reseting the room");
+        //System.out.println("Net congestion => resetting the room");
         resetRoom = false;
       }
 

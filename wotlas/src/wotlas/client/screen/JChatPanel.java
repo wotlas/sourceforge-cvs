@@ -19,16 +19,27 @@
 
 package wotlas.client.screen;
 
+import wotlas.client.DataManager;
+import wotlas.client.PlayerImpl;
+
+import wotlas.common.chat.*;
+import wotlas.common.message.chat.*;
+import wotlas.common.universe.WotlasLocation;
+
+import wotlas.utils.Debug;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+
+import java.util.Hashtable;
 
 /** JPanel to show the chat engine
  *
  * @author Petrus
  */
 
-public class JChatPanel extends JPanel implements MouseListener
+public class JChatPanel extends JPanel implements MouseListener, ActionListener
 {
 
   /*------------------------------------------------------------------------------------*/  
@@ -37,12 +48,14 @@ public class JChatPanel extends JPanel implements MouseListener
   static final int CHAT_SPEAK = 1;
   static final int CHAT_SHOUT = 2;
  
-  ImageIcon iconUp = new ImageIcon("images/th_up.gif");
-  ImageIcon iconDown = new ImageIcon("images/th_dn.gif");
+  ImageIcon iconUp = new ImageIcon("..\\base\\graphics\\gui\\chat\\myrddraal.gif");
+  ImageIcon iconDown = new ImageIcon("..\\base\\graphics\\gui\\chat\\madmyrddraal.gif");
   
   /** Our tabbedPane
    */
   JTabbedPane tabbedPane;
+  
+  private Hashtable chatRooms;
  
  /*------------------------------------------------------------------------------------*/  
  
@@ -52,20 +65,6 @@ public class JChatPanel extends JPanel implements MouseListener
     super();
 
     tabbedPane = new JTabbedPane();
-
-    /*Component panel1 = makeTextPanel("Blah");
-    tabbedPane.addTab("#Salon", iconUp, panel1, "Main room");
-    tabbedPane.setSelectedIndex(0);
-
-    Component panel2 = makeTextPanel("Blah blah");
-    tabbedPane.addTab("#Philo", iconUp, panel2, "Room for philosophs");
-
-    Component panel3 = makeTextPanel("Blah blah blah");
-    tabbedPane.addTab("#Science", null, panel3, "Room for scientists");
-    
-    Component panel4 = makeTextPanel("Blah blah blah");
-    tabbedPane.addTab("#Bio", null, panel4, "Room for biologists");
-    */
     
     addChatRoom("Current Room");
 
@@ -73,23 +72,72 @@ public class JChatPanel extends JPanel implements MouseListener
 
     // NORTH
     JToolBar chatToolbar = new JToolBar();
+    chatToolbar.setFloatable(false);
+        
+    JButton b_createChatRoom = new JButton(new ImageIcon("..\\base\\graphics\\gui\\chat\\smile.gif"));
+    b_createChatRoom.setActionCommand("createChatRoom");
+    b_createChatRoom.addActionListener(this);
+    b_createChatRoom.setToolTipText("Create a new chat room");
+    chatToolbar.add(b_createChatRoom);
     
-    //chatToolbar.setPreferredSize(new Dimension(10,10));
-    JButton createGroupButton = new JButton(new ImageIcon("images/th_up.gif"));
-    createGroupButton.setToolTipText("Create a new group");
-    chatToolbar.add(createGroupButton);
-    JButton leaveGroupButton = new JButton(new ImageIcon("images/th_dn.gif"));
-    leaveGroupButton.setToolTipText("Leave the current new group");
-    chatToolbar.add(leaveGroupButton);
+    JButton b_leaveChatRoom = new JButton(new ImageIcon("..\\base\\graphics\\gui\\chat\\perplexed.gif"));
+    b_leaveChatRoom.setActionCommand("leaveChatRoom");
+    b_leaveChatRoom.addActionListener(this);
+    b_leaveChatRoom.setToolTipText("Leave the current chat room");
+    chatToolbar.add(b_leaveChatRoom);
+    
+    JButton b_deleteChatRoom = new JButton(new ImageIcon("..\\base\\graphics\\gui\\chat\\dead.gif"));
+    b_deleteChatRoom.setActionCommand("deleteChatRoom");
+    b_deleteChatRoom.addActionListener(this);
+    b_deleteChatRoom.setToolTipText("Delete the current chat room");
+    chatToolbar.add(b_deleteChatRoom);
     
     //Add the tabbed pane to this panel.
-    setLayout(new GridLayout(1, 1, 0, 0)); 
-    //setLayout(new BorderLayout());
-    //add("Center", chatToolbar);
-    add("South", tabbedPane);
+    //setLayout(new GridLayout(1, 1, 0, 0)); 
+    setLayout(new BorderLayout());
+    add("North", chatToolbar);
+    add("Center", tabbedPane);
       
   }
 
+ /*------------------------------------------------------------------------------------*/  
+ 
+  /** To add a chatRoom.
+   *
+   * @param chatRoom ChatRoom to add
+   * @return false if the chatRoom already exists, true otherwise
+   */
+  public boolean addChatRoom(ChatRoom chatRoom) {
+    if ( chatRooms.containsKey(chatRoom.getPrimaryKey()) ) {
+      Debug.signal( Debug.CRITICAL, this, "addChatRoom failed: key " + chatRoom.getPrimaryKey()
+                      + " already in " + this );
+      return false;
+    }
+
+    chatRooms.put(chatRoom.getPrimaryKey(), chatRoom);
+    return true;    
+  }
+
+ /*------------------------------------------------------------------------------------*/  
+
+  /** To remove a chatRoom.   
+   *
+   * @param chatRoom ChatRoom to remove
+   * @return false if the chatRoom doesn't exists, true otherwise
+   */
+  public boolean removeChatRoom(ChatRoom chatRoom) {
+    if ( !chatRooms.containsKey(chatRoom.getPrimaryKey()) ) {
+      Debug.signal( Debug.CRITICAL, this, "removeChatRoom failed: key " + chatRoom.getPrimaryKey()
+                      + " not found in " + this );
+      return false;
+    }
+
+    chatRooms.remove(chatRoom.getPrimaryKey() );
+    return true;
+  }
+
+ /*------------------------------------------------------------------------------------*/  
+  
   protected Component makeTextPanel(String text) {
     JPanel panelChat = new JPanel(false);
     panelChat.setLayout(new BorderLayout());
@@ -132,7 +180,44 @@ public class JChatPanel extends JPanel implements MouseListener
     Component panelRoom = makeTextPanel(roomName);
     tabbedPane.addTab("#" + roomName, iconUp, panelRoom, roomName + " channel");    
   }
+
+ /*------------------------------------------------------------------------------------*/ 
  
+  /** Called when an action is performed.
+   */
+  public void actionPerformed(ActionEvent e) {
+    String actionCommand = e.getActionCommand();
+    if (actionCommand != null) {
+      System.out.println("Action command : " + actionCommand);
+      if (actionCommand.equals("createChatRoom")) {
+        PlayerImpl myPlayer = DataManager.getDefaultDataManager().getMyPlayer();        
+        WotlasLocation chatRoomLocation = myPlayer.getLocation();
+        String chatRoomName = "";
+        if ( chatRoomLocation.isRoom() ) {
+          chatRoomName = myPlayer.getMyRoom().getShortName();
+        } else if ( chatRoomLocation.isTown() ) {
+          chatRoomName = "Town chat room";
+        } else if ( chatRoomLocation.isWorld() ) {
+          chatRoomName = "World chat room";
+        }        
+          
+        myPlayer.sendMessage( new ChatRoomCreationMessage( chatRoomName,
+                                                           myPlayer.getPrimaryKey(),
+                                                           chatRoomLocation
+                                                          ) );
+        
+      } else if (actionCommand.equals("leaveChatRoom")) {
+        
+      } else if (actionCommand.equals("deleteChatRoom")) {
+        
+      } else {          
+        System.out.println("Err : unknown actionCommand");      
+      }
+    } else {
+      System.out.println("No action command found!");
+    }    
+  }
+
  /*------------------------------------------------------------------------------------*/ 
  
   /**

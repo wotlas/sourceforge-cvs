@@ -11,7 +11,7 @@
 # On Unix gnu make should find your sh automatically. 
 #
 
-SHELL = c:\\winnt\cmd.exe
+SHELL = d:\\winnt\cmd.exe
 
 
 # PACKAGES
@@ -43,6 +43,9 @@ COMMON_PACKAGES = wotlas/common \
 COMMON_PACKAGES2 = wotlas/common/message/description \
                    wotlas/common/message/movement
 
+COMMON_PACKAGES3 = wotlas/common/chat \
+                   wotlas/common/message/chat
+
 
 SERVER_PACKAGES = wotlas/server \
                   wotlas/server/setup \
@@ -51,6 +54,7 @@ SERVER_PACKAGES = wotlas/server \
 
 SERVER_PACKAGES2 = wotlas/server/message/movement
 
+SERVER_PACKAGES3 = wotlas/server/message/chat
 
 CLIENT_PACKAGES = wotlas/client \
                   wotlas/client/screen \
@@ -60,6 +64,7 @@ CLIENT_PACKAGES = wotlas/client \
 
 CLIENT_PACKAGES2 = wotlas/client/message/movement
 
+CLIENT_PACKAGES3 = wotlas/client/message/chat
 
 GRAPHICS_DEMO_PACKAGE = test/graphics/color
 
@@ -81,19 +86,25 @@ SRC_COMMON = $(foreach dir,$(COMMON_PACKAGES),$(SRCDIR)/$(dir)/*.java)
 
 SRC_COMMON2 = $(foreach dir,$(COMMON_PACKAGES2),$(SRCDIR)/$(dir)/*.java)
 
+SRC_COMMON3 = $(foreach dir,$(COMMON_PACKAGES3),$(SRCDIR)/$(dir)/*.java)
+
 SRC_SERVER = $(foreach dir,$(SERVER_PACKAGES),$(SRCDIR)/$(dir)/*.java)
 
 SRC_SERVER2 = $(foreach dir,$(SERVER_PACKAGES2),$(SRCDIR)/$(dir)/*.java)
+
+SRC_SERVER3 = $(foreach dir,$(SERVER_PACKAGES3),$(SRCDIR)/$(dir)/*.java)
 
 SRC_CLIENT = $(foreach dir,$(CLIENT_PACKAGES),$(SRCDIR)/$(dir)/*.java)
 
 SRC_CLIENT2 = $(foreach dir,$(CLIENT_PACKAGES2),$(SRCDIR)/$(dir)/*.java)
 
+SRC_CLIENT3 = $(foreach dir,$(CLIENT_PACKAGES3),$(SRCDIR)/$(dir)/*.java)
+
 SRC_GRDEMO = $(foreach dir,$(GRAPHICS_DEMO_PACKAGE),$(SRCDIR)/$(dir)/*.java)
 
 
 # And we compile it all
-all: utils libs libs2 common common2 server server2 client client2
+all: utils libs libs2 common common2 common3 server server2 server3 client client2 client3
 
 utils:
 	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_UTILS)
@@ -110,17 +121,27 @@ common:
 common2:
 	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_COMMON2)
 
+common3:
+	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_COMMON3)
+
 server:
 	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_SERVER)
 
 server2:
 	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_SERVER2)
 
+server3:
+	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_SERVER3)
+
+
 client:
 	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_CLIENT)
 
 client2:
 	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_CLIENT2)
+
+client3:
+	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_CLIENT3)
 
 grdemo:
 	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_GRDEMO)

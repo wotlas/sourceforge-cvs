@@ -21,7 +21,7 @@ package wotlas.common.universe;
 
  /** Location class. Identifies a precise location in the universe. Normally,
   *  it points out a room of an InteriorMap, building, town, world.<br>
-  *  But it can point out :<p><br>
+  *  But it can points out :<p><br>
   *
   *  - a World ( worldMapId set, townMapId=-1, buildingID=-1, interiorMapId=-1, roomID=-1)<br>
   *
@@ -192,7 +192,7 @@ public class WotlasLocation
     * @return true if it points out a room.
     */
     public boolean isRoom() {
-        if( building>=0 && townMapID>=0 )
+        if( buildingID>=0 && townMapID>=0 )
             return true;
        return false;
     }

@@ -479,31 +479,9 @@ public class EditorDataManager extends Thread implements Tickable, Menu2DListene
      // We search for the owner of the object
         Object object = gDirector.findOwner( x, y );
 
-     // We take a look at the selected object the user clicked
-     // Is it a player ? a door ?
+        /*
+        if ( object instanceof ScreenObject ) {
 
-        if( object instanceof Door ) {
-          // We open/close the door IF the player is near enough...
-             Door door = (Door) object;
-
-             if (SHOW_DEBUG)
-                System.out.println("A door has been clicked...");
-
-          // player near enough the door ?
-              /*
-             if( door.isPlayerNear( myPlayer.getCurrentRectangle() ) ) {
-
-             }
-             else {
-              // we go to the door
-                 Point doorPoint = door.getPointNearDoor( myPlayer.getCurrentRectangle() );
-
-                 if( doorPoint!=null )
-                     // myPlayer.moveTo( doorPoint, worldManager );
-             }
-               */
-
-             return true;
         }
 //      else if( object instanceof BaseObject ) {
 //
@@ -514,6 +492,7 @@ public class EditorDataManager extends Thread implements Tickable, Menu2DListene
               Debug.signal(Debug.WARNING,this,"Unknown Object Clicked : "+object);
               return true;
         }
+         */
 
        return false; // event not for us
     }

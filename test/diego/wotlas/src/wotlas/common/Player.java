@@ -204,6 +204,11 @@ public interface Player extends PreciseLocationOwner
     * @return current Room, null if we are not in a room.
     */
       public Room getMyRoom();
+      
+   /** To get the player's current TileMap ( if we are in a TileMap ).
+    * @return current TileMap, null if we are not in a tileMap.
+    */
+      public TileMap getMyTileMap();
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

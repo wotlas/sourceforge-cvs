@@ -74,7 +74,8 @@ public class NetMessageFactory {
   /** Protected Empty Constructor. 
    */
      protected NetMessageFactory() {
-     	msgClasses = new Hashtable(50);
+//     	msgClasses = new Hashtable(50);
+     	msgClasses = new Hashtable(90);
 
        // We add system messages.
          addMessage( ServerWelcomeMsgBehaviour.class );
@@ -182,8 +183,10 @@ public class NetMessageFactory {
 
          Class searchedClass = (Class) msgClasses.get( msgSuperClassName );
 
-         if( searchedClass==null )
+         if( searchedClass==null ){
+             System.out.println(" diego: problems with action "+msgSuperClassName );
              throw new ClassNotFoundException(msgSuperClassName);
+         }
 
          return (NetMessageBehaviour) searchedClass.newInstance();
      }
@@ -191,4 +194,3 @@ public class NetMessageFactory {
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

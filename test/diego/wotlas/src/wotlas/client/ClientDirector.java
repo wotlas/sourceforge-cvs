@@ -29,6 +29,7 @@ import wotlas.utils.FileTools;
 import wotlas.utils.Tools;
 import wotlas.common.universe.*;
 
+import wotlas.common.action.*;
 import wotlas.common.*;
 
 import java.io.File;
@@ -107,6 +108,7 @@ public class ClientDirector {
 
         /*  first of all Manage the Preloader for ClientDirector*/
         WorldManager.PRELOADER_STATUS = PreloaderEnabled.LOAD_CLIENT_DATA;
+        UserAction.InitAllActions();
 
         // STEP 0 - We parse the command line options
         boolean classicLogWindow = false;

@@ -52,7 +52,7 @@ import java.util.Hashtable;
  * @see wotlas.common.Player
  */
 
-public class PlayerImpl implements Player, SpriteDataSupplier, Tickable {
+public class PlayerImpl implements Player, SpriteDataSupplier,FakeSpriteDataSupplier, Tickable {
 
   /** Period between the display of two away messages for ONE player.
    */

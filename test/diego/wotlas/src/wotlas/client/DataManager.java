@@ -43,16 +43,16 @@ import wotlas.libs.sound.SoundLibrary;
 import wotlas.libs.aswing.*;
 
 import wotlas.utils.*;
+import wotlas.common.action.*;
+import wotlas.common.message.action.*;
+import wotlas.common.screenobject.*;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-
 import java.io.File;
 import java.io.IOException;
-
 import javax.swing.*;
-
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
@@ -66,6 +66,14 @@ import java.util.Properties;
 
 public class DataManager extends Thread implements NetConnectionListener, Tickable,
                                                    Menu2DListener {
+
+  public final static byte COMMAND_NOTHING  = 0;
+  public final static byte COMMAND_CAST     = 1;
+  public final static byte COMMAND_ABILITY  = 2;
+  public final static byte COMMAND_BASIC    = 3;
+
+  public byte commandRequest = COMMAND_NOTHING;
+  public UserAction commandAction = null;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -966,13 +974,100 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
     public boolean mouseSelect( int x, int y, boolean isLeftClick ) {
 
-     // We search for the owner of the object
+        // We search for the owner of the object
         Object object = gDirector.findOwner( x, y );
 
-     // We take a look at the selected object the user clicked
-     // Is it a player ? a door ?
+        // We take a look at the selected object the user clicked
+        // Is it a player ? a door ? an objecOnTheScreen
 
-        if ( object instanceof PlayerImpl ) {
+        if( commandRequest != COMMAND_NOTHING ) {
+            // init vars
+            byte indexForMaskTarget = 0;
+            byte targetRange = 0;
+            WotlasLocation loc = new WotlasLocation(myPlayer.getLocation());
+            
+            // checking what's the target
+            if( object==null ) {
+                if (SHOW_DEBUG)
+                    System.out.println("The ground has been clicked...");
+                indexForMaskTarget = UserAction.TARGET_GROUND;
+            } 
+            else if ( object instanceof ItemOnTheScreen ) {
+                ItemOnTheScreen item = (ItemOnTheScreen) object;
+                if (SHOW_DEBUG)
+                    System.out.println("An item has been clicked...");
+                indexForMaskTarget = UserAction.TARGET_ITEM;
+            } 
+            else  {
+                commandRequest = COMMAND_NOTHING;
+                if (SHOW_DEBUG) {
+                    System.out.println("Action aborting: wrong target class.....");
+                }
+            } 
+
+            
+            /*
+            // player near enough the door ?
+            if( door.isPlayerNear( myPlayer.getCurrentRectangle() ) ) {
+            }
+            */
+            targetRange = UserAction.TARGET_RANGE_SAME_MAP;
+            
+            // checking if the target and the range are right
+            if( !commandAction.isValidTarget(indexForMaskTarget, targetRange) ){
+                if (SHOW_DEBUG) {
+                    System.out.println("Action aborting: invalid target/range.....");
+                }
+                loc = null;
+                commandRequest = COMMAND_NOTHING;
+                getClientScreen().getMapPanel().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                return true;
+            }
+            
+            // executing command
+            switch(commandRequest) {
+                case COMMAND_CAST:
+                    // check if can cast
+                    // .....
+                    // check if have mana
+                    // .....
+                    // send message
+                    switch(targetRange){
+                        case UserAction.TARGET_RANGE_NONE:
+                            break;
+                        case UserAction.TARGET_RANGE_TOUCH:
+                        case UserAction.TARGET_RANGE_SHORT:
+                        case UserAction.TARGET_RANGE_MEDIUM:
+                        case UserAction.TARGET_RANGE_LONG:
+                        // case UserAction.TARGET_RANGE_SEE_AND_SHORT:
+                        // case UserAction.TARGET_RANGE_SEE_AND_MEDIUM:
+                        // case UserAction.TARGET_RANGE_SEE_AND_LONG:
+                        case UserAction.TARGET_RANGE_SAME_MAP:
+                            sendMessage( new CastActionWithPositionMessage( commandAction.getId(), x, y ) );
+                            break;
+                        case UserAction.TARGET_RANGE_ONE_MAP:
+                        case UserAction.TARGET_RANGE_MAP_ON_SAME_WORLD:
+                        case UserAction.TARGET_RANGE_ANY:
+                            sendMessage( new CastActionWithLocationMessage( commandAction.getId(), loc ) );
+                            break;
+                    }
+
+                    getClientScreen().getMapPanel().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                    commandRequest = COMMAND_NOTHING;
+                    loc = null;
+                    return true;
+
+            }
+
+            // reset vars and screen cursor
+            loc = null;
+            commandRequest = COMMAND_NOTHING;
+            getClientScreen().getMapPanel().setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            if (SHOW_DEBUG) {
+                System.out.println("Action aborted.....");
+            }
+        }
+        else if( object instanceof PlayerImpl ) {
           // We display selection and player info
              String previouslySelectedPlayerKey = "";
 

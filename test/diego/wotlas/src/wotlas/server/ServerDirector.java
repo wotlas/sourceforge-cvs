@@ -35,6 +35,7 @@ import wotlas.libs.aswing.ALoginDialog;
 
 import wotlas.common.environment.*;
 import wotlas.common.universe.*;
+import wotlas.common.action.*;
 
 import java.awt.Frame;
 import java.io.File;
@@ -138,6 +139,7 @@ public class ServerDirector implements Runnable, NetServerListener {
 
         /*  first of all Manage the Preloader for WorldGenerator*/
         WorldManager.PRELOADER_STATUS = PreloaderEnabled.LOAD_SERVER_DATA;
+        UserAction.InitAllActions();
 
         // STEP 0 - We parse the command line options
         boolean isDaemon = false;

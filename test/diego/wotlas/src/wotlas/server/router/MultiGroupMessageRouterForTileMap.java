@@ -46,19 +46,24 @@ import java.util.Iterator;
 
 public class MultiGroupMessageRouterForTileMap extends MessageRouter {
 
+    /** Our items/npc
+    */
+    protected Hashtable screenObject;
+//        player.setPrimaryKey( account.getAccountName() );
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Our Map.
+    /** Our Map.
     */
-     protected TileMap thisTileMap;
+    protected TileMap thisTileMap;
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Constructor. Just creates internals.
+    /** Constructor. Just creates internals.
     */
-     public MultiGroupMessageRouterForTileMap() {
-         super();
-     }
+    public MultiGroupMessageRouterForTileMap() {
+        super();
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

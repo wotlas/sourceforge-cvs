@@ -142,7 +142,7 @@ public class AielWarrior extends Male {
                     imageNr = EnvironmentManager.getDefaultNpcImageNr();
             }
 
-            fakeSprite = new FakeSprite( (SpriteDataSupplier) player, ImageLibRef.PLAYER_PRIORITY
+            fakeSprite = new FakeSprite( (FakeSpriteDataSupplier) player, ImageLibRef.PLAYER_PRIORITY
             , EnvironmentManager.getServerEnvironment().getGraphics(EnvironmentManager.SET_OF_NPC
             )[ EnvironmentManager.getDefaultPlayerImage() ], imageNr  );
             return fakeSprite;

@@ -109,5 +109,34 @@ public class MaskTools {
         else
             return false;
     }
+
+    static public byte set(byte mask, byte index){
+        if( 8 <= index){
+            System.out.println("set:Error making mask, index too high ["+index+"].");
+            return mask;
+        }
+        mask = (byte) ( mask | ( 1 << index ) );
+        return mask;
+    }
+
+    static public byte reset(byte mask, byte index){
+        if( 8 <= index){
+            System.out.println("reset:Error making mask, index too high ["+index+"].");
+            return mask;
+        }
+        mask = (byte) ( mask & (~( 1 << index )) );
+        return mask;
+    }
+
+    static public boolean isSet(byte mask, byte index){
+        if( 8 <= index){
+            System.out.println("isSet:Error making mask, index too high ["+index+"].");
+            return false;
+        }
+        if( (mask & ( 1 << index )) != 0 )
+            return true;
+        else
+            return false;
+    }
 }
 

@@ -30,18 +30,17 @@ import java.awt.geom.*;
  *  a FakeSprite, comes out from Sprite, i create it, 'cause i need 
  * to display part of an image, a tile in inside a GroupOfGraphics.
  * 
- * Why i need a dataSupplier? because the player can change his form/aspect
+ * Why i need an Owner?because the player can change his form/aspect
  * so i will use the dataSupplier to get the new.
  *
  * @author MasterBob, Aldiss, Petrus, Diego
- * @see wotlas.libs.graphics2D.drawable.SpriteDataSupplier
  */
 
 public class FakeSprite extends Drawable implements DrawableOwner {
 
-  /** Our SpriteDataSupplier.
+  /** Our owner.
    */
-     private SpriteDataSupplier dataSupplier;
+     private FakeSpriteDataSupplier dataSupplier;
 
   /** Current Image Identifier.
    */
@@ -54,10 +53,10 @@ public class FakeSprite extends Drawable implements DrawableOwner {
 
   /** Constructor. The anchor mode for rotations is set to CENTER_ANCHOR_POINT.
    *
-   * @param dataSupplier Sprite's data supplier
+   * @param owner 
    * @param priority sprite's priority
    */
-    public FakeSprite(SpriteDataSupplier dataSupplier, short priority
+    public FakeSprite(FakeSpriteDataSupplier dataSupplier, short priority
     ,GroupOfGraphics groupOfGraphics, int imageNr) {
     	super();
         this.dataSupplier = dataSupplier;
@@ -79,25 +78,7 @@ public class FakeSprite extends Drawable implements DrawableOwner {
         tick();
      }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To change the data supplier.
-   * @param dataSupplier new data Supplier.
-   */
-    public void setDataSupplier(SpriteDataSupplier dataSupplier) {
-        this.dataSupplier = dataSupplier;
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To get the data supplier.
-   * @return the sprite's data Supplier.
-   */
-    public SpriteDataSupplier getDataSupplier() {
-        return dataSupplier;
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Paint method called by the GraphicsDirector. The specified rectangle represents
    *  the displayed screen in background cordinates ( see GraphicsDirector ).

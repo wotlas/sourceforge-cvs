@@ -4,6 +4,9 @@
     <fileobject name="InfoPlugIn.java">
         <attr name="class_dependency_wotlas.client.screen.JPanelPlugIn" stringvalue="InfoPlugIn"/>
     </fileobject>
+    <fileobject name="AdminPlugIn.java">
+        <attr name="class_dependency_wotlas.client.screen.JPanelPlugIn" stringvalue="AdminPlugIn"/>
+    </fileobject>
     <fileobject name="InventoryPlugIn.java">
         <attr name="class_dependency_wotlas.client.screen.JPanelPlugIn" stringvalue="InventoryPlugIn"/>
     </fileobject>

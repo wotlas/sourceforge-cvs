@@ -21,15 +21,15 @@ package wotlas.libs.graphics2D.drawable;
 
 import wotlas.libs.graphics2D.ImageIdentifier;
 
-/** A SpriteDataSupplier defines the data access methods needed by a Sprite Object.
+/** A FakeSpriteDataSupplier defines the data access methods needed by a FakeSprite Object.
  *  If you plan not to use rotation / scaling / alpha, etc... just return the default
  *  value that is specified in the javadoc header.
  *
- * @author MasterBob, Aldiss
+ * @author MasterBob, Aldiss, Diego
  * @see wotlas.libs.graphics2D.drawable.Sprite
  */
 
-public interface SpriteDataSupplier {
+public interface FakeSpriteDataSupplier {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -53,36 +53,5 @@ public interface SpriteDataSupplier {
    */
     public ImageIdentifier getImageIdentifier();
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To get the eventual rotation angle. 0 means no rotation.
-   *
-   * @return angle in radians.
-   */
-    public double getAngle();
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To get the X factor for scaling... 1.0 means no X scaling
-   *
-   * @return X scale factor
-   */
-    public double getScaleX();
-
-  /** To get the Y factor for scaling... 1.0 means no Y scaling
-   *
-   * @return Y scale factor
-   */
-    public double getScaleY();
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To get the image's transparency ( 0.0 means invisible, 1.0 means fully visible ). 
-   *
-   * @return alpha
-   */
-    public float getAlpha();
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }
+

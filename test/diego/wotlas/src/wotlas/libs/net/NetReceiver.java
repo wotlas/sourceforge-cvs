@@ -1,6 +1,6 @@
 /*
  * Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
- * Copyright (C) 2001-2002 WOTLAS Team
+ * Copyright (C) 2001-2003 WOTLAS Team
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -155,7 +155,6 @@ public class NetReceiver extends NetThread {
         catch( Exception e ){
              // Real error !
                Debug.signal( Debug.ERROR, this, e ); // serious error while processing message
-               e.printStackTrace();
         }
 
      // we ask the NetConnection to perform some cleanup
@@ -303,4 +302,3 @@ public class NetReceiver extends NetThread {
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

@@ -17,29 +17,25 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-// TODO
-// - getWotCharacter
 
 package wotlas.client;
 
-import wotlas.common.character.WotCharacter;
 import wotlas.common.character.*;
 import wotlas.common.ImageLibRef;
 import wotlas.common.Player;
 import wotlas.common.Tickable;
 import wotlas.common.universe.*;
 
-import wotlas.libs.graphics2D.Animation;
-import wotlas.libs.graphics2D.ImageLibrary;
 import wotlas.libs.graphics2D.*;
-import wotlas.libs.graphics2D.drawable.Sprite;
 import wotlas.libs.graphics2D.drawable.*;
 
-import wotlas.utils.Debug;
-import wotlas.utils.List;
+import wotlas.libs.pathfinding.PathFollower;
+
+import wotlas.utils.*;
 
 import java.awt.Point;
 import java.awt.Rectangle;
+
 
 /** Class of a Wotlas Player.
  *
@@ -74,17 +70,9 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Player's trajectory
+  /** Player's PathFollower for movements...
    */
-  private List trajectory;
-
-  /** Current position in trajectory
-   */
-  private int indexTrajectory = 0;
-
-  /** End of the trajectory
-   */
-  private Point endPosition;
+  private PathFollower pathFollower = new PathFollower();
 
  /*------------------------------------------------------------------------------------*/
 
@@ -102,28 +90,9 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
 
  /*------------------------------------------------------------------------------------*/
 
-  /** X coordinate
-   */
-  private int x;
-
-  /** Y coordinate
-   */
-  private int y;
-
-  /** Current position
-   */
-  private float positionX, positionY;
-
-  /** our angle (in rads)
-   */
-  private double angleRad;
-
- /*------------------------------------------------------------------------------------*/
-
   /** Locks
    */
   private byte trajectoryLock[] = new byte[0];
-  private byte endLock[] = new byte[0];
   private byte xLock[] = new byte[0];
   private byte yLock[] = new byte[0];
   private byte angleLock[] = new byte[0];
@@ -145,11 +114,6 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
     Debug.signal( Debug.NOTICE, null, "PlayerImpl::init");
     animation = new Animation(wotCharacter.getImage(location));
     sprite = (Sprite) wotCharacter.getDrawable(this);
-    endPosition = new Point();
-    trajectory = new List();
-    positionX = (float)x;
-    positionY = (float)y;
-
   }
 
   /** Called after graphicsDirector's init
@@ -259,7 +223,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
    */
   public int getX() {
     synchronized( xLock ) {
-      return x;
+      return (int) pathFollower.getXPosition();
     }
   }
 
@@ -269,7 +233,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
    */
   public int getY() {
     synchronized( yLock ) {
-      return y;
+      return (int) pathFollower.getYPosition();
     }
   }
 
@@ -289,9 +253,9 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
    */
   public double getAngle() {
     synchronized( angleLock ) {
-      return angleRad;
+      return pathFollower.getOrientationAngle();
     }
-  };
+  }
 
   /** To get the X factor for scaling... 1.0 means no X scaling
    *
@@ -299,7 +263,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
    */
   public double getScaleX() {
     return 1.0;
-  };
+  }
 
   /** To get the Y factor for scaling... 1.0 means no Y scaling
    *
@@ -307,7 +271,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
    */
   public double getScaleY() {
     return 1.0;
-  };
+  }
 
   /** To get the image's transparency ( 0.0 means invisible, 1.0 means fully visible ).
    *
@@ -315,7 +279,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
    */
   public float getAlpha() {
     return 1.0f;
-  };
+  }
 
  /*------------------------------------------------------------------------------------*/
 
@@ -324,8 +288,7 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
    */
   public void setX( int x ){
     synchronized( xLock ) {
-      this.x = x;
-
+         pathFollower.setXPosition( (float)x );
     }
   }
 
@@ -334,57 +297,90 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
    */
   public void setY( int y ){
     synchronized( yLock ) {
-      this.y = y;
-
+         pathFollower.setYPosition( (float)y );
     }
   }
 
+  /** To set the angle.
+   */
   public void setAngle( double angleRad ) {
     synchronized( angleLock ) {
-      this.angleRad = angleRad;
+         pathFollower.setOrientationAngle( angleRad );
     }
   }
 
-  public void setPosition(wotlas.utils.ScreenPoint p) {
-    positionX = (float) p.x;
-    positionY = (float) p.y;
+  /** To set the position.
+   */
+  public void setPosition(ScreenPoint p) {
+         setX( p.x );
+         setY( p.y );
+  }
+
+  /** To set player's speed
+   */
+  public void setSpeed( float speed ) {
+     pathFollower.setSpeed( (float)speed );
+  }
+
+  /** To get player's speed
+   */
+  public float getSpeed() {
+    return pathFollower.getSpeed();
+  }
+
+  /** To set player's angular speed
+   */
+  public void setAngularSpeed(float angularSpeed) {
+    pathFollower.setAngularSpeed( angularSpeed );
+  }
+
+  /** To get player's angular speed
+   */
+  public float getAngularSpeed() {
+    return pathFollower.getAngularSpeed();
+  }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get destination of trajectory
+   */
+   public Point getEndPosition() {
+     return pathFollower.getTargetPosition();
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To set the player's movement.
+   */
+   public void initMovement(List path) {
+      synchronized( trajectoryLock ) {
+         boolean noRotations = true;
+
+         if ( location.isRoom() ) {
+              noRotations = false;
+              pathFollower.setSpeed( 60.0f );
+         }
+         else if ( location.isTown() )
+              pathFollower.setSpeed( 10.0f );
+         else if ( location.isWorld() )
+              pathFollower.setSpeed( 5.0f );
+
+         pathFollower.initMovement( path, noRotations );
+      }
   }
 
  /*------------------------------------------------------------------------------------*/
 
-  /** To get destination of trajectory
+  /** Returns true if player is moving
    */
-  public Point getEndPosition() {
-    return endPosition;
+  public boolean isMoving() {
+    return pathFollower.isMoving();
   }
 
-  /** To set endPosition of trajectory.
+  /** To stop the player's movement
    */
-  public void setEndPosition(int x, int y) {
-    synchronized( endLock ) {
-      this.endPosition.x = x;
-      this.endPosition.y = y;
-    }
-  }
-
-  /** To set endPosition of trajectory.
-   */
-  public void setEndPosition(Point endPoint) {
-    synchronized( endLock ) {
-      this.endPosition = endPoint;
-    }
-  }
-
-  /** To set the trajectory
-   */
-  public void setTrajectory(List list) {
-    if (list != null) {
-      synchronized( trajectoryLock ) {
-        this.trajectory = list;
-        indexTrajectory = 0;
-        walkingAlongPath = true;
-      }
-    }
+  public void stopMoving() {
+    pathFollower.stopMovement();
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -404,295 +400,21 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
 
  /*------------------------------------------------------------------------------------*/
 
-  /** Returns true if player is moving
-   */
-  public boolean isMoving() {
-    return (turningAlongPath || walkingAlongPath);
-  }
-
-  /** To stop the player's movement
-   */
-  public void stopMoving() {
-    walkingAlongPath = false;
-    turningAlongPath = false;
-    path = null;
-    nextPoint = null;
-    prevPoint = null;
-  }
-
   /** Tick
    */
   public void tick() {
 
-    //if (location.isRoom()) {
-      // Movement on InteriorMap (with rotations)
-      if (turningAlongPath || walkingAlongPath) {
-        updatePathMovement();
-        x = (int) positionX;
-        y = (int) positionY;
-        animation.tick();
-        sprite.tick();
+   // 1 - Movement Update
+      synchronized( trajectoryLock ) {
+           pathFollower.tick();
       }
-      return;
-    //}
 
-    // Movement on TownMap or WorldMap (without rotations)
-    /*if (indexTrajectory < trajectory.size()) {
-      Point newPosition = (Point) trajectory.elementAt(indexTrajectory);
-      x = newPosition.x*DataManager.TILE_SIZE;
-      y = newPosition.y*DataManager.TILE_SIZE;
-      animation.tick();
-      sprite.tick();
-      indexTrajectory++;
-      return;
-    } else { //if (indexTrajectory == trajectory.size()) {
-      walkingAlongPath = false;
-      indexTrajectory = 0;
-      trajectory = null;
-      trajectory = new List();
-    }*/
-
+   // 2 - Animation Update
+      if(!pathFollower.isMoving())
+         animation.reset();
+      else
+         animation.tick();
   }
 
  /*------------------------------------------------------------------------------------*/
-
-//******************************************************************
-//******* AStar with angle and velocity ****************************
-//******************************************************************
-
-  /** Player speed : 40 pixel/s
-   */
-  private int speed = 60;
-
-  /** Player default angular speed : 3 rad/s
-   */
-  public float angularSpeed = 3;
-
-  //---------------------------------------------------------------------------//
-
-   /** Previous point in path.
-    */
-    private Point prevPoint;
-
-   /** Next point in path & next angle.
-    */
-    private Point nextPoint;
-    private float nextAngle;
-
-   /** Our current index in the Path ( next point we target )
-    */
-    private int pathIndex;
-
-   /** The computed Astar path
-    */
-    private List path;
-
-   /** Our current movement walking ? turning ?
-    */
-    private boolean walkingAlongPath, turningAlongPath;
-
-   /** Last update time.
-    */
-    private long lastUpdateTime;
-
-   /** Angular Direction : +1 for positive direction, -1 otherwise.
-    */
-    private byte angularDirection;
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To set player's speed
-   */
-  public void setSpeed(int speed) {
-    this.speed = speed;
-  }
-
-  /** To get player's speed
-   */
-  public int getSpeed() {
-    return speed;
-  }
-
-  /** To set player's angular speed
-   */
-  public void setAngularSpeed(float angularSpeed) {
-    this.angularSpeed = angularSpeed;
-  }
-
-  /** To get player's angular speed
-   */
-  public float getAngularSpeed() {
-    return angularSpeed;
-  }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Update Movement along path.
-   *  Method to call each tick to update the entity's position.
-   *  This method does nothing if there is no current move.
-   */
-    void updatePathMovement() {
-
-       if(!turningAlongPath && !walkingAlongPath)
-          return;
-
-       long now = System.currentTimeMillis();
-       double deltaT = ( now-lastUpdateTime )/1000.0f;
-       lastUpdateTime = now;
-
-      if (turningAlongPath) {
-        // Orientation update
-           setAngle( getAngle() + angularDirection*deltaT*angularSpeed );
-
-        // End of turn ?
-        double deltaA = (float)( (nextAngle-getAngle())*angularDirection);
-
-           if( deltaA<=0 ) {
-                turningAlongPath = false;
-                setAngle(angle( new Point( (int)positionX, (int)positionY), nextPoint) );
-           }
-           else if(deltaA>Math.PI/8)
-                return; // no footsteps, the angle is to great, we just turn...
-       }
-        /*else {
-        setAngle( angle( new Point( position.x, position.y ), nextPoint) );
-       }*/
-
-    // 1 - Position Update
-       positionX = (float)(positionX + speed*deltaT*Math.cos( getAngle() ) );
-       positionY = (float)(positionY + speed*deltaT*Math.sin( getAngle() ) );
-
-    // 2 - Have we reached the next Path Point ?
-       float deltaD = distance( new Point( (int)positionX, (int)positionY ), prevPoint ) - distance( nextPoint, prevPoint );
-
-       if( deltaD >= 0 ) {
-           pathIndex++;
-
-         // 2.1 - Path Over ?
-            if( pathIndex >= path.size() ) {
-                positionX = (float) nextPoint.x;
-                positionY = (float) nextPoint.y;
-                setAngle( nextAngle );
-                animation.reset();
-
-                walkingAlongPath = false;
-                turningAlongPath = false;
-                path=null;
-                nextPoint=null;
-                prevPoint=null;
-
-                return;
-            }
-
-         // 2.2 - Next Point + position correction
-            prevPoint = new Point( (int)positionX, (int)positionY ); // = nextPoint
-            nextPoint = (Point) path.elementAt( pathIndex );
-            updateAngularNode();
-
-       }
-
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-   /** Initialize a path movement.
-    * @param path a valid returned by the Astar algorithm
-    */
-    public void initMovement( List path ) {
-         if( path==null || path.size()<1 ) {// invalid path
-             System.out.println( "Invalid Path !!!! "+path);
-             return;
-         }
-
-         this.path = path;
-         pathIndex = 1;
-         lastUpdateTime = System.currentTimeMillis();
-
-         prevPoint =  new Point( (int)positionX, (int)positionY );
-         nextPoint = (Point) path.elementAt(pathIndex);
-
-         walkingAlongPath = true;
-          // We only use rotations on an InteriorMap
-         if (location.isRoom()) {
-           speed = 60;
-         } else if (location.isTown()) {
-           turningAlongPath = false;
-           speed = 10;
-         } else if (location.isWorld()) {
-           turningAlongPath = false;
-           speed = 5;
-         }
-
-         updateAngularNode();
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-   /** Returns the distance between two points
-    * @return distance between the two points.
-    */
-    private float distance( Point a, Point b ) {
-         return (float) Math.sqrt( (b.y-a.y)*(b.y-a.y)+(b.x-a.x)*(b.x-a.x) );
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-   /** Returns the angle between the given line and the horizontal.
-    *
-    * @param first point of the line
-    * @param second point of the line
-    * @return angle in radian in the [-pi,pi] range
-    */
-    private float angle( Point a, Point b ) {
-         if(b.x==a.x) {
-            if(b.y>a.y) return (float) Math.PI/2;
-            else if (b.y<a.y) return (float) -Math.PI/2;
-
-            return 0.0f;
-         }
-
-         float angle = (float) Math.atan( (double)(b.y-a.y)/(b.x-a.x) );
-
-         if(b.x<a.x) {
-            if(angle>=0) return (float) ( angle-Math.PI );
-            if(angle<0)  return (float) ( angle+Math.PI );
-         }
-
-         return angle;
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-   /** To update the angular movement at a Path node.
-    */
-    private void updateAngularNode() {
-        nextAngle = angle( prevPoint, nextPoint );
-
-        angularDirection = 1;
-
-        while( nextAngle-getAngle() > Math.PI )
-           nextAngle = (float)(nextAngle-2*Math.PI);
-
-        while( nextAngle-getAngle() < -Math.PI )
-           nextAngle = (float)(nextAngle+2*Math.PI);
-
-        if( getAngle() > nextAngle )
-            angularDirection = -1;
-
-         // We only use rotations on an InteriorMap
-        if (location.isRoom()) {
-          turningAlongPath = true;
-        } else {
-          turningAlongPath = false;
-          // We update the angle right now
-          setAngle(nextAngle);
-        }
-
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-
-
-
 }

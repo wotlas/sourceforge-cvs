@@ -566,7 +566,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       int newY = e.getY() + (int)screen.getY();
       if (SHOW_DEBUG)
         System.out.println("endPosition = ("+newX+","+newY+")");
-      myPlayer.setEndPosition(newX, newY);
+  //      myPlayer.setEndPosition(newX, newY);
 
       // Create the trajectory
       List path = aStar.findPath( new Point( myPlayer.getX()/TILE_SIZE, myPlayer.getY()/TILE_SIZE ),

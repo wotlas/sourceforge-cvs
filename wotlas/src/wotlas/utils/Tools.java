@@ -19,6 +19,7 @@
  
 package wotlas.utils;
 
+import java.util.Calendar;
 
 /** Various useful tools...
  *
@@ -73,4 +74,33 @@ public class Tools
     }
 
  /*------------------------------------------------------------------------------------*/ 
+
+  /** To get a date formated in a lexical way ( year-month-day).
+   *  Example: "2001-09-25". Note that we write "09" instead of "9".
+   *
+   * @return date
+   */
+   static public String getLexicalDate()
+   {
+      Calendar rightNow = Calendar.getInstance();
+ 
+      String year = ""+rightNow.get(Calendar.YEAR);
+      String month = null;
+      String day = null;
+      
+      if( rightNow.get(Calendar.MONTH) <= 9 )
+           month = "0"+rightNow.get(Calendar.MONTH);
+      else
+           month = ""+rightNow.get(Calendar.MONTH);
+
+      if( rightNow.get(Calendar.DAY_OF_MONTH) <= 9 )
+           day = "0"+rightNow.get(Calendar.DAY_OF_MONTH);
+      else
+           day = ""+rightNow.get(Calendar.DAY_OF_MONTH);
+
+      return year+"-"+month+"-"+day;
+   }
+
+ /*------------------------------------------------------------------------------------*/ 
+
 }

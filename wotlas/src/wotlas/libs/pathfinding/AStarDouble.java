@@ -306,7 +306,7 @@ double ot = ((NodeDouble) nodes.elementAt(cur)).f;
    */
   public boolean isNotBlock(int x, int y)
   {    
-    if ( (x<0) || (x+SPRITE_SIZE==mapWidth) || (y<0) || (y+SPRITE_SIZE==mapHeight))
+    if ( (x<0) || (x+SPRITE_SIZE>=mapWidth) || (y<0) || (y+SPRITE_SIZE>=mapHeight))
       return false;    
       
     return (map[x][y] && map[x][y+SPRITE_SIZE] && map[x+SPRITE_SIZE][y] && map[x+SPRITE_SIZE][y+SPRITE_SIZE]);

@@ -232,7 +232,7 @@ public class WorldGenerator {
            rooms[2].setShortName("entry");
            rooms[2].setInsertionPoint( new ScreenPoint(640,640) );
 
-             roomLink = rooms[2].addRoomLink( new ScreenRectangle( 790, 520, 30, 260 ) );
+             roomLink = rooms[2].addRoomLink( new ScreenRectangle( 780, 520, 30, 260 ) );
              roomLink.setRoom1ID(2);
              roomLink.setRoom2ID(3);  
 
@@ -309,7 +309,7 @@ public class WorldGenerator {
              roomLink.setRoom1ID(6);
              roomLink.setRoom2ID(7);  
 
-             roomLink = rooms[6].addRoomLink( new ScreenRectangle( 460, 190, 120, 20) );
+             roomLink = rooms[6].addRoomLink( new ScreenRectangle( 460, 200, 120, 20) );
              roomLink.setRoom1ID(8);
              roomLink.setRoom2ID(6);  
 

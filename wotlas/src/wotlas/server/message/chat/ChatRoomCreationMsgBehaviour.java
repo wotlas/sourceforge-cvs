@@ -32,7 +32,7 @@ import wotlas.server.PlayerImpl;
  * @author Petrus
  */
 
-public class ChatRoomCreationMsgBehaviour implements NetMessageBehaviour
+public class ChatRoomCreationMsgBehaviour extends ChatRoomCreationMessage implements NetMessageBehaviour
 {
 
  /*------------------------------------------------------------------------------------*/

@@ -392,6 +392,7 @@ public class PlayerImpl implements Player, NetConnectionListener
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** To get the player's current Room ( if we are in a Room ).
+    * @return current Room, null if we are not in a room.
     */
       public Room getMyRoom() {
         return myRoom;

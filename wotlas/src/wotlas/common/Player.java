@@ -205,6 +205,13 @@ public interface Player
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** To get the player's current Room ( if we are in a Room ).
+    * @return current Room, null if we are not in a room.
+    */
+      public Room getMyRoom();
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
    /** Is this player connected to the game ?
     * @return true if the player is in the game, false if the client is not connected.
     */

@@ -570,10 +570,11 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To get the player's current Room ( if we are in a Room ).
+    * @return current Room, null if we are not in a room.
    */
-  public Room getMyRoom() {
-    return myRoom;
-  }
+    public Room getMyRoom() {
+      return myRoom;
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -583,13 +584,12 @@ public class PlayerImpl implements Player, SpriteDataSupplier, Tickable
        if( textDrawable!=null ) {
            if( textDrawable.isLive() )
                return null;
-           
-           textDrawable.resetTimeLimit();
-           return textDrawable;
+           //textDrawable.resetTimeLimit();
+           //return textDrawable;
        }
 
        if (isConnectedToGame) {
-        textDrawable = new TextDrawable( fullPlayerName + ".", getDrawable(), wotCharacter.getColor(),
+        textDrawable = new TextDrawable( fullPlayerName, getDrawable(), wotCharacter.getColor(),
                                         13.0f, "Lblack.ttf", ImageLibRef.TEXT_PRIORITY, 5000 );
        } else {
         textDrawable = new TextDrawable( fullPlayerName + " (away)", getDrawable(), wotCharacter.getColor(),

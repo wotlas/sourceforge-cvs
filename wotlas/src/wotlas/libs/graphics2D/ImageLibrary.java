@@ -60,7 +60,7 @@ import java.io.*;
  *                           |
  *                           --- cork-2
  *
- *     - images must have the following format : <IMAGE_NAME>-<XXX>.<jpg|gif>
+ *     - images must have the following format : <IMAGE_NAME>-<XXX>.<jpg|gif|*>
  *       XXX represents the image ID (must start at 0 and increase one by one).
  *
  *       Example : cats-0-jit
@@ -69,7 +69,7 @@ import java.io.*;
  *                    |
  *                    --- strange_cat-1.jpg
  *                    |
- *                    --- an_other_cat-2.gif
+ *                    --- an_other_cat-2.png
  *                    |
  *                    --- big_cats-0  // sub-directory, note that the IDs between images
  *                                    // and directories are separated.
@@ -647,7 +647,7 @@ public class ImageLibrary {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Given an image name of our database ( format <name>-<number>.<jpg|gif> )
+  /** Given an image name of our database ( format <name>-<number>.<jpg|gif|*> )
    *  we return the <number> part.
    *
    * @param name image name
@@ -658,8 +658,11 @@ public class ImageLibrary {
        String name = imageName.toLowerCase();
 
     // 1 - we retrieve the substring
-       if( !name.endsWith(".jpg") && !name.endsWith(".gif") )
-           return -1; // bad format
+    
+       // To support any image extension we only check the '.' existence
+    
+       //if( !name.endsWith(".jpg") && !name.endsWith(".gif") )
+       //    return -1; // bad format
 
        int lastPoint = name.lastIndexOf('.');
        if(lastPoint<2) return -1; // error: invalid index
@@ -726,7 +729,7 @@ public class ImageLibrary {
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To load all the images of a directory. The image name must follow the format :
-   *  <name>-<number>.<ext> where ext is either "jpg" or "gif".
+   *  <name>-<number>.<ext> where ext can be anything ("jpg", "gif", "png", etc.).
    *
    *  Important : the returned array can have null fields if non-image files were found
    *              in the specified directory.
@@ -741,7 +744,7 @@ public class ImageLibrary {
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To load all the images of a directory. The image name must follow the format :
-   *  <name>-<number>.<ext> where ext is either "jpg" or "gif".
+   *  <name>-<number>.<ext> where ext can be anything ("jpg", "gif", "png", etc. ).
    *
    *  Important : the returned array can have null fields if non-image files were found
    *              in the specified directory.
@@ -770,8 +773,17 @@ public class ImageLibrary {
                if(DEBUG_MODE) System.out.println( "Warning: Bad Image Name Format ! ( "+list[i]+" )");
                continue;
             }
-
-            im[id] = tk.getImage( path.getPath()+File.separator+list[i].getName() );
+            
+            try{
+               im[id] = tk.getImage( path.getPath()+File.separator+list[i].getName() );
+            }catch(Exception e) {
+              // Exception during getImage()
+              // this image will be ignored
+               im[id] = null;
+               e.printStackTrace();
+               continue;
+            }
+            
             tracker.addImage(im[id],i);
          }
 
@@ -831,8 +843,8 @@ public class ImageLibrary {
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To load all the images of a directory. The image name must follow the format :
-   *  <name>-<number>.<ext> where ext is either "jpg" or "gif". The returned array has
-   *  no holes. The <number> must start at 0.
+   *  <name>-<number>.<ext> where ext  can be anything ("jpg", "gif", "png", etc...).
+   *  The returned array has no holes. The <number> must start at 0.
    *
    *  Important : the returned array can have null fields if the image numbers have jump.
    *
@@ -873,7 +885,7 @@ public class ImageLibrary {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To find an image with a given index ( filename format is <name>-<index>.<jpg | gif>)
+  /** To find an image with a given index ( filename format is <name>-<index>.<jpg | gif | *>)
    *  in a given file list.
    *
    * @param imageFiles list of files to investigate...

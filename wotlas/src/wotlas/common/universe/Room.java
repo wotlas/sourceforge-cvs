@@ -20,8 +20,10 @@
 package wotlas.common.universe;
 
 import wotlas.common.Player;
+import wotlas.utils.Debug;
 
 import java.awt.Point;
+import java.util.Hashtable;
 
  /** Room class
   *
@@ -35,7 +37,7 @@ public class Room
 
   /** ID of the Room (index in the array {@link InteriorMap#rooms InteriorMap.rooms})
    */
-   private int RoomID;
+   private int roomID;
 
   /** Full name of the World
    */
@@ -60,10 +62,10 @@ public class Room
   /**
    */
    private MapExit[] mapExits;
-  
+
   /** List of players in the Room
    */
-   private transient Player[] players;
+   private transient Hashtable players;
   
   /** List of items in the Room
    */
@@ -82,10 +84,10 @@ public class Room
    */
 
   public void setRoomID(int myRoomID) {
-    this.RoomID = myRoomID;
+    this.roomID = myRoomID;
   }
   public int getRoomID() {
-    return RoomID;
+    return roomID;
   }
   public void setFullName(String myFullName) {
     this.fullName = myFullName;
@@ -123,12 +125,6 @@ public class Room
   public MapExit[] getMapExits() {
     return mapExits;
   }
-  public void setPlayers(Player[] myPlayers) {
-    this.players = myPlayers;
-  }
-  public Player[] getPlayers() {
-    return players;
-  }
   public void setWotlasObjects(WotlasObject myWotlasObject) {
   }
   public WotlasObject[] getWotlasObjects() {
@@ -136,7 +132,64 @@ public class Room
   }
   
   /*------------------------------------------------------------------------------------*/
-  
+
+
+  /** To get the list of all the players on this map.
+   * IMPORTANT: before ANY process on this list synchronize your code on the "players"
+   * object :
+   *<pre>
+   *   Hashtable players = room.getPlayers();
+   *   
+   *   synchronized( players ) {
+   *       ... some SIMPLE and SHORT processes...
+   *   }
+   *
+   * @return player hashtable, player.getPrimaryKey() is the key.
+   */
+    public Hashtable getPlayers() {
+        return players;
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Add a player to this world. The player must have been previously initialized.
+   *  We suppose that the player.getLocation() points out to this Room.
+   *
+   * @param player player to add
+   * @return false if the player already exists on this RoomMap, true otherwise
+   */
+   public boolean addPlayer( Player player ) {
+       if( players.contains( player.getPrimaryKey() ) ) {
+           Debug.signal( Debug.CRITICAL, this, "addPlayer failed: key "+player.getPrimaryKey()
+                         +" already in this room "+roomID );
+           return false;
+       }
+
+       players.put( player.getPrimaryKey(), player );
+       return true;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Removes a player from this room.
+   *  We suppose that the player.getLocation() points out to this room.
+   *
+   * @param player player to remove
+   * @return false if the player doesn't exists in this Room, true otherwise
+   */
+   public boolean removePlayer( Player player ) {
+       if( !players.contains( player.getPrimaryKey() ) ) {
+           Debug.signal( Debug.CRITICAL, this, "removePlayer failed: key "+player.getPrimaryKey()
+                         +" not found in this room "+roomID );
+           return false;
+       }
+
+       players.remove( player.getPrimaryKey() );
+       return true;
+   }
+
+ /*------------------------------------------------------------------------------------*/
+
   /** Add a new RoomLink object to the array {@link #roomLinks roomLinks}
    *
    * @return a new RoomLink object

@@ -20,8 +20,10 @@
 package wotlas.common.universe;
 
 import wotlas.common.Player;
+import wotlas.utils.Debug;
 
- 
+import java.util.Hashtable;
+
  /** TownMap class
   *
   * @author Petrus
@@ -63,7 +65,7 @@ public class TownMap
   
   /** List of players in the Town
    */
-   private transient Player[] players;
+   private transient Hashtable players;
 
   /** List of buildings to enter the town
    * first  element : BuildingID
@@ -112,12 +114,6 @@ public class TownMap
   public Building[] getBuildings() {
     return buildings;
   }
-  public void setPlayerImpls(Player[] myPlayers) {
-    this.players = myPlayers;
-  }
-  public Player[] getPlayers() {
-    return players;
-  }
   public void setBuildingsEnter(int[][] myBuildingsEnter) {
     this.buildingsEnter = myBuildingsEnter;
   }
@@ -125,6 +121,78 @@ public class TownMap
     return buildingsEnter;
   }
   
+ /*------------------------------------------------------------------------------------*/
+
+  /** To Get a building by its ID.
+   *
+   * @param id buildingID
+   * @return corresponding building, null if ID does not exist.
+   */
+   public Building getBuildingByID( int id ) {
+   	if(id>=buildings.length || id<0) {
+           Debug.signal( Debug.ERROR, this, "getBuildingByID : Bad building ID "+id );
+   	   return null;
+   	}
+   	
+        return buildings[id];
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** To get the list of all the players on this map.
+   * IMPORTANT: before ANY process on this list synchronize your code on the "players"
+   * object :
+   *<pre>
+   *   Hashtable players = town.getPlayers();
+   *   
+   *   synchronized( players ) {
+   *       ... some SIMPLE and SHORT processes...
+   *   }
+   *
+   * @return player hashtable, player.getPrimaryKey() is the key.
+   */
+    public Hashtable getPlayers() {
+        return players;
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Add a player to this town. The player must have been previously initialized.
+   *  We suppose that the player.getLocation() points out to this town.
+   *
+   * @param player player to add
+   * @return false if the player already exists on this TownMap, true otherwise
+   */
+   public boolean addPlayer( Player player ) {
+       if( players.contains( player.getPrimaryKey() ) ) {
+           Debug.signal( Debug.CRITICAL, this, "addPlayer failed: key "+player.getPrimaryKey()
+                         +" already in this town "+townMapID );
+           return false;
+       }
+
+       players.put( player.getPrimaryKey(), player );
+       return true;
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Removes a player from this town.
+   *  We suppose that the player.getLocation() points out to this town.
+   *
+   * @param player player to remove
+   * @return false if the player doesn't exists on this townMap, true otherwise
+   */
+   public boolean removePlayer( Player player ) {
+       if( !players.contains( player.getPrimaryKey() ) ) {
+           Debug.signal( Debug.CRITICAL, this, "removePlayer failed: key "+player.getPrimaryKey()
+                         +" not found in this town "+townMapID );
+           return false;
+       }
+
+       players.remove( player.getPrimaryKey() );
+       return true;
+   }
+
  /*------------------------------------------------------------------------------------*/
 
   /** Add a new Building object to our list {@link #buildings buildings})

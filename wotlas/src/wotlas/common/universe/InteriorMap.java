@@ -19,6 +19,9 @@
 
 package wotlas.common.universe;
 
+import wotlas.utils.Debug;
+
+
  /** InteriorMap class
   *
   * @author Petrus
@@ -112,6 +115,23 @@ public class InteriorMap
   }
   
  /*------------------------------------------------------------------------------------*/
+
+  /** To Get a room by its ID.
+   *
+   * @param id roomID
+   * @return corresponding room, null if ID does not exist.
+   */
+   public Room getRoomByID( int id ) {
+   	if(id>=rooms.length || id<0) {
+           Debug.signal( Debug.ERROR, this, "getRoomByID : Bad room ID "+id );
+   	   return null;
+   	}
+   	
+        return rooms[id];
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 
   /** Add a new Room object to the array rooms
    *

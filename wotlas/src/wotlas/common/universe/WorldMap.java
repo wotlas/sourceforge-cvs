@@ -20,7 +20,10 @@
 package wotlas.common.universe;
 
 import wotlas.common.Player;
- 
+import wotlas.utils.Debug;
+
+import java.util.Hashtable;
+
  /** WorldMap class
   *
   * @author Petrus
@@ -47,17 +50,19 @@ public class WorldMap
   /** Array of TownMap
    */
    private transient TownMap[] townMaps;
-  
-  /** List of players in the WorldMap   // CHANGE TO HASHMAP !!! AND manage hashmap size !!
+
+  /** List of players in the WorldMap (not players in towns)
    */
-   private transient Player[] players;
+   private transient Hashtable players;
 
  /*------------------------------------------------------------------------------------*/
   
   /**
    * Constructor
    */
-   public WorldMap() {}
+   public WorldMap() {
+       players = new Hashtable(10);
+   }
   
  /*------------------------------------------------------------------------------------*/
   /*
@@ -88,42 +93,80 @@ public class WorldMap
   public TownMap[] getTownMaps() {
     return townMaps;
   }
-  public void setPlayers(Player[] myPlayers) {
-    this.players = myPlayers;
-  }
-  public Player[] getPlayers() {
-    return players;
-  }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** To get the list of all the players on this map.
+   * IMPORTANT: before ANY process on this list synchronize your code on the "players"
+   * object :
+   *<pre>
+   *   Hashtable players = world.getPlayers();
+   *   
+   *   synchronized( players ) {
+   *       ... some SIMPLE and SHORT processes...
+   *   }
+   *
+   * @return player hashtable, player.getPrimaryKey() is the key.
+   */
+    public Hashtable getPlayers() {
+        return players;
+    }
 
  /*------------------------------------------------------------------------------------*/
 
   /** Add a player to this world. The player must have been previously initialized.
-   *  We suppose that the player.getLocation() points out our World location.
+   *  We suppose that the player.getLocation() points out to this World.
    *
    * @param player player to add
+   * @return false if the player already exists on this WorldMap, true otherwise
    */
-   public void addPlayer( Player player )
-   {
-/* To change or suppress PlayerImpl is server/client specific and cannot be used here
- * directly, replace with interface player.
- * 
-     if (playerImpl == null) {
-        playerImpl = new PlayerImpl[1];
-        playerImpl[0] = player;
-     } else {
-    	PlayerImpl[] myPlayerImpl = new PlayerImpl[playerImpl.length+1];
-    	System.arraycopy( playerImpl, 0, myPlayerImpl, 0, playerImpl.length );
-    	myPlayerImpl[playerImpl.length] = player;
-    	playerImpl = myPlayerImpl;
-     }
- */
+   public boolean addPlayer( Player player ) {
+       if( players.contains( player.getPrimaryKey() ) ) {
+           Debug.signal( Debug.CRITICAL, this, "addPlayer failed: key "+player.getPrimaryKey()
+                         +" already in this world "+worldMapID );
+           return false;
+       }
+
+       players.put( player.getPrimaryKey(), player );
+       return true;
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-/** removePlayer TO ADD **/
+  /** Removes a player from this world.
+   *  We suppose that the player.getLocation() points out to this World.
+   *
+   * @param player player to remove
+   * @return false if the player doesn't exists on this WorldMap, true otherwise
+   */
+   public boolean removePlayer( Player player ) {
+       if( !players.contains( player.getPrimaryKey() ) ) {
+           Debug.signal( Debug.CRITICAL, this, "removePlayer failed: key "+player.getPrimaryKey()
+                         +" not found in this world "+worldMapID );
+           return false;
+       }
+
+       players.remove( player.getPrimaryKey() );
+       return true;
+   }
 
  /*------------------------------------------------------------------------------------*/
+
+  /** To Get a Town by its ID.
+   *
+   * @param id townMapID
+   * @return corresponding townMap, null if ID does not exist.
+   */
+   public TownMap getTownMapByID( int id ) {
+   	if(id>=townMaps.length || id<0) {
+           Debug.signal( Debug.ERROR, this, "getTownMapByID : Bad town ID "+id );
+   	   return null;
+   	}
+   	
+        return townMaps[id];
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Add a new TownMap object to the array {@link #townMaps townMaps}
    *

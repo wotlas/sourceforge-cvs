@@ -18,7 +18,9 @@
  */
  
 package wotlas.common.universe;
- 
+
+import wotlas.utils.Debug;
+
  /** Building class
   *
   * @author Petrus
@@ -154,6 +156,22 @@ public class Building
   }
     
  /*------------------------------------------------------------------------------------*/
+
+  /** To Get a interiorMap by its ID.
+   *
+   * @param id interiorMapID
+   * @return corresponding interiorMap, null if ID does not exist.
+   */
+   public InteriorMap getInteriorMapByID( int id ) {
+   	if(id>=interiorMaps.length || id<0) {
+           Debug.signal( Debug.ERROR, this, "getInteriorMapByID : Bad interiorMap ID "+id );
+   	   return null;
+   	}
+
+        return interiorMaps[id];
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Add a new InteriorMap object to the array interiorMaps
    *

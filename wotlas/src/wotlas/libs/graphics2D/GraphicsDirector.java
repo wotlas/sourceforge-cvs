@@ -271,4 +271,40 @@ public class GraphicsDirector extends JPanel {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+   /** Given a point we search for the first drawable that implements the DrawableOwner
+    *  interface AND contains the point. We then return the owner of the drawable.
+    *
+    *  @param x x cordinate
+    *  @param y y cordinate
+    *  @return the owner of the targeted drawable, null if none or not found.
+    */
+     public Object findOwner( int x, int y ) {
+        synchronized( drawables ) {
+            drawables.resetIterator();
+        
+            while( drawables.hasNext() ) {
+               Drawable d = drawables.next();
+
+               if( d instanceof DrawableOwner )
+                   if ( d.contains(x,y) && ((DrawableOwner)d).getOwner()!=null )
+                      return ( (DrawableOwner)d ).getOwner();
+            }
+        }
+
+        return null;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Given a point we search for the first drawable that implements the DrawableOwner
+    *  interface AND contains the point. We then return the owner of the drawable.
+    *
+    *  @param p Point
+    *  @return the owner of the targeted drawable, null if none or not found.
+    */
+     public Object findOwner( Point p ) {
+         return findOwner( p.x, p.y );
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

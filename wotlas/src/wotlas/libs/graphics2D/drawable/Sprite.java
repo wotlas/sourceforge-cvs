@@ -33,7 +33,7 @@ import java.awt.geom.*;
  * @see wotlas.libs.graphics2D.drawable.SpriteDataSupplier
  */
 
-public class Sprite extends Drawable {
+public class Sprite extends Drawable implements DrawableOwner {
 
  /*------------------------------------------------------------------------------------*/
 
@@ -219,4 +219,16 @@ public class Sprite extends Drawable {
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** To get the owner of this drawable. By 'owner' we mean the object which this
+    *  Sprite is the graphical representation, i.e the SpriteDataSupplier.
+    *
+    * @return Object owner of this drawable : the given SpriteDataSupplier.
+    */
+     public Object getOwner() {
+        return (Object) dataSupplier;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }

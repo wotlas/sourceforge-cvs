@@ -142,4 +142,13 @@ public abstract class Drawable {
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** Test if the given point is in the rectangle of this drawable.
+   *  @return true if the point is in the rectangle.
+   */
+     public boolean contains( int x, int y ) {
+         return r.contains( x, y );
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }

@@ -396,12 +396,12 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     synchronized( personalityLock ) {
       this.personality = personality;
     }
-
     personality.setContext(this);
 
     if (currentProfileConfig.getLocalClientID() == -1) {
-      Debug.signal( Debug.NOTICE, null, "no valid key found => request a new account to AccountServer");
-      Debug.signal( Debug.NOTICE, null, "sending login & password");
+  
+      //Debug.signal( Debug.NOTICE, null, "no valid key found => request a new account to AccountServer");
+      //Debug.signal( Debug.NOTICE, null, "sending login & password");
 
 /* wiz 
     personality.queueMessage( new PasswordAndLoginMessage( currentProfileConfig.getLogin(),
@@ -422,7 +422,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       Debug.signal( Debug.NOTICE, null, "New account created !" );
       return;
 
-    } else {
+  } else {
+    
       // The key is valid, we are connected to the GameServer
     }
 

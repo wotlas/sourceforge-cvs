@@ -50,6 +50,10 @@ public interface ImageLibRef extends ImageLibraryReference
    */
     public final static short AES_SEDAI_SET = 0;
 
+  /** Player's small images.
+   */
+    public final static short PLAYER_SMALL_IMAGES_SET = 1;
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** Aes Sedai Set - ACTION LIST */
@@ -91,6 +95,10 @@ public interface ImageLibRef extends ImageLibraryReference
     */
      public final static short TARVALON_WHTOW_LEV0_MAP_ACTION = 2;
 
+   /** Tar Valon - West Gate
+    */
+     public final static short TARVALON_WEST_GATE_MAP_ACTION = 3;
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /*** Towns small images set - ACTION LIST ***/
@@ -107,13 +115,26 @@ public interface ImageLibRef extends ImageLibraryReference
     */
      public final static short TARVALON_WHTOW_SMALL_IM_ACTION = 0;
 
+   /** Tar valon - West Gate small image.
+    */
+     public final static short TARVALON_WEGATE_SMALL_IM_ACTION = 1;
+
+ /*------------------------------------------------------------------------------------*/
+
+  /*** Player small images set - ACTION LIST ***/
+
+   /** Player small image on town maps (& WorldMap)...
+    */
+     public final static short PLAYER_SMALL_IM_ACTION = 0;
+
  /*------------------------------------------------------------------------------------*/
 
   /** DRAWABLE PRIORITIES
    */
     public final static short MAP_PRIORITY      = 0;      // lowest priority, drawn first
-    public final static short SHADOW_PRIORITY   = 5;      // shadows or small player auras
+    public final static short SHADOW_PRIORITY   = 5;      // shadows
     public final static short OBJECT_PRIORITY   = 20;     // wotlas objects
+    public final static short AURA_PRIORITY     = 25;     // small player auras
     public final static short ONEPOWER_PRIORITY = 30;     // one power effects
     public final static short PLAYER_PRIORITY   = 50;     // players
     public final static short DOOR_PRIORITY     = 100;    // doors

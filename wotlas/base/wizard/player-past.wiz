@@ -13,7 +13,7 @@ stepPropertiesKey=6
 stepPropertiesValue=6
 
 stepPropertiesKey.0=init.info0
-stepPropertiesValue.0=Please\ take\ some\ time\ to\ invent\ a\ past\ for\ your\ character.\ This\nshort\ text\ will\ be\ seen\ by\ other\ players\ (any\ racist,\ sexual\ or\ crude\ntext\ will\ result\ in\ the\ close\ of\ your\ account).\ Enter\ your\ text\ here\ :
+stepPropertiesValue.0=Please\ take\ some\ time\ to\ invent\ a\ past\ for\ your\ character.\ This\ short\ text\ will\ be\ seen\ by\ other\ players\ (any\ racist,\ sexual\ or\ crude\ text\ will\ result\ in\ the\ close\ of\ your\ account).\ Enter\ your\ text\ here\ :
 
 stepPropertiesKey.1=init.option0
 stepPropertiesValue.1=I'll\ write\ this\ later...

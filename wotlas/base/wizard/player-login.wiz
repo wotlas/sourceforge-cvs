@@ -13,7 +13,7 @@ stepPropertiesKey=5
 stepPropertiesValue=5
 
 stepPropertiesKey.0=init.info0
-stepPropertiesValue.0=\nYou\ need\ to\ enter\ a\ login\ and\ password\ to\ protect\ the\ access\ to\nyour\ wotlas\ account.\ The\ password\ you\ enter\ here\ will\ be\ saved\ to\ your\ disk,\ so\ you\ won't\ have\ to\ enter\ it\ at\ each\ session.\ You\ can\ change\ this\ behaviour\ in\ the\ 'Options'\ panel.
+stepPropertiesValue.0=\nYou\ need\ to\ enter\ a\ login\ and\ password\ to\ protect\ the\ access\ to\ your\ wotlas\ account.\ The\ password\ you\ enter\ here\ will\ be\ saved\ to\ your\ disk,\ so\ you\ won't\ have\ to\ enter\ it\ at\ each\ session.\ You\ can\ change\ this\ behaviour\ in\ the\ 'Options'\ panel.
 
 # SERVER SIDE INCLUDES
 

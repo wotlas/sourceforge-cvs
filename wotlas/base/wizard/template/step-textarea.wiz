@@ -6,7 +6,7 @@ isLastStep=false
 isNextButtonEnabled=true
 isPrevButtonEnabled=true
 
-stepClass=wotlas.libs.wizard.step.JWizardStepTextArea
+stepClass=wotlas.libs.wizard.step.JWizardStepTextAreaNet
 stepTitle=Story\ Input\ Step\ (JWizardStepTextArea)
 
 stepPropertiesKey=3

@@ -6,7 +6,7 @@ isLastStep=false
 isNextButtonEnabled=true
 isPrevButtonEnabled=true
 
-stepClass=wotlas.libs.wizard.step.JWizardStepComboBox
+stepClass=wotlas.libs.wizard.step.JWizardStepComboBoxNet
 stepTitle=Information\ Choice\ Step\ (JWizardStepComboBox)
 
 stepPropertiesKey=7

@@ -9,8 +9,8 @@ isPrevButtonEnabled=true
 stepClass=wotlas.libs.wizard.step.JWizardStepRadioNet
 stepTitle=Warder\ Character\ Rank
 
-stepPropertiesKey=23
-stepPropertiesValue=23
+stepPropertiesKey=13
+stepPropertiesValue=13
 
 stepPropertiesKey.0=init.label0
 stepPropertiesValue.0=Here\ are\ the\ ranks\ available\ to\ you\ :
@@ -28,7 +28,7 @@ stepPropertiesKey.4=init.choice1
 stepPropertiesValue.4=Tower\ Guard
 
 stepPropertiesKey.5=init.info1
-stepPropertiesValue.5=A\ youngling\ can\ also\ become\ a\ White\ Tower\ guard\ if\ he\ doesn't\nhave\ a\ Warder's\ skills.
+stepPropertiesValue.5=A\ youngling\ can\ also\ become\ a\ White\ Tower\ guard\ if\ he\ doesn't\ have\ a\ Warder's\ skills.
 
 stepPropertiesKey.6=init.choice2
 stepPropertiesValue.6=Warder

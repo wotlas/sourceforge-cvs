@@ -34,7 +34,7 @@ stepPropertiesKey.6=init.choice2
 stepPropertiesValue.6=White\ Ajah
 
 stepPropertiesKey.7=init.info2
-stepPropertiesValue.7=The\ White\ Ajah\ devotes\ itself\ to\ questions\ of\ philosophy\ and\ truth.\n
+stepPropertiesValue.7=The\ White\ Ajah\ devotes\ itself\ to\ questions\ of\ philosophy\ and\ truth.
 
 stepPropertiesKey.8=init.choice3
 stepPropertiesValue.8=Blue\ Ajah
@@ -58,19 +58,19 @@ stepPropertiesKey.14=init.choice6
 stepPropertiesValue.14=Green\ Ajah
 
 stepPropertiesKey.15=init.info6
-stepPropertiesValue.15=The\ Green\ Ajah\ (called\ the\ Battle\ Ajah\ during\ the\ Trolloc\ Wars)\nholds\ itself\ ready\ for\ Tarmon\ Gai'don.
+stepPropertiesValue.15=The\ Green\ Ajah\ (called\ the\ Battle\ Ajah\ during\ the\ Trolloc\ Wars)\ holds\ itself\ ready\ for\ Tarmon\ Gai'don.
 
 stepPropertiesKey.16=init.choice7
 stepPropertiesValue.16=Gray\ Ajah
 
 stepPropertiesKey.17=init.info7
-stepPropertiesValue.17=Gray\ Ajah\ sisters\ are\ mediators,\ seeking\ harmony\ and\ consensus.\n
+stepPropertiesValue.17=Gray\ Ajah\ sisters\ are\ mediators,\ seeking\ harmony\ and\ consensus.
 
 stepPropertiesKey.18=init.choice8
 stepPropertiesValue.18=Brown\ Ajah
 
 stepPropertiesKey.19=init.info8
-stepPropertiesValue.19=Brown\ Ajah\ sisters\ forsakes\ involvment\ with\ the\ mundane\ world\nand\ dedicates\ itself\ to\ seeking\ knowledge\ (literature,\ science,...\ ).
+stepPropertiesValue.19=Brown\ Ajah\ sisters\ forsakes\ involvment\ with\ the\ mundane\ world\ and\ dedicates\ itself\ to\ seeking\ knowledge\ (literature,\ science,...)
 
 
 # SERVER SIDE INCLUDES

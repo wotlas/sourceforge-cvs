@@ -7,7 +7,7 @@ isNextButtonEnabled=true
 isPrevButtonEnabled=true
 
 stepClass=wotlas.libs.wizard.step.JWizardStep1TextFieldNet
-stepTitle=Information\ Input\ Step\ (JWizardStep1TextField)
+stepTitle=Account\ Contact
 
 stepPropertiesKey=5
 stepPropertiesValue=5
@@ -16,7 +16,7 @@ stepPropertiesKey.0=init.label0
 stepPropertiesValue.0=Enter your email address :
 
 stepPropertiesKey.1=init.info0
-stepPropertiesValue.1=\nThis\ is\ optional.\ Your\ email\ address\ will\ only\ be\ used\ to\ contact\nyou\ in\ case\ of\ account\ problems.\ We\ will\ make\ absolutely\ no\ use\nof\ it\ otherwise.
+stepPropertiesValue.1=\nThis\ is\ optional.\ Your\ email\ address\ will\ only\ be\ used\ to\ contact\ you\ in\ case\ of\ account\ problems.\ We\ will\ make\ absolutely\ no\ use\ of\ it\ otherwise.
 
 # SERVER SIDE INCLUDES
 

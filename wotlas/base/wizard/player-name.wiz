@@ -13,13 +13,13 @@ stepPropertiesKey=6
 stepPropertiesValue=6
 
 stepPropertiesKey.0=init.label0
-stepPropertiesValue.0=Your\ player's\ nickname\ :
+stepPropertiesValue.0=Enter\ your\ player's\ nickname\ :
 
 stepPropertiesKey.1=init.label1
-stepPropertiesValue.1=Your\ player's\ full\ name\ :
+stepPropertiesValue.1=Enter\ your\ player's\ full\ name\ :
 
 stepPropertiesKey.2=init.info0
-stepPropertiesValue.2=\nThese\ fields\ will\ help\ identify\ your\ player\ in\ the\ game.\ Your\ full\nplayer\ name\ should\ have\ more\ than\ five\ letters.
+stepPropertiesValue.2=\nThese\ fields\ will\ help\ identify\ your\ player\ in\ the\ game.\ Your\ full\ player\ name\ should\ have\ more\ than\ five\ letters.
 
 # SERVER SIDE INCLUDES
 

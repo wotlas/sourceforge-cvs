@@ -22,18 +22,18 @@ stepPropertiesKey.2=init.choice0
 stepPropertiesValue.2=Aes\ Sedai
 
 stepPropertiesKey.3=init.info0
-stepPropertiesValue.3=\ \ \ \ \ \ Wielders\ of\ the\ One\ Power.\ Since\ the\ Time\ of\ Madness,\ all\nsurviving\ Aes\ Sedai\ are\ women.\ Widely\ distrusted\ and\ feared,\ even\ hated,\ they\ are\ blamed\ by\ many\ for\ the\ Breaking\ of\ the\ World,\ and\ are\ thought\ to\ meddle\ in\ the\ affairs\ of\ nations.\ At\ the\ same\ time,\ few\ rulers\ will\ be\ without\ an\ Aes\ Sedai\ advisor,\ even\ in\ lands\ where\nthe\ existence\ of\ such\ a\ connection\ must\ be\ kept\ secret.
+stepPropertiesValue.3=\ \ \ \ \ \ \ \ Wielders\ of\ the\ One\ Power.\ Since\ the\ Time\ of\ Madness,\nall\ surviving\ Aes\ Sedai\ are\ women.\ Widely\ distrusted\ and\ feared,\ even\ hated,\ they\ are\ blamed\ by\ many\ for\ the\ Breaking\ of\ the\ World,\ and\ are\ thought\ to\ meddle\ in\ the\ affairs\ of\ nations.\ At\ the\ same\ time,\ few\ rulers\ will\ be\ without\ an\ Aes\ Sedai\ advisor,\ even\ in\ lands\ where\ the\ existence\ of\ such\ a\ connection\ must\ be\ kept\ secret.
 
 stepPropertiesKey.4=init.choice1
 stepPropertiesValue.4=Warder
 
 stepPropertiesKey.5=init.info1
-stepPropertiesValue.5=\ \ \ \ \ \ A\ warrior\ bonded\ to\ an\ Aes Sedai.\ The\ bonding\ is\ a\ thing\ of\nthe\ One\ Power,\ and\ by\ it\ he\ gains\ such\ gifts\ as\ quick\ healing,\ the\nability\ to\ go\ long\ periods\ without\ food,\ water,\ or\ rest\ and\ the\ ability\ to\ sense\ the\ taint\ of\ the\ Dark\ One\ at\ a\ distance.\n\n
+stepPropertiesValue.5=\ \ \ \ \ \ \ \ A\ warrior\ bonded\ to\ an\ Aes Sedai.\ The\ bonding\ is\ a\ thing\ of\ the\ One\ Power,\ and\ by\ it\ he\ gains\ such\ gifts\ as\ quick\ healing,\ the\ ability\ to\ go\ long\ periods\ without\ food,\ water,\ or\ rest\ and\ the\ ability\ to\ sense\ the\ taint\ of\ the\ Dark\ One\ at\ a\ distance.\n\ \n\ \n\ 
 
 # SERVER SIDE INCLUDES
 
 # Method to call to proceed data
-stepPropertiesKey.6=server.choice0.method
+stepPropertiesKey.6=server.method
 stepPropertiesValue.6=setWotCharacterClass
 
 # Links

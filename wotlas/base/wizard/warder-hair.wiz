@@ -7,7 +7,7 @@ isNextButtonEnabled=true
 isPrevButtonEnabled=true
 
 stepClass=wotlas.libs.wizard.step.JWizardStepListNet
-stepTitle=Aes\ Sedai\ Hair\ Color
+stepTitle=Warder\ Hair\ Color
 
 stepPropertiesKey=11
 stepPropertiesValue=11
@@ -47,4 +47,4 @@ stepPropertiesKey.9=server.next
 stepPropertiesValue.9=player-name.wiz
 
 stepPropertiesKey.10=server.previous
-stepPropertiesValue.10=aes-sedai-rank.wiz
+stepPropertiesValue.10=warder-rank.wiz

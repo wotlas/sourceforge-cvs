@@ -98,16 +98,6 @@ public class IntroductionWindow extends Window implements ActionListener
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  // Main to test this code
-
-  public static void main(String argv[]) {
-      new IntroductionWindow(new Frame(),"test.jpg",5000);
-      while(true);
-  }
-
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
   /** Paint Method. We draw the background image.
    * @param g graphics
    */

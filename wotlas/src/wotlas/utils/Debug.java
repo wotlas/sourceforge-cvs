@@ -85,7 +85,7 @@ public class Debug
        {
           if(code<level)
        	     return;
-       	
+
           String debug_msg = "";
 
           switch( code ) {

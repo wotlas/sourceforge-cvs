@@ -25,6 +25,7 @@ import java.util.*;
 import wotlas.utils.*;
 
 import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.common.message.account.*;
 import wotlas.common.message.movement.*;
 import wotlas.common.message.description.*;
 import wotlas.common.universe.*;
@@ -103,11 +104,61 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
                }
 
                boolean error = false;
+               boolean accountTransfered = false;
 
                if( location.isRoom() ) {
                   // move to our new room
                      Room targetRoom = wManager.getRoom( location );
                      if( targetRoom==null ) error = true;
+
+                  // LEAVING BUILDING ? ACCOUNT TRANSFERT ?
+                     if( !error ) {
+                        int targetServerID = targetRoom.getMyInteriorMap().getMyBuilding().getServerID();
+
+                        if( targetServerID!=ServerDirector.getServerID() ) {
+                          // ok ! we must transfert this account to another server !!   
+                             GatewayServer gateway = ServerManager.getDefaultServerManager().getGatewayServer();
+
+                             WotlasLocation oldLocation = player.getLocation();
+                             int oldX = player.getX();
+                             int oldY = player.getY();
+                             float oldOrientation = player.getOrientation();
+
+                          // We update the player's location
+                             player.setLocation( location );
+                             player.getMovementComposer().resetMovement();
+                             player.setX( x );
+                             player.setY( y );
+                             player.setOrientation( orientation );
+
+                             //player.sendMessage( new WarningMessage("Please Wait. There is admittance control to enter this place.") );
+
+                               if( gateway.transfertAccount( primaryKey, targetServerID ) ) {
+                                   Debug.signal(Debug.NOTICE,null,"Account Transaction "+primaryKey+" succeeded... sending redirection message.");
+
+                                   player.sendMessage(new RedirectConnectionMessage(primaryKey,targetServerID) ); // success
+                                   accountTransfered = true;
+                                   player.updateSyncID();
+                               }
+                               else {
+                                    Debug.signal(Debug.NOTICE,null,"Account Transaction "+primaryKey+" failed... reverting to previous state.");
+
+                                 // we revert to previous position
+                                    player.setLocation( oldLocation );
+                                    player.setX( oldX );
+                                    player.setY( oldY );
+                                    player.setOrientation( oldOrientation );
+
+                                    synchronized( players ) {
+                                       players.put( primaryKey, player ); // we re-add our player
+                                    }                                      // to the same location
+
+                                    player.sendMessage(new RedirectErrorMessage("Movement Failed. Retry later.\nTarget server ("
+                                                            +targetServerID+") is not running.") ); // failed
+                                    return;
+                               }
+                        }
+                     }
 
                      players = targetRoom.getPlayers();
                }
@@ -140,20 +191,26 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
 
             // 3  - LOCATION UPDATE
                WotlasLocation oldLocation = player.getLocation();
-               player.setLocation( location );
-               player.updateSyncID();
-               player.getMovementComposer().resetMovement();
-               player.setX( x );
-               player.setY( y );
-               player.setOrientation( orientation );
 
-               synchronized( players ) {
-                   players.put( primaryKey, player );
+               if( !accountTransfered ){
+               	// We update the player's location only if his account is still
+               	// on this server...
+                   player.setLocation( location );
+                   player.updateSyncID();
+                   player.getMovementComposer().resetMovement();
+                   player.setX( x );
+                   player.setY( y );
+                   player.setOrientation( orientation );
+
+                   synchronized( players ) {
+                       players.put( primaryKey, player );
+                   }
                }
 
             // 4 - SEND MESSAGE TO PLAYER
-               player.sendMessage( new YouCanLeaveMapMessage( primaryKey, location, x, y,
-                                                              orientation, player.getSyncID() ) );
+               if( !accountTransfered )
+                   player.sendMessage( new YouCanLeaveMapMessage( primaryKey, location, x, y,
+                                                                  orientation, player.getSyncID() ) );
 
             // 5 - SENDING REMOVE_PLAYER_MSG TO OTHER PLAYERS
                RemovePlayerFromRoomMessage rMsg = new RemovePlayerFromRoomMessage(primaryKey, oldLocation );

@@ -178,7 +178,6 @@ public class InteriorMap
 
   /** Transient fields getter & setter
    */
-
     public Building getMyBuilding() {
       return myBuilding;
     }

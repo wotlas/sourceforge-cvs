@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
+ 
 package wotlas.common.message.movement;
 
 import java.io.DataInputStream;
@@ -24,48 +24,57 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.universe.*;
+
 
 /** 
- * To tell the server that we are changing location (Message Sent by Client).
+ * A warning message that should display to the client in a pop-up window.
+ * (Message Sent by Server). It means the account of the user should have
+ * been sent to another server but  the operation failed.
  *
  * @author Aldiss
  */
 
-public class CanLeaveIntMapMessage extends LocationChangeMessage
+public class RedirectErrorMessage extends NetMessage
 {
+ /*------------------------------------------------------------------------------------*/
+
+   // information
+      protected String errorMsg;
+
+   // optional reset position
+      protected int xReset;
+      protected int yReset;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. Just initializes the message category and type.
    */
-     public CanLeaveIntMapMessage() {
-          super();
+     public RedirectErrorMessage() {
+         super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor with Player's primaryKey & location.
+  /** Constructor with IDs and no special reset position.
+   *
    */
-     public CanLeaveIntMapMessage(String primaryKey, WotlasLocation location, int x, int y, float orientation) {
-          super();
-          this.primaryKey = primaryKey;
-          this.location = location;
-          this.x = x;
-          this.y = y;
-          this.orientation = orientation;
+     public RedirectErrorMessage(String errorMsg) {
+         super();
+         this.errorMsg = errorMsg;
+         xReset=-1;
+         yReset=-1;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor with data from a previous location message.
+  /** Constructor with IDs and a special reset position. The player will be set to this
+   *  new position to avoid conflicts.
    */
-     public CanLeaveIntMapMessage( LocationChangeMessage msg ) {
-          super();
-          this.primaryKey = msg.primaryKey;
-          this.location = msg.location;
-          this.x = msg.x;
-          this.y = msg.y;
-          this.orientation = msg.orientation;
+     public RedirectErrorMessage(String errorMsg, int xReset, int yReset ) {
+         super();
+         this.errorMsg = errorMsg;
+         this.xReset=xReset;
+         this.yReset=yReset;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -77,7 +86,9 @@ public class CanLeaveIntMapMessage extends LocationChangeMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void encode( DataOutputStream ostream ) throws IOException {
-            super.encode( ostream );
+         ostream.writeUTF( errorMsg );
+         ostream.writeInt(xReset);
+         ostream.writeInt(yReset);
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -89,9 +100,12 @@ public class CanLeaveIntMapMessage extends LocationChangeMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void decode( DataInputStream istream ) throws IOException {
-            super.decode( istream );
+          errorMsg = istream.readUTF();
+          xReset = istream.readInt();
+          yReset = istream.readInt();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }
 

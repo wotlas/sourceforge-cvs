@@ -30,6 +30,7 @@ import wotlas.common.universe.*;
 import wotlas.common.Player;
 import wotlas.server.*;
 import wotlas.common.message.description.*;
+import wotlas.common.message.account.*;
 
 /**
  * Associated behaviour to the CanLeaveTownMapMessage...
@@ -161,7 +162,56 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
                       players.remove( primaryKey );
                    }
 
-                // move to our new room
+                // 3 - Building on the same server ?
+                   int targetServerID = building.getServerID();
+
+                   if( targetServerID!=ServerDirector.getServerID() ) {
+                    // ok ! we must transfert this account to another server !!   
+                       GatewayServer gateway = ServerManager.getDefaultServerManager().getGatewayServer();
+
+                        WotlasLocation oldLocation = player.getLocation();
+                        int oldX = player.getX();
+                        int oldY = player.getY();
+                        float oldOrientation = player.getOrientation();
+
+                     // We update the player's location
+                        player.setLocation( location );
+                        player.getMovementComposer().resetMovement();
+                        player.setX( x );
+                        player.setY( y );
+                        player.setOrientation( orientation );
+
+                        //player.sendMessage( new WarningMessage("Please Wait. There is admittance control to enter this place.") );
+
+                       if( gateway.transfertAccount( primaryKey, targetServerID ) ) {
+                           Debug.signal(Debug.NOTICE, null, "Account Transaction "+primaryKey+" succeeded... sending redirection message.");
+                           player.sendMessage(new RedirectConnectionMessage(primaryKey,targetServerID) ); // success
+                           player.updateSyncID();
+                           return;
+                       }
+                       else {
+                            Debug.signal(Debug.NOTICE, null, "Account Transaction "+primaryKey+" failed... reverting to previous state.");
+
+                         // we revert to previous position
+                            player.setLocation( oldLocation );
+                            player.setX( mapExit.getTargetPosition().getX() );
+                            player.setY( mapExit.getTargetPosition().getY() );
+                            player.setOrientation( oldOrientation );
+
+                            synchronized( players ) {
+                               players.put( primaryKey, player ); // we re-add our player
+                            }                                      // to the same location
+
+                            player.sendMessage(new RedirectErrorMessage("Movement Failed. Retry later.\nTarget server ("
+                                                   +targetServerID+") is not running.",
+                                                   mapExit.getTargetPosition().getX(),
+                                                   mapExit.getTargetPosition().getY() ) ); // failed
+                            return;
+                       }
+                   }
+
+
+                // 4 - move to our new room
                    Room targetRoom = wManager.getRoom( location );
                    if( targetRoom==null ) {
                        sendError( player, "Target Room not found ! " +location );
@@ -175,7 +225,7 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
 
                    players = targetRoom.getPlayers();
 
-                // 3  - LOCATION UPDATE
+                // 5  - LOCATION UPDATE
                    player.setLocation( location );
                    player.updateSyncID();
                    player.getMovementComposer().resetMovement();
@@ -187,7 +237,7 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
                       players.put( primaryKey, player );
                    }
 
-                // 4 - SEND MESSAGE TO PLAYER
+                // 6 - SEND MESSAGE TO PLAYER
                    player.sendMessage( new YouCanLeaveMapMessage( primaryKey, location,
                                                                   x, y, orientation, player.getSyncID() ) );
                    return;

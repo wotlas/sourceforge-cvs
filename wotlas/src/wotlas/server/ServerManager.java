@@ -42,9 +42,13 @@ public class ServerManager
 
  /*------------------------------------------------------------------------------------*/
  
-   /** Our ServerConfig file.
+   /** Our server config files.
     */
-      private ServerConfig config;
+      private ServerConfigList configs;
+
+   /** Config of this server.
+    */
+      private ServerConfig ourConfig;
 
    /** Our GameServer
     */
@@ -56,7 +60,7 @@ public class ServerManager
 
    /** Our GatewayServer
     */
-//      private GatewayServer gatewayServer;
+      private GatewayServer gatewayServer;
 
  /*------------------------------------------------------------------------------------*/
   
@@ -65,44 +69,50 @@ public class ServerManager
    */
    private ServerManager() {
 
-       // 1 - we load the ServerConfig file...
+       // 1 - we load the ServerConfig files...
+          Debug.signal( Debug.NOTICE, null, "Updating server config files from Internet home... please wait...");
+       
           PersistenceManager pm = PersistenceManager.getDefaultPersistenceManager();          
-          config = pm.loadServerConfig( ServerDirector.getServerID() );
 
-          if( config == null ) {
+          configs = new ServerConfigList( pm );
+          configs.setRemoteServerConfigHomeURL( ServerDirector.getRemoteServerConfigHomeURL() );
+
+          configs.getLatestConfigFiles(null);  // we retrieve all the server files
+
+          ourConfig = configs.getServerConfig( ServerDirector.getServerID() );
+
+          if( ourConfig == null ) {
                Debug.signal( Debug.FAILURE, this, "Can't init servers without a ServerConfig !" );
                Debug.exit();
-           }
+          }
 
        // 2 - We create the AccountServer
           String account_packages[] = { "wotlas.server.message.account" };
 
-          accountServer = new AccountServer( config.getServerName(),
-                                             config.getAccountServerPort(),
+          accountServer = new AccountServer( ourConfig.getServerName(),
+                                             ourConfig.getAccountServerPort(),
                                              account_packages,
-                                             config.getMaxNumberOfAccountConnections() );
+                                             ourConfig.getMaxNumberOfAccountConnections() );
+
        // 3 - We create the GameServer
           String game_packages[] = { "wotlas.server.message.description",
                                      "wotlas.server.message.movement",
                                      "wotlas.server.message.chat" };
 
-          gameServer = new GameServer( config.getServerName(),
-                                       config.getGameServerPort(),
+          gameServer = new GameServer( ourConfig.getServerName(),
+                                       ourConfig.getGameServerPort(),
                                        game_packages,
-                                       config.getMaxNumberOfGameConnections() );
+                                       ourConfig.getMaxNumberOfGameConnections() );
 
        // 4 - We create the GatewayServer
-
- /** Not for now
-  **
           String gateway_packages[] = { "wotlas.server.message.gateway" };
 
-          gatewayServer = new GatewayServer( config.getServerName(),
-                                             config.getGatewayServerPort(),
+          gatewayServer = new GatewayServer( ourConfig.getServerName(),
+                                             ourConfig.getGatewayServerPort(),
                                              gateway_packages,
-                                             config.getMaxNumberOfGatewayConnections() );
+                                             ourConfig.getMaxNumberOfGatewayConnections(),
+                                             configs );
 
-  **/
        // Everything is ready on the network side...
    }
 
@@ -113,7 +123,7 @@ public class ServerManager
    public void start() {
        gameServer.start();
        accountServer.start();
-//       gatewayServer.start();
+       gatewayServer.start();
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -167,10 +177,10 @@ public class ServerManager
    *
    * @return the gateway server.
    */
-/*   public GatewayServer getGatewayServer() {
+   public GatewayServer getGatewayServer() {
          return gatewayServer;
    }
-*/
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** To get the ServerConfig.
@@ -178,7 +188,7 @@ public class ServerManager
    * @return the serverConfig
    */
     public ServerConfig getServerConfig() {
-         return config;
+         return ourConfig;
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

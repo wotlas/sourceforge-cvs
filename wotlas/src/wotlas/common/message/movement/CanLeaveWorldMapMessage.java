@@ -57,6 +57,19 @@ public class CanLeaveWorldMapMessage extends LocationChangeMessage
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+  /** Constructor with data from a previous location message.
+   */
+     public CanLeaveWorldMapMessage( LocationChangeMessage msg ) {
+          super();
+          this.primaryKey = msg.primaryKey;
+          this.location = msg.location;
+          this.x = msg.x;
+          this.y = msg.y;
+          this.orientation = msg.orientation;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
   /** This is where we put your message data on the stream. You don't need
    * to invoke this method yourself, it's done automatically.
    *

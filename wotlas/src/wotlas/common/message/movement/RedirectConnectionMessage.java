@@ -27,45 +27,40 @@ import wotlas.libs.net.NetMessage;
 import wotlas.common.universe.*;
 
 /** 
- * To tell the server that we are changing location (Message Sent by Client).
+ * To tell the client that he has to redirect his request because his account has been
+ * moved to another server (Message Sent by Server).
  *
  * @author Aldiss
  */
 
-public class CanLeaveIntMapMessage extends LocationChangeMessage
+public class RedirectConnectionMessage extends NetMessage
 {
+ /*------------------------------------------------------------------------------------*/
+
+   /** Remote Server ID
+    */
+     protected int remoteServerID;
+
+   /** Player primary key
+    */
+     protected String primaryKey;
+
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. Just initializes the message category and type.
    */
-     public CanLeaveIntMapMessage() {
+     public RedirectConnectionMessage() {
           super();
-     }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Constructor with Player's primaryKey & location.
-   */
-     public CanLeaveIntMapMessage(String primaryKey, WotlasLocation location, int x, int y, float orientation) {
-          super();
-          this.primaryKey = primaryKey;
-          this.location = location;
-          this.x = x;
-          this.y = y;
-          this.orientation = orientation;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** Constructor with data from a previous location message.
    */
-     public CanLeaveIntMapMessage( LocationChangeMessage msg ) {
+     public RedirectConnectionMessage( String primaryKey, int remoteServerID ) {
           super();
-          this.primaryKey = msg.primaryKey;
-          this.location = msg.location;
-          this.x = msg.x;
-          this.y = msg.y;
-          this.orientation = msg.orientation;
+          this.primaryKey = primaryKey;
+          this.remoteServerID = remoteServerID;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -77,7 +72,8 @@ public class CanLeaveIntMapMessage extends LocationChangeMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void encode( DataOutputStream ostream ) throws IOException {
-            super.encode( ostream );
+            ostream.writeUTF( primaryKey );
+            ostream.writeInt( remoteServerID );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -89,7 +85,8 @@ public class CanLeaveIntMapMessage extends LocationChangeMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void decode( DataInputStream istream ) throws IOException {
-            super.decode( istream );
+            primaryKey = istream.readUTF();
+            remoteServerID = istream.readInt();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

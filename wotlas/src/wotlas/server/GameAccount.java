@@ -19,6 +19,11 @@
 
 package wotlas.server;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+
+import wotlas.common.message.description.PlayerDataMessage;
 
 /** A game account represents information about a player account.
  *  It is used for access control when connecting to a GameServer, and for
@@ -318,6 +323,57 @@ public class GameAccount
      public void setPlayer( PlayerImpl player ) {
          this.player = player;
      }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** This is where we put your message data on the stream. You don't need
+   * to invoke this method yourself, it's done automatically.
+   *
+   * @param ostream data stream where to put your data (see java.io.DataOutputStream)
+   * @exception IOException if the stream has been closed or is corrupted.
+   */
+   public void encode( DataOutputStream ostream ) throws IOException {
+       ostream.writeUTF( login );
+       ostream.writeUTF( password );
+       ostream.writeUTF( email );
+       ostream.writeInt( originalServerID );
+       ostream.writeInt( localClientID );
+       ostream.writeLong( lastConnectionTime );
+
+       PlayerDataMessage playerEncoder = new PlayerDataMessage( player, false );
+       playerEncoder.encode( ostream );
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** This is where we put your message data on the stream. You don't need
+   * to invoke this method yourself, it's done automatically.
+   *
+   * @param istream data stream where to retrieve our data (see java.io.DataInputStream)
+   * @exception IOException if the stream has been closed or is corrupted.
+   */
+   public void decode( DataInputStream istream ) throws IOException {
+       login = istream.readUTF();
+       password = istream.readUTF();
+       email = istream.readUTF();
+       originalServerID = istream.readInt();
+       localClientID = istream.readInt();
+       lastConnectionTime = istream.readLong();
+       setLastConnectionTimeNow();
+       badPasswordCounter = 0;
+
+       PlayerDataMessage playerDecoder = new PlayerDataMessage( player, false, "wotlas.server.PlayerImpl" );
+       playerDecoder.decode( istream );
+       player = (PlayerImpl) playerDecoder.getPlayer();
+   }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+  /** Returns the full account name (aka primary key).
+   */
+   public String getPrimaryKey() {
+   	return login + "-" + originalServerID + "-" + localClientID;
+   }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

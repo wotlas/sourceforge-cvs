@@ -16,56 +16,47 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
-package wotlas.common.message.movement;
+ 
+package wotlas.server.message.gateway;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.universe.*;
+
 
 /** 
- * To tell the server that we are changing location (Message Sent by Client).
+ * To tell the remote gateway server that the account transaction failed.
  *
  * @author Aldiss
  */
 
-public class CanLeaveIntMapMessage extends LocationChangeMessage
+public class AccountTrFailedMessage extends NetMessage
 {
  /*------------------------------------------------------------------------------------*/
 
-  /** Constructor. Just initializes the message category and type.
+  /** Info
    */
-     public CanLeaveIntMapMessage() {
+      protected String errorMsg;
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Constructor.
+   */
+     public AccountTrFailedMessage() {
           super();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor with Player's primaryKey & location.
+  /** Constructor with error message.
+   *
+   * @param errorMsg why the transaction failed.
    */
-     public CanLeaveIntMapMessage(String primaryKey, WotlasLocation location, int x, int y, float orientation) {
-          super();
-          this.primaryKey = primaryKey;
-          this.location = location;
-          this.x = x;
-          this.y = y;
-          this.orientation = orientation;
-     }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Constructor with data from a previous location message.
-   */
-     public CanLeaveIntMapMessage( LocationChangeMessage msg ) {
-          super();
-          this.primaryKey = msg.primaryKey;
-          this.location = msg.location;
-          this.x = msg.x;
-          this.y = msg.y;
-          this.orientation = msg.orientation;
+     public AccountTrFailedMessage( String errorMsg ) {
+         super();
+         this.errorMsg = errorMsg;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -77,7 +68,7 @@ public class CanLeaveIntMapMessage extends LocationChangeMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void encode( DataOutputStream ostream ) throws IOException {
-            super.encode( ostream );
+         ostream.writeUTF( errorMsg );
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -89,7 +80,7 @@ public class CanLeaveIntMapMessage extends LocationChangeMessage
    * @exception IOException if the stream has been closed or is corrupted.
    */
      public void decode( DataInputStream istream ) throws IOException {
-            super.decode( istream );
+         errorMsg = istream.readUTF();
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -17,57 +17,52 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package wotlas.common.message.movement;
+package wotlas.server.message.gateway;
+
+import wotlas.server.*;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 import wotlas.libs.net.NetMessage;
-import wotlas.common.universe.*;
 
 /** 
- * To tell the server that we are changing location (Message Sent by Client).
+ * To transfert an account to a GatewayServer.
  *
  * @author Aldiss
  */
 
-public class CanLeaveIntMapMessage extends LocationChangeMessage
-{
+public class AccountTransactionMessage extends NetMessage
+{ 
+ /*------------------------------------------------------------------------------------*/
+
+  /** Game Account to transfert
+   */
+    protected GameAccount account;
+ 
+  /** Wotlas Server ID of the server which is transfering this account.
+   */
+    protected int serverID;
+  
  /*------------------------------------------------------------------------------------*/
 
   /** Constructor. Just initializes the message category and type.
    */
-     public CanLeaveIntMapMessage() {
-          super();
-     }
+    public AccountTransactionMessage() {
+        super();        
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor with Player's primaryKey & location.
+  /** Constructor with parameters.
    */
-     public CanLeaveIntMapMessage(String primaryKey, WotlasLocation location, int x, int y, float orientation) {
-          super();
-          this.primaryKey = primaryKey;
-          this.location = location;
-          this.x = x;
-          this.y = y;
-          this.orientation = orientation;
-     }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Constructor with data from a previous location message.
-   */
-     public CanLeaveIntMapMessage( LocationChangeMessage msg ) {
-          super();
-          this.primaryKey = msg.primaryKey;
-          this.location = msg.location;
-          this.x = msg.x;
-          this.y = msg.y;
-          this.orientation = msg.orientation;
-     }
-
+    public AccountTransactionMessage( GameAccount account, int serverID ) {
+        super();
+        this.account = account;
+        this.serverID = serverID;
+    }
+  
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   /** This is where we put your message data on the stream. You don't need
@@ -76,9 +71,10 @@ public class CanLeaveIntMapMessage extends LocationChangeMessage
    * @param ostream data stream where to put your data (see java.io.DataOutputStream)
    * @exception IOException if the stream has been closed or is corrupted.
    */
-     public void encode( DataOutputStream ostream ) throws IOException {
-            super.encode( ostream );
-     }
+    public void encode( DataOutputStream ostream ) throws IOException {
+       account.encode( ostream );
+       ostream.writeInt( serverID );
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -88,10 +84,14 @@ public class CanLeaveIntMapMessage extends LocationChangeMessage
    * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
    * @exception IOException if the stream has been closed or is corrupted.
    */
-     public void decode( DataInputStream istream ) throws IOException {
-            super.decode( istream );
-     }
+    public void decode( DataInputStream istream ) throws IOException {
+
+      account = new GameAccount();
+      account.decode( istream );
+
+      serverID = istream.readInt();
+    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+ 
 }
-

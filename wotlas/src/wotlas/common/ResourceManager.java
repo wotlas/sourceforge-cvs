@@ -170,6 +170,10 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
     */
      private boolean inServerJar;
 
+   /** Current Jar Name.
+    */
+     private String jarName;
+
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
    /** Constructor that uses default resource locations. Check the default
@@ -183,7 +187,16 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
            inJar = false;
 
         // Are we in a client JAR File ?
+           jarName = WOTLAS_CLIENT_JAR;
            inClientJar = Tools.hasJar(WOTLAS_CLIENT_JAR);
+
+           if( !inClientJar ) {
+             // perhaps the JAR name was changed by Java Web Start
+               jarName = Tools.findJarName( WOTLAS_CLIENT_JAR );
+               
+               if(jarName!=null)
+                  inClientJar = true; // yes the name was changed, we are in a Jar
+           }
 
            if( inClientJar ) {
               inJar = true;
@@ -192,7 +205,16 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
            }
 
         // Are we in a server JAR File ?
+           jarName = WOTLAS_SERVER_JAR;
            inServerJar = Tools.hasJar(WOTLAS_SERVER_JAR);
+
+           if( !inServerJar ) {
+             // perhaps the JAR name was changed by Java Web Start
+               jarName = Tools.findJarName( WOTLAS_SERVER_JAR );
+               
+               if(jarName!=null)
+                  inServerJar = true; // yes the name was changed, we are in a Jar
+           }
 
            if( inServerJar ) {
               inJar = true;
@@ -202,6 +224,7 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
 
 
         // OK we are not in a JAR. We'll use the default external location for resources
+           jarName = null;
            basePath = DEFAULT_BASE_PATH;
      }
 
@@ -442,7 +465,7 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
      	       ext ="";
      	
            if( inClientJar ) {
-               return Tools.listFilesInJar( WOTLAS_CLIENT_JAR, dirName, ext );
+               return Tools.listFilesInJar( jarName, dirName, ext );
            }
            else
                return FileTools.listFiles( dirName, ext );
@@ -461,7 +484,7 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
     */
      public String[] listUniverseDirectories( String dirName ) {     	
            if( inClientJar ) {
-               return Tools.listFilesInJar( WOTLAS_CLIENT_JAR, dirName, null );
+               return Tools.listFilesInJar( jarName, dirName, null );
            }
            else
                return FileTools.listDirs( dirName  );
@@ -622,11 +645,8 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
      	   if( ext==null )
      	       ext ="";
      	
-           if( inClientJar && !isExternal(dirName) ) {
-               return Tools.listFilesInJar( WOTLAS_CLIENT_JAR, dirName, ext );
-           }
-           else if( inServerJar && !isExternal(dirName) ){
-               return Tools.listFilesInJar( WOTLAS_SERVER_JAR, dirName, ext );
+           if( inJar && !isExternal(dirName) ) {
+               return Tools.listFilesInJar( jarName, dirName, ext );
            }
            else
                return FileTools.listFiles( dirName, ext );
@@ -644,11 +664,9 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
     *  @return the sub-dirs of the given dirName (on one level only).
     */
      public String[] listDirectories( String dirName ) {     	
-           if( inClientJar && !isExternal(dirName)) {
-               return Tools.listFilesInJar( WOTLAS_CLIENT_JAR, dirName, null );
-           }
-           else if( inServerJar && !isExternal(dirName) ){
-               return Tools.listFilesInJar( WOTLAS_SERVER_JAR, dirName, null );
+
+           if( inJar && !isExternal(dirName)) {
+               return Tools.listFilesInJar( jarName, dirName, null );
            }
            else
                return FileTools.listDirs( dirName  );

@@ -479,6 +479,27 @@ public class Tools {
 
  /*------------------------------------------------------------------------------------*/ 
 
+   /** We search for a jar name in our classpath given a key word.
+    * @param jarName jar file name, such as "wotlas.jar"
+    * @return Jar that has the keyword in its name, null if none
+    */
+     public static String findJarName( String keyword ) {
+     	   keyword = keyword.toLowerCase();
+           StringTokenizer tokenizer = new StringTokenizer(System.getProperty("java.class.path", "."),
+                                              System.getProperty("path.separator", ";"));
+
+           while( tokenizer.hasMoreTokens() ) {
+              String directory = tokenizer.nextToken().toLowerCase();
+              
+              if( directory.indexOf(keyword)>=0 )
+                  return directory;
+           }
+
+           return null; // not found
+     }
+
+ /*------------------------------------------------------------------------------------*/ 
+
    /** Returns true if we have the given jar name in our classpath.
     * @param jarName jar file name, such as "wotlas.jar"
     * @return true if the JAR is in the classpath, false if not

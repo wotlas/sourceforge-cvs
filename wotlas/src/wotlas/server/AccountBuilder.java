@@ -19,8 +19,9 @@
 
 package wotlas.server;
 
+import wotlas.common.character.*;
 import wotlas.common.message.account.*;
-import wotlas.utils.Debug;
+import wotlas.utils.*;
 import wotlas.libs.net.*;
 
 
@@ -39,7 +40,19 @@ import wotlas.libs.net.*;
  *      and added to the current running game.<br>
  *
  *  5 - The client connection is then closed and the AccountBuilder handled to the
- *      garbage collector. The client can now connect to the GameServer.
+ *      garbage collector. The client can now connect to the GameServer.<br><p>
+ *
+ * The order of the messages to send is :<br>
+ *
+ * - PasswordAndLoginMessage( String login, String password )
+ * - WotCharacterClassMessage( String className, byte wotCharacterStatus );
+ * - VisualPropertiesMessage( byte hairColor )
+ * - PlayerNamesMessage( String playerName, String fullPlayerName )
+ * - AccountCreationMessage() validates the account creation
+ *
+ * If the creation is successful, the accountServer sends a AccountCreatedMessage
+ * containing the player's IDs. If any error occurs an AccountCreationFailedMessage
+ * is sent AND the connection is immediately closed.
  *
  * @author Aldiss
  * @see wotlas.server.AccountServer
@@ -57,14 +70,21 @@ public class AccountBuilder implements NetConnectionListener
     /** ADD HERE OTHER ACCOUNT STATE (player quizz, quizz done ... )
      */
 
-    /** Account Empty State (not initialized)
+    /** Account awaiting login & password to be set.
      */
-       static final public byte ACCOUNT_LOGIN_PASSWD_STATE = 1;
+       static final public byte ACCOUNT_LOGIN_PASSWD_STATE = 10;
 
-    /** Account Empty State (not initialized)
+    /** Account awaiting player's visual properties to be set
      */
-       static final public byte ACCOUNT_PLAYER_NAMES_STATE = 2;
+       static final public byte ACCOUNT_WOTCHARACTER_CLASS_STATE = 20;
 
+    /** Account awaiting player's visual properties to be set
+     */
+       static final public byte ACCOUNT_VISUAL_PROPERTIES_STATE = 30;
+
+    /** Account awaiting player name & full player name to be set.
+     */
+       static final public byte ACCOUNT_PLAYER_NAMES_STATE = 40;
 
     /** Account Ready State (account ready to be created)
      */
@@ -147,7 +167,69 @@ public class AccountBuilder implements NetConnectionListener
 
      	account.setLogin(login);
      	account.setPassword(password);
-        state = ACCOUNT_READY_STATE;    // TMP: change to ACCOUNT_PLAYER_NAMES_STATE
+        state = ACCOUNT_WOTCHARACTER_CLASS_STATE;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Method called by NetMessages to set WotCharacterClass
+    */
+     public void setWotCharacterClass( String className, byte wotCharacterStatus ) {
+     	if(state!=ACCOUNT_WOTCHARACTER_CLASS_STATE) {
+           stateError();
+           return;
+        }
+
+        Object obj = Tools.getInstance( className );
+
+        if( obj==null || !(obj instanceof WotCharacter) ) {
+           stateError();
+           return;
+        }
+
+        WotCharacter wotCharacter = (WotCharacter) obj; 
+
+        if( !(wotCharacter instanceof AesSedai) ) {
+           stateError();
+           return;
+        }
+
+        if( !AesSedai.isValidAesSedaiStatus( wotCharacterStatus ) ) {
+           stateError();
+           return;
+        }
+
+        ( (AesSedai) wotCharacter ).setAesSedaiStatus( wotCharacterStatus );
+     	player.setWotCharacter( wotCharacter );
+        state = ACCOUNT_VISUAL_PROPERTIES_STATE;
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Method called by NetMessages to set the visual properties of the player.
+    *
+    * @param hairColor ID found in wotlas.common.character.Human
+    */
+     public void setVisualProperties( byte hairColor ) {
+     	if(state!=ACCOUNT_VISUAL_PROPERTIES_STATE) {
+           stateError();
+           return;
+        }
+
+        if( ! (player.getWotCharacter() instanceof Human)  ) {
+           stateError();
+           return;
+        }
+
+        Human h = (Human) player.getWotCharacter();
+
+        if( !Human.isValidHairColor( hairColor ) ) {
+           stateError();
+           return;
+        }
+
+        h.setHairColor( hairColor );
+        state = ACCOUNT_PLAYER_NAMES_STATE;
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -222,6 +304,7 @@ public class AccountBuilder implements NetConnectionListener
     */
      public void stateError() {
         state=ACCOUNT_EMPTY_STATE;
+        personality.queueMessage( new AccountCreationFailedMessage( "bad state detected ! please retry." ) );
         Debug.signal( Debug.ERROR, this, "Bad State Detected During Account Creation" );
         personality.closeConnection();
      }

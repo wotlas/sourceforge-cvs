@@ -246,7 +246,7 @@ public class GraphicsDirector extends JPanel {
    * @param gc graphics object.
    */
     public void paint(Graphics gc) {      
-         if(gc==null || getHeight()<=0 || getWidth()<=0) return;
+         if(gc==null || screen==null || getHeight()<=0 || getWidth()<=0) return;
 
       // double-buffer init
          if (backBufferImage == null  || getWidth() != backBufferImage.getWidth(this) || getHeight() != backBufferImage.getHeight(this))

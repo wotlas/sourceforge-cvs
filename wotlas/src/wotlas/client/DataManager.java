@@ -479,8 +479,10 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   /** Tick
    */
   public void tick() {
-    //myPlayer.tick();
-
+    
+    myPlayer.tick();
+    locationUpdate();
+    
     if (circle != null) {
       if (circleLife < CIRCLE_LIFETIME) {
         circleLife++;
@@ -491,13 +493,16 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         circleLife = 0;
       }
     }
-    Iterator it = players.values().iterator();
+    
+    
+    /*
+    Iterator it = players.values().iterator();    
     //System.out.println("tick players");
-    while( it.hasNext() ) {
-      //System.out.println("tick");
+    while( it.hasNext() ) {      
       ( (PlayerImpl) it.next() ).tick();
     }
     //System.out.println("end tick");
+    */
     gDirector.tick();
   }
 
@@ -523,8 +528,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     if (object == null) {
       int newX = e.getX() + (int)screen.getX();
       int newY = e.getY() + (int)screen.getY();
-      System.out.println("endPosition = ("+newX+","+newY+")");
+      //System.out.println("endPosition = ("+newX+","+newY+")");
       myPlayer.setEndPosition(newX, newY);
+      
       // Create the trajectory
       
       wotlas.utils.List path = aStar.findPath( new Point( myPlayer.getX()/TILE_SIZE, myPlayer.getY()/TILE_SIZE),
@@ -570,7 +576,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
           Point p = (Point) smoothPath.elementAt(i);                    
           p.x *= TILE_SIZE;
           p.y *= TILE_SIZE;
-          System.out.println("smoothPath["+i+"] = ("+p.x+","+p.y+")");
+          //System.out.println("smoothPath["+i+"] = ("+p.x+","+p.y+")");
         }        
       }
       myPlayer.initMovement(smoothPath);
@@ -653,6 +659,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   }
   
   public void roomLocationUpdate() {
+    
     Room myRoom = worldManager.getRoom( myPlayer.getLocation() );
     
     // I - ROOMLINK INTERSECTION UPDATE ( is the player moving to another room ? )
@@ -674,10 +681,14 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         int newRoomID = myRoom.isInOtherRoom( latestRoomLink, myPlayer.getCurrentRectangle() );
                
         if ( newRoomID>=0 ) {
-          // Ok, we move to this new Room
+          // Ok, we move to this new Room          
           myRoom.removePlayer( myPlayer );
           myPlayer.getLocation().setRoomID( newRoomID );
           myRoom.addPlayer( myPlayer );
+          System.out.print("Move to another room : ");
+          Room room = worldManager.getRoom(myPlayer.getLocation());
+          System.out.println(room.getFullName());
+          
         }
     } // End of part I
   
@@ -695,10 +706,12 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         
         switch( mapExit.getType() ) {
           case MapExit.INTERIOR_MAP_EXIT :
+            System.out.println("Move to another InteriorMap");
             initInteriorMapDisplay(myPlayer.getLocation()); // init new map
             break;
   
           case MapExit.TOWN_EXIT :
+            System.out.println("Move to TownMap");
             initTownMapDisplay(myPlayer.getLocation()); // init new map
             break;
         }
@@ -707,11 +720,11 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
   }
   
   public void townLocationUpdate() {
-    ;
+    //System.out.println("DataManager::townLocationUpdate");
   }
 
   public void worldLocationUpdate() {
-    
+    //System.out.println("DataManager::worldLocationUpdate");
   }
   
   /** To init InteriorMap
@@ -735,11 +748,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     ScreenPoint insertionPoint = room.getInsertionPoint();
     System.out.println("\tinsertionPoint = " + insertionPoint);
     
-    RoomLink[] roomLinks = room.getRoomLinks();
-    System.out.println("\tRoomLink");
-    for (int i=0; i<roomLinks.length; i++) {
-      System.out.println("\t\troomLinks["+i+"] = " + roomLinks[i]);
-    }
+    
     
     backgroundImageID = imap.getInteriorMapImage();
     System.out.println("\tbackgroundImageID = " + backgroundImageID);
@@ -757,6 +766,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     myPlayer.setX(insertionPoint.x);
     myPlayer.setY(insertionPoint.y);
     myPlayer.setPosition(insertionPoint);
+   
     
     // 4 - given the backgroundImageID we get the mask...
     ImageIdentifier mapMaskID = null;
@@ -771,7 +781,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
       Debug.exit();
     }
 
-    // 5 - We load the mask image and create the Astar algo.
+    // 5 - We load the mask image and initialize the Astar algo.
     BufferedImage bufIm = null;
     try {
       bufIm = ImageLibrary.loadBufferedImage(new ImageIdentifier( mapMaskID ), imageDBHome, BufferedImage.TYPE_INT_ARGB );
@@ -793,6 +803,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
                     new Dimension( JClientScreen.leftWidth, JClientScreen.mapHeight )   // screen default dimension
                    );
 
+    RoomLink[] roomLinks = room.getRoomLinks();
+    System.out.println("\tRoomLink");
+    for (int i=0; i<roomLinks.length; i++) {
+      System.out.println("\t\troomLinks["+i+"] = " + roomLinks[i]);
+      drawScreenRectangle(roomLinks[i].toRectangle());
+    }
+    
     // 7 - We add visual properties to the player (shadows...)
     myPlayer.initVisualProperties(gDirector);            
   }
@@ -825,5 +842,30 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
    */
   public void cleanInteriorMapData() {
     ;
+  }
+  
+ /*------------------------------------------------------------------------------------*/
+  /** To draw a rectangle on the screen
+   *
+   * @param rect the rectangle to display
+   */
+  private void drawScreenRectangle(Rectangle rect) {
+    System.out.println("DataManager::drawScreenRectangle " + rect);
+    Point p[] = new Point[5];
+    int x = (int) rect.getX();
+    int y = (int) rect.getY();
+    int width = (int) rect.getWidth();
+    int height = (int) rect.getHeight();
+    System.out.println(x);
+    System.out.println(y);
+    System.out.println(width);
+    System.out.println(height);
+    p[0] = new Point(x,y);
+    p[1] = new Point(x+width, y);
+    p[2] = new Point(x+width, y+height);
+    p[3] = new Point(x, y+height);
+    p[4] = new Point(x,y);
+    Drawable pathDrawable = (Drawable) new PathDrawable( p, Color.green, (short) ImageLibRef.AURA_PRIORITY ); 
+    gDirector.addDrawable( pathDrawable);
   }
 }

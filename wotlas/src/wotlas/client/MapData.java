@@ -34,10 +34,6 @@ public interface MapData
   
  /*------------------------------------------------------------------------------------*/
   
- /** True if we send netMessage
-   */
-  public static boolean SEND_NETMESSAGE = true;
-  
   /** Connection timeout
    */
   public static final int CONNECTION_TIMEOUT = 5000;

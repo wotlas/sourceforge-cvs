@@ -23,7 +23,7 @@ import java.net.Socket;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
-import wotlas.libs.net.personality.LoparPersonality;
+import wotlas.libs.net.personality.TormPersonality;
 import wotlas.libs.net.message.ClientRegisterMessage;
 import wotlas.libs.net.message.ClientRegisterMsgBehaviour;
 
@@ -31,7 +31,7 @@ import wotlas.utils.Debug;
 import wotlas.utils.Tools;
 
 /** A NetClient provides methods to initiate a connection with a server.
- *  The default NetPersonality it provides is a LoparPersonality.
+ *  The default NetPersonality it provides is a TormPersonality.
  *
  * @author Aldiss
  * @see wotlas.libs.net.NetPersonality
@@ -51,11 +51,25 @@ public class NetClient
     */
        private String error_message;
 
+   /** So we have to stop the connection process ( "cancel action" )
+    */
+       private boolean stop;
+
+   /** Connection validated by server ?
+    */
+       private boolean validConnection;
+
  /*------------------------------------------------------------------------------------*/
 
    /** Constructor.
     */
        public NetClient() {
+             stop = false;
+             validConnection = false;
+
+          // We delete the eventual old NetMessageFactory
+             if( NetMessageFactory.getDefaultMessageFactory() != null )
+                 NetMessageFactory.getDefaultMessageFactory().deleteFactory();
        }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -68,7 +82,7 @@ public class NetClient
     */
       protected NetPersonality getNewDefaultPersonality( Socket socket )
       throws IOException {
-              return new LoparPersonality( socket, null );
+              return new TormPersonality( socket, null );
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -109,6 +123,9 @@ public class NetClient
                     return null;
                }
 
+               if( stop() )
+                   return null;
+
             // We create a new personality and send our key.
             // This client is the temporary context of the first
             // incoming message sent by the server.
@@ -117,6 +134,11 @@ public class NetClient
 
                personality.queueMessage( new ClientRegisterMessage( key ) );
                personality.pleaseSendAllMessagesNow();
+
+               if( stop() ) {
+               	   personality.closeConnection();
+                   return null;
+               }
 
             // We wait for the answer... and process it when it's there.
             // If something went wrong on the server the received message will
@@ -141,20 +163,29 @@ public class NetClient
                           wait( CONNECTION_TIMEOUT );
                        }
                        catch(InterruptedException ie){
-                          personality.closeConnection();
-                          Debug.signal(Debug.ERROR, this, "Connection Timeout");
-                          error_message = "Server reached, but connection timeout";
-                          return null;
                        }
                     }
                }
 
-            // Success ? let's see if there is an error message
-            // (see the messages in the wotlas.libs.net.message package)
-               if(error_message!=null) {
-                  Debug.signal(Debug.ERROR, this, "Server returned an Error");
+               if(stop()) {
                   personality.closeConnection();
                   return null;
+               }
+
+            // Success ? let's see if there is an error message
+            // (see the messages in the wotlas.libs.net.message package)
+               if( !validConnection() ) {
+
+                  if(getErrorMessage()!=null) {
+                      Debug.signal(Debug.ERROR, this, "Server returned an Error");
+                  }
+                  else {
+                      setErrorMessage( "Server reached, but connection timeout" );        
+                      Debug.signal(Debug.ERROR, this, "Connection Timeout");
+                  }
+
+                  personality.closeConnection();
+                  return null;                   
                }
 
                personality.setContext( context );
@@ -187,11 +218,52 @@ public class NetClient
     *
     * @param error_message the new error message.
     */
-      public void setErrorMessage( String error_message) {
+      public synchronized void setErrorMessage( String error_message) {
              this.error_message = error_message;
       }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** To stop the connection process...
+     */
+       public synchronized void stopConnectionProcess() {
+             stop=true;
+             notify();
+       }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Do we have to stop the connection process ?
+     *
+     * @return true if we must stop;
+     */
+       public synchronized boolean stop() {
+             return stop;
+       }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** This method is for the ServerWelcomeMsgBehaviour only: it validates the
+     *  connection with the server.
+     */
+       public synchronized void validateConnection() {
+             validConnection=true;
+       }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Do we have a valid connection ?
+     *
+     * @return true if it's the case...
+     */
+       public synchronized boolean validConnection() {
+             return validConnection;
+       }
+
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+
 }
 
 

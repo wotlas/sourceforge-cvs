@@ -394,18 +394,22 @@ public class AStarDouble
     int y = pointGoal.y;
 
     if (isNotBlock(x,y)) {
-      //if (SHOW_DEBUG)
-      //  System.out.println("valid point");
+      if (SHOW_DEBUG)
+        System.out.println("AStarDouble \t (" + x + "," + y + ") is valid point");
       return true;
     } else {
-      //if (SHOW_DEBUG)
-      //  System.out.println("not a valid point -> search a valid point");
-      Debug.signal( Debug.NOTICE, null, "not a valid goal point -> search a valid point");  
-      //Debug.signal( Debug.NOTICE, null, "  x = " + x + " ,  y = " + y);
+      if (SHOW_DEBUG) {
+        System.out.println("AStarDouble \t (" + x + "," + y + ") is not a valid point -> search a valid point");
+        System.out.println("\ttileSize = " + tileSize);
+        System.out.println("\tSPRITE_SIZE = " + SPRITE_SIZE);
+        System.out.println("\tmapWidth = " + mapWidth);
+        System.out.println("\tmapHeight = " + mapHeight);
+      }
+      Debug.signal( Debug.NOTICE, null, "not a valid goal point -> search a valid point");              
     }
 
-    // test if player is near border
-    if (x+SPRITE_SIZE>mapWidth) {
+    // test if player is near border    
+    if (x+SPRITE_SIZE>=mapWidth) {
       if (SHOW_DEBUG)
         System.out.println("test x near border");
       if (map[x-SPRITE_SIZE-1][y]) {
@@ -415,7 +419,7 @@ public class AStarDouble
         return true;
       }
     }
-    if (y+SPRITE_SIZE>mapHeight) {
+    if (y+SPRITE_SIZE>=mapHeight) {
       if (SHOW_DEBUG)
         System.out.println("test y near border");
       if (map[x][mapHeight-SPRITE_SIZE-1]) {

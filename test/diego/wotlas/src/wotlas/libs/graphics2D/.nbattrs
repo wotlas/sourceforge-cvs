@@ -7,6 +7,9 @@
     <fileobject name="GraphicsDirector.java">
         <attr name="class_dependency_javax.swing.JPanel" stringvalue="GraphicsDirector"/>
     </fileobject>
+    <fileobject name="GroupOfGraphics.java">
+        <attr name="class_dependency_wotlas.libs.persistence.BackupReady" stringvalue="GroupOfGraphics"/>
+    </fileobject>
     <fileobject name="ImageIdentifier.java">
         <attr name="class_dependency_java.io.Serializable" stringvalue="ImageIdentifier"/>
     </fileobject>

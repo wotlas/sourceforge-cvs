@@ -32,6 +32,8 @@ import wotlas.common.*;
 
 import wotlas.client.*;
 
+import wotlas.common.universe.*;
+
 import java.io.File;
 import java.util.Properties;
 import java.util.Iterator;
@@ -44,6 +46,8 @@ import java.util.Iterator;
 public class EditTile {
 
  /*------------------------------------------------------------------------------------*/
+    
+    transient static public TileMap workingOnThisTileMap;
 
     /** Server Command Line Help
    */

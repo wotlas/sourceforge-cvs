@@ -70,7 +70,7 @@ public class WorldGenerator {
            tileMap.setTileMapID(0);
            tileMap.setFullName("Mishra");
            tileMap.setShortName("mishra");
-           tileMap.setInsertionPoint( new ScreenPoint(60,330) );
+           tileMap.setInsertionPoint( new ScreenPoint(10,10) );
            tileMap.setSmallTileMapImage( new ImageIdentifier( "maps-1/town-small-1/shayol-ghul-2" ) );
            tileMap.setMusicName("tar-valon.mid");
            tileMap.selectGroupOfGraphics( GroupOfGraphics.ROGUE_SET );
@@ -79,8 +79,8 @@ public class WorldGenerator {
            manager.setMap( 10, 20, TileMap.PIXEL_32, (byte)10, (byte)9 );
            manager.setMapPoint(3,2,0,0);
            manager.setMapPoint(4,2,1,0);
-           manager.setMapPoint(5,2,2,0);
-           manager.setMapPoint(6,2,3,0);
+           manager.setMapPoint(5,3,2,3);
+           manager.setMapPoint(6,4,3,2);
            manager.setMapPoint(7,2,4,0);
            manager.setMapPoint(8,2,5,0);
            manager.setMapPoint(9,2,6,0);
@@ -93,7 +93,7 @@ public class WorldGenerator {
            tileMap.setTileMapID(1);
            tileMap.setFullName("Rak Timin");
            tileMap.setShortName("raktimin");
-           tileMap.setInsertionPoint( new ScreenPoint(30,310) );
+           tileMap.setInsertionPoint( new ScreenPoint(10,10) );
            tileMap.setSmallTileMapImage( new ImageIdentifier( "maps-1/town-small-1/shayol-ghul-2" ) );
            tileMap.setMusicName("tar-valon.mid");
            tileMap.selectGroupOfGraphics( GroupOfGraphics.DEMO_SET );

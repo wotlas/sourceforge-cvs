@@ -149,6 +149,11 @@ public class JMPanel extends JPanel implements MouseListener, MouseMotionListene
     
        if(EditorDataManager.SHOW_DEBUG)
           System.out.println("[JMPanel] : clic sur (" + e.getX() + "," + e.getY() + ")");
+       if(EditorDataManager.SHOW_DEBUG){
+          System.out.println("[JMPanel] : clic sur (" 
+          + new Integer( e.getX()/32 ) + "," 
+          + new Integer( e.getY()/32 ) + ")");
+       }
 
        if(SwingUtilities.isRightMouseButton(e)) {
           if (EditorDataManager.SHOW_DEBUG)
@@ -159,13 +164,18 @@ public class JMPanel extends JPanel implements MouseListener, MouseMotionListene
        }
        else {
           isLeftMouseButtonPressed = false;
+          
           dataManager.onLeftButtonDragged(e,e.getX()-x,e.getY()-y,END_MOUSE_MOVEMENT);
 
           if (EditorDataManager.SHOW_DEBUG)
              System.out.println("\tleft clic");
-
+          /*
           if( Math.abs(e.getX()-x)<5 && Math.abs(e.getY()-y)<5 )
               dataManager.onLeftClicJMapPanel(e);
+           */
+          if( Math.abs(e.getX()-x)<5 && Math.abs(e.getY()-y)<5 )
+            dataManager.clickOnATile( new Integer( e.getX()/32 ).intValue()
+            ,new Integer( e.getY()/32 ).intValue() );
        }
 
        mouseDragged = false;

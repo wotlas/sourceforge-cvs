@@ -43,20 +43,20 @@ public class TileMap extends ScreenRectangle implements WotlasMap,BackupReady {
      */
     private static final long serialVersionUID = 556565L;
 
-    public static final byte FAKEISO = 1;
-    public static final byte FLAT    = 2;
-    public static final Dimension PIXEL_32 = new Dimension( 32, 32 );
-    public static final Dimension PIXEL_50 = new Dimension( 50, 50 );
-    public static final Dimension PIXEL_40X80 = new Dimension( 40, 80 );
-    public static final Dimension PIXEL_80X40 = new Dimension( 80, 40 );
-    public static final Dimension PIXEL_70X35 = new Dimension( 70, 35 );
+    public static byte FAKEISO = 1;
+    public static byte FLAT    = 2;
+    public static Dimension PIXEL_32 = new Dimension( 32, 32 );
+    public static Dimension PIXEL_50 = new Dimension( 50, 50 );
+    public static Dimension PIXEL_40X80 = new Dimension( 40, 80 );
+    public static Dimension PIXEL_80X40 = new Dimension( 80, 40 );
+    public static Dimension PIXEL_70X35 = new Dimension( 70, 35 );
 
-    public static final byte TILE   = 1;
-    public static final byte WALLX  = 2;
-    public static final byte WALLY  = 3;
+    public static byte TILE   = 1;
+    public static byte WALLX  = 2;
+    public static byte WALLY  = 3;
     
-    public static final byte TILE_FREE      = 0;
-    public static final byte TILE_NOT_FREE  = 1;
+    public static byte TILE_FREE      = 0;
+    public static byte TILE_NOT_FREE  = 1;
 
  /*------------------------------------------------------------------------------------*/
     
@@ -89,6 +89,7 @@ public class TileMap extends ScreenRectangle implements WotlasMap,BackupReady {
     private Dimension mapSize;
 
   /** Point of insertion (teleportation, arrival)
+   * this should be in a free tile
    */
     private ScreenPoint insertionPoint;
 
@@ -170,10 +171,12 @@ public class TileMap extends ScreenRectangle implements WotlasMap,BackupReady {
         this.mapSize = mapSize;
     }
 
+    // this should be in a free tile
     public void setInsertionPoint(ScreenPoint myInsertionPoint) {
         this.insertionPoint = myInsertionPoint;
     }
 
+    // this should be in a free tile
     public ScreenPoint getInsertionPoint() {
         return new ScreenPoint( insertionPoint );
     }

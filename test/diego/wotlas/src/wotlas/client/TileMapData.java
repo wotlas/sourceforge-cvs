@@ -182,6 +182,7 @@ public class TileMapData implements MapData {
         TileMap tileMap = editorDataManager.getWorldManager().getTileMap( location );
 
         GraphicsDirector gDirector = editorDataManager.getGraphicsDirector();
+        EditorPlugIn.rememberTheGDirector( gDirector );
         gDirector.preTileMapInit( tileMap.getMapFullSize() );
         tileMap.initGroupOfGraphics( gDirector );
         tileMap.drawAllLayer( gDirector );

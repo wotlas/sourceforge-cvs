@@ -29,6 +29,8 @@ import java.awt.*;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
+import javax.swing.*;
+
  /** Group of graphics represents an Id+ the size of the Tiles inside the image, and the name of the image
   *
   * WHT'S THE USE of Group of graphics?
@@ -124,7 +126,6 @@ public class GroupOfGraphics implements BackupReady {
      */
     private String tileImageSet;
 
-    transient private TilePosition posInsideTile;
     transient private ImageIdentifier image;
     
     transient private int Xlen;
@@ -212,9 +213,11 @@ public class GroupOfGraphics implements BackupReady {
     public void drawMe( java.awt.Graphics2D gc, int myX, int myY, int internalTile, BufferedImage theTile ) {
         if(Pos==null){
             ComputePos(theTile);
+            // if( tileType == TileMap.TILE )
+                // do nothing;
             if( tileType == TileMap.WALLX )
                 ComputePosWall( true );
-            if( tileType == TileMap.WALLY )
+            else if( tileType == TileMap.WALLY )
                 ComputePosWall( false );
         }
         if( tileType == TileMap.WALLX )
@@ -322,4 +325,24 @@ public class GroupOfGraphics implements BackupReady {
         }
     }
    */
+    
+    public ImageIcon getAsIcon( int internalTile, ImageLibrary imageLib ) {
+        if( image == null )
+           image = new ImageIdentifier(tileImageSet);
+        imageLib.loadImage( image );
+        BufferedImage theTile = imageLib.getImage( image );
+        if(Pos==null)
+            ComputePos(theTile);
+        BufferedImage subImage;
+        subImage = theTile.getSubimage( Pos[internalTile][0]
+        ,Pos[internalTile][1]
+        ,tileDim.width
+        ,tileDim.height
+        );
+        return new ImageIcon(subImage);
+    }
+    
+    public int totalImage(){
+        return Xlen*Ylen;
+    }
 }

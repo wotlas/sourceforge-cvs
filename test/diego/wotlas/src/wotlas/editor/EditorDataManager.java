@@ -93,7 +93,7 @@ public class EditorDataManager extends Thread implements Tickable, Menu2DListene
 
   /** Our TileMapData : data of the current map displayed on screen.
    */
-    private TileMapData myMapData;
+    public TileMapData myMapData;
 
   /** Our ImageLibrary.
    */
@@ -291,24 +291,6 @@ public class EditorDataManager extends Thread implements Tickable, Menu2DListene
 
        if(SHOW_DEBUG)
           System.out.println("End of DataManager's showInterface !");
-                 
-    // 10 - Add extra plugin
-          
-// Test Petrus
-/*
-       String empty[] = { "head", "body", "left hand", "right hand" };
-      SimpleMenu2D emptyMenu = new SimpleMenu2D("emptyMenu",empty);
-      emptyMenu.setItemEnabled( "head", true );
-      emptyMenu.setItemEnabled( "body", true );
-      emptyMenu.setItemEnabled( "left hand", true );
-      emptyMenu.setItemEnabled( "right hand", true );
-      ((SimpleMenu2D) menuManager.getRootMenu()).addItemLink(MenuManager.OBJECT_ITEM_NAME, emptyMenu );
-*/      
-      /*SimpleMenu2D objectMenu = (SimpleMenu2D) menuManager.findByName(MenuManager.OBJECT_ITEM_NAME);
-      objectMenu.addItem("head");
-      */
-// end Test Petrus
-     
   }
 
  /*------------------------------------------------------------------------------------*/
@@ -455,8 +437,7 @@ public class EditorDataManager extends Thread implements Tickable, Menu2DListene
           mouseSelect( e.getX(), e.getY(), false );
           menuManager.initNoContent();
           menuManager.show( new Point( e.getX(), e.getY() ) );
-      }
- 
+      } 
    }
 
  /*------------------------------------------------------------------------------------*/
@@ -474,15 +455,14 @@ public class EditorDataManager extends Thread implements Tickable, Menu2DListene
     public void onLeftButtonMoved( int x, int y ) {
         if( !menuManager.isVisible() )
             return;
-
         menuManager.mouseMoved( x, y );
     }
     
     public void onRightButtonDragged( int dx, int dy,  boolean startsNow ) {
-        if( !menuManager.isVisible() )
+/*        if( !menuManager.isVisible() )
             return;
 
-        menuManager.mouseDragged( dx, dy, startsNow );
+        menuManager.mouseDragged( dx, dy, startsNow );*/
     }
 
  /*------------------------------------------------------------------------------------*/
@@ -599,16 +579,19 @@ public class EditorDataManager extends Thread implements Tickable, Menu2DListene
    /** Method called when an item has been clicked on an item who is not a menu link.
     *  @param e menu event generated.
     */
-      public void menuItemClicked( Menu2DEvent e ) {
-          if(SHOW_DEBUG)
-             System.out.println("Menu Item Clicked : "+e.toString()); 
-// Test petrus
-          if (e.getItemName().equals("test inventory plugin")) {
-            System.out.println("ok");
-          } else {
-            System.out.println("not a test");
-          }
-      }
+    public void menuItemClicked( Menu2DEvent e ) {
+        if(SHOW_DEBUG)
+            System.out.println("Menu Item Clicked : "+e.toString()); 
+    }
  /*------------------------------------------------------------------------------------*/
 
+    public void clickOnATile( int x, int y ) {
+        EditTile.workingOnThisTileMap.getManager().getMapBackGroundData(
+        )[x][y][0] = (byte) EditorPlugIn.selectedGroup;
+        EditTile.workingOnThisTileMap.getManager().getMapBackGroundData(
+        )[x][y][1] = (byte) EditorPlugIn.selectedGroupImgNr;
+        EditTile.workingOnThisTileMap.getManager().getMapBackGroundData(
+        )[x][y][2] = (byte) EditorPlugIn.selectedIsFree;
+        EditorPlugIn.AddIt(x,y);
+    }
 }

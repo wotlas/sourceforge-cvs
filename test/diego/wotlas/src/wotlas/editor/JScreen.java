@@ -105,7 +105,7 @@ public class JScreen extends JFrame {
       JPanel leftPanel = new JPanel();
       leftPanel.setPreferredSize(new Dimension(leftWidth, mainHeight));
       leftPanel.setLayout(new java.awt.GridLayout(1, 1));
-      mapPanel.setMinimumSize(new Dimension(500, 500));
+      mapPanel.setMinimumSize(new Dimension(400, 500));
       jScrollPane1 = new javax.swing.JScrollPane(mapPanel);
       leftPanel.add(jScrollPane1);
 
@@ -114,13 +114,14 @@ public class JScreen extends JFrame {
       rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
       rightPanel.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
       rightPanel.setBackground(Color.black);
-      rightPanel.add(Box.createRigidArea(new Dimension(0,2)));
+      rightPanel.setMinimumSize(new Dimension(150, 500));
+      //rightPanel.add(Box.createRigidArea(new Dimension(0,2)));
 
       // *** Map editor plug in ***
       editorPlugIn.init();
       editorPlugIn.setAlignmentX(Component.CENTER_ALIGNMENT);
       rightPanel.add(editorPlugIn, BorderLayout.CENTER);
-      rightPanel.add(Box.createRigidArea(new Dimension(0,2)));
+      //rightPanel.add(Box.createRigidArea(new Dimension(0,2)));
       
       JPanel fillPanel = new JPanel( );
       fillPanel.setLayout(new BoxLayout(fillPanel,BoxLayout.X_AXIS)); // MasterBob revision

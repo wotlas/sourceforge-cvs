@@ -62,6 +62,11 @@ public class WorldManager
    * @return corresponding worldMap, null if ID does not exist.
    */
    public WorldMap getWorldMapByID( int id ) {
+        if(worldMaps==null) {
+           Debug.signal( Debug.ERROR, this, "No World data available." );
+   	   return null;
+   	}
+
    	if(id>=worldMaps.length || id<0) {
            Debug.signal( Debug.ERROR, this, "getWorldMapByID : Bad world ID "+id );
    	   return null;
@@ -124,9 +129,14 @@ public class WorldManager
       // Get Location & location type
          WotlasLocation location = player.getLocation();
 
+         if( location==null ) {
+             Debug.signal( Debug.ERROR, this, "Player "+player.toString()+" has no WotlasLocation.");
+             return;
+         }
+
       // does this world exists ?
          WorldMap world = getWorldMapByID( location.getWorldMapID() );
-      
+
          if( world==null ) {
              Debug.signal( Debug.ERROR, this, "Player "+player.toString()+" has bad location.");
              return;

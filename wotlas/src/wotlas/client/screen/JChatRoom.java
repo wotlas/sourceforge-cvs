@@ -78,7 +78,7 @@ public class JChatRoom extends JPanel
   
   /** New name to display in JList.
    */
-  String strNewName;
+  //String strNewName;
 
  /*------------------------------------------------------------------------------------*/  
  
@@ -139,7 +139,7 @@ public class JChatRoom extends JPanel
   
   /** To add some players to the JList.
    */
-  synchronized public void addPlayers(PlayerImpl players[]) {
+  /*synchronized public void addPlayers(PlayerImpl players[]) {
     for (int i=0; i<players.length; i++) {
       // we detect non valid entries
      	 if(players[i]==null ||  this.players.containsKey( players[i].getPrimaryKey() ))
@@ -149,16 +149,17 @@ public class JChatRoom extends JPanel
          playersListModel.addElement(players[i].getFullPlayerName());
          this.players.put( players[i].getPrimaryKey(), players[i] );
     }
-  }
+  }*/
   
   /** To add a player to the JList.
    */
-  synchronized public void addPlayer(PlayerImpl player) {
-    if( players.containsKey( player.getPrimaryKey() ) )
+  synchronized public void addPlayer(String primaryKey, String senderFullName) {
+    if( players.containsKey( primaryKey ) )
         return; // already in this chat
-    //playersListModel.addElement(player.getFullPlayerName());
-    strNewName = player.getFullPlayerName();    
-    players.put( player.getPrimaryKey(), player );    
+    System.out.println("ADDING PLAYER "+primaryKey);
+    
+    final String strNewName = senderFullName;    
+    players.put( primaryKey, senderFullName );    
     
     Runnable runnable = new Runnable() {
       public void run() {
@@ -171,17 +172,35 @@ public class JChatRoom extends JPanel
   
   /** To remove a player from the JList.
    */
-  synchronized public void removePlayer(PlayerImpl player) {
-    if( !players.containsKey( player.getPrimaryKey() ) )
+  synchronized public void removePlayer(String primaryKey) {
+    if( !players.containsKey( primaryKey ) )
         return; // not in this chat
-System.out.println("REMOVING PLAYER "+player.getPrimaryKey());
-    playersListModel.removeElement(player.getFullPlayerName());
-    this.players.remove( player.getPrimaryKey());    
+    System.out.println("REMOVING PLAYER "+primaryKey);
+    
+    final String strOldName = (String) players.get(primaryKey);
+    players.remove(primaryKey);    
+    
+    Runnable runnable = new Runnable() {
+      public void run() {
+        playersListModel.removeElement(strOldName);
+      }
+    };
+    SwingUtilities.invokeLater( runnable );
+    
   }
   
+  /** To remove all players from JList.
+   */
   synchronized public void removeAllPlayers() {
-    playersListModel.removeAllElements();
     players.clear();
+    
+    Runnable runnable = new Runnable() {
+      public void run() {
+        playersListModel.removeAllElements();
+      }
+    };
+    SwingUtilities.invokeLater( runnable );
+    
   }
 
   public Hashtable getPlayers() {

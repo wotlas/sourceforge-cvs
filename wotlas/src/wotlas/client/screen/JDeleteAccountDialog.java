@@ -90,10 +90,11 @@ public class JDeleteAccountDialog extends JConnectionDialog
           hasSucceeded = true;
 
         final String ferror = new String(error);
+        final Frame ourFrame = frame;
 
         Runnable runnable = new Runnable() {
            public void run() {
-              new AInfoDialog( frame, ferror, true,
+              new AInfoDialog( ourFrame, ferror, true,
                                ClientDirector.getResourceManager().getBase("gui") );
            }
         };

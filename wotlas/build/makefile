@@ -99,30 +99,30 @@ SRC_CLIENT2 = $(foreach dir,$(CLIENT_PACKAGES2),$(SRCDIR)/$(dir)/*.java)
 all: utils libs libs2 common common2 server server2 client client2
 
 utils:
-	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_UTILS)
+	$(JAVAC) -O -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_UTILS)
 
 libs:
-	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_LIBS)
+	$(JAVAC) -O -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_LIBS)
 
 libs2:
-	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_LIBS2)
+	$(JAVAC) -O -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_LIBS2)
 
 common:
-	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_COMMON)
+	$(JAVAC) -O -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_COMMON)
 
 common2:
-	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_COMMON2)
+	$(JAVAC) -O -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_COMMON2)
 
 server:
-	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_SERVER)
+	$(JAVAC) -O -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_SERVER)
 
 server2:
-	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_SERVER2)
+	$(JAVAC) -O -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_SERVER2)
 
 client:
-	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_CLIENT)
+	$(JAVAC) -O -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_CLIENT)
 
 client2:
-	$(JAVAC) -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_CLIENT2)
+	$(JAVAC) -O -sourcepath $(SRCDIR) -d $(CLASSDIR) $(SRC_CLIENT2)
 
 ##########################################################################

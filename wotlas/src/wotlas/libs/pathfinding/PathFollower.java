@@ -169,7 +169,6 @@ public class PathFollower implements MovementComposer {
   /** Empty Constructor.
    */
     public PathFollower() {
-System.out.println("0-walking=false");
         walkingAlongPath = false;
         turningAlongPath = false;
         realisticRotations = false;
@@ -272,7 +271,6 @@ System.out.println("0-walking=false");
   /** To set if the player is walking along the path
    */
     public void setWalkingAlongPath(boolean walkingAlongPath) {
-System.out.println("1-set to walking="+walkingAlongPath);
       this.walkingAlongPath = walkingAlongPath;
     }
 
@@ -342,7 +340,6 @@ System.out.println("1-set to walking="+walkingAlongPath);
   /** To reset our movement along the path.
    */
     public void resetMovement() {
-System.out.println("2-reset to walking="+walkingAlongPath);
       walkingAlongPath = false;
       turningAlongPath = false;
       path = null;
@@ -358,10 +355,8 @@ System.out.println("2-reset to walking="+walkingAlongPath);
     public void stopMovement() {
       resetMovement();
       
-      if(player.isMaster()) {
-System.out.println("SENDING MESSAGE"); // ALDISS
+      if(player.isMaster())
          player.sendMessage( new PathUpdateMovementMessage( this, player.getPrimaryKey() ) );
-}
     }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -419,7 +414,6 @@ System.out.println("SENDING MESSAGE"); // ALDISS
            xPosition = (float)msg.srcPoint.x;
            yPosition = (float)msg.srcPoint.y;
            orientationAngle = msg.orientationAngle;
-           System.out.println("PATH FOLLOWER UPDATE: Setting position to x:"+xPosition+" y:"+yPosition);
 
            walkingAlongPath = msg.isMoving;
 
@@ -432,7 +426,6 @@ System.out.println("SENDING MESSAGE"); // ALDISS
                }
                else {
                	  // Astar not initialized, just saving data
-                     System.out.println("Saving movement to :"+pDst);
                	     endPoint = new ScreenPoint( pDst );
                	     movementTimeStamp = System.currentTimeMillis();
                	     reconstructTrajectory = true;
@@ -442,7 +435,6 @@ System.out.println("SENDING MESSAGE"); // ALDISS
            else {
              // No movement
                resetMovement();
-               System.out.println("Stopping movement");
            }
 
      }
@@ -473,10 +465,7 @@ System.out.println("SENDING MESSAGE"); // ALDISS
   /** Our Tick method. Call this method regularly to update the position along the path.
    */
     public void tick() {
-//System.out.println("Position x:"+xPosition+" y:"+yPosition+" walk:"+walkingAlongPath );
-
        if (AStarDouble.isInitialized()) {
-
           if(reconstructTrajectory) {
               if(endPoint!=null) 
                  recreateTrajectory( endPoint.toPoint(), movementDeltaTime );
@@ -502,6 +491,8 @@ System.out.println("SENDING MESSAGE"); // ALDISS
        double deltaT = ( now-lastUpdateTime )/1000.0f;
        lastUpdateTime = now;
 
+       if(deltaT>=0.8f) return; // SECURITY if a slow is encountered
+
     // 2 - Orientation update
        if (turningAlongPath) {
         // Orientation update
@@ -523,10 +514,6 @@ System.out.println("SENDING MESSAGE"); // ALDISS
        yPosition = (float)(yPosition + speed*deltaT*Math.sin( orientationAngle ) );
 
     // 4 - Have we reached the next point in the path ?
-if(prevPoint==null)
-System.out.println("prevPoint null for pInd="+pathIndex+" & nextPoint="+nextPoint); 
-if(nextPoint==null)
-System.out.println("nextPoint null for pInd="+pathIndex+" & prevPoint="+prevPoint); 
        float deltaD = distance( getPosition(), prevPoint ) - distance( nextPoint, prevPoint );
 
         if( deltaD >= 0 ) {
@@ -559,7 +546,6 @@ System.out.println("nextPoint null for pInd="+pathIndex+" & prevPoint="+prevPoin
                              new Point( endPosition.x, endPosition.y ) );
 
             if( path==null ) {
-System.out.println("NO PATHH !!!!"); // ALDISS
                 stopMovement();
                 return; // no movement
             }
@@ -567,10 +553,8 @@ System.out.println("NO PATHH !!!!"); // ALDISS
             updateMovementAspect();
             initMovement( path );
 
-            if(player.isMaster()) {
-System.out.println("SENDING MESSAGE walking="+isMoving()); // ALDISS
+            if(player.isMaster())
                player.sendMessage( new PathUpdateMovementMessage( this, player.getPrimaryKey() ) );
-            }
      }
 
 
@@ -593,7 +577,6 @@ System.out.println("SENDING MESSAGE walking="+isMoving()); // ALDISS
             }
 
             updateMovementAspect();
- System.out.println("Recreating path with:"+path);
             initMovement( path, movementDeltaTime );
      }
 
@@ -686,7 +669,6 @@ System.out.println("SENDING MESSAGE walking="+isMoving()); // ALDISS
 
               // We validate the movement
                  walkingAlongPath = true;
-System.out.println("VALID TRAJ RECONSTRUCTED !!! prevPoint is"+prevPoint+" to "+nextPoint);
                  return;
             }
         }
@@ -704,7 +686,6 @@ System.out.println("VALID TRAJ RECONSTRUCTED !!! prevPoint is"+prevPoint+" to "+
            stopMovement();     
         else
            resetMovement();
-System.out.println("GOING DIRECTLY TO END OF TRAJ !");
    }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

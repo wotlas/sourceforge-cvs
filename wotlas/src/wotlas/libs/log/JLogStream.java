@@ -124,6 +124,7 @@ public class JLogStream extends LogStream {
                    (int) ((screenSize.getHeight() - dialog.getHeight()) / 2) );
 
           dialog.show();
+          waitTime(1000);
      }
 
  /*------------------------------------------------------------------------------------*/
@@ -177,6 +178,23 @@ public class JLogStream extends LogStream {
       };
 
       SwingUtilities.invokeLater( runnable );
+    }
+
+ /*------------------------------------------------------------------------------------*/
+
+  /** Waits ms milliseconds with a very low CPU use.
+   *
+   * @param ms number of milliseconds to wait.
+   */
+    public void waitTime( long ms ) {
+      Object o = new Object();
+    
+       synchronized( o ) {
+          try{
+               o.wait(ms);
+          }
+          catch(InterruptedException e) {}
+       }
     }
 
  /*------------------------------------------------------------------------------------*/

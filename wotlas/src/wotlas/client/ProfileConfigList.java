@@ -110,6 +110,25 @@ public class ProfileConfigList
       profiles = myProfiles;
     }
   }
+  
+  /** Update a profile or create a new one.
+   */
+  public void updateProfile(ProfileConfig profile) {
+    if (profiles==null || profiles.length==0) {
+      profiles = new ProfileConfig[1];
+      profiles[0] = profile;
+    } else {
+      // search for an existing profiles
+      for (int i=0; i<profiles.length; i++) {
+        if (profiles[i].getKey().equals(profile.getKey())) {          
+          profiles[i] = profile;
+          return;
+        }
+      }
+      // no existing profile found
+      addProfile(profile);
+    }
+  }
 
  /*------------------------------------------------------------------------------------*/
 

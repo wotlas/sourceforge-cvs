@@ -19,11 +19,11 @@
 
 package wotlas.server.setup;
 
-import wotlas.common.ServerConfig;
+import wotlas.common.*;
 import wotlas.server.PersistenceManager;
-import wotlas.utils.Debug;
-import wotlas.utils.FileTools;
+import wotlas.utils.*;
 
+import java.io.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -44,9 +44,13 @@ public class ServerSetup extends JFrame
     */
     public final static String DATABASE_CONFIG = "../src/config/server.cfg";
 
+   /** Static Link to Remote Servers Config File.
+    */
+    public final static String REMOTE_SERVER_CONFIG = "../src/config/remote-servers.cfg";
+
  /*------------------------------------------------------------------------------------*/
 
-    private JTextField t_serverName, t_serverID, t_accountServerPort,
+    private JTextField t_serverSymbolicName, t_serverName, t_serverID, t_accountServerPort,
                t_gameServerPort, t_gatewayServerPort, t_maxNumberOfGameConnections,
                t_maxNumberOfAccountConnections, t_maxNumberOfGatewayConnections,
                t_description, t_location, t_adminEmail;
@@ -68,6 +72,9 @@ public class ServerSetup extends JFrame
     */
       private int serverID;
 
+   /** Remote server admin email.
+    */
+      private String remoteServerAdminEmail;
 
  /*------------------------------------------------------------------------------------*/
 
@@ -82,18 +89,18 @@ public class ServerSetup extends JFrame
                 System.exit(1);
              }
 
-           databasePath = properties.getProperty( "DATABASE_PATH" );
+           databasePath = properties.getProperty( "DATABASE_PATH","" );
 
-           if( databasePath==null ) {
+           if( databasePath.length()==0 ) {
                Debug.signal( Debug.FAILURE, null, "No Database Path specified in config file !" );
                System.exit(1);
            }
 
            Debug.signal( Debug.NOTICE, null, "DataBase Path Found : "+databasePath );
 
-           String s_serverID = properties.getProperty( "SERVER_ID" );
+           String s_serverID = properties.getProperty( "SERVER_ID","" );
 
-           if( s_serverID==null ) {
+           if( s_serverID.length()==0 ) {
                Debug.signal( Debug.FAILURE, null, "No ServerID specified in config file !" );
                System.exit(1);
            }
@@ -116,8 +123,31 @@ public class ServerSetup extends JFrame
          if( config == null )
              config = new ServerConfig();
 
+
+      // STEP 2 - We load the remote servers config file to get the admin email.
+         Properties remoteProps = FileTools.loadPropertiesFile( REMOTE_SERVER_CONFIG );
+
+         if( remoteProps==null ) {
+             Debug.signal( Debug.ERROR, null, "No valid remote-servers.cfg file found !" );
+             remoteServerAdminEmail = "<no remote-servers.cfg file!>";
+         }
+         else {
+           remoteServerAdminEmail = remoteProps.getProperty( "REMOTE_SERVER_ADMIN_EMAIL","" );
+
+           if( remoteServerAdminEmail.length()==0 ) {
+               Debug.signal( Debug.ERROR, null, "No admin email set !" );
+               remoteServerAdminEmail = "<no email set!>";
+           }
+         }
+
       // Main JPanel
-         JPanel mainPanel = new JPanel(new GridLayout(22,1,10,10));
+         JPanel mainPanel = new JPanel(new GridLayout(24,1,10,10));
+
+      // Server Symbolic Name
+         JLabel label0 = new JLabel("Server Symbolic Name :");
+         t_serverSymbolicName = new JTextField( config.getServerSymbolicName() );
+         mainPanel.add( label0 );
+         mainPanel.add( t_serverSymbolicName );
 
       // Server Name
          JLabel label1 = new JLabel("Server Name (IP address or DNS name):");
@@ -126,7 +156,7 @@ public class ServerSetup extends JFrame
          mainPanel.add( t_serverName );
 
 
-      // Server ID ( -1 means standalone )
+      // Server ID ( 0 means standalone )
          JLabel label2 = new JLabel("Server ID (0 means standalone) :");
          t_serverID = new JTextField( ""+config.getServerID() );
          mainPanel.add( label2 );
@@ -139,7 +169,7 @@ public class ServerSetup extends JFrame
          mainPanel.add( t_description );
 
       // Location
-         JLabel label4 = new JLabel("Server Location :");
+         JLabel label4 = new JLabel("Server's Country :");
          t_location = new JTextField( config.getLocation() );
          mainPanel.add( label4 );
          mainPanel.add( t_location );
@@ -199,10 +229,12 @@ public class ServerSetup extends JFrame
               public void actionPerformed (ActionEvent e)
               {
                 // we save the config
+                   config.setServerSymbolicName( t_serverSymbolicName.getText() );
                    config.setServerName( t_serverName.getText() );
                    config.setDescription( t_description.getText() );
                    config.setLocation( t_location.getText() );
                    config.setAdminEmail( t_adminEmail.getText() );
+                   config.setConfigVersion();
 
                    try{
                       int val1 = Integer.parseInt( t_serverID.getText() );
@@ -212,7 +244,7 @@ public class ServerSetup extends JFrame
                       int val5 = Integer.parseInt( t_maxNumberOfGameConnections.getText() );
                       int val6 = Integer.parseInt( t_maxNumberOfAccountConnections.getText() );
                       int val7 = Integer.parseInt( t_maxNumberOfGatewayConnections.getText() );
-                   
+
                       config.setServerID( val1 );
                       config.setAccountServerPort( val2 );
                       config.setGameServerPort( val3 );
@@ -232,8 +264,16 @@ public class ServerSetup extends JFrame
                        JOptionPane.showMessageDialog( ServerSetup.this, "Failed to save server config in database",
                                                       "Error", JOptionPane.ERROR_MESSAGE);
                    else {
-                       JOptionPane.showMessageDialog( ServerSetup.this, "Config saved: "+config.toString(),
-                                                      "Success", JOptionPane.INFORMATION_MESSAGE);
+                       new JHTMLWindow( ServerSetup.this, "<b>Your server configuration has been successfully saved."
+                                        +"If you want to make available your server on the Internet, you should"
+                                        +" mail the config below to <i>"+remoteServerAdminEmail+" .</i><br>"
+                                        +"<br>We will then send you a valid serverID and add your server config "
+                                        +"to our server's list. This way clients will be able to see your server."
+                                        +"panel.<br></b><pre>", "Success",
+                                        databasePath+File.separator+PersistenceManager.SERVERS_HOME
+                                        +File.separator+PersistenceManager.SERVERS_PREFIX
+                                        +config.getServerID()+PersistenceManager.SERVERS_SUFFIX,
+                                        500, 400, true, true );
 
                        if(serverID==config.getServerID())
                           return;
@@ -299,9 +339,8 @@ public class ServerSetup extends JFrame
 
           b_exit.addActionListener(new ActionListener()
            {
-              public void actionPerformed (ActionEvent e)
-              {
-                 System.exit(1);
+              public void actionPerformed (ActionEvent e) {
+                 System.exit(0);
               }
            });
 

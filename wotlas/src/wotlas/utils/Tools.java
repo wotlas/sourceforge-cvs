@@ -47,5 +47,30 @@ public class Tools
 
  /*------------------------------------------------------------------------------------*/
 
+  /** Is the Java version higher than the "min_required_version" string ?
+   *  If it's not the case we return false and signal an ERROR to the Debug utility.
+   *
+   * @param required_min_version the minimum version number acceptable for this JVM
+   *        ("1.2.2" for example).
+   * @return true if the JVM version is higher, false otherwise.
+   */
+    static public boolean javaVersionHigherThan( String min_required_version )
+    {
+       String version = System.getProperty("java.version");
+
+       if( version==null ) {
+         Debug.signal( Debug.ERROR, null, "Could not obtain JVM version..." );
+         return false;
+       }
+
+       if( version.compareTo(min_required_version) < 0) {
+          Debug.signal( Debug.ERROR, null, "Your Java version is "+version
+                       +". The minimum required version is "+min_required_version+" !" );
+          return false;
+       }
+
+       return true;
+    }
+
  /*------------------------------------------------------------------------------------*/ 
 }

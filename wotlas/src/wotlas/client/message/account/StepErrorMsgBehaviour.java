@@ -55,19 +55,41 @@ public class StepErrorMsgBehaviour extends StepErrorMessage implements NetMessag
      public void doBehaviour( Object sessionContext ) {
 
         // the sessionContext is here a JWizard
-           final JWizard wizard = (JWizard) sessionContext;
-
-           Runnable runnable = new Runnable() {
-              public void run() {
-                 JOptionPane.showMessageDialog( wizard, info, "Warning message!", JOptionPane.WARNING_MESSAGE);
-              }
-           };
+           JWizard wizard = (JWizard) sessionContext;
 
            wizard.awakeCurrentStep();
-           SwingUtilities.invokeLater( runnable );
+           SwingUtilities.invokeLater( new StepErrorJDisplay(wizard,info) );
            Debug.signal(Debug.ERROR,null,"Step Error : "+info);
      }
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+   /** Class for message display. We use this class for async display.
+    */
+     public static class StepErrorJDisplay implements Runnable {
+
+         private JWizard wizard;
+         private String message;
+
+       /** Empty constructor for NetMessageFactory (needed if we want an error display)
+        */
+         public StepErrorJDisplay() {}
+
+       /** Constructor with parent wizard & message to display.
+        */
+         public StepErrorJDisplay(JWizard wizard, String message) {
+             this.message = message;
+             this.wizard = wizard;
+         }
+
+       /** Thread Action.
+        */
+         public void run() {
+            JOptionPane.showMessageDialog( wizard, message, "Warning message!", JOptionPane.WARNING_MESSAGE);
+         }
+     }
+
+ /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }
 

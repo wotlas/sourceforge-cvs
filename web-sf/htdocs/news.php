@@ -36,7 +36,7 @@ Click <a href="overview.html">here</a> for an overview of the Wotlas project.
 	if ($end=="" || $end<=$start)
 		$end=$start+9;
 		
-	$query="SELECT * FROM news ORDER BY DATE DESC,NUM DESC";
+	$query="SELECT date,title,content FROM news ORDER BY Date DESC, NewsId DESC";
 	$result=mysql_query($query,$connect) or die("SQL Request failure : $query</body></html>");
 	
 	$nb=mysql_num_rows($result);
@@ -55,15 +55,15 @@ Click <a href="overview.html">here</a> for an overview of the Wotlas project.
 	for ($i=1;$i<$start;$i++)
 		mysql_fetch_array($result);	
 	
-	while (($lin=mysql_fetch_array($result)) && ($i<=$end))
+	while (($line=mysql_fetch_array($result)) && ($i<=$end))
 		{	
 	 		echo "\n<blockquote>";
 	 		echo "\n<img src=\"images/button.gif\" width=14 height=14 align=absmiddle> <b><font size=3>";
-	 		echo Conv_date($lin["date"]);
-	 		echo " - <font size=4>".$lin["titre"]."</font>";
+	 		echo Conv_date($line["date"]);
+	 		echo " - <font size=4>".$line["title"]."</font>";
 	 		echo "</font></b><br>\n";
 	 		echo "<blockquote>\n<p align=justify><font size=2>\n";
-	 		echo $lin["contenu"]; 	// body
+	 		echo $line["content"]; 	// body
 	 		echo "</font></p>\n</blockquote>\n</blockquote>\n";
 	 		echo "<!-- Anti-bug --></a></p></table>";
 	 		echo "\n<hr>\n";	

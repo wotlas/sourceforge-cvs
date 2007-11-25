@@ -31,7 +31,6 @@ import wotlas.common.objects.usefuls.Key;
  * @see wotlas.common.objects.containers.ContainerObject
  * @see wotlas.common.objects.interfaces.LockableInterface
  */
-
 public class Chest extends ContainerObject implements LockableInterface
 {
 

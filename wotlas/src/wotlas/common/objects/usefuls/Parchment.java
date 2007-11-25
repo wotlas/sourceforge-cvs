@@ -28,7 +28,6 @@ import wotlas.common.objects.interfaces.*;
  * @see wotlas.common.objects.usefuls.Document
  * @see wotlas.common.objects.usefuls.Chapter
  */
-
 public class Parchment extends Document
 {
 

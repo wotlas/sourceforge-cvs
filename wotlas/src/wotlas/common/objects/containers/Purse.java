@@ -32,7 +32,6 @@ import wotlas.common.Player;
  * @see wotlas.common.objects.valueds.ValuedObject
  * @see wotlas.common.objects.interfaces.TransportableInterface
  */
-
 public class Purse extends ContainerObject implements TransportableInterface
 {
 

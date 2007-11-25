@@ -29,7 +29,6 @@ import wotlas.common.universe.Room;
  * @see wotlas.common.objects.interfaces.ContainerInterface
  * @see wotlas.common.objects.containers.ContainerObject
  */
-
 public class Ground extends ContainerObject
 {
 

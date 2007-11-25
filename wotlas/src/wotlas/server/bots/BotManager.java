@@ -28,7 +28,7 @@ import java.util.Iterator;
 
 /** A bot manager possesses a BotFactory to ease bots creation, a BotChatService
  *  that enables bots to get answers to send to players when they are chatting.
- *  Finally the BotManager is a façade (design pattern) for some methods that
+ *  Finally the BotManager is a facade (design pattern) for some methods that
  *  concerns bots.
  *
  *  IMPORTANT : to init this class needs the init.botChatServiceClass server property

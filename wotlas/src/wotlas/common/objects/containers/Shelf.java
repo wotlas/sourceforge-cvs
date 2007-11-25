@@ -29,7 +29,6 @@ import wotlas.common.Player;
  * @author Elann
  * @see wotlas.common.objects.containers.ContainerObject
  */
-
 public class Shelf extends ContainerObject
 {
 

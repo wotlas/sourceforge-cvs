@@ -29,7 +29,6 @@ import wotlas.common.objects.interfaces.*;
  * @see wotlas.common.objects.BaseObject
  * @see wotlas.common.objects.interfaces.ContainerInterface
  */
-
 public class ContainerObject extends BaseObject implements ContainerInterface
 {
 

@@ -31,7 +31,6 @@ import wotlas.common.objects.BaseObject;
  * @see wotlas.common.objects.containers.ContainerObject
  * @see wotlas.common.objects.interfaces.TransportableInterface
  */
-
 public class Bag extends ContainerObject implements TransportableInterface
 {
 

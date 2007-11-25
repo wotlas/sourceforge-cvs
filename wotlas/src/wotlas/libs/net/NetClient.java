@@ -35,7 +35,7 @@ import wotlas.utils.Tools;
  *  by overriding the getNewConnection().
  *
  *  IMPORTANT: The NetClient object is only a tool that can be erased after its use.
- *             It is a façade for creating a single NetConnection object.
+ *             It is a facade for creating a single NetConnection object.
  *
  * @author Aldiss
  * @see wotlas.libs.net.NetConnection

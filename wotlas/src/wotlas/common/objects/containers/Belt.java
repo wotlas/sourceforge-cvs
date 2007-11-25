@@ -32,7 +32,6 @@ import wotlas.common.Player;
  * @see wotlas.common.objects.interfaces.ArmorInterface
  * @see wotlas.common.objects.interfaces.TransportableInterface
  */
-
 public class Belt extends ContainerObject implements TransportableInterface, ArmorInterface
 {
 

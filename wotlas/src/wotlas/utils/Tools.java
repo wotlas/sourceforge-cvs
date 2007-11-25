@@ -318,161 +318,192 @@ public class Tools {
      throws ClassNotFoundException, SecurityException {
 
         // 1 - Prepare the search
-        //     If the classpath is not found we'll search in the current '.' directory
-           StringTokenizer tokenizer = new StringTokenizer(System.getProperty("java.class.path", "."),
-                                              System.getProperty("path.separator", ";"));
+        // If the classpath is not found we'll search in the current '.'
+        // directory
+        StringTokenizer tokenizer = new StringTokenizer(System.getProperty("java.class.path", "."), System.getProperty("path.separator",
+                ";"));
 
-           String packageNames[] = null;
-           
-           if( packages!=null && packages.length!=0 ) {
-               packageNames = new String[packages.length];
-               
-               for( int i=0; i<packageNames.length; i++ )
-                    packageNames[i] = subString( packages[i], ".", File.separator );
-           }
+        String packageNames[] = null;
 
-           Class theInterface = Class.forName(interfaceName); // will throw ClassNotFoundException if not found
+        if (packages != null && packages.length != 0) {
+            packageNames = new String[packages.length];
 
+            for (int i = 0; i < packageNames.length; i++) {
+                packageNames[i] = Tools.subString(packages[i], ".", File.separator);
+            }
+        }
+
+        Class theInterface = Class.forName(interfaceName); // will throw
+        // ClassNotFoundException
+        // if not found
 
         // 2 - We search the packages using the classpath
-        //     Our tokenizer possesses the different classpath entries
-           Vector results = new Vector();
+        // Our tokenizer possesses the different classpath entries
+        Vector results = new Vector();
 
-           while( tokenizer.hasMoreTokens() ) {
-              String directory = tokenizer.nextToken();
-              Vector list = new Vector();
+        while (tokenizer.hasMoreTokens()) {
+            String directory = tokenizer.nextToken();
+            Vector list = new Vector();
 
-             // 2.1 - What type of file/directory are we looking at ?
-                if( directory.endsWith(".jar") || directory.endsWith(".zip") ) {
-                
-                  // Ok we'll need to enumerate the entries in the JAR or ZIP
-                     Enumeration entries = null;
+            // 2.1 - What type of file/directory are we looking at ?
+            if (directory.endsWith(".jar") || directory.endsWith(".zip")) {
 
-                     if( directory.endsWith(".jar") ) {
-                         JarFile jar = null;
+                // Ok we'll need to enumerate the entries in the JAR or ZIP
+                Enumeration entries = null;
 
-                         try {
-                            jar = new JarFile(directory);
-                         }
-                         catch (IOException e) {
-                            Debug.signal(Debug.ERROR, null, "Classpath contains invalid entry: " + directory );
-                            continue;
-                         }
+                if (directory.endsWith(".jar")) {
+                    JarFile jar = null;
 
-                         entries = jar.entries();
-                     }
-                     else {
-                         ZipFile zip = null;
+                    try {
+                        jar = new JarFile(directory);
+                    } catch (IOException e) {
+                        Debug.signal(Debug.ERROR, null, "Classpath contains invalid entry: " + directory);
+                        continue;
+                    }
 
-                         try {
-                            zip = new ZipFile(directory);
-                         }
-                         catch (IOException e) {
-                            Debug.signal(Debug.ERROR, null, "Classpath contains invalid entry: " + directory );
-                            continue;
-                         }
+                    entries = jar.entries();
+                } else {
+                    ZipFile zip = null;
 
-                         entries = zip.entries();
-                     }
+                    try {
+                        zip = new ZipFile(directory);
+                    } catch (IOException e) {
+                        Debug.signal(Debug.ERROR, null, "Classpath contains invalid entry: " + directory);
+                        continue;
+                    }
 
-                  // Then if there are valid entries we add them to our list
-                     if (entries != null)
-                         while (entries.hasMoreElements()) {
-                              String entry = ((ZipEntry)entries.nextElement()).getName();
-                              if( !entry.endsWith(".class") )
-                                  continue;
-
-                              entry = entry.substring(0,entry.lastIndexOf(".class"));
-                              entry = entry.replace( '/', '.' ); // jar & zip entries use '/'
-
-                              if( packageNames!=null ) {
-                              	// is it a class from one of our packages ?
-                                   for(int i=0; i<packages.length; i++)
-                                     if( entry.startsWith(packages[i]) ) {
-                                         list.addElement(entry);
-                                         break;
-                                     }
-                              }
-                              else
-                                 list.addElement( entry );
-                         }
-                }
-                else {
-                  // ok this is a directory
-                     if( !directory.equals(".") ) {
-
-                       // This is not our local directory we search for immediate .class files
-                          File files[] = new File(directory).listFiles();
-
-                          if(files!=null)
-                             for(int index = 0; index < files.length; index++) {
-                                 String entry = files[index].getPath();
-
-                                 if( entry.endsWith(".class") ) {
-                                     entry = subString( entry, File.separator, "." );
-                                     entry = entry.substring(0,entry.lastIndexOf(".class"));
-                                     list.addElement( entry );
-                                 }
-                             }
-                     }
-                     else if( packageNames!=null ) {
-
-                       // directory =="." and we have package names to search for
-                          for( int p=0; p<packageNames.length; p++ ) {
-                               File packageFiles[] = new File(packageNames[p]).listFiles();
-
-                               if( packageFiles==null || packageFiles.length==0 ) {
-                                   Debug.signal( Debug.WARNING, null, "Empty Package : "+packages[p] );
-                               	   continue;
-                               }
-
-                            // We add all the files of the packages
-                               for( int i=0; i<packageFiles.length; i++ ) {
-                                   String entry = packageFiles[i].getPath();
-
-                                   if( entry.endsWith(".class") ) {
-                                       entry = subString( entry, File.separator, "." );
-                                       entry = entry.substring(0,entry.lastIndexOf(".class"));
-                                       list.addElement( entry );
-                                   }
-                               }
-                          }
-                     }
+                    entries = zip.entries();
                 }
 
- 
-             // 2.2 - OK. Now we can search for the wanted interface among the files we found
-             //       for the current classpath entry !
-                if (list.size() == 0)
+                // Then if there are valid entries we add them to our list
+                if (entries != null) {
+                    while (entries.hasMoreElements()) {
+                        String entry = ((ZipEntry) entries.nextElement()).getName();
+                        if (!entry.endsWith(".class")) {
+                            continue;
+                        }
+
+                        entry = entry.substring(0, entry.lastIndexOf(".class"));
+                        entry = entry.replace('/', '.'); // jar & zip entries
+                        // use '/'
+
+                        if (packageNames != null) {
+                            // is it a class from one of our packages ?
+                            for (int i = 0; i < packages.length; i++) {
+                                if (entry.startsWith(packages[i])) {
+                                    list.addElement(entry);
+                                    break;
+                                }
+                            }
+                        } else {
+                            list.addElement(entry);
+                        }
+                    }
+                }
+            } else {
+                // ok this is a directory
+                if (!directory.equals(".")) {
+
+                    // This is not our local directory we search for immediate
+                    // .class files
+                    boolean found = false;
+                    for (int p = 0; p < packageNames.length; p++) {
+                        File packageFiles[] = new File(directory, packageNames[p]).listFiles();
+
+                        if (packageFiles == null || packageFiles.length == 0) {
+                            Debug.signal(Debug.WARNING, null, "Empty Package : " + directory + " ; " + packages[p]);
+                            continue;
+                        }
+
+                        // We add all the files of the packages
+                        for (int i = 0; i < packageFiles.length; i++) {
+                            String entry = packageFiles[i].getPath();
+
+                            if (entry.endsWith(".class")) {
+                                found = true;
+                                entry = Tools.subString(entry, File.separator, ".");
+                                entry = entry.substring(directory.length() + 1, entry.lastIndexOf(".class"));
+                                list.addElement(entry);
+                            }
+                        }
+                    }
+                    if (!found) {
+                        File files[] = new File(directory).listFiles();
+
+                        if (files != null) {
+                            for (int index = 0; index < files.length; index++) {
+                                String entry = files[index].getPath();
+
+                                if (entry.endsWith(".class")) {
+                                    entry = Tools.subString(entry, File.separator, ".");
+                                    entry = entry.substring(0, entry.lastIndexOf(".class"));
+                                    list.addElement(entry);
+                                }
+                            }
+                        }
+                    }
+                } else if (packageNames != null) {
+
+                    // directory =="." and we have package names to search for
+                    for (int p = 0; p < packageNames.length; p++) {
+                        File packageFiles[] = new File(packageNames[p]).listFiles();
+
+                        if (packageFiles == null || packageFiles.length == 0) {
+                            Debug.signal(Debug.WARNING, null, "Empty Package : " + packages[p]);
+                            continue;
+                        }
+
+                        // We add all the files of the packages
+                        for (int i = 0; i < packageFiles.length; i++) {
+                            String entry = packageFiles[i].getPath();
+
+                            if (entry.endsWith(".class")) {
+                                entry = Tools.subString(entry, File.separator, ".");
+                                entry = entry.substring(0, entry.lastIndexOf(".class"));
+                                list.addElement(entry);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 2.2 - OK. Now we can search for the wanted interface among the
+            // files we found
+            // for the current classpath entry !
+            if (list.size() == 0) {
+                continue;
+            }
+
+            Iterator it = list.iterator();
+
+            while (it.hasNext()) {
+
+                Class candidate = null;
+                String className = (String) it.next();
+
+                if (className.equals(interfaceName)) {
                     continue;
+                } // well, sorry... not interested... ;)
 
-                Iterator it = list.iterator();
+                try {
+                    // Note we are using the current Class Loader to find the
+                    // class...
+                    candidate = Class.forName(className);
+                } catch (Exception e) {
+                    Debug.signal(Debug.WARNING, null, "Failed to find class : " + className + " Msg: " + e);
+                    continue;
+                }
 
-                 while( it.hasNext() ) {
+                if (theInterface.isAssignableFrom(candidate)) {
+                    results.add(candidate);
+                }
+            }
+        }
 
-                     Class candidate = null;
-                     String className = (String) it.next();
-
-                     if (className.equals(interfaceName))
-                        continue; // well, sorry... not interested... ;)
-
-                     try {
-                     	// Note we are using the current Class Loader to find the class...
-                           candidate = Class.forName(className);
-                     }
-                     catch (Exception e) {
-                           Debug.signal(Debug.WARNING,null,"Failed to find class : "+className+" Msg: "+e);
-                           continue;
-                     }
-
-                     if( theInterface.isAssignableFrom( candidate ) )
-                         results.add(candidate);
-                 }
-           }
-
-      // 3 - Return the results...
-        Class toReturn[] = {};
-        return (Class[]) results.toArray( toReturn );
+        // 3 - Return the results...
+        Class toReturn[] =
+                {};
+        return (Class[]) results.toArray(toReturn);
     }
 
  /*------------------------------------------------------------------------------------*/ 

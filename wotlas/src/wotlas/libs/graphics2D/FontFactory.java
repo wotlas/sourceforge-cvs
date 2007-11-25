@@ -123,25 +123,31 @@ public class FontFactory {
         **  Note : this manual load is temporary, when I'll have time I'll implement
         **  a simple dynamic font download method and suppress manual declaration.
         **/
-           addFont( new Font("Dialog", Font.PLAIN, 10) );
-           addFont( loadUserFont("Lblack.ttf") );
+           addFont( null, new Font("Dialog", Font.PLAIN, 10) );
+           Font ftLucida = loadUserFont("Lblack.ttf");
+           addFont( "Lucida Blackletter Regular", ftLucida );
+           addFont( "Lucida Blackletter", ftLucida );
     }
 
  /*------------------------------------------------------------------------------------*/
 
    /** Adds a new font to our table.
     */
-    protected void addFont( Font f ) {
+    protected void addFont( String name, Font f ) {
           if(f==null)
              return;
 
-          if( fonts.containsKey(f.getFontName()) ) {
+          if( fonts.containsKey(f.getFontName()) || (name!=null && fonts.containsKey(name)) ) {
               if(DEBUG_MODE)
                  System.out.println("Font already exists ! "+f.getFontName() );
               return;
           }
 
-          fonts.put( f.getFontName(), f );
+          if (name==null) {
+            fonts.put( f.getFontName(), f );
+          } else {
+            fonts.put( name, f );
+          }
 
           if(DEBUG_MODE)
              System.out.println("Added font: "+f.getFontName());
@@ -175,7 +181,7 @@ public class FontFactory {
 
          if(resourceLocator==null) {
             try {
-                File file = new File(userFontPath+File.separator+fontFileName);
+                File file = new File(this.userFontPath, fontFileName);
                 FileInputStream fis = new FileInputStream(file);
                 return Font.createFont(Font.TRUETYPE_FONT, fis);
             }
@@ -189,7 +195,7 @@ public class FontFactory {
             }
          }
          else {
-            InputStream is = resourceLocator.getFontStream(fontFileName);
+            InputStream is = resourceLocator.getFontStream( fontFileName);
             if(is==null) return null;
             try{
                 return Font.createFont(Font.TRUETYPE_FONT, is);

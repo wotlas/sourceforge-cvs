@@ -88,10 +88,10 @@ public class PropertiesConfigFile extends Properties {
         }
 
      // We copy the loaded properties in our list
-        Enumeration enum = configProps.propertyNames();
+        Enumeration enumCfg = configProps.propertyNames();
 
-        while( enum.hasMoreElements() ) {
-            String key = (String) enum.nextElement();
+        while( enumCfg.hasMoreElements() ) {
+            String key = (String) enumCfg.nextElement();
             setProperty( key, configProps.getProperty(key), false );
         }
     }

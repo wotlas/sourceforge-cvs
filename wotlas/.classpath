@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="test/" kind="src" path="src"/>
+	<classpathentry kind="lib" path="lib/alice/js.jar"/>
+	<classpathentry kind="lib" path="lib/alice/org.mortbay.jetty.jar"/>
+	<classpathentry kind="lib" path="lib/alice/servlet.jar"/>
+	<classpathentry kind="lib" path="lib/ant.jar"/>
+	<classpathentry kind="lib" path="lib/crimson.jar"/>
+	<classpathentry kind="lib" path="lib/jaxp.jar"/>
+	<classpathentry kind="lib" path="lib/jython.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="build/classes"/>
+</classpath>

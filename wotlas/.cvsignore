@@ -1,0 +1,7 @@
+base/logs
+.classpath
+.project
+build
+.checkstyle
+dist
+.settings

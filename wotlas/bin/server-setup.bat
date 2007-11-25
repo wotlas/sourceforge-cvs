@@ -1,6 +1,8 @@
 @echo off
 
-echo Starting Server Admin Setup...
+
+call env.bat
 cd ..
-cd classes
-java -classpath . wotlas.server.ServerDirector -admin
+
+echo Starting Wotlas Admin Setup...
+java -classpath %SERVER_JARS%  wotlas.server.ServerDirector -admin

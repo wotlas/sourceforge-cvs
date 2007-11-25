@@ -61,17 +61,17 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
    *  We use this default value if (1) we are not in a JAR file,
    *  (2) no other base path is provided at start-up.
    */
-     public static final String DEFAULT_BASE_PATH = "../base";
+     public static final String DEFAULT_BASE_PATH = "base";
 
   /** Default location where are stored help docs when NOT packed in a Jar.
    *  We only use this default value if we are not in a JAR file.
    */
-     public static final String DEFAULT_HELP_DOCS_PATH = "../docs/help";
+     public static final String DEFAULT_HELP_DOCS_PATH = "docs/help";
 
   /** Default location for binaries and OS dependent scripts
    *  This is always an external directory.
    */
-     public static final String DEFAULT_BIN_PATH = "../bin";
+     public static final String DEFAULT_BIN_PATH = "bin";
 
  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

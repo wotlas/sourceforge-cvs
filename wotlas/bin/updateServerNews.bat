@@ -6,6 +6,8 @@ SET WEB_LOGIN=mySourceForgeLogin
 SET WEB_SHELL=shell.sf.net
 SET SHELL_PATH=/home/groups/w/wo/wotlas/htdocs/game
 
+call env.bat
+
 echo+
 echo if you just got environment error messages, quit, right-click on updateServerTable.bat, select Properties, go the the Memory tab and change the initial environment parameter to 4096. Click Ok and double-click on the program shortcut that has been created.
 echo+

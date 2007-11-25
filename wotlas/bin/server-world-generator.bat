@@ -1,3 +1,5 @@
+
+call env.bat
 cd ..
-cd classes
-java -classpath . wotlas.server.setup.WorldGenerator
+
+java -classpath %SERVER_JARS% wotlas.server.setup.WorldGenerator

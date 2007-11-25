@@ -1,3 +1,5 @@
+
+call env.bat
 cd ..
-cd classes
-java -classpath . wotlas.utils.ProjectTools
+
+java -classpath %SERVER_JARS% wotlas.utils.ProjectTools

@@ -58,7 +58,7 @@ public class ObjectDump
         if (methodName.startsWith("get"))
         {
           // System.out.print(methodName + ": ");
-          o = m.invoke(obj, null);
+          o = m.invoke(obj, (Object[]) null);
           if (o != null )
           {
             /*if (o.getClass().isPrimitive()) {

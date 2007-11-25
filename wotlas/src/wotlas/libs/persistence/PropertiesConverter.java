@@ -340,7 +340,7 @@ public class PropertiesConverter
                    else {
                       // Real mode (using the object)
                       arg[0] = new Integer(nbCells);
-                      value = readMethod.invoke(object, arg);
+                      value = readMethod.invoke(object, (Object[])arg);
                    }
                    // Save the value according to its class
                    nbSaved += saveValue(properties,
@@ -370,7 +370,7 @@ public class PropertiesConverter
                // Test mode (using the class)
                value = null;
             else
-               value = readMethod.invoke(object, null);
+               value = readMethod.invoke(object, (Object[])null);
             if ((value != null) && 
                 (value.getClass().isArray() || readMethod.getReturnType().isArray())) {
                Object[] values;

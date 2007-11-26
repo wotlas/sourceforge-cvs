@@ -102,48 +102,48 @@ public class ClientDirector {
 
             if (argv[i].equals("-debug")) { // -- TO SET THE DEBUG MODE --
                 System.out.println("mode DEBUG on");
-                SHOW_DEBUG = true;
+                ClientDirector.SHOW_DEBUG = true;
             } else if (argv[i].equals("-classic")) {
                 classicLogWindow = true;
             } else if (argv[i].equals("-base")) { // -- TO SET THE CONFIG FILES LOCATION --
 
                 if (i == argv.length - 1) {
                     System.out.println("Location missing.");
-                    System.out.println(CLIENT_COMMAND_LINE_HELP);
+                    System.out.println(ClientDirector.CLIENT_COMMAND_LINE_HELP);
                     return;
                 }
 
                 basePath = argv[i + 1];
             } else if (argv[i].equals("-help")) { // -- TO DISPLAY THE HELP --
 
-                System.out.println(CLIENT_COMMAND_LINE_HELP);
+                System.out.println(ClientDirector.CLIENT_COMMAND_LINE_HELP);
                 return;
             }
         }
 
         // STEP 1 - Creation of the ResourceManager
-        resourceManager = new ResourceManager();
+        ClientDirector.resourceManager = new ResourceManager();
 
-        if (!resourceManager.inJar())
-            resourceManager.setBasePath(basePath);
+        if (!ClientDirector.resourceManager.inJar())
+            ClientDirector.resourceManager.setBasePath(basePath);
 
         // STEP 2 - Start a JLogStream to display our Debug messages
         try {
             if (!classicLogWindow)
-                logStream = new JLogStream(new javax.swing.JFrame(), resourceManager.getExternalLogsDir() + CLIENT_LOG_NAME, "log-title.jpg", resourceManager);
+                ClientDirector.logStream = new JLogStream(new javax.swing.JFrame(), ClientDirector.resourceManager.getExternalLogsDir() + ClientDirector.CLIENT_LOG_NAME, "log-title.jpg", ClientDirector.resourceManager);
             else
-                logStream = new JLogStream(new javax.swing.JFrame(), resourceManager.getExternalLogsDir() + CLIENT_LOG_NAME, "log-title-dark.jpg", resourceManager);
+                ClientDirector.logStream = new JLogStream(new javax.swing.JFrame(), ClientDirector.resourceManager.getExternalLogsDir() + ClientDirector.CLIENT_LOG_NAME, "log-title-dark.jpg", ClientDirector.resourceManager);
 
-            Debug.setPrintStream(logStream);
-            System.setOut(logStream);
-            System.setErr(logStream);
+            Debug.setPrintStream(ClientDirector.logStream);
+            System.setOut(ClientDirector.logStream);
+            System.setErr(ClientDirector.logStream);
         } catch (Exception e) {
             e.printStackTrace();
             Tools.displayDebugMessage("Start-up Error", "" + e);
             Debug.exit();
         }
 
-        if (SHOW_DEBUG)
+        if (ClientDirector.SHOW_DEBUG)
             System.out.println("Log created.");
 
         // STEP 3 - We control the VM version and load our vital config files.
@@ -152,37 +152,37 @@ public class ClientDirector {
         Debug.signal(Debug.NOTICE, null, "| Copyright (C) 2001-2002 WOTLAS Team |");
         Debug.signal(Debug.NOTICE, null, "*-------------------------------------*\n");
 
-        Debug.signal(Debug.NOTICE, null, "Code version       : " + resourceManager.WOTLAS_VERSION);
+        Debug.signal(Debug.NOTICE, null, "Code version       : " + ResourceManager.WOTLAS_VERSION);
 
-        if (!resourceManager.inJar())
+        if (!ClientDirector.resourceManager.inJar())
             Debug.signal(Debug.NOTICE, null, "Data directory     : " + basePath);
         else
             Debug.signal(Debug.NOTICE, null, "Data directory     : JAR File");
 
-        clientProperties = new ClientPropertiesFile(resourceManager);
-        remoteServersProperties = new RemoteServersPropertiesFile(resourceManager);
+        ClientDirector.clientProperties = new ClientPropertiesFile(ClientDirector.resourceManager);
+        ClientDirector.remoteServersProperties = new RemoteServersPropertiesFile(ClientDirector.resourceManager);
 
         // STEP 4 - Creation of Sound Library
-        SoundLibrary.createSoundLibrary(clientProperties, resourceManager, resourceManager);
+        SoundLibrary.createSoundLibrary(ClientDirector.clientProperties, ClientDirector.resourceManager, ClientDirector.resourceManager);
 
         // STEP 5 - Creation of our Font Factory
-        FontFactory.createDefaultFontFactory(resourceManager);
+        FontFactory.createDefaultFontFactory(ClientDirector.resourceManager);
         Debug.signal(Debug.NOTICE, null, "Font Factory created...");
 
         // STEP 6 - We load the client configuration. There is always a config returned.
-        clientConfiguration = ClientConfiguration.load();
+        ClientDirector.clientConfiguration = ClientConfiguration.load();
 
         // STEP 7 - We ask the ClientManager to get ready
-        clientManager = new ClientManager(resourceManager);
+        ClientDirector.clientManager = new ClientManager(ClientDirector.resourceManager);
         Debug.signal(Debug.NOTICE, null, "Client Manager created...");
 
         // STEP 8 - We ask the DataManager to get ready
-        dataManager = new DataManager(resourceManager);
-        dataManager.showDebug(SHOW_DEBUG);
+        ClientDirector.dataManager = new DataManager(ClientDirector.resourceManager);
+        ClientDirector.dataManager.showDebug(ClientDirector.SHOW_DEBUG);
         Debug.signal(Debug.NOTICE, null, "DataManager created...");
 
         // STEP 9 - Start the ClientManager
-        clientManager.start(ClientManager.FIRST_INIT);
+        ClientDirector.clientManager.start(ClientManager.FIRST_INIT);
         Debug.signal(Debug.NOTICE, null, "WOTLAS Client started with success...");
     }
 
@@ -194,7 +194,7 @@ public class ClientDirector {
      * @return remoteServerConfigHomeURL
      */
     public static String getRemoteServerConfigHomeURL() {
-        return remoteServersProperties.getProperty("info.remoteServerHomeURL");
+        return ClientDirector.remoteServersProperties.getProperty("info.remoteServerHomeURL");
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -203,7 +203,7 @@ public class ClientDirector {
      *  @return Client Config, you can use the save() method to save it to disk...
      */
     public static ClientConfiguration getClientConfiguration() {
-        return clientConfiguration;
+        return ClientDirector.clientConfiguration;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -212,7 +212,7 @@ public class ClientDirector {
      *  @return our resource manager.
      */
     public static ResourceManager getResourceManager() {
-        return resourceManager;
+        return ClientDirector.resourceManager;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -222,7 +222,7 @@ public class ClientDirector {
      *  @return our ClientManager
      */
     public static ClientManager getClientManager() {
-        return clientManager;
+        return ClientDirector.clientManager;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -231,7 +231,7 @@ public class ClientDirector {
      *  @return our data manager.
      */
     public static DataManager getDataManager() {
-        return dataManager;
+        return ClientDirector.dataManager;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -240,7 +240,7 @@ public class ClientDirector {
      *  @return our log window which is a printStream.
      */
     public static JLogStream getLogStream() {
-        return logStream;
+        return ClientDirector.logStream;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

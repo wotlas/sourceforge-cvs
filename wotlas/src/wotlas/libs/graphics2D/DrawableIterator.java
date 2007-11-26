@@ -33,218 +33,209 @@ package wotlas.libs.graphics2D;
  * @author aldiss
  */
 
-public class DrawableIterator
-{
- /*------------------------------------------------------------------------------------*/
+public class DrawableIterator {
+    /*------------------------------------------------------------------------------------*/
 
-  // First element of the chain ( Element is in an internal class )
-     private Element first;
+    // First element of the chain ( Element is in an internal class )
+    private Element first;
 
-  // current element of the chain
-     private Element current;
+    // current element of the chain
+    private Element current;
 
-  // last element of the chain
-     private Element last;
+    // last element of the chain
+    private Element last;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Inserts the new drawable just before the last drawable you retrieved with the next() call.
-   *
-   * @param drawable drawable to insert
-   */
-     public void insert( Drawable drawable )
-     {
-         Element toAdd = new Element();
-         toAdd.drawable = drawable;
+    /** Inserts the new drawable just before the last drawable you retrieved with the next() call.
+     *
+     * @param drawable drawable to insert
+     */
+    public void insert(Drawable drawable) {
+        Element toAdd = new Element();
+        toAdd.drawable = drawable;
 
-         // empty list ?
-            if(first==null) {
-               first = toAdd;
-               last = first;
-               return;
-            }
+        // empty list ?
+        if (this.first == null) {
+            this.first = toAdd;
+            this.last = this.first;
+            return;
+        }
 
-         // element just after the element we want to add
-            Element justAfterAdd = null; 
+        // element just after the element we want to add
+        Element justAfterAdd = null;
 
-            if(current==null || current.prev==null)
-                   justAfterAdd = last;
+        if (this.current == null || this.current.prev == null)
+            justAfterAdd = this.last;
+        else
+            justAfterAdd = this.current.prev;
+
+        if (justAfterAdd.prev != null) {
+            justAfterAdd.prev.next = toAdd;
+            toAdd.prev = justAfterAdd.prev;
+            toAdd.next = justAfterAdd;
+            justAfterAdd.prev = toAdd;
+        } else {
+            this.first = toAdd;
+            toAdd.next = justAfterAdd;
+            justAfterAdd.prev = toAdd;
+        }
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Adds the given drawable to the end of our list. The Iterator is not updated.
+     *
+     * @param drawable drawable to add
+     */
+    public void add(Drawable drawable) {
+        Element toAdd = new Element();
+        toAdd.drawable = drawable;
+
+        if (this.last == null) {
+            this.first = toAdd;
+            this.last = this.first;
+        } else {
+            this.last.next = toAdd;
+            toAdd.prev = this.last;
+            this.last = toAdd;
+        }
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Replace the last drawable you retrieved with the next() call by the specified drawable.
+     *  
+     * @param drawable drawable to set
+     */
+    public void replace(Drawable drawable) {
+        if (this.current == null) {
+            if (this.last != null)
+                this.last.drawable = drawable;
+        } else if (this.current.prev != null)
+            this.current.prev.drawable = drawable;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** We remove the drawable returned by the last next() call.
+     */
+    public void remove() {
+        Element toRemove = null;
+
+        if (this.current == null) {
+            if (this.last != null)
+                toRemove = this.last;
             else
-                   justAfterAdd= current.prev;
-                     
-            if(justAfterAdd.prev!=null) {
-                  justAfterAdd.prev.next = toAdd;
-                  toAdd.prev = justAfterAdd.prev;
-                  toAdd.next = justAfterAdd;
-                  justAfterAdd.prev = toAdd;
-            }
-            else {
-                  first = toAdd;
-                  toAdd.next = justAfterAdd;
-                  justAfterAdd.prev = toAdd;
-            }
-     }
+                return; // empty list
+        } else
+            toRemove = this.current.prev;
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        if (toRemove.prev != null)
+            toRemove.prev.next = toRemove.next;
+        else
+            this.first = toRemove.next;
 
-  /** Adds the given drawable to the end of our list. The Iterator is not updated.
-   *
-   * @param drawable drawable to add
-   */
-     public void add( Drawable drawable )
-     {
-         Element toAdd = new Element();
-         toAdd.drawable = drawable;
-         
-         if(last==null){
-            first = toAdd;
-            last = first;
-         }
-         else {
-            last.next = toAdd;
-            toAdd.prev = last;
-            last = toAdd;
-         }
-     }
+        if (toRemove.next != null)
+            toRemove.next.prev = toRemove.prev;
+        else
+            this.last = toRemove.prev;
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        toRemove.prev = null;
+        toRemove.next = null;
+        toRemove.drawable = null;
+    }
 
-  /** Replace the last drawable you retrieved with the next() call by the specified drawable.
-   *  
-   * @param drawable drawable to set
-   */
-     public void replace( Drawable drawable )
-     {
-         if(current==null){
-              if(last!=null)
-                 last.drawable=drawable;
-         }
-         else if (current.prev!=null)
-              current.prev.drawable = drawable;
-     }
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** We remove all the drawables.
+     */
+    public void clear() {
+        this.current = this.first;
 
-  /** We remove the drawable returned by the last next() call.
-   */
-     public void remove()
-     {
-         Element toRemove = null;
-               
-         if(current==null) {
-             if(last!=null)
-                  toRemove = last;
-             else
-                  return; // empty list
-         }
-         else
-             toRemove = current.prev;
+        while (this.current != null) {
+            this.current.drawable = null;
+            this.current.prev = null;
+            this.current = this.current.next;
+        }
 
-         if(toRemove.prev!=null)
-             toRemove.prev.next = toRemove.next;
-         else
-             first = toRemove.next;
+        if (this.last != null)
+            this.last.next = null;
 
-         if(toRemove.next!=null)
-             toRemove.next.prev = toRemove.prev;
-         else
-             last = toRemove.prev;
+        this.first = null;
+        this.last = null;
+    }
 
-         toRemove.prev = null;
-         toRemove.next = null;
-         toRemove.drawable = null;
-     }
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** Resets this iterator ( use hasNext() & next() methods ).
+     */
+    public void resetIterator() {
+        this.current = this.first;
+    }
 
-  /** We remove all the drawables.
-   */
-     public void clear() {
-         current = first;
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-         while( current!=null ) {
-          current.drawable = null;
-          current.prev = null;
-          current = current.next;
-         }
+    /** Resets this iterator to the end of the drawable list ( use hasPrev() & prev()
+     *  methods ). 
+     */
+    public void resetIteratorToEnd() {
+        this.current = this.last;
+    }
 
-         if( last!=null )
-             last.next =null;
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-         first = null;
-         last = null;
-     }
+    /** Returns true if there is a next element.
+     *  @return true if there is a next element.
+     */
+    public boolean hasNext() {
+        return this.current != null;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Resets this iterator ( use hasNext() & next() methods ).
-    */
-      public void resetIterator() {
-          current = first;
-      }
+    /** Returns true if there is a previous element.
+     *  @return true if there is a previous element.
+     */
+    public boolean hasPrev() {
+        return this.current != null;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Resets this iterator to the end of the drawable list ( use hasPrev() & prev()
-    *  methods ). 
-    */
-      public void resetIteratorToEnd() {
-          current = last;
-      }
+    /** Returns the next drawable.
+     *  @return next drawable
+     */
+    public Drawable next() {
+        if (this.current == null)
+            return null;
+        Drawable drawable = this.current.drawable;
+        this.current = this.current.next;
+        return drawable;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/ 
- 
-   /** Returns true if there is a next element.
-    *  @return true if there is a next element.
-    */
-      public boolean hasNext() {
-          return current!=null;
-      }
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** Returns the previous drawable.
+     *  @return previous drawable
+     */
+    public Drawable prev() {
+        if (this.current == null)
+            return null;
+        Drawable drawable = this.current.drawable;
+        this.current = this.current.prev;
+        return drawable;
+    }
 
-   /** Returns true if there is a previous element.
-    *  @return true if there is a previous element.
-    */
-      public boolean hasPrev() {
-          return current!=null;
-      }
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** Element class
+     */
+    static class Element {
+        public Drawable drawable;
+        public Element prev;
+        public Element next;
+    }
 
-   /** Returns the next drawable.
-    *  @return next drawable
-    */
-       public Drawable next() {
-           if(current==null) return null;
-            Drawable drawable = current.drawable;
-            current = current.next;
-            return drawable;
-       }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-   /** Returns the previous drawable.
-    *  @return previous drawable
-    */
-       public Drawable prev() {
-           if(current==null) return null;
-            Drawable drawable = current.drawable;
-            current = current.prev;
-            return drawable;
-       }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-   /** Element class
-    */
-       static class Element{        
-          public Drawable drawable;
-          public Element prev;
-          public Element next;
-       }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-
-

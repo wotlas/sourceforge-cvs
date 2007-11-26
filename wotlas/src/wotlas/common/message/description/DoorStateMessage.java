@@ -22,9 +22,8 @@ package wotlas.common.message.description;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
+import wotlas.common.universe.WotlasLocation;
 import wotlas.libs.net.NetMessage;
-import wotlas.common.universe.*;
 
 /** 
  * To send a new state for a Door...
@@ -33,83 +32,83 @@ import wotlas.common.universe.*;
  * @author Aldiss
  */
 
-public class DoorStateMessage extends NetMessage
-{
- /*------------------------------------------------------------------------------------*/
+public class DoorStateMessage extends NetMessage {
+    /*------------------------------------------------------------------------------------*/
 
-  /** Door state.
-   */
+    /** Door state.
+     */
     protected boolean isOpened;
 
-  /** RoomLinkID that posseses the door...
-   */
+    /** RoomLinkID that posseses the door...
+     */
     protected int roomLinkID;
-  
-  /** WotlasLocation
-   */
+
+    /** WotlasLocation
+     */
     protected WotlasLocation location;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor. Just initializes the message category and type.
-   */
-     public DoorStateMessage() {
-          super();
-     }
+    /** Constructor. Just initializes the message category and type.
+     */
+    public DoorStateMessage() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor with Player's primaryKey & location.
-   */
-     public DoorStateMessage(WotlasLocation location, int roomLinkID, boolean isOpened) {
-          super();
-          this.location = new WotlasLocation(location);
-          this.roomLinkID = roomLinkID;
-          this.isOpened = isOpened;
-     }
+    /** Constructor with Player's primaryKey & location.
+     */
+    public DoorStateMessage(WotlasLocation location, int roomLinkID, boolean isOpened) {
+        super();
+        this.location = new WotlasLocation(location);
+        this.roomLinkID = roomLinkID;
+        this.isOpened = isOpened;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** This is where we put your message data on the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param ostream data stream where to put your data (see java.io.DataOutputStream)
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-     public void encode( DataOutputStream ostream ) throws IOException {
+    /** This is where we put your message data on the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param ostream data stream where to put your data (see java.io.DataOutputStream)
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    @Override
+    public void encode(DataOutputStream ostream) throws IOException {
 
-         ostream.writeInt( location.getWorldMapID() );
-         ostream.writeInt( location.getTownMapID() );
-         ostream.writeInt( location.getBuildingID() );
-         ostream.writeInt( location.getInteriorMapID() );
-         ostream.writeInt( location.getRoomID() );
-         
-         ostream.writeInt( roomLinkID );
-         ostream.writeBoolean( isOpened );
-     }
+        ostream.writeInt(this.location.getWorldMapID());
+        ostream.writeInt(this.location.getTownMapID());
+        ostream.writeInt(this.location.getBuildingID());
+        ostream.writeInt(this.location.getInteriorMapID());
+        ostream.writeInt(this.location.getRoomID());
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        ostream.writeInt(this.roomLinkID);
+        ostream.writeBoolean(this.isOpened);
+    }
 
-  /** This is where we retrieve our message data from the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-     public void decode( DataInputStream istream ) throws IOException {
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-         location = new WotlasLocation();
+    /** This is where we retrieve our message data from the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    @Override
+    public void decode(DataInputStream istream) throws IOException {
 
-         location.setWorldMapID( istream.readInt() );
-         location.setTownMapID( istream.readInt() );
-         location.setBuildingID( istream.readInt() );
-         location.setInteriorMapID( istream.readInt() );
-         location.setRoomID( istream.readInt() );
+        this.location = new WotlasLocation();
 
-         roomLinkID = istream.readInt();
-         isOpened = istream.readBoolean();
-     }
+        this.location.setWorldMapID(istream.readInt());
+        this.location.setTownMapID(istream.readInt());
+        this.location.setBuildingID(istream.readInt());
+        this.location.setInteriorMapID(istream.readInt());
+        this.location.setRoomID(istream.readInt());
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        this.roomLinkID = istream.readInt();
+        this.isOpened = istream.readBoolean();
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

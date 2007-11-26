@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.libs.net;
 
 import java.io.DataInputStream;
@@ -65,54 +65,53 @@ import java.io.IOException;
 
 public abstract class NetMessage {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Message ClassName (fully qualified class name).
-   */
-     private String messageClassName;
+    /** Message ClassName (fully qualified class name).
+     */
+    private String messageClassName;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor. Just initializes the message's class name field.
-   */
-     public NetMessage() {     	
-       // we search for the first non-NetMessageBehaviour
-     	if( NetMessageBehaviour.class.isAssignableFrom( getClass() ) )
-            messageClassName = getClass().getSuperclass().getName();
+    /** Constructor. Just initializes the message's class name field.
+     */
+    public NetMessage() {
+        // we search for the first non-NetMessageBehaviour
+        if (NetMessageBehaviour.class.isAssignableFrom(getClass()))
+            this.messageClassName = getClass().getSuperclass().getName();
         else
-            messageClassName = getClass().getName(); // ok, we can get this class name
-     }
+            this.messageClassName = getClass().getName(); // ok, we can get this class name
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the message's class name.
-   * @return the message's class name.
-   */
-     public String getMessageClassName() {
-         return messageClassName;
-     }
+    /** To get the message's class name.
+     * @return the message's class name.
+     */
+    public String getMessageClassName() {
+        return this.messageClassName;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** This is where you put your message data on the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param ostream data stream where to put your data (see java.io.DataOutputStream)
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-     abstract public void encode( DataOutputStream ostream ) throws IOException;
+    /** This is where you put your message data on the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param ostream data stream where to put your data (see java.io.DataOutputStream)
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    abstract public void encode(DataOutputStream ostream) throws IOException;
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** This is where you retrieve your message data from the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-     abstract public void decode( DataInputStream istream ) throws IOException;
+    /** This is where you retrieve your message data from the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    abstract public void decode(DataInputStream istream) throws IOException;
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

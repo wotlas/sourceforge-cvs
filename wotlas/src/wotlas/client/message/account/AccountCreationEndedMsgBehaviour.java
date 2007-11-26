@@ -16,17 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.client.message.account;
 
-import java.io.IOException;
-
-
-import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.*;
-import wotlas.common.message.account.*;
+import wotlas.client.ClientDirector;
 import wotlas.client.screen.JAccountCreationWizard;
-import wotlas.client.*;
+import wotlas.common.message.account.AccountCreationEndedMessage;
+import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.utils.Debug;
 
 /**
@@ -35,33 +31,31 @@ import wotlas.utils.Debug;
  * @author Aldiss
  */
 
-public class AccountCreationEndedMsgBehaviour extends AccountCreationEndedMessage implements NetMessageBehaviour
-{
- /*------------------------------------------------------------------------------------*/
+public class AccountCreationEndedMsgBehaviour extends AccountCreationEndedMessage implements NetMessageBehaviour {
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public AccountCreationEndedMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+     */
+    public AccountCreationEndedMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
 
-           Debug.signal(Debug.NOTICE,null,"Creation Succeeded !");
-           ClientDirector.getClientManager().addNewProfile(clientID,serverID,login,password,playerName);
+        Debug.signal(Debug.NOTICE, null, "Creation Succeeded !");
+        ClientDirector.getClientManager().addNewProfile(this.clientID, this.serverID, this.login, this.password, this.playerName);
 
         // the sessionContext is here a JWizard
-           JAccountCreationWizard wizard = (JAccountCreationWizard) sessionContext;
-           wizard.awakeCurrentStep();
-     }
+        JAccountCreationWizard wizard = (JAccountCreationWizard) sessionContext;
+        wizard.awakeCurrentStep();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

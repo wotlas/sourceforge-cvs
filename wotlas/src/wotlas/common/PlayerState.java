@@ -25,30 +25,30 @@ package wotlas.common;
  * @see wotlas.client.screen.JChatPanel
  * @see wotlas.common.Player
  */
- 
+
 public class PlayerState {
-    
-  public final static byte DISCONNECTED = 0;
-  public final static byte CONNECTED    = 1;
-  public final static byte AWAY         = 2;
-  
-  public String fullName;
-  
-  //public boolean isNotAway=false;  
-  public byte value;
-    
-  /** Constructor.
-   */
-  //PlayerState(String fullName, boolean isConnected) {
-  public PlayerState(String fullName, byte value) {
-    this.fullName = fullName;
-    //this.isNotAway = isConnected;
-    this.value = value;    
-  }
-  
-  public PlayerState() {
-    fullName = "";
-    value = DISCONNECTED;
-  }
-    
+
+    public final static byte DISCONNECTED = 0;
+    public final static byte CONNECTED = 1;
+    public final static byte AWAY = 2;
+
+    public String fullName;
+
+    //public boolean isNotAway=false;  
+    public byte value;
+
+    /** Constructor.
+     */
+    //PlayerState(String fullName, boolean isConnected) {
+    public PlayerState(String fullName, byte value) {
+        this.fullName = fullName;
+        //this.isNotAway = isConnected;
+        this.value = value;
+    }
+
+    public PlayerState() {
+        this.fullName = "";
+        this.value = PlayerState.DISCONNECTED;
+    }
+
 }

@@ -16,19 +16,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.message.description;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
-import java.util.*;
-
-import wotlas.libs.net.NetMessage;
+import java.util.Hashtable;
+import java.util.Iterator;
 import wotlas.common.Player;
-import wotlas.common.universe.*;
-
+import wotlas.common.universe.Room;
+import wotlas.common.universe.WotlasLocation;
 
 /** 
  * The messages the GameServer sends to give us the players data
@@ -37,119 +35,119 @@ import wotlas.common.universe.*;
  * @author Aldiss
  */
 
-public class RoomPlayerDataMessage extends PlayerDataMessage
-{
- /*------------------------------------------------------------------------------------*/
+public class RoomPlayerDataMessage extends PlayerDataMessage {
+    /*------------------------------------------------------------------------------------*/
 
-  /** Player reference.
-   */
-     private Player myPlayer;
+    /** Player reference.
+     */
+    private Player myPlayer;
 
-  /** Players.
-   */
-     protected Hashtable players;
+    /** Players.
+     */
+    protected Hashtable players;
 
-  /** Wotlas Location
-   */
-     protected WotlasLocation location;
+    /** Wotlas Location
+     */
+    protected WotlasLocation location;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor. Just initializes the message category and type.
-   */
-     public RoomPlayerDataMessage() {
-          super();
-     }
+    /** Constructor. Just initializes the message category and type.
+     */
+    public RoomPlayerDataMessage() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor with the Players object and our Player ( myPlayer ). The 'myPlayer'
-   *  parameter is needed as we don't want to send our Player's data with the other
-   *  players.
-   *
-   * @param location WotlasLocation from which the player's list comes from.
-   * @param myPlayer our player.
-   * @param players our players.
-   */
-     public RoomPlayerDataMessage( Room room, Player myPlayer ) {
-         super();
-         this.myPlayer = myPlayer;
-         this.otherPlayer = myPlayer;
-         this.location = room.getLocation();
-         this.players = room.getMessageRouter().getPlayers();
-         this.publicInfoOnly = true;
-     }
+    /** Constructor with the Players object and our Player ( myPlayer ). The 'myPlayer'
+     *  parameter is needed as we don't want to send our Player's data with the other
+     *  players.
+     *
+     * @param location WotlasLocation from which the player's list comes from.
+     * @param myPlayer our player.
+     * @param players our players.
+     */
+    public RoomPlayerDataMessage(Room room, Player myPlayer) {
+        super();
+        this.myPlayer = myPlayer;
+        this.otherPlayer = myPlayer;
+        this.location = room.getLocation();
+        this.players = room.getMessageRouter().getPlayers();
+        this.publicInfoOnly = true;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** This is where we put your message data on the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param ostream data stream where to put your data (see java.io.DataOutputStream)
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-     public void encode( DataOutputStream ostream ) throws IOException {
+    /** This is where we put your message data on the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param ostream data stream where to put your data (see java.io.DataOutputStream)
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    @Override
+    public void encode(DataOutputStream ostream) throws IOException {
 
-      // Wotlas Location
-         ostream.writeInt( location.getWorldMapID() );
-         ostream.writeInt( location.getTownMapID() );
-         ostream.writeInt( location.getBuildingID() );
-         ostream.writeInt( location.getInteriorMapID() );
-         ostream.writeInt( location.getRoomID() );
+        // Wotlas Location
+        ostream.writeInt(this.location.getWorldMapID());
+        ostream.writeInt(this.location.getTownMapID());
+        ostream.writeInt(this.location.getBuildingID());
+        ostream.writeInt(this.location.getInteriorMapID());
+        ostream.writeInt(this.location.getRoomID());
 
-      // Players
-         synchronized( players ) {
-            if( players.containsKey( myPlayer.getPrimaryKey() ) )
-                ostream.writeInt( players.size()-1 );
+        // Players
+        synchronized (this.players) {
+            if (this.players.containsKey(this.myPlayer.getPrimaryKey()))
+                ostream.writeInt(this.players.size() - 1);
             else
-                ostream.writeInt( players.size() );
+                ostream.writeInt(this.players.size());
 
-            Iterator it = players.values().iterator();
+            Iterator it = this.players.values().iterator();
 
-            while( it.hasNext() ) {
-            	player = (Player) it.next();
+            while (it.hasNext()) {
+                this.player = (Player) it.next();
 
-                if( myPlayer!=player )
-                    super.encode( ostream );
+                if (this.myPlayer != this.player)
+                    super.encode(ostream);
             }
-         }
-     }
+        }
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** This is where we retrieve our message data from the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-     public void decode( DataInputStream istream ) throws IOException {
+    /** This is where we retrieve our message data from the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    @Override
+    public void decode(DataInputStream istream) throws IOException {
 
-         // Wotlas Location
-            location = new WotlasLocation();
+        // Wotlas Location
+        this.location = new WotlasLocation();
 
-            location.setWorldMapID( istream.readInt() );
-            location.setTownMapID( istream.readInt() );
-            location.setBuildingID( istream.readInt() );
-            location.setInteriorMapID( istream.readInt() );
-            location.setRoomID( istream.readInt() );
+        this.location.setWorldMapID(istream.readInt());
+        this.location.setTownMapID(istream.readInt());
+        this.location.setBuildingID(istream.readInt());
+        this.location.setInteriorMapID(istream.readInt());
+        this.location.setRoomID(istream.readInt());
 
-         // Players
-            int nbPlayers = istream.readInt();
-            
-            if(nbPlayers>0)
-               players = new Hashtable((int)(nbPlayers*1.6));
-            else {
-               players = new Hashtable();
-               return;
-            }
+        // Players
+        int nbPlayers = istream.readInt();
 
-            for( int i=0; i<nbPlayers; i++ ) {
-                 super.decode( istream );
-                 players.put( player.getPrimaryKey(), player );
-            }
-     }
+        if (nbPlayers > 0)
+            this.players = new Hashtable((int) (nbPlayers * 1.6));
+        else {
+            this.players = new Hashtable();
+            return;
+        }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        for (int i = 0; i < nbPlayers; i++) {
+            super.decode(istream);
+            this.players.put(this.player.getPrimaryKey(), this.player);
+        }
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

@@ -19,11 +19,8 @@
 
 package wotlas.client.message.account;
 
-import java.io.IOException;
-
 import wotlas.client.DataManager;
-
-import wotlas.common.message.account.*;
+import wotlas.common.message.account.WarningMessage;
 import wotlas.libs.net.NetMessageBehaviour;
 
 /**
@@ -33,42 +30,40 @@ import wotlas.libs.net.NetMessageBehaviour;
  * @see wotlas.client.DataManager
  */
 
-public class WarningMsgBehaviour extends WarningMessage implements NetMessageBehaviour
-{
- /*------------------------------------------------------------------------------------*/
+public class WarningMsgBehaviour extends WarningMessage implements NetMessageBehaviour {
+    /*------------------------------------------------------------------------------------*/
 
-   /** To tell if this message is to be invoked later or not.
-    */
-     private boolean invokeLater = true;
+    /** To tell if this message is to be invoked later or not.
+     */
+    private boolean invokeLater = true;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-  public WarningMsgBehaviour() {
-    super();
-  }
+    /** Constructor.
+     */
+    public WarningMsgBehaviour() {
+        super();
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-  public void doBehaviour( Object sessionContext ) {
-      DataManager dataManager = (DataManager) sessionContext;
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
+        DataManager dataManager = (DataManager) sessionContext;
 
-       if( invokeLater && dataManager.isRunning() ) {
-           invokeLater = false;
-           dataManager.invokeLater( this );
-           return;
-       }
+        if (this.invokeLater && dataManager.isRunning()) {
+            this.invokeLater = false;
+            dataManager.invokeLater(this);
+            return;
+        }
 
-      dataManager.showWarningMessage(info);
-  }
+        dataManager.showWarningMessage(this.info);
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
 }
-

@@ -19,72 +19,74 @@
 
 package wotlas.utils;
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.*;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Toolkit;
+import java.io.File;
+import java.io.FileInputStream;
 
 /** Various useful tools to manipulate Swing components
  *
  * @author Petrus
  */
 
-public class SwingTools
-{
- 
- /*------------------------------------------------------------------------------------*/
+public class SwingTools {
 
-  /** Center a component on the screen
-   *
-   * @param component the component to be centered
-   */
-  static public void centerComponent(Component component) {
-    Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-    int x = (int) ((d.getWidth() - component.getWidth()) / 2);
-    int y = (int) ((d.getHeight() - component.getHeight()) / 2);
-    component.setLocation(x, y);
-  }
+    /*------------------------------------------------------------------------------------*/
 
- /*------------------------------------------------------------------------------------*/
-  
-  /** Load a font
-   *
-   * @param filename path of the font
-   * @param size font size
-   */
-  static public Font loadFont(String filename, float size) {
-    try {
-      File file = new File(filename);
-      FileInputStream fis = new FileInputStream(file);
-      Font f = Font.createFont(Font.TRUETYPE_FONT, fis);      
-      f = f.deriveFont(size);
-      return f;
-    } catch (Exception e) {
-      e.printStackTrace();
-      Font f = new Font("Dialog", Font.PLAIN, (int)size);
-      return f;
+    /** Center a component on the screen
+     *
+     * @param component the component to be centered
+     */
+    static public void centerComponent(Component component) {
+        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+        int x = (int) ((d.getWidth() - component.getWidth()) / 2);
+        int y = (int) ((d.getHeight() - component.getHeight()) / 2);
+        component.setLocation(x, y);
     }
-  }
 
- /*------------------------------------------------------------------------------------*/
-  
-  /** Load a font
-   *
-   * @param filename path of the font
-   * @param size font size
-   */
-  static public Font loadFont(String filename) {
-    try {
-      File file = new File(filename);
-      FileInputStream fis = new FileInputStream(file);
-      Font f = Font.createFont(Font.TRUETYPE_FONT, fis);            
-      return f;
-    } catch (Exception e) {
-      e.printStackTrace();
-      Font f = new Font("Dialog", Font.PLAIN, 10);
-      return f;
+    /*------------------------------------------------------------------------------------*/
+
+    /** Load a font
+     *
+     * @param filename path of the font
+     * @param size font size
+     */
+    static public Font loadFont(String filename, float size) {
+        try {
+            File file = new File(filename);
+            FileInputStream fis = new FileInputStream(file);
+            Font f = Font.createFont(Font.TRUETYPE_FONT, fis);
+            f = f.deriveFont(size);
+            return f;
+        } catch (Exception e) {
+            e.printStackTrace();
+            Font f = new Font("Dialog", Font.PLAIN, (int) size);
+            return f;
+        }
     }
-  }
 
- /*------------------------------------------------------------------------------------*/ 
+    /*------------------------------------------------------------------------------------*/
+
+    /** Load a font
+     *
+     * @param filename path of the font
+     * @param size font size
+     */
+    static public Font loadFont(String filename) {
+        try {
+            File file = new File(filename);
+            FileInputStream fis = new FileInputStream(file);
+            Font f = Font.createFont(Font.TRUETYPE_FONT, fis);
+            return f;
+        } catch (Exception e) {
+            e.printStackTrace();
+            Font f = new Font("Dialog", Font.PLAIN, 10);
+            return f;
+        }
+    }
+
+    /*------------------------------------------------------------------------------------*/
 
 }

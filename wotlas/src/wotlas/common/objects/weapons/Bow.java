@@ -16,15 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.objects.weapons;
 
-import wotlas.common.objects.interfaces.TransportableInterface;
-
-import wotlas.common.objects.valueds.ValuedObject;
 import wotlas.common.Player;
 import wotlas.common.objects.BaseObject;
-
+import wotlas.common.objects.interfaces.TransportableInterface;
+import wotlas.common.objects.valueds.ValuedObject;
 
 /** 
  * The bow class.
@@ -35,95 +33,86 @@ import wotlas.common.objects.BaseObject;
  * @see wotlas.common.objects.interfaces.TransportableInterface
  */
 
-public class Bow extends RemoteWeapon implements TransportableInterface
-{
+public class Bow extends RemoteWeapon implements TransportableInterface {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
- 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
- /** Default constructor
-  */ 
-   public Bow()
-   {
-   	super();
-	
-	this.className="Bow";
-	this.objectName="default bow";
-   }
- 
- 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** Default constructor
+     */
+    public Bow() {
+        super();
 
-  /** Puts on the weapon to enable attack.<br>
-   * Take one hand. When arm is invoked, both hands are taken.
-   */
-    public void equip()
-	{
-	 equipped=true;
-	}
-	
-  /** Attacks the specified target.
-   *
-   * @param target the Player attacked
-   * @return 0 because the damage is not instantly inflicted.
-   */
-    public short attack(Player target)
-	{
-	 loose();
-	 return 0;
-	}
+        this.className = "Bow";
+        this.objectName = "default bow";
+    }
 
-  /** Alternative attack on the specified target.<br>
-   * No altern attack for bows. Calls attack(target).
-   * @param target the Player attacked
-   * @return the damage inflicted
-   */
-    public short alternativeAttack(Player target)
-	{
-	 return attack(target);
-	}
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-   /** Gets rid of the object. The object is dropped on the ground.
-   */
-    public void discard()
-	{
-	 /* no op */
-	}
+    /** Puts on the weapon to enable attack.<br>
+     * Take one hand. When arm is invoked, both hands are taken.
+     */
+    @Override
+    public void equip() {
+        this.equipped = true;
+    }
 
-  /** Sells the object to somebody.
-  	  @param buyer The Player who buy the object. 
-  	  @return the prize paid.
-   */
-    public ValuedObject sellTo(Player buyer)
-	{
-	 /* no op */
-	 return new ValuedObject();
-	}
+    /** Attacks the specified target.
+     *
+     * @param target the Player attacked
+     * @return 0 because the damage is not instantly inflicted.
+     */
+    @Override
+    public short attack(Player target) {
+        loose();
+        return 0;
+    }
 
-  /** Gives the object to somebody.
-  	  @param receiver The Player who receive the object.
-   */
-    public void giveTo(Player receiver)
-	{
-	 /* no op */
-	}
- 
-   /** Trade the object to somebody.<br>
-    * Here the transaction is already accepted.
-  	* @param buyer The Player who buy the object. 
-  	* @return the object given by the other player.
+    /** Alternative attack on the specified target.<br>
+     * No altern attack for bows. Calls attack(target).
+     * @param target the Player attacked
+     * @return the damage inflicted
+     */
+    @Override
+    public short alternativeAttack(Player target) {
+        return attack(target);
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Gets rid of the object. The object is dropped on the ground.
     */
-    public BaseObject tradeTo(Player buyer)
-	{
-	 /* no op */
-	 return new BaseObject();
-	}
+    public void discard() {
+        /* no op */
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
+    /** Sells the object to somebody.
+    	  @param buyer The Player who buy the object. 
+    	  @return the prize paid.
+     */
+    public ValuedObject sellTo(Player buyer) {
+        /* no op */
+        return new ValuedObject();
+    }
+
+    /** Gives the object to somebody.
+    	  @param receiver The Player who receive the object.
+     */
+    public void giveTo(Player receiver) {
+        /* no op */
+    }
+
+    /** Trade the object to somebody.<br>
+     * Here the transaction is already accepted.
+    * @param buyer The Player who buy the object. 
+    * @return the object given by the other player.
+     */
+    public BaseObject tradeTo(Player buyer) {
+        /* no op */
+        return new BaseObject();
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }
-

@@ -19,7 +19,6 @@
 
 package wotlas.libs.aswing;
 
-import java.awt.Image;
 import javax.swing.ImageIcon;
 
 /** To locate resources needed by the aswing package : images...
@@ -29,16 +28,15 @@ import javax.swing.ImageIcon;
 
 public interface ASwingResourceLocator {
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Returns the wanted image icon from the GUI directory.
-    *
-    *  @param imageName imageName with or without the complete resource path.
-    *  @return ImageIcon, null if the image was not found.
-    */
-    public ImageIcon getImageIcon( String imageName );
+    /** Returns the wanted image icon from the GUI directory.
+     *
+     *  @param imageName imageName with or without the complete resource path.
+     *  @return ImageIcon, null if the image was not found.
+     */
+    public ImageIcon getImageIcon(String imageName);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

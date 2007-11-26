@@ -19,17 +19,13 @@
 
 package wotlas.server;
 
-import wotlas.libs.net.NetServer;
-import wotlas.libs.net.NetConnection;
-
-import wotlas.common.ErrorCodeList;
-import wotlas.common.ResourceManager;
-
-import wotlas.utils.Debug;
-import wotlas.utils.FileTools;
-
 import java.io.File;
 import java.util.Properties;
+import wotlas.common.ErrorCodeList;
+import wotlas.common.ResourceManager;
+import wotlas.libs.net.NetConnection;
+import wotlas.libs.net.NetServer;
+import wotlas.utils.Debug;
 
 /** Wotlas Account Server. Its role is to wait clients and connect them to a new
  *  AccountBuilder. An AccountBuilder will help the client to create a GameAccount.<p>
@@ -45,195 +41,184 @@ import java.util.Properties;
 
 public class AccountServer extends NetServer implements ErrorCodeList {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Static Link to Account Server Config File.
-    */
+    /** Static Link to Account Server Config File.
+     */
     public final static String ACCOUNT_CONFIG = "account-server.cfg";
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Client Counter
-   */
-    private int clientCounter;      
+    /** Client Counter
+     */
+    private int clientCounter;
 
-  /** Factory for building step parameters.
-   */
+    /** Factory for building step parameters.
+     */
     private AccountStepFactory stepFactory;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor (see wotlas.libs.net.NetServer for details).
-   *
-   *  @param serverInterface the host interface to bind to. Example: wotlas.tower.org
-   *  @param port port on which the server listens to clients.
-   *  @param packages a list of packages where we can find NetMsgBehaviour Classes.
-   *  @param nbMaxSockets maximum number of sockets that can be opened on this server
-   */
-    public AccountServer( String serverInterface, int port, String packages[], int nbMaxSockets ) {
-       super( serverInterface, port, packages );
-       setMaximumOpenedSockets( nbMaxSockets );
+    /** Constructor (see wotlas.libs.net.NetServer for details).
+     *
+     *  @param serverInterface the host interface to bind to. Example: wotlas.tower.org
+     *  @param port port on which the server listens to clients.
+     *  @param packages a list of packages where we can find NetMsgBehaviour Classes.
+     *  @param nbMaxSockets maximum number of sockets that can be opened on this server
+     */
+    public AccountServer(String serverInterface, int port, String packages[], int nbMaxSockets) {
+        super(serverInterface, port, packages);
+        setMaximumOpenedSockets(nbMaxSockets);
 
-     // we create our wizars step factory
-        stepFactory = new AccountStepFactory( ServerDirector.getResourceManager() );
+        // we create our wizars step factory
+        this.stepFactory = new AccountStepFactory(ServerDirector.getResourceManager());
 
-        if(stepFactory.getStep(AccountStepFactory.FIRST_STEP)==null ) {
-           Debug.signal(Debug.FAILURE, this, "First step missing in the account wizard !");
-           Debug.exit();
+        if (this.stepFactory.getStep(AccountStepFactory.FIRST_STEP) == null) {
+            Debug.signal(Debug.FAILURE, this, "First step missing in the account wizard !");
+            Debug.exit();
         }
 
         ResourceManager rManager = ServerDirector.getResourceManager();
 
-     // we load the clientCounter from the ACCOUNT_CONFIG
-        
+        // we load the clientCounter from the ACCOUNT_CONFIG
+
         Properties props = null;
-        
-        if( new File(rManager.getExternalConfigsDir()+ACCOUNT_CONFIG).exists() )
-           props = rManager.loadProperties( rManager.getExternalConfigsDir()+ACCOUNT_CONFIG );
 
-        if(props==null) {
-           // file not found, we create one...
-              Debug.signal( Debug.WARNING, null, "Could not find file: "
-                            +rManager.getExternalConfigsDir()+ACCOUNT_CONFIG
-                            +"\n   Creating a new one..." );
+        if (new File(rManager.getExternalConfigsDir() + AccountServer.ACCOUNT_CONFIG).exists())
+            props = rManager.loadProperties(rManager.getExternalConfigsDir() + AccountServer.ACCOUNT_CONFIG);
 
-              props = new Properties();
-              props.setProperty( "clientCounter", "0" );
-              clientCounter=0;
-              
-              if( !rManager.saveProperties( props,
-                                            rManager.getExternalConfigsDir()+ACCOUNT_CONFIG,
-                                            "Do not remove or modify this file !") ){
-                  Debug.signal( Debug.FAILURE, this,"Cannot create or get "+ACCOUNT_CONFIG+" file!");
-                  Debug.exit();
-              }
-        }
-        else {
-             try{
-                clientCounter = Integer.parseInt( props.getProperty( "clientCounter" ) )+1;
-                Debug.signal( Debug.NOTICE, null, "AccountServer Client Counter set to "+clientCounter+"." );
-             }
-             catch( Exception e ){
-                  Debug.signal( Debug.FAILURE, this,"Bad "+ACCOUNT_CONFIG+" clientCounter property!");
-                  Debug.exit();
-             }
+        if (props == null) {
+            // file not found, we create one...
+            Debug.signal(Debug.WARNING, null, "Could not find file: " + rManager.getExternalConfigsDir() + AccountServer.ACCOUNT_CONFIG + "\n   Creating a new one...");
+
+            props = new Properties();
+            props.setProperty("clientCounter", "0");
+            this.clientCounter = 0;
+
+            if (!rManager.saveProperties(props, rManager.getExternalConfigsDir() + AccountServer.ACCOUNT_CONFIG, "Do not remove or modify this file !")) {
+                Debug.signal(Debug.FAILURE, this, "Cannot create or get " + AccountServer.ACCOUNT_CONFIG + " file!");
+                Debug.exit();
+            }
+        } else {
+            try {
+                this.clientCounter = Integer.parseInt(props.getProperty("clientCounter")) + 1;
+                Debug.signal(Debug.NOTICE, null, "AccountServer Client Counter set to " + this.clientCounter + ".");
+            } catch (Exception e) {
+                Debug.signal(Debug.FAILURE, this, "Bad " + AccountServer.ACCOUNT_CONFIG + " clientCounter property!");
+                Debug.exit();
+            }
         }
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** This method is called automatically when a new client establishes a connection
-    *  with this server ( the client sends a ClientRegisterMessage ).
-    *
-    * @param connection a previously created connection for this connection.
-    * @param key a string given by the client to identify itself. The key should be
-    *        equal to "AccountServerPlease!".
-    */
-    public void accessControl( NetConnection connection, String key ) {
+    /** This method is called automatically when a new client establishes a connection
+     *  with this server ( the client sends a ClientRegisterMessage ).
+     *
+     * @param connection a previously created connection for this connection.
+     * @param key a string given by the client to identify itself. The key should be
+     *        equal to "AccountServerPlease!".
+     */
+    @Override
+    public void accessControl(NetConnection connection, String key) {
 
-       // The key is there to prevent wrong connections
-          if( key.equals("AccountServerPlease!") ) {
+        // The key is there to prevent wrong connections
+        if (key.equals("AccountServerPlease!")) {
 
             // ok, let's create an AccountBuilder for this future client.
-               AccountBuilder accountBuilder = new AccountBuilder(this);
+            AccountBuilder accountBuilder = new AccountBuilder(this);
 
             // we set his message context to his player...
-               connection.setContext( accountBuilder );
-               connection.addConnectionListener( accountBuilder );
+            connection.setContext(accountBuilder);
+            connection.addConnectionListener(accountBuilder);
 
             // welcome on board...
-               acceptClient( connection );
-               Debug.signal( Debug.NOTICE, this, "A new client is building a GameAccount...");
-          }
-          else if(key.startsWith("deleteAccount:") && !key.endsWith(":") ) {
+            acceptClient(connection);
+            Debug.signal(Debug.NOTICE, this, "A new client is building a GameAccount...");
+        } else if (key.startsWith("deleteAccount:") && !key.endsWith(":")) {
             // we retrieve the account name & password
-               int basepos = key.indexOf(':');
-               int basepos2 = key.indexOf(':',basepos+1);
-               
-               if(basepos2<0) {
-                  Debug.signal( Debug.NOTICE, this, "A client tried to delete an account without giving a password.");
-                  refuseClient( connection, ERR_BAD_REQUEST, "Invalid request !" );
-                  return;
-               }
-               
-               String accountName = key.substring( basepos+1, basepos2 );
-               String password = key.substring( basepos2+1, key.length() );
+            int basepos = key.indexOf(':');
+            int basepos2 = key.indexOf(':', basepos + 1);
+
+            if (basepos2 < 0) {
+                Debug.signal(Debug.NOTICE, this, "A client tried to delete an account without giving a password.");
+                refuseClient(connection, ErrorCodeList.ERR_BAD_REQUEST, "Invalid request !");
+                return;
+            }
+
+            String accountName = key.substring(basepos + 1, basepos2);
+            String password = key.substring(basepos2 + 1, key.length());
 
             // We try to erase the account
-               AccountManager manager = ServerDirector.getDataManager().getAccountManager();
-               GameAccount account = manager.getAccount( accountName );
+            AccountManager manager = ServerDirector.getDataManager().getAccountManager();
+            GameAccount account = manager.getAccount(accountName);
 
-               if( account==null ) {
-                   Debug.signal( Debug.NOTICE, this, "A client tried to delete a non-existent account.");
-                   refuseClient( connection, ERR_UNKNOWN_ACCOUNT, "This account does not exist on this server" );
-                   return;
-               }
+            if (account == null) {
+                Debug.signal(Debug.NOTICE, this, "A client tried to delete a non-existent account.");
+                refuseClient(connection, ErrorCodeList.ERR_UNKNOWN_ACCOUNT, "This account does not exist on this server");
+                return;
+            }
 
             // Password Crack Detection ( dictionnary attack )
-               if( account.tooMuchBadPasswordEntered() ) {
-                   Debug.signal( Debug.WARNING, this, accountName+" already entered 3 bad passwords! account locked for 30s");
-                   refuseClient( connection, ERR_BAD_PASSWORD, "Sorry, you entered 3 bad passwords ! your account is locked for 30s." );
-                   return;
-               }
+            if (account.tooMuchBadPasswordEntered()) {
+                Debug.signal(Debug.WARNING, this, accountName + " already entered 3 bad passwords! account locked for 30s");
+                refuseClient(connection, ErrorCodeList.ERR_BAD_PASSWORD, "Sorry, you entered 3 bad passwords ! your account is locked for 30s.");
+                return;
+            }
 
             // The account exists... but do we have the right password ?
-               if( account.isRightPassword( password ) ) {
+            if (account.isRightPassword(password)) {
                 // ok we delete the account...
-                   if( manager.deleteAccount( accountName, true ) ) {
-                       Debug.signal( Debug.NOTICE, this, "Account "+accountName+" deleted successfully...");
-                       refuseClient( connection, ERR_ACCOUNT_DELETED, "Account deleted successfully..." );
-                       return;
-                   }
+                if (manager.deleteAccount(accountName, true)) {
+                    Debug.signal(Debug.NOTICE, this, "Account " + accountName + " deleted successfully...");
+                    refuseClient(connection, ErrorCodeList.ERR_ACCOUNT_DELETED, "Account deleted successfully...");
+                    return;
+                }
 
                 // we set his message context to his player...
-                   Debug.signal( Debug.NOTICE, this, "Failed to delete Account "+accountName+"...");
-                   refuseClient( connection, ERR_DELETE_FAILED, "Failed to delete your account. Please Report the problem." );
-                   return;
-               }
-               else {
-                   Debug.signal( Debug.NOTICE, this, accountName+" entered a bad password to delete an account.");
-                   refuseClient( connection, ERR_BAD_PASSWORD, "Wrong password !" );
-                   return;
-               }
-          }
-          else {
-               Debug.signal( Debug.NOTICE, this, "A client tried to enter the AccountServer with a wrong key :"+key);
-               refuseClient( connection, ERR_WRONG_KEY, "Wrong key for this server :"+key );
-          }
+                Debug.signal(Debug.NOTICE, this, "Failed to delete Account " + accountName + "...");
+                refuseClient(connection, ErrorCodeList.ERR_DELETE_FAILED, "Failed to delete your account. Please Report the problem.");
+                return;
+            } else {
+                Debug.signal(Debug.NOTICE, this, accountName + " entered a bad password to delete an account.");
+                refuseClient(connection, ErrorCodeList.ERR_BAD_PASSWORD, "Wrong password !");
+                return;
+            }
+        } else {
+            Debug.signal(Debug.NOTICE, this, "A client tried to enter the AccountServer with a wrong key :" + key);
+            refuseClient(connection, ErrorCodeList.ERR_WRONG_KEY, "Wrong key for this server :" + key);
+        }
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get a valid ID for a new client. The new ID is saved on disk.
-   */
+    /** To get a valid ID for a new client. The new ID is saved on disk.
+     */
     synchronized public int getNewLocalClientID() {
-        clientCounter++;
+        this.clientCounter++;
 
-      // save this state in config/accountServer.cfg
-         Properties props = new Properties();
-         props.setProperty( "clientCounter", ""+clientCounter );
+        // save this state in config/accountServer.cfg
+        Properties props = new Properties();
+        props.setProperty("clientCounter", "" + this.clientCounter);
 
-         ResourceManager rManager = ServerDirector.getResourceManager();
-              
-         if( !rManager.saveProperties( props,
-                                       rManager.getExternalConfigsDir()+ACCOUNT_CONFIG,
-                                       "Do not remove or modify this file !") ){
-             Debug.signal( Debug.CRITICAL, this,"Cannot save clientCounter (="
-                           +clientCounter+") to "+ACCOUNT_CONFIG+" file!");
-         }
+        ResourceManager rManager = ServerDirector.getResourceManager();
 
-      // we return the new value
-         return clientCounter;
+        if (!rManager.saveProperties(props, rManager.getExternalConfigsDir() + AccountServer.ACCOUNT_CONFIG, "Do not remove or modify this file !")) {
+            Debug.signal(Debug.CRITICAL, this, "Cannot save clientCounter (=" + this.clientCounter + ") to " + AccountServer.ACCOUNT_CONFIG + " file!");
+        }
+
+        // we return the new value
+        return this.clientCounter;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the factory for building step parameters.
-   */
+    /** To get the factory for building step parameters.
+     */
     public AccountStepFactory getStepFactory() {
-    	return stepFactory;
+        return this.stepFactory;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

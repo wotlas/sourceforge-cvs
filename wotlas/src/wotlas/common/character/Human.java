@@ -19,11 +19,11 @@
 
 package wotlas.common.character;
 
-import wotlas.common.*;
-import wotlas.common.universe.*;
-import wotlas.libs.graphics2D.*;
-
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import wotlas.common.universe.WotlasLocation;
+import wotlas.libs.graphics2D.ImageIdentifier;
 
 /** A Human Wotlas Character.
  *
@@ -33,114 +33,106 @@ import java.io.*;
 
 public abstract class Human implements WotCharacter {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Hair color
-   */
-    public final static String hairColors[] = {
-    	           "bald",
-    	           "golden",
-    	           "brown",
-    	           "black",
-    	           "gray",
-    	           "white",
-    	           "reddish",
-    };
+    /** Hair color
+     */
+    public final static String hairColors[] = { "bald", "golden", "brown", "black", "gray", "white", "reddish", };
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Hair color [PUBLIC INFO]
-   */
+    /** Hair color [PUBLIC INFO]
+     */
     protected String hairColor;
 
-  /** Speed [RECONSTRUCTED INFO - NOT REPLICATED]
-   */
+    /** Speed [RECONSTRUCTED INFO - NOT REPLICATED]
+     */
     transient protected float speed;
 
-  /** TO ADD : other common human fields ( force, dexterity, etc ... ) */
+    /** TO ADD : other common human fields ( force, dexterity, etc ... ) */
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To get the hair color of the human player.
-   */
+    /** To get the hair color of the human player.
+     */
     public String getHairColor() {
-       return hairColor; 
+        return this.hairColor;
     }
 
-  /** To set the hair color of the human player. If the hair color given
-   *  doesn't exist in our list we set it as "unknown".
-   */
-    public void setHairColor( String hairColor ) {
-       if(hairColor!=null)
-          for( int i=0; i<hairColors.length; i++ )
-               if( hairColor.equals(hairColors[i]) ) {
-                   this.hairColor = hairColor;
-                   return;
-               }
+    /** To set the hair color of the human player. If the hair color given
+     *  doesn't exist in our list we set it as "unknown".
+     */
+    public void setHairColor(String hairColor) {
+        if (hairColor != null)
+            for (int i = 0; i < Human.hairColors.length; i++)
+                if (hairColor.equals(Human.hairColors[i])) {
+                    this.hairColor = hairColor;
+                    return;
+                }
 
-       this.hairColor = "unknown";
+        this.hairColor = "unknown";
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Returns an image for this character.
-   *
-   *  @param playerLocation player current location
-   *  @return image identifier of this character.
-   */
-     public ImageIdentifier getImage( WotlasLocation playerLocation ) {
+    /** Returns an image for this character.
+     *
+     *  @param playerLocation player current location
+     *  @return image identifier of this character.
+     */
+    public ImageIdentifier getImage(WotlasLocation playerLocation) {
 
-         // Default image for towns & worlds
-            if( playerLocation.isTown() || playerLocation.isWorld() )
-                return new ImageIdentifier( "players-0/players-small-images-1/player-small-0" );
+        // Default image for towns & worlds
+        if (playerLocation.isTown() || playerLocation.isWorld())
+            return new ImageIdentifier("players-0/players-small-images-1/player-small-0");
 
-            return null; // null otherwise, we let sub-classes redefine the rest...
-     }
+        return null; // null otherwise, we let sub-classes redefine the rest...
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Returns the speed of this character.
-   *
-   *  @param playerLocation player current location
-   *  @return speed in pixel/s
-   */
-     public float getSpeed( WotlasLocation playerLocation ) {
-         if ( playerLocation.isRoom() )
-              return 60.0f;  // Default human speed ( 60pixel/s = 2m/s )
-         else if ( playerLocation.isTown() )
-              return 10.0f;
-         else
-              return 5.0f;
-     }
+    /** Returns the speed of this character.
+     *
+     *  @param playerLocation player current location
+     *  @return speed in pixel/s
+     */
+    public float getSpeed(WotlasLocation playerLocation) {
+        if (playerLocation.isRoom())
+            return 60.0f; // Default human speed ( 60pixel/s = 2m/s )
+        else if (playerLocation.isTown())
+            return 10.0f;
+        else
+            return 5.0f;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- /** To put the WotCharacter's data on the network stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param ostream data stream where to put your data (see java.io.DataOutputStream)
-   * @param publicInfoOnly if false we write the player's full description, if true
-   *                     we only write public info
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-     public void encode( DataOutputStream ostream, boolean publicInfoOnly ) throws IOException {
-     	ostream.writeUTF( hairColor );
-     }
+    /** To put the WotCharacter's data on the network stream. You don't need
+      * to invoke this method yourself, it's done automatically.
+      *
+      * @param ostream data stream where to put your data (see java.io.DataOutputStream)
+      * @param publicInfoOnly if false we write the player's full description, if true
+      *                     we only write public info
+      * @exception IOException if the stream has been closed or is corrupted.
+      */
+    public void encode(DataOutputStream ostream, boolean publicInfoOnly) throws IOException {
+        ostream.writeUTF(this.hairColor);
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To retrieve your WotCharacter's data from the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
-   * @param publicInfoOnly if false it means the available data is the player's full description,
-   *                     if true it means we only have public info here.
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-     public void decode( DataInputStream istream, boolean publicInfoOnly ) throws IOException {
-     	hairColor = istream.readUTF();
-     }
+    /** To retrieve your WotCharacter's data from the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
+     * @param publicInfoOnly if false it means the available data is the player's full description,
+     *                     if true it means we only have public info here.
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    public void decode(DataInputStream istream, boolean publicInfoOnly) throws IOException {
+        this.hairColor = istream.readUTF();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

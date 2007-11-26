@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.knowledges;
 
 import wotlas.common.Player;
@@ -27,37 +27,35 @@ import wotlas.common.Player;
  * @author Elann
  */
 
-public interface FightTech
-{
+public interface FightTech {
 
- /*------------------------------------------------------------------------------------*/
-	  	 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Get the target.<br>
-   * Used to calculate damage inflicted.
-   * @return target
-   */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the target.<br>
+     * Used to calculate damage inflicted.
+     * @return target
+     */
     public Player getTarget();
-	
-  /** Set the target.<br>
-   * Used to calculate damage inflicted.
-   * @param target the new target
-   */
+
+    /** Set the target.<br>
+     * Used to calculate damage inflicted.
+     * @param target the new target
+     */
     public void setTarget(Player target);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Get the damage inflicted. Must have a target. 
-   * @return damage
-   */
+    /** Get the damage inflicted. Must have a target. 
+     * @return damage
+     */
     public short getDamage();
-	
-  /** Set the damage inflicted.
-   * @param damage the new damage
-   */
+
+    /** Set the damage inflicted.
+     * @param damage the new damage
+     */
     public void setDamage(short damage);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

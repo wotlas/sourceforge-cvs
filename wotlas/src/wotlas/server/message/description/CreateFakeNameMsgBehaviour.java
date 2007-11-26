@@ -19,12 +19,9 @@
 
 package wotlas.server.message.description;
 
-import java.io.IOException;
-
+import wotlas.common.message.description.CreateFakeNameMessage;
+import wotlas.common.message.description.SetFakeNameMessage;
 import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.message.description.*;
-import wotlas.common.Player;
-import wotlas.common.universe.*;
 import wotlas.server.LieManager;
 import wotlas.server.PlayerImpl;
 
@@ -36,32 +33,31 @@ import wotlas.server.PlayerImpl;
 
 public class CreateFakeNameMsgBehaviour extends CreateFakeNameMessage implements NetMessageBehaviour {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
+    /** Constructor.
+     */
     public CreateFakeNameMsgBehaviour() {
-      super();
+        super();
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-    public void doBehaviour( Object sessionContext ) {
-      // The sessionContext is here a PlayerImpl.
-       PlayerImpl player = (PlayerImpl) sessionContext;
-       LieManager lieManager = player.getLieManager();
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
+        // The sessionContext is here a PlayerImpl.
+        PlayerImpl player = (PlayerImpl) sessionContext;
+        LieManager lieManager = player.getLieManager();
 
-       short currentFakeName = lieManager.createFakeName(fakeName);    
+        short currentFakeName = lieManager.createFakeName(this.fakeName);
 
-       if (currentFakeName > 0)
-          player.sendMessage(new SetFakeNameMessage(currentFakeName, fakeName));
+        if (currentFakeName > 0)
+            player.sendMessage(new SetFakeNameMessage(currentFakeName, this.fakeName));
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

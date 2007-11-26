@@ -19,13 +19,11 @@
 
 package wotlas.server.message.description;
 
-import java.io.IOException;
-
+import wotlas.common.message.description.MyPlayerDataPleaseMessage;
+import wotlas.common.message.description.YourFakeNamesMessage;
+import wotlas.common.message.description.YourPlayerDataMessage;
 import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.message.description.*;
-import wotlas.common.Player;
 import wotlas.server.PlayerImpl;
-import wotlas.server.LieManager;
 
 /**
  * Associated behaviour to the MyPlayerDataPleaseMessage...
@@ -35,36 +33,35 @@ import wotlas.server.LieManager;
 
 public class MyPlayerDataPleaseMsgBehaviour extends MyPlayerDataPleaseMessage implements NetMessageBehaviour {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public MyPlayerDataPleaseMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+     */
+    public MyPlayerDataPleaseMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
 
         // The sessionContext is here a PlayerImpl.
-           PlayerImpl player = (PlayerImpl) sessionContext;
+        PlayerImpl player = (PlayerImpl) sessionContext;
 
         // We send the player's data
-           player.sendMessage( new YourPlayerDataMessage( (Player) player ) );
+        player.sendMessage(new YourPlayerDataMessage(player));
 
         // We send the player's fake names
-           player.sendMessage( new YourFakeNamesMessage( player.getLieManager().getFakeNames(), player.getLieManager().getCurrentFakeNameIndex() ) );
+        player.sendMessage(new YourFakeNamesMessage(player.getLieManager().getFakeNames(), player.getLieManager().getCurrentFakeNameIndex()));
 
         // We send possessed objects... (release 2.0)
 
-     }
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

@@ -16,9 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
-package wotlas.common.objects.interfaces;
 
+package wotlas.common.objects.interfaces;
 
 /** 
  * The writable documents' class.
@@ -26,17 +25,15 @@ package wotlas.common.objects.interfaces;
  * @author Elann
  */
 
-public interface WritableInterface
-{
+public interface WritableInterface {
 
- /*------------------------------------------------------------------------------------*/	
- 
-  /** Write to the document.
-   * @param text the text to write
-   */
+    /*------------------------------------------------------------------------------------*/
+
+    /** Write to the document.
+     * @param text the text to write
+     */
     public void writeText(String text);
-			
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

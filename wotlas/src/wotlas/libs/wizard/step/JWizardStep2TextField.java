@@ -19,13 +19,20 @@
 
 package wotlas.libs.wizard.step;
 
-import wotlas.libs.wizard.*;
-import wotlas.libs.aswing.*;
-
-import java.awt.*;
-import java.awt.event.*;
-
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.GridLayout;
+import javax.swing.BorderFactory;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import wotlas.libs.aswing.ALabel;
+import wotlas.libs.aswing.ATextArea;
+import wotlas.libs.aswing.ATextField;
+import wotlas.libs.wizard.JWizard;
+import wotlas.libs.wizard.JWizardStep;
+import wotlas.libs.wizard.JWizardStepParameters;
+import wotlas.libs.wizard.WizardException;
 
 /** A step of a wizard with a ALabel, ATextField, ALabel, ATextField, AtextArea (info)<br>
  *
@@ -51,125 +58,132 @@ import javax.swing.*;
 
 public class JWizardStep2TextField extends JWizardStep {
 
-  /** Swing components of this step
-   */
-   private ALabel label0, label1;
+    /** Swing components of this step
+     */
+    private ALabel label0, label1;
 
-   protected ATextField tfield0, tfield1;
+    protected ATextField tfield0, tfield1;
 
-   private ATextArea tarea;
-   private JPanel formPanel;
+    private ATextArea tarea;
+    private JPanel formPanel;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-   public JWizardStep2TextField() {
-      super();
-      setBackground(Color.white);
-      setLayout(new BorderLayout());
-      setBorder(BorderFactory.createEmptyBorder(20,20,0,20));
-      
-      formPanel = new JPanel(new GridLayout(2,2,5,5));
-      formPanel.setBackground(Color.white);
-        label0 = new ALabel();
-        formPanel.add(label0);
-        tfield0 = new ATextField(15);
-        formPanel.add(tfield0);
-        label1 = new ALabel();
-        formPanel.add(label1);
-        tfield1 = new ATextField(15);
-        formPanel.add(tfield1);
-      
-      add(formPanel,BorderLayout.NORTH);
-    
-      tarea = new ATextArea();
-      tarea.setBackground(Color.white);
-      tarea.setLineWrap(true);
-      tarea.setWrapStyleWord(true);
-      tarea.setEditable(false);
-      tarea.setAlignmentX(LEFT_ALIGNMENT);  
-      add(tarea,BorderLayout.CENTER);
-   }
+    /** Constructor.
+     */
+    public JWizardStep2TextField() {
+        super();
+        setBackground(Color.white);
+        setLayout(new BorderLayout());
+        setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
 
- /*------------------------------------------------------------------------------------*/
+        this.formPanel = new JPanel(new GridLayout(2, 2, 5, 5));
+        this.formPanel.setBackground(Color.white);
+        this.label0 = new ALabel();
+        this.formPanel.add(this.label0);
+        this.tfield0 = new ATextField(15);
+        this.formPanel.add(this.tfield0);
+        this.label1 = new ALabel();
+        this.formPanel.add(this.label1);
+        this.tfield1 = new ATextField(15);
+        this.formPanel.add(this.tfield1);
 
-  /** Init method called to initilize this JWizardStep. You can redefine this method
-   *  to add your JPanel's Swing components. Don't forget to call super.init(parameters);
-   *
-   * @param parameters parameters for this step
-   * @exception thrown if the given parameters are wrong...
-   */
-   protected void init( JWizardStepParameters parameters ) throws WizardException {
-        super.init(parameters);
-      
-     // 1 - We retrieve init properties
-        String s_label0 = parameters.getProperty("init.label0");
-        String s_text0  = parameters.getProperty("init.text0");
-        String s_label1 = parameters.getProperty("init.label1");
-        String s_text1  = parameters.getProperty("init.text1");
-        String s_info   = parameters.getProperty("init.info0");
+        add(this.formPanel, BorderLayout.NORTH);
 
-     // 2 - We check the properties we have
-        if(s_label0==null || s_label1==null)
-           throw new WizardException("No label property found !");
-
-        if(s_text0==null) s_text0="";
-        if(s_text1==null) s_text1="";
-        if(s_info==null)  s_info="";
-
-     // 3 - We end the GUI init
-        label0.setText(s_label0);
-        tfield0.setText(s_text0);
-        label1.setText(s_label1);
-        tfield1.setText(s_text1);
-
-        tarea.setText(s_info);
-   }
-
- /*------------------------------------------------------------------------------------*/
-
-  /** Called each time the step is shown on screen.
-   */
-   protected void onShow(Object context, JWizard wizard) {
-   }
-
-  /** Called when the "Next" button is clicked.
-   *  Use the wizard's setNextStep() method to set the next step to be displayed.
-   *  @return return true to validate the "Next" button action, false to cancel it...
-   */
-   protected boolean onNext(Object context, JWizard wizard) {
-    if ( (tfield0.getText().length()==0) || (tfield1.getText().length()==0) ) {
-      JOptionPane.showMessageDialog( null, "Please, fill the fields", "Error", JOptionPane.ERROR_MESSAGE);
-      return false;
+        this.tarea = new ATextArea();
+        this.tarea.setBackground(Color.white);
+        this.tarea.setLineWrap(true);
+        this.tarea.setWrapStyleWord(true);
+        this.tarea.setEditable(false);
+        this.tarea.setAlignmentX(Component.LEFT_ALIGNMENT);
+        add(this.tarea, BorderLayout.CENTER);
     }
-   	return true;
-   }
 
-  /** Called when Previous button is clicked.
-   *  Use the wizard's setNextStep() method to set the next step to be displayed.
-   *  @return return true to validate the "Previous" button action, false to cancel it...
-   */
-   protected boolean onPrevious(Object context, JWizard wizard) {
-   	return true;
-   }
+    /*------------------------------------------------------------------------------------*/
 
- /*------------------------------------------------------------------------------------*/
+    /** Init method called to initilize this JWizardStep. You can redefine this method
+     *  to add your JPanel's Swing components. Don't forget to call super.init(parameters);
+     *
+     * @param parameters parameters for this step
+     * @exception thrown if the given parameters are wrong...
+     */
+    @Override
+    protected void init(JWizardStepParameters parameters) throws WizardException {
+        super.init(parameters);
 
-   /** To get the text entered in the first JTextField.
-    */
-   public String getText0() {
-   	return tfield0.getText();
-   }
+        // 1 - We retrieve init properties
+        String s_label0 = parameters.getProperty("init.label0");
+        String s_text0 = parameters.getProperty("init.text0");
+        String s_label1 = parameters.getProperty("init.label1");
+        String s_text1 = parameters.getProperty("init.text1");
+        String s_info = parameters.getProperty("init.info0");
 
- /*------------------------------------------------------------------------------------*/
+        // 2 - We check the properties we have
+        if (s_label0 == null || s_label1 == null)
+            throw new WizardException("No label property found !");
 
-   /** To get the text entered in the second JTextField.
-    */
-   public String getText1() {
-   	return tfield1.getText();
-   }
+        if (s_text0 == null)
+            s_text0 = "";
+        if (s_text1 == null)
+            s_text1 = "";
+        if (s_info == null)
+            s_info = "";
 
- /*------------------------------------------------------------------------------------*/
+        // 3 - We end the GUI init
+        this.label0.setText(s_label0);
+        this.tfield0.setText(s_text0);
+        this.label1.setText(s_label1);
+        this.tfield1.setText(s_text1);
+
+        this.tarea.setText(s_info);
+    }
+
+    /*------------------------------------------------------------------------------------*/
+
+    /** Called each time the step is shown on screen.
+     */
+    @Override
+    protected void onShow(Object context, JWizard wizard) {
+    }
+
+    /** Called when the "Next" button is clicked.
+     *  Use the wizard's setNextStep() method to set the next step to be displayed.
+     *  @return return true to validate the "Next" button action, false to cancel it...
+     */
+    @Override
+    protected boolean onNext(Object context, JWizard wizard) {
+        if ((this.tfield0.getText().length() == 0) || (this.tfield1.getText().length() == 0)) {
+            JOptionPane.showMessageDialog(null, "Please, fill the fields", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    /** Called when Previous button is clicked.
+     *  Use the wizard's setNextStep() method to set the next step to be displayed.
+     *  @return return true to validate the "Previous" button action, false to cancel it...
+     */
+    @Override
+    protected boolean onPrevious(Object context, JWizard wizard) {
+        return true;
+    }
+
+    /*------------------------------------------------------------------------------------*/
+
+    /** To get the text entered in the first JTextField.
+     */
+    public String getText0() {
+        return this.tfield0.getText();
+    }
+
+    /*------------------------------------------------------------------------------------*/
+
+    /** To get the text entered in the second JTextField.
+     */
+    public String getText1() {
+        return this.tfield1.getText();
+    }
+
+    /*------------------------------------------------------------------------------------*/
 
 }

@@ -19,109 +19,114 @@
 
 package wotlas.utils;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.MediaTracker;
+import java.awt.Toolkit;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.Timer;
 
 /** Displays an image in a JWindow during a certain amount of time.
  *
  * @author Aldiss
  */
 
-public class IntroductionWindow extends Window implements ActionListener
-{
-  /** image to display.
-   */
-      private Image back;
+public class IntroductionWindow extends Window implements ActionListener {
+    /** image to display.
+     */
+    private Image back;
 
-  /** Timer
-   */
-      private Timer timer;
+    /** Timer
+     */
+    private Timer timer;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Creates a Window with the specified image in background.
-   *
-   * @param frame parent frame. 
-   * @param image_path an image path...
-   * @param duration display duration
-   */
+    /** Creates a Window with the specified image in background.
+     *
+     * @param frame parent frame. 
+     * @param image_path an image path...
+     * @param duration display duration
+     */
 
-    public IntroductionWindow( Frame frame, String image_path, int duration )
-    {
+    public IntroductionWindow(Frame frame, String image_path, int duration) {
         super(frame);
 
-          Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
+        Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
 
-       // We load the image...
-          MediaTracker mediaTracker = new MediaTracker(this);
-          back = getToolkit().getImage(image_path);
-          mediaTracker.addImage(back,0);
+        // We load the image...
+        MediaTracker mediaTracker = new MediaTracker(this);
+        this.back = getToolkit().getImage(image_path);
+        mediaTracker.addImage(this.back, 0);
 
-           try{
-               mediaTracker.waitForID(0);
-           }
-           catch(InterruptedException e){
-               Debug.signal( Debug.WARNING, this, e );
-           }
+        try {
+            mediaTracker.waitForID(0);
+        } catch (InterruptedException e) {
+            Debug.signal(Debug.WARNING, this, e);
+        }
 
-       // We center the windows on the screen
-          int XO = ( screensize.width-back.getWidth(this) )/2;
-          int YO = ( screensize.height-back.getHeight(this) )/2;
+        // We center the windows on the screen
+        int XO = (screensize.width - this.back.getWidth(this)) / 2;
+        int YO = (screensize.height - this.back.getHeight(this)) / 2;
 
-          setLayout(null);
-          setBackground(Color.black);
-          setBounds(XO,YO,back.getWidth(this),back.getHeight(this));
+        setLayout(null);
+        setBackground(Color.black);
+        setBounds(XO, YO, this.back.getWidth(this), this.back.getHeight(this));
 
-         setVisible(true);
-         repaint();
+        setVisible(true);
+        repaint();
 
-      // Timer init
-         timer = new Timer(duration,this);
-         timer.start();
-   }
+        // Timer init
+        this.timer = new Timer(duration, this);
+        this.timer.start();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- /** Timer Event interception
-  *
-  * @param e supposed timer event
-  */
-   public void actionPerformed( ActionEvent e)
-   {
-     if(e.getSource()!=timer)
-         return;
+    /** Timer Event interception
+     *
+     * @param e supposed timer event
+     */
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() != this.timer)
+            return;
 
-     dispose();
-   }
+        dispose();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Paint Method. We draw the background image.
-   * @param g graphics
-   */
-     public void paint(Graphics g) {
-          g.drawImage(back,0,0,this);
-     }
+    /** Paint Method. We draw the background image.
+     * @param g graphics
+     */
+    @Override
+    public void paint(Graphics g) {
+        g.drawImage(this.back, 0, 0, this);
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To avoid any flicks we redefine this method...
-   */
-     public void repaint() {
-          paint(getGraphics());
-     }
+    /** To avoid any flicks we redefine this method...
+     */
+    @Override
+    public void repaint() {
+        paint(getGraphics());
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To avoid any flicks we redefine this method...
-    * @param g graphics
-    */
-      public void update(Graphics g) {
-          paint(g);
-      }
+    /** To avoid any flicks we redefine this method...
+     * @param g graphics
+     */
+    @Override
+    public void update(Graphics g) {
+        paint(g);
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

@@ -16,15 +16,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.objects.interfaces;
 
-import wotlas.common.objects.usefuls.*;
-import wotlas.common.objects.containers.*;
-import wotlas.common.objects.weapons.*;
-import wotlas.common.objects.armors.*;
-
 import wotlas.common.objects.BaseObject;
+import wotlas.common.objects.armors.BodyArmor;
+import wotlas.common.objects.armors.HeadArmor;
+import wotlas.common.objects.containers.Bag;
+import wotlas.common.objects.containers.Belt;
+import wotlas.common.objects.containers.Purse;
+import wotlas.common.objects.usefuls.Book;
+import wotlas.common.objects.weapons.Bow;
+import wotlas.common.objects.weapons.HeavyWeapon;
+import wotlas.common.objects.weapons.LightWeapon;
 
 /** 
  * The common interface for all inventories. 
@@ -32,197 +36,194 @@ import wotlas.common.objects.BaseObject;
  * @author Elann
  */
 
-public interface InventoryInterface
-{
+public interface InventoryInterface {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** Get the body armor.
-   * @return bodyArmor
-   */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the body armor.
+     * @return bodyArmor
+     */
     public BodyArmor getBodyArmor();
 
-  /** Set the body armor.
-   * @param bodyArmor the new body armor
-   */
+    /** Set the body armor.
+     * @param bodyArmor the new body armor
+     */
     public void setBodyArmor(BodyArmor bodyArmor);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** Get the head armor.
-   * @return headArmor
-   */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the head armor.
+     * @return headArmor
+     */
     public HeadArmor getHeadArmor();
 
-  /** Set the head armor.
-   * @param headArmor the new head armor
-   */
+    /** Set the head armor.
+     * @param headArmor the new head armor
+     */
     public void setHeadArmor(HeadArmor headArmor);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** Get the heavy weapon.
-   * @return heavyWeapon
-   */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the heavy weapon.
+     * @return heavyWeapon
+     */
     public HeavyWeapon getHeavyWeapon();
 
-  /** Set the heavy weapon.
-   * @param heavyWeapon the new heavy weapon
-   */
+    /** Set the heavy weapon.
+     * @param heavyWeapon the new heavy weapon
+     */
     public void setHeavyWeapon(HeavyWeapon heavyWeapon);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** Get the bow.
-   * @return bow
-   */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the bow.
+     * @return bow
+     */
     public Bow getBow();
 
-  /** Set the bow.
-   * @param bow the new bow
-   */
+    /** Set the bow.
+     * @param bow the new bow
+     */
     public void setBow(Bow bow);
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** Get the belt weapon.
-   * @return beltWeapon
-   */
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the belt weapon.
+     * @return beltWeapon
+     */
     public LightWeapon getBeltWeapon();
 
-  /** Set the belt weapon.
-   * @param beltWeapon the new belt weapon
-   */
+    /** Set the belt weapon.
+     * @param beltWeapon the new belt weapon
+     */
     public void setBeltWeapon(LightWeapon beltWeapon);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** Get the weapon hidden in right sleeve.
-   * @return rightSleeveWeapon
-   */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the weapon hidden in right sleeve.
+     * @return rightSleeveWeapon
+     */
     public LightWeapon getRightSleeveWeapon();
 
-  /** Set the weapon hidden in right sleeve.
-   * @param rightSleeveWeapon the new weapon hidden in right sleeve
-   */
+    /** Set the weapon hidden in right sleeve.
+     * @param rightSleeveWeapon the new weapon hidden in right sleeve
+     */
     public void setRightSleeveWeapon(LightWeapon rightSleeveWeapon);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** Get the weapon hidden in left sleeve.
-   * @return leftSleeveWeapon
-   */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the weapon hidden in left sleeve.
+     * @return leftSleeveWeapon
+     */
     public LightWeapon getLeftSleeveWeapon();
 
-  /** Set the weapon hidden in left sleeve.
-   * @param leftSleeveWeapon the new weapon hidden in left sleeve
-   */
+    /** Set the weapon hidden in left sleeve.
+     * @param leftSleeveWeapon the new weapon hidden in left sleeve
+     */
     public void setLeftSleeveWeapon(LightWeapon leftSleeveWeapon);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** Get the weapon hidden in right boot.
-   * @return rightBootWeapon
-   */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the weapon hidden in right boot.
+     * @return rightBootWeapon
+     */
     public LightWeapon getRightBootWeapon();
 
-  /** Set the weapon hidden in right boot.
-   * @param rightBootWeapon the new weapon hidden in right boot
-   */
+    /** Set the weapon hidden in right boot.
+     * @param rightBootWeapon the new weapon hidden in right boot
+     */
     public void setRightBootWeapon(LightWeapon rightBootWeapon);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** Get the weapon hidden in left boot.
-   * @return leftBootWeapon
-   */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the weapon hidden in left boot.
+     * @return leftBootWeapon
+     */
     public LightWeapon getLeftBootWeapon();
 
-  /** Set the weapon hidden in left boot.
-   * @param leftBootWeapon the new weapon hidden in left boot
-   */
+    /** Set the weapon hidden in left boot.
+     * @param leftBootWeapon the new weapon hidden in left boot
+     */
     public void setLeftBootWeapon(LightWeapon leftBootWeapon);
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** Get the purse.
-   * @return purse
-   */
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the purse.
+     * @return purse
+     */
     public Purse getPurse();
 
-  /** Set the purse.
-   * @param purse the new purse
-   */
+    /** Set the purse.
+     * @param purse the new purse
+     */
     public void setPurse(Purse purse);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** Get the bag.
-   * @return bag
-   */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the bag.
+     * @return bag
+     */
     public Bag getBag();
 
-  /** Set the bag.
-   * @param bag the new bag
-   */
+    /** Set the bag.
+     * @param bag the new bag
+     */
     public void setBag(Bag bag);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** Get the belt.
-   * @return belt
-   */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the belt.
+     * @return belt
+     */
     public Belt getBelt();
 
-  /** Set the belt.
-   * @param belt the new belt
-   */
+    /** Set the belt.
+     * @param belt the new belt
+     */
     public void setBelt(Belt belt);
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** Get the object ready for right hand.
-   * @return rightObject
-   */
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the object ready for right hand.
+     * @return rightObject
+     */
     public BaseObject getRightObject();
 
-  /** Set the object ready for right hand.<br>
-   * This method does not check for validity - you can put anything in hand.
-   * @param rightObject the new object ready for right hand
-   */
+    /** Set the object ready for right hand.<br>
+     * This method does not check for validity - you can put anything in hand.
+     * @param rightObject the new object ready for right hand
+     */
     public void setRightObject(BaseObject rightObject);
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** Get the object ready for left hand.
-   * @return leftObject
-   */
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the object ready for left hand.
+     * @return leftObject
+     */
     public BaseObject getLeftObject();
 
-  /** Set the object ready for left hand.<br>
-   * This method does not check for validity - you can put anything in hand.
-   * @param rightObject the new object ready for left hand
-   */
+    /** Set the object ready for left hand.<br>
+     * This method does not check for validity - you can put anything in hand.
+     * @param rightObject the new object ready for left hand
+     */
     public void setLeftObject(BaseObject leftObject);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** Get the book.
-   * @return book
-   */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the book.
+     * @return book
+     */
     public Book getBook();
 
-  /** Set the book.
-   * @param book the new book
-   */
+    /** Set the book.
+     * @param book the new book
+     */
     public void setBook(Book book);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- 
 }
-

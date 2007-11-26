@@ -19,16 +19,8 @@
 
 package wotlas.client.screen;
 
-import wotlas.libs.net.*;
-import wotlas.utils.Debug;
-import wotlas.utils.Tools;
-
+import java.awt.Frame;
 import wotlas.client.gui.JConnectionDialog;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-
 
 /** A small utility to connect to an account server using a JDialog.
  * <pre>
@@ -48,46 +40,41 @@ import java.awt.event.*;
  * @see wotlas.libs.net.NetClient
  */
 
-public class JGameConnectionDialog extends JConnectionDialog
-{
- /*------------------------------------------------------------------------------------*/
+public class JGameConnectionDialog extends JConnectionDialog {
+    /*------------------------------------------------------------------------------------*/
 
-   /** Constructor. Displays the JDialog and immediately tries to connect to the specified
-    *  server. It displays eventual error messages in pop-ups.
-    *  The detail of the parameters is the following :
-    * 
-    * @param frame frame owner of this JDialog
-    * @param server server name (DNS or IP address)
-    * @param port server port
-    * @param serverID Id of the server we want to join
-    * @param login client login
-    * @param password client password
-    * @param localClientID ID given by the account server when the client created his player
-    * @param originalServerID ID given by the account server when the client created his player
-    * @param context context to set to messages ( see NetConnection ).
-    */
+    /** Constructor. Displays the JDialog and immediately tries to connect to the specified
+     *  server. It displays eventual error messages in pop-ups.
+     *  The detail of the parameters is the following :
+     * 
+     * @param frame frame owner of this JDialog
+     * @param server server name (DNS or IP address)
+     * @param port server port
+     * @param serverID Id of the server we want to join
+     * @param login client login
+     * @param password client password
+     * @param localClientID ID given by the account server when the client created his player
+     * @param originalServerID ID given by the account server when the client created his player
+     * @param context context to set to messages ( see NetConnection ).
+     */
 
-   public JGameConnectionDialog(Frame frame,String server,int port, int serverID, String login,
-                                String password, int localClientID, int originalServerID,
-                                Object context) {
-         super(frame, server, port, serverID, login+"-"+originalServerID+"-"
-                                    +localClientID+":"+password, context);
-   }
-
- /*------------------------------------------------------------------------------------*/
-
-   /** To retrieve a list of the NetMessage packages to use with this server.
-    */
-    protected String[] getPackages() {
-    	//String list[] = null; // no packages for now
-      String list[] = {"wotlas.client.message.account",
-                       "wotlas.client.message.description",
-                       "wotlas.client.message.movement",
-                       "wotlas.client.message.chat" };
-
-    	return list;
+    public JGameConnectionDialog(Frame frame, String server, int port, int serverID, String login, String password, int localClientID,
+            int originalServerID, Object context) {
+        super(frame, server, port, serverID, login + "-" + originalServerID + "-" + localClientID + ":" + password, context);
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
+
+    /** To retrieve a list of the NetMessage packages to use with this server.
+     */
+    @Override
+    protected String[] getPackages() {
+        //String list[] = null; // no packages for now
+        String list[] = { "wotlas.client.message.account", "wotlas.client.message.description", "wotlas.client.message.movement", "wotlas.client.message.chat" };
+
+        return list;
+    }
+
+    /*------------------------------------------------------------------------------------*/
 
 }

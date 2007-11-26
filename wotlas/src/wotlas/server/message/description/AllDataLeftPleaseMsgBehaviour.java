@@ -19,13 +19,9 @@
 
 package wotlas.server.message.description;
 
-import java.io.IOException;
-
-import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.message.description.*;
-import wotlas.common.Player;
+import wotlas.common.message.description.AllDataLeftPleaseMessage;
 import wotlas.common.router.MessageRouter;
-import wotlas.common.universe.*;
+import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.server.PlayerImpl;
 
 /**
@@ -37,35 +33,34 @@ import wotlas.server.PlayerImpl;
 
 public class AllDataLeftPleaseMsgBehaviour extends AllDataLeftPleaseMessage implements NetMessageBehaviour {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public AllDataLeftPleaseMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+     */
+    public AllDataLeftPleaseMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
 
         // The sessionContext is here a PlayerImpl.
-           PlayerImpl player = (PlayerImpl) sessionContext;
+        PlayerImpl player = (PlayerImpl) sessionContext;
 
         // 1 - PLAYER DATA
-           MessageRouter mRouter = player.getMessageRouter();
-           mRouter.addPlayer(player); // we validate the add of our player to this router
-                                      // this is the router that will send the data we need
+        MessageRouter mRouter = player.getMessageRouter();
+        mRouter.addPlayer(player); // we validate the add of our player to this router
+        // this is the router that will send the data we need
 
-       // 2 - OBJECT DATA (release 2)
+        // 2 - OBJECT DATA (release 2)
 
-     }
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

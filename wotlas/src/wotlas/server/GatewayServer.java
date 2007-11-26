@@ -19,18 +19,14 @@
 
 package wotlas.server;
 
-import wotlas.libs.net.NetServer;
-import wotlas.libs.net.NetClient;
-import wotlas.libs.net.NetConnection;
-
+import wotlas.common.ErrorCodeList;
 import wotlas.common.ServerConfig;
 import wotlas.common.ServerConfigManager;
-import wotlas.common.ErrorCodeList;
-
+import wotlas.libs.net.NetClient;
+import wotlas.libs.net.NetConnection;
+import wotlas.libs.net.NetErrorCodeList;
+import wotlas.libs.net.NetServer;
 import wotlas.utils.Debug;
-
-import java.io.IOException;
-
 
 /** Wotlas Gateway Server. This is used for account transaction management.
  *  The server awaits for account transferts and also provides a method
@@ -44,125 +40,114 @@ import java.io.IOException;
 
 public class GatewayServer extends NetServer implements ErrorCodeList {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Server config list.
-    */
-     private ServerConfigManager serverConfigManager;
+    /** Server config list.
+     */
+    private ServerConfigManager serverConfigManager;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor (see wotlas.libs.net.NetServer for details)
-   *
-   *  @param serverInterface the host interface to bind to. Example: wotlas.tower.org
-   *  @param port port on which the server listens to clients.
-   *  @param packages a list of packages where we can find NetMsgBehaviour Classes.
-   *  @param nbMaxSockets maximum number of sockets that can be opened on this server
-   *  @param serverConfigManager config of all the servers.
-   */
-    public GatewayServer( String serverInterface, int port, String packages[], int nbMaxSockets,
-                          ServerConfigManager serverConfigManager ) {
-       super( serverInterface, port, packages );
-       setMaximumOpenedSockets( nbMaxSockets );
+    /** Constructor (see wotlas.libs.net.NetServer for details)
+     *
+     *  @param serverInterface the host interface to bind to. Example: wotlas.tower.org
+     *  @param port port on which the server listens to clients.
+     *  @param packages a list of packages where we can find NetMsgBehaviour Classes.
+     *  @param nbMaxSockets maximum number of sockets that can be opened on this server
+     *  @param serverConfigManager config of all the servers.
+     */
+    public GatewayServer(String serverInterface, int port, String packages[], int nbMaxSockets, ServerConfigManager serverConfigManager) {
+        super(serverInterface, port, packages);
+        setMaximumOpenedSockets(nbMaxSockets);
 
-       this.serverConfigManager = serverConfigManager;
+        this.serverConfigManager = serverConfigManager;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** This method is called automatically when a new client establishes a connection
-    *  with this server ( the client sends a ClientRegisterMessage ).
-    *
-    * @param connection a previously created connection for this connection.
-    * @param key a string given by the client to identify itself. The key should be
-    *        equal to "AccountServerPlease!".
-    */
-    public void accessControl( NetConnection connection, String key ) {
+    /** This method is called automatically when a new client establishes a connection
+     *  with this server ( the client sends a ClientRegisterMessage ).
+     *
+     * @param connection a previously created connection for this connection.
+     * @param key a string given by the client to identify itself. The key should be
+     *        equal to "AccountServerPlease!".
+     */
+    @Override
+    public void accessControl(NetConnection connection, String key) {
 
-       // The key is there to prevent wrong connections
-          if( key.equals("GatewayServerPlease!") ) {
+        // The key is there to prevent wrong connections
+        if (key.equals("GatewayServerPlease!")) {
             // ok, let's create an AccountTransaction for the operation.
-               AccountTransaction transaction = new AccountTransaction(
-                                                AccountTransaction.TRANSACTION_ACCOUNT_RECEIVER );
+            AccountTransaction transaction = new AccountTransaction(AccountTransaction.TRANSACTION_ACCOUNT_RECEIVER);
 
             // we set his message context to his player...
-               connection.setContext( transaction );
-               connection.addConnectionListener( transaction );
+            connection.setContext(transaction);
+            connection.addConnectionListener(transaction);
 
             // welcome on board...
-               acceptClient( connection );
-               Debug.signal( Debug.NOTICE, null, "Gateway Server is receiving an account...");
-          }
-          else {
+            acceptClient(connection);
+            Debug.signal(Debug.NOTICE, null, "Gateway Server is receiving an account...");
+        } else {
             // NO VALID KEY
-               Debug.signal( Debug.NOTICE, this, "Someone tried to connect with a bad key : "+key);
-               refuseClient( connection, ERR_WRONG_KEY, "Wrong key for this server :"+key );
-          }
+            Debug.signal(Debug.NOTICE, this, "Someone tried to connect with a bad key : " + key);
+            refuseClient(connection, ErrorCodeList.ERR_WRONG_KEY, "Wrong key for this server :" + key);
+        }
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To transfert an account to a remote server...
-    *  @param account account to transfert
-    *  @param remoteServerID remote server ID.
-    */
-    public boolean transfertAccount( String accountPrimaryKey, int remoteServerID ) {
+    /** To transfert an account to a remote server...
+     *  @param account account to transfert
+     *  @param remoteServerID remote server ID.
+     */
+    public boolean transfertAccount(String accountPrimaryKey, int remoteServerID) {
 
-          Debug.signal( Debug.NOTICE, null, "Starting "+accountPrimaryKey+" account transfert to server "+remoteServerID+"." );
+        Debug.signal(Debug.NOTICE, null, "Starting " + accountPrimaryKey + " account transfert to server " + remoteServerID + ".");
 
-       // STEP 1 - Get the remote server config
-          ServerConfig remoteServer = serverConfigManager.getServerConfig( remoteServerID );
+        // STEP 1 - Get the remote server config
+        ServerConfig remoteServer = this.serverConfigManager.getServerConfig(remoteServerID);
 
-          if(remoteServer==null) {
-             Debug.signal(Debug.ERROR, this, "Server Config "+remoteServerID+" not found !" );
-             return false;
-          }
+        if (remoteServer == null) {
+            Debug.signal(Debug.ERROR, this, "Server Config " + remoteServerID + " not found !");
+            return false;
+        }
 
-          Debug.signal( Debug.NOTICE, null, ""+accountPrimaryKey+" will be sent to "+remoteServer.getServerName()+":"+remoteServer.getGatewayServerPort() );
+        Debug.signal(Debug.NOTICE, null, "" + accountPrimaryKey + " will be sent to " + remoteServer.getServerName() + ":" + remoteServer.getGatewayServerPort());
 
-       // STEP 2 - Creation of an AccountTransaction
-          AccountTransaction transaction = new AccountTransaction(
-                                               AccountTransaction.TRANSACTION_ACCOUNT_SENDER );
+        // STEP 2 - Creation of an AccountTransaction
+        AccountTransaction transaction = new AccountTransaction(AccountTransaction.TRANSACTION_ACCOUNT_SENDER);
 
-       // STEP 3 - Open a connection with the remote server
-          NetClient client = new NetClient();
-          NetConnection connection = client.connectToServer(
-                                          remoteServer.getServerName(),
-                                          remoteServer.getGatewayServerPort(),
-                                          "GatewayServerPlease!",
-                                          transaction, null );
+        // STEP 3 - Open a connection with the remote server
+        NetClient client = new NetClient();
+        NetConnection connection = client.connectToServer(remoteServer.getServerName(), remoteServer.getGatewayServerPort(), "GatewayServerPlease!", transaction, null);
 
-          if(connection==null) {
+        if (connection == null) {
             // We analyze the error returned
-               if( client.getErrorCode()==ErrorCodeList.ERR_CONNECT_FAILED ) {
-                  // we report the deadlink and try the eventualy new address
-                     String newServerName = serverConfigManager.reportDeadServer(remoteServerID);
-                     if(newServerName!=null)
-                        Debug.signal( Debug.NOTICE, null, "Server dead link. Trying "+newServerName+":"+remoteServer.getGatewayServerPort() );
+            if (client.getErrorCode() == NetErrorCodeList.ERR_CONNECT_FAILED) {
+                // we report the deadlink and try the eventualy new address
+                String newServerName = this.serverConfigManager.reportDeadServer(remoteServerID);
+                if (newServerName != null)
+                    Debug.signal(Debug.NOTICE, null, "Server dead link. Trying " + newServerName + ":" + remoteServer.getGatewayServerPort());
 
-                     if(server!=null) {
-                          client = new NetClient();
-                          connection = client.connectToServer(
-                                          newServerName,
-                                          remoteServer.getGatewayServerPort(),
-                                          "GatewayServerPlease!",
-                                          transaction, null );
-                     }
-               }
+                if (this.server != null) {
+                    client = new NetClient();
+                    connection = client.connectToServer(newServerName, remoteServer.getGatewayServerPort(), "GatewayServerPlease!", transaction, null);
+                }
+            }
 
-               if(connection==null) {
-                  Debug.signal( Debug.ERROR, this, client.getErrorMessage() );
-                  return false;
-               }
-          }
+            if (connection == null) {
+                Debug.signal(Debug.ERROR, this, client.getErrorMessage());
+                return false;
+            }
+        }
 
-          Debug.signal( Debug.NOTICE, null, "Gateway server reached. Starting transaction for "+accountPrimaryKey+".");
-          connection.addConnectionListener( transaction );
+        Debug.signal(Debug.NOTICE, null, "Gateway server reached. Starting transaction for " + accountPrimaryKey + ".");
+        connection.addConnectionListener(transaction);
 
-       // STEP 4 - Wait for the result (10s max)
-          return transaction.transfertAccount( accountPrimaryKey, 10000, ServerDirector.getServerID() );
+        // STEP 4 - Wait for the result (10s max)
+        return transaction.transfertAccount(accountPrimaryKey, 10000, ServerDirector.getServerID());
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

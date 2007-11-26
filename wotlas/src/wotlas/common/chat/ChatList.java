@@ -19,9 +19,8 @@
 
 package wotlas.common.chat;
 
-import wotlas.common.Player;
-
 import java.util.Hashtable;
+import wotlas.common.Player;
 
 /** Interface of a Chat.
  *
@@ -30,52 +29,51 @@ import java.util.Hashtable;
  * @see wotlas.client.ChatImpl
  */
 
-public interface ChatList
-{
-  /** To get the number of existing ChatRooms.
-   */
-  public int getNumberOfChatRooms();
+public interface ChatList {
+    /** To get the number of existing ChatRooms.
+     */
+    public int getNumberOfChatRooms();
 
-  /** To add a ChatRoom.
-   */
-  public boolean addChatRoom(ChatRoom chatRoom);
-  
-  /** To remove a ChatRoom.
-   *
-   * @param primaryKey ChatRoom primary key
-   */
-  public boolean removeChatRoom(String primaryKey);
-  
-  /** To get a ChatRoom.
-   *
-   * @param primaryKey primary key of ChatRoom we want to get
-   */
-  public ChatRoom getChatRoom(String primaryKey);
-  
-  /** To add a player to a ChatRoom.
-   *
-   * @param primaryKey primary key of ChatRoom to modify
-   * @param player Player to add
-   */
-  public boolean addPlayer(String primaryKey, Player player);
-  
-  /** To remove a player from a ChatRoom.
-   *
-   * @param primaryKey primary key of ChatRoom to modify
-   * @param player Player to remove
-   */
-  public boolean removePlayer(String primaryKey, Player player);
-  
-  /** To get the list of players of a ChatRoom
-   *
-   * @param primaryKey primary key of the ChatRoom
-   */
-  public Hashtable getPlayers(String primaryKey);
+    /** To add a ChatRoom.
+     */
+    public boolean addChatRoom(ChatRoom chatRoom);
 
-  /** To get all the ChatRooms. Use with : synchronized( ... ) {} please !
-   *
-   * @param primaryKey primary key of ChatRoom we want to get
-   */
-  public Hashtable getChatRooms();
-  
+    /** To remove a ChatRoom.
+     *
+     * @param primaryKey ChatRoom primary key
+     */
+    public boolean removeChatRoom(String primaryKey);
+
+    /** To get a ChatRoom.
+     *
+     * @param primaryKey primary key of ChatRoom we want to get
+     */
+    public ChatRoom getChatRoom(String primaryKey);
+
+    /** To add a player to a ChatRoom.
+     *
+     * @param primaryKey primary key of ChatRoom to modify
+     * @param player Player to add
+     */
+    public boolean addPlayer(String primaryKey, Player player);
+
+    /** To remove a player from a ChatRoom.
+     *
+     * @param primaryKey primary key of ChatRoom to modify
+     * @param player Player to remove
+     */
+    public boolean removePlayer(String primaryKey, Player player);
+
+    /** To get the list of players of a ChatRoom
+     *
+     * @param primaryKey primary key of the ChatRoom
+     */
+    public Hashtable getPlayers(String primaryKey);
+
+    /** To get all the ChatRooms. Use with : synchronized( ... ) {} please !
+     *
+     * @param primaryKey primary key of ChatRoom we want to get
+     */
+    public Hashtable getChatRooms();
+
 }

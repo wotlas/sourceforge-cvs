@@ -19,60 +19,61 @@
 
 package wotlas.libs.aswing;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import javax.swing.JRadioButton;
 
 /** Antialiased JRadioButton : we use antialiasing to draw the text on a JRadioButton
  *
  * @author Petrus
  */
-public class ARadioButton extends JRadioButton
-{
-  
- /*------------------------------------------------------------------------------------*/
-  
-  /** Constructor with no set text.
-   */
-  public ARadioButton() {
-    super();
-    setOpaque(false);
-  }
-  
- /*------------------------------------------------------------------------------------*/
-  
-  /** Constructor with the specified text.
-   */
-  public ARadioButton( String text ) {
-    super( text );   
-    setOpaque(false);   
-  }
+public class ARadioButton extends JRadioButton {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor with selection state.
-   */
-  public ARadioButton( String text, boolean selected ) {
-    super( text, selected );
-    setOpaque(false);
-  }
-  
- /*------------------------------------------------------------------------------------*/
+    /** Constructor with no set text.
+     */
+    public ARadioButton() {
+        super();
+        setOpaque(false);
+    }
 
-  /** Mutated Paint Method.
-   */
-  public void paint( Graphics g ) {
-    Graphics2D g2D = (Graphics2D) g; 
-    RenderingHints saveRenderHints = g2D.getRenderingHints(); // save
-    
-    RenderingHints renderHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING,
-                                                        RenderingHints.VALUE_ANTIALIAS_ON);
-    renderHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-    
-    g2D.setRenderingHints( renderHints );
-    super.paint(g);
-    g2D.setRenderingHints( saveRenderHints ); // restore
-  }
+    /*------------------------------------------------------------------------------------*/
 
- /*------------------------------------------------------------------------------------*/
+    /** Constructor with the specified text.
+     */
+    public ARadioButton(String text) {
+        super(text);
+        setOpaque(false);
+    }
+
+    /*------------------------------------------------------------------------------------*/
+
+    /** Constructor with selection state.
+     */
+    public ARadioButton(String text, boolean selected) {
+        super(text, selected);
+        setOpaque(false);
+    }
+
+    /*------------------------------------------------------------------------------------*/
+
+    /** Mutated Paint Method.
+     */
+    @Override
+    public void paint(Graphics g) {
+        Graphics2D g2D = (Graphics2D) g;
+        RenderingHints saveRenderHints = g2D.getRenderingHints(); // save
+
+        RenderingHints renderHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        renderHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+
+        g2D.setRenderingHints(renderHints);
+        super.paint(g);
+        g2D.setRenderingHints(saveRenderHints); // restore
+    }
+
+    /*------------------------------------------------------------------------------------*/
 
 }

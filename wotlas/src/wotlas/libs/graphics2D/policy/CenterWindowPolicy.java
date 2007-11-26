@@ -19,9 +19,10 @@
 
 package wotlas.libs.graphics2D.policy;
 
-import wotlas.libs.graphics2D.*;
-
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import wotlas.libs.graphics2D.GraphicsDirector;
+import wotlas.libs.graphics2D.WindowPolicy;
 
 /** A simple window policy that always centers the refDrawable on the screen.
  *
@@ -29,46 +30,50 @@ import java.awt.*;
  * @see wotlas.libs.graphics2D.WindowPolicy
  */
 
-public class CenterWindowPolicy implements WindowPolicy{
+public class CenterWindowPolicy implements WindowPolicy {
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Our gDirector.
-    */
-     private GraphicsDirector gDirector;
+    /** Our gDirector.
+     */
+    private GraphicsDirector gDirector;
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To init this WindowPolicy.
-    *
-    * @param gDirector the associated graphics director
-    */
-     public void init( GraphicsDirector gDirector ) {
-         this.gDirector = gDirector;
-     }
+    /** To init this WindowPolicy.
+     *
+     * @param gDirector the associated graphics director
+     */
+    public void init(GraphicsDirector gDirector) {
+        this.gDirector = gDirector;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Tick method that signals to the WindowPolicy that it can update its parameters.
-    */
-     public void tick() {
-        if( gDirector.getRefDrawable() == null )
+    /** Tick method that signals to the WindowPolicy that it can update its parameters.
+     */
+    public void tick() {
+        if (this.gDirector.getRefDrawable() == null)
             return;
 
-        Rectangle screen = gDirector.getScreenRectangle();
-        Dimension background = gDirector.getBackgroundDimension();
-        Rectangle refDrawable = gDirector.getRefDrawable().getRectangle();
+        Rectangle screen = this.gDirector.getScreenRectangle();
+        Dimension background = this.gDirector.getBackgroundDimension();
+        Rectangle refDrawable = this.gDirector.getRefDrawable().getRectangle();
 
-      // we center the screen cordinates
-        screen.x = refDrawable.x - ( screen.width - refDrawable.width )/2;
-        screen.y = refDrawable.y - ( screen.height - refDrawable.height )/2;
+        // we center the screen cordinates
+        screen.x = refDrawable.x - (screen.width - refDrawable.width) / 2;
+        screen.y = refDrawable.y - (screen.height - refDrawable.height) / 2;
 
-      // we correct the center if it's out of the backround dimension.
-        if(screen.x<0) screen.x = 0;
-        if(screen.y<0) screen.y = 0;
-        if( (screen.x+screen.width)>=background.width ) screen.x = background.width-screen.width-1;
-        if( (screen.y+screen.height)>=background.height ) screen.y = background.height-screen.height-1;
-     }
+        // we correct the center if it's out of the backround dimension.
+        if (screen.x < 0)
+            screen.x = 0;
+        if (screen.y < 0)
+            screen.y = 0;
+        if ((screen.x + screen.width) >= background.width)
+            screen.x = background.width - screen.width - 1;
+        if ((screen.y + screen.height) >= background.height)
+            screen.y = background.height - screen.height - 1;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

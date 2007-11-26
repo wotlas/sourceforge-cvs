@@ -16,11 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.objects.usefuls;
 
 import wotlas.common.objects.BaseObject;
-import wotlas.common.objects.interfaces.*;
+import wotlas.common.objects.interfaces.UsefulInterface;
 
 /** 
  * The base class for all useful objects. (equippable objects)
@@ -30,41 +30,37 @@ import wotlas.common.objects.interfaces.*;
  * @see wotlas.common.objects.interfaces.UsefulInterface
  */
 
-public abstract class UsefulObject extends BaseObject implements UsefulInterface
-{
+public abstract class UsefulObject extends BaseObject implements UsefulInterface {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
- /** Is it ready ?
-  */
-  protected boolean ready;
-  
- /*------------------------------------------------------------------------------------*/
+    /** Is it ready ?
+     */
+    protected boolean ready;
 
-  /** The default constructor.
-   */			
-    public UsefulObject()
-	{
-	 super();
-	
-	 className="UsefulObject";
-	 objectName="default useful object";
-	 
-	 ready=false;	 
-	}															
+    /*------------------------------------------------------------------------------------*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-	
-  /** Use the object. Lots of different implementations. 
-   */
+    /** The default constructor.
+     */
+    public UsefulObject() {
+        super();
+
+        this.className = "UsefulObject";
+        this.objectName = "default useful object";
+
+        this.ready = false;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Use the object. Lots of different implementations. 
+     */
     public abstract void use();
 
-  /** Ready the object for usage. Lots of different implementations.
-   */
+    /** Ready the object for usage. Lots of different implementations.
+     */
     public abstract void ready();
 
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

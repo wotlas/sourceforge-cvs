@@ -16,17 +16,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.libs.net;
 
-import java.io.File;
 import java.util.Hashtable;
-
-import wotlas.libs.net.message.*;
-
+import wotlas.libs.net.message.ClientRegisterMsgBehaviour;
+import wotlas.libs.net.message.EndOfConnectionMsgBehaviour;
+import wotlas.libs.net.message.PingMsgBehaviour;
+import wotlas.libs.net.message.ServerErrorMsgBehaviour;
+import wotlas.libs.net.message.ServerWelcomeMsgBehaviour;
 import wotlas.utils.Debug;
 import wotlas.utils.Tools;
-
 
 /** For one NetMessage representing message data, there can be only one NetMessageBehaviour
  *  available on each side (local, remote). Therefore this Message Factory keeps in a table all the 
@@ -40,155 +40,149 @@ import wotlas.utils.Tools;
 
 public class NetMessageFactory {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Default message factory (one per default ClassLoader).
-   */
-     private static NetMessageFactory msgFactory;
+    /** Default message factory (one per default ClassLoader).
+     */
+    private static NetMessageFactory msgFactory;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** MessageBehaviour Classes, ordered by their mother class ( NetMessage child )
-   */
-     private Hashtable msgClasses;
+    /** MessageBehaviour Classes, ordered by their mother class ( NetMessage child )
+     */
+    private Hashtable msgClasses;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Static initialization.
-   */
-     static {
-     	 msgFactory = new NetMessageFactory();
-     }
+    /** Static initialization.
+     */
+    static {
+        NetMessageFactory.msgFactory = new NetMessageFactory();
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To get the default MessageFactory.
-   * @return the default NetMessageFactory
-   */
-     protected static NetMessageFactory getMessageFactory() {
-           return msgFactory;
-     }
+    /** To get the default MessageFactory.
+     * @return the default NetMessageFactory
+     */
+    protected static NetMessageFactory getMessageFactory() {
+        return NetMessageFactory.msgFactory;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Protected Empty Constructor. 
-   */
-     protected NetMessageFactory() {
-     	msgClasses = new Hashtable(50);
+    /** Protected Empty Constructor. 
+     */
+    protected NetMessageFactory() {
+        this.msgClasses = new Hashtable(50);
 
-       // We add system messages.
-         addMessage( ServerWelcomeMsgBehaviour.class );
-         addMessage( ServerErrorMsgBehaviour.class );
-         addMessage( ClientRegisterMsgBehaviour.class );
-         addMessage( EndOfConnectionMsgBehaviour.class );
-         addMessage( PingMsgBehaviour.class );
-     }
+        // We add system messages.
+        addMessage(ServerWelcomeMsgBehaviour.class);
+        addMessage(ServerErrorMsgBehaviour.class);
+        addMessage(ClientRegisterMsgBehaviour.class);
+        addMessage(EndOfConnectionMsgBehaviour.class);
+        addMessage(PingMsgBehaviour.class);
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Adds new messages to the NetMessageFactory. You have to give the name of the packages
-   *  where the message behaviour classes can be found. They are searched on the disk from
-   *  current system directory.<br>
-   *
-   *  We don't check if the packages have already been added. Old message behaviour classes
-   *  are replaced if they where already defined in the factory.
-   *
-   * @param packagesName a list of packages where we can find NetMsgBehaviour Classes.
-   * @return the number of loaded messages.
-   */
-     protected int addMessagePackages( String packagesName[] ) {
-          if(packagesName==null || packagesName.length==0)
-              return 0;
+    /** Adds new messages to the NetMessageFactory. You have to give the name of the packages
+     *  where the message behaviour classes can be found. They are searched on the disk from
+     *  current system directory.<br>
+     *
+     *  We don't check if the packages have already been added. Old message behaviour classes
+     *  are replaced if they where already defined in the factory.
+     *
+     * @param packagesName a list of packages where we can find NetMsgBehaviour Classes.
+     * @return the number of loaded messages.
+     */
+    protected int addMessagePackages(String packagesName[]) {
+        if (packagesName == null || packagesName.length == 0)
+            return 0;
 
-       // we search NetMessageBehaviour classes
-          Class classes[] = null;
-       
-          try{
-              classes = Tools.getImplementorsOf("wotlas.libs.net.NetMessageBehaviour", packagesName );
-          }
-          catch( ClassNotFoundException e ) {
-              Debug.signal(Debug.CRITICAL, this, e );
-              return 0;
-          }
-          catch( SecurityException e ) {
-              Debug.signal(Debug.CRITICAL, this, e );
-              return 0;
-          }
-          catch( RuntimeException e ) {
-              Debug.signal(Debug.ERROR, this, e );
-              return 0;
-          }
+        // we search NetMessageBehaviour classes
+        Class classes[] = null;
 
-          if(classes==null || classes.length==0)
-             return 0;
+        try {
+            classes = Tools.getImplementorsOf("wotlas.libs.net.NetMessageBehaviour", packagesName);
+        } catch (ClassNotFoundException e) {
+            Debug.signal(Debug.CRITICAL, this, e);
+            return 0;
+        } catch (SecurityException e) {
+            Debug.signal(Debug.CRITICAL, this, e);
+            return 0;
+        } catch (RuntimeException e) {
+            Debug.signal(Debug.ERROR, this, e);
+            return 0;
+        }
 
-       // We add the found classes to our list
-          int nbMsg = 0;
-            
-          for( int i=0; i<classes.length; i++)
-              if( addMessage( classes[i] ) )
-                  nbMsg++;
-         
-          return nbMsg;
-     }
+        if (classes == null || classes.length == 0)
+            return 0;
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        // We add the found classes to our list
+        int nbMsg = 0;
 
-  /** Adds a new NetMessageBehaviour class to our list.
-   *
-   * @param packageName a package name where we can find NetMsgBehaviour Classes.
-   * @return true if the message has been accepted
-   */
-     protected boolean addMessage( Class classToAdd ) {
+        for (int i = 0; i < classes.length; i++)
+            if (addMessage(classes[i]))
+                nbMsg++;
 
-           if( classToAdd==null || classToAdd.isInterface() )
-              return false;
+        return nbMsg;
+    }
 
-           try {
-              Object o = classToAdd.newInstance();
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-              if( !(o instanceof NetMessage) || !(o instanceof NetMessageBehaviour) ) {
-                  Debug.signal( Debug.ERROR, this, "Provided class has a bad network message format ! "+classToAdd );
-                  return false;
-              }
-           }
-           catch( Exception e ) {
-               Debug.signal( Debug.ERROR, this, e );
-               return false;
-           }
- 
-         // Ok, we have a valid Message Behaviour Class.
-           msgClasses.put( classToAdd.getSuperclass().getName(), classToAdd );
+    /** Adds a new NetMessageBehaviour class to our list.
+     *
+     * @param packageName a package name where we can find NetMsgBehaviour Classes.
+     * @return true if the message has been accepted
+     */
+    protected boolean addMessage(Class classToAdd) {
 
-           // Debug.signal(Debug.NOTICE, null, "Added Msg "+classToAdd);
-           return true;
-     }
+        if (classToAdd == null || classToAdd.isInterface())
+            return false;
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        try {
+            Object o = classToAdd.newInstance();
 
-  /** To get a new instance of a NetMessageBehaviour given its super class name
-   *  associated (NetMessage). This method is used by the NetReceiver to reconstruct
-   *  the received messages.
-   *
-   * @param msgSuperClassName the message's super class name.
-   * @return a new instance of the wanted NetMessageBehaviour.
-   * @exception ClassNotFoundException if there is no associated class for the given name.
-   * @exception InstantiationException should never occur since we instanciate the class in
-   *            the addMessagePackage(s) method.
-   * @exception IllegalAccessException if the class access has been secured.
-   */
-     public NetMessageBehaviour getNewMessageInstance( String msgSuperClassName )
-     throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+            if (!(o instanceof NetMessage) || !(o instanceof NetMessageBehaviour)) {
+                Debug.signal(Debug.ERROR, this, "Provided class has a bad network message format ! " + classToAdd);
+                return false;
+            }
+        } catch (Exception e) {
+            Debug.signal(Debug.ERROR, this, e);
+            return false;
+        }
 
-         Class searchedClass = (Class) msgClasses.get( msgSuperClassName );
+        // Ok, we have a valid Message Behaviour Class.
+        this.msgClasses.put(classToAdd.getSuperclass().getName(), classToAdd);
 
-         if( searchedClass==null )
-             throw new ClassNotFoundException(msgSuperClassName);
+        // Debug.signal(Debug.NOTICE, null, "Added Msg "+classToAdd);
+        return true;
+    }
 
-         return (NetMessageBehaviour) searchedClass.newInstance();
-     }
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** To get a new instance of a NetMessageBehaviour given its super class name
+     *  associated (NetMessage). This method is used by the NetReceiver to reconstruct
+     *  the received messages.
+     *
+     * @param msgSuperClassName the message's super class name.
+     * @return a new instance of the wanted NetMessageBehaviour.
+     * @exception ClassNotFoundException if there is no associated class for the given name.
+     * @exception InstantiationException should never occur since we instanciate the class in
+     *            the addMessagePackage(s) method.
+     * @exception IllegalAccessException if the class access has been secured.
+     */
+    public NetMessageBehaviour getNewMessageInstance(String msgSuperClassName) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+
+        Class searchedClass = (Class) this.msgClasses.get(msgSuperClassName);
+
+        if (searchedClass == null)
+            throw new ClassNotFoundException(msgSuperClassName);
+
+        return (NetMessageBehaviour) searchedClass.newInstance();
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

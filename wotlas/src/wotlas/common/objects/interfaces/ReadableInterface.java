@@ -16,9 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
-package wotlas.common.objects.interfaces;
 
+package wotlas.common.objects.interfaces;
 
 /** 
  * The readable documents' class.
@@ -26,17 +25,15 @@ package wotlas.common.objects.interfaces;
  * @author Elann
  */
 
-public interface ReadableInterface
-{
+public interface ReadableInterface {
 
- /*------------------------------------------------------------------------------------*/
-	
-  /** Get the document's text.
-   * @return current readable text
-   */
+    /*------------------------------------------------------------------------------------*/
+
+    /** Get the document's text.
+     * @return current readable text
+     */
     public String readText();
-			
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

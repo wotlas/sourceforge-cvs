@@ -28,14 +28,13 @@ import java.io.InputStream;
 
 public interface SoundResourceLocator {
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To get an inputstream on the wanted sound.
-    * @param soundName sound name such as "boing.wav"
-    * @return input stream on the wanted sound, null if the sound was not found
-    */
-     public InputStream getSoundStream( String soundName );
+    /** To get an inputstream on the wanted sound.
+     * @param soundName sound name such as "boing.wav"
+     * @return input stream on the wanted sound, null if the sound was not found
+     */
+    public InputStream getSoundStream(String soundName);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

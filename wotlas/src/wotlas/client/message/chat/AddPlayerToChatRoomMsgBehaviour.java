@@ -19,18 +19,11 @@
 
 package wotlas.client.message.chat;
 
-import java.io.IOException;
-import java.util.*;
-
+import java.util.Hashtable;
+import wotlas.client.DataManager;
+import wotlas.client.PlayerImpl;
+import wotlas.common.message.chat.AddPlayerToChatRoomMessage;
 import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.message.chat.*;
-
-import wotlas.common.chat.*;
-import wotlas.common.Player;
-import wotlas.common.universe.*;
-
-import wotlas.client.*;
-
 import wotlas.utils.Debug;
 
 /**
@@ -39,49 +32,47 @@ import wotlas.utils.Debug;
  * @author Aldiss
  */
 
-public class AddPlayerToChatRoomMsgBehaviour extends AddPlayerToChatRoomMessage implements NetMessageBehaviour
-{
+public class AddPlayerToChatRoomMsgBehaviour extends AddPlayerToChatRoomMessage implements NetMessageBehaviour {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-  public AddPlayerToChatRoomMsgBehaviour() {
-    super();
-  }
+    /** Constructor.
+     */
+    public AddPlayerToChatRoomMsgBehaviour() {
+        super();
+    }
 
- /*------------------------------------------------------------------------------------*/
-  
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-  public void doBehaviour( Object sessionContext ) {
-       if (DataManager.SHOW_DEBUG)
-         System.out.println("AddPlayerToChatRoomMsgBehaviour::doBehaviour: "+chatRoomPrimaryKey);
+    /*------------------------------------------------------------------------------------*/
 
-    // The sessionContext is here a DataManager.
-       DataManager dataManager = (DataManager) sessionContext;
-       PlayerImpl player = dataManager.getMyPlayer();
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
+        if (DataManager.SHOW_DEBUG)
+            System.out.println("AddPlayerToChatRoomMsgBehaviour::doBehaviour: " + this.chatRoomPrimaryKey);
 
-    // We seek for the player to add
-       Hashtable players = dataManager.getPlayers();
-       PlayerImpl sender = null;
+        // The sessionContext is here a DataManager.
+        DataManager dataManager = (DataManager) sessionContext;
+        PlayerImpl player = dataManager.getMyPlayer();
 
-       if(players!=null)
-          sender = (PlayerImpl) players.get( senderPrimaryKey );
+        // We seek for the player to add
+        Hashtable players = dataManager.getPlayers();
+        PlayerImpl sender = null;
 
-       if( sender==null ) {
-           Debug.signal( Debug.ERROR, this, "Could not find the subject player of this message : "+senderPrimaryKey);
-           return;
-       }
+        if (players != null)
+            sender = (PlayerImpl) players.get(this.senderPrimaryKey);
 
-    // We add the player
-       dataManager.getClientScreen().getChatPanel().addPlayer(chatRoomPrimaryKey,sender);
-  }
-  
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
+        if (sender == null) {
+            Debug.signal(Debug.ERROR, this, "Could not find the subject player of this message : " + this.senderPrimaryKey);
+            return;
+        }
+
+        // We add the player
+        dataManager.getClientScreen().getChatPanel().addPlayer(this.chatRoomPrimaryKey, sender);
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }
-  

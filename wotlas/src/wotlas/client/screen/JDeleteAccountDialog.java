@@ -19,20 +19,12 @@
 
 package wotlas.client.screen;
 
-import wotlas.libs.net.*;
-import wotlas.utils.Debug;
-import wotlas.utils.Tools;
-import wotlas.libs.aswing.*;
-
-import wotlas.common.ErrorCodeList;
-
-import wotlas.client.gui.JConnectionDialog;
+import java.awt.Frame;
+import javax.swing.SwingUtilities;
 import wotlas.client.ClientDirector;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-
+import wotlas.client.gui.JConnectionDialog;
+import wotlas.common.ErrorCodeList;
+import wotlas.libs.aswing.AInfoDialog;
 
 /** A small utility to connect to delete an account using a JDialog.
  * <pre>
@@ -52,55 +44,55 @@ import java.awt.event.*;
  * @see wotlas.libs.net.NetClient
  */
 
-public class JDeleteAccountDialog extends JConnectionDialog
-{
- /*------------------------------------------------------------------------------------*/
+public class JDeleteAccountDialog extends JConnectionDialog {
+    /*------------------------------------------------------------------------------------*/
 
-   /** Constructor. Displays the JDialog and immediately tries to connect to the specified
-    *  server. It displays eventual error messages in pop-ups.
-    *  The detail of the parameters is the following :
-    * 
-    * @param frame frame owner of this JDialog
-    * @param server server name (DNS or IP address)
-    * @param port server port
-    * @param serverID Id of the server we want to join
-    * @param accountName login+'-'+key
-    * @param password
-    */
-   public JDeleteAccountDialog(Frame frame,String server,int port,int serverID,String accountName, String password) {
-         super(frame,server,port,serverID,"deleteAccount:"+accountName+":"+password,null);
-   }
-
- /*------------------------------------------------------------------------------------*/
-
-   /** To retrieve a list of the NetMessage packages to use with this server.
-    */
-    protected String[] getPackages() {
-    	String list[] = { "wotlas.client.message.account" };    	
-    	return list;
+    /** Constructor. Displays the JDialog and immediately tries to connect to the specified
+     *  server. It displays eventual error messages in pop-ups.
+     *  The detail of the parameters is the following :
+     * 
+     * @param frame frame owner of this JDialog
+     * @param server server name (DNS or IP address)
+     * @param port server port
+     * @param serverID Id of the server we want to join
+     * @param accountName login+'-'+key
+     * @param password
+     */
+    public JDeleteAccountDialog(Frame frame, String server, int port, int serverID, String accountName, String password) {
+        super(frame, server, port, serverID, "deleteAccount:" + accountName + ":" + password, null);
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** To display en error message in a pop-up.
-    */
-    protected void displayError( String error ) {
+    /** To retrieve a list of the NetMessage packages to use with this server.
+     */
+    @Override
+    protected String[] getPackages() {
+        String list[] = { "wotlas.client.message.account" };
+        return list;
+    }
 
-    	if(errorCode==ErrorCodeList.ERR_ACCOUNT_DELETED)
-          hasSucceeded = true;
+    /*------------------------------------------------------------------------------------*/
+
+    /** To display en error message in a pop-up.
+     */
+    @Override
+    protected void displayError(String error) {
+
+        if (this.errorCode == ErrorCodeList.ERR_ACCOUNT_DELETED)
+            this.hasSucceeded = true;
 
         final String ferror = new String(error);
-        final Frame ourFrame = frame;
+        final Frame ourFrame = this.frame;
 
         Runnable runnable = new Runnable() {
-           public void run() {
-              new AInfoDialog( ourFrame, ferror, true,
-                               ClientDirector.getResourceManager() );
-           }
+            public void run() {
+                new AInfoDialog(ourFrame, ferror, true, ClientDirector.getResourceManager());
+            }
         };
 
-        SwingUtilities.invokeLater( runnable );
+        SwingUtilities.invokeLater(runnable);
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 }

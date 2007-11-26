@@ -19,13 +19,23 @@
 
 package wotlas.libs.wizard.step;
 
-import wotlas.libs.wizard.*;
-import wotlas.libs.aswing.*;
-
-import java.awt.*;
-import java.awt.event.*;
-
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import wotlas.libs.aswing.ALabel;
+import wotlas.libs.aswing.ARadioButton;
+import wotlas.libs.aswing.ATextArea;
+import wotlas.libs.wizard.JWizard;
+import wotlas.libs.wizard.JWizardStep;
+import wotlas.libs.wizard.JWizardStepParameters;
+import wotlas.libs.wizard.WizardException;
 
 /** A step of a wizard with a ALabel, JRadioButton, AtextArea (associated
  * JRadioButton description).<br>
@@ -58,176 +68,179 @@ import javax.swing.*;
  * @see wotlas.libs.wizard.JWizardStep
  */
 
-public class JWizardStepRadio extends JWizardStep implements ActionListener{
+public class JWizardStepRadio extends JWizardStep implements ActionListener {
 
-  /** Swing components of this step
-   */
-   private ALabel label1;
+    /** Swing components of this step
+     */
+    private ALabel label1;
 
-   protected ARadioButton buttons[];
-   protected String aRadioInfo[];
+    protected ARadioButton buttons[];
+    protected String aRadioInfo[];
 
-   private ATextArea tarea;
-   private JPanel formPanel;
+    private ATextArea tarea;
+    private JPanel formPanel;
 
-   private ButtonGroup btGroup;
+    private ButtonGroup btGroup;
 
-  /** The index of the selected radio button.
-   */
-   protected int selectedRadio;
+    /** The index of the selected radio button.
+     */
+    protected int selectedRadio;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor
-   */
-   public JWizardStepRadio() {
-      super();
-      setBackground(Color.white);
-      setLayout(new BorderLayout());
-      setBorder(BorderFactory.createEmptyBorder(20,20,0,20));
+    /** Constructor
+     */
+    public JWizardStepRadio() {
+        super();
+        setBackground(Color.white);
+        setLayout(new BorderLayout());
+        setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
 
-      label1 = new ALabel();
-      add(label1,BorderLayout.NORTH);
+        this.label1 = new ALabel();
+        add(this.label1, BorderLayout.NORTH);
 
-      formPanel = new JPanel();
-      formPanel.setAlignmentX(LEFT_ALIGNMENT);
-      formPanel.setBackground(Color.white);
-      JScrollPane scrollPane = new JScrollPane(formPanel);
-      scrollPane.setBorder(BorderFactory.createEmptyBorder(20,50,40,10));
-      scrollPane.setBackground(Color.white);
-      add(scrollPane, BorderLayout.CENTER);
+        this.formPanel = new JPanel();
+        this.formPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        this.formPanel.setBackground(Color.white);
+        JScrollPane scrollPane = new JScrollPane(this.formPanel);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(20, 50, 40, 10));
+        scrollPane.setBackground(Color.white);
+        add(scrollPane, BorderLayout.CENTER);
 
-      tarea = new ATextArea();
-      tarea.setBackground(Color.white);
-      tarea.setLineWrap(true);
-      tarea.setWrapStyleWord(true);
-      tarea.setEditable(false);
-      tarea.setAlignmentX(LEFT_ALIGNMENT);  
-      add(tarea, BorderLayout.SOUTH);
-  }
+        this.tarea = new ATextArea();
+        this.tarea.setBackground(Color.white);
+        this.tarea.setLineWrap(true);
+        this.tarea.setWrapStyleWord(true);
+        this.tarea.setEditable(false);
+        this.tarea.setAlignmentX(Component.LEFT_ALIGNMENT);
+        add(this.tarea, BorderLayout.SOUTH);
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Init method called to initilize this JWizardStep. You can redefine this method
-   *  to add your JPanel's Swing components. Don't forget to call super.init(parameters);
-   *
-   * @param parameters parameters for this step
-   * @exception thrown if the given parameters are wrong...
-   */
-   protected void init( JWizardStepParameters parameters ) throws WizardException {
+    /** Init method called to initilize this JWizardStep. You can redefine this method
+     *  to add your JPanel's Swing components. Don't forget to call super.init(parameters);
+     *
+     * @param parameters parameters for this step
+     * @exception thrown if the given parameters are wrong...
+     */
+    @Override
+    protected void init(JWizardStepParameters parameters) throws WizardException {
         super.init(parameters);
-      
-     // 1 - We retrieve init properties
+
+        // 1 - We retrieve init properties
         String s_label = parameters.getProperty("init.label0");
-        String s_nbChoices  = parameters.getProperty("init.nbChoices");
+        String s_nbChoices = parameters.getProperty("init.nbChoices");
 
         String choices[] = null;
 
-        try{
-           int nb = Integer.parseInt(s_nbChoices);
-           choices = new String[nb];
-           aRadioInfo = new String[nb];
-           buttons = new ARadioButton[nb];
-        }
-        catch(Exception e) {
-           throw new WizardException("nbChoices property badly set! "+e.getMessage());
-        }
-
-     // 2 - We check the properties we have
-        if(s_label==null)
-           throw new WizardException("No label property found !");
-
-        for( int i=0; i<choices.length; i++) {
-             String choice = parameters.getProperty("init.choice"+i);
-
-             if(choice==null)
-                throw new WizardException("Property 'init.choice"+i+"' missing !");
-
-             String s_info   = parameters.getProperty("init.info"+i);
-
-             if(s_info==null) s_info="";
-
-             choices[i] = choice;
-             aRadioInfo[i] = s_info;
+        try {
+            int nb = Integer.parseInt(s_nbChoices);
+            choices = new String[nb];
+            this.aRadioInfo = new String[nb];
+            this.buttons = new ARadioButton[nb];
+        } catch (Exception e) {
+            throw new WizardException("nbChoices property badly set! " + e.getMessage());
         }
 
-     // 3 - We end the GUI init
-        label1.setText(s_label);
-        btGroup = new ButtonGroup();
+        // 2 - We check the properties we have
+        if (s_label == null)
+            throw new WizardException("No label property found !");
 
-        formPanel.removeAll();
-        formPanel.setLayout( new GridLayout(choices.length,1,10,10) );
+        for (int i = 0; i < choices.length; i++) {
+            String choice = parameters.getProperty("init.choice" + i);
 
-        for( int i=0; i<choices.length; i++) {
-             buttons[i] = new ARadioButton(choices[i]);
-             buttons[i].setActionCommand(""+i);
-             buttons[i].setSelected(false);
-             buttons[i].addActionListener(this);
-             btGroup.add(buttons[i]);
-             formPanel.add(buttons[i]);
+            if (choice == null)
+                throw new WizardException("Property 'init.choice" + i + "' missing !");
+
+            String s_info = parameters.getProperty("init.info" + i);
+
+            if (s_info == null)
+                s_info = "";
+
+            choices[i] = choice;
+            this.aRadioInfo[i] = s_info;
         }
 
-        if(choices.length>0) {
-           buttons[0].setSelected(true);
-           tarea.setText(aRadioInfo[0]);
-           selectedRadio=0;
+        // 3 - We end the GUI init
+        this.label1.setText(s_label);
+        this.btGroup = new ButtonGroup();
+
+        this.formPanel.removeAll();
+        this.formPanel.setLayout(new GridLayout(choices.length, 1, 10, 10));
+
+        for (int i = 0; i < choices.length; i++) {
+            this.buttons[i] = new ARadioButton(choices[i]);
+            this.buttons[i].setActionCommand("" + i);
+            this.buttons[i].setSelected(false);
+            this.buttons[i].addActionListener(this);
+            this.btGroup.add(this.buttons[i]);
+            this.formPanel.add(this.buttons[i]);
         }
-        else
-           selectedRadio=-1;
-   }
 
- /*------------------------------------------------------------------------------------*/
+        if (choices.length > 0) {
+            this.buttons[0].setSelected(true);
+            this.tarea.setText(this.aRadioInfo[0]);
+            this.selectedRadio = 0;
+        } else
+            this.selectedRadio = -1;
+    }
 
-   /** Action Performed when the user clicks a button.
-    */
+    /*------------------------------------------------------------------------------------*/
+
+    /** Action Performed when the user clicks a button.
+     */
     public void actionPerformed(ActionEvent e) {
 
-        int i=0;
+        int i = 0;
 
-        try{
-           i = Integer.parseInt( e.getActionCommand() );
-        }catch(Exception ex) {
-          ex.printStackTrace();
-          return;
-	}
+        try {
+            i = Integer.parseInt(e.getActionCommand());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return;
+        }
 
-        if(i>=0) {
-          tarea.setText(aRadioInfo[i]);
-          selectedRadio=i;
+        if (i >= 0) {
+            this.tarea.setText(this.aRadioInfo[i]);
+            this.selectedRadio = i;
         }
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Called each time the step is shown on screen.
-   */
-   protected void onShow(Object context, JWizard wizard) {
-   }
+    /** Called each time the step is shown on screen.
+     */
+    @Override
+    protected void onShow(Object context, JWizard wizard) {
+    }
 
-  /** Called when the "Next" button is clicked.
-   *  Use the wizard's setNextStep() method to set the next step to be displayed.
-   *  @return return true to validate the "Next" button action, false to cancel it...
-   */
-   protected boolean onNext(Object context, JWizard wizard) {
-   	return true;
-   }
+    /** Called when the "Next" button is clicked.
+     *  Use the wizard's setNextStep() method to set the next step to be displayed.
+     *  @return return true to validate the "Next" button action, false to cancel it...
+     */
+    @Override
+    protected boolean onNext(Object context, JWizard wizard) {
+        return true;
+    }
 
-  /** Called when Previous button is clicked.
-   *  Use the wizard's setNextStep() method to set the next step to be displayed.
-   *  @return return true to validate the "Previous" button action, false to cancel it...
-   */
-   protected boolean onPrevious(Object context, JWizard wizard) {
-   	return true;
-   }
+    /** Called when Previous button is clicked.
+     *  Use the wizard's setNextStep() method to set the next step to be displayed.
+     *  @return return true to validate the "Previous" button action, false to cancel it...
+     */
+    @Override
+    protected boolean onPrevious(Object context, JWizard wizard) {
+        return true;
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** To get the selected choice : integer 0 to nbChoices, -1 if none selected.
-    */
-   public int getChoice() {
-   	return selectedRadio;
-   }
+    /** To get the selected choice : integer 0 to nbChoices, -1 if none selected.
+     */
+    public int getChoice() {
+        return this.selectedRadio;
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
 }

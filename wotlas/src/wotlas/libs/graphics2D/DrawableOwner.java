@@ -19,7 +19,6 @@
 
 package wotlas.libs.graphics2D;
 
-
 /** An interface drawables can implement to tell that they have an owner. For example
  *  take the case of an Ant class which is a SpriteDataSupplier for a Sprite representing
  *  an Ant. Because the wotlas.libs.graphics2D.drawable.Sprite implements the DrawableOwner
@@ -41,15 +40,15 @@ package wotlas.libs.graphics2D;
 
 public interface DrawableOwner {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** To get the owner of this drawable. By 'owner' we mean the object which this
-    *  Drawable is the graphical representation.
-    *
-    * @return Object owner of this drawable.
-    */
-     public Object getOwner();
+    /** To get the owner of this drawable. By 'owner' we mean the object which this
+     *  Drawable is the graphical representation.
+     *
+     * @return Object owner of this drawable.
+     */
+    public Object getOwner();
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
 }

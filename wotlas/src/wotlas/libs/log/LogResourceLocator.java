@@ -19,10 +19,7 @@
 
 package wotlas.libs.log;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import java.io.*;
+import java.awt.Image;
 
 /** To locate resources needed by the JLogStream and JCroppedWindow
  *
@@ -31,16 +28,15 @@ import java.io.*;
 
 public interface LogResourceLocator {
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Returns the wanted image from the base GUI directory.
-    *
-    *  @param imageName name of the image we want.
-    *  @return Image, null if the image was not found.
-    */
-    public Image getGuiImage( String imageName );
+    /** Returns the wanted image from the base GUI directory.
+     *
+     *  @param imageName name of the image we want.
+     *  @return Image, null if the image was not found.
+     */
+    public Image getGuiImage(String imageName);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

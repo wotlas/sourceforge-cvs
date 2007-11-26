@@ -16,9 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
-package wotlas.common.chat;
 
+package wotlas.common.chat;
 
 /** A chat message history utility.
  *
@@ -27,83 +26,83 @@ package wotlas.common.chat;
 
 public class ChatMessageHistory {
 
- /*------------------------------------------------------------------------------------*/
-  
-   /** Number of history entries.
-    */
+    /*------------------------------------------------------------------------------------*/
+
+    /** Number of history entries.
+     */
     private static final int HISTORY_MAX_ENTRIES = 15;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Messages History
-   */
+    /** Messages History
+     */
     private String history[];
 
-  /** Current index
-   */
+    /** Current index
+     */
     private short index;
-  
- /*------------------------------------------------------------------------------------*/  
 
-  /** Constructor
-   */
-   public ChatMessageHistory() {
-   	history = new String[HISTORY_MAX_ENTRIES];
-   	index=0;
-   }
-  
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To add a message to the message history. Eventual 'next' messages are erased.
-   */
-   public void add(String message) {
-      // we erase eventual 'next entries'...
-   	for( short i=(short)(index+1); i<HISTORY_MAX_ENTRIES; i++ )
-             history[i]=null;
+    /** Constructor
+     */
+    public ChatMessageHistory() {
+        this.history = new String[ChatMessageHistory.HISTORY_MAX_ENTRIES];
+        this.index = 0;
+    }
 
-        history[index] = message;
-        index++;
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-      // end of history ?
-        if(index==HISTORY_MAX_ENTRIES) {
-           // we erase the first saved message
-              for( short i=0; i<HISTORY_MAX_ENTRIES-1; i++)
-                   history[i]=history[i+1];
+    /** To add a message to the message history. Eventual 'next' messages are erased.
+     */
+    public void add(String message) {
+        // we erase eventual 'next entries'...
+        for (short i = (short) (this.index + 1); i < ChatMessageHistory.HISTORY_MAX_ENTRIES; i++)
+            this.history[i] = null;
 
-              index=HISTORY_MAX_ENTRIES-1;
-              history[index]=null;
+        this.history[this.index] = message;
+        this.index++;
+
+        // end of history ?
+        if (this.index == ChatMessageHistory.HISTORY_MAX_ENTRIES) {
+            // we erase the first saved message
+            for (short i = 0; i < ChatMessageHistory.HISTORY_MAX_ENTRIES - 1; i++)
+                this.history[i] = this.history[i + 1];
+
+            this.index = ChatMessageHistory.HISTORY_MAX_ENTRIES - 1;
+            this.history[this.index] = null;
         }
-   }
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the next message if there is one. If there is none the current message is
-   *  returned.
-   */
-   public String getNext(String currentMessage) {
-   	if(index==HISTORY_MAX_ENTRIES-1 || history[index+1]==null)
-   	   return currentMessage;
+    /** To get the next message if there is one. If there is none the current message is
+     *  returned.
+     */
+    public String getNext(String currentMessage) {
+        if (this.index == ChatMessageHistory.HISTORY_MAX_ENTRIES - 1 || this.history[this.index + 1] == null)
+            return currentMessage;
 
-        index++;
-        return history[index];
-   }
+        this.index++;
+        return this.history[this.index];
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the previous message if there is one. If there is none the current message is
-   *  returned. The current message must be given and will be saved at the current index
-   *  (only if the current index is the last one of the history).
-   */
-   public String getPrevious(String currentMessage) {
-   	if(index==0 || history[index-1]==null) // security (history[index-1]==null) should never occur
-   	   return currentMessage;
+    /** To get the previous message if there is one. If there is none the current message is
+     *  returned. The current message must be given and will be saved at the current index
+     *  (only if the current index is the last one of the history).
+     */
+    public String getPrevious(String currentMessage) {
+        if (this.index == 0 || this.history[this.index - 1] == null) // security (history[index-1]==null) should never occur
+            return currentMessage;
 
-        if( history[index]==null || (index!=HISTORY_MAX_ENTRIES-1 && history[index+1]==null) )
-           history[index]=currentMessage;
+        if (this.history[this.index] == null || (this.index != ChatMessageHistory.HISTORY_MAX_ENTRIES - 1 && this.history[this.index + 1] == null))
+            this.history[this.index] = currentMessage;
 
-        index--;
-        return history[index];
-   }
+        this.index--;
+        return this.history[this.index];
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

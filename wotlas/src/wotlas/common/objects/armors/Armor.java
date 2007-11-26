@@ -16,15 +16,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.objects.armors;
 
-import wotlas.common.objects.BaseObject;
-import wotlas.common.objects.valueds.ValuedObject;
-import wotlas.common.objects.valueds.Material;
-import wotlas.common.objects.interfaces.*;
-
 import wotlas.common.Player;
+import wotlas.common.objects.BaseObject;
+import wotlas.common.objects.interfaces.ArmorInterface;
+import wotlas.common.objects.interfaces.RepairInterface;
+import wotlas.common.objects.interfaces.TransportableInterface;
+import wotlas.common.objects.valueds.Material;
+import wotlas.common.objects.valueds.ValuedObject;
 
 /** 
  * The base class for all pieces of armor.
@@ -35,166 +36,158 @@ import wotlas.common.Player;
  * @see wotlas.common.objects.interfaces.TransportableInterface
  */
 
-public class Armor extends BaseObject implements ArmorInterface, RepairInterface, TransportableInterface
-{
+public class Armor extends BaseObject implements ArmorInterface, RepairInterface, TransportableInterface {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
+    /** The defense of the armor - may be zero.
+     */
+    protected short defense;
 
-  /** The defense of the armor - may be zero.
-   */
-      protected short defense;
+    /** The current state of the armor. Goes from newly-made to broken.
+     */
+    protected short state;
 
-  /** The current state of the armor. Goes from newly-made to broken.
-   */
-   	  protected short state;  
-	  	  	 
-  /** Is the armor in a bag or on the char ?
-   */
-	  protected boolean equipped;
-	  	  
- /** The knowledges needed to repair this.
-   */
-	  protected String[] /* Knowledge[] */ repairKnowledge;
-	  
-	  
- /*------------------------------------------------------------------------------------*/
+    /** Is the armor in a bag or on the char ?
+     */
+    protected boolean equipped;
 
-  /** The default constructor.
-   * Sets defense & state to -1
-   */			
-    public Armor()
-	{
-	 this.defense=-1;
-	 this.state=-1;
-	 this.equipped=false;
-	 
-	 this.className="Armor";
-	 this.objectName="default armor";
-	}															
- 
-  /** The parametric constructor.
-	* @param defense the defense of the armor - may be zero
-	* @param state the current state of the armor  	
-   */			
-    public Armor(short defense,short state)
-	{
-	 this.defense=defense;
-	 this.state=state;
-	 this.equipped=false;
-	 
-	 this.className="Armor";
-	 this.objectName="default armor";
-	}															
+    /** The knowledges needed to repair this.
+      */
+    protected String[] /* Knowledge[] */repairKnowledge;
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Puts on the armor.
-   */
-    public void equip()
-	{
-	 /* no op */
-	}
+    /** The default constructor.
+     * Sets defense & state to -1
+     */
+    public Armor() {
+        this.defense = -1;
+        this.state = -1;
+        this.equipped = false;
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        this.className = "Armor";
+        this.objectName = "default armor";
+    }
 
-   /** Gets rid of the object. The object is dropped on the ground.
-   */
-    public void discard()
-	{
-	 /* no op */
-	}
+    /** The parametric constructor.
+    * @param defense the defense of the armor - may be zero
+    * @param state the current state of the armor  	
+     */
+    public Armor(short defense, short state) {
+        this.defense = defense;
+        this.state = state;
+        this.equipped = false;
 
-  /** Sells the object to somebody.
-  	  @param buyer The Player who buy the object. 
-  	  @return the prize paid.
-   */
-    public ValuedObject sellTo(Player buyer)
-	{
-	 /* no op */
-	 return new ValuedObject();
-	}
+        this.className = "Armor";
+        this.objectName = "default armor";
+    }
 
-  /** Gives the object to somebody.
-  	  @param receiver The Player who receive the object.
-   */
-    public void giveTo(Player receiver)
-	{
-	 /* no op */
-	}
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Trade the object to somebody.<br>
-    * Here the transaction is already accepted.
-  	* @param buyer The Player who buy the object. 
-  	* @return the object given by the other player.
+    /** Puts on the armor.
+     */
+    public void equip() {
+        /* no op */
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Gets rid of the object. The object is dropped on the ground.
     */
-    public BaseObject tradeTo(Player buyer)
-	{
-	 /* no op */
-	 return new BaseObject();
-	}
-	
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    public void discard() {
+        /* no op */
+    }
 
-  /** Returns the state of the armor - string version
-    * @return a state string
-    */
-	public String getStateString() { return stateList[this.state]; } // should check for size violation
+    /** Sells the object to somebody.
+    	  @param buyer The Player who buy the object. 
+    	  @return the prize paid.
+     */
+    public ValuedObject sellTo(Player buyer) {
+        /* no op */
+        return new ValuedObject();
+    }
 
-	
-  /** Get the knowledge needed to repair.
-   * @return knowledge needed
-   */ 																		
-    public String[]/*Knowledge[] */ getRepairKnowledge()
-	{
-	 return repairKnowledge;
-	}
-	
-  /** Get the materials needed to repair.<br>
-   * Get this from the repairer.
-   * @return material list
-   * @param repairer the Player that repairs the object. May be the owner or not.
-   */
-    public Material[] getRepairMaterial(Player repairer) 
-	{  
-	   /* asks the repairer what he needs */
-	   return new Material[1];	   
-	}
-	
- 
-  /** Repair the object.
-   * @param repairer the Player that repairs the object. May be the owner or not.
-   */
-    public void repair(Player repairer)
-	{
-	 /* no op */
-	}
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** Gives the object to somebody.
+    	  @param receiver The Player who receive the object.
+     */
+    public void giveTo(Player receiver) {
+        /* no op */
+    }
 
-  /** Gets the defense of the armor.
-    * @return defense
-    */
-	public short getDefense() { return defense; }
- 
-  /** Sets the defense of the armor.
-    * @param defense the new defense
-    */
-	public void setDefense(short defense) { this.defense=defense; }
+    /** Trade the object to somebody.<br>
+      * Here the transaction is already accepted.
+    	* @param buyer The Player who buy the object. 
+    	* @return the object given by the other player.
+      */
+    public BaseObject tradeTo(Player buyer) {
+        /* no op */
+        return new BaseObject();
+    }
 
-	
-  /** Gets the state of the armor.
-    * @return state
-    */
-	public short getState() { return state; }
- 
-  /** Sets the state of the armor.
-    * @param state the new state
-    */
-	public void setState(short state) { this.state=state; }
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Returns the state of the armor - string version
+      * @return a state string
+      */
+    public String getStateString() {
+        return RepairInterface.stateList[this.state];
+    } // should check for size violation
+
+    /** Get the knowledge needed to repair.
+     * @return knowledge needed
+     */
+    public String[]/*Knowledge[] */getRepairKnowledge() {
+        return this.repairKnowledge;
+    }
+
+    /** Get the materials needed to repair.<br>
+     * Get this from the repairer.
+     * @return material list
+     * @param repairer the Player that repairs the object. May be the owner or not.
+     */
+    public Material[] getRepairMaterial(Player repairer) {
+        /* asks the repairer what he needs */
+        return new Material[1];
+    }
+
+    /** Repair the object.
+     * @param repairer the Player that repairs the object. May be the owner or not.
+     */
+    public void repair(Player repairer) {
+        /* no op */
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Gets the defense of the armor.
+      * @return defense
+      */
+    public short getDefense() {
+        return this.defense;
+    }
+
+    /** Sets the defense of the armor.
+      * @param defense the new defense
+      */
+    public void setDefense(short defense) {
+        this.defense = defense;
+    }
+
+    /** Gets the state of the armor.
+      * @return state
+      */
+    public short getState() {
+        return this.state;
+    }
+
+    /** Sets the state of the armor.
+      * @param state the new state
+      */
+    public void setState(short state) {
+        this.state = state;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

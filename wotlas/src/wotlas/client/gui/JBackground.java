@@ -19,50 +19,50 @@
 
 package wotlas.client.gui;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Graphics;
+import java.awt.Image;
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
 
 /** Shows a background image on a JPanel
  *
  * @author Petrus
  */
 
-public class JBackground extends JPanel
-{ 
-  /** Background Image
-   */ 
-  private Image grayImage;
-  
- /*------------------------------------------------------------------------------------*/
+public class JBackground extends JPanel {
+    /** Background Image
+     */
+    private Image grayImage;
 
-  public JBackground() {}
-  
-  /** Constructor
-   *
-   * @param imageIcon the background image
-   */
-  public JBackground (ImageIcon imageIcon)
-  {    
-    setLayout(new BorderLayout(0,0));
-    //grayImage = GrayFilter.createDisabledImage(imageIcon.getImage());
-    grayImage = imageIcon.getImage();
-    setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());    
-  }
+    /*------------------------------------------------------------------------------------*/
 
- /*------------------------------------------------------------------------------------*/
-  
-  /** To paint the background image
-   */
-  
-  public void paintComponent(Graphics g)
-  {
-    if (grayImage != null) {
-      g.drawImage(grayImage, 0, 0, this);
+    public JBackground() {
     }
-  }
-  
-  
- /*------------------------------------------------------------------------------------*/
+
+    /** Constructor
+     *
+     * @param imageIcon the background image
+     */
+    public JBackground(ImageIcon imageIcon) {
+        setLayout(new BorderLayout(0, 0));
+        //grayImage = GrayFilter.createDisabledImage(imageIcon.getImage());
+        this.grayImage = imageIcon.getImage();
+        setSize(imageIcon.getIconWidth(), imageIcon.getIconHeight());
+    }
+
+    /*------------------------------------------------------------------------------------*/
+
+    /** To paint the background image
+     */
+
+    @Override
+    public void paintComponent(Graphics g) {
+        if (this.grayImage != null) {
+            g.drawImage(this.grayImage, 0, 0, this);
+        }
+    }
+
+    /*------------------------------------------------------------------------------------*/
 
 }

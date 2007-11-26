@@ -19,8 +19,6 @@
 
 package wotlas.client;
 
-import java.util.Hashtable;
-
 /** Interface of a map (WorldMap, TownMap or InteriorMap
  *
  * @author Petrus
@@ -28,49 +26,46 @@ import java.util.Hashtable;
  * @see wotlas.client.TownMapData
  * @see wotlas.client.InteriorMapData
  */
- 
+
 public interface MapData {
-  
- /*------------------------------------------------------------------------------------*/
-  
-  /** Connection timeout
-   */
-  public static final int CONNECTION_TIMEOUT = 5000;
-  
-  /** Set to true to show debug information
-   */
-  public void showDebug(boolean value);
 
- /*------------------------------------------------------------------------------------*/
-   
-  /** To set isNotMovingToAnotherMap
-   */
-  public void setIsNotMovingToAnotherMap(boolean value);
+    /*------------------------------------------------------------------------------------*/
 
- /*------------------------------------------------------------------------------------*/
- 
-  /** To init the display<br>
-   * - load background and mask images<br>
-   * - init the AStar algorithm
-   * - init the Graphics Director
-   * - show the other images (shadows, buildings, towns...)
-   */
-  public void initDisplay( PlayerImpl myPlayer, DataManager dataManager );
+    /** Connection timeout
+     */
+    public static final int CONNECTION_TIMEOUT = 5000;
 
- /*------------------------------------------------------------------------------------*/
-  
-  /** To update the location<br>
-   * - test if player is intersecting a screenZone<br>
-   * - test if player is entering a new WotlasLocation<br>
-   * - change the current MapData
-   *
-   * @param myPlayer the master player
-   */
-  public void locationUpdate(PlayerImpl myPlayer);
+    /** Set to true to show debug information
+     */
+    public void showDebug(boolean value);
 
- /*------------------------------------------------------------------------------------*/
- 
+    /*------------------------------------------------------------------------------------*/
+
+    /** To set isNotMovingToAnotherMap
+     */
+    public void setIsNotMovingToAnotherMap(boolean value);
+
+    /*------------------------------------------------------------------------------------*/
+
+    /** To init the display<br>
+     * - load background and mask images<br>
+     * - init the AStar algorithm
+     * - init the Graphics Director
+     * - show the other images (shadows, buildings, towns...)
+     */
+    public void initDisplay(PlayerImpl myPlayer, DataManager dataManager);
+
+    /*------------------------------------------------------------------------------------*/
+
+    /** To update the location<br>
+     * - test if player is intersecting a screenZone<br>
+     * - test if player is entering a new WotlasLocation<br>
+     * - change the current MapData
+     *
+     * @param myPlayer the master player
+     */
+    public void locationUpdate(PlayerImpl myPlayer);
+
+    /*------------------------------------------------------------------------------------*/
+
 }
-  
-  
-  

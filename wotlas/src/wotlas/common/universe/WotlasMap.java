@@ -16,42 +16,41 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.universe;
 
-import wotlas.common.Player;
 import wotlas.common.router.MessageRouter;
 
- /** Represents a Map of the game.
-  *
-  * @author Petrus, Aldiss
-  * @see wotlas.common.universe.WorldMap
-  * @see wotlas.common.universe.TownMap
-  * @see wotlas.common.universe.Room
-  */
+/** Represents a Map of the game.
+ *
+ * @author Petrus, Aldiss
+ * @see wotlas.common.universe.WorldMap
+ * @see wotlas.common.universe.TownMap
+ * @see wotlas.common.universe.Room
+ */
 
 public interface WotlasMap extends LocationOwner {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To get our message router.
-   */
+    /** To get our message router.
+     */
     public MessageRouter getMessageRouter();
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To get the full name of the map.
-   * @return fullName
-   */
+    /** To get the full name of the map.
+     * @return fullName
+     */
     public String getFullName();
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To get a String representation of this map Object.
-   * @return map type + map Full Name
-   */
+    /** To get a String representation of this map Object.
+     * @return map type + map Full Name
+     */
     public String toString();
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
 }

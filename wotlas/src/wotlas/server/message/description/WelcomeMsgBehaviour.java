@@ -19,16 +19,13 @@
 
 package wotlas.server.message.description;
 
-import java.io.IOException;
 import java.util.HashMap;
-
-import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.chat.*;
+import wotlas.common.chat.ChatRoom;
 import wotlas.common.message.chat.SendTextMessage;
-import wotlas.common.message.description.*;
-import wotlas.common.Player;
-import wotlas.common.universe.*;
-import wotlas.server.*;
+import wotlas.common.message.description.WelcomeMessage;
+import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.server.PlayerImpl;
+import wotlas.server.ServerDirector;
 
 /**
  * Associated behaviour to the WelcomeMessage...
@@ -36,42 +33,36 @@ import wotlas.server.*;
  * @author Petrus
  */
 
-public class WelcomeMsgBehaviour extends WelcomeMessage implements NetMessageBehaviour
-{
- /*------------------------------------------------------------------------------------*/
+public class WelcomeMsgBehaviour extends WelcomeMessage implements NetMessageBehaviour {
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public WelcomeMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+     */
+    public WelcomeMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
 
         // The sessionContext is here a PlayerImpl.
-           PlayerImpl player = (PlayerImpl) sessionContext;
+        PlayerImpl player = (PlayerImpl) sessionContext;
 
         // We create a welcome message
-           String message = "/cmd:<b>Welcome to Wotlas !</b><br> ";
+        String message = "/cmd:<b>Welcome to Wotlas !</b><br> ";
 
         // Get the list of online players
-           HashMap onlinePlayers = ServerDirector.getDataManager().getAccountManager().getOnlinePlayers();
-           message += "There are currently " + onlinePlayers.size() + " online players on this server...";
+        HashMap onlinePlayers = ServerDirector.getDataManager().getAccountManager().getOnlinePlayers();
+        message += "There are currently " + onlinePlayers.size() + " online players on this server...";
 
-           player.sendMessage( new SendTextMessage( player.getPrimaryKey(),
-                                               player.getFullPlayerName(),
-                                               ChatRoom.DEFAULT_CHAT,
-                                               message,
-                                               ChatRoom.NORMAL_VOICE_LEVEL ) );
-     }
+        player.sendMessage(new SendTextMessage(player.getPrimaryKey(), player.getFullPlayerName(), ChatRoom.DEFAULT_CHAT, message, ChatRoom.NORMAL_VOICE_LEVEL));
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

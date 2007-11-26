@@ -19,12 +19,9 @@
 
 package wotlas.server.setup;
 
-
-import java.io.*;
-import java.util.*;
-
-import wotlas.utils.FileTools;
+import java.io.File;
 import wotlas.utils.Debug;
+import wotlas.utils.FileTools;
 
 /** A small utility to update the version number in the server table.
  *
@@ -33,83 +30,80 @@ import wotlas.utils.Debug;
 
 class UpdateServerTable {
 
-  /** Static path to the server configs
-   */
-  static public final String SERVER_HOME = "../base/servers/";
+    /** Static path to the server configs
+     */
+    static public final String SERVER_HOME = "../base/servers/";
 
-  /** Static path to the local server table.
-   */
-  static public final String SERVER_TABLE = "../base/configs/remote/server-table.cfg";
+    /** Static path to the local server table.
+     */
+    static public final String SERVER_TABLE = "../base/configs/remote/server-table.cfg";
 
-  /******************************************************************************/
+    /******************************************************************************/
 
+    static public void main(String argv[]) {
+        //Open the files
 
-  static public void main(String argv[]){
-     //Open the files
-       
-       File files[] = new File(SERVER_HOME).listFiles();
-       String serverTable = FileTools.loadTextFromFile(SERVER_TABLE);
+        File files[] = new File(UpdateServerTable.SERVER_HOME).listFiles();
+        String serverTable = FileTools.loadTextFromFile(UpdateServerTable.SERVER_TABLE);
 
-       if(files==null) {
-       	  Debug.signal(Debug.CRITICAL,null, "no server config files in "+SERVER_HOME);
-       	  return;
-       }
+        if (files == null) {
+            Debug.signal(Debug.CRITICAL, null, "no server config files in " + UpdateServerTable.SERVER_HOME);
+            return;
+        }
 
-       if(serverTable==null) {
-          Debug.signal(Debug.CRITICAL,null,"server table not found at "+SERVER_TABLE);
-       	  return;
-       }
-     
-       for(int i=0; i<files.length; i++) {
-       	   if(files[i].isDirectory() || !files[i].getName().endsWith(".cfg"))
-       	      continue;
+        if (serverTable == null) {
+            Debug.signal(Debug.CRITICAL, null, "server table not found at " + UpdateServerTable.SERVER_TABLE);
+            return;
+        }
 
-           int index = files[i].getName().indexOf("server-");
+        for (int i = 0; i < files.length; i++) {
+            if (files[i].isDirectory() || !files[i].getName().endsWith(".cfg"))
+                continue;
 
-           if(index<0) continue;
+            int index = files[i].getName().indexOf("server-");
 
-           try{
-             // we get the ID from "server-ID.cfg"
-               String name = files[i].getName();
-               int id = Integer.parseInt( name.substring( 7, name.length()-4) );
-               
-               if(id==0) continue;
+            if (index < 0)
+                continue;
 
-              // we parse the file for 'configVersion='
-               String config = FileTools.loadTextFromFile(SERVER_HOME+name);
-               
-               index = config.indexOf("configVersion=");
-               int lineEnd = config.indexOf("\n",index);
-               
-               String version = config.substring(index+14,lineEnd);
-               
-              // we insert the version number in the server table
-               name = "Server-"+id+"-Version =";
-               index = serverTable.indexOf(name);           // note the SPACE before the '='
-               lineEnd = serverTable.indexOf("\n",index);
-               
-               serverTable = serverTable.substring(0,index+name.length())
-                             +" "+version
-                             +serverTable.substring(lineEnd,serverTable.length());
-                             
-               System.out.println( "Updated successfully server config "+id+" to server table.");
-           }
-           catch(Exception e) { 
-                Debug.signal(Debug.CRITICAL,null, "Server config with bad format detected : "+e);
-           	continue;
-           }
-       }
+            try {
+                // we get the ID from "server-ID.cfg"
+                String name = files[i].getName();
+                int id = Integer.parseInt(name.substring(7, name.length() - 4));
 
-      // We save the server table
-         if( !FileTools.saveTextToFile( SERVER_TABLE, serverTable ) ) {
-       	     Debug.signal(Debug.CRITICAL,null,"failed to save server table in "+SERVER_HOME );
-       	     return;
-       	 }
+                if (id == 0)
+                    continue;
 
-         Debug.signal(Debug.NOTICE,null," Server table saved." );
-   }
+                // we parse the file for 'configVersion='
+                String config = FileTools.loadTextFromFile(UpdateServerTable.SERVER_HOME + name);
 
+                index = config.indexOf("configVersion=");
+                int lineEnd = config.indexOf("\n", index);
 
-  /********************************************************************************/
+                String version = config.substring(index + 14, lineEnd);
+
+                // we insert the version number in the server table
+                name = "Server-" + id + "-Version =";
+                index = serverTable.indexOf(name); // note the SPACE before the '='
+                lineEnd = serverTable.indexOf("\n", index);
+
+                serverTable = serverTable.substring(0, index + name.length()) + " " + version + serverTable.substring(lineEnd, serverTable.length());
+
+                System.out.println("Updated successfully server config " + id + " to server table.");
+            } catch (Exception e) {
+                Debug.signal(Debug.CRITICAL, null, "Server config with bad format detected : " + e);
+                continue;
+            }
+        }
+
+        // We save the server table
+        if (!FileTools.saveTextToFile(UpdateServerTable.SERVER_TABLE, serverTable)) {
+            Debug.signal(Debug.CRITICAL, null, "failed to save server table in " + UpdateServerTable.SERVER_HOME);
+            return;
+        }
+
+        Debug.signal(Debug.NOTICE, null, " Server table saved.");
+    }
+
+    /********************************************************************************/
 
 }

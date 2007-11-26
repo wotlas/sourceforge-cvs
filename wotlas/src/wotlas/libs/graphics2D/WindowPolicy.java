@@ -19,7 +19,6 @@
 
 package wotlas.libs.graphics2D;
 
-
 /** A Window policy tells how the screen must move when the central sprite moves.
  *
  * @author MasterBob, Aldiss
@@ -28,19 +27,19 @@ package wotlas.libs.graphics2D;
 
 public interface WindowPolicy {
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To init this WindowPolicy.
-    *
-    * @param gDirector the associated graphics director
-    */
-     public void init( GraphicsDirector gDirector );
+    /** To init this WindowPolicy.
+     *
+     * @param gDirector the associated graphics director
+     */
+    public void init(GraphicsDirector gDirector);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Tick method that signals to the WindowPolicy that it can update its parameters.
-    */
-     public void tick();
+    /** Tick method that signals to the WindowPolicy that it can update its parameters.
+     */
+    public void tick();
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

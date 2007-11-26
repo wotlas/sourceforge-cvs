@@ -16,10 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
-package wotlas.common.objects.weapons;
 
-import wotlas.common.objects.interfaces.*;
+package wotlas.common.objects.weapons;
 
 import wotlas.common.Player;
 
@@ -33,57 +31,52 @@ import wotlas.common.Player;
  * @see wotlas.common.objects.interfaces.SiegeWeaponInterface
  */
 
-public class SiegeWeapon extends RemoteWeapon
-{
+public class SiegeWeapon extends RemoteWeapon {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
- 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
- /** Default constructor
-  */ 
-   public SiegeWeapon()
-   {
-   	super();
-	
-	this.className="SiegeWeapon";
-	this.objectName="default siege weapon";
-   }
- 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** Default constructor
+     */
+    public SiegeWeapon() {
+        super();
 
-  /** Puts on the weapon to enable attack.<br>
-   * Impossible on SiegeWeapons !
-   */
-    public void equip()
-	{
-	 /* no op - have you ever seen someone CARRYING a catapult ? */
-	}
-	
-  /** Attacks the specified target.
-   *
-   * @param target the Player attacked
-   * @return 0 because the damage is not instantly inflicted.
-   */
-    public short attack(Player target)
-	{
-	 loose();
-	 return 0;
-	}
+        this.className = "SiegeWeapon";
+        this.objectName = "default siege weapon";
+    }
 
-  /** Alternative attack on the specified target.<br>
-   * No altern attack for SiegeWeapons. Calls attack(target).
-   * @param target the Player attacked
-   * @return the damage inflicted
-   */
-    public short alternativeAttack(Player target)
-	{
-	 return attack(target);
-	}
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
+    /** Puts on the weapon to enable attack.<br>
+     * Impossible on SiegeWeapons !
+     */
+    @Override
+    public void equip() {
+        /* no op - have you ever seen someone CARRYING a catapult ? */
+    }
+
+    /** Attacks the specified target.
+     *
+     * @param target the Player attacked
+     * @return 0 because the damage is not instantly inflicted.
+     */
+    @Override
+    public short attack(Player target) {
+        loose();
+        return 0;
+    }
+
+    /** Alternative attack on the specified target.<br>
+     * No altern attack for SiegeWeapons. Calls attack(target).
+     * @param target the Player attacked
+     * @return the damage inflicted
+     */
+    @Override
+    public short alternativeAttack(Player target) {
+        return attack(target);
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }
-

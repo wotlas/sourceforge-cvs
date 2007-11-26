@@ -19,9 +19,16 @@
 
 package wotlas.libs.aswing;
 
-import javax.swing.*;
-import java.awt.*;
-import javax.swing.table.DefaultTableCellRenderer;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.ListCellRenderer;
+import javax.swing.SwingConstants;
 
 /** Antialiased ListCellRenderer for JList
  *
@@ -29,54 +36,53 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public class AListCellRenderer extends JLabel implements ListCellRenderer {
 
- /*------------------------------------------------------------------------------------*/
- 
-  /** Constructor without arguments.
-   */
-   public AListCellRenderer() {
-      super();
-      setBackground( Color.white );
-      setOpaque(true);
-      setAlignmentX( CENTER_ALIGNMENT );
-      setHorizontalAlignment( SwingConstants.CENTER );
-      setForeground( new Color(70,70,100) );
-   }
- 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Component getter
-   */
-     public Component getListCellRendererComponent(
-         JList list, Object value, int index, boolean isSelected, boolean cellHasFocus ) {
+    /** Constructor without arguments.
+     */
+    public AListCellRenderer() {
+        super();
+        setBackground(Color.white);
+        setOpaque(true);
+        setAlignmentX(Component.CENTER_ALIGNMENT);
+        setHorizontalAlignment(SwingConstants.CENTER);
+        setForeground(new Color(70, 70, 100));
+    }
 
-         setText(value.toString());
-         setBackground( isSelected ? new Color(200,200,240) : Color.white );
+    /*------------------------------------------------------------------------------------*/
 
-         if(isSelected)
-            setBorder( BorderFactory.createLineBorder(new Color(150,150,225)) );
-         else
-            setBorder( BorderFactory.createEmptyBorder() );
+    /** Component getter
+     */
+    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 
-         return this;
-     }
+        setText(value.toString());
+        setBackground(isSelected ? new Color(200, 200, 240) : Color.white);
 
- /*------------------------------------------------------------------------------------*/
- 
-  /** Mutated Paint Method.
-   */
-  public void paint( Graphics g ) {
-    Graphics2D g2D = (Graphics2D) g; 
-    RenderingHints saveRenderHints = g2D.getRenderingHints(); // save
-    
-    RenderingHints renderHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING,
-                                                        RenderingHints.VALUE_ANTIALIAS_ON);
-    renderHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-    
-    g2D.setRenderingHints( renderHints );
-    super.paint(g);
-    g2D.setRenderingHints( saveRenderHints ); // restore
-  }
+        if (isSelected)
+            setBorder(BorderFactory.createLineBorder(new Color(150, 150, 225)));
+        else
+            setBorder(BorderFactory.createEmptyBorder());
 
- /*------------------------------------------------------------------------------------*/
+        return this;
+    }
 
-}  
+    /*------------------------------------------------------------------------------------*/
+
+    /** Mutated Paint Method.
+     */
+    @Override
+    public void paint(Graphics g) {
+        Graphics2D g2D = (Graphics2D) g;
+        RenderingHints saveRenderHints = g2D.getRenderingHints(); // save
+
+        RenderingHints renderHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        renderHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+
+        g2D.setRenderingHints(renderHints);
+        super.paint(g);
+        g2D.setRenderingHints(saveRenderHints); // restore
+    }
+
+    /*------------------------------------------------------------------------------------*/
+
+}

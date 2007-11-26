@@ -19,7 +19,6 @@
 
 package wotlas.libs.graphics2D.menu;
 
-
 /** Menu 2D Item. Simple Data Structure. This class is only for the SimpleMenu2D.
  *
  * @author Aldiss
@@ -27,29 +26,29 @@ package wotlas.libs.graphics2D.menu;
 
 public class SimpleMenu2DItem {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Item Name.
-    */
-      protected String itemName;
-   
-   /** Is enabled ?
-    */
-      protected boolean isEnabled;
-   
-   /** Link to another Menu
-    */
-      protected SimpleMenu2D link;
+    /** Item Name.
+     */
+    protected String itemName;
 
- /*------------------------------------------------------------------------------------*/
+    /** Is enabled ?
+     */
+    protected boolean isEnabled;
 
-   /** Constructor.
-    */
-      protected SimpleMenu2DItem( String itemName ) {
-         this.itemName = itemName;
-         isEnabled = true;
-         link = null;
-      }
+    /** Link to another Menu
+     */
+    protected SimpleMenu2D link;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
+
+    /** Constructor.
+     */
+    protected SimpleMenu2DItem(String itemName) {
+        this.itemName = itemName;
+        this.isEnabled = true;
+        this.link = null;
+    }
+
+    /*------------------------------------------------------------------------------------*/
 }

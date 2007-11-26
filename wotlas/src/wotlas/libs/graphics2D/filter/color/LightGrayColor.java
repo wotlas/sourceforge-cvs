@@ -21,44 +21,43 @@ package wotlas.libs.graphics2D.filter.color;
 
 import wotlas.libs.graphics2D.filter.ColorType;
 
-
 /** Represents the "light gray" colors.
  *
  * @author Aldiss
  */
 
-public class LightGrayColor implements ColorType{
+public class LightGrayColor implements ColorType {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-     /** Return true if the given color is of our Color Type.
-      * @param r red component
-      * @param b blue component
-      * @param g green component
-      * @return true if it's of this color type.
-      */
-       public boolean isFromThisColorType( short r, short g, short b ) {
-       	     if( Math.abs(g-r)<5 && Math.abs(b-r)<5 && r>=170 )
-       	         return true;
-       	     return false;
-       }
+    /** Return true if the given color is of our Color Type.
+     * @param r red component
+     * @param b blue component
+     * @param g green component
+     * @return true if it's of this color type.
+     */
+    public boolean isFromThisColorType(short r, short g, short b) {
+        if (Math.abs(g - r) < 5 && Math.abs(b - r) < 5 && r >= 170)
+            return true;
+        return false;
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-     /** Given three level of luminosity we return a color of our color type.
-      * @param min min luminosity.
-      * @param mid medium luminosity.
-      * @param max maximum luminosity.
-      * @return a rgb integer with an alpha set to 0.
-      */
-       public int setToColorType( short min, short mid, short max ) {
+    /** Given three level of luminosity we return a color of our color type.
+     * @param min min luminosity.
+     * @param mid medium luminosity.
+     * @param max maximum luminosity.
+     * @return a rgb integer with an alpha set to 0.
+     */
+    public int setToColorType(short min, short mid, short max) {
 
-             if((short)(mid*1.5f)>255)
-                return 0xffffff;
+        if ((short) (mid * 1.5f) > 255)
+            return 0xffffff;
 
-             return ((short)(mid*1.5f)<<16) | ((short)(mid*1.5f)<<8) | (short)(mid*1.5f);
-       }
+        return ((short) (mid * 1.5f) << 16) | ((short) (mid * 1.5f) << 8) | (short) (mid * 1.5f);
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
 }

@@ -19,12 +19,10 @@
 
 package wotlas.client;
 
-import wotlas.libs.graphics2D.menu.*;
 import wotlas.libs.graphics2D.GraphicsDirector;
-
-import java.awt.event.MouseEvent;
-import java.awt.Point;
-import java.util.*;
+import wotlas.libs.graphics2D.menu.Menu2D;
+import wotlas.libs.graphics2D.menu.Menu2DManager;
+import wotlas.libs.graphics2D.menu.SimpleMenu2D;
 
 /** Manages all the game menus the user can access by right-clicking on game objects, players, etc ...
  * @author Aldiss
@@ -33,133 +31,122 @@ import java.util.*;
 
 public class MenuManager extends Menu2DManager {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** MAIN MENU NAME
-   */
+    /** MAIN MENU NAME
+     */
     final public static String MAIN_MENU_NAME = "Main Menu";
 
-  /** OBJECT ITEM NAME
-   */
+    /** OBJECT ITEM NAME
+     */
     final public static String OBJECT_ITEM_NAME = "Object";
 
-  /** KNOWLEDGE ITEM NAME
-   */
+    /** KNOWLEDGE ITEM NAME
+     */
     final public static String KNOWLEDGE_ITEM_NAME = "Knowledge";
 
-  /** WEAVE ITEM NAME
-   */
+    /** WEAVE ITEM NAME
+     */
     final public static String WEAVE_ITEM_NAME = "Weave";
 
-  /** DESCRIPTION ITEM NAME
-   */
+    /** DESCRIPTION ITEM NAME
+     */
     final public static String DESCRIPTION_ITEM_NAME = "Description";
 
-  /** Selected Object Item Index
-   */
+    /** Selected Object Item Index
+     */
     final public static int SELECTED_OBJECT_ITEM_INDEX = 1;
 
-  /** MAIN MENU - Player/Object Selected
-   */
-    final public static String MAIN_MENU_ITEMS[] =  {
-            "Current Selection :",
-            "",
-            "-",
-            OBJECT_ITEM_NAME,
-            WEAVE_ITEM_NAME,
-            KNOWLEDGE_ITEM_NAME,
-            "-",
-            DESCRIPTION_ITEM_NAME,
-    };
+    /** MAIN MENU - Player/Object Selected
+     */
+    final public static String MAIN_MENU_ITEMS[] = { "Current Selection :", "", "-", MenuManager.OBJECT_ITEM_NAME, MenuManager.WEAVE_ITEM_NAME, MenuManager.KNOWLEDGE_ITEM_NAME, "-", MenuManager.DESCRIPTION_ITEM_NAME, };
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Our Player.
-   */
+    /** Our Player.
+     */
     private PlayerImpl player;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor with current player and gDirector.
-   */
-    public MenuManager( PlayerImpl player, GraphicsDirector gDirector ) {
-         super();
-         this.player = player;
-         init( gDirector );
+    /** Constructor with current player and gDirector.
+     */
+    public MenuManager(PlayerImpl player, GraphicsDirector gDirector) {
+        super();
+        this.player = player;
+        init(gDirector);
 
-         SimpleMenu2D mainMenu = new SimpleMenu2D( MAIN_MENU_NAME, MAIN_MENU_ITEMS );
-         setRootMenu( mainMenu );
+        SimpleMenu2D mainMenu = new SimpleMenu2D(MenuManager.MAIN_MENU_NAME, MenuManager.MAIN_MENU_ITEMS);
+        setRootMenu(mainMenu);
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To Initialize the menus with the current player selection.
-   */
-    public void initContent( PlayerImpl target ) {
+    /** To Initialize the menus with the current player selection.
+     */
+    public void initContent(PlayerImpl target) {
 
-        rootMenu.changeItemName( rootMenu.getItemName(SELECTED_OBJECT_ITEM_INDEX), target.getFullPlayerName() );
-        
-        rootMenu.setItemEnabled(KNOWLEDGE_ITEM_NAME,true);
-        rootMenu.setItemEnabled(OBJECT_ITEM_NAME,true);
-        rootMenu.setItemEnabled(WEAVE_ITEM_NAME,true);
-        rootMenu.setItemEnabled(DESCRIPTION_ITEM_NAME,true);
+        this.rootMenu.changeItemName(this.rootMenu.getItemName(MenuManager.SELECTED_OBJECT_ITEM_INDEX), target.getFullPlayerName());
 
-      // transmit the call on player's ObjectManager & WeaveManager
+        this.rootMenu.setItemEnabled(MenuManager.KNOWLEDGE_ITEM_NAME, true);
+        this.rootMenu.setItemEnabled(MenuManager.OBJECT_ITEM_NAME, true);
+        this.rootMenu.setItemEnabled(MenuManager.WEAVE_ITEM_NAME, true);
+        this.rootMenu.setItemEnabled(MenuManager.DESCRIPTION_ITEM_NAME, true);
 
+        // transmit the call on player's ObjectManager & WeaveManager
 
-      // tmp code to display empty menus :
-        rootMenu.addItemLink( OBJECT_ITEM_NAME, getEmptyMenu() );
-        rootMenu.addItemLink( WEAVE_ITEM_NAME, getEmptyMenu() );
-        rootMenu.addItemLink( KNOWLEDGE_ITEM_NAME, getEmptyMenu() );
-        rootMenu.setItemEnabled(DESCRIPTION_ITEM_NAME,false);
+        // tmp code to display empty menus :
+        this.rootMenu.addItemLink(MenuManager.OBJECT_ITEM_NAME, getEmptyMenu());
+        this.rootMenu.addItemLink(MenuManager.WEAVE_ITEM_NAME, getEmptyMenu());
+        this.rootMenu.addItemLink(MenuManager.KNOWLEDGE_ITEM_NAME, getEmptyMenu());
+        this.rootMenu.setItemEnabled(MenuManager.DESCRIPTION_ITEM_NAME, false);
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To Initialize the menus with the current object selection.
-   *
-    public void initContent( BaseObject object ) {
-    }
-   */
+    /** To Initialize the menus with the current object selection.
+     *
+      public void initContent( BaseObject object ) {
+      }
+     */
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To Initialize the menus with the current player selection.
-   */
+    /** To Initialize the menus with the current player selection.
+     */
     public void initNoContent() {
-        rootMenu.changeItemName( rootMenu.getItemName(SELECTED_OBJECT_ITEM_INDEX), "none" );
-        
-        rootMenu.setItemEnabled(KNOWLEDGE_ITEM_NAME,false);
-        rootMenu.setItemEnabled(OBJECT_ITEM_NAME,true);
-        rootMenu.setItemEnabled(WEAVE_ITEM_NAME,false);
-        rootMenu.setItemEnabled(DESCRIPTION_ITEM_NAME,false);
+        this.rootMenu.changeItemName(this.rootMenu.getItemName(MenuManager.SELECTED_OBJECT_ITEM_INDEX), "none");
 
-      // transmit the call on player's ObjectManager & WeaveManager
+        this.rootMenu.setItemEnabled(MenuManager.KNOWLEDGE_ITEM_NAME, false);
+        this.rootMenu.setItemEnabled(MenuManager.OBJECT_ITEM_NAME, true);
+        this.rootMenu.setItemEnabled(MenuManager.WEAVE_ITEM_NAME, false);
+        this.rootMenu.setItemEnabled(MenuManager.DESCRIPTION_ITEM_NAME, false);
 
+        // transmit the call on player's ObjectManager & WeaveManager
 
-      // tmp code to display empty menus :        
-      //  rootMenu.addItemLink( OBJECT_ITEM_NAME, getEmptyMenu() );
+        // tmp code to display empty menus :        
+        //  rootMenu.addItemLink( OBJECT_ITEM_NAME, getEmptyMenu() );
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To clear the content of this manager.
-   */
-     public void clear() {
-        player = null;
-        gDirector = null;
-     }
+    /** To clear the content of this manager.
+     */
+    public void clear() {
+        this.player = null;
+        this.gDirector = null;
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To get an empty menu.
-   */
-     public Menu2D getEmptyMenu() {
+    /** To get an empty menu.
+     */
+    public Menu2D getEmptyMenu() {
         String empty[] = { "empty" };
-        SimpleMenu2D emptyMenu = new SimpleMenu2D("emptyMenu",empty);
-        emptyMenu.setItemEnabled( "empty", false );
+        SimpleMenu2D emptyMenu = new SimpleMenu2D("emptyMenu", empty);
+        emptyMenu.setItemEnabled("empty", false);
         return emptyMenu;
-     }
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 }

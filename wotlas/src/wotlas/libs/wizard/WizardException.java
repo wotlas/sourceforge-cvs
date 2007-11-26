@@ -27,10 +27,10 @@ package wotlas.libs.wizard;
 
 public class WizardException extends Exception {
 
- /** Exception Constructor with message.
-  */
-   public WizardException( String msg ) {
-        super( msg );
-   }
+    /** Exception Constructor with message.
+     */
+    public WizardException(String msg) {
+        super(msg);
+    }
 
 }

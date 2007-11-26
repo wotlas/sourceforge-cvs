@@ -19,22 +19,12 @@
 
 package wotlas.client.message.description;
 
-import java.io.IOException;
-import java.util.*;
-import java.awt.*;
-
-import wotlas.utils.Debug;
-
-import wotlas.libs.sound.*;
-import wotlas.libs.net.NetMessageBehaviour;
-
-import wotlas.common.message.description.*;
-import wotlas.common.universe.*;
-import wotlas.common.Player;
-
-import wotlas.client.*;
-import wotlas.client.screen.*;
+import wotlas.client.DataManager;
 import wotlas.client.screen.plugin.InfoPlugIn;
+import wotlas.common.Player;
+import wotlas.common.message.description.PlayerPastMessage;
+import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.utils.Debug;
 
 /**
  * Associated behaviour to the PlayerPastMessage...
@@ -44,46 +34,46 @@ import wotlas.client.screen.plugin.InfoPlugIn;
 
 public class PlayerPastMsgBehaviour extends PlayerPastMessage implements NetMessageBehaviour {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public PlayerPastMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+     */
+    public PlayerPastMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
 
         // The sessionContext is here a DataManager
-           DataManager dataManager = (DataManager) sessionContext;
-           Player searchedPlayer = (Player) dataManager.getPlayers().get(primaryKey);
+        DataManager dataManager = (DataManager) sessionContext;
+        Player searchedPlayer = (Player) dataManager.getPlayers().get(this.primaryKey);
 
         // 1 - Control
-           if( searchedPlayer==null ) {
-               Debug.signal( Debug.WARNING, this, "Player not found :"+primaryKey );
-               return;
-           }
+        if (searchedPlayer == null) {
+            Debug.signal(Debug.WARNING, this, "Player not found :" + this.primaryKey);
+            return;
+        }
 
         // 2 - Update of the player
-           searchedPlayer.setPlayerPast( playerPast );
+        searchedPlayer.setPlayerPast(this.playerPast);
 
         // 3 - Update of the panel
-           InfoPlugIn infoPanel = (InfoPlugIn) dataManager.getClientScreen().getPlayerPanel().getPlugIn("Info");
+        InfoPlugIn infoPanel = (InfoPlugIn) dataManager.getClientScreen().getPlayerPanel().getPlugIn("Info");
 
-           if(infoPanel==null) {
-              Debug.signal(Debug.ERROR,this,"InfoPlugIn not found !");
-       	      return;
-           }
+        if (infoPanel == null) {
+            Debug.signal(Debug.ERROR, this, "InfoPlugIn not found !");
+            return;
+        }
 
-           infoPanel.setPlayerInfo( searchedPlayer );
-     }
+        infoPanel.setPlayerInfo(searchedPlayer);
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

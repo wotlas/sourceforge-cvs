@@ -28,37 +28,36 @@ import java.awt.Point;
  * @author Petrus
  */
 
-public class Node
-{
-  /*------------------------------------------------------------------------------------*/
+public class Node {
+    /*------------------------------------------------------------------------------------*/
 
-  /** coordonate
-   */
-  Point point;
-  
-  /** cost
-   */
-  int   g;
-  
-  /** distance to the goal (heuristic)
-   */
-  int   h;
-  
-  /** total : f=g+h
-   */
-  int   f;
-  
-  /** Node's parent
-   */
-  Node  parent;
- 
- /*------------------------------------------------------------------------------------*/
- 
-  /**
-   * Constructor
-   */
-  Node() {
-    parent = null;
-  }
+    /** coordonate
+     */
+    Point point;
+
+    /** cost
+     */
+    int g;
+
+    /** distance to the goal (heuristic)
+     */
+    int h;
+
+    /** total : f=g+h
+     */
+    int f;
+
+    /** Node's parent
+     */
+    Node parent;
+
+    /*------------------------------------------------------------------------------------*/
+
+    /**
+     * Constructor
+     */
+    Node() {
+        this.parent = null;
+    }
 
 }

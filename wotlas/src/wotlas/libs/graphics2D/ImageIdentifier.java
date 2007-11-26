@@ -101,297 +101,296 @@ package wotlas.libs.graphics2D;
 
 public class ImageIdentifier {
 
-	/*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-	/**
-	 * Integer identifiers pointing to the directory in the ImageLibrary where
-	 * our image is.
-	 */
-	protected short dirIds[];
+    /**
+     * Integer identifiers pointing to the directory in the ImageLibrary where
+     * our image is.
+     */
+    protected short dirIds[];
 
-	/**
-	 * This is a declaration for persistence only. It's the same ids as above
-	 * (dirIds) but as a 'Short' array for persistence.
-	 */
-	protected Short dirPersistenceIds[];
+    /**
+     * This is a declaration for persistence only. It's the same ids as above
+     * (dirIds) but as a 'Short' array for persistence.
+     */
+    protected Short dirPersistenceIds[];
 
-	/**
-	 * Image ID in the selected directory. We could have regroup dirIds[] and
-	 * imageId in a same array but it would'nt have been practical to use. This
-	 * way it's much easier.
-	 */
-	protected short imageId;
+    /**
+     * Image ID in the selected directory. We could have regroup dirIds[] and
+     * imageId in a same array but it would'nt have been practical to use. This
+     * way it's much easier.
+     */
+    protected short imageId;
 
-	/**
-	 * Use this ImageIdentifier as an animation ? (it's a hint for other
-	 * classes)
-	 */
-	protected boolean isAnimation;
+    /**
+     * Use this ImageIdentifier as an animation ? (it's a hint for other
+     * classes)
+     */
+    protected boolean isAnimation;
 
-	/*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-	/**
-	 * Constructor for persistence.
-	 */
-	public ImageIdentifier() {
-		dirIds = new short[0];
-	}
+    /**
+     * Constructor for persistence.
+     */
+    public ImageIdentifier() {
+        this.dirIds = new short[0];
+    }
 
-	/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-	/**
-	 * Constructor with path & no animation.
-	 * 
-	 * @param path
-	 *            sub-directories (plus eventual specified image) pointing to
-	 *            the image.
-	 */
-	public ImageIdentifier(String path[]) {
-		constructImageIdentifier(path, false);
-	}
+    /**
+     * Constructor with path & no animation.
+     * 
+     * @param path
+     *            sub-directories (plus eventual specified image) pointing to
+     *            the image.
+     */
+    public ImageIdentifier(String path[]) {
+        constructImageIdentifier(path, false);
+    }
 
-	/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-	/**
-	 * Constructor with path & animation. Important : our internal
-	 * representation is always a full one : directory IDs + final image ID.
-	 * 
-	 * @param path
-	 *            sub-directories (plus eventual specified image) pointing to
-	 *            the image.
-	 * @param hasAnimation
-	 *            use the path base for an animation ?
-	 */
-	public ImageIdentifier(String path[], boolean isAnimation) {
-		constructImageIdentifier(path, isAnimation);
-	}
+    /**
+     * Constructor with path & animation. Important : our internal
+     * representation is always a full one : directory IDs + final image ID.
+     * 
+     * @param path
+     *            sub-directories (plus eventual specified image) pointing to
+     *            the image.
+     * @param hasAnimation
+     *            use the path base for an animation ?
+     */
+    public ImageIdentifier(String path[], boolean isAnimation) {
+        constructImageIdentifier(path, isAnimation);
+    }
 
-	/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-	/**
-	 * To construct the imageIdentifier.
-	 * 
-	 * @param path
-	 *            sub-directories (plus eventual specified image) pointing to
-	 *            the image.
-	 * @param hasAnimation
-	 *            use the path base for an animation ?
-	 */
-	protected void constructImageIdentifier(String path[], boolean isAnimation) {
-		this.isAnimation = isAnimation;
+    /**
+     * To construct the imageIdentifier.
+     * 
+     * @param path
+     *            sub-directories (plus eventual specified image) pointing to
+     *            the image.
+     * @param hasAnimation
+     *            use the path base for an animation ?
+     */
+    protected void constructImageIdentifier(String path[], boolean isAnimation) {
+        this.isAnimation = isAnimation;
 
-		if (path == null || path.length == 0) {
-			dirIds = new short[0]; // no dir and
-			imageId = 0; // first image as default
-		}
+        if (path == null || path.length == 0) {
+            this.dirIds = new short[0]; // no dir and
+            this.imageId = 0; // first image as default
+        }
 
-		// Is the last entry of the path an Image ?
-		short ID = (short) ImageLibrary.getImageID(path[path.length - 1]);
+        // Is the last entry of the path an Image ?
+        short ID = (short) ImageLibrary.getImageID(path[path.length - 1]);
 
-		if (ID < 0) {
-			dirIds = new short[path.length]; // last ID in the path is a
-												// directory
-			imageId = 0; // image ID set to 0 (default).
-		} else {
-			dirIds = new short[path.length - 1]; // last ID is an image, we
-													// don't need to keep some
-			imageId = ID; // place for it, we just save it's ID..
-		}
+        if (ID < 0) {
+            this.dirIds = new short[path.length]; // last ID in the path is a
+            // directory
+            this.imageId = 0; // image ID set to 0 (default).
+        } else {
+            this.dirIds = new short[path.length - 1]; // last ID is an image, we
+            // don't need to keep some
+            this.imageId = ID; // place for it, we just save it's ID..
+        }
 
-		// Save directory IDs
-		for (int i = 0; i < dirIds.length; i++) {
-			dirIds[i] = (short) ImageLibrary.getDirectoryID(path[i]);
+        // Save directory IDs
+        for (int i = 0; i < this.dirIds.length; i++) {
+            this.dirIds[i] = (short) ImageLibrary.getDirectoryID(path[i]);
 
-			if (dirIds[i] < 0 && ImageLibrary.DEBUG_MODE)
-				System.out.println("WARNING: ImageIdentifier has bad id: ("
-						+ path[i] + ")");
-		}
-	}
+            if (this.dirIds[i] < 0 && ImageLibrary.DEBUG_MODE)
+                System.out.println("WARNING: ImageIdentifier has bad id: (" + path[i] + ")");
+        }
+    }
 
-	/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-	/**
-	 * Constructor with path & no animation.
-	 * 
-	 * @param path
-	 *            pointing to the image (relative path, don't enter the image
-	 *            database path).
-	 */
-	public ImageIdentifier(String path) {
-		this(path, false);
-	}
+    /**
+     * Constructor with path & no animation.
+     * 
+     * @param path
+     *            pointing to the image (relative path, don't enter the image
+     *            database path).
+     */
+    public ImageIdentifier(String path) {
+        this(path, false);
+    }
 
-	/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-	/**
-	 * Constructor with path & animation. Important : our internal
-	 * representation is always a full one : directory IDs + final image ID.
-	 * 
-	 * @param path
-	 *            path pointing to the image.
-	 * @param hasAnimation
-	 *            use the path base for an animation ?
-	 */
-	public ImageIdentifier(String path, boolean isAnimation) {
+    /**
+     * Constructor with path & animation. Important : our internal
+     * representation is always a full one : directory IDs + final image ID.
+     * 
+     * @param path
+     *            path pointing to the image.
+     * @param hasAnimation
+     *            use the path base for an animation ?
+     */
+    public ImageIdentifier(String path, boolean isAnimation) {
 
-		// Null path ?
-		if (path == null || path.length() == 0 || path.equals("/")) {
-			constructImageIdentifier(null, isAnimation);
-			return;
-		}
+        // Null path ?
+        if (path == null || path.length() == 0 || path.equals("/")) {
+            constructImageIdentifier(null, isAnimation);
+            return;
+        }
 
-		// We suppress an eventual ending '/'
-		if (path.endsWith("/"))
-			path = path.substring(0, path.length() - 2);
+        // We suppress an eventual ending '/'
+        if (path.endsWith("/"))
+            path = path.substring(0, path.length() - 2);
 
-		// We count the number of '/'
-		int pos = 0;
-		int count = 0;
+        // We count the number of '/'
+        int pos = 0;
+        int count = 0;
 
-		while ((pos = path.indexOf('/', pos) + 1) > 0)
-			count++;
+        while ((pos = path.indexOf('/', pos) + 1) > 0)
+            count++;
 
-		String splitPath[] = new String[count + 1];
+        String splitPath[] = new String[count + 1];
 
-		if (count == 0)
-			splitPath[0] = path;
-		else {
-			pos = 0;
-			int pos2 = 0;
-			count = 0;
+        if (count == 0)
+            splitPath[0] = path;
+        else {
+            pos = 0;
+            int pos2 = 0;
+            count = 0;
 
-			while ((pos2 = path.indexOf('/', pos)) > 0) {
-				splitPath[count] = path.substring(pos, pos2);
-				count++;
-				pos = pos2 + 1;
-			}
+            while ((pos2 = path.indexOf('/', pos)) > 0) {
+                splitPath[count] = path.substring(pos, pos2);
+                count++;
+                pos = pos2 + 1;
+            }
 
-			splitPath[count] = path.substring(pos, path.length());
-		}
+            splitPath[count] = path.substring(pos, path.length());
+        }
 
-		constructImageIdentifier(splitPath, isAnimation);
-	}
+        constructImageIdentifier(splitPath, isAnimation);
+    }
 
-	/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-	/**
-	 * Construction from an other ImageIdentifier.
-	 * 
-	 * @param otherIm
-	 *            other ImageIdentifier to copy
-	 */
-	public ImageIdentifier(ImageIdentifier otherIm) {
-		dirIds = new short[otherIm.dirIds.length];
+    /**
+     * Construction from an other ImageIdentifier.
+     * 
+     * @param otherIm
+     *            other ImageIdentifier to copy
+     */
+    public ImageIdentifier(ImageIdentifier otherIm) {
+        this.dirIds = new short[otherIm.dirIds.length];
 
-		for (short i = 0; i < dirIds.length; i++)
-			dirIds[i] = otherIm.dirIds[i];
+        for (short i = 0; i < this.dirIds.length; i++)
+            this.dirIds[i] = otherIm.dirIds[i];
 
-		imageId = otherIm.imageId;
-		isAnimation = otherIm.isAnimation;
-	}
+        this.imageId = otherIm.imageId;
+        this.isAnimation = otherIm.isAnimation;
+    }
 
-	/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-	/**
-	 * Construction from an array.
-	 * 
-	 * @param dirIds
-	 *            internal directory identifiers to set (set by copy).
-	 * @param imageId
-	 *            internal image identifier to set.
-	 * @param isAnimation
-	 *            use the path base for an animation ?
-	 */
-	public ImageIdentifier(short dirIds[], short imageID, boolean isAnimation) {
-		if (dirIds != null)
-			this.dirIds = new short[dirIds.length];
-		else
-			this.dirIds = new short[0];
+    /**
+     * Construction from an array.
+     * 
+     * @param dirIds
+     *            internal directory identifiers to set (set by copy).
+     * @param imageId
+     *            internal image identifier to set.
+     * @param isAnimation
+     *            use the path base for an animation ?
+     */
+    public ImageIdentifier(short dirIds[], short imageID, boolean isAnimation) {
+        if (dirIds != null)
+            this.dirIds = new short[dirIds.length];
+        else
+            this.dirIds = new short[0];
 
-		for (short i = 0; i < this.dirIds.length; i++)
-			this.dirIds[i] = dirIds[i];
+        for (short i = 0; i < this.dirIds.length; i++)
+            this.dirIds[i] = dirIds[i];
 
-		this.imageId = imageID;
-		this.isAnimation = isAnimation;
-	}
+        this.imageId = imageID;
+        this.isAnimation = isAnimation;
+    }
 
-	/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-	// Getters & Setters for persistence
-	/*
-	 * public short[] getDirIds() { return dirIds; }
-	 * 
-	 * public void setDirIds(short dirIds[]) { this.dirIds = dirIds; }
-	 */
+    // Getters & Setters for persistence
+    /*
+     * public short[] getDirIds() { return dirIds; }
+     * 
+     * public void setDirIds(short dirIds[]) { this.dirIds = dirIds; }
+     */
 
-	/**
-	 * Getter for persistence purpose only.
-	 */
-	public Short[] getDirPersistenceIds() {
+    /**
+     * Getter for persistence purpose only.
+     */
+    public Short[] getDirPersistenceIds() {
 
-		Short toReturn[] = new Short[dirIds.length];
+        Short toReturn[] = new Short[this.dirIds.length];
 
-		for (int i = 0; i < dirIds.length; i++)
-			toReturn[i] = new Short(dirIds[i]);
+        for (int i = 0; i < this.dirIds.length; i++)
+            toReturn[i] = new Short(this.dirIds[i]);
 
-		return toReturn;
-	}
+        return toReturn;
+    }
 
-	/**
-	 * Setter for persistence purpose only.
-	 */
-	public void setDirPersistenceIds(Short dirPersistenceIds[]) {
+    /**
+     * Setter for persistence purpose only.
+     */
+    public void setDirPersistenceIds(Short dirPersistenceIds[]) {
 
-		dirIds = new short[dirPersistenceIds.length];
+        this.dirIds = new short[dirPersistenceIds.length];
 
-		for (int i = 0; i < dirPersistenceIds.length; i++)
-			dirIds[i] = dirPersistenceIds[i].shortValue();
-	}
+        for (int i = 0; i < dirPersistenceIds.length; i++)
+            this.dirIds[i] = dirPersistenceIds[i].shortValue();
+    }
 
-	/**
-	 * Getter for internal use only.
-	 */
-	public short getImageId() {
-		return imageId;
-	}
+    /**
+     * Getter for internal use only.
+     */
+    public short getImageId() {
+        return this.imageId;
+    }
 
-	/**
-	 * Setter for internal use only.
-	 */
-	public void setImageId(short imageId) {
-		this.imageId = imageId;
-	}
+    /**
+     * Setter for internal use only.
+     */
+    public void setImageId(short imageId) {
+        this.imageId = imageId;
+    }
 
-	/**
-	 * To know if this ImageIdentifier represents an animation.
-	 */
-	public boolean getIsAnimation() {
-		return isAnimation;
-	}
+    /**
+     * To know if this ImageIdentifier represents an animation.
+     */
+    public boolean getIsAnimation() {
+        return this.isAnimation;
+    }
 
-	/**
-	 * To set if this ImageIdentifier represents an animation.
-	 */
-	public void setIsAnimation(boolean isAnimation) {
-		this.isAnimation = isAnimation;
-	}
+    /**
+     * To set if this ImageIdentifier represents an animation.
+     */
+    public void setIsAnimation(boolean isAnimation) {
+        this.isAnimation = isAnimation;
+    }
 
-	/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-	/**
-	 * To String method.
-	 * 
-	 * @return string representation
-	 */
-	@Override
-	public String toString() {
-		String str = "ImageId: dir[";
+    /**
+     * To String method.
+     * 
+     * @return string representation
+     */
+    @Override
+    public String toString() {
+        String str = "ImageId: dir[";
 
-		for (short i = 0; i < dirIds.length; i++)
-			str += dirIds[i] + ", ";
+        for (short i = 0; i < this.dirIds.length; i++)
+            str += this.dirIds[i] + ", ";
 
-		return str + "] image:" + imageId + " animation:" + isAnimation;
-	}
+        return str + "] image:" + this.imageId + " animation:" + this.isAnimation;
+    }
 
-	/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 }

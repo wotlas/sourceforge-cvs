@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.knowledges;
 
 //import wotlas.common.character.Level;
@@ -27,23 +27,21 @@ package wotlas.common.knowledges;
  * @author Elann
  */
 
-public interface Training
-{
+public interface Training {
 
- /*------------------------------------------------------------------------------------*/
-	  	 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Get the affected levels.
-   * @return affectedLevels
-   */
-    public String[] /*Level[]*/ getAffectedLevels();
-	
-  /** Set the affected levels name.
-   * @param affectedLevels the new levels
-   */
-    public void setAffectedLevels(String[] /*Level[]*/ affectedLevels);
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** Get the affected levels.
+     * @return affectedLevels
+     */
+    public String[] /*Level[]*/getAffectedLevels();
+
+    /** Set the affected levels name.
+     * @param affectedLevels the new levels
+     */
+    public void setAffectedLevels(String[] /*Level[]*/affectedLevels);
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

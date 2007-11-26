@@ -28,14 +28,13 @@ import java.io.InputStream;
 
 public interface MusicResourceLocator {
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To get an inputstream on the wanted music.
-    * @param musicName music name such as "tarvalon.mid"
-    * @return input stream on the wanted music, null if the music was not found
-    */
-     public InputStream getMusicStream( String musicName );
+    /** To get an inputstream on the wanted music.
+     * @param musicName music name such as "tarvalon.mid"
+     * @return input stream on the wanted music, null if the music was not found
+     */
+    public InputStream getMusicStream(String musicName);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

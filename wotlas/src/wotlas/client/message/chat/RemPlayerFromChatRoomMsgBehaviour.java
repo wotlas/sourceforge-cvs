@@ -19,18 +19,12 @@
 
 package wotlas.client.message.chat;
 
-import java.io.IOException;
-import java.util.*;
-
+import java.util.Hashtable;
+import wotlas.client.DataManager;
+import wotlas.client.PlayerImpl;
+import wotlas.common.chat.ChatRoom;
+import wotlas.common.message.chat.RemPlayerFromChatRoomMessage;
 import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.message.chat.*;
-
-import wotlas.common.chat.*;
-import wotlas.common.Player;
-import wotlas.common.universe.*;
-
-import wotlas.client.*;
-
 import wotlas.utils.Debug;
 
 /**
@@ -39,54 +33,52 @@ import wotlas.utils.Debug;
  * @author Aldiss
  */
 
-public class RemPlayerFromChatRoomMsgBehaviour extends RemPlayerFromChatRoomMessage implements NetMessageBehaviour
-{
+public class RemPlayerFromChatRoomMsgBehaviour extends RemPlayerFromChatRoomMessage implements NetMessageBehaviour {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-  public RemPlayerFromChatRoomMsgBehaviour() {
-    super();
-  }
+    /** Constructor.
+     */
+    public RemPlayerFromChatRoomMsgBehaviour() {
+        super();
+    }
 
- /*------------------------------------------------------------------------------------*/
-  
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-  public void doBehaviour( Object sessionContext ) {
-       if (DataManager.SHOW_DEBUG)
-         System.out.println("RemPlayerFromChatRoomMsgBehaviour::doBehaviour: "+chatRoomPrimaryKey);
+    /*------------------------------------------------------------------------------------*/
 
-    // The sessionContext is here a DataManager.
-       DataManager dataManager = (DataManager) sessionContext;
-       PlayerImpl player = dataManager.getMyPlayer();
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
+        if (DataManager.SHOW_DEBUG)
+            System.out.println("RemPlayerFromChatRoomMsgBehaviour::doBehaviour: " + this.chatRoomPrimaryKey);
 
-    // We seek for the player to remove
-       Hashtable players = dataManager.getPlayers();
-       PlayerImpl sender = null;
-          
-       if(players!=null)
-          sender = (PlayerImpl) players.get( senderPrimaryKey );
+        // The sessionContext is here a DataManager.
+        DataManager dataManager = (DataManager) sessionContext;
+        PlayerImpl player = dataManager.getMyPlayer();
 
-       if( sender==null ) {
-           Debug.signal( Debug.ERROR, this, "Could not find the subject player of this message : "+senderPrimaryKey);
-           return;
-       }
+        // We seek for the player to remove
+        Hashtable players = dataManager.getPlayers();
+        PlayerImpl sender = null;
 
-    // We remove the player
-       dataManager.getClientScreen().getChatPanel().removePlayer(chatRoomPrimaryKey,sender);
+        if (players != null)
+            sender = (PlayerImpl) players.get(this.senderPrimaryKey);
 
-       if( player.getPrimaryKey().equals( senderPrimaryKey ) ) {
-       	 // It's our player we remove from this chat !
-            dataManager.getClientScreen().getChatPanel().setCurrentJChatRoom( ChatRoom.DEFAULT_CHAT );
-       }
-  }
-  
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
+        if (sender == null) {
+            Debug.signal(Debug.ERROR, this, "Could not find the subject player of this message : " + this.senderPrimaryKey);
+            return;
+        }
+
+        // We remove the player
+        dataManager.getClientScreen().getChatPanel().removePlayer(this.chatRoomPrimaryKey, sender);
+
+        if (player.getPrimaryKey().equals(this.senderPrimaryKey)) {
+            // It's our player we remove from this chat !
+            dataManager.getClientScreen().getChatPanel().setCurrentJChatRoom(ChatRoom.DEFAULT_CHAT);
+        }
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }
-  

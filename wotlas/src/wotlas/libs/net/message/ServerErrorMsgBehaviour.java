@@ -16,11 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.libs.net.message;
 
-import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.libs.net.NetClient;
+import wotlas.libs.net.NetMessageBehaviour;
 
 /** 
  * Associated behaviour to the ServerErrorMessage...
@@ -29,35 +29,33 @@ import wotlas.libs.net.NetClient;
  * @see wotlas.libs.net.message.ServerErrorMessage
  */
 
-public class ServerErrorMsgBehaviour extends ServerErrorMessage implements NetMessageBehaviour
-{
- /*------------------------------------------------------------------------------------*/
+public class ServerErrorMsgBehaviour extends ServerErrorMessage implements NetMessageBehaviour {
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public ServerErrorMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+     */
+    public ServerErrorMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to the ServerErrorMessage... 
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {
+    /** Associated code to the ServerErrorMessage... 
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
 
-          NetClient client = (NetClient) sessionContext;
-          client.setErrorCode( errorCode );
-          client.setErrorMessage( errorMessage );
+        NetClient client = (NetClient) sessionContext;
+        client.setErrorCode(this.errorCode);
+        client.setErrorMessage(this.errorMessage);
 
-       // we awake our client with an error message
-          synchronized( client ){
-             client.notify();
-          }
-     }
+        // we awake our client with an error message
+        synchronized (client) {
+            client.notify();
+        }
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

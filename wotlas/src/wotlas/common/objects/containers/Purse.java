@@ -16,13 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.objects.containers;
 
-import wotlas.common.objects.interfaces.*;
-import wotlas.common.objects.valueds.ValuedObject;
-import wotlas.common.objects.BaseObject;
 import wotlas.common.Player;
+import wotlas.common.objects.BaseObject;
+import wotlas.common.objects.interfaces.TransportableInterface;
+import wotlas.common.objects.valueds.ValuedObject;
 
 /** 
  * The purse. Special Container that may only contain ValuedObjects.
@@ -32,127 +32,118 @@ import wotlas.common.Player;
  * @see wotlas.common.objects.valueds.ValuedObject
  * @see wotlas.common.objects.interfaces.TransportableInterface
  */
-public class Purse extends ContainerObject implements TransportableInterface
-{
+public class Purse extends ContainerObject implements TransportableInterface {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
- /** The default capacity of a purse. Used when the default constructor is invoked.
-  */  																						
-  public final static short defaultPurseCapacity=50;
- 
- /** The actual content of the purse.
-  */  																						
-  protected ValuedObject content;
- 
- /*------------------------------------------------------------------------------------*/
+    /** The default capacity of a purse. Used when the default constructor is invoked.
+     */
+    public final static short defaultPurseCapacity = 50;
 
- /** The default constructor.<br>
-  * Calls ContainerObject's constructor.
-  */
-  public Purse()
-  {
-   super(defaultPurseCapacity);  
+    /** The actual content of the purse.
+     */
+    protected ValuedObject content;
 
-   className="Purse";
-   objectName="standard purse";
-  }
+    /*------------------------------------------------------------------------------------*/
 
- /** The parametric constructor.<br>
-  * Calls ContainerObject's constructor.
-  * @param capacity the number of objects that can be contained
-  */
-  public Purse(short capacity)
-  {
-   super(capacity);  
+    /** The default constructor.<br>
+     * Calls ContainerObject's constructor.
+     */
+    public Purse() {
+        super(Purse.defaultPurseCapacity);
 
-   className="Purse";
-   objectName="standard purse";
-  }
+        this.className = "Purse";
+        this.objectName = "standard purse";
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** The parametric constructor.<br>
+     * Calls ContainerObject's constructor.
+     * @param capacity the number of objects that can be contained
+     */
+    public Purse(short capacity) {
+        super(capacity);
 
-  /** Add a valued object to the purse.
-   * @param o the object to add
-   * @return true if added - false if a problem occurs
-   */
-    public boolean addObject(BaseObject o)
-	{
-	 if (o.getClassName()!="ValuedObject")
-	 	return false;							 
-		
-	 return super.addObject(o);
-	}
+        this.className = "Purse";
+        this.objectName = "standard purse";
+    }
 
-  /** Remove a valued object from the purse.
-   * @param o the object to remove. Can be found by getObjectByName() or getObjectAt()
-   */
-    public void removeObject(BaseObject o)
-	{
-	 if (o.getClassName()!="ValuedObject")
-	 	return;							  // throw ?
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-	 super.removeObject(o);
-	}	
-	
-  /** Retrieve a valued object from the purse. This method does not check validity.
-   * @param pos the position of the valued object in the container
-   * @return the valued object required 
-   */
-   	public BaseObject getObjectAt(short pos) throws ArrayIndexOutOfBoundsException
-	{
-	 return super.getObjectAt(pos);
-	}
+    /** Add a valued object to the purse.
+     * @param o the object to add
+     * @return true if added - false if a problem occurs
+     */
+    @Override
+    public boolean addObject(BaseObject o) {
+        if (o.getClassName() != "ValuedObject")
+            return false;
 
-  /** Retrieve a valued object from the purse by name.
-   * @param name the name of the object wanted
-   * @return the object required 
-   */
-	public BaseObject getObjectByName(String name) 
-	{	   // dnk if useful - Code first C later
-	 return super.getObjectByName(name);
-	}
+        return super.addObject(o);
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-   /** Gets rid of the object. The object is dropped on the ground.
-   */
-    public void discard()
-	{
-	 /* no op */
-	}
+    /** Remove a valued object from the purse.
+     * @param o the object to remove. Can be found by getObjectByName() or getObjectAt()
+     */
+    @Override
+    public void removeObject(BaseObject o) {
+        if (o.getClassName() != "ValuedObject")
+            return; // throw ?
 
-  /** Sells the object to somebody.
-  	  @param buyer The Player who buy the object. 
-  	  @return the prize paid.
-   */
-    public ValuedObject sellTo(Player buyer)
-	{
-	 /* no op */
-	 return new ValuedObject();
-	}
+        super.removeObject(o);
+    }
 
-  /** Gives the object to somebody.
-  	  @param receiver The Player who receive the object.
-   */
-    public void giveTo(Player receiver)
-	{
-	 /* no op */
-	}
-	
-  /** Trade the object to somebody.<br>
-    * Here the transaction is already accepted.
-  	* @param buyer The Player who buy the object. 
-  	* @return the object given by the other player.
+    /** Retrieve a valued object from the purse. This method does not check validity.
+     * @param pos the position of the valued object in the container
+     * @return the valued object required 
+     */
+    @Override
+    public BaseObject getObjectAt(short pos) throws ArrayIndexOutOfBoundsException {
+        return super.getObjectAt(pos);
+    }
+
+    /** Retrieve a valued object from the purse by name.
+     * @param name the name of the object wanted
+     * @return the object required 
+     */
+    @Override
+    public BaseObject getObjectByName(String name) { // dnk if useful - Code first C later
+        return super.getObjectByName(name);
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Gets rid of the object. The object is dropped on the ground.
     */
-    public BaseObject tradeTo(Player buyer)
-	{
-	 /* no op */
-	 return new BaseObject();
-	}
-	
- /*------------------------------------------------------------------------------------*/
-	
- 
-}
+    public void discard() {
+        /* no op */
+    }
 
+    /** Sells the object to somebody.
+    	  @param buyer The Player who buy the object. 
+    	  @return the prize paid.
+     */
+    public ValuedObject sellTo(Player buyer) {
+        /* no op */
+        return new ValuedObject();
+    }
+
+    /** Gives the object to somebody.
+    	  @param receiver The Player who receive the object.
+     */
+    public void giveTo(Player receiver) {
+        /* no op */
+    }
+
+    /** Trade the object to somebody.<br>
+      * Here the transaction is already accepted.
+    	* @param buyer The Player who buy the object. 
+    	* @return the object given by the other player.
+      */
+    public BaseObject tradeTo(Player buyer) {
+        /* no op */
+        return new BaseObject();
+    }
+
+    /*------------------------------------------------------------------------------------*/
+
+}

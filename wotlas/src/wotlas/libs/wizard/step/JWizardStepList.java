@@ -19,13 +19,22 @@
 
 package wotlas.libs.wizard.step;
 
-import wotlas.libs.wizard.*;
-import wotlas.libs.aswing.*;
-
-import java.awt.*;
-import java.awt.event.*;
-
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.GridLayout;
+import javax.swing.BorderFactory;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import wotlas.libs.aswing.ALabel;
+import wotlas.libs.aswing.AListCellRenderer;
+import wotlas.libs.aswing.ATextArea;
+import wotlas.libs.wizard.JWizard;
+import wotlas.libs.wizard.JWizardStep;
+import wotlas.libs.wizard.JWizardStepParameters;
+import wotlas.libs.wizard.WizardException;
 
 /** A step of a wizard with a ALabel, JList, AtextArea (info).<br>
  *
@@ -55,134 +64,138 @@ import javax.swing.*;
 
 public class JWizardStepList extends JWizardStep {
 
-  /** Swing components of this step
-   */
-   private ALabel label1;
+    /** Swing components of this step
+     */
+    private ALabel label1;
 
-   protected JList list;
+    protected JList list;
 
-   private ATextArea tarea;
-   private JPanel formPanel;
+    private ATextArea tarea;
+    private JPanel formPanel;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor
-   */
-   public JWizardStepList() {
-      super();
-      setBackground( Color.white );
-      setLayout( new BorderLayout() );
-      setBorder( BorderFactory.createEmptyBorder(20,20,0,20) );
+    /** Constructor
+     */
+    public JWizardStepList() {
+        super();
+        setBackground(Color.white);
+        setLayout(new BorderLayout());
+        setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 20));
 
-        label1 = new ALabel();
-        label1.setHorizontalAlignment( SwingConstants.CENTER );
-        add( label1, BorderLayout.NORTH );
+        this.label1 = new ALabel();
+        this.label1.setHorizontalAlignment(SwingConstants.CENTER);
+        add(this.label1, BorderLayout.NORTH);
 
-      formPanel = new JPanel( new GridLayout(1,1,10,2) );
-      formPanel.setAlignmentX( LEFT_ALIGNMENT );
-      formPanel.setBackground( Color.white );
+        this.formPanel = new JPanel(new GridLayout(1, 1, 10, 2));
+        this.formPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        this.formPanel.setBackground(Color.white);
 
-        list = new JList();
-        list.setCellRenderer( new AListCellRenderer() );
-        list.setBorder( BorderFactory.createLineBorder( new Color(50,50,75) ) );
-        list.setSelectionMode( ListSelectionModel.SINGLE_SELECTION );
-        list.setAlignmentX( CENTER_ALIGNMENT );
-        formPanel.add( list );
-        formPanel.setBorder( BorderFactory.createEmptyBorder(10,80,10,80) );
+        this.list = new JList();
+        this.list.setCellRenderer(new AListCellRenderer());
+        this.list.setBorder(BorderFactory.createLineBorder(new Color(50, 50, 75)));
+        this.list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        this.list.setAlignmentX(Component.CENTER_ALIGNMENT);
+        this.formPanel.add(this.list);
+        this.formPanel.setBorder(BorderFactory.createEmptyBorder(10, 80, 10, 80));
 
-      add( formPanel, BorderLayout.CENTER );
+        add(this.formPanel, BorderLayout.CENTER);
 
-      tarea = new ATextArea();
-      tarea.setBackground( Color.white );
-      tarea.setLineWrap( true );
-      tarea.setWrapStyleWord( true );
-      tarea.setEditable( false );
-      tarea.setAlignmentX( LEFT_ALIGNMENT );  
-      add( tarea, BorderLayout.SOUTH );
-  }
+        this.tarea = new ATextArea();
+        this.tarea.setBackground(Color.white);
+        this.tarea.setLineWrap(true);
+        this.tarea.setWrapStyleWord(true);
+        this.tarea.setEditable(false);
+        this.tarea.setAlignmentX(Component.LEFT_ALIGNMENT);
+        add(this.tarea, BorderLayout.SOUTH);
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Init method called to initilize this JWizardStep. You can redefine this method
-   *  to add your JPanel's Swing components. Don't forget to call super.init(parameters);
-   *
-   * @param parameters parameters for this step
-   * @exception thrown if the given parameters are wrong...
-   */
-   protected void init( JWizardStepParameters parameters ) throws WizardException {
+    /** Init method called to initilize this JWizardStep. You can redefine this method
+     *  to add your JPanel's Swing components. Don't forget to call super.init(parameters);
+     *
+     * @param parameters parameters for this step
+     * @exception thrown if the given parameters are wrong...
+     */
+    @Override
+    protected void init(JWizardStepParameters parameters) throws WizardException {
         super.init(parameters);
-      
-     // 1 - We retrieve init properties
+
+        // 1 - We retrieve init properties
         String s_label = parameters.getProperty("init.label0");
-        String s_nbChoices  = parameters.getProperty("init.nbChoices");
-        String s_info   = parameters.getProperty("init.info0");
+        String s_nbChoices = parameters.getProperty("init.nbChoices");
+        String s_info = parameters.getProperty("init.info0");
 
         String choices[] = null;
 
-        try{
-           int nb = Integer.parseInt(s_nbChoices);
-           choices = new String[nb];
-        }
-        catch(Exception e) {
-           throw new WizardException("nbChoices property badly set! "+e.getMessage());
-        }
-
-     // 2 - We check the properties we have
-        if(s_label==null)
-           throw new WizardException("No label property found !");
-
-        for( int i=0; i<choices.length; i++) {
-             String choice = parameters.getProperty("init.choice"+i);
-
-             if(choice==null)
-                throw new WizardException("Property 'init.choice"+i+"' missing !");
-
-             choices[i] = choice;
+        try {
+            int nb = Integer.parseInt(s_nbChoices);
+            choices = new String[nb];
+        } catch (Exception e) {
+            throw new WizardException("nbChoices property badly set! " + e.getMessage());
         }
 
-        if(s_info==null)  s_info="";
+        // 2 - We check the properties we have
+        if (s_label == null)
+            throw new WizardException("No label property found !");
 
-     // 3 - We end the GUI init
-        label1.setText(s_label);
-        list.setListData(choices);
-        
-        if(choices.length!=0)
-           list.setSelectedIndex(0);
+        for (int i = 0; i < choices.length; i++) {
+            String choice = parameters.getProperty("init.choice" + i);
 
-        tarea.setText(s_info);
-   }
+            if (choice == null)
+                throw new WizardException("Property 'init.choice" + i + "' missing !");
 
- /*------------------------------------------------------------------------------------*/
+            choices[i] = choice;
+        }
 
-  /** Called each time the step is shown on screen.
-   */
-   protected void onShow(Object context, JWizard wizard) {
-   }
+        if (s_info == null)
+            s_info = "";
 
-  /** Called when the "Next" button is clicked.
-   *  Use the wizard's setNextStep() method to set the next step to be displayed.
-   *  @return return true to validate the "Next" button action, false to cancel it...
-   */
-   protected boolean onNext(Object context, JWizard wizard) {
-   	return true;
-   }
+        // 3 - We end the GUI init
+        this.label1.setText(s_label);
+        this.list.setListData(choices);
 
-  /** Called when Previous button is clicked.
-   *  Use the wizard's setNextStep() method to set the next step to be displayed.
-   *  @return return true to validate the "Previous" button action, false to cancel it...
-   */
-   protected boolean onPrevious(Object context, JWizard wizard) {
-   	return true;
-   }
+        if (choices.length != 0)
+            this.list.setSelectedIndex(0);
 
- /*------------------------------------------------------------------------------------*/
+        this.tarea.setText(s_info);
+    }
 
-   /** To get the selected choice : integer 0 to nbChoices, -1 if none selected.
-    */
-   public int getChoice() {
-   	return list.getSelectedIndex();
-   }
+    /*------------------------------------------------------------------------------------*/
 
- /*------------------------------------------------------------------------------------*/
+    /** Called each time the step is shown on screen.
+     */
+    @Override
+    protected void onShow(Object context, JWizard wizard) {
+    }
+
+    /** Called when the "Next" button is clicked.
+     *  Use the wizard's setNextStep() method to set the next step to be displayed.
+     *  @return return true to validate the "Next" button action, false to cancel it...
+     */
+    @Override
+    protected boolean onNext(Object context, JWizard wizard) {
+        return true;
+    }
+
+    /** Called when Previous button is clicked.
+     *  Use the wizard's setNextStep() method to set the next step to be displayed.
+     *  @return return true to validate the "Previous" button action, false to cancel it...
+     */
+    @Override
+    protected boolean onPrevious(Object context, JWizard wizard) {
+        return true;
+    }
+
+    /*------------------------------------------------------------------------------------*/
+
+    /** To get the selected choice : integer 0 to nbChoices, -1 if none selected.
+     */
+    public int getChoice() {
+        return this.list.getSelectedIndex();
+    }
+
+    /*------------------------------------------------------------------------------------*/
 
 }

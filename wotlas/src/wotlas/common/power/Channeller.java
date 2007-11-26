@@ -19,11 +19,8 @@
 
 package wotlas.common.power;
 
-import wotlas.common.*;
-import wotlas.common.universe.*;
-import java.util.*;
-import java.io.*;
-
+import java.io.File;
+import java.util.HashMap;
 import wotlas.utils.Debug;
 
 /** Implementation of a generic WotChanneller. Any character capable of channelling 
@@ -35,8 +32,7 @@ import wotlas.utils.Debug;
  * @see wotlas.libs.graphics2D.Drawable
  */
 
-public abstract class Channeller 
-{
+public abstract class Channeller {
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
     /** Storage for the list of Weaves usable by this Channeller
@@ -61,48 +57,46 @@ public abstract class Channeller
     /** Storage for the status of the Source
      */
     private boolean isChannelling = false;
- 
+
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
     /** Constructor
      */
     public Channeller() {
 
-	/** Load the available Weave classes
-	 * ASSUMING NOT IN JAR FILE
-	 */
-	File weavesFiles[] = new File( "wotlas/common/power/Weaves" ).listFiles();
+        /** Load the available Weave classes
+         * ASSUMING NOT IN JAR FILE
+         */
+        File weavesFiles[] = new File("wotlas/common/power/Weaves").listFiles();
 
-	if( weavesFiles==null || weavesFiles.length==0 ) {
-	    Debug.signal( Debug.WARNING, this, "No Weaves found in wotlas/common/power/Weaves!" );
-	    return;
-	}
+        if (weavesFiles == null || weavesFiles.length == 0) {
+            Debug.signal(Debug.WARNING, this, "No Weaves found in wotlas/common/power/Weaves!");
+            return;
+        }
 
-	for (int i=0; i< weavesFiles.length; i++ ) {
+        for (int i = 0; i < weavesFiles.length; i++) {
 
-	    if( !weavesFiles[i].isFile() || !weavesFiles[i].getName().endsWith(".class") )
-		continue;
+            if (!weavesFiles[i].isFile() || !weavesFiles[i].getName().endsWith(".class"))
+                continue;
 
-	    // Load the class
-	    try{
-		String name = weavesFiles[i].getName();
-		Class cl = Class.forName("wotlas.common.power.Weaves." 
-					 + name.substring( 0, name.lastIndexOf(".class") ) );
+            // Load the class
+            try {
+                String name = weavesFiles[i].getName();
+                Class cl = Class.forName("wotlas.common.power.Weaves." + name.substring(0, name.lastIndexOf(".class")));
 
-		if (cl==null || cl.isInterface())
-		    continue;
+                if (cl == null || cl.isInterface())
+                    continue;
 
-		Object o = cl.newInstance();
+                Object o = cl.newInstance();
 
-		if( o==null || !(o instanceof Weave) )
-		    continue;
-	    // Ok, we have a valid Weave class.
-		fullWeaveList.put( ((Weave) o).getName(), (Weave) o );
-	    }
-	    catch( Exception e ) {
-		Debug.signal( Debug.WARNING, this, e );
-	    }
-	}
+                if (o == null || !(o instanceof Weave))
+                    continue;
+                // Ok, we have a valid Weave class.
+                this.fullWeaveList.put(((Weave) o).getName(), o);
+            } catch (Exception e) {
+                Debug.signal(Debug.WARNING, this, e);
+            }
+        }
 
     }
 
@@ -114,7 +108,7 @@ public abstract class Channeller
      * @return an array of the Strings, the names of the weaves.
      */
     public String[] getWeaveList() {
-	return (String[] ) weaveList.keySet().toArray();
+        return (String[]) this.weaveList.keySet().toArray();
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -124,14 +118,13 @@ public abstract class Channeller
      * @param weaveName the name of the new weave to be added.
      * @return success status
      */
-    public boolean addWeave( String weaveName ) {
-	if ( !(fullWeaveList.containsKey(weaveName)) ) {
-	     return false;
-	}
-	else {
-	    weaveList.put(weaveName, fullWeaveList.get(weaveName) );
-	    return true;
-	}
+    public boolean addWeave(String weaveName) {
+        if (!(this.fullWeaveList.containsKey(weaveName))) {
+            return false;
+        } else {
+            this.weaveList.put(weaveName, this.fullWeaveList.get(weaveName));
+            return true;
+        }
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -141,8 +134,8 @@ public abstract class Channeller
      * @param weaveName the name of the Power (see the list produced by getPowerList())
      * @return the Power
      */
-    public Weave getWeave( String weaveName ) {
-	return (Weave) weaveList.get(weaveName);
+    public Weave getWeave(String weaveName) {
+        return (Weave) this.weaveList.get(weaveName);
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -153,8 +146,8 @@ public abstract class Channeller
      * @return success status (true if successful)
      */
     public boolean openSource() {
-	isChannelling = true;
-	return isChannelling;
+        this.isChannelling = true;
+        return this.isChannelling;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -164,8 +157,8 @@ public abstract class Channeller
      * This is here for when I implement time spent holding the source effects
      */
     public boolean releaseSource() {
-	isChannelling = false;
-	return true;
+        this.isChannelling = false;
+        return true;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -176,7 +169,7 @@ public abstract class Channeller
      * @return the number of Power Points the channeller has remaining
      */
     public int getPowerPoints() {
-	return -1;
+        return -1;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -192,7 +185,7 @@ public abstract class Channeller
      * @return the Power level of the Channeller
      */
     public int getPowerLevel() {
-	return -1;
+        return -1;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -202,7 +195,7 @@ public abstract class Channeller
      * @return success status
      */
     public boolean isTrueSourceAvailable() {
-	return trueSourceUsable;
+        return this.trueSourceUsable;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -212,13 +205,12 @@ public abstract class Channeller
      * @return the status of the True Source, true=in use
      */
     public boolean toggleSourcePower() {
-	if (trueSourceUsable) {
-	    trueSourceInUse = !(trueSourceInUse);
-	    return trueSourceInUse;
-	}
-	else {
-	    return false;
-	}
+        if (this.trueSourceUsable) {
+            this.trueSourceInUse = !(this.trueSourceInUse);
+            return this.trueSourceInUse;
+        } else {
+            return false;
+        }
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -228,7 +220,7 @@ public abstract class Channeller
      * @return success status
      */
     public boolean isChanneller() {
-	return true; // Not considering the option of severed Channellers yet
+        return true; // Not considering the option of severed Channellers yet
     }
 
 }

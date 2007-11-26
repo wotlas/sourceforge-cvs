@@ -19,9 +19,10 @@
 
 package wotlas.common.router;
 
-import wotlas.common.*;
-import wotlas.common.universe.*;
-
+import wotlas.common.WorldManager;
+import wotlas.common.universe.Room;
+import wotlas.common.universe.TownMap;
+import wotlas.common.universe.WorldMap;
 
 /** A factory of MessageRouters. This is an abstract factory. You need to create an
  *  implementation of it and give it to the WorldManager. The server & client sides
@@ -32,37 +33,36 @@ import wotlas.common.universe.*;
 
 public interface MessageRouterFactory {
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Inititializes this MessageRouterFactory.
-    */
-     public void init();
+    /** Inititializes this MessageRouterFactory.
+     */
+    public void init();
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Creates or gets a MessageRouter for a WorldMap.
-    * @param wMap WorldMap the router is for...
-    * @return a MessageRouter to use for this map
-    */
-     public MessageRouter createMsgRouterForWorldMap( WorldMap wMap, WorldManager wManager );
+    /** Creates or gets a MessageRouter for a WorldMap.
+     * @param wMap WorldMap the router is for...
+     * @return a MessageRouter to use for this map
+     */
+    public MessageRouter createMsgRouterForWorldMap(WorldMap wMap, WorldManager wManager);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Creates or gets a MessageRouter for a TownMap.
-    * @param tMap TownMap the router is for...
-    * @return a MessageRouter to use for this map
-    */
-     public MessageRouter createMsgRouterForTownMap( TownMap tMap, WorldManager wManager );
+    /** Creates or gets a MessageRouter for a TownMap.
+     * @param tMap TownMap the router is for...
+     * @return a MessageRouter to use for this map
+     */
+    public MessageRouter createMsgRouterForTownMap(TownMap tMap, WorldManager wManager);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Creates or gets a MessageRouter for a Room.
-    * @param room Room the router is for...
-    * @return a MessageRouter to use for this map
-    */
-     public MessageRouter createMsgRouterForRoom( Room room, WorldManager wManager );
+    /** Creates or gets a MessageRouter for a Room.
+     * @param room Room the router is for...
+     * @return a MessageRouter to use for this map
+     */
+    public MessageRouter createMsgRouterForRoom(Room room, WorldManager wManager);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

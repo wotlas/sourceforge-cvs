@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.objects.valueds;
 
 /** 
@@ -26,45 +26,44 @@ package wotlas.common.objects.valueds;
  * @see wotlas.common.objects.valueds.Money
  */
 
-public class Coin extends ValuedObject
-{
+public class Coin extends ValuedObject {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
- /** The origin of the coin. <br>Should be used to be refused by some.
-  * For instance Tar Valon marks are not welcomed everywhere.
-  */
-  	private String country;
- 
- /*------------------------------------------------------------------------------------*/
+    /** The origin of the coin. <br>Should be used to be refused by some.
+     * For instance Tar Valon marks are not welcomed everywhere.
+     */
+    private String country;
 
- /** Default constructor
-  */ 
-   public Coin()
-   {
-   	super();
-	
-	this.className="Coin";
-	this.objectName="default coin";
-   }
-    
- /*------------------------------------------------------------------------------------*/
- 
- 
- /** Gets the origin of the coin. <br>
-  * Should be used to be refused by some. For instance Tar Valon marks are not welcomed everywhere.
-  * @return country
-  */
-   public String getCountry() { return country; }
-   
- /** Sets the origin of the coin.
-  * Should be chosen from a country list located somewhere on a server.
-  * @param country the new country
-  */
-   public void setCountry(String country) { this.country=country; }
-  
- 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
+    /*------------------------------------------------------------------------------------*/
+
+    /** Default constructor
+     */
+    public Coin() {
+        super();
+
+        this.className = "Coin";
+        this.objectName = "default coin";
+    }
+
+    /*------------------------------------------------------------------------------------*/
+
+    /** Gets the origin of the coin. <br>
+     * Should be used to be refused by some. For instance Tar Valon marks are not welcomed everywhere.
+     * @return country
+     */
+    public String getCountry() {
+        return this.country;
+    }
+
+    /** Sets the origin of the coin.
+     * Should be chosen from a country list located somewhere on a server.
+     * @param country the new country
+     */
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }
-

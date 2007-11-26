@@ -19,11 +19,9 @@
 
 package wotlas.client;
 
+import javax.swing.table.AbstractTableModel;
 import wotlas.common.ServerConfig;
 import wotlas.common.ServerConfigManager;
-
-import javax.swing.JTable;
-import javax.swing.table.AbstractTableModel;
 
 /** An AbstractTableModel to display the client's profiles in a JTable
  *
@@ -34,83 +32,84 @@ import javax.swing.table.AbstractTableModel;
 
 public class ProfileConfigListTableModel extends AbstractTableModel {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Array of client's profiles
-   */
-  private ProfileConfig profiles[];
+    /** Array of client's profiles
+     */
+    private ProfileConfig profiles[];
 
-  /** Array of servers
-   */
-  private ServerConfigManager servers;
+    /** Array of servers
+     */
+    private ServerConfigManager servers;
 
-  /** temporary server
-   */
-  private ServerConfig serverConfig;
+    /** temporary server
+     */
+    private ServerConfig serverConfig;
 
-  /** Names of the table columns
-   */
-  private final String[] columnNames = {"name", "server", "key"};
+    /** Names of the table columns
+     */
+    private final String[] columnNames = { "name", "server", "key" };
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor
-   *
-   * @param profileConfigList client's accounts
-   * @param serverConfigList list of servers
-   */
-  public ProfileConfigListTableModel( ProfileConfigList profileConfigList,
-                                      ServerConfigManager serverConfigList) {
-    this.profiles = profileConfigList.getProfiles();
-    if(profiles==null) profiles = new ProfileConfig[0];
-    
-    this.servers  = serverConfigList;
-  }
+    /** Constructor
+     *
+     * @param profileConfigList client's accounts
+     * @param serverConfigList list of servers
+     */
+    public ProfileConfigListTableModel(ProfileConfigList profileConfigList, ServerConfigManager serverConfigList) {
+        this.profiles = profileConfigList.getProfiles();
+        if (this.profiles == null)
+            this.profiles = new ProfileConfig[0];
 
- /*------------------------------------------------------------------------------------*/
-
-  /** To get the number of columns
-   */
-  public int getColumnCount() {
-    return columnNames.length;
-  }
-
-  /** To get the number of rows
-   */
-  public int getRowCount() {
-    return profiles.length;
-  }
-
-  /** To get a column name
-   *
-   * @param col index of column
-   */
-  public String getColumnName(int col) {
-    return columnNames[col];
-  }
-
-  /** To get the value of a cell
-   *
-   * @param row index of cell row
-   * @param col index of cell column
-   */
-  public Object getValueAt(int row, int col) {
-    switch(col) {
-      case 0:
-        return profiles[row].getPlayerName();
-
-      case 1:
-        serverConfig = servers.getServerConfig(profiles[row].getServerID());
-        return serverConfig.getServerName();
-
-      case 2:
-        return profiles[row].getLogin()+"-"+profiles[row].getKey();
-
-      default:
-        return null;
+        this.servers = serverConfigList;
     }
-  }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-}  
+    /** To get the number of columns
+     */
+    public int getColumnCount() {
+        return this.columnNames.length;
+    }
+
+    /** To get the number of rows
+     */
+    public int getRowCount() {
+        return this.profiles.length;
+    }
+
+    /** To get a column name
+     *
+     * @param col index of column
+     */
+    @Override
+    public String getColumnName(int col) {
+        return this.columnNames[col];
+    }
+
+    /** To get the value of a cell
+     *
+     * @param row index of cell row
+     * @param col index of cell column
+     */
+    public Object getValueAt(int row, int col) {
+        switch (col) {
+            case 0:
+                return this.profiles[row].getPlayerName();
+
+            case 1:
+                this.serverConfig = this.servers.getServerConfig(this.profiles[row].getServerID());
+                return this.serverConfig.getServerName();
+
+            case 2:
+                return this.profiles[row].getLogin() + "-" + this.profiles[row].getKey();
+
+            default:
+                return null;
+        }
+    }
+
+    /*------------------------------------------------------------------------------------*/
+
+}

@@ -19,15 +19,14 @@
 
 package wotlas.client.message.description;
 
-import java.util.*;
-
-import wotlas.utils.Debug;
-
+import wotlas.client.DataManager;
+import wotlas.client.PlayerImpl;
+import wotlas.common.message.description.DoorsStateMessage;
+import wotlas.common.universe.Door;
+import wotlas.common.universe.Room;
+import wotlas.common.universe.RoomLink;
 import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.message.description.*;
-import wotlas.common.universe.*;
-import wotlas.common.Player;
-import wotlas.client.*;
+import wotlas.utils.Debug;
 
 /**
  * Associated behaviour to the DoorsStateMessage...
@@ -35,64 +34,62 @@ import wotlas.client.*;
  * @author Aldiss
  */
 
-public class DoorsStateMsgBehaviour extends DoorsStateMessage implements NetMessageBehaviour
-{
- /*------------------------------------------------------------------------------------*/
+public class DoorsStateMsgBehaviour extends DoorsStateMessage implements NetMessageBehaviour {
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public DoorsStateMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+     */
+    public DoorsStateMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
 
         // The sessionContext is here a DataManager
-           DataManager dataManager = (DataManager) sessionContext;
-           PlayerImpl myPlayer = dataManager.getMyPlayer();
+        DataManager dataManager = (DataManager) sessionContext;
+        PlayerImpl myPlayer = dataManager.getMyPlayer();
 
         // 1 - Control
-           if( !myPlayer.getLocation().isRoom() ) {
-               Debug.signal( Debug.ERROR, this, "Master player is not on an InteriorMap" );
-               return;
-           }
+        if (!myPlayer.getLocation().isRoom()) {
+            Debug.signal(Debug.ERROR, this, "Master player is not on an InteriorMap");
+            return;
+        }
 
-           Room room = dataManager.getWorldManager().getRoom( location );
+        Room room = dataManager.getWorldManager().getRoom(this.location);
 
-           if( room==null || room.getRoomLinks()==null ) {
-               Debug.signal( Debug.WARNING, this, "Room or RoomLink not found..." );
-               return;
-           }
+        if (room == null || room.getRoomLinks() == null) {
+            Debug.signal(Debug.WARNING, this, "Room or RoomLink not found...");
+            return;
+        }
 
         // 2 - Update
-           for( int i=0; i<roomLinkIDs.length; i++ ) {
-                RoomLink roomLink = room.getRoomLink( roomLinkIDs[i] );
-                Door door = null;
-                
-                if( roomLink!=null)
-                    door = roomLink.getDoor();
+        for (int i = 0; i < this.roomLinkIDs.length; i++) {
+            RoomLink roomLink = room.getRoomLink(this.roomLinkIDs[i]);
+            Door door = null;
 
-                if( door==null) {
-                    Debug.signal( Debug.WARNING, this, "Door not found ! "+location );
-                    continue;
-                }
+            if (roomLink != null)
+                door = roomLink.getDoor();
+
+            if (door == null) {
+                Debug.signal(Debug.WARNING, this, "Door not found ! " + this.location);
+                continue;
+            }
 
             // we set directly the state of the door, without any animation
-                if( isOpened[i] )
-                    door.setOpened();
-                else
-                    door.setClosed();
-           }
-     }
+            if (this.isOpened[i])
+                door.setOpened();
+            else
+                door.setClosed();
+        }
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

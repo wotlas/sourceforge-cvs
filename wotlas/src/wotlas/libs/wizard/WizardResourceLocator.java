@@ -29,25 +29,24 @@ import javax.swing.ImageIcon;
 
 public interface WizardResourceLocator {
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Returns the wanted image icon from the GUI directory.
-    *
-    *  @param imageName imageName with or without the complete resource path.
-    *  @return ImageIcon, null if the image was not found.
-    */
-    public ImageIcon getImageIcon( String imageName );
+    /** Returns the wanted image icon from the GUI directory.
+     *
+     *  @param imageName imageName with or without the complete resource path.
+     *  @return ImageIcon, null if the image was not found.
+     */
+    public ImageIcon getImageIcon(String imageName);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Returns the wanted image from the GUI directory.
-    *
-    *  @param imageName imageName with or without the complete resource path.
-    *  @return Image, null if the image was not found.
-    */
-    public Image getGuiImage( String imageName );
+    /** Returns the wanted image from the GUI directory.
+     *
+     *  @param imageName imageName with or without the complete resource path.
+     *  @return Image, null if the image was not found.
+     */
+    public Image getGuiImage(String imageName);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

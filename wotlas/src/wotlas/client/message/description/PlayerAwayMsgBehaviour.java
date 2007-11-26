@@ -19,21 +19,13 @@
 
 package wotlas.client.message.description;
 
-import java.io.IOException;
-import java.util.*;
-import java.awt.*;
-
-import wotlas.utils.Debug;
-
-import wotlas.libs.sound.*;
-import wotlas.libs.net.NetMessageBehaviour;
-
-import wotlas.common.message.description.*;
-import wotlas.common.universe.*;
+import wotlas.client.DataManager;
+import wotlas.client.PlayerImpl;
+import wotlas.client.screen.JChatRoom;
 import wotlas.common.Player;
-
-import wotlas.client.*;
-import wotlas.client.screen.*;
+import wotlas.common.message.description.PlayerAwayMessage;
+import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.utils.Debug;
 
 /**
  * Associated behaviour to the PlayerAwayMessage...
@@ -41,45 +33,42 @@ import wotlas.client.screen.*;
  * @author Aldiss
  */
 
-public class PlayerAwayMsgBehaviour extends PlayerAwayMessage implements NetMessageBehaviour
-{
- /*------------------------------------------------------------------------------------*/
+public class PlayerAwayMsgBehaviour extends PlayerAwayMessage implements NetMessageBehaviour {
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public PlayerAwayMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+     */
+    public PlayerAwayMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
 
         // The sessionContext is here a DataManager
-           DataManager dataManager = (DataManager) sessionContext;
-           Player searchedPlayer = (Player) dataManager.getPlayers().get(primaryKey);
+        DataManager dataManager = (DataManager) sessionContext;
+        Player searchedPlayer = (Player) dataManager.getPlayers().get(this.primaryKey);
 
         // 1 - Control
-           if( searchedPlayer==null ) {
-               Debug.signal( Debug.WARNING, this, "Player not found :"+primaryKey );
-               return;
-           }
+        if (searchedPlayer == null) {
+            Debug.signal(Debug.WARNING, this, "Player not found :" + this.primaryKey);
+            return;
+        }
 
         // 2 - Update of the player
-           searchedPlayer.setPlayerAwayMessage( playerAwayMessage );
+        searchedPlayer.setPlayerAwayMessage(this.playerAwayMessage);
 
         // 3 - Display of the message
-           JChatRoom chatRoom = dataManager.getClientScreen().getChatPanel().getCurrentJChatRoom();
-           chatRoom.appendText("<font color='gray'> "+((PlayerImpl)searchedPlayer).getFullPlayerName()+" (disconnected) says:<i> "
-                                                    +playerAwayMessage+" </i></font>");
-     }
+        JChatRoom chatRoom = dataManager.getClientScreen().getChatPanel().getCurrentJChatRoom();
+        chatRoom.appendText("<font color='gray'> " + ((PlayerImpl) searchedPlayer).getFullPlayerName() + " (disconnected) says:<i> " + this.playerAwayMessage + " </i></font>");
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

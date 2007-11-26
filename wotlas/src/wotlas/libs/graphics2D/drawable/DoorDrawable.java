@@ -19,11 +19,14 @@
 
 package wotlas.libs.graphics2D.drawable;
 
-import wotlas.libs.graphics2D.*;
-
-import java.awt.*;
-import java.awt.image.*;
-import java.awt.geom.*;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import wotlas.libs.graphics2D.Drawable;
+import wotlas.libs.graphics2D.DrawableOwner;
+import wotlas.libs.graphics2D.ImageIdentifier;
+import wotlas.libs.graphics2D.ImageLibrary;
 
 /** The DoorDrawable will represent the action of closing and opening a door.
  *  4 style of doors are considered.
@@ -35,11 +38,11 @@ import java.awt.geom.*;
 
 public class DoorDrawable extends Drawable implements DrawableOwner {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /**
-    * The anchor point for the rotation will depent of the type of the door
-    */
+    /**
+     * The anchor point for the rotation will depent of the type of the door
+     */
 
     /** Door's Rotation set to     *
      *                           |---|
@@ -48,96 +51,95 @@ public class DoorDrawable extends Drawable implements DrawableOwner {
      *                           |   |
      *                           |---|
      */
-     public final static byte VERTICAL_TOP_PIVOT = 0;
+    public final static byte VERTICAL_TOP_PIVOT = 0;
 
-   /** Door's Rotation set to    |---|
-     *                           |   |
-     *                           |   |
-     *                           |   |
-     *                           |---|
-     *                             *
+    /** Door's Rotation set to    |---|
+      *                           |   |
+      *                           |   |
+      *                           |   |
+      *                           |---|
+      *                             *
+      */
+    public final static byte VERTICAL_BOTTOM_PIVOT = 1;
+
+    /** Door's Rotation set to    |-----------------|
+     *                           *|                 |
+     *                            |-----------------|
      */
-     public final static byte VERTICAL_BOTTOM_PIVOT = 1;
+    public final static byte HORIZONTAL_LEFT_PIVOT = 2;
 
-   /** Door's Rotation set to    |-----------------|
-    *                           *|                 |
-    *                            |-----------------|
-    */
-     public final static byte HORIZONTAL_LEFT_PIVOT = 2;
+    /** Door's Rotation set to    |-----------------|
+      *                           |                 |*
+      *                           |-----------------|
+      */
+    public final static byte HORIZONTAL_RIGHT_PIVOT = 3;
 
-   /** Door's Rotation set to    |-----------------|
-     *                           |                 |*
-     *                           |-----------------|
+    /*------------------------------------------------------------------------------------*/
+
+    /** Owner of this door drawable.
      */
-     public final static byte HORIZONTAL_RIGHT_PIVOT = 3;
+    private Object owner;
 
+    /** Current Image Identifier.
+     */
+    private ImageIdentifier image;
 
- /*------------------------------------------------------------------------------------*/
+    /** the initial angle if needed to represent a closing door
+     */
+    private float iniAngle = 0f;
 
-  /** Owner of this door drawable.
-   */
-     private Object owner;
+    /** the variationAngle
+     */
+    private float variationAngle = 0f;
 
-  /** Current Image Identifier.
-   */
-     private ImageIdentifier image;
+    /** the current angle
+     *  we don't take into account the iniAngle to define the currentAngle
+     *  we will just do the correction due to the iniAngle on the paint method
+     */
+    private float currentAngle = 0f;
 
-  /** the initial angle if needed to represent a closing door
-   */
-     private float iniAngle = 0f;
+    /** Door's type
+     */
+    private byte doorType;
 
-  /** the variationAngle
-   */
-     private float variationAngle = 0f;
-
-  /** the current angle
-   *  we don't take into account the iniAngle to define the currentAngle
-   *  we will just do the correction due to the iniAngle on the paint method
-   */
-     private float currentAngle = 0f;
-
-  /** Door's type
-   */
-     private byte doorType;
-
-  /** indicate if we are opening the door
-   */
+    /** indicate if we are opening the door
+     */
     private boolean isOpening = false;
 
-  /** indicate if we are closing the door
-   */
+    /** indicate if we are closing the door
+     */
     private boolean isClosing = false;
 
-  /** our current Rectangle when the door is closed.
-   */
+    /** our current Rectangle when the door is closed.
+     */
     private Rectangle rDoorClosed;
 
-  /** Rectangle representing the door opened.
-   */
+    /** Rectangle representing the door opened.
+     */
     private Rectangle rDoorOpened;
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor with doorType mode ( see public static fields ).
-   *
-   * @param positionX x position of the top-left corner of the door 
-   * @param positionY y position of the top-left corner of the door 
-   * @param iniAngle optional initial angle
-   * @param variationAngle variation angle for the door (in radians, ex: +pi/2, -pi/2 );
-   * @param doorType type of the door
-   * @param image door image
-   * @param priority sprite's priority
-   */
-    public DoorDrawable( int positionX, int positionY, float iniAngle, float variationAngle,
-                         byte doorType, ImageIdentifier image, short priority) {
-    	super();
+    /** Constructor with doorType mode ( see public static fields ).
+     *
+     * @param positionX x position of the top-left corner of the door 
+     * @param positionY y position of the top-left corner of the door 
+     * @param iniAngle optional initial angle
+     * @param variationAngle variation angle for the door (in radians, ex: +pi/2, -pi/2 );
+     * @param doorType type of the door
+     * @param image door image
+     * @param priority sprite's priority
+     */
+    public DoorDrawable(int positionX, int positionY, float iniAngle, float variationAngle, byte doorType, ImageIdentifier image,
+            short priority) {
+        super();
 
-        rDoorClosed = new Rectangle();
-        rDoorOpened = new Rectangle();
+        this.rDoorClosed = new Rectangle();
+        this.rDoorOpened = new Rectangle();
 
-        rDoorClosed.x = positionX;
-        rDoorClosed.y = positionY;
-        r = rDoorClosed;
+        this.rDoorClosed.x = positionX;
+        this.rDoorClosed.y = positionY;
+        this.r = this.rDoorClosed;
 
         this.priority = priority;
         this.iniAngle = iniAngle;
@@ -146,365 +148,363 @@ public class DoorDrawable extends Drawable implements DrawableOwner {
         this.image = image;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To initialize this drawable with the ImageLibrary. Don't call it yourself ! it's
-   *  done automatically when you call addDrawable on the GraphicsDirector.
-   *
-   *  IF you need the ImageLib for some special inits just extend this method and don't
-   *  forget to call a super.init(imageLib) !
-   *
-   *  @param imagelib ImageLibrary where you can take the images to display.
-   */
-     protected void init( ImageLibrary imageLib ) {
-     	super.init(imageLib);
+    /** To initialize this drawable with the ImageLibrary. Don't call it yourself ! it's
+     *  done automatically when you call addDrawable on the GraphicsDirector.
+     *
+     *  IF you need the ImageLib for some special inits just extend this method and don't
+     *  forget to call a super.init(imageLib) !
+     *
+     *  @param imagelib ImageLibrary where you can take the images to display.
+     */
+    @Override
+    protected void init(ImageLibrary imageLib) {
+        super.init(imageLib);
 
-      // Compute rectangle for door closed
-        rDoorClosed.width = getImageLibrary().getWidth( image );
-        rDoorClosed.height = getImageLibrary().getHeight( image );
-        
-      // Compute rectangle for door opened
-         if( iniAngle<=1.0 && Math.abs(variationAngle)>=1.55 /*Math.PI/2*/ ) {
-            switch( doorType ) {
-             //default:
-               case HORIZONTAL_LEFT_PIVOT:
-                       rDoorOpened.x = rDoorClosed.x;
+        // Compute rectangle for door closed
+        this.rDoorClosed.width = getImageLibrary().getWidth(this.image);
+        this.rDoorClosed.height = getImageLibrary().getHeight(this.image);
 
-                       if( variationAngle>0 )
-                           rDoorOpened.y = rDoorClosed.y;
-                       else
-                           rDoorOpened.y = rDoorClosed.y - rDoorClosed.width +rDoorClosed.height;
-                       break;
+        // Compute rectangle for door opened
+        if (this.iniAngle <= 1.0 && Math.abs(this.variationAngle) >= 1.55 /*Math.PI/2*/) {
+            switch (this.doorType) {
+                //default:
+                case HORIZONTAL_LEFT_PIVOT:
+                    this.rDoorOpened.x = this.rDoorClosed.x;
 
-                  case HORIZONTAL_RIGHT_PIVOT:
-                       rDoorOpened.x = rDoorClosed.x +rDoorClosed.width-rDoorClosed.height;
+                    if (this.variationAngle > 0)
+                        this.rDoorOpened.y = this.rDoorClosed.y;
+                    else
+                        this.rDoorOpened.y = this.rDoorClosed.y - this.rDoorClosed.width + this.rDoorClosed.height;
+                    break;
 
-                       if( variationAngle>0 )
-                           rDoorOpened.y = rDoorClosed.y - rDoorClosed.width + rDoorClosed.height;
-                       else
-                           rDoorOpened.y = rDoorClosed.y;
-                       break;
+                case HORIZONTAL_RIGHT_PIVOT:
+                    this.rDoorOpened.x = this.rDoorClosed.x + this.rDoorClosed.width - this.rDoorClosed.height;
 
-                  case VERTICAL_BOTTOM_PIVOT:
-                       rDoorOpened.y = rDoorClosed.y + rDoorClosed.height - rDoorClosed.width;
+                    if (this.variationAngle > 0)
+                        this.rDoorOpened.y = this.rDoorClosed.y - this.rDoorClosed.width + this.rDoorClosed.height;
+                    else
+                        this.rDoorOpened.y = this.rDoorClosed.y;
+                    break;
 
-                       if( variationAngle>0 )
-                           rDoorOpened.x = rDoorClosed.x;
-                       else
-                           rDoorOpened.x = rDoorClosed.x - rDoorClosed.height +rDoorClosed.width;
-                       break;
+                case VERTICAL_BOTTOM_PIVOT:
+                    this.rDoorOpened.y = this.rDoorClosed.y + this.rDoorClosed.height - this.rDoorClosed.width;
 
-                  case VERTICAL_TOP_PIVOT:
-                       rDoorOpened.y = rDoorClosed.y;
+                    if (this.variationAngle > 0)
+                        this.rDoorOpened.x = this.rDoorClosed.x;
+                    else
+                        this.rDoorOpened.x = this.rDoorClosed.x - this.rDoorClosed.height + this.rDoorClosed.width;
+                    break;
 
-                       if( variationAngle>0 )
-                           rDoorOpened.x = rDoorClosed.x - rDoorClosed.height +rDoorClosed.width;
-                       else
-                           rDoorOpened.x = rDoorClosed.x;
-                       break;
+                case VERTICAL_TOP_PIVOT:
+                    this.rDoorOpened.y = this.rDoorClosed.y;
+
+                    if (this.variationAngle > 0)
+                        this.rDoorOpened.x = this.rDoorClosed.x - this.rDoorClosed.height + this.rDoorClosed.width;
+                    else
+                        this.rDoorOpened.x = this.rDoorClosed.x;
+                    break;
             }
 
-            rDoorOpened.width = rDoorClosed.height;
-            rDoorOpened.height = rDoorClosed.width;
-         }
-         else {
-           // we create a general rectangle
-            switch( doorType ) {
-             //default:
-               case HORIZONTAL_LEFT_PIVOT:
-                       rDoorOpened.x = rDoorClosed.x;
-                       rDoorOpened.y = rDoorClosed.y - rDoorClosed.width;
-                       rDoorOpened.width = rDoorClosed.width;
-                       rDoorOpened.height = rDoorClosed.height+2*rDoorClosed.width;
-                       break;
+            this.rDoorOpened.width = this.rDoorClosed.height;
+            this.rDoorOpened.height = this.rDoorClosed.width;
+        } else {
+            // we create a general rectangle
+            switch (this.doorType) {
+                //default:
+                case HORIZONTAL_LEFT_PIVOT:
+                    this.rDoorOpened.x = this.rDoorClosed.x;
+                    this.rDoorOpened.y = this.rDoorClosed.y - this.rDoorClosed.width;
+                    this.rDoorOpened.width = this.rDoorClosed.width;
+                    this.rDoorOpened.height = this.rDoorClosed.height + 2 * this.rDoorClosed.width;
+                    break;
 
-                  case HORIZONTAL_RIGHT_PIVOT:
-                       rDoorOpened.x = rDoorClosed.x;
-                       rDoorOpened.y = rDoorClosed.y - rDoorClosed.width;
-                       rDoorOpened.width = rDoorClosed.width;
-                       rDoorOpened.height = rDoorClosed.height+2*rDoorClosed.width;
-                       break;
+                case HORIZONTAL_RIGHT_PIVOT:
+                    this.rDoorOpened.x = this.rDoorClosed.x;
+                    this.rDoorOpened.y = this.rDoorClosed.y - this.rDoorClosed.width;
+                    this.rDoorOpened.width = this.rDoorClosed.width;
+                    this.rDoorOpened.height = this.rDoorClosed.height + 2 * this.rDoorClosed.width;
+                    break;
 
-                  case VERTICAL_BOTTOM_PIVOT:
-                       rDoorOpened.x = rDoorClosed.x-rDoorClosed.height;
-                       rDoorOpened.y = rDoorClosed.y;
-                       rDoorOpened.width = rDoorClosed.width+2*rDoorClosed.height;
-                       rDoorOpened.height = rDoorClosed.height;
-                       break;
+                case VERTICAL_BOTTOM_PIVOT:
+                    this.rDoorOpened.x = this.rDoorClosed.x - this.rDoorClosed.height;
+                    this.rDoorOpened.y = this.rDoorClosed.y;
+                    this.rDoorOpened.width = this.rDoorClosed.width + 2 * this.rDoorClosed.height;
+                    this.rDoorOpened.height = this.rDoorClosed.height;
+                    break;
 
-                  case VERTICAL_TOP_PIVOT:
-                       rDoorOpened.x = rDoorClosed.x-rDoorClosed.height;
-                       rDoorOpened.y = rDoorClosed.y;
-                       rDoorOpened.width = rDoorClosed.width+2*rDoorClosed.height;
-                       rDoorOpened.height = rDoorClosed.height;
-                       break;
+                case VERTICAL_TOP_PIVOT:
+                    this.rDoorOpened.x = this.rDoorClosed.x - this.rDoorClosed.height;
+                    this.rDoorOpened.y = this.rDoorClosed.y;
+                    this.rDoorOpened.width = this.rDoorClosed.width + 2 * this.rDoorClosed.height;
+                    this.rDoorOpened.height = this.rDoorClosed.height;
+                    break;
             }
-         }
-     }
+        }
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the real door rectangle, not its influence zone.
-   * @return strict rectangle representing the door CLOSED.
-   */
+    /** To get the real door rectangle, not its influence zone.
+     * @return strict rectangle representing the door CLOSED.
+     */
     public Rectangle getRealDoorRectangle() {
-    	  return new Rectangle(rDoorClosed);
+        return new Rectangle(this.rDoorClosed);
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the current angle of the doorDrawable
-   */
+    /** To get the current angle of the doorDrawable
+     */
     public float getCurrentAngle() {
-    	return this.currentAngle;
+        return this.currentAngle;
     }
 
-  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To set the angle of variation of the doorDrawable
-   *  @param varAngle the angle of the variation of the rotation
-   */
-    public void setVariationAngle (float varAngle) {
-    	this.variationAngle = varAngle;
+    /** To set the angle of variation of the doorDrawable
+     *  @param varAngle the angle of the variation of the rotation
+     */
+    public void setVariationAngle(float varAngle) {
+        this.variationAngle = varAngle;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the variationAngle of the doorDrawable
-   */
+    /** To get the variationAngle of the doorDrawable
+     */
     public float getVariationAngle() {
-    	return this.variationAngle;
+        return this.variationAngle;
     }
 
-  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To set the current angle of the doorDrawable
-   *  @param angle the angle of the rotation
-   */
+    /** To set the current angle of the doorDrawable
+     *  @param angle the angle of the rotation
+     */
     public void setCurrentAngle(float angle) {
-    	this.currentAngle = angle;
+        this.currentAngle = angle;
     }
 
-  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /**
-   *  set/stop the action of closing door
-   */
-     private void setClosing( boolean closing ) {
-      this.isClosing = closing;
-     }
+    /**
+     *  set/stop the action of closing door
+     */
+    private void setClosing(boolean closing) {
+        this.isClosing = closing;
+    }
 
-  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /**
-   *  set/stop the action of opening door
-   */
-     private void setOpening( boolean opening ) {
-      this.isOpening = opening;
-     }
+    /**
+     *  set/stop the action of opening door
+     */
+    private void setOpening(boolean opening) {
+        this.isOpening = opening;
+    }
 
-  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /**
-   *  return true if the door is opening
-   */
-     public boolean isOpening() {
-      return this.isOpening;
-     }
+    /**
+     *  return true if the door is opening
+     */
+    public boolean isOpening() {
+        return this.isOpening;
+    }
 
-  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /**
-   *  return true if the door is closing
-   */
-     public boolean isClosing() {
-      return this.isClosing;
-     }
+    /**
+     *  return true if the door is closing
+     */
+    public boolean isClosing() {
+        return this.isClosing;
+    }
 
-  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /**
-   *  set the door to a stable closed view
-   */
-     public void setClosed() {
-      this.isOpening = false;
-      this.isClosing = false;
-      this.currentAngle = this.iniAngle;
-      r = rDoorClosed;
-     }
+    /**
+     *  set the door to a stable closed view
+     */
+    public void setClosed() {
+        this.isOpening = false;
+        this.isClosing = false;
+        this.currentAngle = this.iniAngle;
+        this.r = this.rDoorClosed;
+    }
 
-  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /**
-   *  set the door to a stable open view
-   */
-     public void setOpened() {
-      this.isOpening = false;
-      this.isClosing = false;
-      this.currentAngle = this.iniAngle + this.variationAngle;
-      r = rDoorOpened;
-     }
+    /**
+     *  set the door to a stable open view
+     */
+    public void setOpened() {
+        this.isOpening = false;
+        this.isClosing = false;
+        this.currentAngle = this.iniAngle + this.variationAngle;
+        this.r = this.rDoorOpened;
+    }
 
-  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /**
-   *  return true if the door is in a stable closed view
-   */
-     public boolean isClosed() {
-      if(this.isOpening == false && this.isClosing == false
-         && this.currentAngle == this.iniAngle )
+    /**
+     *  return true if the door is in a stable closed view
+     */
+    public boolean isClosed() {
+        if (this.isOpening == false && this.isClosing == false && this.currentAngle == this.iniAngle)
             return true;
-       else 
-          return false;
-     }
+        else
+            return false;
+    }
 
-  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /**
-   *  return true if the door is in a stable opened view
-   */
-     public boolean isOpened() {
-      if( (this.isOpening == false) && (this.isClosing == false)
-          && (this.currentAngle == this.iniAngle + this.variationAngle) )
+    /**
+     *  return true if the door is in a stable opened view
+     */
+    public boolean isOpened() {
+        if ((this.isOpening == false) && (this.isClosing == false) && (this.currentAngle == this.iniAngle + this.variationAngle))
             return true;
-       else 
-          return false;
-     }
+        else
+            return false;
+    }
 
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To open the door
-   */
+    /** To open the door
+     */
     public void open() {
-       setClosing(false);
-       setOpening(true);
-       r = rDoorOpened;
+        setClosing(false);
+        setOpening(true);
+        this.r = this.rDoorOpened;
     }
 
-  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To close the door
-   */
+    /** To close the door
+     */
     public void close() {
-       setOpening(false);
-       setClosing(true);
-       r = rDoorClosed;
+        setOpening(false);
+        setClosing(true);
+        this.r = this.rDoorClosed;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Paint method called by the GraphicsDirector. The specified rectangle represents
-   *  the displayed screen in background cordinates ( see GraphicsDirector ).
-   *
-   *  @param gc graphics 2D use for display (double buffering is handled by the
-   *         GraphicsDirector)
-   *  @param screen display zone of the graphicsDirector, in background coordinates.
-   */
-    public void paint( Graphics2D gc, Rectangle screen ) {
+    /** Paint method called by the GraphicsDirector. The specified rectangle represents
+     *  the displayed screen in background cordinates ( see GraphicsDirector ).
+     *
+     *  @param gc graphics 2D use for display (double buffering is handled by the
+     *         GraphicsDirector)
+     *  @param screen display zone of the graphicsDirector, in background coordinates.
+     */
+    @Override
+    public void paint(Graphics2D gc, Rectangle screen) {
 
-      // 1 - Need to display this sprite ?
-         if( !r.intersects(screen) )
-             return;
+        // 1 - Need to display this sprite ?
+        if (!this.r.intersects(screen))
+            return;
 
-      // 2 - any affine transform ?
-         AffineTransform affTr = null;
+        // 2 - any affine transform ?
+        AffineTransform affTr = null;
 
-         //calcul de la rotation eventuelle
-         float rotation = iniAngle + currentAngle;
+        //calcul de la rotation eventuelle
+        float rotation = this.iniAngle + this.currentAngle;
 
-         if( rotation !=0.0 ) {
-           // Rotation Transformation
-              affTr = new AffineTransform();
-              int anchorX=0, anchorY=0;
+        if (rotation != 0.0) {
+            // Rotation Transformation
+            affTr = new AffineTransform();
+            int anchorX = 0, anchorY = 0;
 
-              switch( doorType ) {
-                  //default:
-                  case HORIZONTAL_LEFT_PIVOT:
-                       anchorX = rDoorClosed.x+rDoorClosed.height/2;
-                       anchorY = rDoorClosed.y + rDoorClosed.height/2;
-                       break;
+            switch (this.doorType) {
+                //default:
+                case HORIZONTAL_LEFT_PIVOT:
+                    anchorX = this.rDoorClosed.x + this.rDoorClosed.height / 2;
+                    anchorY = this.rDoorClosed.y + this.rDoorClosed.height / 2;
+                    break;
 
-                  case HORIZONTAL_RIGHT_PIVOT:
-                       anchorX = rDoorClosed.x + rDoorClosed.width - rDoorClosed.height/2;
-                       anchorY = rDoorClosed.y + rDoorClosed.height/2;
-                       break;
+                case HORIZONTAL_RIGHT_PIVOT:
+                    anchorX = this.rDoorClosed.x + this.rDoorClosed.width - this.rDoorClosed.height / 2;
+                    anchorY = this.rDoorClosed.y + this.rDoorClosed.height / 2;
+                    break;
 
-                  case VERTICAL_BOTTOM_PIVOT:
-                       anchorX = rDoorClosed.x + rDoorClosed.width/2;
-                       anchorY = rDoorClosed.y + rDoorClosed.height -rDoorClosed.width/2;
-                       break;
+                case VERTICAL_BOTTOM_PIVOT:
+                    anchorX = this.rDoorClosed.x + this.rDoorClosed.width / 2;
+                    anchorY = this.rDoorClosed.y + this.rDoorClosed.height - this.rDoorClosed.width / 2;
+                    break;
 
-                  case VERTICAL_TOP_PIVOT:
-                       anchorX = rDoorClosed.x + rDoorClosed.width/2;
-                       anchorY = rDoorClosed.y + rDoorClosed.width/2;
-                       break;
+                case VERTICAL_TOP_PIVOT:
+                    anchorX = this.rDoorClosed.x + this.rDoorClosed.width / 2;
+                    anchorY = this.rDoorClosed.y + this.rDoorClosed.width / 2;
+                    break;
 
-              }
+            }
 
-              affTr.rotate( rotation, anchorX-screen.x, anchorY-screen.y );
-         }
+            affTr.rotate(rotation, anchorX - screen.x, anchorY - screen.y);
+        }
 
+        // 3 - image display
+        BufferedImage bufIm = getImageLibrary().getImage(this.image);
 
-      // 3 - image display
-         BufferedImage bufIm = getImageLibrary().getImage( image );
-
-         if( affTr==null )
-             gc.drawImage( bufIm, rDoorClosed.x-screen.x, rDoorClosed.y-screen.y, null );
-         else {
-             affTr.translate( rDoorClosed.x-screen.x, rDoorClosed.y-screen.y );
-             gc.drawImage( bufIm, affTr, null );
-         }
+        if (affTr == null)
+            gc.drawImage(bufIm, this.rDoorClosed.x - screen.x, this.rDoorClosed.y - screen.y, null);
+        else {
+            affTr.translate(this.rDoorClosed.x - screen.x, this.rDoorClosed.y - screen.y);
+            gc.drawImage(bufIm, affTr, null);
+        }
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Tick method called by the GraphicsDirector. This tick method has a returned value
-   *  that indicates if the drawable is still living or must be deleted. Some Drawables
-   *  always return "still living", it is then the task of the program that uses
-   *  the GraphicsDirector to manage the destruction of drawables.
-   *
-   *  @return true if the drawable is "live", false if it must be deleted.
-   */
-     public boolean tick() {
+    /** Tick method called by the GraphicsDirector. This tick method has a returned value
+     *  that indicates if the drawable is still living or must be deleted. Some Drawables
+     *  always return "still living", it is then the task of the program that uses
+     *  the GraphicsDirector to manage the destruction of drawables.
+     *
+     *  @return true if the drawable is "live", false if it must be deleted.
+     */
+    @Override
+    public boolean tick() {
 
-       if(isOpening) {
-          currentAngle += variationAngle/10;
-          if( Math.abs(currentAngle) >= Math.abs(variationAngle))
-              setOpened();
-       }
+        if (this.isOpening) {
+            this.currentAngle += this.variationAngle / 10;
+            if (Math.abs(this.currentAngle) >= Math.abs(this.variationAngle))
+                setOpened();
+        }
 
-       if(isClosing) {
-          currentAngle -= variationAngle/10;
-          if( Math.abs(currentAngle-variationAngle) >= Math.abs(variationAngle) )
-              setClosed();
-       }
+        if (this.isClosing) {
+            this.currentAngle -= this.variationAngle / 10;
+            if (Math.abs(this.currentAngle - this.variationAngle) >= Math.abs(this.variationAngle))
+                setClosed();
+        }
 
-       return true; // no update needed and a DoorDrawable is always "live" by default.
-     }
+        return true; // no update needed and a DoorDrawable is always "live" by default.
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the owner of this drawable. By 'owner' we mean the object which this
-    *  Drawable is the graphical representation.
-    *
-    * @return Object owner of this drawable.
-    */
-     public Object getOwner() {
-        return owner;
-     }
+    /** To get the owner of this drawable. By 'owner' we mean the object which this
+      *  Drawable is the graphical representation.
+      *
+      * @return Object owner of this drawable.
+      */
+    public Object getOwner() {
+        return this.owner;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To set the owner of this drawable. By 'owner' we mean the object which this
-    *  Drawable is the graphical representation.
-    *
-    * @param object owner of this drawable.
-    */
-     public void setOwner( Object owner ) {
+    /** To set the owner of this drawable. By 'owner' we mean the object which this
+      *  Drawable is the graphical representation.
+      *
+      * @param object owner of this drawable.
+      */
+    public void setOwner(Object owner) {
         this.owner = owner;
-     }
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }

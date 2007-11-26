@@ -19,8 +19,8 @@
 
 package wotlas.client;
 
-import wotlas.common.ResourceManager;
 import wotlas.common.PropertiesConfigFile;
+import wotlas.common.ResourceManager;
 import wotlas.utils.Debug;
 
 /** Represents the 'client.cfg' properties file. We check that its content is valid.
@@ -31,23 +31,23 @@ import wotlas.utils.Debug;
 
 public class ClientPropertiesFile extends PropertiesConfigFile {
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Client Properties Config File Name
-    */
+    /** Client Properties Config File Name
+     */
     public final static String CLIENT_CONFIG = "client.cfg";
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Constructor with our resource manager.
-    *
-    * @param rManager our resource manager
-    */
-    public ClientPropertiesFile( ResourceManager rManager ) {
-    	super( rManager, CLIENT_CONFIG );
+    /** Constructor with our resource manager.
+     *
+     * @param rManager our resource manager
+     */
+    public ClientPropertiesFile(ResourceManager rManager) {
+        super(rManager, ClientPropertiesFile.CLIENT_CONFIG);
 
-        Debug.signal( Debug.NOTICE, null, "Client properties loaded successfully." );
+        Debug.signal(Debug.NOTICE, null, "Client properties loaded successfully.");
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

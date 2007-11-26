@@ -16,13 +16,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.objects.containers;
 
-import wotlas.common.objects.interfaces.*;
-import wotlas.common.objects.BaseObject;
-import wotlas.common.objects.valueds.ValuedObject;
 import wotlas.common.Player;
+import wotlas.common.objects.BaseObject;
+import wotlas.common.objects.interfaces.ArmorInterface;
+import wotlas.common.objects.interfaces.TransportableInterface;
+import wotlas.common.objects.valueds.ValuedObject;
 
 /** 
  * The belt. Special Container that is also a piece of Armor.
@@ -32,104 +33,91 @@ import wotlas.common.Player;
  * @see wotlas.common.objects.interfaces.ArmorInterface
  * @see wotlas.common.objects.interfaces.TransportableInterface
  */
-public class Belt extends ContainerObject implements TransportableInterface, ArmorInterface
-{
+public class Belt extends ContainerObject implements TransportableInterface, ArmorInterface {
 
- /*------------------------------------------------------------------------------------*/
-  
-  protected short defense;
-  
-  protected boolean equipped;
- 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
- /** The default constructor. Calls ContainerObject's constructor.
-  */
-  public Belt()
-  {
-   super();
-     
-   className="Belt";
-   objectName="standard belt";	  // to modify
-  }
+    protected short defense;
 
- /** The parametric constructor. Calls ContainerObject's constructor.
-  * @param capacity the number of objects that can be contained
-  */
-  public Belt(short capacity)
-  {
-   super(capacity);
-     
-   className="Belt";
-   objectName="standard belt";	  // to modify
-  }
+    protected boolean equipped;
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-	
-  /** Get the armor's defense points
-   * @return defense
-   */ 				
-   	public short getDefense()
-	{
-	 return defense;
-	} 																		
+    /*------------------------------------------------------------------------------------*/
 
-  /** Sets the defense of the armor.
-    * @param defense the new defense
+    /** The default constructor. Calls ContainerObject's constructor.
+     */
+    public Belt() {
+        super();
+
+        this.className = "Belt";
+        this.objectName = "standard belt"; // to modify
+    }
+
+    /** The parametric constructor. Calls ContainerObject's constructor.
+     * @param capacity the number of objects that can be contained
+     */
+    public Belt(short capacity) {
+        super(capacity);
+
+        this.className = "Belt";
+        this.objectName = "standard belt"; // to modify
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the armor's defense points
+     * @return defense
+     */
+    public short getDefense() {
+        return this.defense;
+    }
+
+    /** Sets the defense of the armor.
+      * @param defense the new defense
+      */
+    public void setDefense(short defense) {
+        this.defense = defense;
+    }
+
+    /** Puts on the armor.
+     */
+    public void equip() {
+        this.equipped = true;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Gets rid of the object. The object is dropped on the ground.
     */
-	public void setDefense(short defense)
-	{
-	 this.defense=defense;
-	}
- 
-  /** Puts on the armor.
-   */
-    public void equip()
-	{
-	 equipped=true;
-	}
+    public void discard() {
+        /* no op */
+    }
 
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** Sells the object to somebody.
+    	  @param buyer The Player who buy the object. 
+    	  @return the prize paid.
+     */
+    public ValuedObject sellTo(Player buyer) {
+        /* no op */
+        return new ValuedObject();
+    }
 
-   /** Gets rid of the object. The object is dropped on the ground.
-   */
-    public void discard()
-	{
-	 /* no op */
-	}
+    /** Gives the object to somebody.
+    	  @param receiver The Player who receive the object.
+     */
+    public void giveTo(Player receiver) {
+        /* no op */
+    }
 
-  /** Sells the object to somebody.
-  	  @param buyer The Player who buy the object. 
-  	  @return the prize paid.
-   */
-    public ValuedObject sellTo(Player buyer)
-	{
-	 /* no op */
-	 return new ValuedObject();
-	}
+    /** Trade the object to somebody.<br>
+      * Here the transaction is already accepted.
+    	* @param buyer The Player who buy the object. 
+    	* @return the object given by the other player.
+      */
+    public BaseObject tradeTo(Player buyer) {
+        /* no op */
+        return new BaseObject();
+    }
 
-  /** Gives the object to somebody.
-  	  @param receiver The Player who receive the object.
-   */
-    public void giveTo(Player receiver)
-	{
-	 /* no op */
-	}
-	
-  /** Trade the object to somebody.<br>
-    * Here the transaction is already accepted.
-  	* @param buyer The Player who buy the object. 
-  	* @return the object given by the other player.
-    */
-    public BaseObject tradeTo(Player buyer)
-	{
-	 /* no op */
-	 return new BaseObject();
-	}
-	
- /*------------------------------------------------------------------------------------*/
-	
- 
+    /*------------------------------------------------------------------------------------*/
+
 }
-

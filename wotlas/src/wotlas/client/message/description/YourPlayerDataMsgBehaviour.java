@@ -19,14 +19,9 @@
 
 package wotlas.client.message.description;
 
-import java.io.IOException;
-
-import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.message.description.*;
-import wotlas.client.*;
-
 import wotlas.client.DataManager;
-import wotlas.utils.Debug;
+import wotlas.common.message.description.YourPlayerDataMessage;
+import wotlas.libs.net.NetMessageBehaviour;
 
 /**
  * Associated behaviour to the YourPlayerDataMessage...
@@ -34,30 +29,28 @@ import wotlas.utils.Debug;
  * @author Aldiss, Petrus
  */
 
-public class YourPlayerDataMsgBehaviour extends YourPlayerDataMessage implements NetMessageBehaviour
-{
+public class YourPlayerDataMsgBehaviour extends YourPlayerDataMessage implements NetMessageBehaviour {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-  public YourPlayerDataMsgBehaviour() {
-    super();
-  }
+    /** Constructor.
+     */
+    public YourPlayerDataMsgBehaviour() {
+        super();
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-  public void doBehaviour( Object sessionContext ) {
-    DataManager dataManager = (DataManager) sessionContext;
-    dataManager.setCurrentPlayer( player );
-  }
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
+        DataManager dataManager = (DataManager) sessionContext;
+        dataManager.setCurrentPlayer(this.player);
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
 }
-

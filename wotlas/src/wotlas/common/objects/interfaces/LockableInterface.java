@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.objects.interfaces;
 
 import wotlas.common.objects.usefuls.Key;
@@ -27,24 +27,20 @@ import wotlas.common.objects.usefuls.Key;
  * @author Elann
  */
 
-public interface LockableInterface
-{
+public interface LockableInterface {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-
-  /** Try to lock the object.
-   * @param key the key used 
-   */
+    /** Try to lock the object.
+     * @param key the key used 
+     */
     public void tryLock(Key key);
 
-  /** Try to unlock the object.
-   * @param key the key used 
-   */
+    /** Try to unlock the object.
+     * @param key the key used 
+     */
     public void tryUnlock(Key key);
 
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

@@ -16,9 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
-package wotlas.common.objects.interfaces;
 
+package wotlas.common.objects.interfaces;
 
 /** 
  * The base interface for all armor and clothes.
@@ -26,28 +25,24 @@ package wotlas.common.objects.interfaces;
  * @author Elann
  */
 
-public interface ArmorInterface
-{
+public interface ArmorInterface {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
- 
-  /** Get the armor's defense points
-   * @return defense
-   */ 				
-   	public short getDefense(); 																		
+    /** Get the armor's defense points
+     * @return defense
+     */
+    public short getDefense();
 
-  /** Sets the defense of the armor.
-    * @param defense the new defense
-    */
-	public void setDefense(short defense);
- 
-  /** Puts on the armor.
-   */
+    /** Sets the defense of the armor.
+      * @param defense the new defense
+      */
+    public void setDefense(short defense);
+
+    /** Puts on the armor.
+     */
     public void equip();
-	 
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

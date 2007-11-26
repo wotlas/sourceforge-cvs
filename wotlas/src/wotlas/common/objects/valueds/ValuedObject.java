@@ -30,99 +30,99 @@ import wotlas.common.objects.BaseObject;
 
 public class ValuedObject extends BaseObject {
 
-	/*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-	/**
-	 * The value of the object. It is expressed in MK.<br>
-	 * The lowest value is 0.01. (1 CP)<br>
-	 * <br>
-	 * <br>
-	 * <table border=1>
-	 * <tr>
-	 * <th>Value</th>
-	 * <th>Equals</th>
-	 * <th>Names</th>
-	 * </tr>
-	 * <tr>
-	 * <td>10 CP</td>
-	 * <td>1 SP</td>
-	 * <td>(Copper Penny - Silver Penny)</td>
-	 * </tr>
-	 * <tr>
-	 * <td>10 SP</td>
-	 * <td>1 MK</td>
-	 * <td>(Silver Penny - silver MarK)</td>
-	 * </tr>
-	 * <tr>
-	 * <td>10 MK</td>
-	 * <td>1 GC</td>
-	 * <td>(silver MarK - Gold Coin)</td>
-	 * </tr>
-	 * </table>
-	 */
-	protected double value;
+    /**
+     * The value of the object. It is expressed in MK.<br>
+     * The lowest value is 0.01. (1 CP)<br>
+     * <br>
+     * <br>
+     * <table border=1>
+     * <tr>
+     * <th>Value</th>
+     * <th>Equals</th>
+     * <th>Names</th>
+     * </tr>
+     * <tr>
+     * <td>10 CP</td>
+     * <td>1 SP</td>
+     * <td>(Copper Penny - Silver Penny)</td>
+     * </tr>
+     * <tr>
+     * <td>10 SP</td>
+     * <td>1 MK</td>
+     * <td>(Silver Penny - silver MarK)</td>
+     * </tr>
+     * <tr>
+     * <td>10 MK</td>
+     * <td>1 GC</td>
+     * <td>(silver MarK - Gold Coin)</td>
+     * </tr>
+     * </table>
+     */
+    protected double value;
 
-	/**
-	 * The quantity owned.
-	 */
-	protected short quantity;
+    /**
+     * The quantity owned.
+     */
+    protected short quantity;
 
-	/*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-	/**
-	 * Default constructor. <br>
-	 * Sets value and quantity to 0.
-	 */
-	public ValuedObject() {
-		super();
+    /**
+     * Default constructor. <br>
+     * Sets value and quantity to 0.
+     */
+    public ValuedObject() {
+        super();
 
-		value = 0.0;
-		quantity = 0;
+        this.value = 0.0;
+        this.quantity = 0;
 
-		className = "ValuedObject";
-		objectName = "default valued object";
-	}
+        this.className = "ValuedObject";
+        this.objectName = "default valued object";
+    }
 
-	/*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-	/**
-	 * Gets the quantity.
-	 * 
-	 * @return quantity
-	 */
-	public short getQuantity() {
-		return quantity;
-	}
+    /**
+     * Gets the quantity.
+     * 
+     * @return quantity
+     */
+    public short getQuantity() {
+        return this.quantity;
+    }
 
-	/**
-	 * Sets the quantity.
-	 * 
-	 * @param quantity
-	 *            the new quantity
-	 */
-	public void setQuantity(short quantity) {
-		this.quantity = quantity;
-	}
+    /**
+     * Sets the quantity.
+     * 
+     * @param quantity
+     *            the new quantity
+     */
+    public void setQuantity(short quantity) {
+        this.quantity = quantity;
+    }
 
-	/**
-	 * Gets the value of the object.
-	 * 
-	 * @return value
-	 */
-	public double getValue() {
-		return value;
-	}
+    /**
+     * Gets the value of the object.
+     * 
+     * @return value
+     */
+    public double getValue() {
+        return this.value;
+    }
 
-	/**
-	 * Sets the value of the object.
-	 * 
-	 * @param value
-	 *            the new value
-	 */
-	public void setValue(float value) {
-		this.value = value;
-	}
+    /**
+     * Sets the value of the object.
+     * 
+     * @param value
+     *            the new value
+     */
+    public void setValue(float value) {
+        this.value = value;
+    }
 
-	/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 }

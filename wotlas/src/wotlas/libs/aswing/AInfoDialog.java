@@ -19,9 +19,17 @@
 
 package wotlas.libs.aswing;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.SwingConstants;
 
 /** A small utility to display an information message
  *
@@ -29,54 +37,52 @@ import javax.swing.*;
  */
 
 public class AInfoDialog extends JDialog {
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Constructor.
-    * 
-    * @param frame frame owner of this JDialog
-    * @param message msg to display
-    * @param modal if the dialog is modal or not
-    * @param rLocator to locate resources
-    */
-   public AInfoDialog(Frame frame, String message, boolean modal, ASwingResourceLocator rLocator ) {
-         super(frame,"Information", modal);
+    /** Constructor.
+     * 
+     * @param frame frame owner of this JDialog
+     * @param message msg to display
+     * @param modal if the dialog is modal or not
+     * @param rLocator to locate resources
+     */
+    public AInfoDialog(Frame frame, String message, boolean modal, ASwingResourceLocator rLocator) {
+        super(frame, "Information", modal);
 
-      // some inits
-         getContentPane().setLayout( new BorderLayout() );
-         getContentPane().setBackground(Color.white);
-         
-      // Top Label
-         ALabel label1 = new ALabel(message,SwingConstants.CENTER );
-         getContentPane().add( label1, BorderLayout.CENTER );
+        // some inits
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().setBackground(Color.white);
 
-      // Ok Button
-         ImageIcon im_okup = rLocator.getImageIcon("ok-up.gif");
-         ImageIcon im_okdo = rLocator.getImageIcon("ok-do.gif");
-         ImageIcon im_okun = rLocator.getImageIcon("ok-un.gif");
-         JButton b_ok = new JButton(im_okup);
-         b_ok.setRolloverIcon(im_okdo);
-         b_ok.setPressedIcon(im_okdo);
-         b_ok.setDisabledIcon(im_okun);
-         b_ok.setBorderPainted(false);
-         b_ok.setContentAreaFilled(false);
-         b_ok.setFocusPainted(false);
-         getContentPane().add(b_ok, BorderLayout.SOUTH );
+        // Top Label
+        ALabel label1 = new ALabel(message, SwingConstants.CENTER);
+        getContentPane().add(label1, BorderLayout.CENTER);
 
-          b_ok.addActionListener(new ActionListener()
-           {
-              public void actionPerformed (ActionEvent e) {
-                   dispose();
-              }
-           });
+        // Ok Button
+        ImageIcon im_okup = rLocator.getImageIcon("ok-up.gif");
+        ImageIcon im_okdo = rLocator.getImageIcon("ok-do.gif");
+        ImageIcon im_okun = rLocator.getImageIcon("ok-un.gif");
+        JButton b_ok = new JButton(im_okup);
+        b_ok.setRolloverIcon(im_okdo);
+        b_ok.setPressedIcon(im_okdo);
+        b_ok.setDisabledIcon(im_okun);
+        b_ok.setBorderPainted(false);
+        b_ok.setContentAreaFilled(false);
+        b_ok.setFocusPainted(false);
+        getContentPane().add(b_ok, BorderLayout.SOUTH);
 
-         pack();
+        b_ok.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        });
 
-         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-         setLocation( (int) ((screenSize.getWidth() - getWidth()) / 2),
-                   (int) ((screenSize.getHeight() - getHeight()) / 2) );
-         show();
-   }
+        pack();
 
- /*------------------------------------------------------------------------------------*/
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation((int) ((screenSize.getWidth() - getWidth()) / 2), (int) ((screenSize.getHeight() - getHeight()) / 2));
+        show();
+    }
+
+    /*------------------------------------------------------------------------------------*/
 
 }

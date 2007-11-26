@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.knowledges;
 
 import wotlas.common.power.Weave;
@@ -27,23 +27,21 @@ import wotlas.common.power.Weave;
  * @author Elann
  */
 
-public interface ChannelAbility extends Ability
-{
+public interface ChannelAbility extends Ability {
 
- /*------------------------------------------------------------------------------------*/
-	  	 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Get the weaves that may be produced.
-   * @return weaves
-   */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the weaves that may be produced.
+     * @return weaves
+     */
     public Weave[] getWeaves();
-	
-  /** Set the weaves that may be produced.
-   * @param weaves the new weaves
-   */
+
+    /** Set the weaves that may be produced.
+     * @param weaves the new weaves
+     */
     public void setWeaves(Weave[] weaves);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

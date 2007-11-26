@@ -19,16 +19,7 @@
 
 package wotlas.common.message.movement;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 import wotlas.libs.net.NetMessage;
-import wotlas.common.Player;
-import wotlas.common.character.WotCharacter;
-import wotlas.common.universe.WotlasLocation;
-
-import wotlas.utils.Tools;
 
 /** 
  * To send movement data (Message Sent by Client or Server).
@@ -36,16 +27,14 @@ import wotlas.utils.Tools;
  * @author Aldiss
  */
 
-abstract public class MovementUpdateMessage extends NetMessage
-{
- /*------------------------------------------------------------------------------------*/
+abstract public class MovementUpdateMessage extends NetMessage {
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor. Just initializes the message category and type.
-   */
-     public MovementUpdateMessage() {
-          super();
-     }
+    /** Constructor. Just initializes the message category and type.
+     */
+    public MovementUpdateMessage() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

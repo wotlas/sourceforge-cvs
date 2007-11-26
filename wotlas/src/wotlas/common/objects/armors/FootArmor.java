@@ -16,10 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
-package wotlas.common.objects.armors;
 
-import wotlas.common.objects.interfaces.*;
+package wotlas.common.objects.armors;
 
 /** 
  * The foot armor class.
@@ -29,40 +27,34 @@ import wotlas.common.objects.interfaces.*;
  * @see wotlas.common.objects.interfaces.ArmorInterface
  */
 
-public class FootArmor extends Armor
-{
+public class FootArmor extends Armor {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
- 
- /*------------------------------------------------------------------------------------*/
- 
-  /** The default constructor.
-  	* Invoques Armor's constructor.
-   */			
-    public FootArmor()
-	{
-	 super();
-	 
-	 this.className="FootArmor";
-	 this.objectName="default foot armor";
-	}															
- 
- 
-  /** The parametric constructor.
-  	* Invoques Armor's constructor.
-	* @param defense the defense of the armor - may be zero
-	* @param state the current state of the armor  	
-   */			
-    public FootArmor(short defense,short state)
-	{
-	 super(defense,state);
-	 
-	 this.className="FootArmor";
-	 this.objectName="default foot armor";
-	}															
+    /*------------------------------------------------------------------------------------*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
+    /** The default constructor.
+    	* Invoques Armor's constructor.
+     */
+    public FootArmor() {
+        super();
+
+        this.className = "FootArmor";
+        this.objectName = "default foot armor";
+    }
+
+    /** The parametric constructor.
+    	* Invoques Armor's constructor.
+    * @param defense the defense of the armor - may be zero
+    * @param state the current state of the armor  	
+     */
+    public FootArmor(short defense, short state) {
+        super(defense, state);
+
+        this.className = "FootArmor";
+        this.objectName = "default foot armor";
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }
-

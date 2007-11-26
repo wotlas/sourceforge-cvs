@@ -16,15 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.message.account;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
 import wotlas.libs.net.NetMessage;
-
 
 /** 
  * A warning message that should display to the client in a pop-up window.
@@ -33,58 +31,58 @@ import wotlas.libs.net.NetMessage;
  * @author Aldiss
  */
 
-public class WarningMessage extends NetMessage
-{
- /*------------------------------------------------------------------------------------*/
+public class WarningMessage extends NetMessage {
+    /*------------------------------------------------------------------------------------*/
 
-   // information
-      protected String info;
+    // information
+    protected String info;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor. Just initializes the message category and type.
-   */
-     public WarningMessage() {
-         super();
-     }
+    /** Constructor. Just initializes the message category and type.
+     */
+    public WarningMessage() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor with IDs.
-   *
-   * @param clientID client local ID
-   * @param serverID server ID who created the client account
-   */
-     public WarningMessage(String info) {
-         super();
-         this.info = info;
-     }
+    /** Constructor with IDs.
+     *
+     * @param clientID client local ID
+     * @param serverID server ID who created the client account
+     */
+    public WarningMessage(String info) {
+        super();
+        this.info = info;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** This is where we put your message data on the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param ostream data stream where to put your data (see java.io.DataOutputStream)
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-     public void encode( DataOutputStream ostream ) throws IOException {
-         ostream.writeUTF( info );
-     }
+    /** This is where we put your message data on the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param ostream data stream where to put your data (see java.io.DataOutputStream)
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    @Override
+    public void encode(DataOutputStream ostream) throws IOException {
+        ostream.writeUTF(this.info);
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** This is where we retrieve our message data from the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-     public void decode( DataInputStream istream ) throws IOException {
-          info = istream.readUTF();
-     }
+    /** This is where we retrieve our message data from the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    @Override
+    public void decode(DataInputStream istream) throws IOException {
+        this.info = istream.readUTF();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

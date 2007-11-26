@@ -16,13 +16,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.objects.inventories;
 
-import wotlas.common.objects.usefuls.*;
-import wotlas.common.objects.containers.*;
-import wotlas.common.objects.weapons.*;
-import wotlas.common.objects.armors.*;
+import wotlas.common.objects.armors.BodyArmor;
+import wotlas.common.objects.armors.HeadArmor;
+import wotlas.common.objects.weapons.Bow;
+import wotlas.common.objects.weapons.HeavyWeapon;
+import wotlas.common.objects.weapons.LightWeapon;
 
 /** 
  * This is the class for Aes Sedai's Inventory.<br>
@@ -31,164 +32,160 @@ import wotlas.common.objects.armors.*;
  * @see wotlas.common.objects.interfaces.InventoryInterface
  */
 
-public class AesSedaiInventory extends Inventory
-{
+public class AesSedaiInventory extends Inventory {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
+    /** Constructor.
+     */
     public AesSedaiInventory() {
         super();
     }
 
- /*------------------------------------------------------------------------------------*/
- 
-  /** Get the body armor.
-   * @return null
-   */
-    public BodyArmor getBodyArmor()
-    {
+    /*------------------------------------------------------------------------------------*/
+
+    /** Get the body armor.
+     * @return null
+     */
+    @Override
+    public BodyArmor getBodyArmor() {
         return null;
     }
 
-  /** Set the body armor. Ignored.
-   * @param bodyArmor the new body armor
-   */
-    public void setBodyArmor(BodyArmor bodyArmor) throws InventoryException
-    {
-	 throw new InventoryException();
+    /** Set the body armor. Ignored.
+     * @param bodyArmor the new body armor
+     */
+    @Override
+    public void setBodyArmor(BodyArmor bodyArmor) throws InventoryException {
+        throw new InventoryException();
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** Get the head armor.
-   * @return null
-   */
-    public HeadArmor getHeadArmor()
-    {
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the head armor.
+     * @return null
+     */
+    @Override
+    public HeadArmor getHeadArmor() {
         return null;
     }
 
-  /** Set the head armor. Ignored.
-   * @param headArmor the new head armor
-   */
-    public void setHeadArmor(HeadArmor headArmor) throws InventoryException
-    {
-	 throw new InventoryException();
+    /** Set the head armor. Ignored.
+     * @param headArmor the new head armor
+     */
+    @Override
+    public void setHeadArmor(HeadArmor headArmor) throws InventoryException {
+        throw new InventoryException();
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Get the heavy weapon.
-   * @return null
-   */
-    public HeavyWeapon getHeavyWeapon()
-    {
+    /** Get the heavy weapon.
+     * @return null
+     */
+    @Override
+    public HeavyWeapon getHeavyWeapon() {
         return null;
     }
 
-  /** Set the heavy weapon. Ignored.
-   * @param heavyWeapon the new heavy weapon
-   */
-    public void setHeavyWeapon(HeavyWeapon heavyWeapon) throws InventoryException
-    {
- 	 throw new InventoryException();
+    /** Set the heavy weapon. Ignored.
+     * @param heavyWeapon the new heavy weapon
+     */
+    @Override
+    public void setHeavyWeapon(HeavyWeapon heavyWeapon) throws InventoryException {
+        throw new InventoryException();
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** Get the bow.
-   * @return null
-   */
-    public Bow getBow()
-    {
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the bow.
+     * @return null
+     */
+    @Override
+    public Bow getBow() {
         return null;
     }
 
-  /** Set the bow. Ignored.
-   * @param bow the new bow
-   */
-    public void setBow(Bow bow) throws InventoryException
-    {
-	 throw new InventoryException();
+    /** Set the bow. Ignored.
+     * @param bow the new bow
+     */
+    @Override
+    public void setBow(Bow bow) throws InventoryException {
+        throw new InventoryException();
     }
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
- 
-  /** Get the weapon hidden in right sleeve.
-   * @return null
-   */
-    public LightWeapon getRightSleeveWeapon()
-    {
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the weapon hidden in right sleeve.
+     * @return null
+     */
+    @Override
+    public LightWeapon getRightSleeveWeapon() {
         return null;
     }
 
-  /** Set the weapon hidden in right sleeve. Ignored.
-   * @param rightSleeveWeapon the new weapon hidden in right sleeve
-   */
-    public void setRightSleeveWeapon(LightWeapon rightSleeveWeapon) throws InventoryException
-    {
-	 throw new InventoryException();
+    /** Set the weapon hidden in right sleeve. Ignored.
+     * @param rightSleeveWeapon the new weapon hidden in right sleeve
+     */
+    @Override
+    public void setRightSleeveWeapon(LightWeapon rightSleeveWeapon) throws InventoryException {
+        throw new InventoryException();
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** Get the weapon hidden in left sleeve.
-   * @return null
-   */
-    public LightWeapon getLeftSleeveWeapon()
-    {
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the weapon hidden in left sleeve.
+     * @return null
+     */
+    @Override
+    public LightWeapon getLeftSleeveWeapon() {
         return null;
     }
 
-  /** Set the weapon hidden in left sleeve. Ignored.
-   * @param leftSleeveWeapon the new weapon hidden in left sleeve
-   */
-    public void setLeftSleeveWeapon(LightWeapon leftSleeveWeapon) throws InventoryException
-    {
-	 throw new InventoryException();
+    /** Set the weapon hidden in left sleeve. Ignored.
+     * @param leftSleeveWeapon the new weapon hidden in left sleeve
+     */
+    @Override
+    public void setLeftSleeveWeapon(LightWeapon leftSleeveWeapon) throws InventoryException {
+        throw new InventoryException();
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** Get the weapon hidden in right boot.
-   * @return null
-   */
-    public LightWeapon getRightBootWeapon()
-    {
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the weapon hidden in right boot.
+     * @return null
+     */
+    @Override
+    public LightWeapon getRightBootWeapon() {
         return null;
     }
 
-  /** Set the weapon hidden in right boot. Ignored.
-   * @param rightBootWeapon the new weapon hidden in right boot
-   */
-    public void setRightBootWeapon(LightWeapon rightBootWeapon) throws InventoryException
-    {
-	 throw new InventoryException();
+    /** Set the weapon hidden in right boot. Ignored.
+     * @param rightBootWeapon the new weapon hidden in right boot
+     */
+    @Override
+    public void setRightBootWeapon(LightWeapon rightBootWeapon) throws InventoryException {
+        throw new InventoryException();
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** Get the weapon hidden in left boot.
-   * @return null
-   */
-    public LightWeapon getLeftBootWeapon()
-    {
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the weapon hidden in left boot.
+     * @return null
+     */
+    @Override
+    public LightWeapon getLeftBootWeapon() {
         return null;
     }
 
-  /** Set the weapon hidden in left boot. Ignored.
-   * @param leftBootWeapon the new weapon hidden in left boot
-   */
-    public void setLeftBootWeapon(LightWeapon leftBootWeapon) throws InventoryException
-    {
-	 throw new InventoryException();
+    /** Set the weapon hidden in left boot. Ignored.
+     * @param leftBootWeapon the new weapon hidden in left boot
+     */
+    @Override
+    public void setLeftBootWeapon(LightWeapon leftBootWeapon) throws InventoryException {
+        throw new InventoryException();
     }
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- 
- 
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }

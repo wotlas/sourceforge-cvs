@@ -21,15 +21,6 @@ package wotlas.common;
 
 import javax.swing.table.AbstractTableModel;
 
-import javax.swing.JTable;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.JScrollPane;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.JOptionPane;
-import java.awt.*;
-import java.awt.event.*;
-
 /** An AbstractTableModel to diplay a list of server configs in a JTable
  *
  * @author Petrus   
@@ -38,69 +29,70 @@ import java.awt.event.*;
  */
 
 public class ServerConfigListTableModel extends AbstractTableModel {
-  
- /*------------------------------------------------------------------------------------*/
-  
-  /** Array of servers
-   */
-  private ServerConfigManager servers;
-    
-  /** Names of the table columns
-   */
-  private final String[] columnNames = {"Name", "Location", "ID" };  
 
- /*------------------------------------------------------------------------------------*/
- 
-  /** Constructor
-   *   
-   * @param ServerConfigList list of servers
-   */
-  public ServerConfigListTableModel(ServerConfigManager servers) {    
-    this.servers = servers;
-  }
+    /*------------------------------------------------------------------------------------*/
 
- /*------------------------------------------------------------------------------------*/
+    /** Array of servers
+     */
+    private ServerConfigManager servers;
 
-  /** To get the number of columns
-   */  
-  public int getColumnCount() {
-    return columnNames.length;
-  }
-  
-  /** To get the number of rows
-   */  
-  public int getRowCount() {
-    return servers.size();
-  }
+    /** Names of the table columns
+     */
+    private final String[] columnNames = { "Name", "Location", "ID" };
 
-  /** To get a column name
-   *
-   * @param col index of column
-   */
-  public String getColumnName(int col) {
-    return columnNames[col];
-  }  
-  
-  /** To get the value of a cell
-   *
-   * @param row index of cell row
-   * @param col index of cell column
-   */
-  public Object getValueAt(int row, int col) {
-    switch(col) {
-      case 0:
-        return servers.serverConfigAt(row).getServerSymbolicName();
-        
-      case 1:        
-        return servers.serverConfigAt(row).getLocation();
-        
-      case 2:
-        return new Integer(servers.serverConfigAt(row).getServerID());
-        
-      default:
-        return null;
+    /*------------------------------------------------------------------------------------*/
+
+    /** Constructor
+     *   
+     * @param ServerConfigList list of servers
+     */
+    public ServerConfigListTableModel(ServerConfigManager servers) {
+        this.servers = servers;
     }
-  }
 
- /*------------------------------------------------------------------------------------*/
-}  
+    /*------------------------------------------------------------------------------------*/
+
+    /** To get the number of columns
+     */
+    public int getColumnCount() {
+        return this.columnNames.length;
+    }
+
+    /** To get the number of rows
+     */
+    public int getRowCount() {
+        return this.servers.size();
+    }
+
+    /** To get a column name
+     *
+     * @param col index of column
+     */
+    @Override
+    public String getColumnName(int col) {
+        return this.columnNames[col];
+    }
+
+    /** To get the value of a cell
+     *
+     * @param row index of cell row
+     * @param col index of cell column
+     */
+    public Object getValueAt(int row, int col) {
+        switch (col) {
+            case 0:
+                return this.servers.serverConfigAt(row).getServerSymbolicName();
+
+            case 1:
+                return this.servers.serverConfigAt(row).getLocation();
+
+            case 2:
+                return new Integer(this.servers.serverConfigAt(row).getServerID());
+
+            default:
+                return null;
+        }
+    }
+
+    /*------------------------------------------------------------------------------------*/
+}

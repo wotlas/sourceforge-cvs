@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.utils;
 
 import java.io.PrintStream;
@@ -29,58 +29,57 @@ import java.io.PrintStream;
 
 public class Debug {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
     /** 
      * A debug level used for notification messages,
      * does not represent any serious problem. 
      */
-       public static final byte NOTICE = 0;
+    public static final byte NOTICE = 0;
 
     /** 
      * A debug level warning of an undesireable occurrence,
      * but the program has recovered and is continuing OK.
      */
-       public static final byte WARNING = 1;
+    public static final byte WARNING = 1;
 
     /** 
      * A debug level indicating an important error,
      * the program will probably recover but some things are now wrong.
      */
-       public static final byte ERROR = 2;
+    public static final byte ERROR = 2;
 
     /** 
      * A debug level indicating a critical problem,
      * the program will very likely stop working.
      */
-       public static final byte CRITICAL = 3;
+    public static final byte CRITICAL = 3;
 
     /** 
      * A debug level indicating complete failure,
      * the program is about to crash.  
      */
-       public static final byte FAILURE = 4;
+    public static final byte FAILURE = 4;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
     /**
      * Current level we are working at.
      * Under this level we filter messages.
      */
-       private static byte level = NOTICE;
+    private static byte level = Debug.NOTICE;
 
     /**
      * Display exception stack trace ?
      */
-       private static boolean displayExceptionStack = true;
-
+    private static boolean displayExceptionStack = true;
 
     /**
      * the output stream we are going to use
      */
-       private static PrintStream out = System.err;
+    private static PrintStream out = System.err;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
     /** To print a debug message.
      *
@@ -88,37 +87,42 @@ public class Debug {
      * @param src_obj object reporting the error.
      * @param info a short text about the error.
      */
-       public synchronized static void signal( byte code, Object src_obj, String info )
-       {
-          if(code<level)
-       	     return;
+    public synchronized static void signal(byte code, Object src_obj, String info) {
+        if (code < Debug.level)
+            return;
 
-          String debug_msg = "";
+        String debug_msg = "";
 
-          switch( code ) {
-             case FAILURE:
-	          debug_msg += "FAILURE"; break;
-             case CRITICAL:
-                  debug_msg += "CRITICAL"; break;
-             case ERROR:
-                  debug_msg += "ERROR"; break;
-             case WARNING:
-                  debug_msg += "WARNING"; break;
-             case NOTICE:
-                  debug_msg += "NOTICE"; break;
-             default:
-	          debug_msg += "UNKNOWN"; break;
-           }
+        switch (code) {
+            case FAILURE:
+                debug_msg += "FAILURE";
+                break;
+            case CRITICAL:
+                debug_msg += "CRITICAL";
+                break;
+            case ERROR:
+                debug_msg += "ERROR";
+                break;
+            case WARNING:
+                debug_msg += "WARNING";
+                break;
+            case NOTICE:
+                debug_msg += "NOTICE";
+                break;
+            default:
+                debug_msg += "UNKNOWN";
+                break;
+        }
 
-          if(src_obj!=null)
-             debug_msg += " - " + src_obj.getClass().getName() +"\n   "+info;
-          else 
-             debug_msg += " - " +info;
-                
-          out.println( debug_msg );
-       }
+        if (src_obj != null)
+            debug_msg += " - " + src_obj.getClass().getName() + "\n   " + info;
+        else
+            debug_msg += " - " + info;
 
- /*------------------------------------------------------------------------------------*/
+        Debug.out.println(debug_msg);
+    }
+
+    /*------------------------------------------------------------------------------------*/
 
     /** To print a debug message with the content of an exception.
      *
@@ -126,95 +130,94 @@ public class Debug {
      * @param src_obj class reporting the error.
      * @param e exception raised.
      */
-       public synchronized static void signal( byte code, Object src_obj, Exception e ) {
-          if(e!=null) {
-             if(e.getMessage()!=null)
-                signal( code, src_obj, e.getMessage() );
-             else
-                signal( code, src_obj, e.toString() );
-          }
-          else
-             signal( code, src_obj, "<null exception>" );
+    public synchronized static void signal(byte code, Object src_obj, Exception e) {
+        if (e != null) {
+            if (e.getMessage() != null)
+                Debug.signal(code, src_obj, e.getMessage());
+            else
+                Debug.signal(code, src_obj, e.toString());
+        } else
+            Debug.signal(code, src_obj, "<null exception>");
 
-          if( displayExceptionStack && e!=null )
-              out.println( "EXCEPTION STACK: "+getStackTrace(e) );
-       }
+        if (Debug.displayExceptionStack && e != null)
+            Debug.out.println("EXCEPTION STACK: " + Debug.getStackTrace(e));
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Changes the level of debugging. We don't print errors under the specified level.
-   *
-   * @param level code ( NOTICE, WARNING, ... ) under which we filter.
-   */
-     static public void setLevel( byte level ) {
-       Debug.level=level;
-     }
+    /** Changes the level of debugging. We don't print errors under the specified level.
+     *
+     * @param level code ( NOTICE, WARNING, ... ) under which we filter.
+     */
+    static public void setLevel(byte level) {
+        Debug.level = level;
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To set/unset the display of exception stack trace.
-   *
-   * @param display set to true if you want to see exception stack trace.
-   */
-     static public void displayExceptionStack( boolean display ) {
-       Debug.displayExceptionStack=display;
-     }
+    /** To set/unset the display of exception stack trace.
+     *
+     * @param display set to true if you want to see exception stack trace.
+     */
+    static public void displayExceptionStack(boolean display) {
+        Debug.displayExceptionStack = display;
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To get the stack trace of an exception.
-   *
-   * @param e exception to inspect
-   */
+    /** To get the stack trace of an exception.
+     *
+     * @param e exception to inspect
+     */
 
-     static public String getStackTrace(Exception e) {
-       java.io.StringWriter s = new java.io.StringWriter();    
-       e.printStackTrace(new java.io.PrintWriter(s));
-       String trace = s.toString();
-       
-       if(trace==null || trace.length()==0 || trace.equals("null"))
-          return e.toString();
-       else
-          return trace;
-     }
+    static public String getStackTrace(Exception e) {
+        java.io.StringWriter s = new java.io.StringWriter();
+        e.printStackTrace(new java.io.PrintWriter(s));
+        String trace = s.toString();
 
- /*------------------------------------------------------------------------------------*/
+        if (trace == null || trace.length() == 0 || trace.equals("null"))
+            return e.toString();
+        else
+            return trace;
+    }
 
-  /** To exit properly.
-   */
-     static public void exit() {
-       // We close our printStream ( can be a log so we do things properly )
-          out.flush();
-          System.exit(0);
-     }
+    /*------------------------------------------------------------------------------------*/
 
- /*------------------------------------------------------------------------------------*/
+    /** To exit properly.
+     */
+    static public void exit() {
+        // We close our printStream ( can be a log so we do things properly )
+        Debug.out.flush();
+        System.exit(0);
+    }
 
-  /** To set the PrintStream for this Debug Utility.
-   *  @param out PrintStream to use.
-   */
-     static public void setPrintStream( PrintStream out ) {
-     	 Debug.out = out;
-     }
+    /*------------------------------------------------------------------------------------*/
 
- /*------------------------------------------------------------------------------------*/
+    /** To set the PrintStream for this Debug Utility.
+     *  @param out PrintStream to use.
+     */
+    static public void setPrintStream(PrintStream out) {
+        Debug.out = out;
+    }
 
-  /** To get the PrintStream of this Debug Utility.
-   *  @return out PrintStream we use.
-   */
-     static public PrintStream getPrintStream() {
-     	 return out;
-     }
+    /*------------------------------------------------------------------------------------*/
 
- /*------------------------------------------------------------------------------------*/
+    /** To get the PrintStream of this Debug Utility.
+     *  @return out PrintStream we use.
+     */
+    static public PrintStream getPrintStream() {
+        return Debug.out;
+    }
 
-  /** To flush the printStream.
-   *  @param out PrintStream to use.
-   */
-     static public void flushPrintStream() {
-     	 out.flush();
-     }
+    /*------------------------------------------------------------------------------------*/
 
- /*------------------------------------------------------------------------------------*/
+    /** To flush the printStream.
+     *  @param out PrintStream to use.
+     */
+    static public void flushPrintStream() {
+        Debug.out.flush();
+    }
+
+    /*------------------------------------------------------------------------------------*/
 
 }

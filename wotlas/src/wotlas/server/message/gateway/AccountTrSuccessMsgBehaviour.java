@@ -19,9 +19,8 @@
 
 package wotlas.server.message.gateway;
 
-import wotlas.server.*;
-
 import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.server.AccountTransaction;
 
 /** 
  * Associated Behaviour to the AccountTrSuccessMessage.
@@ -29,27 +28,26 @@ import wotlas.libs.net.NetMessageBehaviour;
  * @author Aldiss
  */
 
-public class AccountTrSuccessMsgBehaviour extends AccountTrSuccessMessage implements NetMessageBehaviour
-{
- /*------------------------------------------------------------------------------------*/
+public class AccountTrSuccessMsgBehaviour extends AccountTrSuccessMessage implements NetMessageBehaviour {
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor. Just initializes the message category and type.
-   */
-   public AccountTrSuccessMsgBehaviour() {
-       super();
-   }
+    /** Constructor. Just initializes the message category and type.
+     */
+    public AccountTrSuccessMsgBehaviour() {
+        super();
+    }
 
- /*------------------------------------------------------------------------------------*/
-  
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-   public void doBehaviour( Object sessionContext ) {
-          ( (AccountTransaction) sessionContext ).transactionSucceeded();
-   }
+    /*------------------------------------------------------------------------------------*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
+        ((AccountTransaction) sessionContext).transactionSucceeded();
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }

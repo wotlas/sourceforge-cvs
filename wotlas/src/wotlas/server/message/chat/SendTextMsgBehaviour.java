@@ -19,23 +19,18 @@
 
 package wotlas.server.message.chat;
 
-import java.io.IOException;
-import java.util.*;
-
-import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.message.chat.*;
-import wotlas.common.chat.*;
-
-import wotlas.common.Player;
-import wotlas.common.universe.*;
-import wotlas.common.character.*;
+import java.util.Hashtable;
+import java.util.Iterator;
+import wotlas.common.chat.ChatRoom;
+import wotlas.common.message.account.WarningMessage;
+import wotlas.common.message.chat.SendTextMessage;
 import wotlas.common.router.MessageRouter;
-
-import wotlas.common.message.account.*;
-
-import wotlas.server.*;
+import wotlas.common.universe.Room;
+import wotlas.common.universe.WotlasLocation;
+import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.server.PlayerImpl;
+import wotlas.server.ServerDirector;
 import wotlas.server.chat.ChatCommandProcessor;
-
 import wotlas.utils.Debug;
 
 /**
@@ -46,212 +41,210 @@ import wotlas.utils.Debug;
 
 public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageBehaviour {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
+    /** Constructor.
+     */
     public SendTextMsgBehaviour() {
-       super();
+        super();
     }
 
- /*------------------------------------------------------------------------------------*/
-  
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-    public void doBehaviour( Object sessionContext ) {
-     // The sessionContext is here a PlayerImpl.
+    /*------------------------------------------------------------------------------------*/
+
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
+        // The sessionContext is here a PlayerImpl.
         PlayerImpl player = (PlayerImpl) sessionContext;
 
-     // 0 - big messages are truncated
-        if(message.length()>ChatRoom.MAXIMUM_MESSAGE_SIZE)
-           message = message.substring( 0, ChatRoom.MAXIMUM_MESSAGE_SIZE-4)+"...";
+        // 0 - big messages are truncated
+        if (this.message.length() > ChatRoom.MAXIMUM_MESSAGE_SIZE)
+            this.message = this.message.substring(0, ChatRoom.MAXIMUM_MESSAGE_SIZE - 4) + "...";
 
         Hashtable players = null;
         WotlasLocation myLocation = player.getLocation();
 
-     // 0.1 - test shortcut/commands...
-        if(message.charAt(0)=='/') {
-           ChatCommandProcessor processor = ServerDirector.getDataManager().getChatCommandProcessor();
+        // 0.1 - test shortcut/commands...
+        if (this.message.charAt(0) == '/') {
+            ChatCommandProcessor processor = ServerDirector.getDataManager().getChatCommandProcessor();
 
-           if( processor.processCommand( message, player, this ) )
-               return; // end of message process if the command returns true
-                       // if the command returns false we continue the message process
+            if (processor.processCommand(this.message, player, this))
+                return; // end of message process if the command returns true
+            // if the command returns false we continue the message process
         }
 
-     // 1 - We send the message back to the user.
-        if( chatRoomPrimaryKey.equals(player.getCurrentChatPrimaryKey()) ) {
-            if( voiceSoundLevel==ChatRoom.SHOUTING_VOICE_LEVEL )
-                message = message.toUpperCase();
+        // 1 - We send the message back to the user.
+        if (this.chatRoomPrimaryKey.equals(player.getCurrentChatPrimaryKey())) {
+            if (this.voiceSoundLevel == ChatRoom.SHOUTING_VOICE_LEVEL)
+                this.message = this.message.toUpperCase();
             player.sendMessage(this);
-        }
-        else if( voiceSoundLevel!=ChatRoom.SHOUTING_VOICE_LEVEL ) {
-         // player is trying to speak in a ChatRoom not near to him.
-       	    message = "<i>No one can hear you !</i>";
+        } else if (this.voiceSoundLevel != ChatRoom.SHOUTING_VOICE_LEVEL) {
+            // player is trying to speak in a ChatRoom not near to him.
+            this.message = "<i>No one can hear you !</i>";
             player.sendMessage(this);
-            return;       	   
+            return;
         }
 
-    // 2 - We analyze who we must receive this message... it depends on the location...
+        // 2 - We analyze who we must receive this message... it depends on the location...
 
-    // 2.1 - ROOM CASE
-       if ( myLocation.isRoom() ) {
-       	 // 2.1.1 - Get Current Room
-            Room myRoom = player.getMyRoom();    
-            if (myRoom==null) {
-                Debug.signal( Debug.ERROR, this, "Error could not get current room ! "+player.getLocation() );
-                player.sendMessage( new WarningMessage("Your player has a bad location on Server ! Please report this bug !\nLocation:"+player.getLocation()) );
+        // 2.1 - ROOM CASE
+        if (myLocation.isRoom()) {
+            // 2.1.1 - Get Current Room
+            Room myRoom = player.getMyRoom();
+            if (myRoom == null) {
+                Debug.signal(Debug.ERROR, this, "Error could not get current room ! " + player.getLocation());
+                player.sendMessage(new WarningMessage("Your player has a bad location on Server ! Please report this bug !\nLocation:" + player.getLocation()));
                 return;
             }
 
-         // 2.1.2 - Voice Level
-            switch( voiceSoundLevel ) {
-                case ChatRoom.WHISPERING_VOICE_LEVEL :
-                   // is it the default chat ? or another ?
-                     boolean isDefaultChat = chatRoomPrimaryKey.equals(ChatRoom.DEFAULT_CHAT);
-                   
-                     if(isDefaultChat)
-                     	players = myRoom.getMessageRouter().getPlayers();
-                     else {
+            // 2.1.2 - Voice Level
+            switch (this.voiceSoundLevel) {
+                case ChatRoom.WHISPERING_VOICE_LEVEL:
+                    // is it the default chat ? or another ?
+                    boolean isDefaultChat = this.chatRoomPrimaryKey.equals(ChatRoom.DEFAULT_CHAT);
+
+                    if (isDefaultChat)
+                        players = myRoom.getMessageRouter().getPlayers();
+                    else {
                         player.setIsChatMember(true);
 
-                        if( player.getChatList()==null ) {
-                            Debug.signal( Debug.ERROR, this, "No Chat List for player: "+player.getPrimaryKey() );
+                        if (player.getChatList() == null) {
+                            Debug.signal(Debug.ERROR, this, "No Chat List for player: " + player.getPrimaryKey());
                             return;
                         }
-                        
-                        players = player.getChatList().getPlayers( chatRoomPrimaryKey );
-                     }
 
-                     if(players==null) {
-                        Debug.signal( Debug.ERROR, this, "No players found for chat: "+chatRoomPrimaryKey );
+                        players = player.getChatList().getPlayers(this.chatRoomPrimaryKey);
+                    }
+
+                    if (players == null) {
+                        Debug.signal(Debug.ERROR, this, "No players found for chat: " + this.chatRoomPrimaryKey);
                         return;
-                     }
+                    }
 
-                  // send the message
-                     synchronized(players) {
+                    // send the message
+                    synchronized (players) {
                         Iterator it = players.values().iterator();
                         PlayerImpl p = null;
 
-                        while ( it.hasNext() ) {
-                            p = (PlayerImpl)it.next();
-                            if (p!=player && ( p.isChatMember() || isDefaultChat ) )
-                                p.sendChatMessage( this , player);
+                        while (it.hasNext()) {
+                            p = (PlayerImpl) it.next();
+                            if (p != player && (p.isChatMember() || isDefaultChat))
+                                p.sendChatMessage(this, player);
                         }
-                     }
+                    }
 
-                     return;
+                    return;
 
-                case ChatRoom.NORMAL_VOICE_LEVEL :
-                   // is it the default chat ? or another ?
-                     if(chatRoomPrimaryKey.equals(ChatRoom.DEFAULT_CHAT))
-                     	players = myRoom.getMessageRouter().getPlayers();
-                     else {
+                case ChatRoom.NORMAL_VOICE_LEVEL:
+                    // is it the default chat ? or another ?
+                    if (this.chatRoomPrimaryKey.equals(ChatRoom.DEFAULT_CHAT))
+                        players = myRoom.getMessageRouter().getPlayers();
+                    else {
                         player.setIsChatMember(true);
 
-                        if( player.getChatList()==null ) {
-                            Debug.signal( Debug.ERROR, this, "No Chat List for player: "+player.getPrimaryKey() );
+                        if (player.getChatList() == null) {
+                            Debug.signal(Debug.ERROR, this, "No Chat List for player: " + player.getPrimaryKey());
                             return;
                         }
-                        
-                        players = player.getChatList().getPlayers( chatRoomPrimaryKey );
-                     }
 
-                     if(players==null) {
-                        Debug.signal( Debug.ERROR, this, "No players found for chat: "+chatRoomPrimaryKey );
+                        players = player.getChatList().getPlayers(this.chatRoomPrimaryKey);
+                    }
+
+                    if (players == null) {
+                        Debug.signal(Debug.ERROR, this, "No players found for chat: " + this.chatRoomPrimaryKey);
                         return;
-                     }
+                    }
 
-                  // send the message
-                     synchronized(players) {
+                    // send the message
+                    synchronized (players) {
                         Iterator it = players.values().iterator();
                         PlayerImpl p = null;
 
-                        while ( it.hasNext() ) {
-                            p = (PlayerImpl)it.next();
-                            if (p!=player)
-                                p.sendChatMessage( this, player );
+                        while (it.hasNext()) {
+                            p = (PlayerImpl) it.next();
+                            if (p != player)
+                                p.sendChatMessage(this, player);
                         }
-                     }
+                    }
 
-                     return;
+                    return;
 
-                case ChatRoom.SHOUTING_VOICE_LEVEL :
-                     players = myRoom.getMessageRouter().getPlayers();
+                case ChatRoom.SHOUTING_VOICE_LEVEL:
+                    players = myRoom.getMessageRouter().getPlayers();
 
-                     if(players==null) {
-                        Debug.signal( Debug.ERROR, this, "No players found for room: "+myRoom );
+                    if (players == null) {
+                        Debug.signal(Debug.ERROR, this, "No players found for room: " + myRoom);
                         return;
-                     }
+                    }
 
-                     message = message.toUpperCase();
+                    this.message = this.message.toUpperCase();
 
-                  // send the message to the players of the room
-                     synchronized(players) {
+                    // send the message to the players of the room
+                    synchronized (players) {
                         Iterator it = players.values().iterator();
                         PlayerImpl p = null;
 
-                        while ( it.hasNext() ) {
-                            p = (PlayerImpl)it.next();
-                            if (p!=player)
-                                p.sendChatMessage( this , player );
+                        while (it.hasNext()) {
+                            p = (PlayerImpl) it.next();
+                            if (p != player)
+                                p.sendChatMessage(this, player);
                         }
-                     }
+                    }
 
-                  // And players in other rooms
-                     if(myRoom.getRoomLinks()==null)
+                    // And players in other rooms
+                    if (myRoom.getRoomLinks() == null)
                         return;
 
-                     for( int j=0; j<myRoom.getRoomLinks().length; j++ ) {
-                         Room otherRoom = myRoom.getRoomLinks()[j].getRoom1();
-  
-                         if( otherRoom==myRoom )
-                             otherRoom = myRoom.getRoomLinks()[j].getRoom2();
+                    for (int j = 0; j < myRoom.getRoomLinks().length; j++) {
+                        Room otherRoom = myRoom.getRoomLinks()[j].getRoom1();
 
-                         players = otherRoom.getMessageRouter().getPlayers();
+                        if (otherRoom == myRoom)
+                            otherRoom = myRoom.getRoomLinks()[j].getRoom2();
 
-                         synchronized( players ) {
+                        players = otherRoom.getMessageRouter().getPlayers();
+
+                        synchronized (players) {
                             Iterator it = players.values().iterator();
-                 
-                            while( it.hasNext() ) {
-                               PlayerImpl p = (PlayerImpl)it.next();
-                               p.sendChatMessage( this , player );
+
+                            while (it.hasNext()) {
+                                PlayerImpl p = (PlayerImpl) it.next();
+                                p.sendChatMessage(this, player);
                             }
-                         }
-                     }
+                        }
+                    }
 
-                     return;
-            }  // end of switch
+                    return;
+            } // end of switch
 
-          return; // should never be reached
-       }
+            return; // should never be reached
+        }
 
-    // 2.2 - TOWN & WORLD CASE
+        // 2.2 - TOWN & WORLD CASE
 
-       MessageRouter mRouter = player.getMessageRouter();
+        MessageRouter mRouter = player.getMessageRouter();
 
-       if(mRouter==null) {
-          Debug.signal( Debug.ERROR, this, "No MessageRouter found for location: "+player.getLocation() );
-          return;
-       }
+        if (mRouter == null) {
+            Debug.signal(Debug.ERROR, this, "No MessageRouter found for location: " + player.getLocation());
+            return;
+        }
 
-       players = mRouter.getPlayers();
+        players = mRouter.getPlayers();
 
-       synchronized( players ) {
-          Iterator it = players.values().iterator();
+        synchronized (players) {
+            Iterator it = players.values().iterator();
 
-            while ( it.hasNext() ) {
-               PlayerImpl p = (PlayerImpl)it.next();
+            while (it.hasNext()) {
+                PlayerImpl p = (PlayerImpl) it.next();
 
-               if (p!=player)
-                   p.sendChatMessage( this , player );
+                if (p != player)
+                    p.sendChatMessage(this, player);
             }
-       }
-  }
-  
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
+        }
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }
-  

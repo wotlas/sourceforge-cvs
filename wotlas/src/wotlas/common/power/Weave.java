@@ -19,12 +19,9 @@
 
 package wotlas.common.power;
 
-import wotlas.common.*;
-import wotlas.common.universe.*;
-import wotlas.libs.graphics2D.*;
-
-import java.io.*;
-import java.awt.Color;
+import wotlas.common.Player;
+import wotlas.common.universe.WotlasLocation;
+import wotlas.libs.graphics2D.Drawable;
 
 /** Generic Wotlas Weave. Each Channeller object possess a collection (HashMap in the default implementation) of Weave objects for their amusement.
  *
@@ -47,7 +44,7 @@ public abstract class Weave {
     /** to get the name of the Weave
      */
     public String getName() {
-	return this.name;
+        return this.name;
     }
 
     private String name;
@@ -59,7 +56,7 @@ public abstract class Weave {
      * @param Player the channeller
      * @return success status
      */
-    public abstract boolean channel( Player channeller );
+    public abstract boolean channel(Player channeller);
 
     /** Alternative channel() method - this one requires a Character as a target
      *
@@ -67,7 +64,7 @@ public abstract class Weave {
      * @param target the target Player
      * @return success status
      */
-    public abstract boolean channel( Player channeller, Player target );
+    public abstract boolean channel(Player channeller, Player target);
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -80,9 +77,8 @@ public abstract class Weave {
      * @param playerLocation player current location
      * @return image identifier of the pwwer in action
      */
-    public abstract Drawable getEffect( WotlasLocation playerLocation );
+    public abstract Drawable getEffect(WotlasLocation playerLocation);
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 
 }

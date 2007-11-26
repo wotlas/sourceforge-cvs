@@ -19,16 +19,13 @@
 
 package wotlas.client.message.movement;
 
-import java.io.IOException;
-import java.util.*;
-
-import wotlas.utils.Debug;
-
-import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.message.movement.*;
-import wotlas.common.universe.*;
+import java.util.Hashtable;
+import wotlas.client.DataManager;
+import wotlas.client.PlayerImpl;
 import wotlas.common.Player;
-import wotlas.client.*;
+import wotlas.common.message.movement.LocationChangeMessage;
+import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.utils.Debug;
 
 /**
  * Associated behaviour to the LocationChangeMessage...
@@ -36,60 +33,58 @@ import wotlas.client.*;
  * @author Aldiss
  */
 
-public class LocationChangeMsgBehaviour extends LocationChangeMessage implements NetMessageBehaviour
-{
- /*------------------------------------------------------------------------------------*/
+public class LocationChangeMsgBehaviour extends LocationChangeMessage implements NetMessageBehaviour {
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public LocationChangeMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+     */
+    public LocationChangeMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {
-           if (DataManager.SHOW_DEBUG)
-               System.out.println("LOCATION CHANGED FOR PLAYER "+primaryKey+" !");
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
+        if (DataManager.SHOW_DEBUG)
+            System.out.println("LOCATION CHANGED FOR PLAYER " + this.primaryKey + " !");
 
         // The sessionContext is here a DataManager.
-           DataManager dataManager = (DataManager) sessionContext;
-           PlayerImpl player = dataManager.getMyPlayer();
+        DataManager dataManager = (DataManager) sessionContext;
+        PlayerImpl player = dataManager.getMyPlayer();
 
-           if(primaryKey==null) {
-              Debug.signal( Debug.ERROR, this, "No primary key to identify player !" );
-              return;
-           }
+        if (this.primaryKey == null) {
+            Debug.signal(Debug.ERROR, this, "No primary key to identify player !");
+            return;
+        }
 
-           if( player.getPrimaryKey().equals( primaryKey ) ) {
-              Debug.signal( Debug.ERROR, this, "This message is for our master player !" );
-              return;
-           }
+        if (player.getPrimaryKey().equals(this.primaryKey)) {
+            Debug.signal(Debug.ERROR, this, "This message is for our master player !");
+            return;
+        }
 
         // We seek for this player
-           Hashtable players = dataManager.getPlayers();
-           Player uPlayer = null;
-           
-           if(players!=null)
-              uPlayer = (Player) players.get(primaryKey);
-              
-           if(uPlayer==null) {
-              Debug.signal( Debug.ERROR, this, "Player "+primaryKey+" not found !" );
-              return;
-           }
-           
+        Hashtable players = dataManager.getPlayers();
+        Player uPlayer = null;
+
+        if (players != null)
+            uPlayer = (Player) players.get(this.primaryKey);
+
+        if (uPlayer == null) {
+            Debug.signal(Debug.ERROR, this, "Player " + this.primaryKey + " not found !");
+            return;
+        }
+
         // SUCCESS ! we update the player location !
-           uPlayer.setLocation(location);
-           
-           if( !uPlayer.getLocation().equals(player.getLocation()) )
-               dataManager.getClientScreen().getChatPanel().removePlayerFromAllchatRooms(primaryKey);
-     }
+        uPlayer.setLocation(this.location);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        if (!uPlayer.getLocation().equals(player.getLocation()))
+            dataManager.getClientScreen().getChatPanel().removePlayerFromAllchatRooms(this.primaryKey);
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

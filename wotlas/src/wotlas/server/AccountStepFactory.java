@@ -19,13 +19,11 @@
 
 package wotlas.server;
 
-import wotlas.libs.wizard.*;
-import wotlas.utils.Debug;
-
-import wotlas.common.ResourceManager;
-
+import java.io.File;
 import java.util.Hashtable;
-import java.io.*;
+import wotlas.common.ResourceManager;
+import wotlas.libs.wizard.JWizardStepParameters;
+import wotlas.utils.Debug;
 
 /** A factory that stores and builds the JWizardStepParameters objects. It is used by
  *  the AccountBuilder.<br>
@@ -37,86 +35,84 @@ import java.io.*;
 
 public class AccountStepFactory {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Suffix of the wizard files.
-   */
+    /** Suffix of the wizard files.
+     */
     public static final String WIZARD_SUFFIX = ".wiz";
 
-  /** Name of the first step to be started by the AccountBuilder. This step must always
-   *  exist.
-   */
+    /** Name of the first step to be started by the AccountBuilder. This step must always
+     *  exist.
+     */
     public static final String FIRST_STEP = "index.wiz";
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Our JWizardStep Buffer where we store static JWizard steps.
-   *  The hashtable's key is the file name that contains the persistent version
-   *  of the JWizardStepParameters.
-   */
-   private Hashtable staticStepParameters;
+    /** Our JWizardStep Buffer where we store static JWizard steps.
+     *  The hashtable's key is the file name that contains the persistent version
+     *  of the JWizardStepParameters.
+     */
+    private Hashtable staticStepParameters;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor. We load the wizard steps.
-   *
-   * @param rManager our resource manager
-   */
-   public AccountStepFactory( ResourceManager rManager ) {
-         staticStepParameters = new Hashtable(20);
+    /** Constructor. We load the wizard steps.
+     *
+     * @param rManager our resource manager
+     */
+    public AccountStepFactory(ResourceManager rManager) {
+        this.staticStepParameters = new Hashtable(20);
 
-         String accountWizardHome = rManager.getWizardStepsDir();
+        String accountWizardHome = rManager.getWizardStepsDir();
 
-      // We load all the step parameters in our hashtable
-         String list[] = rManager.listFiles( accountWizardHome, WIZARD_SUFFIX );
+        // We load all the step parameters in our hashtable
+        String list[] = rManager.listFiles(accountWizardHome, AccountStepFactory.WIZARD_SUFFIX);
 
-         int nbSteps=0;
+        int nbSteps = 0;
 
-         for( int i=0; i<list.length; i++ ) {
-            
-            JWizardStepParameters parameters = JWizardStepParameters.loadFromStream(
-                                               rManager.getFileStream( list[i] ) );
+        for (int i = 0; i < list.length; i++) {
 
-            if(parameters==null) {
-               Debug.signal(Debug.ERROR,this,"Failed to load wizard step "+list[i]);
-               continue;
+            JWizardStepParameters parameters = JWizardStepParameters.loadFromStream(rManager.getFileStream(list[i]));
+
+            if (parameters == null) {
+                Debug.signal(Debug.ERROR, this, "Failed to load wizard step " + list[i]);
+                continue;
             }
 
             String name = list[i];
-            int index = list[i].lastIndexOf( File.separator );
+            int index = list[i].lastIndexOf(File.separator);
 
-            if(index<0) {
-               index = list[i].lastIndexOf( "/" );
+            if (index < 0) {
+                index = list[i].lastIndexOf("/");
 
-               if(index>0)
-                  name = name.substring( index+1, name.length() );
-            }
-            else
-               name = name.substring( index+File.separator.length(), name.length() );
-            
-            staticStepParameters.put( name, parameters );
+                if (index > 0)
+                    name = name.substring(index + 1, name.length());
+            } else
+                name = name.substring(index + File.separator.length(), name.length());
+
+            this.staticStepParameters.put(name, parameters);
             nbSteps++;
-         }
+        }
 
-        Debug.signal( Debug.NOTICE, null, "Loaded "+nbSteps+" account wizard steps...");
-   }
+        Debug.signal(Debug.NOTICE, null, "Loaded " + nbSteps + " account wizard steps...");
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To get a JWizardStepParameters object from the file name of its persistent state.
-   *
-   *  @param stepFileName file name
-   *  @return the wanted JWizardStepParameters instance, null if we failed to retrieve it.
-   */
-   public JWizardStepParameters getStep(String stepFileName) {
+    /** To get a JWizardStepParameters object from the file name of its persistent state.
+     *
+     *  @param stepFileName file name
+     *  @return the wanted JWizardStepParameters instance, null if we failed to retrieve it.
+     */
+    public JWizardStepParameters getStep(String stepFileName) {
 
-     // Class already in our buffer ?
-        if( staticStepParameters.containsKey(stepFileName) )
-            return (JWizardStepParameters) staticStepParameters.get(stepFileName);
-     
+        // Class already in our buffer ?
+        if (this.staticStepParameters.containsKey(stepFileName))
+            return (JWizardStepParameters) this.staticStepParameters.get(stepFileName);
+
         return null; // not found
-   }
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
 }

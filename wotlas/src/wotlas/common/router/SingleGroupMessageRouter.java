@@ -19,15 +19,11 @@
 
 package wotlas.common.router;
 
-import wotlas.common.*;
-import wotlas.common.universe.*;
-import wotlas.common.chat.*;
-
-import wotlas.libs.net.NetMessage;
-import wotlas.utils.Debug;
-
-import java.util.Hashtable;
 import java.util.Iterator;
+import wotlas.common.Player;
+import wotlas.common.WorldManager;
+import wotlas.common.universe.WotlasLocation;
+import wotlas.libs.net.NetMessage;
 
 /** A message router that manages only a single group of players. Useful for WorldMaps
  *  TownMaps. We don't advertise people's presence...
@@ -37,82 +33,85 @@ import java.util.Iterator;
 
 public class SingleGroupMessageRouter extends MessageRouter {
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Constructor. Just creates internals.
-    */
-     public SingleGroupMessageRouter() {
-         super();
-     }
+    /** Constructor. Just creates internals.
+     */
+    public SingleGroupMessageRouter() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** This method does nothing for this router.
-    *
-    * @param location location this MessageRouter is linked to.
-    * @param wManager WorldManager of the application.
-    */
-     public void init( WotlasLocation location, WorldManager wManager ) {
-     }
+    /** This method does nothing for this router.
+     *
+     * @param location location this MessageRouter is linked to.
+     * @param wManager WorldManager of the application.
+     */
+    @Override
+    public void init(WotlasLocation location, WorldManager wManager) {
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To add a player to this group. The default implementation of this method just
-    *  add the player to our list WITHOUT sending any messages.
-    *
-    * @param player player to add
-    * @return true if the player was added successfully, false if an error occured.
-    */
-     public boolean addPlayer( Player player ) {
-         players.put( player.getPrimaryKey(), player );
-         return true;
-     }
+    /** To add a player to this group. The default implementation of this method just
+     *  add the player to our list WITHOUT sending any messages.
+     *
+     * @param player player to add
+     * @return true if the player was added successfully, false if an error occured.
+     */
+    @Override
+    public boolean addPlayer(Player player) {
+        this.players.put(player.getPrimaryKey(), player);
+        return true;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** This method does nothing for this router.
-    *
-    * @param player player to move
-    * @return true if the player was moved successfully, false if an error occured.
-    */
-     public boolean movePlayer( Player player, WotlasLocation targetLocation ) {
+    /** This method does nothing for this router.
+     *
+     * @param player player to move
+     * @return true if the player was moved successfully, false if an error occured.
+     */
+    @Override
+    public boolean movePlayer(Player player, WotlasLocation targetLocation) {
         return false;
-     }
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To send a list of messages to the specified group with the exception of a player.
-    *  for this router messages are only sent to the LOCAL group we manage. Other
-    *  groupOption values are not considered. If you use the EXC_EXTENDED_GROUP option
-    *  no message will be sent.
-    *
-    *  @param msg message to send to the group
-    *  @param exceptThisPlayer player to except from the send of messages, if the
-    *         given player is null the message will be sent to everyone in the selected
-    *         groups.
-    *  @param groupOption gives the groups to send the message to. See the constants
-    *         defined in this class : LOCAL_GROUP, EXTENDED_GROUP, EXC_EXTENDED_GROUP
-    */
-     public void sendMessages( NetMessage msg[], Player exceptThisPlayer, byte groupOption ) {
+    /** To send a list of messages to the specified group with the exception of a player.
+     *  for this router messages are only sent to the LOCAL group we manage. Other
+     *  groupOption values are not considered. If you use the EXC_EXTENDED_GROUP option
+     *  no message will be sent.
+     *
+     *  @param msg message to send to the group
+     *  @param exceptThisPlayer player to except from the send of messages, if the
+     *         given player is null the message will be sent to everyone in the selected
+     *         groups.
+     *  @param groupOption gives the groups to send the message to. See the constants
+     *         defined in this class : LOCAL_GROUP, EXTENDED_GROUP, EXC_EXTENDED_GROUP
+     */
+    @Override
+    public void sendMessages(NetMessage msg[], Player exceptThisPlayer, byte groupOption) {
 
-           if( groupOption==EXC_EXTENDED_GROUP )
-               return;
-        
+        if (groupOption == MessageRouter.EXC_EXTENDED_GROUP)
+            return;
+
         // We send the messages to the local group.
-           synchronized( players ) {
-              Iterator it = players.values().iterator();
+        synchronized (this.players) {
+            Iterator it = this.players.values().iterator();
 
-              while( it.hasNext() ) {
-                  Player p = (Player) it.next();
+            while (it.hasNext()) {
+                Player p = (Player) it.next();
 
-                  if( p!=exceptThisPlayer )
-                      for( int i=0; i< msg.length; i++ )
-                           p.sendMessage( msg[i] );
-              }
-           }
-     }
+                if (p != exceptThisPlayer)
+                    for (int i = 0; i < msg.length; i++)
+                        p.sendMessage(msg[i]);
+            }
+        }
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

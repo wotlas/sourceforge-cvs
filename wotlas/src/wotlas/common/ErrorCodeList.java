@@ -28,36 +28,34 @@ import wotlas.libs.net.NetErrorCodeList;
  * @see wotlas.libs.net.NetErrorCodeList
  */
 
-public interface ErrorCodeList extends NetErrorCodeList
-{
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+public interface ErrorCodeList extends NetErrorCodeList {
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Net Library Error Codes (Server Side) - reserves code 0 - 99
-   *  declared in NetErrorCodeList.
-   */
+    /** Net Library Error Codes (Server Side) - reserves code 0 - 99
+     *  declared in NetErrorCodeList.
+     */
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Net Library Error Codes (Client Side) - reserves code 100 - 199
-   *  declared in NetErrorCodeList.
-   */
+    /** Net Library Error Codes (Client Side) - reserves code 100 - 199
+     *  declared in NetErrorCodeList.
+     */
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Wotlas Server Error Codes (AccountServer, GameServer, GatewayServer) - reserves code 200 - 299
-   *  declared in NetErrorCodeList.
-   */
-    public final static short ERR_BAD_REQUEST       = 200;  // some data is missing in the request
-    public final static short ERR_UNKNOWN_ACCOUNT   = 201;  // the account does not exist on this server
-    public final static short ERR_BAD_PASSWORD      = 202;  // the client entered a wrong password
-    public final static short ERR_DELETE_FAILED     = 203;  // the delete operation failed
-    public final static short ERR_ACCOUNT_DELETED   = 204;  // the account has been deleted
-    public final static short ERR_WRONG_KEY         = 205;  // the client gave a wrong key for this server
-    public final static short ERR_ALREADY_CONNECTED = 206;  // someone is already connected to this account
-    public final static short ERR_DEAD_ACCOUNT      = 207;  // if the player of the account has been killed in the game
-    public final static short ERR_BOT_ACCOUNT       = 208;  // the account is a bot's one
+    /** Wotlas Server Error Codes (AccountServer, GameServer, GatewayServer) - reserves code 200 - 299
+     *  declared in NetErrorCodeList.
+     */
+    public final static short ERR_BAD_REQUEST = 200; // some data is missing in the request
+    public final static short ERR_UNKNOWN_ACCOUNT = 201; // the account does not exist on this server
+    public final static short ERR_BAD_PASSWORD = 202; // the client entered a wrong password
+    public final static short ERR_DELETE_FAILED = 203; // the delete operation failed
+    public final static short ERR_ACCOUNT_DELETED = 204; // the account has been deleted
+    public final static short ERR_WRONG_KEY = 205; // the client gave a wrong key for this server
+    public final static short ERR_ALREADY_CONNECTED = 206; // someone is already connected to this account
+    public final static short ERR_DEAD_ACCOUNT = 207; // if the player of the account has been killed in the game
+    public final static short ERR_BOT_ACCOUNT = 208; // the account is a bot's one
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

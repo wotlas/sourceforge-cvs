@@ -19,13 +19,16 @@
 
 package wotlas.libs.wizard.step;
 
-import wotlas.libs.wizard.*;
-import wotlas.libs.aswing.*;
-
-import java.awt.*;
-import java.awt.event.*;
-
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Component;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import wotlas.libs.aswing.ATextArea;
+import wotlas.libs.wizard.JWizard;
+import wotlas.libs.wizard.JWizardStep;
+import wotlas.libs.wizard.JWizardStepParameters;
+import wotlas.libs.wizard.WizardException;
 
 /** A step of a wizard with a AtextArea (info).
  *
@@ -45,76 +48,80 @@ import javax.swing.*;
 
 public class JWizardStepInfo extends JWizardStep {
 
-  /** Swing components of this step
-   */
-   protected ATextArea tarea;
+    /** Swing components of this step
+     */
+    protected ATextArea tarea;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-  public JWizardStepInfo() {
-    super();
-    setBackground(Color.white);
-    setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-    setBorder(BorderFactory.createEmptyBorder(20,20,0,10));
+    /** Constructor.
+     */
+    public JWizardStepInfo() {
+        super();
+        setBackground(Color.white);
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setBorder(BorderFactory.createEmptyBorder(20, 20, 0, 10));
 
-    tarea = new ATextArea();
-    tarea.setBackground(Color.white);
-    tarea.setLineWrap(true);
-    tarea.setWrapStyleWord(true);
-    tarea.setEditable(false);
-    tarea.setAlignmentX(LEFT_ALIGNMENT);  
-    add(tarea);
-      
-    add(Box.createVerticalGlue());
-  }
+        this.tarea = new ATextArea();
+        this.tarea.setBackground(Color.white);
+        this.tarea.setLineWrap(true);
+        this.tarea.setWrapStyleWord(true);
+        this.tarea.setEditable(false);
+        this.tarea.setAlignmentX(Component.LEFT_ALIGNMENT);
+        add(this.tarea);
 
- /*------------------------------------------------------------------------------------*/
+        add(Box.createVerticalGlue());
+    }
 
-  /** Init method called to initilize this JWizardStep. You can redefine this method
-   *  to add your JPanel's Swing components. Don't forget to call super.init(parameters);
-   *
-   * @param parameters parameters for this step
-   * @exception thrown if the given parameters are wrong...
-   */
-   protected void init( JWizardStepParameters parameters ) throws WizardException {
+    /*------------------------------------------------------------------------------------*/
+
+    /** Init method called to initilize this JWizardStep. You can redefine this method
+     *  to add your JPanel's Swing components. Don't forget to call super.init(parameters);
+     *
+     * @param parameters parameters for this step
+     * @exception thrown if the given parameters are wrong...
+     */
+    @Override
+    protected void init(JWizardStepParameters parameters) throws WizardException {
         super.init(parameters);
-      
-     // 1 - We retrieve init properties
+
+        // 1 - We retrieve init properties
         String s_info = parameters.getProperty("init.info0");
 
-     // 2 - We check the properties we have
-        if(s_info==null)
-           throw new WizardException("No information property found !");
+        // 2 - We check the properties we have
+        if (s_info == null)
+            throw new WizardException("No information property found !");
 
-     // 3 - We end the GUI init
-        tarea.setText(s_info);
-   }
+        // 3 - We end the GUI init
+        this.tarea.setText(s_info);
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Called each time the step is shown on screen.
-   */
-   protected void onShow(Object context, JWizard wizard) {
-   }
+    /** Called each time the step is shown on screen.
+     */
+    @Override
+    protected void onShow(Object context, JWizard wizard) {
+    }
 
-  /** Called when the "Next" button is clicked.
-   *  Use the wizard's setNextStep() method to set the next step to be displayed.
-   *  @return return true to validate the "Next" button action, false to cancel it...
-   */
-   protected boolean onNext(Object context, JWizard wizard) {
-   	return true;
-   }
+    /** Called when the "Next" button is clicked.
+     *  Use the wizard's setNextStep() method to set the next step to be displayed.
+     *  @return return true to validate the "Next" button action, false to cancel it...
+     */
+    @Override
+    protected boolean onNext(Object context, JWizard wizard) {
+        return true;
+    }
 
-  /** Called when Previous button is clicked.
-   *  Use the wizard's setNextStep() method to set the next step to be displayed.
-   *  @return return true to validate the "Previous" button action, false to cancel it...
-   */
-   protected boolean onPrevious(Object context, JWizard wizard) {
-   	return true;
-   }
+    /** Called when Previous button is clicked.
+     *  Use the wizard's setNextStep() method to set the next step to be displayed.
+     *  @return return true to validate the "Previous" button action, false to cancel it...
+     */
+    @Override
+    protected boolean onPrevious(Object context, JWizard wizard) {
+        return true;
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
 }

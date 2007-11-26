@@ -22,7 +22,6 @@ package wotlas.server.bots.alice;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
 import wotlas.libs.net.NetMessage;
 
 /** 
@@ -34,74 +33,76 @@ import wotlas.libs.net.NetMessage;
  */
 
 public class AliceWotlasMessage extends NetMessage {
- 
- /*------------------------------------------------------------------------------------*/
 
-  /** Primary key of the player that sent the original message.
-   */
+    /*------------------------------------------------------------------------------------*/
+
+    /** Primary key of the player that sent the original message.
+     */
     protected String playerPrimaryKey;
- 
-  /** Primary key of the bot who is the target of the message.
-   */
+
+    /** Primary key of the bot who is the target of the message.
+     */
     protected String botPrimaryKey;
 
-  /** Message sent to AliceBot or answered by aliceBot.
-   */
+    /** Message sent to AliceBot or answered by aliceBot.
+     */
     protected String message;
 
-  /** Server ID of the wotlas server that started the message transaction
-   */
+    /** Server ID of the wotlas server that started the message transaction
+     */
     protected int serverID;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
+    /** Constructor.
+     */
     public AliceWotlasMessage() {
-      super();        
+        super();
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor with parameters.
-   */
-    public AliceWotlasMessage(String playerPrimaryKey, String botPrimaryKey, String message, int serverID ) {
-       super();
-       this.playerPrimaryKey = playerPrimaryKey;
-       this.botPrimaryKey = botPrimaryKey;
-       this.message = message;
-       this.serverID = serverID;
-    }
-  
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** This is where we put your message data on the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param ostream data stream where to put your data (see java.io.DataOutputStream)
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-    public void encode( DataOutputStream ostream ) throws IOException {
-       ostream.writeUTF( playerPrimaryKey );
-       ostream.writeUTF( botPrimaryKey );
-       ostream.writeUTF( message );
-       ostream.writeInt( serverID );
+    /** Constructor with parameters.
+     */
+    public AliceWotlasMessage(String playerPrimaryKey, String botPrimaryKey, String message, int serverID) {
+        super();
+        this.playerPrimaryKey = playerPrimaryKey;
+        this.botPrimaryKey = botPrimaryKey;
+        this.message = message;
+        this.serverID = serverID;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** This is where we retrieve our message data from the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-    public void decode( DataInputStream istream ) throws IOException {
-       playerPrimaryKey = istream.readUTF();
-       botPrimaryKey = istream.readUTF();
-       message = istream.readUTF();
-       serverID = istream.readInt();
+    /** This is where we put your message data on the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param ostream data stream where to put your data (see java.io.DataOutputStream)
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    @Override
+    public void encode(DataOutputStream ostream) throws IOException {
+        ostream.writeUTF(this.playerPrimaryKey);
+        ostream.writeUTF(this.botPrimaryKey);
+        ostream.writeUTF(this.message);
+        ostream.writeInt(this.serverID);
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** This is where we retrieve our message data from the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    @Override
+    public void decode(DataInputStream istream) throws IOException {
+        this.playerPrimaryKey = istream.readUTF();
+        this.botPrimaryKey = istream.readUTF();
+        this.message = istream.readUTF();
+        this.serverID = istream.readInt();
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

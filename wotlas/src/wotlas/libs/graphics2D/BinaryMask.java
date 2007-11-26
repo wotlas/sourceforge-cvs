@@ -19,10 +19,7 @@
 
 package wotlas.libs.graphics2D;
 
-import java.awt.MediaTracker;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
-
 
 /** A small utility to create a mask (binary array) from an image<br>
  * white color => false<br>
@@ -30,41 +27,40 @@ import java.awt.image.BufferedImage;
  *
  * @author Petrus
  */
-public class BinaryMask
-{
+public class BinaryMask {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To create a mask
-   * 
-   * @param buffImg a buffered image
-   * @return the created mask
-   */
-  static public boolean[][] create(BufferedImage buffImg) {
-    int imgWidth = buffImg.getWidth();
-    int imgHeight = buffImg.getHeight();
-    boolean[][] mask = new boolean[imgWidth][imgHeight];
+    /** To create a mask
+     * 
+     * @param buffImg a buffered image
+     * @return the created mask
+     */
+    static public boolean[][] create(BufferedImage buffImg) {
+        int imgWidth = buffImg.getWidth();
+        int imgHeight = buffImg.getHeight();
+        boolean[][] mask = new boolean[imgWidth][imgHeight];
 
-    for (int j=0; j<imgHeight; j++) {
-      for (int i=0; i<imgWidth; i++) {
-        mask[i][j] = (buffImg.getRGB(i, j) == -1) ? false : true;
-      }
+        for (int j = 0; j < imgHeight; j++) {
+            for (int i = 0; i < imgWidth; i++) {
+                mask[i][j] = (buffImg.getRGB(i, j) == -1) ? false : true;
+            }
+        }
+        return mask;
     }
-    return mask;
-  }
- 
- /*------------------------------------------------------------------------------------*/
 
-  /** To create a mask
-   *
-   * @param path image path
-   * @return the created mask
-   *
-  static public boolean[][] create(String path) {
-    BufferedImage maskBuffImg = ImageLibrary.loadBufferedImage(path);
-    return create(maskBuffImg);
-  } 
+    /*------------------------------------------------------------------------------------*/
 
- /*------------------------------------------------------------------------------------*/
-   
+    /** To create a mask
+     *
+     * @param path image path
+     * @return the created mask
+     *
+    static public boolean[][] create(String path) {
+      BufferedImage maskBuffImg = ImageLibrary.loadBufferedImage(path);
+      return create(maskBuffImg);
+    } 
+
+    /*------------------------------------------------------------------------------------*/
+
 }

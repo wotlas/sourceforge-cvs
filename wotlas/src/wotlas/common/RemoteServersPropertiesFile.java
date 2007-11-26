@@ -30,31 +30,31 @@ import wotlas.utils.Debug;
 
 public class RemoteServersPropertiesFile extends PropertiesConfigFile {
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Remote Servers Properties Config File Name
-    */
+    /** Remote Servers Properties Config File Name
+     */
     public final static String REMOTE_SERVERS_CONFIG = "remote-servers.cfg";
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Constructor with our resource manager.
-    *
-    * @param rManager our resource manager
-    */
-    public RemoteServersPropertiesFile( ResourceManager rManager ) {
-    	super( rManager, REMOTE_SERVERS_CONFIG );
+    /** Constructor with our resource manager.
+     *
+     * @param rManager our resource manager
+     */
+    public RemoteServersPropertiesFile(ResourceManager rManager) {
+        super(rManager, RemoteServersPropertiesFile.REMOTE_SERVERS_CONFIG);
 
-        if( !isValid("info.remoteServerHomeURL") ) {
-            Debug.signal( Debug.FAILURE, this, "info.remoteServerHomeURL property not set in "+REMOTE_SERVERS_CONFIG+" !" );
+        if (!isValid("info.remoteServerHomeURL")) {
+            Debug.signal(Debug.FAILURE, this, "info.remoteServerHomeURL property not set in " + RemoteServersPropertiesFile.REMOTE_SERVERS_CONFIG + " !");
             Debug.exit();
         }
 
-        if( !getProperty("info.remoteServerHomeURL").endsWith("/") )
-             setProperty("info.remoteServerHomeURL", getProperty("info.remoteServerHomeURL")+"/" );
+        if (!getProperty("info.remoteServerHomeURL").endsWith("/"))
+            setProperty("info.remoteServerHomeURL", getProperty("info.remoteServerHomeURL") + "/");
 
-        Debug.signal( Debug.NOTICE, null, "Server home URL    : "+getProperty("info.remoteServerHomeURL") );
+        Debug.signal(Debug.NOTICE, null, "Server home URL    : " + getProperty("info.remoteServerHomeURL"));
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

@@ -30,110 +30,110 @@ import java.awt.Point;
  * @author Aldiss
  */
 
-public class ScreenPoint
-{
- /*------------------------------------------------------------------------------------*/
+public class ScreenPoint {
+    /*------------------------------------------------------------------------------------*/
 
-  /** x position.
-   */
+    /** x position.
+     */
     public int x;
-  
-  /** y position.
-   */
+
+    /** y position.
+     */
     public int y;
-   
- /*------------------------------------------------------------------------------------*/
-   
-  /** Empty Constructor.
-   */
+
+    /*------------------------------------------------------------------------------------*/
+
+    /** Empty Constructor.
+     */
     public ScreenPoint() {
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-    public ScreenPoint( int x, int y ) {
-    	this.x = x;
-    	this.y = y;
+    /** Constructor.
+     */
+    public ScreenPoint(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor with ScreenPoint.
-   */
-    public ScreenPoint(ScreenPoint other ) {
+    /** Constructor with ScreenPoint.
+     */
+    public ScreenPoint(ScreenPoint other) {
         this.x = other.x;
         this.y = other.y;
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor with Point.
-   */
-    public ScreenPoint( Point other ) {
+    /** Constructor with Point.
+     */
+    public ScreenPoint(Point other) {
         this.x = other.x;
         this.y = other.y;
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Complete Setter.
-    */
-    public void setToPoint( int x, int y ) {
-    	this.x = x;
-    	this.y = y;
+    /** Complete Setter.
+     */
+    public void setToPoint(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** X getter.
-   */
+    /** X getter.
+     */
     public int getX() {
-    	return x;
-    }   
+        return this.x;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Y getter.
-   */
+    /** Y getter.
+     */
     public int getY() {
-    	return y;
+        return this.y;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** X setter
-   */
-    public void setX( int x ) {
-    	this.x=x;
+    /** X setter
+     */
+    public void setX(int x) {
+        this.x = x;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Y setter
-   */
-    public void setY( int y ) {
-    	this.y=y;
+    /** Y setter
+     */
+    public void setY(int y) {
+        this.y = y;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get a Point representation of this ScreenPoint.
-   * @return Point
-   */
-    public Point toPoint(){
-        return new Point( x, y );
+    /** To get a Point representation of this ScreenPoint.
+     * @return Point
+     */
+    public Point toPoint() {
+        return new Point(this.x, this.y);
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get a string representation of this ScreenPoint.
-   */
+    /** To get a string representation of this ScreenPoint.
+     */
+    @Override
     public String toString() {
-    	return "ScreenPoint [ "+x+", "+y+" ]";
+        return "ScreenPoint [ " + this.x + ", " + this.y + " ]";
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

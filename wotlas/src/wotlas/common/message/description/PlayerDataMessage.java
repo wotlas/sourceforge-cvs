@@ -22,14 +22,12 @@ package wotlas.common.message.description;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
-import wotlas.libs.net.NetMessage;
-import wotlas.common.message.movement.*;
-import wotlas.common.*;
+import wotlas.common.Player;
 import wotlas.common.character.WotCharacter;
+import wotlas.common.message.movement.MovementUpdateMessage;
+import wotlas.common.movement.MovementComposer;
 import wotlas.common.universe.WotlasLocation;
-import wotlas.common.movement.*;
-
+import wotlas.libs.net.NetMessage;
 import wotlas.utils.Tools;
 
 /** 
@@ -38,189 +36,189 @@ import wotlas.utils.Tools;
  * @author Aldiss, Petrus
  */
 
-public class PlayerDataMessage extends NetMessage
-{
- /*------------------------------------------------------------------------------------*/
+public class PlayerDataMessage extends NetMessage {
+    /*------------------------------------------------------------------------------------*/
 
-  /** Player interface.
-   */
-      protected Player player;
-  
-  /** key of destinated player.
-   */
-      protected Player otherPlayer;
+    /** Player interface.
+     */
+    protected Player player;
 
-  /** Do we have to write/read public info or all the player's data ?
-   */
-      protected boolean publicInfoOnly;
+    /** key of destinated player.
+     */
+    protected Player otherPlayer;
 
-  /** Player Class to use when building the Player object.
-   *  Default is client implementation. Use the appropriate constructor to change that.
-   */
-      private String playerClass = "wotlas.client.PlayerImpl";
+    /** Do we have to write/read public info or all the player's data ?
+     */
+    protected boolean publicInfoOnly;
 
- /*------------------------------------------------------------------------------------*/
+    /** Player Class to use when building the Player object.
+     *  Default is client implementation. Use the appropriate constructor to change that.
+     */
+    private String playerClass = "wotlas.client.PlayerImpl";
 
-  /** Constructor. Just initializes the message category and type.
-   */
-     public PlayerDataMessage() {
-          super();
-     }
+    /*------------------------------------------------------------------------------------*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Constructor with the Player object.
-   *
-   * @param player Player object to send.
-   * @param publicInfoOnly tells if we have to write/read public info or all the player's data
-   */
-     public PlayerDataMessage( Player player, boolean publicInfoOnly ) {
-         super();
-         this.player = player;
-         this.publicInfoOnly = publicInfoOnly;
-     }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Constructor with the Player object and playerClass to use.
-   *
-   * @param player Player object to send.
-   * @param publicInfoOnly tells if we have to write/read public info or all the player's data
-   * @param playerClass to use when building the Player object.
-   */
-     public PlayerDataMessage( Player player, boolean publicInfoOnly, String playerClass ) {
-         super();
-         this.player = player;
-         this.publicInfoOnly = publicInfoOnly;
-         this.playerClass = playerClass;
+    /** Constructor. Just initializes the message category and type.
+     */
+    public PlayerDataMessage() {
+        super();
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-    
-   /** To set otherPlayerKey
-    *
-    * @param otherPlayerKey key of player this message is sent to
-    */
-     public void setOtherPlayer(Player otherPlayer) {
-         this.otherPlayer = otherPlayer;
-     }
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** Constructor with the Player object.
+     *
+     * @param player Player object to send.
+     * @param publicInfoOnly tells if we have to write/read public info or all the player's data
+     */
+    public PlayerDataMessage(Player player, boolean publicInfoOnly) {
+        super();
+        this.player = player;
+        this.publicInfoOnly = publicInfoOnly;
+    }
 
-  /** This is where we put your message data on the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param ostream data stream where to put your data (see java.io.DataOutputStream)
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-     public void encode( DataOutputStream ostream ) throws IOException {
-         ostream.writeBoolean( publicInfoOnly );
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-      // Wotlas Location
-         ostream.writeInt( player.getLocation().getWorldMapID() );
-         ostream.writeInt( player.getLocation().getTownMapID() );
-         ostream.writeInt( player.getLocation().getBuildingID() );
-         ostream.writeInt( player.getLocation().getInteriorMapID() );
-         ostream.writeInt( player.getLocation().getRoomID() );
+    /** Constructor with the Player object and playerClass to use.
+     *
+     * @param player Player object to send.
+     * @param publicInfoOnly tells if we have to write/read public info or all the player's data
+     * @param playerClass to use when building the Player object.
+     */
+    public PlayerDataMessage(Player player, boolean publicInfoOnly, String playerClass) {
+        super();
+        this.player = player;
+        this.publicInfoOnly = publicInfoOnly;
+        this.playerClass = playerClass;
+    }
 
-      // Player Data
-         ostream.writeUTF( player.getPlayerName() );
-         ostream.writeUTF( player.getFullPlayerName(otherPlayer) );
-         ostream.writeUTF( player.getPrimaryKey() );
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-         if(!publicInfoOnly) {
-            ostream.writeUTF( player.getPlayerPast() );
-            ostream.writeUTF( player.getPlayerAwayMessage() );
-         }
+    /** To set otherPlayerKey
+     *
+     * @param otherPlayerKey key of player this message is sent to
+     */
+    public void setOtherPlayer(Player otherPlayer) {
+        this.otherPlayer = otherPlayer;
+    }
 
-         ostream.writeBoolean( player.isConnectedToGame() );
-         ostream.writeByte( player.getPlayerState().value );
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-      // Sync ID
-         if(!publicInfoOnly)
-            ostream.writeByte( player.getSyncID() );
+    /** This is where we put your message data on the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param ostream data stream where to put your data (see java.io.DataOutputStream)
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    @Override
+    public void encode(DataOutputStream ostream) throws IOException {
+        ostream.writeBoolean(this.publicInfoOnly);
 
-      // Movement Composer
-         ostream.writeUTF( player.getMovementComposer().getClass().getName() );
+        // Wotlas Location
+        ostream.writeInt(this.player.getLocation().getWorldMapID());
+        ostream.writeInt(this.player.getLocation().getTownMapID());
+        ostream.writeInt(this.player.getLocation().getBuildingID());
+        ostream.writeInt(this.player.getLocation().getInteriorMapID());
+        ostream.writeInt(this.player.getLocation().getRoomID());
 
-         MovementUpdateMessage updateMsg = player.getMovementComposer().getUpdate();
+        // Player Data
+        ostream.writeUTF(this.player.getPlayerName());
+        ostream.writeUTF(this.player.getFullPlayerName(this.otherPlayer));
+        ostream.writeUTF(this.player.getPrimaryKey());
 
-         ostream.writeUTF( updateMsg.getClass().getName() );
-         updateMsg.encode( ostream );
+        if (!this.publicInfoOnly) {
+            ostream.writeUTF(this.player.getPlayerPast());
+            ostream.writeUTF(this.player.getPlayerAwayMessage());
+        }
 
-      // Wotlas Character Data
-         ostream.writeUTF( player.getWotCharacter().getClass().getName() );
-         player.getWotCharacter().encode( ostream, publicInfoOnly ); // call to encode character's data
-     }
+        ostream.writeBoolean(this.player.isConnectedToGame());
+        ostream.writeByte(this.player.getPlayerState().value);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        // Sync ID
+        if (!this.publicInfoOnly)
+            ostream.writeByte(this.player.getSyncID());
 
-  /** This is where we retrieve our message data from the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-     public void decode( DataInputStream istream ) throws IOException {
-         publicInfoOnly = istream.readBoolean();
+        // Movement Composer
+        ostream.writeUTF(this.player.getMovementComposer().getClass().getName());
 
-      // Player Client Instance creation ( no direct call to "server"
-      // or "client" packages are issued from the "common" package )
-         player = (Player) Tools.getInstance( playerClass );
+        MovementUpdateMessage updateMsg = this.player.getMovementComposer().getUpdate();
 
-      // Wotlas Location
-         WotlasLocation wotLoc = new WotlasLocation();
+        ostream.writeUTF(updateMsg.getClass().getName());
+        updateMsg.encode(ostream);
 
-         wotLoc.setWorldMapID( istream.readInt() );
-         wotLoc.setTownMapID( istream.readInt() );
-         wotLoc.setBuildingID( istream.readInt() );
-         wotLoc.setInteriorMapID( istream.readInt() );
-         wotLoc.setRoomID( istream.readInt() );
+        // Wotlas Character Data
+        ostream.writeUTF(this.player.getWotCharacter().getClass().getName());
+        this.player.getWotCharacter().encode(ostream, this.publicInfoOnly); // call to encode character's data
+    }
 
-         player.setLocation( wotLoc );
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-      // Player Data
-         player.setPlayerName( istream.readUTF() );
-         player.setFullPlayerName( istream.readUTF() );
-         player.setPrimaryKey( istream.readUTF() );
+    /** This is where we retrieve our message data from the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    @Override
+    public void decode(DataInputStream istream) throws IOException {
+        this.publicInfoOnly = istream.readBoolean();
 
-         if(!publicInfoOnly){
-             player.setPlayerPast( istream.readUTF() );
-             player.setPlayerAwayMessage( istream.readUTF() );
-         }
+        // Player Client Instance creation ( no direct call to "server"
+        // or "client" packages are issued from the "common" package )
+        this.player = (Player) Tools.getInstance(this.playerClass);
 
-         player.setIsConnectedToGame( istream.readBoolean() );
-         player.getPlayerState().value = istream.readByte();
+        // Wotlas Location
+        WotlasLocation wotLoc = new WotlasLocation();
 
-      // Sync ID
-         if( !publicInfoOnly )
-            player.setSyncID( istream.readByte() );
+        wotLoc.setWorldMapID(istream.readInt());
+        wotLoc.setTownMapID(istream.readInt());
+        wotLoc.setBuildingID(istream.readInt());
+        wotLoc.setInteriorMapID(istream.readInt());
+        wotLoc.setRoomID(istream.readInt());
 
-      // Movement Composer
-         MovementComposer mvComposer = (MovementComposer) Tools.getInstance( istream.readUTF() );
-         MovementUpdateMessage uMsg = (MovementUpdateMessage) Tools.getInstance( istream.readUTF() );
-         uMsg.decode( istream );
+        this.player.setLocation(wotLoc);
 
-      // Wotlas Character
-         WotCharacter wotChar = (WotCharacter) Tools.getInstance( istream.readUTF() );
-         
-         wotChar.decode( istream, publicInfoOnly );
-         player.setWotCharacter( wotChar );
+        // Player Data
+        this.player.setPlayerName(istream.readUTF());
+        this.player.setFullPlayerName(istream.readUTF());
+        this.player.setPrimaryKey(istream.readUTF());
 
-      // Movement Composer init
-         mvComposer.init( player );
-         mvComposer.setUpdate( uMsg ); // in this order, because the player must have been fully initialized
-         player.setMovementComposer( mvComposer );
-     }
+        if (!this.publicInfoOnly) {
+            this.player.setPlayerPast(istream.readUTF());
+            this.player.setPlayerAwayMessage(istream.readUTF());
+        }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        this.player.setIsConnectedToGame(istream.readBoolean());
+        this.player.getPlayerState().value = istream.readByte();
 
-   /** To get the player subject of this message.
-    */
-     public Player getPlayer() {
-     	return player;
-     }
+        // Sync ID
+        if (!this.publicInfoOnly)
+            this.player.setSyncID(istream.readByte());
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        // Movement Composer
+        MovementComposer mvComposer = (MovementComposer) Tools.getInstance(istream.readUTF());
+        MovementUpdateMessage uMsg = (MovementUpdateMessage) Tools.getInstance(istream.readUTF());
+        uMsg.decode(istream);
+
+        // Wotlas Character
+        WotCharacter wotChar = (WotCharacter) Tools.getInstance(istream.readUTF());
+
+        wotChar.decode(istream, this.publicInfoOnly);
+        this.player.setWotCharacter(wotChar);
+
+        // Movement Composer init
+        mvComposer.init(this.player);
+        mvComposer.setUpdate(uMsg); // in this order, because the player must have been fully initialized
+        this.player.setMovementComposer(mvComposer);
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** To get the player subject of this message.
+     */
+    public Player getPlayer() {
+        return this.player;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

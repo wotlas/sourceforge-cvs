@@ -16,13 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.objects;
 
 import wotlas.common.Player;
-//import wotlas.common.Levels;	// not implemented
-//import wotlas.common.Knowledge; // not implemented
-import wotlas.common.universe.WotlasLocation;	
+import wotlas.common.universe.WotlasLocation;
 import wotlas.libs.graphics2D.Drawable;
 import wotlas.libs.graphics2D.ImageIdentifier;
 
@@ -32,179 +30,194 @@ import wotlas.libs.graphics2D.ImageIdentifier;
  * @author Elann
  */
 
-public class BaseObject
-{
+public class BaseObject {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Class name - generic name for all the objects of the class.  
-   */
-   	 protected String className;
-	 
-  /** Object name - specific name for the object. Not static because it could change if it is broken for example.  
-   */
-   	 protected String objectName;
-   
-  /** Object position in the world.
-   */
-  	 private WotlasLocation objectLocation; 
-   
-  /** Object position in the room.
-   */
-   	 private int x,y;
-  
-  /** Object's weight - used for endurance and max load. Perhaps negative weight should mean unmovable.
-   */
-     private short objectWeight;
-	  
-  /** Object's size - used for max load in Containers.
-   */
-     private short objectSize;
+    /** Class name - generic name for all the objects of the class.  
+     */
+    protected String className;
 
-  /** The level(s) required to use this object. - THE CLASS LEVEL DOES NOT EXIST ! 
-   */
-	 private String[] /*Level[]*/ requiredLevels;													
+    /** Object name - specific name for the object. Not static because it could change if it is broken for example.  
+     */
+    protected String objectName;
 
-  /** The knowledge required to use this object. - THE CLASS KNOWLEDGE DOES NOT EXIST !
-   */
-   	 private String[] /*Knowledge[]*/ requiredKnowledge;
+    /** Object position in the world.
+     */
+    private WotlasLocation objectLocation;
 
-  /** The owner of this object.
-   */
-   	 private transient Player owner;
-  	 
-  /** The GFX of the object.
-   */
-	 private Drawable drawable;
-	 
-  /** The icon in the Inventory
-   */
-	 private ImageIdentifier inventoryPicture;
-	 	 
- /*------------------------------------------------------------------------------------*/
-		
-  /* ------- Constructor ----- */
-  		
-  /** Default constructor.
-   * <br>Just sets className and objectName to default.
-   */
-   	 public BaseObject()
-	 {
-	  className="BaseObject";
-	  objectName="default object";
-	 }
-		
-  /* ------- Getters / Setters - still missing some : Knowledge & Levels, owner --------- */
+    /** Object position in the room.
+     */
+    private int x, y;
 
-  /** Return the ImageIdentifier of the object's inventory representation.
-  	  @return inventoryPicture
-   */
-   	 public ImageIdentifier getInventoryPicture()
-	 {
-	  return inventoryPicture;
-	 }
+    /** Object's weight - used for endurance and max load. Perhaps negative weight should mean unmovable.
+     */
+    private short objectWeight;
 
-  /** Set the ImageIdentifier of the object's inventory representation.
-  	  @param inventoryPicture the new ID
-   */
-   	 public void setInventoryPicture(ImageIdentifier inventoryPicture)
-	 {
-	  this.inventoryPicture=inventoryPicture;
-	 }
+    /** Object's size - used for max load in Containers.
+     */
+    private short objectSize;
 
-  /** Return the object's in-game representation.
-  	  @return drawable
-   */
-   	 public Drawable getDrawable()
-	 {
-	  return drawable;
-	 }
+    /** The level(s) required to use this object. - THE CLASS LEVEL DOES NOT EXIST ! 
+     */
+    private String[] /*Level[]*/requiredLevels;
 
-  /** Set the object's in-game representation.
-  	  @param drawable the new drawable
-   */
-   	 public void setDrawable(Drawable drawable)
-	 {
-	  this.drawable=drawable;
-	 }
-	
-  /** Return the name of the class of the object (like Sword, Axe, ...)
-  	  @return className
-   */
-	public String getClassName() { return className; }
+    /** The knowledge required to use this object. - THE CLASS KNOWLEDGE DOES NOT EXIST !
+     */
+    private String[] /*Knowledge[]*/requiredKnowledge;
 
-  /** Sets the name of the class of the object (like Sword, Axe, ...)
-  	  @param className the new name
-   */
-	public void setClassName(String className) { this.className=className; }
+    /** The owner of this object.
+     */
+    private transient Player owner;
 
-	
-  /** Returns the name of the object (like Callandor, Tar Valon Gold Mark, ...)
-  	  @return objectName
-   */
-	public String getObjectName() { return objectName; }
+    /** The GFX of the object.
+     */
+    private Drawable drawable;
 
-  /** Sets the name of the object (like Callandor, Tar Valon Gold Mark, ...)
-  	  @param objectName the new name
-   */
-	public void setObjectName(String objectName) { this.objectName=objectName; }
-		
+    /** The icon in the Inventory
+     */
+    private ImageIdentifier inventoryPicture;
 
-  /** Returns the location of the object in the world. 
-  	  @return objectLocation
-   */
-	public WotlasLocation getObjectLocation() { return objectLocation; }
+    /*------------------------------------------------------------------------------------*/
 
-  /** Sets the location of the object in the world.
-  	  @param objectLocation the new location
-   */
-	public void setObjectLocation(WotlasLocation objectLocation) { this.objectLocation=objectLocation; }
+    /* ------- Constructor ----- */
 
+    /** Default constructor.
+     * <br>Just sets className and objectName to default.
+     */
+    public BaseObject() {
+        this.className = "BaseObject";
+        this.objectName = "default object";
+    }
 
-  /** Returns the x location of the object in the map. 
-  	  @return x
-   */
-	public int getX() { return x; }
+    /* ------- Getters / Setters - still missing some : Knowledge & Levels, owner --------- */
 
-  /** Sets the x location of the object in the map.
-  	  @param x the new x location
-   */
-	public void setX(int x) { this.x=x; }
+    /** Return the ImageIdentifier of the object's inventory representation.
+    	  @return inventoryPicture
+     */
+    public ImageIdentifier getInventoryPicture() {
+        return this.inventoryPicture;
+    }
 
-	
-  /** Returns the y location of the object in the map. 
-  	  @return y
-   */
-	public int getY() { return y; }
+    /** Set the ImageIdentifier of the object's inventory representation.
+    	  @param inventoryPicture the new ID
+     */
+    public void setInventoryPicture(ImageIdentifier inventoryPicture) {
+        this.inventoryPicture = inventoryPicture;
+    }
 
-  /** Sets the y location of the object in the map.
-  	  @param y the new y location
-   */
-	public void setY(int y) { this.y=y; }
+    /** Return the object's in-game representation.
+    	  @return drawable
+     */
+    public Drawable getDrawable() {
+        return this.drawable;
+    }
 
-	
-  /** Returns the weight of the object.
-  	  @return the object's weight
-   */
-    public short getObjectWeight() { return objectWeight; }
+    /** Set the object's in-game representation.
+    	  @param drawable the new drawable
+     */
+    public void setDrawable(Drawable drawable) {
+        this.drawable = drawable;
+    }
 
-  /** Sets the weight of the object.
-  	  @param weight the object's weight
-   */
-    public void setObjectWeight(short weight) { this.objectWeight=weight; }
+    /** Return the name of the class of the object (like Sword, Axe, ...)
+    	  @return className
+     */
+    public String getClassName() {
+        return this.className;
+    }
 
-	
-  /** Returns the size of the object.
-  	  @return the object's size
-   */
-    public short getObjectSize() { return objectSize; }
+    /** Sets the name of the class of the object (like Sword, Axe, ...)
+    	  @param className the new name
+     */
+    public void setClassName(String className) {
+        this.className = className;
+    }
 
-  /** Sets the size of the object.
-  	  @param size the object's size
-   */
-    public void setObjectSize(short size) { this.objectSize=size; }
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** Returns the name of the object (like Callandor, Tar Valon Gold Mark, ...)
+    	  @return objectName
+     */
+    public String getObjectName() {
+        return this.objectName;
+    }
+
+    /** Sets the name of the object (like Callandor, Tar Valon Gold Mark, ...)
+    	  @param objectName the new name
+     */
+    public void setObjectName(String objectName) {
+        this.objectName = objectName;
+    }
+
+    /** Returns the location of the object in the world. 
+    	  @return objectLocation
+     */
+    public WotlasLocation getObjectLocation() {
+        return this.objectLocation;
+    }
+
+    /** Sets the location of the object in the world.
+    	  @param objectLocation the new location
+     */
+    public void setObjectLocation(WotlasLocation objectLocation) {
+        this.objectLocation = objectLocation;
+    }
+
+    /** Returns the x location of the object in the map. 
+    	  @return x
+     */
+    public int getX() {
+        return this.x;
+    }
+
+    /** Sets the x location of the object in the map.
+    	  @param x the new x location
+     */
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    /** Returns the y location of the object in the map. 
+    	  @return y
+     */
+    public int getY() {
+        return this.y;
+    }
+
+    /** Sets the y location of the object in the map.
+    	  @param y the new y location
+     */
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    /** Returns the weight of the object.
+    	  @return the object's weight
+     */
+    public short getObjectWeight() {
+        return this.objectWeight;
+    }
+
+    /** Sets the weight of the object.
+    	  @param weight the object's weight
+     */
+    public void setObjectWeight(short weight) {
+        this.objectWeight = weight;
+    }
+
+    /** Returns the size of the object.
+    	  @return the object's size
+     */
+    public short getObjectSize() {
+        return this.objectSize;
+    }
+
+    /** Sets the size of the object.
+    	  @param size the object's size
+     */
+    public void setObjectSize(short size) {
+        this.objectSize = size;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

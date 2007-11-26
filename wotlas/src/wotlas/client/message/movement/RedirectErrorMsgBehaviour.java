@@ -19,10 +19,9 @@
 
 package wotlas.client.message.movement;
 
-import java.io.IOException;
-
-import wotlas.client.*;
-import wotlas.common.message.movement.*;
+import wotlas.client.DataManager;
+import wotlas.client.PlayerImpl;
+import wotlas.common.message.movement.RedirectErrorMessage;
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.utils.Debug;
 
@@ -33,56 +32,54 @@ import wotlas.utils.Debug;
  * @see wotlas.client.DataManager
  */
 
-public class RedirectErrorMsgBehaviour extends RedirectErrorMessage implements NetMessageBehaviour
-{
- /*------------------------------------------------------------------------------------*/
+public class RedirectErrorMsgBehaviour extends RedirectErrorMessage implements NetMessageBehaviour {
+    /*------------------------------------------------------------------------------------*/
 
-   /** To tell if this message is to be invoked later or not.
-    */
-     private boolean invokeLater = true;
+    /** To tell if this message is to be invoked later or not.
+     */
+    private boolean invokeLater = true;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-  public RedirectErrorMsgBehaviour() {
-    super();
-  }
+    /** Constructor.
+     */
+    public RedirectErrorMsgBehaviour() {
+        super();
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-  public void doBehaviour( Object sessionContext ) {
-      DataManager dataManager = (DataManager) sessionContext;
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
+        DataManager dataManager = (DataManager) sessionContext;
 
-       if( invokeLater ) {
-           invokeLater = false;
-           dataManager.invokeLater( this );
-           return;
-       }
+        if (this.invokeLater) {
+            this.invokeLater = false;
+            dataManager.invokeLater(this);
+            return;
+        }
 
-    // Stop movement (if the player has restart a movement during the account transfert attempt)
-      PlayerImpl myPlayer = dataManager.getMyPlayer();
-      myPlayer.getMovementComposer().resetMovement();
+        // Stop movement (if the player has restart a movement during the account transfert attempt)
+        PlayerImpl myPlayer = dataManager.getMyPlayer();
+        myPlayer.getMovementComposer().resetMovement();
 
-    // We check if there is a special reset position to set.
-       if(xReset>=0 && yReset>=0) {
-          myPlayer.setX(xReset);
-          myPlayer.setY(yReset);
-       }
+        // We check if there is a special reset position to set.
+        if (this.xReset >= 0 && this.yReset >= 0) {
+            myPlayer.setX(this.xReset);
+            myPlayer.setY(this.yReset);
+        }
 
-    // We reset the MapData State and display an error message
-      Debug.signal( Debug.WARNING, this, "Account transfert failed !" );
+        // We reset the MapData State and display an error message
+        Debug.signal(Debug.WARNING, this, "Account transfert failed !");
 
-      dataManager.getMapData().setIsNotMovingToAnotherMap(true);
-      dataManager.showWarningMessage( errorMsg );
-  }
+        dataManager.getMapData().setIsNotMovingToAnotherMap(true);
+        dataManager.showWarningMessage(this.errorMsg);
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
 }
-

@@ -29,76 +29,76 @@ import java.util.Properties;
 
 public interface MusicPlayer {
 
-  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-  
-  /** To init the music player. The resource locator can be used to get a stream on
-   *  a music file.
-   * @param props properties for init.
-   * @param resourceLocator to locate music resources.
-   */
-    public void init( Properties props, MusicResourceLocator resourceLocator );
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** To init the music player. The resource locator can be used to get a stream on
+     *  a music file.
+     * @param props properties for init.
+     * @param resourceLocator to locate music resources.
+     */
+    public void init(Properties props, MusicResourceLocator resourceLocator);
 
-  /** Closes this music player.
-   */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Closes this music player.
+     */
     public void close();
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To play a music.
-   * @param musicName music file name in the music database.
-   *        we'll search the file via the resourceLocator.
-   */
-    public void playMusic( String musicName );
+    /** To play a music.
+     * @param musicName music file name in the music database.
+     *        we'll search the file via the resourceLocator.
+     */
+    public void playMusic(String musicName);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Stops the current music.
-   */
+    /** Stops the current music.
+     */
     public void stopMusic();
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-  
-  /** Resume the current music or restarts the current music.
-   */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Resume the current music or restarts the current music.
+     */
     public void resumeMusic();
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the music volume in [0, 100].
-   *  @return the music volume.
-   */
+    /** To get the music volume in [0, 100].
+     *  @return the music volume.
+     */
     public short getMusicVolume();
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To set the music volume.
-   * @param volume new volume in [0,100]
-   */
+    /** To set the music volume.
+     * @param volume new volume in [0,100]
+     */
     public void setMusicVolume(short musicVolume);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-  
-  /** Tells if we want the player to play music or just ignore music 'play' requests.
-   * @return true if we must ignore music play requests
-   */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Tells if we want the player to play music or just ignore music 'play' requests.
+     * @return true if we must ignore music play requests
+     */
     public boolean getNoMusicState();
 
-  /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To set/unset the "No Music" state option.
-   * @param noMusicState true if requests to play music must be ignored, false to play music
-   *        when asked to.
-   */
-    public void setNoMusicState( boolean noMusicState );
+    /** To set/unset the "No Music" state option.
+     * @param noMusicState true if requests to play music must be ignored, false to play music
+     *        when asked to.
+     */
+    public void setNoMusicState(boolean noMusicState);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the name of this music player.
-   */
+    /** To get the name of this music player.
+     */
     public String getMusicPlayerName();
- 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

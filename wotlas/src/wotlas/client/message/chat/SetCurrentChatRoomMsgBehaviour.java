@@ -19,19 +19,12 @@
 
 package wotlas.client.message.chat;
 
-import java.io.IOException;
-import java.util.*;
-
+import java.util.Hashtable;
+import wotlas.client.DataManager;
+import wotlas.client.PlayerImpl;
+import wotlas.client.screen.JChatRoom;
+import wotlas.common.message.chat.SetCurrentChatRoomMessage;
 import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.message.chat.*;
-
-import wotlas.common.chat.*;
-import wotlas.common.Player;
-import wotlas.common.universe.*;
-
-import wotlas.client.*;
-import wotlas.client.screen.*;
-
 import wotlas.utils.Debug;
 
 /**
@@ -41,80 +34,78 @@ import wotlas.utils.Debug;
  */
 
 public class SetCurrentChatRoomMsgBehaviour extends SetCurrentChatRoomMessage implements NetMessageBehaviour {
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** To tell if this message is to be invoked later or not.
-    */
-     private boolean invokeLater = true;
+    /** To tell if this message is to be invoked later or not.
+     */
+    private boolean invokeLater = true;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-  public SetCurrentChatRoomMsgBehaviour() {
-    super();
-  }
+    /** Constructor.
+     */
+    public SetCurrentChatRoomMsgBehaviour() {
+        super();
+    }
 
- /*------------------------------------------------------------------------------------*/
-  
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-  public void doBehaviour( Object sessionContext ) {
-       if (DataManager.SHOW_DEBUG)
-         System.out.println("SetCurrentChatRoomMsgBehaviour::doBehaviour: "+chatRoomPrimaryKey);
+    /*------------------------------------------------------------------------------------*/
 
-    // The sessionContext is here a DataManager.
-       DataManager dataManager = (DataManager) sessionContext;
-       PlayerImpl player = dataManager.getMyPlayer();
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
+        if (DataManager.SHOW_DEBUG)
+            System.out.println("SetCurrentChatRoomMsgBehaviour::doBehaviour: " + this.chatRoomPrimaryKey);
 
-       if( invokeLater ) {
-         // We set the current chat for our player
-            if( dataManager.getClientScreen().getChatPanel().setCurrentJChatRoom( chatRoomPrimaryKey ) ) {
-                dataManager.getClientScreen().getChatPanel().addPlayer(chatRoomPrimaryKey, player );
-            }
-            else {
-                Debug.signal( Debug.ERROR, this, "Failed to set current chat for player... "+chatRoomPrimaryKey);
+        // The sessionContext is here a DataManager.
+        DataManager dataManager = (DataManager) sessionContext;
+        PlayerImpl player = dataManager.getMyPlayer();
+
+        if (this.invokeLater) {
+            // We set the current chat for our player
+            if (dataManager.getClientScreen().getChatPanel().setCurrentJChatRoom(this.chatRoomPrimaryKey)) {
+                dataManager.getClientScreen().getChatPanel().addPlayer(this.chatRoomPrimaryKey, player);
+            } else {
+                Debug.signal(Debug.ERROR, this, "Failed to set current chat for player... " + this.chatRoomPrimaryKey);
                 return;
             }
 
-            if(!player.getLocation().isRoom())
-               return;
-            
-            invokeLater = false;
-            dataManager.invokeLater( this );
+            if (!player.getLocation().isRoom())
+                return;
+
+            this.invokeLater = false;
+            dataManager.invokeLater(this);
             return;
-       }
+        }
 
-    // We seek the players to add
-       JChatRoom chatRoom = dataManager.getClientScreen().getChatPanel().getJChatRoom( chatRoomPrimaryKey );
+        // We seek the players to add
+        JChatRoom chatRoom = dataManager.getClientScreen().getChatPanel().getJChatRoom(this.chatRoomPrimaryKey);
 
-       if(chatRoom==null) {
-          Debug.signal( Debug.ERROR, this, "Failed to find chat : "+chatRoomPrimaryKey);
-          return;
-       }
+        if (chatRoom == null) {
+            Debug.signal(Debug.ERROR, this, "Failed to find chat : " + this.chatRoomPrimaryKey);
+            return;
+        }
 
-       Hashtable players = dataManager.getPlayers();
-       PlayerImpl sender = null;
+        Hashtable players = dataManager.getPlayers();
+        PlayerImpl sender = null;
 
-       for( int i=0; i<playersPrimaryKey.length; i++ ) {
-          if(players!=null)
-             sender = (PlayerImpl) players.get( playersPrimaryKey[i] );
+        for (int i = 0; i < this.playersPrimaryKey.length; i++) {
+            if (players != null)
+                sender = (PlayerImpl) players.get(this.playersPrimaryKey[i]);
 
-          if( sender==null )
-              Debug.signal( Debug.WARNING, this, "Could not find the player for chat... "+playersPrimaryKey[i]);
-          else
-              fullPlayerNames[i] = sender.getFullPlayerName();
+            if (sender == null)
+                Debug.signal(Debug.WARNING, this, "Could not find the player for chat... " + this.playersPrimaryKey[i]);
+            else
+                this.fullPlayerNames[i] = sender.getFullPlayerName();
 
-       // We add the player
-          if( !playersPrimaryKey[i].equals(player.getPrimaryKey()) )
-              chatRoom.addPlayer(playersPrimaryKey[i], fullPlayerNames[i]);
-       }
-  }
-  
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
+            // We add the player
+            if (!this.playersPrimaryKey[i].equals(player.getPrimaryKey()))
+                chatRoom.addPlayer(this.playersPrimaryKey[i], this.fullPlayerNames[i]);
+        }
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }
-  

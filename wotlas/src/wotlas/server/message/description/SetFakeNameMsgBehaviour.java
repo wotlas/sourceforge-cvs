@@ -19,12 +19,8 @@
 
 package wotlas.server.message.description;
 
-import java.io.IOException;
-
+import wotlas.common.message.description.SetFakeNameMessage;
 import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.message.description.*;
-import wotlas.common.Player;
-import wotlas.common.universe.*;
 import wotlas.server.LieManager;
 import wotlas.server.PlayerImpl;
 
@@ -34,31 +30,29 @@ import wotlas.server.PlayerImpl;
  * @author Petrus
  */
 
-public class SetFakeNameMsgBehaviour extends SetFakeNameMessage implements NetMessageBehaviour
-{
- /*------------------------------------------------------------------------------------*/
+public class SetFakeNameMsgBehaviour extends SetFakeNameMessage implements NetMessageBehaviour {
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-  public SetFakeNameMsgBehaviour() {
-    super();
-  }
+    /** Constructor.
+     */
+    public SetFakeNameMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-  public void doBehaviour( Object sessionContext ) {
-    // The sessionContext is here a PlayerImpl.
-    PlayerImpl player = (PlayerImpl) sessionContext;
-    LieManager lieManager = player.getLieManager();
-    
-    lieManager.setFakeName(index, fakeName);    
-  }
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
+        // The sessionContext is here a PlayerImpl.
+        PlayerImpl player = (PlayerImpl) sessionContext;
+        LieManager lieManager = player.getLieManager();
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        lieManager.setFakeName(this.index, this.fakeName);
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

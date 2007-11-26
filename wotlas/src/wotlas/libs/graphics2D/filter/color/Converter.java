@@ -19,9 +19,6 @@
 
 package wotlas.libs.graphics2D.filter.color;
 
-import wotlas.libs.graphics2D.filter.ColorType;
-
-
 /** Tools to manipulate colors
  *
  * @author Petrus
@@ -29,46 +26,46 @@ import wotlas.libs.graphics2D.filter.ColorType;
 
 public class Converter {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-     /** To get the blue component of a argb pixel.
-      * @param argb pixel of the DirectColorModel type.
-      * @return the blue component in the [0,255] range
-      */
-       static public short getBlue( int argb ) {
-           return (short) (argb & 0xff);
-       }
+    /** To get the blue component of a argb pixel.
+     * @param argb pixel of the DirectColorModel type.
+     * @return the blue component in the [0,255] range
+     */
+    static public short getBlue(int argb) {
+        return (short) (argb & 0xff);
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-     /** To get the green component of a argb pixel.
-      * @param argb pixel of the DirectColorModel type.
-      * @return the green component in the [0,255] range
-      */
-       static public short getGreen( int argb ) {
-          return (short) ((argb & 0xff00) >> 8 );
-       }
+    /** To get the green component of a argb pixel.
+     * @param argb pixel of the DirectColorModel type.
+     * @return the green component in the [0,255] range
+     */
+    static public short getGreen(int argb) {
+        return (short) ((argb & 0xff00) >> 8);
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-     /** To get the red component of a argb pixel.
-      * @param argb pixel of the DirectColorModel type.
-      * @return the red component in the [0,255] range
-      */
-       static public short getRed( int argb ) {
-          return (short) ((argb & 0xff0000) >> 16 );
-       }
+    /** To get the red component of a argb pixel.
+     * @param argb pixel of the DirectColorModel type.
+     * @return the red component in the [0,255] range
+     */
+    static public short getRed(int argb) {
+        return (short) ((argb & 0xff0000) >> 16);
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-     /** To get the alpha component of a argb pixel.
-      * @param argb pixel of the DirectColorModel type.
-      * @return the alpha component in the [0,255] range
-      */
-       static public short getAlpha( int argb ) {
-          return (short) ((argb & 0xff000000) >> 24 );
-       }
+    /** To get the alpha component of a argb pixel.
+     * @param argb pixel of the DirectColorModel type.
+     * @return the alpha component in the [0,255] range
+     */
+    static public short getAlpha(int argb) {
+        return (short) ((argb & 0xff000000) >> 24);
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
 }

@@ -19,11 +19,14 @@
 
 package wotlas.libs.aswing;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-
-import java.io.File;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Toolkit;
+import javax.swing.JDialog;
+import javax.swing.JProgressBar;
+import javax.swing.SwingConstants;
 
 /** A small utility to display a progress bar in a JDialog
  *
@@ -32,68 +35,67 @@ import java.io.File;
 
 public class AProgressDialog extends JDialog {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Our label ...
-   */
+    /** Our label ...
+     */
     protected ALabel label;
 
-  /** Our progress bar.
-   */
+    /** Our progress bar.
+     */
     protected JProgressBar progressBar;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Constructor.
-    * 
-    * @param frame frame owner of this JDialog
-    * @param message msg to display
-    * @param modal if the dialog is modal or not
-    */
-     public AProgressDialog(Frame frame, String title ) {
-         super(frame,title, false);
+    /** Constructor.
+     * 
+     * @param frame frame owner of this JDialog
+     * @param message msg to display
+     * @param modal if the dialog is modal or not
+     */
+    public AProgressDialog(Frame frame, String title) {
+        super(frame, title, false);
 
-      // some inits
-         getContentPane().setLayout( new BorderLayout() );
-         getContentPane().setBackground(Color.white);
-         
-      // Top Label
-         label = new ALabel("  ",SwingConstants.CENTER );
-         getContentPane().add( label, BorderLayout.CENTER );
-         label.setPreferredSize(new Dimension(300,30));
-         label.setMinimumSize(new Dimension(300,30));
+        // some inits
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().setBackground(Color.white);
 
-      // Progress Bar
-         progressBar = new JProgressBar(0,100);
-         progressBar.setValue(0);
-         progressBar.setStringPainted(true);
-         getContentPane().add( progressBar, BorderLayout.SOUTH );
-         pack();
+        // Top Label
+        this.label = new ALabel("  ", SwingConstants.CENTER);
+        getContentPane().add(this.label, BorderLayout.CENTER);
+        this.label.setPreferredSize(new Dimension(300, 30));
+        this.label.setMinimumSize(new Dimension(300, 30));
 
-         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-         setLocation( (int) ((screenSize.getWidth() - getWidth()) / 2),
-                   (int) ((screenSize.getHeight() - getHeight()) / 2) );
-         show();
-   }
+        // Progress Bar
+        this.progressBar = new JProgressBar(0, 100);
+        this.progressBar.setValue(0);
+        this.progressBar.setStringPainted(true);
+        getContentPane().add(this.progressBar, BorderLayout.SOUTH);
+        pack();
 
- /*------------------------------------------------------------------------------------*/
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        setLocation((int) ((screenSize.getWidth() - getWidth()) / 2), (int) ((screenSize.getHeight() - getHeight()) / 2));
+        show();
+    }
 
-   /** String message for the progress monitor...
-    */
-      public void setNote( String note ) {
-               label.setText( note );
-               AProgressDialog.this.repaint();
-      }
+    /*------------------------------------------------------------------------------------*/
 
-  /*-------------------------------------------------------------------------------*/
+    /** String message for the progress monitor...
+     */
+    public void setNote(String note) {
+        this.label.setText(note);
+        AProgressDialog.this.repaint();
+    }
 
-   /** Value for the progress monitor, ranges from one to 100.
-    */
-      public void setProgress( final int value ) {
-              progressBar.setValue(value);
-              AProgressDialog.this.repaint();
-      }
+    /*-------------------------------------------------------------------------------*/
 
-  /*-------------------------------------------------------------------------------*/
+    /** Value for the progress monitor, ranges from one to 100.
+     */
+    public void setProgress(final int value) {
+        this.progressBar.setValue(value);
+        AProgressDialog.this.repaint();
+    }
+
+    /*-------------------------------------------------------------------------------*/
 
 }

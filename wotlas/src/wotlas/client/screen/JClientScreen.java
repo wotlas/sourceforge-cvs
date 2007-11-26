@@ -19,15 +19,26 @@
 
 package wotlas.client.screen;
 
-import wotlas.client.*;
-
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+import wotlas.client.ClientDirector;
+import wotlas.client.ClientManager;
+import wotlas.client.DataManager;
 import wotlas.libs.graphics2D.GraphicsDirector;
-import wotlas.utils.Debug;
-
-import java.awt.*;
-import java.awt.event.*;
-
-import javax.swing.*;
 
 /** The main frame of the wotlas client interface.<br>
  * It contains a :<br>
@@ -43,213 +54,211 @@ import javax.swing.*;
 
 public class JClientScreen extends JFrame {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** GUI DIMENSION
-   */
-   public final static int mainWidth = 800;
-   public final static int mainHeight = 600;
+    /** GUI DIMENSION
+     */
+    public final static int mainWidth = 800;
+    public final static int mainHeight = 600;
 
-   public final static int leftWidth = 600;
+    public final static int leftWidth = 600;
 
-   public final static int gameHeight = 300;    // JMapPanel
-   public final static int mapHeight = 300;     // Same as above
-   public final static int gameMinHeight = 200; // JMapPanel
+    public final static int gameHeight = 300; // JMapPanel
+    public final static int mapHeight = 300; // Same as above
+    public final static int gameMinHeight = 200; // JMapPanel
 
-   public final static int thumbHeight = 145;
+    public final static int thumbHeight = 145;
 
-   public final static int playerHeight = mainHeight-thumbHeight;
+    public final static int playerHeight = JClientScreen.mainHeight - JClientScreen.thumbHeight;
 
-   public final static int chatMinHeight = 150;
+    public final static int chatMinHeight = 150;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Our GUI components
-   */
-   private JMapPanel mapPanel;
-   private GraphicsDirector gDirector;
-   private JChatPanel chatPanel;
-   private JOptionsPanel optionsPanel;
-   private JPlayerPanel playerPanel;
-   private GraphicPingPanel pingPanel;
+    /** Our GUI components
+     */
+    private JMapPanel mapPanel;
+    private GraphicsDirector gDirector;
+    private JChatPanel chatPanel;
+    private JOptionsPanel optionsPanel;
+    private JPlayerPanel playerPanel;
+    private GraphicPingPanel pingPanel;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Empty Constructor.
-   */
+    /** Empty Constructor.
+     */
     public JClientScreen() {
-       super("Wotlas client");
+        super("Wotlas client");
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor with graphicsDirector & data Manager
-   */
-   public JClientScreen( GraphicsDirector gDirector, DataManager dManager ) {
-      super("Wotlas client");
+    /** Constructor with graphicsDirector & data Manager
+     */
+    public JClientScreen(GraphicsDirector gDirector, DataManager dManager) {
+        super("Wotlas client");
 
-       mapPanel = new JMapPanel(gDirector, dManager);
-       chatPanel = new JChatPanel();
-       optionsPanel = new JOptionsPanel();
-       playerPanel = new JPlayerPanel();
-       pingPanel = new GraphicPingPanel();
+        this.mapPanel = new JMapPanel(gDirector, dManager);
+        this.chatPanel = new JChatPanel();
+        this.optionsPanel = new JOptionsPanel();
+        this.playerPanel = new JPlayerPanel();
+        this.pingPanel = new GraphicPingPanel();
 
-       addWindowListener( new WindowAdapter() {
-          public void windowClosing(WindowEvent e) {
-             hide();
-             ClientDirector.getDataManager().closeConnection();
-             ClientDirector.getClientManager().start(ClientManager.MAIN_SCREEN);
-          }
-       });
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                hide();
+                ClientDirector.getDataManager().closeConnection();
+                ClientDirector.getClientManager().start(ClientManager.MAIN_SCREEN);
+            }
+        });
 
-      setIconImage(ClientDirector.getResourceManager().getGuiImage("icon.gif"));
-   }
+        setIconImage(ClientDirector.getResourceManager().getGuiImage("icon.gif"));
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To init the different panels & the display.
-   */
-   public void init() {
+    /** To init the different panels & the display.
+     */
+    public void init() {
 
-    // *** Right Panel ***
+        // *** Right Panel ***
 
-      JPanel rightPanel = new JPanel();
-      rightPanel.setPreferredSize(new Dimension(mainWidth-leftWidth, mainHeight));
-      rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
-      rightPanel.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
-      rightPanel.setBackground(Color.black);
-      
-      // *** Preview Panel ***
-      optionsPanel.setPreferredSize(new Dimension(mainWidth-leftWidth-4, thumbHeight));
-      optionsPanel.setMinimumSize(new Dimension(mainWidth-leftWidth-4, thumbHeight));
-      optionsPanel.setMaximumSize(new Dimension(mainWidth-leftWidth-4, thumbHeight));
-      optionsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-      rightPanel.add(optionsPanel, BorderLayout.NORTH);
+        JPanel rightPanel = new JPanel();
+        rightPanel.setPreferredSize(new Dimension(JClientScreen.mainWidth - JClientScreen.leftWidth, JClientScreen.mainHeight));
+        rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
+        rightPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+        rightPanel.setBackground(Color.black);
 
-      rightPanel.add(Box.createRigidArea(new Dimension(0,2)));
-      
-      // *** Player Panel ***
-      playerPanel.init();
-      playerPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-      rightPanel.add(playerPanel, BorderLayout.CENTER);
-      
-      rightPanel.add(Box.createRigidArea(new Dimension(0,2)));
-      
-      // *** Ping Panel ***
-      JPanel fillPanel = new JPanel( );
-      fillPanel.setLayout(new BoxLayout(fillPanel,BoxLayout.X_AXIS)); // MasterBob revision
-      fillPanel.add(pingPanel);
+        // *** Preview Panel ***
+        this.optionsPanel.setPreferredSize(new Dimension(JClientScreen.mainWidth - JClientScreen.leftWidth - 4, JClientScreen.thumbHeight));
+        this.optionsPanel.setMinimumSize(new Dimension(JClientScreen.mainWidth - JClientScreen.leftWidth - 4, JClientScreen.thumbHeight));
+        this.optionsPanel.setMaximumSize(new Dimension(JClientScreen.mainWidth - JClientScreen.leftWidth - 4, JClientScreen.thumbHeight));
+        this.optionsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        rightPanel.add(this.optionsPanel, BorderLayout.NORTH);
 
-      ImageIcon im_quitup    = ClientDirector.getResourceManager().getImageIcon("quit-up.jpg");
-      ImageIcon im_quitdo    = ClientDirector.getResourceManager().getImageIcon("quit-do.jpg");
+        rightPanel.add(Box.createRigidArea(new Dimension(0, 2)));
 
-      JButton b_quit = new JButton(im_quitup);
-      b_quit.setRolloverIcon(im_quitdo);
-      b_quit.setPressedIcon(im_quitdo);
-      b_quit.setBorderPainted(false);
-      b_quit.setContentAreaFilled(false);
-      b_quit.setFocusPainted(false);
+        // *** Player Panel ***
+        this.playerPanel.init();
+        this.playerPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        rightPanel.add(this.playerPanel, BorderLayout.CENTER);
 
-      b_quit.addActionListener(new ActionListener() {
-          public void actionPerformed (ActionEvent e) {
-            hide();
-            ClientDirector.getDataManager().closeConnection();
-          }
-        }
-      );
+        rightPanel.add(Box.createRigidArea(new Dimension(0, 2)));
 
-      b_quit.setPreferredSize( new Dimension(36,40) );      
-      b_quit.setMinimumSize( new Dimension(36,40) );
-      b_quit.setMaximumSize( new Dimension(36,40) );
+        // *** Ping Panel ***
+        JPanel fillPanel = new JPanel();
+        fillPanel.setLayout(new BoxLayout(fillPanel, BoxLayout.X_AXIS)); // MasterBob revision
+        fillPanel.add(this.pingPanel);
 
-      fillPanel.add(b_quit);
-      rightPanel.add(fillPanel);
-      getContentPane().add(rightPanel, BorderLayout.EAST);
+        ImageIcon im_quitup = ClientDirector.getResourceManager().getImageIcon("quit-up.jpg");
+        ImageIcon im_quitdo = ClientDirector.getResourceManager().getImageIcon("quit-do.jpg");
 
-    // *** Left panel ***
+        JButton b_quit = new JButton(im_quitup);
+        b_quit.setRolloverIcon(im_quitdo);
+        b_quit.setPressedIcon(im_quitdo);
+        b_quit.setBorderPainted(false);
+        b_quit.setContentAreaFilled(false);
+        b_quit.setFocusPainted(false);
 
-      // *** Map panel ***
-      mapPanel.setMinimumSize(new Dimension(leftWidth, gameMinHeight));      
-      chatPanel.setMinimumSize(new Dimension(leftWidth, chatMinHeight));
+        b_quit.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                hide();
+                ClientDirector.getDataManager().closeConnection();
+            }
+        });
 
-      chatPanel.getCurrentJChatRoom().addPlayer(
-                        ClientDirector.getDataManager().getMyPlayer().getPrimaryKey(),
-                        ClientDirector.getDataManager().getMyPlayer().getFullPlayerName());
-      
-      JSplitPane leftPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mapPanel, chatPanel);
-      leftPanel.setOneTouchExpandable(true);
-      leftPanel.setDividerLocation(gameHeight);
+        b_quit.setPreferredSize(new Dimension(36, 40));
+        b_quit.setMinimumSize(new Dimension(36, 40));
+        b_quit.setMaximumSize(new Dimension(36, 40));
 
-      getContentPane().add(leftPanel, BorderLayout.CENTER);
+        fillPanel.add(b_quit);
+        rightPanel.add(fillPanel);
+        getContentPane().add(rightPanel, BorderLayout.EAST);
 
-    // Finalize init
-      pack();
-  }
+        // *** Left panel ***
 
- /*------------------------------------------------------------------------------------*/
+        // *** Map panel ***
+        this.mapPanel.setMinimumSize(new Dimension(JClientScreen.leftWidth, JClientScreen.gameMinHeight));
+        this.chatPanel.setMinimumSize(new Dimension(JClientScreen.leftWidth, JClientScreen.chatMinHeight));
 
-  /** GETTERS & SETTERS **/
+        this.chatPanel.getCurrentJChatRoom().addPlayer(ClientDirector.getDataManager().getMyPlayer().getPrimaryKey(), ClientDirector.getDataManager().getMyPlayer().getFullPlayerName());
 
-  /** To set the Options Panel
-   */
-   public void setOptionsPanel(JOptionsPanel optionsPanel) {
-      this.optionsPanel = optionsPanel;
-   }
+        JSplitPane leftPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, this.mapPanel, this.chatPanel);
+        leftPanel.setOneTouchExpandable(true);
+        leftPanel.setDividerLocation(JClientScreen.gameHeight);
 
-  /** To get tthe Options Panel
-   */
-   public JOptionsPanel getOptionsPanel() {
-      return optionsPanel;
-   }
+        getContentPane().add(leftPanel, BorderLayout.CENTER);
 
-  /** To set the Chat Panel
-   */
-   public void setChatPanel(JChatPanel chatPanel) {
-      this.chatPanel = chatPanel;
-   }
+        // Finalize init
+        pack();
+    }
 
-  /** To get the Chat panel
-   */
-   public JChatPanel getChatPanel() {
-      return chatPanel;
-   }
+    /*------------------------------------------------------------------------------------*/
 
-  /** To set the Player Panel
-   */
-   public void setPlayerPanel(JPlayerPanel playerPanel) {
-      this.playerPanel = playerPanel;
-   }
+    /** GETTERS & SETTERS **/
 
-  /** To get the Player Panel
-   */
-   public JPlayerPanel getPlayerPanel() {
-      return playerPanel;
-   }
+    /** To set the Options Panel
+     */
+    public void setOptionsPanel(JOptionsPanel optionsPanel) {
+        this.optionsPanel = optionsPanel;
+    }
 
-  /** To set the Map Panel
-   */
-   public void setMapPanel(JMapPanel mapPanel) {
-      this.mapPanel = mapPanel;
-   }
+    /** To get tthe Options Panel
+     */
+    public JOptionsPanel getOptionsPanel() {
+        return this.optionsPanel;
+    }
 
-  /** To get the Map Panel
-   */
-   public JMapPanel getMapPanel() {
-      return mapPanel;
-   }
+    /** To set the Chat Panel
+     */
+    public void setChatPanel(JChatPanel chatPanel) {
+        this.chatPanel = chatPanel;
+    }
 
-  /** To set the Ping Panel
-   */
-   public void setPingPanel(GraphicPingPanel pingPanel) {
-      this.pingPanel = pingPanel;
-   }
+    /** To get the Chat panel
+     */
+    public JChatPanel getChatPanel() {
+        return this.chatPanel;
+    }
 
-  /** To get the Ping Panel
-   */
-   public GraphicPingPanel getPingPanel() {
-      return pingPanel;
-   }
+    /** To set the Player Panel
+     */
+    public void setPlayerPanel(JPlayerPanel playerPanel) {
+        this.playerPanel = playerPanel;
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /** To get the Player Panel
+     */
+    public JPlayerPanel getPlayerPanel() {
+        return this.playerPanel;
+    }
+
+    /** To set the Map Panel
+     */
+    public void setMapPanel(JMapPanel mapPanel) {
+        this.mapPanel = mapPanel;
+    }
+
+    /** To get the Map Panel
+     */
+    public JMapPanel getMapPanel() {
+        return this.mapPanel;
+    }
+
+    /** To set the Ping Panel
+     */
+    public void setPingPanel(GraphicPingPanel pingPanel) {
+        this.pingPanel = pingPanel;
+    }
+
+    /** To get the Ping Panel
+     */
+    public GraphicPingPanel getPingPanel() {
+        return this.pingPanel;
+    }
+
+    /*------------------------------------------------------------------------------------*/
 
 }

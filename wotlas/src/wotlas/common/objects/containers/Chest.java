@@ -16,12 +16,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.objects.containers;
 
-import wotlas.common.objects.interfaces.*;
-import wotlas.common.objects.valueds.ValuedObject;
-import wotlas.common.Player;
+import wotlas.common.objects.interfaces.LockableInterface;
 import wotlas.common.objects.usefuls.Key;
 
 /** 
@@ -31,105 +29,91 @@ import wotlas.common.objects.usefuls.Key;
  * @see wotlas.common.objects.containers.ContainerObject
  * @see wotlas.common.objects.interfaces.LockableInterface
  */
-public class Chest extends ContainerObject implements LockableInterface
-{
+public class Chest extends ContainerObject implements LockableInterface {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
- /** The Key associated with the chest.
-  */
-  protected Key key;
- 
- 
- /*------------------------------------------------------------------------------------*/
+    /** The Key associated with the chest.
+     */
+    protected Key key;
 
-  /** The default constructor. Calls ContainerObject's constructor.
-   */
-      public Chest()
-	  {
-	   super();
-	   	   
-	   className="Chest";
-	   objectName="default chest";
-	   key=null;
-	  }
- 
- /** Parametric constructor. Calls ContainerObject's constructor.
-  * @param key the key working with the chest
-  */
-  public Chest(Key key)
-  {
-   super();
-     
-   className="Chest";
-   objectName=key.getSKeyID()+"-chest";
-   this.key=key;
-  }
+    /*------------------------------------------------------------------------------------*/
 
- 
- /** Parametric constructor. Calls ContainerObject's constructor.
-  * @param capacity the number of objects that can be contained
-  */
-  public Chest(short capacity)
-  {
-   super(capacity);
-     
-   className="Chest";
-   objectName="default chest";
-   key=null;
-  }
+    /** The default constructor. Calls ContainerObject's constructor.
+     */
+    public Chest() {
+        super();
 
- /** Full parametric constructor. Calls ContainerObject's constructor.
-  * @param key the key working with the chest
-  */
-  public Chest(Key key,short capacity)
-  {
-   super(capacity);
-     
-   className="Chest";
-   objectName=key.getSKeyID()+"-chest";
-   this.key=key;
-  }
+        this.className = "Chest";
+        this.objectName = "default chest";
+        this.key = null;
+    }
 
-  
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-	
-  /** Try to lock the object.
-   * @param key the key used 
-   */
-    public void tryLock(Key key)
-	{
-	
-	}
+    /** Parametric constructor. Calls ContainerObject's constructor.
+     * @param key the key working with the chest
+     */
+    public Chest(Key key) {
+        super();
 
-  /** Try to unlock the object.
-   * @param key the key used 
-   */
-    public void tryUnlock(Key key)
-	{
-	
-	}
+        this.className = "Chest";
+        this.objectName = key.getSKeyID() + "-chest";
+        this.key = key;
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /** Parametric constructor. Calls ContainerObject's constructor.
+     * @param capacity the number of objects that can be contained
+     */
+    public Chest(short capacity) {
+        super(capacity);
 
-  /** Get the associated Key
-   * @return key the key for this chest 
-   */
-    public Key getKey()
-	{
-	 return key;
-	}
+        this.className = "Chest";
+        this.objectName = "default chest";
+        this.key = null;
+    }
 
-  /** Set the associated Key
-   * @param key the new key for this chest 
-   */
-    public void setKey(Key key)
-	{
-	 this.key=key;
-	}
-	
- /*------------------------------------------------------------------------------------*/
+    /** Full parametric constructor. Calls ContainerObject's constructor.
+     * @param key the key working with the chest
+     */
+    public Chest(Key key, short capacity) {
+        super(capacity);
+
+        this.className = "Chest";
+        this.objectName = key.getSKeyID() + "-chest";
+        this.key = key;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Try to lock the object.
+     * @param key the key used 
+     */
+    public void tryLock(Key key) {
+
+    }
+
+    /** Try to unlock the object.
+     * @param key the key used 
+     */
+    public void tryUnlock(Key key) {
+
+    }
+
+    /*------------------------------------------------------------------------------------*/
+
+    /** Get the associated Key
+     * @return key the key for this chest 
+     */
+    public Key getKey() {
+        return this.key;
+    }
+
+    /** Set the associated Key
+     * @param key the new key for this chest 
+     */
+    public void setKey(Key key) {
+        this.key = key;
+    }
+
+    /*------------------------------------------------------------------------------------*/
 
 }
-

@@ -16,32 +16,31 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.universe;
 
-
- /** Represents an object that has a precise location.
-  *
-  * @author Aldiss
-  * @see wotlas.common.universe.LocationOwner
-  */
+/** Represents an object that has a precise location.
+ *
+ * @author Aldiss
+ * @see wotlas.common.universe.LocationOwner
+ */
 
 public interface PreciseLocationOwner extends LocationOwner {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To get the object's X position.
-   *  @return x
-   */
-      public int getX();
+    /** To get the object's X position.
+     *  @return x
+     */
+    public int getX();
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To get the object's Y position.
-   *  @return y
-   */
-      public int getY();
+    /** To get the object's Y position.
+     *  @return y
+     */
+    public int getY();
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
 }

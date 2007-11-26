@@ -19,16 +19,15 @@
 
 package wotlas.client.message.description;
 
-import java.io.IOException;
-import java.util.*;
-
-import wotlas.utils.Debug;
-
+import java.util.Hashtable;
+import java.util.Iterator;
+import wotlas.client.DataManager;
+import wotlas.client.PlayerImpl;
+import wotlas.common.message.description.RoomPlayerDataMessage;
+import wotlas.common.universe.Room;
+import wotlas.common.universe.WotlasLocation;
 import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.message.description.*;
-import wotlas.common.universe.*;
-import wotlas.common.Player;
-import wotlas.client.*;
+import wotlas.utils.Debug;
 
 /**
  * Associated behaviour to the PathUpdateMovementMessage...
@@ -36,109 +35,102 @@ import wotlas.client.*;
  * @author Aldiss
  */
 
-public class RoomPlayerDataMsgBehaviour extends RoomPlayerDataMessage implements NetMessageBehaviour
-{
- /*------------------------------------------------------------------------------------*/
+public class RoomPlayerDataMsgBehaviour extends RoomPlayerDataMessage implements NetMessageBehaviour {
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public RoomPlayerDataMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+     */
+    public RoomPlayerDataMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {
-           if (DataManager.SHOW_DEBUG)
-             System.out.println("ROOM PLAYER DATA MESSAGE "+location);
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
+        if (DataManager.SHOW_DEBUG)
+            System.out.println("ROOM PLAYER DATA MESSAGE " + this.location);
 
         // The sessionContext is here a DataManager.
-           DataManager dataManager = (DataManager) sessionContext;
-           PlayerImpl myPlayer = dataManager.getMyPlayer();
+        DataManager dataManager = (DataManager) sessionContext;
+        PlayerImpl myPlayer = dataManager.getMyPlayer();
 
-           if(myPlayer.getLocation()==null) {
-              Debug.signal( Debug.ERROR, this, "No location set !" );
-              return;
-           }
+        if (myPlayer.getLocation() == null) {
+            Debug.signal(Debug.ERROR, this, "No location set !");
+            return;
+        }
 
+        // We search for the location specified...
+        if (myPlayer.getLocation().isRoom()) {
+            Room myRoom = myPlayer.getMyRoom();
+            if (myRoom == null) {
+                Debug.signal(Debug.ERROR, this, "Null Room for " + myPlayer.getPrimaryKey());
+                return;
+            }
 
-       // We search for the location specified...
-          if( myPlayer.getLocation().isRoom() )
-          {
-              Room myRoom = myPlayer.getMyRoom();       
-              if( myRoom==null ) {
-              	Debug.signal( Debug.ERROR, this, "Null Room for "+myPlayer.getPrimaryKey() );
-              	return;
-              }
+            // is this Room on the same map as ours ?
+            WotlasLocation myLocation = myPlayer.getLocation();
 
-           // is this Room on the same map as ours ?
-              WotlasLocation myLocation = myPlayer.getLocation();
-              
-              if( myLocation.getWorldMapID()!=location.getWorldMapID() ||
-                  myLocation.getTownMapID()!=location.getTownMapID() ||
-                  myLocation.getBuildingID()!=location.getBuildingID() ||
-                  myLocation.getInteriorMapID()!=location.getInteriorMapID() )
-              {
-                 Debug.signal( Debug.WARNING, this, "Received message with far location" );
-                 return;
-              }
+            if (myLocation.getWorldMapID() != this.location.getWorldMapID() || myLocation.getTownMapID() != this.location.getTownMapID() || myLocation.getBuildingID() != this.location.getBuildingID() || myLocation.getInteriorMapID() != this.location.getInteriorMapID()) {
+                Debug.signal(Debug.WARNING, this, "Received message with far location");
+                return;
+            }
 
-           // Search in Current Room
-              if( myRoom.getRoomID() == location.getRoomID() ) {
-                  merge( dataManager );
-                  return;  // success
-              }
+            // Search in Current Room
+            if (myRoom.getRoomID() == this.location.getRoomID()) {
+                merge(dataManager);
+                return; // success
+            }
 
-           // Search in other rooms
-              if(myRoom.getRoomLinks()==null) {
-              	  return; // not found
-              }
+            // Search in other rooms
+            if (myRoom.getRoomLinks() == null) {
+                return; // not found
+            }
 
-              for( int i=0; i<myRoom.getRoomLinks().length; i++ ) {
-                   Room otherRoom = myRoom.getRoomLinks()[i].getRoom1();
-                   
-                   if( otherRoom==myRoom )
-                       otherRoom = myRoom.getRoomLinks()[i].getRoom2();
+            for (int i = 0; i < myRoom.getRoomLinks().length; i++) {
+                Room otherRoom = myRoom.getRoomLinks()[i].getRoom1();
 
-                   if( otherRoom.getRoomID() == location.getRoomID() ) {
-                       merge( dataManager );
-                       return;  // success
-                   }
-              }
+                if (otherRoom == myRoom)
+                    otherRoom = myRoom.getRoomLinks()[i].getRoom2();
 
-             return; // the room was not found near us...
-          }
+                if (otherRoom.getRoomID() == this.location.getRoomID()) {
+                    merge(dataManager);
+                    return; // success
+                }
+            }
 
-     }
+            return; // the room was not found near us...
+        }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    }
 
-  /** To merge our players the DataManager's hashtable...
-   */
-    private void merge( DataManager dataManager ) {
-    	Hashtable dest = dataManager.getPlayers();
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-    	synchronized( dest ) {
-            Iterator it = players.values().iterator();
+    /** To merge our players the DataManager's hashtable...
+     */
+    private void merge(DataManager dataManager) {
+        Hashtable dest = dataManager.getPlayers();
 
-            while( it.hasNext() ) {
+        synchronized (dest) {
+            Iterator it = this.players.values().iterator();
+
+            while (it.hasNext()) {
                 PlayerImpl playerImpl = (PlayerImpl) it.next();
-            	
-            	if( dest.containsKey( playerImpl.getPrimaryKey() ) )
-            	    continue;
 
-                dest.put( playerImpl.getPrimaryKey(), playerImpl );
+                if (dest.containsKey(playerImpl.getPrimaryKey()))
+                    continue;
+
+                dest.put(playerImpl.getPrimaryKey(), playerImpl);
                 playerImpl.init();
                 playerImpl.initVisualProperties(dataManager.getGraphicsDirector());
             }
-    	}
+        }
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

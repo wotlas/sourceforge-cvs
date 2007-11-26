@@ -19,23 +19,20 @@
 
 package wotlas.server.message.description;
 
-import wotlas.server.*;
-
-import wotlas.libs.net.NetMessageBehaviour;
-
-import wotlas.common.message.description.*;
-import wotlas.common.message.movement.*;
-import wotlas.common.message.chat.*;
+import wotlas.common.WorldManager;
+import wotlas.common.message.description.DoorStateMessage;
+import wotlas.common.message.movement.ResetPositionMessage;
 import wotlas.common.router.MessageRouter;
-import wotlas.common.universe.*;
-import wotlas.common.chat.*;
-import wotlas.common.*;
-
-import wotlas.utils.*;
-
-
-import java.io.IOException;
-import java.util.*;
+import wotlas.common.universe.Door;
+import wotlas.common.universe.Room;
+import wotlas.common.universe.RoomLink;
+import wotlas.common.universe.TownMap;
+import wotlas.common.universe.WorldMap;
+import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.server.PlayerImpl;
+import wotlas.server.ServerDirector;
+import wotlas.utils.Debug;
+import wotlas.utils.ScreenPoint;
 
 /**
  * Associated behaviour to the DoorStateMessage...
@@ -45,111 +42,103 @@ import java.util.*;
 
 public class DoorStateMsgBehaviour extends DoorStateMessage implements NetMessageBehaviour {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public DoorStateMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+     */
+    public DoorStateMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
 
         // The sessionContext is here a PlayerImpl.
-           PlayerImpl player = (PlayerImpl) sessionContext;
+        PlayerImpl player = (PlayerImpl) sessionContext;
 
         // 1 - CONTROL
-           if( location.getWorldMapID()!=player.getLocation().getWorldMapID() ||
-               location.getTownMapID()!=player.getLocation().getTownMapID() ||
-               location.getBuildingID()!=player.getLocation().getBuildingID() ||
-               location.getInteriorMapID()!=player.getLocation().getInteriorMapID() ||
-               location.getRoomID()!=player.getLocation().getRoomID() ) {
-               Debug.signal( Debug.ERROR, this, "Specified door location is not in our room !! "+location );
-               sendError(player, "Door not found. A location error might have occured.\n We are going to reset your location.");
-               return;
-           }
+        if (this.location.getWorldMapID() != player.getLocation().getWorldMapID() || this.location.getTownMapID() != player.getLocation().getTownMapID() || this.location.getBuildingID() != player.getLocation().getBuildingID() || this.location.getInteriorMapID() != player.getLocation().getInteriorMapID() || this.location.getRoomID() != player.getLocation().getRoomID()) {
+            Debug.signal(Debug.ERROR, this, "Specified door location is not in our room !! " + this.location);
+            sendError(player, "Door not found. A location error might have occured.\n We are going to reset your location.");
+            return;
+        }
 
-       // Is the update possible ?
-          Room currentRoom = player.getMyRoom();
-          Room targetRoom = null;
+        // Is the update possible ?
+        Room currentRoom = player.getMyRoom();
+        Room targetRoom = null;
 
-       // update Door
-          RoomLink roomLink = currentRoom.getRoomLink( roomLinkID );
-          Door door = null;
-          
-          if( roomLink!=null )
-              door = roomLink.getDoor();
+        // update Door
+        RoomLink roomLink = currentRoom.getRoomLink(this.roomLinkID);
+        Door door = null;
 
-          if( door==null ) {
-               Debug.signal( Debug.ERROR, this, "Specified door was not found !" );
-               sendError(player, "Door not found. A location error might have occured.\n We are going to reset your location.");
-               return;
-          }
-          
-          if( isOpened )
-              door.open();
-          else
-              door.close();
+        if (roomLink != null)
+            door = roomLink.getDoor();
 
-       // We propagate this update
-          targetRoom = roomLink.getRoom1();
+        if (door == null) {
+            Debug.signal(Debug.ERROR, this, "Specified door was not found !");
+            sendError(player, "Door not found. A location error might have occured.\n We are going to reset your location.");
+            return;
+        }
 
-          if( targetRoom==currentRoom )
-              targetRoom = roomLink.getRoom2();
+        if (this.isOpened)
+            door.open();
+        else
+            door.close();
 
-          currentRoom.getMessageRouter().sendMessage( this, null, MessageRouter.EXC_EXTENDED_GROUP );
-          targetRoom.getMessageRouter().sendMessage( this, null, MessageRouter.EXC_EXTENDED_GROUP );
-     }
+        // We propagate this update
+        targetRoom = roomLink.getRoom1();
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        if (targetRoom == currentRoom)
+            targetRoom = roomLink.getRoom2();
 
-   /** To send an error message to the client.
-    */
-     public void sendError( PlayerImpl player, String message ) {
-         Debug.signal( Debug.ERROR, this, message );
+        currentRoom.getMessageRouter().sendMessage(this, null, MessageRouter.EXC_EXTENDED_GROUP);
+        targetRoom.getMessageRouter().sendMessage(this, null, MessageRouter.EXC_EXTENDED_GROUP);
+    }
 
-      // We search for a valid insertion point
-         ScreenPoint pReset = null;
-         player.updateSyncID();
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-         if( player.getLocation().isRoom() )
-             pReset = player.getMyRoom().getInsertionPoint();
-         else {
-           // We get the world manager
-             WorldManager wManager = ServerDirector.getDataManager().getWorldManager();
+    /** To send an error message to the client.
+     */
+    public void sendError(PlayerImpl player, String message) {
+        Debug.signal(Debug.ERROR, this, message);
 
-             if( player.getLocation().isTown() ) {
-                 TownMap myTown = wManager.getTownMap( location );
-                 if(myTown!=null) 
+        // We search for a valid insertion point
+        ScreenPoint pReset = null;
+        player.updateSyncID();
+
+        if (player.getLocation().isRoom())
+            pReset = player.getMyRoom().getInsertionPoint();
+        else {
+            // We get the world manager
+            WorldManager wManager = ServerDirector.getDataManager().getWorldManager();
+
+            if (player.getLocation().isTown()) {
+                TownMap myTown = wManager.getTownMap(this.location);
+                if (myTown != null)
                     pReset = myTown.getInsertionPoint();
-             }
-             else if( player.getLocation().isWorld() ) {
-                 WorldMap myWorld = wManager.getWorldMap( location );
-                 if(myWorld!=null) 
+            } else if (player.getLocation().isWorld()) {
+                WorldMap myWorld = wManager.getWorldMap(this.location);
+                if (myWorld != null)
                     pReset = myWorld.getInsertionPoint();
-             }
-         }
+            }
+        }
 
-      // Have we found a valid insertion point ?
-         if(pReset==null) {
-            Debug.signal(Debug.CRITICAL,this,"NO VALID LOCATION FOR PLAYER: "+player.getLocation());
+        // Have we found a valid insertion point ?
+        if (pReset == null) {
+            Debug.signal(Debug.CRITICAL, this, "NO VALID LOCATION FOR PLAYER: " + player.getLocation());
             pReset = new ScreenPoint(0, 0);
-         }
+        }
 
-      // We send the message...
-         player.sendMessage( new ResetPositionMessage( player.getPrimaryKey(), player.getLocation(),
-                                                       pReset.x, pReset.y, player.getOrientation(),
-                                                       player.getSyncID() ) );
-     }
+        // We send the message...
+        player.sendMessage(new ResetPositionMessage(player.getPrimaryKey(), player.getLocation(), pReset.x, pReset.y, player.getOrientation(), player.getSyncID()));
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

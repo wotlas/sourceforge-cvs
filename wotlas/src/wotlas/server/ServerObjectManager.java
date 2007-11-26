@@ -16,14 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.server;
 
 import wotlas.common.objects.ObjectManager;
-
-import wotlas.common.objects.inventories.Inventory;	
-
-import wotlas.common.universe.WotlasLocation;
+import wotlas.common.objects.inventories.Inventory;
 
 /** 
  * The ServerObjectManager.<br>
@@ -32,52 +29,46 @@ import wotlas.common.universe.WotlasLocation;
  * @author Elann
  */
 
-public class ServerObjectManager implements ObjectManager
-{
+public class ServerObjectManager implements ObjectManager {
 
- /*------------------------------------------------------------------------------------*/
-  
- /** The owned Inventory object.
-  */
-  protected Inventory inventory;
+    /*------------------------------------------------------------------------------------*/
 
- 
- /*------------------------------------------------------------------------------------*/
-		
-  /* ------- Constructor ----- */
-  
-  /** Default constructor.
-   */
-   	public ServerObjectManager() {
-	}		
-	
-  /** Parametric constructor.
-   * @param inventory the inventory of my player
-   */
-   	public ServerObjectManager(Inventory inventory)
-	{
-	 this.inventory=inventory;
-	}		
-		
-  /* ------- Methods --------- */
-	
-  /** Get the Inventory object of the player
-   *  @return the player's Inventory
-   */
-    public Inventory getInventory() 
-	{ 
-	 return inventory;
-	}
+    /** The owned Inventory object.
+     */
+    protected Inventory inventory;
 
-  /** Set the Inventory of the Manager.
-  	  @param inventory the new Inventory
-   */
-    public void setInventory(Inventory inventory)
-	{
-	 this.inventory=inventory; 
-	}
+    /*------------------------------------------------------------------------------------*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* ------- Constructor ----- */
+
+    /** Default constructor.
+     */
+    public ServerObjectManager() {
+    }
+
+    /** Parametric constructor.
+     * @param inventory the inventory of my player
+     */
+    public ServerObjectManager(Inventory inventory) {
+        this.inventory = inventory;
+    }
+
+    /* ------- Methods --------- */
+
+    /** Get the Inventory object of the player
+     *  @return the player's Inventory
+     */
+    public Inventory getInventory() {
+        return this.inventory;
+    }
+
+    /** Set the Inventory of the Manager.
+    	  @param inventory the new Inventory
+     */
+    public void setInventory(Inventory inventory) {
+        this.inventory = inventory;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

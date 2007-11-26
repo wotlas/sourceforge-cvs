@@ -16,14 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.objects.usefuls;
 
-import wotlas.common.objects.interfaces.*;
-
-import wotlas.common.objects.valueds.ValuedObject;
 import wotlas.common.Player;
 import wotlas.common.objects.BaseObject;
+import wotlas.common.objects.interfaces.TransportableInterface;
+import wotlas.common.objects.valueds.ValuedObject;
 
 /** 
  * The keys class.
@@ -34,132 +33,120 @@ import wotlas.common.objects.BaseObject;
  * @see wotlas.common.objects.interfaces.TransportableInterface 
  */
 
-public class Key extends UsefulObject implements TransportableInterface 
-{
+public class Key extends UsefulObject implements TransportableInterface {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
- /** Key identifier.
-  */
-  	protected int iKeyID;
-	
- /** Key string identifier.
-  */
-  	protected String sKeyID; 																						
-	  
- /** Is it on ?
-  */
-  private boolean equipped;
-	  
- /*------------------------------------------------------------------------------------*/
- 
-  /** The default constructor.
-   */			
-    public Key()
-	{
-	 super();
-	 
-	 this.className="Key";
-	 this.objectName="default key";
-	}															
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** Key identifier.
+     */
+    protected int iKeyID;
 
-  /** Use the object.<br>
-   * For a key, needs a target.  
-   */
-    public void use()
-	{
-	 /* no op */
-	}
+    /** Key string identifier.
+     */
+    protected String sKeyID;
 
-  /** Ready the key for usage.
-   */
-    public void ready()
-	{
-	 /* no op */
-	}
+    /** Is it on ?
+     */
+    private boolean equipped;
 
-    public void equip()
-	{	   
-	 equipped=true;
-	}
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-   /** Gets rid of the object. The object is dropped on the ground.
-   */
-    public void discard()
-	{
-	 /* no op */
-	}
+    /*------------------------------------------------------------------------------------*/
 
-  /** Sells the object to somebody.
-  	  @param buyer The Player who buy the object. 
-  	  @return the prize paid.
-   */
-    public ValuedObject sellTo(Player buyer)
-	{
-	 /* no op */
-	 return new ValuedObject();
-	}
+    /** The default constructor.
+     */
+    public Key() {
+        super();
 
-  /** Gives the object to somebody.
-  	  @param receiver The Player who receive the object.
-   */
-    public void giveTo(Player receiver)
-	{
-	 /* no op */
-	}
-	
-  /** Trade the object to somebody.<br>
-    * Here the transaction is already accepted.
-  	* @param buyer The Player who buy the object. 
-  	* @return the object given by the other player.
+        this.className = "Key";
+        this.objectName = "default key";
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Use the object.<br>
+     * For a key, needs a target.  
+     */
+    @Override
+    public void use() {
+        /* no op */
+    }
+
+    /** Ready the key for usage.
+     */
+    @Override
+    public void ready() {
+        /* no op */
+    }
+
+    public void equip() {
+        this.equipped = true;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Gets rid of the object. The object is dropped on the ground.
     */
-    public BaseObject tradeTo(Player buyer)
-	{
-	 /* no op */
-	 return new BaseObject();
-	}
+    public void discard() {
+        /* no op */
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
- 
- /** Get the key integer identifier.
-  * @return iKeyID
-  */
-  	public int getIKeyID()
-	{
-	 return iKeyID;
-	}
-	
- /** Set the key integer identifier.
-  * @param iKeyID the new key identifier
-  */
-    public void setIKeyID(int iKeyID)
-	{
-	 this.iKeyID=iKeyID;
-	} 
- 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** Sells the object to somebody.
+    	  @param buyer The Player who buy the object. 
+    	  @return the prize paid.
+     */
+    public ValuedObject sellTo(Player buyer) {
+        /* no op */
+        return new ValuedObject();
+    }
 
- /** Get the key string identifier.
-  * @return sKeyID
-  */
-  	public String getSKeyID()
-	{
-	 return sKeyID;
-	}
-	
- /** Set the key string identifier.
-  * @param sKeyID the new key identifier
-  */
-    public void setSKeyID(String sKeyID)
-	{
-	 this.sKeyID=sKeyID;
-	} 
- 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** Gives the object to somebody.
+    	  @param receiver The Player who receive the object.
+     */
+    public void giveTo(Player receiver) {
+        /* no op */
+    }
+
+    /** Trade the object to somebody.<br>
+      * Here the transaction is already accepted.
+    	* @param buyer The Player who buy the object. 
+    	* @return the object given by the other player.
+      */
+    public BaseObject tradeTo(Player buyer) {
+        /* no op */
+        return new BaseObject();
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the key integer identifier.
+     * @return iKeyID
+     */
+    public int getIKeyID() {
+        return this.iKeyID;
+    }
+
+    /** Set the key integer identifier.
+     * @param iKeyID the new key identifier
+     */
+    public void setIKeyID(int iKeyID) {
+        this.iKeyID = iKeyID;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the key string identifier.
+     * @return sKeyID
+     */
+    public String getSKeyID() {
+        return this.sKeyID;
+    }
+
+    /** Set the key string identifier.
+     * @param sKeyID the new key identifier
+     */
+    public void setSKeyID(String sKeyID) {
+        this.sKeyID = sKeyID;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

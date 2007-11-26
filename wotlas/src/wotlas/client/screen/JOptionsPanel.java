@@ -19,140 +19,151 @@
 
 package wotlas.client.screen;
 
-import wotlas.utils.*;
-import wotlas.libs.aswing.*;
-import wotlas.client.*;
-import wotlas.client.gui.*;
-
-import java.awt.*;
-import java.awt.event.*;
-
-import javax.swing.*;
-import javax.swing.event.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.MediaTracker;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import wotlas.client.ClientDirector;
+import wotlas.client.DataManager;
+import wotlas.client.gui.JHTMLWindow;
+import wotlas.libs.aswing.ALabel;
 
 /** JPanel to configure the interface
  *
  * @author Petrus
  */
 
-public class JOptionsPanel extends JPanel implements MouseListener
-{
+public class JOptionsPanel extends JPanel implements MouseListener {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   private Image menu;
+    private Image menu;
 
-  /** Consctructor.
-   */
-  public JOptionsPanel() {
-    super();
-    setBackground(Color.white);
-    JPanel innerPanel = new JPanel();
-    innerPanel.setOpaque(false);
-    innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
+    /** Consctructor.
+     */
+    public JOptionsPanel() {
+        super();
+        setBackground(Color.white);
+        JPanel innerPanel = new JPanel();
+        innerPanel.setOpaque(false);
+        innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
 
-  // Title
-    ALabel lbl_title = new ALabel(" ");
-    lbl_title.setAlignmentX(Component.CENTER_ALIGNMENT);
-    innerPanel.add(lbl_title);
+        // Title
+        ALabel lbl_title = new ALabel(" ");
+        lbl_title.setAlignmentX(Component.CENTER_ALIGNMENT);
+        innerPanel.add(lbl_title);
 
-  // Space
-    innerPanel.add(new JLabel(" "));
+        // Space
+        innerPanel.add(new JLabel(" "));
 
-  // Options button
-    ImageIcon im_optionsup = ClientDirector.getResourceManager().getImageIcon("options-up.gif");
-    ImageIcon im_optionsdo  = ClientDirector.getResourceManager().getImageIcon("options-do.gif");
-    JButton b_options = new JButton(im_optionsup);
-    b_options.setRolloverIcon(im_optionsdo);
-    
-    b_options.setPressedIcon(im_optionsdo);
-    b_options.setBorderPainted(false);
-    b_options.setContentAreaFilled(false);
-    b_options.setFocusPainted(false);
-    b_options.setAlignmentX(Component.CENTER_ALIGNMENT);
-    b_options.addActionListener(new ActionListener() {
-      public void actionPerformed (ActionEvent e) {
-        new JConfigurationDlg(ClientDirector.getDataManager().getClientScreen());
-      }
-    });
-    innerPanel.add(b_options);
+        // Options button
+        ImageIcon im_optionsup = ClientDirector.getResourceManager().getImageIcon("options-up.gif");
+        ImageIcon im_optionsdo = ClientDirector.getResourceManager().getImageIcon("options-do.gif");
+        JButton b_options = new JButton(im_optionsup);
+        b_options.setRolloverIcon(im_optionsdo);
 
+        b_options.setPressedIcon(im_optionsdo);
+        b_options.setBorderPainted(false);
+        b_options.setContentAreaFilled(false);
+        b_options.setFocusPainted(false);
+        b_options.setAlignmentX(Component.CENTER_ALIGNMENT);
+        b_options.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new JConfigurationDlg(ClientDirector.getDataManager().getClientScreen());
+            }
+        });
+        innerPanel.add(b_options);
 
-// Help buttons
-    ImageIcon im_helpup  = ClientDirector.getResourceManager().getImageIcon("help-up.gif");
-    ImageIcon im_helpdo  = ClientDirector.getResourceManager().getImageIcon("help-do.gif");
-    JButton b_help = new JButton(im_helpup);
-    b_help.setRolloverIcon(im_helpdo);
-    b_help.setPressedIcon(im_helpdo);
-    b_help.setBorderPainted(false);
-    b_help.setContentAreaFilled(false);
-    b_help.setFocusPainted(false);
-    b_help.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // Help buttons
+        ImageIcon im_helpup = ClientDirector.getResourceManager().getImageIcon("help-up.gif");
+        ImageIcon im_helpdo = ClientDirector.getResourceManager().getImageIcon("help-do.gif");
+        JButton b_help = new JButton(im_helpup);
+        b_help.setRolloverIcon(im_helpdo);
+        b_help.setPressedIcon(im_helpdo);
+        b_help.setBorderPainted(false);
+        b_help.setContentAreaFilled(false);
+        b_help.setFocusPainted(false);
+        b_help.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-    b_help.addActionListener(new ActionListener() {
-      public void actionPerformed (ActionEvent e) {
-        new JHTMLWindow( ClientDirector.getDataManager().getClientScreen(), "Help",
-                         ClientDirector.getResourceManager().getHelpDocsDir()+"index.html",
-                         640, 340, false,
-                         ClientDirector.getResourceManager() );
-      }
-    });
-    innerPanel.add(b_help);
+        b_help.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new JHTMLWindow(ClientDirector.getDataManager().getClientScreen(), "Help", ClientDirector.getResourceManager().getHelpDocsDir() + "index.html", 640, 340, false, ClientDirector.getResourceManager());
+            }
+        });
+        innerPanel.add(b_help);
 
-    add(innerPanel);
+        add(innerPanel);
 
-  // We load the image
-     MediaTracker mediaTracker = new MediaTracker(this);
-     menu  = ClientDirector.getResourceManager().getGuiImage("menu.jpg");
-     mediaTracker.addImage(menu,0);
+        // We load the image
+        MediaTracker mediaTracker = new MediaTracker(this);
+        this.menu = ClientDirector.getResourceManager().getGuiImage("menu.jpg");
+        mediaTracker.addImage(this.menu, 0);
 
-         try{
+        try {
             mediaTracker.waitForAll(); // wait for all images to be in memory
-         }
-         catch(InterruptedException e){
+        } catch (InterruptedException e) {
             e.printStackTrace();
-         }
+        }
 
+        if (DataManager.SHOW_DEBUG) {
+            JMemory memo = new JMemory();
+            memo.init();
+        }
 
-    if (DataManager.SHOW_DEBUG) {
-      JMemory memo = new JMemory();
-      memo.init();
     }
-    
-  }
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To paint our panel...
-    */
-      public void paintComponent(Graphics g) {
-      	  if(menu!=null)
-             g.drawImage(menu,0,0,this);
-     }
+    /** To paint our panel...
+     */
+    @Override
+    public void paintComponent(Graphics g) {
+        if (this.menu != null)
+            g.drawImage(this.menu, 0, 0, this);
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /**
-   * Invoked when the mouse button is clicked
-   */
-  public void mouseClicked(MouseEvent e) {}
-  /**
-   * Invoked when the mouse enters a component
-   */
-  public void mouseEntered(MouseEvent e) {}
-  /**
-   * Invoked when the mouse exits a component
-   */
-  public void mouseExited(MouseEvent e) {}
-  /**
-   * Invoked when a mouse button has been pressed on a component
-   */
-  public void mousePressed(MouseEvent e) {}
-  /**
-   * Invoked when a mouse button has been released on a component
-   */
-  public void mouseReleased(MouseEvent e) {}
+    /**
+     * Invoked when the mouse button is clicked
+     */
+    public void mouseClicked(MouseEvent e) {
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /**
+     * Invoked when the mouse enters a component
+     */
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    /**
+     * Invoked when the mouse exits a component
+     */
+    public void mouseExited(MouseEvent e) {
+    }
+
+    /**
+     * Invoked when a mouse button has been pressed on a component
+     */
+    public void mousePressed(MouseEvent e) {
+    }
+
+    /**
+     * Invoked when a mouse button has been released on a component
+     */
+    public void mouseReleased(MouseEvent e) {
+    }
+
+    /*------------------------------------------------------------------------------------*/
 
 }

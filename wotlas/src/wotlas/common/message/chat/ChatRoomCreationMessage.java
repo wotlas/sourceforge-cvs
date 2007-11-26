@@ -18,12 +18,10 @@
  */
 package wotlas.common.message.chat;
 
-import wotlas.common.universe.WotlasLocation;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
+import wotlas.common.universe.WotlasLocation;
 import wotlas.libs.net.NetMessage;
 
 /**
@@ -59,8 +57,7 @@ public class ChatRoomCreationMessage extends NetMessage {
      * @deprecated SHOULD BE UPDATED ON THE CLIENT'S SIDE
      */
     @Deprecated
-    public ChatRoomCreationMessage(String name, String creatorPrimaryKey,
-            WotlasLocation location) {
+    public ChatRoomCreationMessage(String name, String creatorPrimaryKey, WotlasLocation location) {
         super();
         this.name = name;
         this.creatorPrimaryKey = creatorPrimaryKey;
@@ -89,8 +86,8 @@ public class ChatRoomCreationMessage extends NetMessage {
      */
     @Override
     public void encode(DataOutputStream ostream) throws IOException {
-        ostream.writeUTF(name);
-        ostream.writeUTF(creatorPrimaryKey);
+        ostream.writeUTF(this.name);
+        ostream.writeUTF(this.creatorPrimaryKey);
 
         // DEPRECATED : TO REMOVE FOR THE NEXT CLIENT VERSION
         ostream.writeInt(0);
@@ -113,8 +110,8 @@ public class ChatRoomCreationMessage extends NetMessage {
      */
     @Override
     public void decode(DataInputStream istream) throws IOException {
-        name = istream.readUTF();
-        creatorPrimaryKey = istream.readUTF();
+        this.name = istream.readUTF();
+        this.creatorPrimaryKey = istream.readUTF();
 
         // DEPRECATED : TO REMOVE FOR THE NEXT CLIENT VERSION
         istream.readInt();

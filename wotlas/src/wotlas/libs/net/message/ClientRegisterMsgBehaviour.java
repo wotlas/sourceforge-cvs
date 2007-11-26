@@ -16,18 +16,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.libs.net.message;
 
-import java.io.IOException;
-
-import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.libs.net.NetServerEntry;
 import wotlas.libs.net.NetEngineVersion;
 import wotlas.libs.net.NetErrorCodeList;
-
+import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.libs.net.NetServerEntry;
 import wotlas.utils.Debug;
-
 
 /**
  * Associated behaviour to the ClientRegisterMessage...
@@ -38,66 +34,50 @@ import wotlas.utils.Debug;
 
 public class ClientRegisterMsgBehaviour extends ClientRegisterMessage implements NetMessageBehaviour {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public ClientRegisterMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+     */
+    public ClientRegisterMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to the ClientRegisterMessage...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {
+    /** Associated code to the ClientRegisterMessage...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
 
         // the sessionContext is here an entry on this server ( server + connection )
-           NetServerEntry entry = (NetServerEntry) sessionContext;
+        NetServerEntry entry = (NetServerEntry) sessionContext;
 
-     	// this message is the first one sent by a client 
-     	// when he establishes a new connection. Arrived on the server
+        // this message is the first one sent by a client 
+        // when he establishes a new connection. Arrived on the server
         // we check that we have the same NetEngineVersion.
-           if( netEngineVersion != NetEngineVersion.VERSION ) {
-                if( netEngineVersion > NetEngineVersion.VERSION ) {
-                     entry.getConnection().queueMessage(
-                           new ServerErrorMessage( NetErrorCodeList.ERR_BAD_LIB_VERSION,
-                                                   "The Server Network Engine Version is old : "
-                                                   + NetEngineVersion.VERSION
-                                                   + ". Please Signal it ! You have version "
-                                                   + netEngineVersion ) );
+        if (this.netEngineVersion != NetEngineVersion.VERSION) {
+            if (this.netEngineVersion > NetEngineVersion.VERSION) {
+                entry.getConnection().queueMessage(new ServerErrorMessage(NetErrorCodeList.ERR_BAD_LIB_VERSION, "The Server Network Engine Version is old : " + NetEngineVersion.VERSION + ". Please Signal it ! You have version " + this.netEngineVersion));
 
-                     entry.getConnection().close();
+                entry.getConnection().close();
 
-                     Debug.signal( Debug.WARNING, this,
-                                     "Client tried to connect with a more recent network engine version :"
-                                      +netEngineVersion+". This server has version "
-                                      +NetEngineVersion.VERSION );
-                }
-                else {
-                       entry.getConnection().queueMessage(
-                           new ServerErrorMessage( NetErrorCodeList.ERR_BAD_LIB_VERSION,
-                                                   "You have an old version of the Wotlas Network Engine (v"
-                                                        + netEngineVersion + "). Please update to v"
-                                                        + NetEngineVersion.VERSION ) );
+                Debug.signal(Debug.WARNING, this, "Client tried to connect with a more recent network engine version :" + this.netEngineVersion + ". This server has version " + NetEngineVersion.VERSION);
+            } else {
+                entry.getConnection().queueMessage(new ServerErrorMessage(NetErrorCodeList.ERR_BAD_LIB_VERSION, "You have an old version of the Wotlas Network Engine (v" + this.netEngineVersion + "). Please update to v" + NetEngineVersion.VERSION));
 
-                       entry.getConnection().close();
+                entry.getConnection().close();
 
-                       Debug.signal( Debug.WARNING, this,
-                                     "Client tried to connect with an old version of the network engine (v"
-                                      +netEngineVersion+")." );
-                }
+                Debug.signal(Debug.WARNING, this, "Client tried to connect with an old version of the network engine (v" + this.netEngineVersion + ").");
+            }
 
-              return;
-           }
+            return;
+        }
 
-     	// if the version are the same, we call the server's accessControl method.
-           entry.getServer().accessControl( entry.getConnection(), key );
-     }
+        // if the version are the same, we call the server's accessControl method.
+        entry.getServer().accessControl(entry.getConnection(), this.key);
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

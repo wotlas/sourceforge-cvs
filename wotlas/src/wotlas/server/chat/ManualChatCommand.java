@@ -19,99 +19,92 @@
 
 package wotlas.server.chat;
 
-import wotlas.server.*;
-import wotlas.common.message.chat.SendTextMessage;
 import wotlas.common.chat.ChatRoom;
-
-import wotlas.utils.Debug;
-
+import wotlas.common.message.chat.SendTextMessage;
+import wotlas.server.PlayerImpl;
+import wotlas.server.ServerDirector;
 
 /** "/manual" chat command. To print some info on a command.
  *
  * @author Aldiss
  */
 
-public class ManualChatCommand implements ChatCommand
-{
- /*------------------------------------------------------------------------------------*/
+public class ManualChatCommand implements ChatCommand {
+    /*------------------------------------------------------------------------------------*/
 
-   /** Returns the first part of the chat command. For example if your chat command
-    *  has the following format '/msg playerId message' the prefix is '/msg'.
-    *  Other example : if your command is '/who' the prefix is '/who'. 
-    *
-    * @return the chat command prefix that will help identify the command.
-    */
-      public String getChatCommandPrefix() {
-      	 return "/manual";
-      }
+    /** Returns the first part of the chat command. For example if your chat command
+     *  has the following format '/msg playerId message' the prefix is '/msg'.
+     *  Other example : if your command is '/who' the prefix is '/who'. 
+     *
+     * @return the chat command prefix that will help identify the command.
+     */
+    public String getChatCommandPrefix() {
+        return "/manual";
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Voice sound level needed to exec this command. While most commands only need to be
-    *  be spoken, others need to be shouted or whispered.
-    *  
-    *  @return ChatRoom.WHISPERING_VOICE_LEVEL if the command is to be whispered,
-    *          ChatRoom.NORMAL_VOICE_LEVEL  if the command just need to be spoken,
-    *          ChatRoom.SHOUTING_VOICE_LEVEL if the command needs to be shout.
-    */
-      public byte getChatCommandVoiceSoundLevel() {
-         return ChatRoom.NORMAL_VOICE_LEVEL;
-      }
+    /** Voice sound level needed to exec this command. While most commands only need to be
+     *  be spoken, others need to be shouted or whispered.
+     *  
+     *  @return ChatRoom.WHISPERING_VOICE_LEVEL if the command is to be whispered,
+     *          ChatRoom.NORMAL_VOICE_LEVEL  if the command just need to be spoken,
+     *          ChatRoom.SHOUTING_VOICE_LEVEL if the command needs to be shout.
+     */
+    public byte getChatCommandVoiceSoundLevel() {
+        return ChatRoom.NORMAL_VOICE_LEVEL;
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Is this a secret command that musn't be displayed in public commands list ?
-    * @return true if secret, false if public...
-    */
-      public boolean isHidden() {
-      	 return false;
-      }
+    /** Is this a secret command that musn't be displayed in public commands list ?
+     * @return true if secret, false if public...
+     */
+    public boolean isHidden() {
+        return false;
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** To get information on this command.
-    * @return command full documentation.
-    */
-      public String getCommandDocumentation() {
-      	return "<font size='4'>Command 'manual'</font>" +
-      	       "<br><b> Syntax :</b> /manual [commandName] " +
-      	       "<br><b> Voice  :</b> normal voice level " +
-      	       "<br><b> Descr  :</b> prints information on the given command." +
-      	       "<br><b> Example:</b> '/manual who' will print info on the who command...";
-      }
+    /** To get information on this command.
+     * @return command full documentation.
+     */
+    public String getCommandDocumentation() {
+        return "<font size='4'>Command 'manual'</font>" + "<br><b> Syntax :</b> /manual [commandName] " + "<br><b> Voice  :</b> normal voice level " + "<br><b> Descr  :</b> prints information on the given command." + "<br><b> Example:</b> '/manual who' will print info on the who command...";
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Method called to execute the command. Just use the response.setMessage() before
-    *  sending it (if you have to).
-    *
-    *  @param message the string containing the chat command.
-    *  @param player the player on which the command is executed
-    *  @param response to use to send the result of the command to the client
-    *  @return true if the message process is finished, false if this command was
-    *          a 'modifier' to modify the rest of the message process.
-    */
-      public boolean exec( String message, PlayerImpl player, SendTextMessage response ) {
+    /** Method called to execute the command. Just use the response.setMessage() before
+     *  sending it (if you have to).
+     *
+     *  @param message the string containing the chat command.
+     *  @param player the player on which the command is executed
+     *  @param response to use to send the result of the command to the client
+     *  @return true if the message process is finished, false if this command was
+     *          a 'modifier' to modify the rest of the message process.
+     */
+    public boolean exec(String message, PlayerImpl player, SendTextMessage response) {
 
-          if( message.indexOf(' ')!=7 )
-              return true; // no parameters
+        if (message.indexOf(' ') != 7)
+            return true; // no parameters
 
-          String commandName = "/"+message.substring(8);
+        String commandName = "/" + message.substring(8);
 
-          ChatCommandProcessor processor = ServerDirector.getDataManager().getChatCommandProcessor();
+        ChatCommandProcessor processor = ServerDirector.getDataManager().getChatCommandProcessor();
 
-          message = processor.getCommandDocumentation( commandName );
+        message = processor.getCommandDocumentation(commandName);
 
-          if( message==null ) {
-              response.setMessage("/cmd:/manual command error:<font color='red'> unknown command </font>");
-              player.sendMessage(response);
-              return true;
-          }
+        if (message == null) {
+            response.setMessage("/cmd:/manual command error:<font color='red'> unknown command </font>");
+            player.sendMessage(response);
+            return true;
+        }
 
-          response.setMessage("/cmd:"+message);
-          player.sendMessage(response);
-          return true;
-      }
+        response.setMessage("/cmd:" + message);
+        player.sendMessage(response);
+        return true;
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 }

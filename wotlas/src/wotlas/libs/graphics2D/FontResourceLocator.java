@@ -28,20 +28,19 @@ import java.io.InputStream;
 
 public interface FontResourceLocator {
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /**  Tells where the user fonts are located
-    */
-     public String getFontsDir();
+    /**  Tells where the user fonts are located
+     */
+    public String getFontsDir();
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To get a font resource as a stream.
-    *  @param fontPath font path we'll get as a stream
-    *  @return InputStream on the wanted font, null if the font was not found
-    */
-     public InputStream getFontStream( String fontPath );
+    /** To get a font resource as a stream.
+     *  @param fontPath font path we'll get as a stream
+     *  @return InputStream on the wanted font, null if the font was not found
+     */
+    public InputStream getFontStream(String fontPath);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

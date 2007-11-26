@@ -19,14 +19,13 @@
 
 package wotlas.libs.net;
 
-import java.net.Socket;
-import java.net.SocketException;
 import java.io.DataInputStream;
 import java.io.IOException;
-
-import wotlas.utils.Debug;
-import wotlas.libs.net.message.PingMessage;
+import java.net.Socket;
+import java.net.SocketException;
 import wotlas.libs.net.message.EndOfConnectionMessage;
+import wotlas.libs.net.message.PingMessage;
+import wotlas.utils.Debug;
 
 /** A NetReceiver waits for NetMessage to arrive on an opened socket.
  *  It decodes them and execute their associated NetMessageBehaviour.
@@ -43,39 +42,39 @@ import wotlas.libs.net.message.EndOfConnectionMessage;
 
 public class NetReceiver extends NetThread {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
     /** Communication stream to receive data
      */
-        private DataInputStream inStream;
+    private DataInputStream inStream;
 
     /** Do we have to wait for a user signal to execute messages ?
      *  Determine if we work synchronously or asynchronously.
      */
-        private boolean sync;
+    private boolean sync;
 
     /** Our message factory
      */
-        private NetMessageFactory factory;
+    private NetMessageFactory factory;
 
     /** A link to our NetConnection
      */
-        private NetConnection connection;
+    private NetConnection connection;
 
     /** Session Object to give to messages when they arrive.
      */
-        private Object sessionContext;
+    private Object sessionContext;
 
     /** For the synchronous NetReceiver : 
      *  maximum number of messages to process per user call ( receiveAllMessages() ).
      */
-        private int maxMsg;
+    private int maxMsg;
 
     /** Do we have to send back ping messages ?
      */
-        private boolean sendBackPingMessages;
+    private boolean sendBackPingMessages;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
     /**  Constructor. Should be called only by the NetServer & NetClient classes.
      *   We assume that a NetMessageFactory has already been created.
@@ -90,216 +89,204 @@ public class NetReceiver extends NetThread {
      * @param bufferSize buffer size (in bytes) for the buffered input stream.
      * @exception IOException if the socket wasn't already connected.
      */
-      public NetReceiver( Socket socket, NetConnection connection, boolean sync,
-                          Object sessionContext, int bufferSize ) throws IOException {
-          super( socket );
-          this.sync = sync;
-          this.sessionContext = sessionContext;
-          this.connection = connection;
-          sendBackPingMessages = false;
+    public NetReceiver(Socket socket, NetConnection connection, boolean sync, Object sessionContext, int bufferSize) throws IOException {
+        super(socket);
+        this.sync = sync;
+        this.sessionContext = sessionContext;
+        this.connection = connection;
+        this.sendBackPingMessages = false;
 
-          if(sync)  maxMsg = 15; // default value
+        if (sync)
+            this.maxMsg = 15; // default value
 
-       // we retrieve & construct some useful handles
-          inStream = new DataInputStream( getBufferedInputStream( bufferSize ) );
-          factory = NetMessageFactory.getMessageFactory();
-      }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Method for the async NetReceiver.
-   *  Never call this method it's done automatically.
-   */
-    public void run() {
-        if(sync)
-           return;   // we have nothing to do here
-
-        try{
-           do{
-             // we wait for message to arrive and read its message class name.
-                String msgSuperClassName = inStream.readUTF();
-
-             // we reconstruct the message and execute its associated code.
-                try{
-                     NetMessageBehaviour msg = factory.getNewMessageInstance( msgSuperClassName );
-                     ( (NetMessage)msg ).decode( inStream ); // decode data in the message behaviour class
-
-                  // what kind of message do we have here ?
-                     if(msg instanceof PingMessage) {
-                     	if(sendBackPingMessages)
-                           connection.queueMessage( (NetMessage)msg ); // send back the PingMessage
-                        else
-                           connection.receivedPingMessage( ((PingMessage) msg).getSeqID() );
-                     }
-                     else if(msg instanceof EndOfConnectionMessage) {
-                        break; // end of connection
-                     }
-                     else
-                        msg.doBehaviour( sessionContext ); // execute the message's behaviour code...
-                }
-                catch(ClassNotFoundException e) {
-                      Debug.signal( Debug.WARNING, this, e );
-                      inStream.skipBytes( inStream.available() );  // cleanse the source ;)
-                }
-           }
-           while( !shouldStopThread() );
-        }
-        catch( SocketException se ) {
-             // Socket closed a bit roughly
-               Debug.signal( Debug.WARNING, this, "Connection closed a bit roughly : "+se.toString() );
-        }
-        catch( IOException ioe ) {
-             // Socket error, connection was probably closed a little roughly...
-               Debug.signal( Debug.WARNING, this, "Connection closed : "+ioe.toString() );
-        }
-        catch( Exception e ){
-             // Real error !
-               Debug.signal( Debug.ERROR, this, e ); // serious error while processing message
-        }
-
-     // we ask the NetConnection to perform some cleanup
-     // and signal that the connection was closed ( connectionListener )
-        connection.close();
-        inStream=null;
+        // we retrieve & construct some useful handles
+        this.inStream = new DataInputStream(getBufferedInputStream(bufferSize));
+        this.factory = NetMessageFactory.getMessageFactory();
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To process all the received messages.
-   *  This is the method to call in a case of a sync NetReceiver. We stop to process messages in 
-   *  either cases : (1) there is no more messages,
-   *                 (2) the maxMsg limit has been reached.
-   */
-     public void receiveAllMessages() {
-        if(!sync)
-           return;   // we have nothing to do here
+    /** Method for the async NetReceiver.
+     *  Never call this method it's done automatically.
+     */
+    @Override
+    public void run() {
+        if (this.sync)
+            return; // we have nothing to do here
 
-        int msgCounter=0;
+        try {
+            do {
+                // we wait for message to arrive and read its message class name.
+                String msgSuperClassName = this.inStream.readUTF();
 
-        try{
-           while( inStream.available()!=0 && msgCounter<maxMsg ) {
-             // 1 - we wait for message to arrive and read its message class name.
-                String msgSuperClassName = inStream.readUTF();
+                // we reconstruct the message and execute its associated code.
+                try {
+                    NetMessageBehaviour msg = this.factory.getNewMessageInstance(msgSuperClassName);
+                    ((NetMessage) msg).decode(this.inStream); // decode data in the message behaviour class
 
-             // 2 - we reconstruct the message and execute its associated code.
-                try{
-                     NetMessageBehaviour msg = factory.getNewMessageInstance( msgSuperClassName );
-                     ( (NetMessage)msg ).decode( inStream ); // decode data in the message behaviour class
-
-                  // what kind of message do we have here ?
-                     if( msg instanceof PingMessage ) {
-                         if( sendBackPingMessages )
-                             connection.queueMessage( (NetMessage)msg ); // send back the PingMessage
-                         else
-                             connection.receivedPingMessage( ((PingMessage) msg).getSeqID() );
-                     }
-                     else if( msg instanceof EndOfConnectionMessage ) {
-                        connection.close();
+                    // what kind of message do we have here ?
+                    if (msg instanceof PingMessage) {
+                        if (this.sendBackPingMessages)
+                            this.connection.queueMessage((NetMessage) msg); // send back the PingMessage
+                        else
+                            this.connection.receivedPingMessage(((PingMessage) msg).getSeqID());
+                    } else if (msg instanceof EndOfConnectionMessage) {
                         break; // end of connection
-                     }
-                     else
-                        msg.doBehaviour( sessionContext ); // execute the message's behaviour code...
+                    } else
+                        msg.doBehaviour(this.sessionContext); // execute the message's behaviour code...
+                } catch (ClassNotFoundException e) {
+                    Debug.signal(Debug.WARNING, this, e);
+                    this.inStream.skipBytes(this.inStream.available()); // cleanse the source ;)
                 }
-                catch(ClassNotFoundException e) {                     
-                      Debug.signal( Debug.WARNING, this, e );
-                      inStream.skipBytes( inStream.available() );  // cleanse the source ;)
-                      return;
+            } while (!shouldStopThread());
+        } catch (SocketException se) {
+            // Socket closed a bit roughly
+            Debug.signal(Debug.WARNING, this, "Connection closed a bit roughly : " + se.toString());
+        } catch (IOException ioe) {
+            // Socket error, connection was probably closed a little roughly...
+            Debug.signal(Debug.WARNING, this, "Connection closed : " + ioe.toString());
+        } catch (Exception e) {
+            // Real error !
+            Debug.signal(Debug.ERROR, this, e); // serious error while processing message
+        }
+
+        // we ask the NetConnection to perform some cleanup
+        // and signal that the connection was closed ( connectionListener )
+        this.connection.close();
+        this.inStream = null;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** To process all the received messages.
+     *  This is the method to call in a case of a sync NetReceiver. We stop to process messages in 
+     *  either cases : (1) there is no more messages,
+     *                 (2) the maxMsg limit has been reached.
+     */
+    public void receiveAllMessages() {
+        if (!this.sync)
+            return; // we have nothing to do here
+
+        int msgCounter = 0;
+
+        try {
+            while (this.inStream.available() != 0 && msgCounter < this.maxMsg) {
+                // 1 - we wait for message to arrive and read its message class name.
+                String msgSuperClassName = this.inStream.readUTF();
+
+                // 2 - we reconstruct the message and execute its associated code.
+                try {
+                    NetMessageBehaviour msg = this.factory.getNewMessageInstance(msgSuperClassName);
+                    ((NetMessage) msg).decode(this.inStream); // decode data in the message behaviour class
+
+                    // what kind of message do we have here ?
+                    if (msg instanceof PingMessage) {
+                        if (this.sendBackPingMessages)
+                            this.connection.queueMessage((NetMessage) msg); // send back the PingMessage
+                        else
+                            this.connection.receivedPingMessage(((PingMessage) msg).getSeqID());
+                    } else if (msg instanceof EndOfConnectionMessage) {
+                        this.connection.close();
+                        break; // end of connection
+                    } else
+                        msg.doBehaviour(this.sessionContext); // execute the message's behaviour code...
+                } catch (ClassNotFoundException e) {
+                    Debug.signal(Debug.WARNING, this, e);
+                    this.inStream.skipBytes(this.inStream.available()); // cleanse the source ;)
+                    return;
                 }
 
-              msgCounter++;
-           }
+                msgCounter++;
+            }
+        } catch (IOException ioe) {
+            // Socket error, connection was probably closed a little roughly...
+            Debug.signal(Debug.WARNING, this, ioe);
+
+            // we ask the NetConnection to perform some cleanup
+            // and signal that the connection was closed ( connectionListener )
+            this.connection.close();
+        } catch (Exception e) {
+            // serious error while processing message
+            Debug.signal(Debug.ERROR, this, e);
+
+            // we ask the NetConnection to perform some cleanup
+            // and signal that the connection was closed ( connectionListener )
+            this.connection.close();
         }
-        catch(IOException ioe){
-           // Socket error, connection was probably closed a little roughly...
-              Debug.signal( Debug.WARNING, this, ioe );
+    }
 
-           // we ask the NetConnection to perform some cleanup
-           // and signal that the connection was closed ( connectionListener )
-              connection.close();
-        }
-        catch(Exception e){
-           // serious error while processing message
-              Debug.signal( Debug.ERROR, this, e );
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-           // we ask the NetConnection to perform some cleanup
-           // and signal that the connection was closed ( connectionListener )
-              connection.close();
-        }
-     }
+    /** To set the maximum number of messages to process per user call.
+     * @param maxMsg maximum number of messages
+     */
+    public void setMaxMessageLimitPerUserCall(int maxMsg) {
+        this.maxMsg = maxMsg;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To set the maximum number of messages to process per user call.
-   * @param maxMsg maximum number of messages
-   */
-     public void setMaxMessageLimitPerUserCall( int maxMsg ) {
-         this.maxMsg = maxMsg;
-     }
+    /** To get the maximum number of messages to process per user call.
+     * @return the maximum number of messages
+     */
+    public int getMaxMessageLimitPerUserCall() {
+        return this.maxMsg;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the maximum number of messages to process per user call.
-   * @return the maximum number of messages
-   */
-     public int getMaxMessageLimitPerUserCall() {
-         return maxMsg;
-     }
+    /** To set the current sessionContext. This is the object that we'll give to message
+     *  behaviours when we'll have to call the doBehaviour() method on them.
+     *
+     * @param sessionContext the new sessionContext.
+     */
+    public void setContext(Object sessionContext) {
+        this.sessionContext = sessionContext;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To set the current sessionContext. This is the object that we'll give to message
-   *  behaviours when we'll have to call the doBehaviour() method on them.
-   *
-   * @param sessionContext the new sessionContext.
-   */
-     public void setContext( Object sessionContext ) {
-         this.sessionContext = sessionContext;
-     }
+    /** Waits for a message to arrive. Useful in some cases when the NetReceiver
+     *  is synchronous. This method does nothing if the NetReceiver is asynchronous.
+     *
+     * IMPORTANT: this method locks forever if there is no incoming message...
+     *            sorry... no timeout.
+     *
+     * @exception IOException if something goes wrong
+     */
+    public void waitForMessage() throws IOException {
+        if (!this.sync)
+            return;
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        // We mark the stream
+        this.inStream.mark(1000);
 
-  /** Waits for a message to arrive. Useful in some cases when the NetReceiver
-   *  is synchronous. This method does nothing if the NetReceiver is asynchronous.
-   *
-   * IMPORTANT: this method locks forever if there is no incoming message...
-   *            sorry... no timeout.
-   *
-   * @exception IOException if something goes wrong
-   */
-     public void waitForMessage() throws IOException{
-        if(!sync)
-           return;
+        // Wait for data...
+        this.inStream.readByte();
 
-      // We mark the stream
-         inStream.mark( 1000 );
+        // Reset Stream state
+        this.inStream.reset();
+    }
 
-      // Wait for data...
-         inStream.readByte();
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-      // Reset Stream state
-         inStream.reset();
-     }
+    /** is the NetReceiver synchronous ?
+     *
+     * @return true if synchronous, false if asynchronous
+     */
+    public boolean isSynchronous() {
+        return this.sync;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** is the NetReceiver synchronous ?
-   *
-   * @return true if synchronous, false if asynchronous
-   */
-     public boolean isSynchronous() {
-         return sync;
-     }
+    /** Do we have to send back ping messages ?
+     * @param sendBack set to true to automatically send back ping messages.
+     */
+    public void sendBackPingMessages(boolean sendBack) {
+        this.sendBackPingMessages = sendBack;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Do we have to send back ping messages ?
-   * @param sendBack set to true to automatically send back ping messages.
-   */
-      public void sendBackPingMessages( boolean sendBack ) {
-          sendBackPingMessages = sendBack;
-      }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

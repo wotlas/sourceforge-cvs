@@ -29,23 +29,22 @@ package wotlas.libs.net;
  */
 
 public interface NetServerListener {
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** This method is called when the server network interface is down.
-   * @param itf the network interface we tried which is NOT available.
-   */
-     public void serverInterfaceIsDown( String itf );
+    /** This method is called when the server network interface is down.
+     * @param itf the network interface we tried which is NOT available.
+     */
+    public void serverInterfaceIsDown(String itf);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** This method is called when the server network interface is Up.
-   * @param ipAddress currently used IP address
-   * @param stateChanged if true it means the interface has been re-created ( ip changed or
-   *        serverSocket has just been created ). If false it means that the interface is Up
-   *        and its state has not changed (since last check).
-   */
-     public void serverInterfaceIsUp( String ipAddress, boolean stateChanged );
+    /** This method is called when the server network interface is Up.
+     * @param ipAddress currently used IP address
+     * @param stateChanged if true it means the interface has been re-created ( ip changed or
+     *        serverSocket has just been created ). If false it means that the interface is Up
+     *        and its state has not changed (since last check).
+     */
+    public void serverInterfaceIsUp(String ipAddress, boolean stateChanged);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

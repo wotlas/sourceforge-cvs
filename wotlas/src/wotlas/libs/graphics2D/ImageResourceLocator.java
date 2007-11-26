@@ -28,39 +28,38 @@ import java.awt.Image;
 
 public interface ImageResourceLocator {
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /**  To get the Image Library Directory.
-    */
-     public String getImageLibraryDir();
+    /**  To get the Image Library Directory.
+     */
+    public String getImageLibraryDir();
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To list all the files of a directory ( on one level only ).
-    *
-    *  @param dirName directory name (must be a complete path)
-    *  @return all the files of the specified directory (not sub-dirs).
-    */
-     public String[] listFiles( String dirName );
+    /** To list all the files of a directory ( on one level only ).
+     *
+     *  @param dirName directory name (must be a complete path)
+     *  @return all the files of the specified directory (not sub-dirs).
+     */
+    public String[] listFiles(String dirName);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To list all the directories of a directory ( on one level only ).
-    *
-    *  @param dirName directory name (must be a complete path)
-    *  @return the sub-dirs of the given dirName (on one level only).
-    */
-     public String[] listDirectories( String dirName );
+    /** To list all the directories of a directory ( on one level only ).
+     *
+     *  @param dirName directory name (must be a complete path)
+     *  @return the sub-dirs of the given dirName (on one level only).
+     */
+    public String[] listDirectories(String dirName);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Returns the wanted image from the Image Library directory.
-    *
-    *  @param imagePath image name from the library with FULL image library path.
-    *  @return Image, null if the image was not found.
-    */
-    public Image getLibraryImage( String imagePath );
+    /** Returns the wanted image from the Image Library directory.
+     *
+     *  @param imagePath image name from the library with FULL image library path.
+     *  @return Image, null if the image was not found.
+     */
+    public Image getLibraryImage(String imagePath);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.objects.interfaces;
 
 /** 
@@ -25,22 +25,18 @@ package wotlas.common.objects.interfaces;
  * @author Elann
  */
 
-public interface UsefulInterface
-{
+public interface UsefulInterface {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-
-  /** Use the object.
-   */
+    /** Use the object.
+     */
     public void use();
 
-  /** Ready the object for usage.
-   */
+    /** Ready the object for usage.
+     */
     public void ready();
-	
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

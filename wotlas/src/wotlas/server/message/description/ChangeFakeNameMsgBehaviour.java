@@ -19,12 +19,8 @@
 
 package wotlas.server.message.description;
 
-import java.io.IOException;
-
+import wotlas.common.message.description.ChangeFakeNameMessage;
 import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.message.description.*;
-import wotlas.common.Player;
-import wotlas.common.universe.*;
 import wotlas.server.LieManager;
 import wotlas.server.PlayerImpl;
 
@@ -36,29 +32,28 @@ import wotlas.server.PlayerImpl;
 
 public class ChangeFakeNameMsgBehaviour extends ChangeFakeNameMessage implements NetMessageBehaviour {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
+    /** Constructor.
+     */
     public ChangeFakeNameMsgBehaviour() {
-       super();
+        super();
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-    public void doBehaviour( Object sessionContext ) {
-       // The sessionContext is here a PlayerImpl.
-       PlayerImpl player = (PlayerImpl) sessionContext;
-       LieManager lieManager = player.getLieManager();
-    
-       lieManager.setCurrentFakeNameIndex(index);    
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
+        // The sessionContext is here a PlayerImpl.
+        PlayerImpl player = (PlayerImpl) sessionContext;
+        LieManager lieManager = player.getLieManager();
+
+        lieManager.setCurrentFakeNameIndex(this.index);
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

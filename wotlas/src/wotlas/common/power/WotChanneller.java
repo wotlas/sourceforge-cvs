@@ -19,9 +19,6 @@
 
 package wotlas.common.power;
 
-import wotlas.common.*;
-import wotlas.common.universe.*;
-
 /** Interface of a Wotlas Channeller. Any character capable of channelling extends the Channeller class
  *
  * @author Chris
@@ -30,8 +27,7 @@ import wotlas.common.universe.*;
  * @see wotlas.libs.graphics2D.Drawable
  */
 
-public interface WotChanneller
-{ 
+public interface WotChanneller {
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
     /** To get a list of Weaves usable by this Channeller.</P>
@@ -48,7 +44,7 @@ public interface WotChanneller
      * @param weaveName the name of the new Weave to be added.
      * @return success status (true if successful)
      */
-    public boolean addWeave( String weaveName );
+    public boolean addWeave(String weaveName);
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -57,7 +53,7 @@ public interface WotChanneller
      * @param weaveName the name of the Power (see the list produced by getPowerList())
      * @return the Weave
      */
-    public Weave getWeave( String weaveName );
+    public Weave getWeave(String weaveName);
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

@@ -19,16 +19,12 @@
 
 package wotlas.server.chat;
 
-import wotlas.server.*;
-import wotlas.common.message.chat.SendTextMessage;
-import wotlas.common.chat.ChatRoom;
-
-import wotlas.utils.Debug;
-import wotlas.utils.Tools;
-
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.io.*;
+import wotlas.common.message.chat.SendTextMessage;
+import wotlas.server.PlayerImpl;
+import wotlas.utils.Debug;
+import wotlas.utils.Tools;
 
 /** This class processes the available chat commands. In wotlas there is only one
  * instance of this class held by the default server DataManager.
@@ -38,169 +34,172 @@ import java.io.*;
 
 public class ChatCommandProcessor {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Our chat commands table where we store commands by their prefix name.
-   */
+    /** Our chat commands table where we store commands by their prefix name.
+     */
     private Hashtable commands;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
+    /** Constructor.
+     */
     public ChatCommandProcessor() {
-    	commands = new Hashtable(20);
+        this.commands = new Hashtable(20);
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To init the processor with the available commands.
-   */
+    /** To init the processor with the available commands.
+     */
     public void init() {
 
-       /** We load the available plug-ins (we search in our local directory).
-        */
-          Class classes[] = null;
-          String packages[] ={ "wotlas.server.chat" };
-        
-          try{
-              classes = Tools.getImplementorsOf("wotlas.server.chat.ChatCommand", packages );
-          }
-          catch( ClassNotFoundException e ) {
-              Debug.signal(Debug.CRITICAL, this, e );
-              return;
-          }
-          catch( SecurityException e ) {
-              Debug.signal(Debug.CRITICAL, this, e );
-              return;
-          }
-          catch( RuntimeException e ) {
-              Debug.signal(Debug.ERROR, this, e );
-              return;
-          }
+        /** We load the available plug-ins (we search in our local directory).
+         */
+        Class classes[] = null;
+        String packages[] = { "wotlas.server.chat" };
 
-          for( int i=0; i<classes.length; i++ ) {
+        try {
+            classes = Tools.getImplementorsOf("wotlas.server.chat.ChatCommand", packages);
+        } catch (ClassNotFoundException e) {
+            Debug.signal(Debug.CRITICAL, this, e);
+            return;
+        } catch (SecurityException e) {
+            Debug.signal(Debug.CRITICAL, this, e);
+            return;
+        } catch (RuntimeException e) {
+            Debug.signal(Debug.ERROR, this, e);
+            return;
+        }
 
-           // We create instances of the chat commands
-              try{
-                  Object o = classes[i].newInstance();
+        for (int i = 0; i < classes.length; i++) {
 
-                  if( o==null || !(o instanceof ChatCommand) )
-                      continue;
+            // We create instances of the chat commands
+            try {
+                Object o = classes[i].newInstance();
 
-               // Ok, we have a valid chat command Class.
-                  addChatCommand( (ChatCommand) o );
-              }
-              catch( Exception e ) {
-                  Debug.signal( Debug.WARNING, this, e );
-              }
-          }
+                if (o == null || !(o instanceof ChatCommand))
+                    continue;
 
-        Debug.signal(Debug.NOTICE,null,"Loaded "+commands.size()+" chat commands...");
+                // Ok, we have a valid chat command Class.
+                addChatCommand((ChatCommand) o);
+            } catch (Exception e) {
+                Debug.signal(Debug.WARNING, this, e);
+            }
+        }
+
+        Debug.signal(Debug.NOTICE, null, "Loaded " + this.commands.size() + " chat commands...");
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Adds a new chat command to our table.
-    */
-    protected void addChatCommand( ChatCommand newCommand ) {
+    /** Adds a new chat command to our table.
+     */
+    protected void addChatCommand(ChatCommand newCommand) {
 
-          if( commands.containsKey( newCommand.getChatCommandPrefix() ) ) {
-              Debug.signal( Debug.ERROR, this, "Command already exists ! "+newCommand );
-              return;
-          }
+        if (this.commands.containsKey(newCommand.getChatCommandPrefix())) {
+            Debug.signal(Debug.ERROR, this, "Command already exists ! " + newCommand);
+            return;
+        }
 
-          commands.put( newCommand.getChatCommandPrefix(), newCommand );
+        this.commands.put(newCommand.getChatCommandPrefix(), newCommand);
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Method called to execute the given command.
-    *
-    *  @param commandName command name as it was given to you by the getCommandName() method.
-    *  @param message the string containing the chat command.
-    *  @param player the player on which the command is executed
-    *  @param response to use to send the result of the command to the client
-    *  @return true if the message process is finished, false if this command was
-    *          a 'modifier' to modify the rest of the message process.
-    */
-      public boolean processCommand( String message, PlayerImpl player, SendTextMessage response ) {
+    /** Method called to execute the given command.
+     *
+     *  @param commandName command name as it was given to you by the getCommandName() method.
+     *  @param message the string containing the chat command.
+     *  @param player the player on which the command is executed
+     *  @param response to use to send the result of the command to the client
+     *  @return true if the message process is finished, false if this command was
+     *          a 'modifier' to modify the rest of the message process.
+     */
+    public boolean processCommand(String message, PlayerImpl player, SendTextMessage response) {
 
-    	// 1 - Search for an eventual separator ' '
-           int separator = message.indexOf(' ');
-           String commandName;
+        // 1 - Search for an eventual separator ' '
+        int separator = message.indexOf(' ');
+        String commandName;
 
-           if(separator<0)
-              commandName = message.trim();
-           else
-              commandName = message.substring(0,separator).trim();
+        if (separator < 0)
+            commandName = message.trim();
+        else
+            commandName = message.substring(0, separator).trim();
 
         // 2 - test existence
-           if( !commands.containsKey(commandName) ) {
-               //response.setMessage("/cmd:Command error :<font color='red'> '"+message+"' not found</font>");
-               //player.sendMessage(response);
-               return false;
-           }
-      	
-      	 // 3 - we run the command
-           ChatCommand command = (ChatCommand) commands.get(commandName);
+        if (!this.commands.containsKey(commandName)) {
+            //response.setMessage("/cmd:Command error :<font color='red'> '"+message+"' not found</font>");
+            //player.sendMessage(response);
+            return false;
+        }
 
-           if( response.getVoiceSoundLevel()!=command.getChatCommandVoiceSoundLevel() )
-               return false; // not the right sound level for this command !
+        // 3 - we run the command
+        ChatCommand command = (ChatCommand) this.commands.get(commandName);
 
-           return command.exec(message,player,response);
-      }
+        if (response.getVoiceSoundLevel() != command.getChatCommandVoiceSoundLevel())
+            return false; // not the right sound level for this command !
 
- /*------------------------------------------------------------------------------------*/
+        return command.exec(message, player, response);
+    }
+
+    /*------------------------------------------------------------------------------------*/
 
     /** To get the list of public commands
      *  @param seeHidden set to true to display all commands
      */
-      public String getCommandList( boolean seeHidden ) {
+    public String getCommandList(boolean seeHidden) {
 
-         StringBuffer list = new StringBuffer("<div align='center'><table width='60%' border='0' bgcolor='#B4D0EF'>");
-         int cellCounter = 0;
-      	 Iterator it = commands.values().iterator();
-      	 
-      	 synchronized( commands ) {
+        StringBuffer list = new StringBuffer("<div align='center'><table width='60%' border='0' bgcolor='#B4D0EF'>");
+        int cellCounter = 0;
+        Iterator it = this.commands.values().iterator();
 
-             while( it.hasNext() ) {
-             	ChatCommand command = (ChatCommand) it.next();
+        synchronized (this.commands) {
 
-                if( command.isHidden() && !seeHidden ) continue;
+            while (it.hasNext()) {
+                ChatCommand command = (ChatCommand) it.next();
 
-                if(cellCounter%4==0) list.append("<tr>");
+                if (command.isHidden() && !seeHidden)
+                    continue;
 
-                list.append("<td><div align='center'>"+command.getChatCommandPrefix()+"</div></td>");
+                if (cellCounter % 4 == 0)
+                    list.append("<tr>");
 
-                if(cellCounter%4==3) list.append("</tr>");
-             	cellCounter++;
-             }
-      	 }
+                list.append("<td><div align='center'>" + command.getChatCommandPrefix() + "</div></td>");
 
-         if(cellCounter%4==1) list.append("<td></td><td></td><td></td></tr></table></div>");
-         else if(cellCounter%4==2) list.append("<td></td><td></td></tr></table></div>");
-         else if(cellCounter%4==3) list.append("<td></td></tr></table></div>");
-         else list.append("</table></div>");
+                if (cellCounter % 4 == 3)
+                    list.append("</tr>");
+                cellCounter++;
+            }
+        }
 
-         return list.toString();
-      }
+        if (cellCounter % 4 == 1)
+            list.append("<td></td><td></td><td></td></tr></table></div>");
+        else if (cellCounter % 4 == 2)
+            list.append("<td></td><td></td></tr></table></div>");
+        else if (cellCounter % 4 == 3)
+            list.append("<td></td></tr></table></div>");
+        else
+            list.append("</table></div>");
 
- /*------------------------------------------------------------------------------------*/
+        return list.toString();
+    }
+
+    /*------------------------------------------------------------------------------------*/
 
     /** To get the documentation of a command.
      * @param commandName command name
      * @return null if the command doesn't exist, the documentation otherwise.
      */
-      public String getCommandDocumentation( String commandName ) {
+    public String getCommandDocumentation(String commandName) {
 
-           if( !commands.containsKey(commandName) )
-               return null;
+        if (!this.commands.containsKey(commandName))
+            return null;
 
-           ChatCommand command = (ChatCommand) commands.get(commandName);
-           return command.getCommandDocumentation();
-      }
+        ChatCommand command = (ChatCommand) this.commands.get(commandName);
+        return command.getCommandDocumentation();
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
 }

@@ -30,13 +30,12 @@ package wotlas.common;
  * @author Aldiss
  */
 
-public interface Tickable
-{
- /*------------------------------------------------------------------------------------*/
+public interface Tickable {
+    /*------------------------------------------------------------------------------------*/
 
-   /** Method called to signal the new process "tick" to your class.
-    */
-      public void tick();
+    /** Method called to signal the new process "tick" to your class.
+     */
+    public void tick();
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 }

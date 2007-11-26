@@ -19,17 +19,17 @@
 
 package wotlas.client.gui;
 
-import wotlas.client.*;
-
-import wotlas.utils.SwingTools;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.UIManager;
+import javax.swing.WindowConstants;
+import wotlas.client.ClientDirector;
 import wotlas.libs.graphics2D.FontFactory;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-
-import java.io.*;
-
+import wotlas.utils.SwingTools;
 
 /** A wizard that displays a content (left panel) and navigation buttons (right panel).
  *
@@ -38,142 +38,142 @@ import java.io.*;
 
 public class JIntroWizard extends JFrame {
 
- /*------------------------------------------------------------------------------------*/  
+    /*------------------------------------------------------------------------------------*/
 
-  /** Left Panel ( content of the window )
-   */
+    /** Left Panel ( content of the window )
+     */
     private JPanel leftPanel;
 
-  /** Right Panel ( buttons for navigation )
-   */
+    /** Right Panel ( buttons for navigation )
+     */
     private JPanel rightPanel;
 
-  /** Some Dimensions
-   */
+    /** Some Dimensions
+     */
     private int width = 500;
     private int rightWidth = 120;
     private int leftWidth = 0;
     private int height = 300;
-    private Dimension rightDimension = new Dimension(rightWidth, 0);
+    private Dimension rightDimension = new Dimension(this.rightWidth, 0);
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
+    /** Constructor.
+     */
     public JIntroWizard() {
         super("Wotlas Client");
         setBackground(Color.white);
         setIconImage(ClientDirector.getResourceManager().getGuiImage("icon.gif"));
-        setGUI();
+        JIntroWizard.setGUI();
 
-        setSize( width, height );
+        setSize(this.width, this.height);
         SwingTools.centerComponent(this);
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Set the left JPanel of the interface
-   *
-   * @param leftPanel left panel to be added
-   */
+    /** Set the left JPanel of the interface
+     *
+     * @param leftPanel left panel to be added
+     */
     protected void setLeftPanel(JPanel leftPanel) {
-       removeLeftPanel();
-       this.leftPanel = leftPanel;
-       leftPanel.setBackground(Color.white);
-       getContentPane().add(this.leftPanel, BorderLayout.CENTER);        
+        removeLeftPanel();
+        this.leftPanel = leftPanel;
+        leftPanel.setBackground(Color.white);
+        getContentPane().add(this.leftPanel, BorderLayout.CENTER);
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Set the right JPanel of the interface
-   *
-   * @param rightPanel right panel to be added
-   */
+    /** Set the right JPanel of the interface
+     *
+     * @param rightPanel right panel to be added
+     */
     protected void setRightPanel(JPanel rightPanel) {
-       removeRightPanel();
-       rightPanel.setPreferredSize(rightDimension);
-       this.rightPanel = rightPanel;
-       rightPanel.setBackground(Color.white);
-       getContentPane().add(this.rightPanel, BorderLayout.EAST);        
+        removeRightPanel();
+        rightPanel.setPreferredSize(this.rightDimension);
+        this.rightPanel = rightPanel;
+        rightPanel.setBackground(Color.white);
+        getContentPane().add(this.rightPanel, BorderLayout.EAST);
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Remove the left panel
-   */
+    /** Remove the left panel
+     */
     protected void removeLeftPanel() {
-       if(leftPanel != null) {
-          getContentPane().remove(leftPanel);
-          leftPanel = null;
-       }
+        if (this.leftPanel != null) {
+            getContentPane().remove(this.leftPanel);
+            this.leftPanel = null;
+        }
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Remove the right panel
-   */
+    /** Remove the right panel
+     */
     protected void removeRightPanel() {
-      if(rightPanel != null) {
-         getContentPane().remove(rightPanel);
-         rightPanel = null;
-      }
+        if (this.rightPanel != null) {
+            getContentPane().remove(this.rightPanel);
+            this.rightPanel = null;
+        }
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To get left panel width
-   */
+    /** To get left panel width
+     */
     public int getLeftWidth() {
-       return leftWidth;
+        return this.leftWidth;
     }
 
-  /** To set left panel width
-   */
+    /** To set left panel width
+     */
     public void setLeftWidth(int width) {
-       leftWidth = width;
+        this.leftWidth = width;
     }
 
-  /** To get right panel width
-   */
+    /** To get right panel width
+     */
     public int getRightWidth() {
-       return rightWidth;
+        return this.rightWidth;
     }
 
-  /** To set right panel width
-   */
+    /** To set right panel width
+     */
     public void setRightWidth(int width) {
-       rightWidth = width;
+        this.rightWidth = width;
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Show the interface
-   */
-    public void showScreen() {  
-       validate();
-       pack();    
-       show();
+    /** Show the interface
+     */
+    public void showScreen() {
+        validate();
+        pack();
+        show();
     }
 
- /*--------------------------------------------------------------------------*/
+    /*--------------------------------------------------------------------------*/
 
-  /** Close the interface and remove the panels
-   */
+    /** Close the interface and remove the panels
+     */
     public void closeScreen() {
-       if (leftPanel != null)
-          getContentPane().remove(leftPanel);
+        if (this.leftPanel != null)
+            getContentPane().remove(this.leftPanel);
 
-       if (rightPanel != null)
-          getContentPane().remove(rightPanel);
+        if (this.rightPanel != null)
+            getContentPane().remove(this.rightPanel);
 
-       dispose();
+        dispose();
     }
 
- /*--------------------------------------------------------------------------*/
+    /*--------------------------------------------------------------------------*/
 
-  /** Set the colors and fonts
-   */
+    /** Set the colors and fonts
+     */
     static public void setGUI() {
         Font f;
 
@@ -181,36 +181,35 @@ public class JIntroWizard extends JFrame {
         UIManager.put("Button.font", f);
 
         f = FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter Regular");
-    
+
         UIManager.put("ComboBox.font", f.deriveFont(14f));
         UIManager.put("ComboBox.foreground", Color.black);
 
         UIManager.put("Label.font", f.deriveFont(14f));
         UIManager.put("Label.foreground", Color.black);
-    
+
         UIManager.put("PasswordField.font", f.deriveFont(14f));
         UIManager.put("PasswordField.foreground", Color.black);
-    
+
         UIManager.put("RadioButton.font", f.deriveFont(14f));
         UIManager.put("RadioButton.foreground", Color.black);
-            
+
         UIManager.put("Table.font", f.deriveFont(14f));
-        UIManager.put("Table.foreground", Color.black);    
-    
+        UIManager.put("Table.foreground", Color.black);
+
         UIManager.put("TableHeader.font", f.deriveFont(16f));
         UIManager.put("TableHeader.foreground", Color.black);
-    
+
         UIManager.put("TextArea.font", f.deriveFont(14f));
         UIManager.put("TextArea.foreground", Color.black);
-    
+
         UIManager.put("TextField.font", f.deriveFont(14f));
-        UIManager.put("TextField.foreground", Color.black);    
-    
+        UIManager.put("TextField.foreground", Color.black);
+
         UIManager.put("CheckBox.font", f.deriveFont(14f));
         UIManager.put("CheckBox.foreground", Color.black);
     }
-  
- /*--------------------------------------------------------------------------*/
+
+    /*--------------------------------------------------------------------------*/
 
 }
-

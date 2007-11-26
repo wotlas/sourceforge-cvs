@@ -19,20 +19,10 @@
 
 package wotlas.client.screen;
 
-import wotlas.utils.JMonitor;
-import wotlas.client.*;
-import wotlas.libs.net.*;
-
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.awt.geom.Line2D;
-import java.awt.geom.Rectangle2D;
-import java.util.Date;
-import javax.swing.*;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
-
+import java.awt.BorderLayout;
+import java.awt.Color;
+import javax.swing.JPanel;
+import wotlas.libs.net.NetConnection;
 
 /** To display various system info...
  * 
@@ -40,104 +30,101 @@ import javax.swing.border.TitledBorder;
  */
 public class JSystemInfoPanel extends JPanel {
 
- /*------------------------------------------------------------------*/
+    /*------------------------------------------------------------------*/
 
-  /** Ping Panel
-   */
+    /** Ping Panel
+     */
     public static final byte GRAPHIC_PING_PANEL = 0;
 
-  /** Memory Panel
-   */
-    public static final byte MEMORY_PANEL       = 1;
+    /** Memory Panel
+     */
+    public static final byte MEMORY_PANEL = 1;
 
- /*------------------------------------------------------------------*/
+    /*------------------------------------------------------------------*/
 
-  /** Selected Panel Type.
-   */
+    /** Selected Panel Type.
+     */
     private static byte selectedType = 0; // default 0
 
-  /** The default JSystemInfoPanel used.
-   */
+    /** The default JSystemInfoPanel used.
+     */
     private static JSystemInfoPanel defaultSystemInfo;
 
- /*------------------------------------------------------------------*/
+    /*------------------------------------------------------------------*/
 
-  /** Ping Panel (is appart because the ping panel is necessary to wotlas)
-   */
+    /** Ping Panel (is appart because the ping panel is necessary to wotlas)
+     */
     protected GraphicPingPanel pingPanel;
 
-  /** Other system JPanel ( JMemory, etc... )
-   */
+    /** Other system JPanel ( JMemory, etc... )
+     */
     protected JPanel systemPanel;
 
- /*------------------------------------------------------------------*/
+    /*------------------------------------------------------------------*/
 
-  /** To change the displayed SystemInfo panel. This method should be called
-   *  from the Option Dialog.
-   * @param SytemInfoPanel type : GRAPHIC_PING_PANEL, MEMORY_PANEL, ...
-   */
-    public static void setSelectedPanel( byte type ){
-         if( defaultSystemInfo==null || type==selectedType ) return; // nothing to change
+    /** To change the displayed SystemInfo panel. This method should be called
+     *  from the Option Dialog.
+     * @param SytemInfoPanel type : GRAPHIC_PING_PANEL, MEMORY_PANEL, ...
+     */
+    public static void setSelectedPanel(byte type) {
+        if (JSystemInfoPanel.defaultSystemInfo == null || type == JSystemInfoPanel.selectedType)
+            return; // nothing to change
 
-      // Stop previous System Panel
-         switch( selectedType ) {
-            case GRAPHIC_PING_PANEL :            
-                 break; // nothing to do the ping panel must stay alive...
+        // Stop previous System Panel
+        switch (JSystemInfoPanel.selectedType) {
+            case GRAPHIC_PING_PANEL:
+                break; // nothing to do the ping panel must stay alive...
 
-            case MEMORY_PANEL :
-                 ( (JMemory) defaultSystemInfo.systemPanel ).stop();
-                 break;
-         }
+            case MEMORY_PANEL:
+                ((JMemory) JSystemInfoPanel.defaultSystemInfo.systemPanel).stop();
+                break;
+        }
 
-      // Start new one
-         switch( type ) {
-            case GRAPHIC_PING_PANEL :            
-                 defaultSystemInfo.add(defaultSystemInfo.pingPanel, BorderLayout.CENTER);
-                 break;
+        // Start new one
+        switch (type) {
+            case GRAPHIC_PING_PANEL:
+                JSystemInfoPanel.defaultSystemInfo.add(JSystemInfoPanel.defaultSystemInfo.pingPanel, BorderLayout.CENTER);
+                break;
 
-            case MEMORY_PANEL :
-                 defaultSystemInfo.systemPanel = new JMemory();
-                 defaultSystemInfo.add(defaultSystemInfo.systemPanel, BorderLayout.CENTER);
-                 break;
-         }
+            case MEMORY_PANEL:
+                JSystemInfoPanel.defaultSystemInfo.systemPanel = new JMemory();
+                JSystemInfoPanel.defaultSystemInfo.add(JSystemInfoPanel.defaultSystemInfo.systemPanel, BorderLayout.CENTER);
+                break;
+        }
 
-      selectedType = type;
+        JSystemInfoPanel.selectedType = type;
     }
 
- /*------------------------------------------------------------------*/
+    /*------------------------------------------------------------------*/
 
-   /** Constructor. Default System Panel is a Ping Panel.
-    */
+    /** Constructor. Default System Panel is a Ping Panel.
+     */
     public JSystemInfoPanel() {
-       super( new BorderLayout() );
-       defaultSystemInfo = this;
-       setBackground( Color.white );
-       pingPanel = new GraphicPingPanel();
-       add( pingPanel, BorderLayout.CENTER );
+        super(new BorderLayout());
+        JSystemInfoPanel.defaultSystemInfo = this;
+        setBackground(Color.white);
+        this.pingPanel = new GraphicPingPanel();
+        add(this.pingPanel, BorderLayout.CENTER);
     }
 
- /*------------------------------------------------------------------*/
+    /*------------------------------------------------------------------*/
 
-   /** To initialize properly the current system info Panel.
-    * @param connection a valid Network Connection
-    */
-    public void init( NetConnection connection ) {
-        connection.setPingListener( (NetPingListener) pingPanel );
+    /** To initialize properly the current system info Panel.
+     * @param connection a valid Network Connection
+     */
+    public void init(NetConnection connection) {
+        connection.setPingListener(this.pingPanel);
 
-     // extra inits
-        switch( selectedType ) {
-            case GRAPHIC_PING_PANEL :            
-                 break;
+        // extra inits
+        switch (JSystemInfoPanel.selectedType) {
+            case GRAPHIC_PING_PANEL:
+                break;
 
-            case MEMORY_PANEL :
-                 break;
+            case MEMORY_PANEL:
+                break;
         }
     }
 
- /*------------------------------------------------------------------*/
+    /*------------------------------------------------------------------*/
 
 }
-
-
-
-

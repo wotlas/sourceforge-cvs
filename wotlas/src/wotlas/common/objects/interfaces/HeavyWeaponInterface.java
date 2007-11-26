@@ -16,9 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
-package wotlas.common.objects.interfaces;
 
+package wotlas.common.objects.interfaces;
 
 /** 
  * The heavy weapon interface. Provides methods common to all heavy weapons.
@@ -27,22 +26,18 @@ package wotlas.common.objects.interfaces;
  * @see wotlas.common.objects.weapons.Weapon 
  */
 
-public interface HeavyWeaponInterface
-{
+public interface HeavyWeaponInterface {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-
-  /** Sheathes the weapon. The weapon can no longer be used without being unsheathed first but it'll escape casual look. 
-   */
+    /** Sheathes the weapon. The weapon can no longer be used without being unsheathed first but it'll escape casual look. 
+     */
     public void sheathe();
 
-  /** Unsheathes the weapon. The weapon is ready to strike. It is plainly visible.
-   */
+    /** Unsheathes the weapon. The weapon is ready to strike. It is plainly visible.
+     */
     public void unsheathe();
 
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

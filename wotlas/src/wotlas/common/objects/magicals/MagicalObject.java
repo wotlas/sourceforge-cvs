@@ -16,11 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.objects.magicals;
 
-import wotlas.common.power.*;		// One and True Power - Weaves
 import wotlas.common.objects.usefuls.UsefulObject;
+import wotlas.common.power.Weave;
 
 /** 
  * The base class for all magical objects.
@@ -29,65 +29,58 @@ import wotlas.common.objects.usefuls.UsefulObject;
  * @see wotlas.common.objects.usefuls.UsefulObject
  */
 
-public abstract class MagicalObject extends UsefulObject
-{
+public abstract class MagicalObject extends UsefulObject {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** The weave produced by the object.
-   */
-      private Weave magicEffect;
-	  
-  /** The powers involved in the magical action. THE CLASS POWER DOES NOT EXIST.
-   */
-   	  private String[]/*Power[]*/ powersInvolved;
-	  
-	  
- /*------------------------------------------------------------------------------------*/
- 
-  /** The default constructor. Invokes UsefulObject's constructor.
-   */
-   public MagicalObject()
-   {
-   	super();
-	
-	this.className="MagicalObject";
-	this.objectName="default magical object";
-   }
+    /** The weave produced by the object.
+     */
+    private Weave magicEffect;
 
-  /** The parametric constructor. Invokes UsefulObject's constructor.
-   * @param magicEffect The Weave produced
-   * @param powersInvolved The Powers involved
-   */
-   public MagicalObject(Weave magicEffect,String[]/*Power[]*/ powersInvolved)
-   {
-   	super();
-	this.magicEffect=magicEffect;
-	this.powersInvolved=powersInvolved;
-	
-	this.className="MagicalObject";
-	this.objectName="default magical object";
-   }
- 
- /*------------------------------------------------------------------------------------*/
+    /** The powers involved in the magical action. THE CLASS POWER DOES NOT EXIST.
+     */
+    private String[]/*Power[]*/powersInvolved;
 
-  /** Get the magical effect caused by the object when used.
-   * @return magicEffect
-   */  					
-   	public Weave getMagicEffect()
-	{
-	 return magicEffect;
-	}																	
+    /*------------------------------------------------------------------------------------*/
 
-  /** Get the powers involved in the magical effect.
-   * @return powersInvolved
-   */  					
-   	public String[]/*Power[]*/ getPowersInvolved()
-	{
-	 return powersInvolved;
-	}																	
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** The default constructor. Invokes UsefulObject's constructor.
+     */
+    public MagicalObject() {
+        super();
+
+        this.className = "MagicalObject";
+        this.objectName = "default magical object";
+    }
+
+    /** The parametric constructor. Invokes UsefulObject's constructor.
+     * @param magicEffect The Weave produced
+     * @param powersInvolved The Powers involved
+     */
+    public MagicalObject(Weave magicEffect, String[]/*Power[]*/powersInvolved) {
+        super();
+        this.magicEffect = magicEffect;
+        this.powersInvolved = powersInvolved;
+
+        this.className = "MagicalObject";
+        this.objectName = "default magical object";
+    }
+
+    /*------------------------------------------------------------------------------------*/
+
+    /** Get the magical effect caused by the object when used.
+     * @return magicEffect
+     */
+    public Weave getMagicEffect() {
+        return this.magicEffect;
+    }
+
+    /** Get the powers involved in the magical effect.
+     * @return powersInvolved
+     */
+    public String[]/*Power[]*/getPowersInvolved() {
+        return this.powersInvolved;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

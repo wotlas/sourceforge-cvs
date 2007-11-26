@@ -36,9 +36,7 @@ class Paragraph {
      * The list of possible strike out styles. Defines if the text is readable,
      * quite, barely or not at all. Many thanks to Elaida ... ;-)
      */
-    public static final String[] strikeOutStyles = {"no strike",
-        "clear strike", "bold strike", "heavy strike"
-    };
+    public static final String[] strikeOutStyles = { "no strike", "clear strike", "bold strike", "heavy strike" };
     /**
      * The current strike out style.
      */
@@ -59,7 +57,7 @@ class Paragraph {
      * @return the HTML-formatted text of the paragraph
      */
     public String getText() {
-        return text;
+        return this.text;
     }
 
     /**
@@ -79,7 +77,7 @@ class Paragraph {
      *            the new HTML-formatted string to add
      */
     public void appendString(String newString) {
-        text = text + "<br>" + newString;
+        this.text = this.text + "<br>" + newString;
     }
 
     /**
@@ -88,7 +86,7 @@ class Paragraph {
      * @return the current strike out style
      */
     public short getStrikeOutStyle() {
-        return strikeOutStyle;
+        return this.strikeOutStyle;
     }
 
     /**

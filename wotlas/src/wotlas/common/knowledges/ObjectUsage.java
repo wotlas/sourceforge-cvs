@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.knowledges;
 
 //import wotlas.common.objects.BaseObject;
@@ -27,23 +27,21 @@ package wotlas.common.knowledges;
  * @author Elann
  */
 
-public interface ObjectUsage
-{
+public interface ObjectUsage {
 
- /*------------------------------------------------------------------------------------*/
-	  	 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Get the associated object class name.
-   * @return objectClassName
-   */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the associated object class name.
+     * @return objectClassName
+     */
     public String getObjectClassName();
-	
-  /** Set the associated object class name of the.
-   * @param objectClassName the new object class name
-   */
+
+    /** Set the associated object class name of the.
+     * @param objectClassName the new object class name
+     */
     public void setObjectClassName(String objectClassName);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

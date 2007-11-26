@@ -19,9 +19,8 @@
 
 package wotlas.server.message.gateway;
 
-import wotlas.server.*;
-
 import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.server.AccountTransaction;
 
 /** 
  * To transfert an account to a GatewayServer.
@@ -29,28 +28,27 @@ import wotlas.libs.net.NetMessageBehaviour;
  * @author Aldiss
  */
 
-public class AccountTransactionMsgBehaviour extends AccountTransactionMessage implements NetMessageBehaviour
-{ 
- /*------------------------------------------------------------------------------------*/
+public class AccountTransactionMsgBehaviour extends AccountTransactionMessage implements NetMessageBehaviour {
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor. Just initializes the message category and type.
-   */
-   public AccountTransactionMsgBehaviour() {
-       super();        
-   }
+    /** Constructor. Just initializes the message category and type.
+     */
+    public AccountTransactionMsgBehaviour() {
+        super();
+    }
 
- /*------------------------------------------------------------------------------------*/
-  
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-   public void doBehaviour( Object sessionContext ) {
+    /*------------------------------------------------------------------------------------*/
 
-       ( (AccountTransaction) sessionContext ).createAccount( account, serverID );
-   }
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
+        ((AccountTransaction) sessionContext).createAccount(this.account, this.serverID);
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }

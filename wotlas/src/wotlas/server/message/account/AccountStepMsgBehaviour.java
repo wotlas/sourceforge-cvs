@@ -16,14 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.server.message.account;
 
-import java.io.IOException;
-
-
+import wotlas.common.message.account.AccountStepMessage;
 import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.message.account.*;
 import wotlas.server.AccountBuilder;
 
 /**
@@ -32,30 +29,28 @@ import wotlas.server.AccountBuilder;
  * @author Aldiss
  */
 
-public class AccountStepMsgBehaviour extends AccountStepMessage implements NetMessageBehaviour
-{
- /*------------------------------------------------------------------------------------*/
+public class AccountStepMsgBehaviour extends AccountStepMessage implements NetMessageBehaviour {
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public AccountStepMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+     */
+    public AccountStepMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
 
         // the sessionContext is here an AccountBuilder
-           AccountBuilder builder = (AccountBuilder) sessionContext;
-           builder.setStepResultData( parameters );
-     }
+        AccountBuilder builder = (AccountBuilder) sessionContext;
+        builder.setStepResultData(this.parameters);
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

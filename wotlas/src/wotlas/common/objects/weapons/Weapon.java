@@ -16,12 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.objects.weapons;
 
-import wotlas.common.objects.BaseObject;
-
 import wotlas.common.Player;
+import wotlas.common.objects.BaseObject;
 
 /** 
  * The base class for all weapons.
@@ -30,105 +29,100 @@ import wotlas.common.Player;
  * @see wotlas.common.objects.BaseObject
  */
 
-public abstract class Weapon extends BaseObject
-{
+public abstract class Weapon extends BaseObject {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
+    /** The minimum damage inflicted by the weapon - may be zero.
+     */
+    protected short damageMin;
 
-  /** The minimum damage inflicted by the weapon - may be zero.
-   */
-      protected short damageMin;
+    /** The maximum damage inflicted by the weapon - may not be zero or it wouldn't be a weapon, eh ?
+     */
+    protected short damageMax;
 
-  /** The maximum damage inflicted by the weapon - may not be zero or it wouldn't be a weapon, eh ?
-   */
-      protected short damageMax;	    
-	  	 
-  /** Is the weapon in a bag or on the char ?
-   */
-	  protected boolean equipped;
-	  
-	  
-	  
- /*------------------------------------------------------------------------------------*/
- 
-  /** The default constructor.<br>
-	* damageMin is set to -1<br>
-    * damageMax is set to -1
-   */			
-    public Weapon()
-	{
-	 this.damageMin=-1;
-	 this.damageMax=-1;
-	 this.equipped=false;
-	 
-	 this.className="Weapon";
-	 this.objectName="default weapon";
-	}															
- 
- 
-  /** The parametric constructor.
-	* @param damageMin the minimum damage inflicted by the weapon - may be zero
-    * @param damageMax the maximum damage inflicted by the weapon - should not be zero
-   */			
-    public Weapon(short damageMin,short damageMax)
-	{
-	 this.damageMin=damageMin;
-	 this.damageMax=damageMax;
-	 this.equipped=false;
-	 
-	 this.className="Weapon";
-	 this.objectName="default weapon";
-	}															
+    /** Is the weapon in a bag or on the char ?
+     */
+    protected boolean equipped;
 
+    /*------------------------------------------------------------------------------------*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** The default constructor.<br>
+    * damageMin is set to -1<br>
+      * damageMax is set to -1
+     */
+    public Weapon() {
+        this.damageMin = -1;
+        this.damageMax = -1;
+        this.equipped = false;
 
-  /** Puts on the weapon to enable attack.
-   */
+        this.className = "Weapon";
+        this.objectName = "default weapon";
+    }
+
+    /** The parametric constructor.
+    * @param damageMin the minimum damage inflicted by the weapon - may be zero
+      * @param damageMax the maximum damage inflicted by the weapon - should not be zero
+     */
+    public Weapon(short damageMin, short damageMax) {
+        this.damageMin = damageMin;
+        this.damageMax = damageMax;
+        this.equipped = false;
+
+        this.className = "Weapon";
+        this.objectName = "default weapon";
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Puts on the weapon to enable attack.
+     */
     public abstract void equip();
-	
-  /** Attacks the specified target. Abstract method.
-   *
-   * @param target the Player attacked
-   * @return the damage inflicted
-   */
+
+    /** Attacks the specified target. Abstract method.
+     *
+     * @param target the Player attacked
+     * @return the damage inflicted
+     */
     public abstract short attack(Player target);
 
-  /** Alternative attack on the specified target. Abstract method.
-   *
-   * @param target the Player attacked
-   * @return the damage inflicted
-   */
+    /** Alternative attack on the specified target. Abstract method.
+     *
+     * @param target the Player attacked
+     * @return the damage inflicted
+     */
     public abstract short alternativeAttack(Player target);
 
-	
- /* ----------------- Getters/Setters ----------------- */	
-	
-	
-  /** Returns the minimum damage inflicted by the weapon
-    * @return damageMin
-    */
-	public short getDamageMin() { return damageMin; }
+    /* ----------------- Getters/Setters ----------------- */
 
-  /** Sets the minimum damage inflicted by the weapon
-    * @param damageMin the new damage min
-    */
-	public void setDamageMin(short damageMin) { this.damageMin=damageMin; }
+    /** Returns the minimum damage inflicted by the weapon
+      * @return damageMin
+      */
+    public short getDamageMin() {
+        return this.damageMin;
+    }
 
-	
-  /** Returns the maximum damage inflicted by the weapon
-    * @return damageMax
-    */
-	public short getDamageMax() { return damageMax; }
+    /** Sets the minimum damage inflicted by the weapon
+      * @param damageMin the new damage min
+      */
+    public void setDamageMin(short damageMin) {
+        this.damageMin = damageMin;
+    }
 
-  /** Sets the maximum damage inflicted by the weapon
-    * @param damageMax the new damage max
-    */
-	public void setDamageMax(short damageMax) { this.damageMax=damageMax; }
-	
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** Returns the maximum damage inflicted by the weapon
+      * @return damageMax
+      */
+    public short getDamageMax() {
+        return this.damageMax;
+    }
+
+    /** Sets the maximum damage inflicted by the weapon
+      * @param damageMax the new damage max
+      */
+    public void setDamageMax(short damageMax) {
+        this.damageMax = damageMax;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

@@ -19,69 +19,71 @@
 
 package wotlas.libs.aswing;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import javax.swing.Icon;
+import javax.swing.JLabel;
 
 /** Antialiased JLabel : we use antialiasing to draw the text on a JLabel
  *
  * @author Aldiss
  */
-public class ALabel extends JLabel
-{
+public class ALabel extends JLabel {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor without arguments.
-   */
-  public ALabel() {
-    super();
-    setOpaque(false);
-  }
+    /** Constructor without arguments.
+     */
+    public ALabel() {
+        super();
+        setOpaque(false);
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-  public ALabel( String text ) {
-    super( text );
-    setOpaque(false);
-  }
+    /** Constructor.
+     */
+    public ALabel(String text) {
+        super(text);
+        setOpaque(false);
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-  public ALabel( Icon icon ) {
-    super( icon );
-    setOpaque(false);
-  }
+    /** Constructor.
+     */
+    public ALabel(Icon icon) {
+        super(icon);
+        setOpaque(false);
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor with alignment.
-   */
-  public ALabel( String text, int horizontalAlignment ) {
-    super( text, horizontalAlignment );
-    setOpaque(false);
-  }
+    /** Constructor with alignment.
+     */
+    public ALabel(String text, int horizontalAlignment) {
+        super(text, horizontalAlignment);
+        setOpaque(false);
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Mutated Paint Method.
-   */
-  public void paint( Graphics g ) {
-    Graphics2D g2D = (Graphics2D) g;
-    RenderingHints saveRenderHints = g2D.getRenderingHints(); // save
+    /** Mutated Paint Method.
+     */
+    @Override
+    public void paint(Graphics g) {
+        Graphics2D g2D = (Graphics2D) g;
+        RenderingHints saveRenderHints = g2D.getRenderingHints(); // save
 
-    RenderingHints renderHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING,
-                                                        RenderingHints.VALUE_ANTIALIAS_ON);
-    renderHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        RenderingHints renderHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        renderHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
-    g2D.setRenderingHints( renderHints );
-    super.paint(g);
-    g2D.setRenderingHints( saveRenderHints ); // restore
-  }
+        g2D.setRenderingHints(renderHints);
+        super.paint(g);
+        g2D.setRenderingHints(saveRenderHints); // restore
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
 }

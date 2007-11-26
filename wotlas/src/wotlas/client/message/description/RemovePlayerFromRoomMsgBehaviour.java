@@ -19,16 +19,12 @@
 
 package wotlas.client.message.description;
 
-import java.io.IOException;
-import java.util.*;
-
-import wotlas.utils.Debug;
-
+import java.util.Hashtable;
+import wotlas.client.DataManager;
+import wotlas.client.PlayerImpl;
+import wotlas.common.message.description.RemovePlayerFromRoomMessage;
 import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.message.description.*;
-import wotlas.common.universe.*;
-import wotlas.common.Player;
-import wotlas.client.*;
+import wotlas.utils.Debug;
 
 /**
  * Associated behaviour to the RemovePlayerFromRoomMessage...
@@ -36,66 +32,64 @@ import wotlas.client.*;
  * @author Aldiss
  */
 
-public class RemovePlayerFromRoomMsgBehaviour extends RemovePlayerFromRoomMessage implements NetMessageBehaviour
-{
- /*------------------------------------------------------------------------------------*/
+public class RemovePlayerFromRoomMsgBehaviour extends RemovePlayerFromRoomMessage implements NetMessageBehaviour {
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public RemovePlayerFromRoomMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+     */
+    public RemovePlayerFromRoomMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {
-           if (DataManager.SHOW_DEBUG)
-             System.out.println("REMOVE PLAYER MESSAGE p:"+primaryKey);  
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
+        if (DataManager.SHOW_DEBUG)
+            System.out.println("REMOVE PLAYER MESSAGE p:" + this.primaryKey);
 
         // The sessionContext is here a DataManager.
-           DataManager dataManager = (DataManager) sessionContext;
-           PlayerImpl myPlayer = dataManager.getMyPlayer();
+        DataManager dataManager = (DataManager) sessionContext;
+        PlayerImpl myPlayer = dataManager.getMyPlayer();
 
         // 1 - Control
-           if( !myPlayer.getLocation().isRoom() ) {
-               Debug.signal( Debug.ERROR, this, "Master player is not on an InteriorMap" );
-               return;
-           }
+        if (!myPlayer.getLocation().isRoom()) {
+            Debug.signal(Debug.ERROR, this, "Master player is not on an InteriorMap");
+            return;
+        }
 
-           if( myPlayer.getPrimaryKey().equals( primaryKey ) ) {
-               Debug.signal( Debug.ERROR, this, "ATTEMPT TO REMOVE MASTER PLAYER !!" );
-               return;
-           }
+        if (myPlayer.getPrimaryKey().equals(this.primaryKey)) {
+            Debug.signal(Debug.ERROR, this, "ATTEMPT TO REMOVE MASTER PLAYER !!");
+            return;
+        }
 
         // 2 - We remove the player
-           Hashtable players = dataManager.getPlayers();
-           PlayerImpl playerImpl = null;
-           
-           synchronized( players ) {
-              playerImpl = (PlayerImpl) players.get( primaryKey );
+        Hashtable players = dataManager.getPlayers();
+        PlayerImpl playerImpl = null;
 
-              if(playerImpl==null)
-                 return;
+        synchronized (players) {
+            playerImpl = (PlayerImpl) players.get(this.primaryKey);
 
-              if (DataManager.SHOW_DEBUG)                 
-                  System.out.println("REMOVING PLAYER "+primaryKey);
+            if (playerImpl == null)
+                return;
 
-              players.remove( primaryKey );
-              dataManager.getClientScreen().getChatPanel().removePlayerFromAllchatRooms(primaryKey);
-           }
-                      
-           playerImpl.cleanVisualProperties(dataManager.getGraphicsDirector());
+            if (DataManager.SHOW_DEBUG)
+                System.out.println("REMOVING PLAYER " + this.primaryKey);
 
-           if (dataManager.getSelectedPlayerKey()!=null && primaryKey.equals(dataManager.getSelectedPlayerKey()) )
-               dataManager.removeCircle();
-     }
+            players.remove(this.primaryKey);
+            dataManager.getClientScreen().getChatPanel().removePlayerFromAllchatRooms(this.primaryKey);
+        }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        playerImpl.cleanVisualProperties(dataManager.getGraphicsDirector());
+
+        if (dataManager.getSelectedPlayerKey() != null && this.primaryKey.equals(dataManager.getSelectedPlayerKey()))
+            dataManager.removeCircle();
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

@@ -21,7 +21,6 @@ package wotlas.utils;
 
 import java.awt.Rectangle;
 
-
 /** A Rectangle class as the java.awt.Rectangle class SHOULD have been ( I still don't
  *  understand why the java.awt.Rectangle.getX() getY() etc. return doubles !!!!! )
  *
@@ -31,158 +30,158 @@ import java.awt.Rectangle;
  * @author Aldiss
  */
 
-public class ScreenRectangle
-{
- /*------------------------------------------------------------------------------------*/
+public class ScreenRectangle {
+    /*------------------------------------------------------------------------------------*/
 
-  /** x position.
-   */
+    /** x position.
+     */
     public int x;
-  
-  /** y position.
-   */
+
+    /** y position.
+     */
     public int y;
 
-  /** width 
-   */ 
+    /** width 
+     */
     public int width;
-   
-  /** height 
-   */ 
+
+    /** height 
+     */
     public int height;
-   
- /*------------------------------------------------------------------------------------*/
-   
-  /** Empty Constructor.
-   */
+
+    /*------------------------------------------------------------------------------------*/
+
+    /** Empty Constructor.
+     */
     public ScreenRectangle() {
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-    public ScreenRectangle( int x, int y, int width, int height ) {
-    	this.x = x;
-    	this.y = y;
-    	this.width = width;
-    	this.height = height;
+    /** Constructor.
+     */
+    public ScreenRectangle(int x, int y, int width, int height) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor with ScreenRectangle.
-   */
-    public ScreenRectangle(ScreenRectangle other ) {
+    /** Constructor with ScreenRectangle.
+     */
+    public ScreenRectangle(ScreenRectangle other) {
         this.x = other.x;
         this.y = other.y;
         this.width = other.width;
         this.height = other.height;
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor with Rectangle.
-   */
-    public ScreenRectangle( Rectangle other ) {
+    /** Constructor with Rectangle.
+     */
+    public ScreenRectangle(Rectangle other) {
         this.x = other.x;
         this.y = other.y;
         this.width = other.width;
         this.height = other.height;
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Complete Setter.
-    */
-    public void setToRectangle( int x, int y, int width, int height ) {
-    	this.x = x;
-    	this.y = y;
-    	this.width = width;
-    	this.height = height;
+    /** Complete Setter.
+     */
+    public void setToRectangle(int x, int y, int width, int height) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** X getter.
-   */
+    /** X getter.
+     */
     public int getX() {
-    	return x;
-    }   
+        return this.x;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Y getter.
-   */
+    /** Y getter.
+     */
     public int getY() {
-    	return y;
+        return this.y;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** X setter
-   */
-    public void setX( int x ) {
-    	this.x=x;
+    /** X setter
+     */
+    public void setX(int x) {
+        this.x = x;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Y setter
-   */
-    public void setY( int y ) {
-    	this.y=y;
+    /** Y setter
+     */
+    public void setY(int y) {
+        this.y = y;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Width getter.
-   */
+    /** Width getter.
+     */
     public int getWidth() {
-    	return width;
-    }   
+        return this.width;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Height getter.
-   */
+    /** Height getter.
+     */
     public int getHeight() {
-    	return height;
+        return this.height;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Width setter
-   */
-    public void setWidth( int width ) {
-    	this.width=width;
+    /** Width setter
+     */
+    public void setWidth(int width) {
+        this.width = width;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Height setter
-   */
-    public void setHeight( int height ) {
-    	this.height=height;
+    /** Height setter
+     */
+    public void setHeight(int height) {
+        this.height = height;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get a Rectangle representation of this ScreenRectangle.
-   * @return Rectangle
-   */
-    public Rectangle toRectangle(){
-       return new Rectangle( x, y, width, height );
+    /** To get a Rectangle representation of this ScreenRectangle.
+     * @return Rectangle
+     */
+    public Rectangle toRectangle() {
+        return new Rectangle(this.x, this.y, this.width, this.height);
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get a string representation of this ScreenRectangle.
-   */
+    /** To get a string representation of this ScreenRectangle.
+     */
+    @Override
     public String toString() {
-    	return "ScreenRectangle [ "+x+", "+y+", "+width+", "+height+" ]";
+        return "ScreenRectangle [ " + this.x + ", " + this.y + ", " + this.width + ", " + this.height + " ]";
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

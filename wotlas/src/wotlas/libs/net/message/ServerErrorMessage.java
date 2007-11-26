@@ -16,15 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.libs.net.message;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
 import wotlas.libs.net.NetMessage;
-
 
 /** 
  * A NetMessage that is send to a client to signal a server error.
@@ -33,64 +31,64 @@ import wotlas.libs.net.NetMessage;
  * @see wotlas.libs.net.NetMessage
  */
 
-public class ServerErrorMessage extends NetMessage
-{
- /*------------------------------------------------------------------------------------*/
+public class ServerErrorMessage extends NetMessage {
+    /*------------------------------------------------------------------------------------*/
 
-  /** An error message.
-   */
-      protected String errorMessage;
+    /** An error message.
+     */
+    protected String errorMessage;
 
-  /** Error code.
-   */
-      protected short errorCode;
+    /** Error code.
+     */
+    protected short errorCode;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor. Just initializes the message category and type.
-   */
-     public ServerErrorMessage() {
-          super();
-     }
+    /** Constructor. Just initializes the message category and type.
+     */
+    public ServerErrorMessage() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor with an error message.
-   *
-   * @param errorMessage a string describing the error.
-   */
-     public ServerErrorMessage( short errorCode, String errorMessage ) {
-         super();
-         this.errorCode = errorCode;
-         this.errorMessage = errorMessage;
-     }
+    /** Constructor with an error message.
+     *
+     * @param errorMessage a string describing the error.
+     */
+    public ServerErrorMessage(short errorCode, String errorMessage) {
+        super();
+        this.errorCode = errorCode;
+        this.errorMessage = errorMessage;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** This is where we put your message data on the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param ostream data stream where to put your data (see java.io.DataOutputStream)
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-     public void encode( DataOutputStream ostream ) throws IOException {
-          ostream.writeShort( errorCode);
-          ostream.writeUTF( errorMessage );
-     }
+    /** This is where we put your message data on the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param ostream data stream where to put your data (see java.io.DataOutputStream)
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    @Override
+    public void encode(DataOutputStream ostream) throws IOException {
+        ostream.writeShort(this.errorCode);
+        ostream.writeUTF(this.errorMessage);
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** This is where we retrieve our message data from the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-     public void decode( DataInputStream istream ) throws IOException {
-          errorCode = istream.readShort();
-          errorMessage = istream.readUTF();
-     }
+    /** This is where we retrieve our message data from the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    @Override
+    public void decode(DataInputStream istream) throws IOException {
+        this.errorCode = istream.readShort();
+        this.errorMessage = istream.readUTF();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

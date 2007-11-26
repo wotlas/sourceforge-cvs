@@ -19,10 +19,13 @@
 
 package wotlas.server.router;
 
-import wotlas.common.universe.*;
-import wotlas.common.router.*;
-import wotlas.common.*;
-
+import wotlas.common.WorldManager;
+import wotlas.common.router.MessageRouter;
+import wotlas.common.router.MessageRouterFactory;
+import wotlas.common.router.SingleGroupMessageRouter;
+import wotlas.common.universe.Room;
+import wotlas.common.universe.TownMap;
+import wotlas.common.universe.WorldMap;
 
 /** A factory of MessageRouters for the server.
  *
@@ -32,49 +35,49 @@ import wotlas.common.*;
 
 public class ServerMessageRouterFactory implements MessageRouterFactory {
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Inititializes this MessageRouterFactory.
-    */
-     public void init() {
-     }
+    /** Inititializes this MessageRouterFactory.
+     */
+    public void init() {
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Creates or gets a MessageRouter for a WorldMap.
-    * @param wMap WorldMap the router is for...
-    * @return a MessageRouter to use for this map
-    */
-     public MessageRouter createMsgRouterForWorldMap( WorldMap wMap, WorldManager wManager ) {
+    /** Creates or gets a MessageRouter for a WorldMap.
+     * @param wMap WorldMap the router is for...
+     * @return a MessageRouter to use for this map
+     */
+    public MessageRouter createMsgRouterForWorldMap(WorldMap wMap, WorldManager wManager) {
         MessageRouter mr = new SingleGroupMessageRouter();
-        mr.init( wMap.getLocation(), wManager );
+        mr.init(wMap.getLocation(), wManager);
         return mr;
-     }
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Creates or gets a MessageRouter for a TownMap.
-    * @param tMap TownMap the router is for...
-    * @return a MessageRouter to use for this map
-    */
-     public MessageRouter createMsgRouterForTownMap( TownMap tMap, WorldManager wManager ) {
+    /** Creates or gets a MessageRouter for a TownMap.
+     * @param tMap TownMap the router is for...
+     * @return a MessageRouter to use for this map
+     */
+    public MessageRouter createMsgRouterForTownMap(TownMap tMap, WorldManager wManager) {
         MessageRouter mr = new SingleGroupMessageRouter();
-        mr.init( tMap.getLocation(), wManager );
+        mr.init(tMap.getLocation(), wManager);
         return mr;
-     }
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Creates or gets a MessageRouter for a Room.
-    * @param room Room the router is for...
-    * @return a MessageRouter to use for this map
-    */
-     public MessageRouter createMsgRouterForRoom( Room room, WorldManager wManager ) {
+    /** Creates or gets a MessageRouter for a Room.
+     * @param room Room the router is for...
+     * @return a MessageRouter to use for this map
+     */
+    public MessageRouter createMsgRouterForRoom(Room room, WorldManager wManager) {
         MessageRouter mr = new MultiGroupMessageRouter();
-        mr.init( room.getLocation(), wManager );
+        mr.init(room.getLocation(), wManager);
         return mr;
-     }
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

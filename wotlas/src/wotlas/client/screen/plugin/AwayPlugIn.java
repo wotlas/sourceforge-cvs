@@ -18,17 +18,20 @@
 
 package wotlas.client.screen.plugin;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import wotlas.utils.*;
-import wotlas.libs.aswing.*;
-
-import wotlas.common.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import wotlas.client.ClientDirector;
+import wotlas.client.PlayerImpl;
+import wotlas.client.screen.JPanelPlugIn;
 import wotlas.common.message.description.PlayerAwayMessage;
-
-import wotlas.client.*;
-import wotlas.client.screen.*;
+import wotlas.libs.aswing.AButton;
+import wotlas.libs.aswing.ATextArea;
 
 /** Plug In where you can enter some text that will be displayed when you are
  *  not connected to the game.
@@ -37,156 +40,162 @@ import wotlas.client.screen.*;
  */
 
 public class AwayPlugIn extends JPanelPlugIn {
-  
- /*------------------------------------------------------------------------------------*/ 
 
-  /** Away Message Text Area
-   */
+    /*------------------------------------------------------------------------------------*/
+
+    /** Away Message Text Area
+     */
     private ATextArea playerTextArea;
 
-  /** Save buttons.
-   */
+    /** Save buttons.
+     */
     private AButton savePastButton;
-  
- /*------------------------------------------------------------------------------------*/ 
-  
-  /** Constructor.
-   */
+
+    /*------------------------------------------------------------------------------------*/
+
+    /** Constructor.
+     */
     public AwayPlugIn() {
-      super();
-      setLayout(new BorderLayout());
+        super();
+        setLayout(new BorderLayout());
 
-      ATextArea ta_infos = new ATextArea("You can enter here a message that will be displayed when you are not connected:");
-      ta_infos.setLineWrap(true);
-      ta_infos.setWrapStyleWord(true);
-      ta_infos.setEditable(false);
-      ta_infos.setAlignmentX(0.5f);
-      ta_infos.setOpaque(false);
-      add(ta_infos, BorderLayout.NORTH);
+        ATextArea ta_infos = new ATextArea("You can enter here a message that will be displayed when you are not connected:");
+        ta_infos.setLineWrap(true);
+        ta_infos.setWrapStyleWord(true);
+        ta_infos.setEditable(false);
+        ta_infos.setAlignmentX(0.5f);
+        ta_infos.setOpaque(false);
+        add(ta_infos, BorderLayout.NORTH);
 
-      JPanel centerPanel = new JPanel( new BorderLayout() );
+        JPanel centerPanel = new JPanel(new BorderLayout());
 
-      playerTextArea = new ATextArea(10,25);
-      playerTextArea.setLineWrap(true);
-      playerTextArea.setWrapStyleWord(true);    
-      playerTextArea.setEditable(true);
-      playerTextArea.setAlignmentX(0.5f);
-      PlayerImpl player = ClientDirector.getDataManager().getMyPlayer();
-      playerTextArea.setText(player.getPlayerAwayMessage());
-      centerPanel.add(new JScrollPane(playerTextArea),BorderLayout.CENTER);
-      add(centerPanel, BorderLayout.CENTER);
+        this.playerTextArea = new ATextArea(10, 25);
+        this.playerTextArea.setLineWrap(true);
+        this.playerTextArea.setWrapStyleWord(true);
+        this.playerTextArea.setEditable(true);
+        this.playerTextArea.setAlignmentX(0.5f);
+        PlayerImpl player = ClientDirector.getDataManager().getMyPlayer();
+        this.playerTextArea.setText(player.getPlayerAwayMessage());
+        centerPanel.add(new JScrollPane(this.playerTextArea), BorderLayout.CENTER);
+        add(centerPanel, BorderLayout.CENTER);
 
-      ImageIcon im_saveup  = ClientDirector.getResourceManager().getImageIcon("save-up.gif");
-      ImageIcon im_savedo  = ClientDirector.getResourceManager().getImageIcon("save-do.gif");
+        ImageIcon im_saveup = ClientDirector.getResourceManager().getImageIcon("save-up.gif");
+        ImageIcon im_savedo = ClientDirector.getResourceManager().getImageIcon("save-do.gif");
 
-      savePastButton = new AButton(im_saveup);
-      savePastButton.setRolloverIcon(im_savedo);
-      savePastButton.setPressedIcon(im_savedo);
-      savePastButton.setBorderPainted(false);
-      savePastButton.setContentAreaFilled(false);
-      savePastButton.setFocusPainted(false);
-      savePastButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        this.savePastButton = new AButton(im_saveup);
+        this.savePastButton.setRolloverIcon(im_savedo);
+        this.savePastButton.setPressedIcon(im_savedo);
+        this.savePastButton.setBorderPainted(false);
+        this.savePastButton.setContentAreaFilled(false);
+        this.savePastButton.setFocusPainted(false);
+        this.savePastButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        savePastButton.addActionListener(new ActionListener() {
-            public void actionPerformed (ActionEvent e) {
+        this.savePastButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 PlayerImpl p = ClientDirector.getDataManager().getMyPlayer();
 
-                String awayMessage = playerTextArea.getText();
-                
-             // Any macro to process ?
+                String awayMessage = AwayPlugIn.this.playerTextArea.getText();
+
+                // Any macro to process ?
                 MacroPlugIn macroPlugIn = (MacroPlugIn) ClientDirector.getDataManager().getClientScreen().getPlayerPanel().getPlugIn("Macro");
 
-                if(macroPlugIn!=null) {
-                   awayMessage = macroPlugIn.processMacros( awayMessage );
-                   playerTextArea.setText(awayMessage);
-                }
-                
-                if( p.getPlayerAwayMessage()!=null &&
-                    p.getPlayerAwayMessage().equals(awayMessage) )
-                   return;
-
-                if(awayMessage.length()>400) {
-                   awayMessage = awayMessage.substring( 0,399 );
-                   playerTextArea.setText(awayMessage);
+                if (macroPlugIn != null) {
+                    awayMessage = macroPlugIn.processMacros(awayMessage);
+                    AwayPlugIn.this.playerTextArea.setText(awayMessage);
                 }
 
-                p.setPlayerAwayMessage( awayMessage );
-                p.sendMessage( new PlayerAwayMessage( p.getPrimaryKey(), awayMessage ) );
+                if (p.getPlayerAwayMessage() != null && p.getPlayerAwayMessage().equals(awayMessage))
+                    return;
+
+                if (awayMessage.length() > 400) {
+                    awayMessage = awayMessage.substring(0, 399);
+                    AwayPlugIn.this.playerTextArea.setText(awayMessage);
+                }
+
+                p.setPlayerAwayMessage(awayMessage);
+                p.sendMessage(new PlayerAwayMessage(p.getPrimaryKey(), awayMessage));
             }
         });
 
-      JPanel whitePanel = new JPanel();
-      whitePanel.setBackground( Color.white );
-      whitePanel.add(savePastButton);
-      add(whitePanel,BorderLayout.SOUTH);
+        JPanel whitePanel = new JPanel();
+        whitePanel.setBackground(Color.white);
+        whitePanel.add(this.savePastButton);
+        add(whitePanel, BorderLayout.SOUTH);
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Called once to initialize the plug-in.
-    *
-    *  @return if true we display the plug-in, return false if something fails during
-    *          this init(), this way the plug-in won't be displayed.
-    */
-      public boolean init() {
-         return true; // nothing special to init...
-      }
+    /** Called once to initialize the plug-in.
+     *
+     *  @return if true we display the plug-in, return false if something fails during
+     *          this init(), this way the plug-in won't be displayed.
+     */
+    @Override
+    public boolean init() {
+        return true; // nothing special to init...
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Called when we need to reset the content of this plug-in.
-    */
-      public void reset() {
-         PlayerImpl player = ClientDirector.getDataManager().getMyPlayer();
-         playerTextArea.setText(player.getPlayerAwayMessage());
-      }
+    /** Called when we need to reset the content of this plug-in.
+     */
+    @Override
+    public void reset() {
+        PlayerImpl player = ClientDirector.getDataManager().getMyPlayer();
+        this.playerTextArea.setText(player.getPlayerAwayMessage());
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Returns the name of the plug-in that will be displayed in the JPlayerPanel.
-    * @return a short name for the plug-in
-    */
-      public String getPlugInName() {
-      	  return "Away";
-      }
+    /** Returns the name of the plug-in that will be displayed in the JPlayerPanel.
+     * @return a short name for the plug-in
+     */
+    @Override
+    public String getPlugInName() {
+        return "Away";
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Returns the name of the plug-in's author.
-    * @return author name.
-    */
-      public String getPlugInAuthor() {
-          return "Wotlas Team (MasterBob,Aldiss)";
-      }
+    /** Returns the name of the plug-in's author.
+     * @return author name.
+     */
+    @Override
+    public String getPlugInAuthor() {
+        return "Wotlas Team (MasterBob,Aldiss)";
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Returns the tool tip text that will be displayed in the JPlayerPanel.
-    * @return a short tool tip text
-    */
-      public String getToolTipText() {
-          return "Message Displayed when Away";
-      }
+    /** Returns the tool tip text that will be displayed in the JPlayerPanel.
+     * @return a short tool tip text
+     */
+    @Override
+    public String getToolTipText() {
+        return "Message Displayed when Away";
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Eventual index in the list of JPlayerPanels
-    * @return -1 if the plug-in has to be added at the end of the plug-in list,
-    *         otherwise a positive integer for a precise location.
-    */
-      public int getPlugInIndex() {
-          return 1;
-      }
+    /** Eventual index in the list of JPlayerPanels
+     * @return -1 if the plug-in has to be added at the end of the plug-in list,
+     *         otherwise a positive integer for a precise location.
+     */
+    @Override
+    public int getPlugInIndex() {
+        return 1;
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Tells if this plug-in is a system plug-in that represents some base
-    *  wotlas feature.
-    * @return true means system plug-in, false means user plug-in
-    */
-      public boolean isSystemPlugIn() {
-      	  return true;
-      }
+    /** Tells if this plug-in is a system plug-in that represents some base
+     *  wotlas feature.
+     * @return true means system plug-in, false means user plug-in
+     */
+    @Override
+    public boolean isSystemPlugIn() {
+        return true;
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 }

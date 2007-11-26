@@ -22,237 +22,237 @@ package wotlas.common.universe;
 import wotlas.libs.graphics2D.ImageIdentifier;
 import wotlas.utils.Debug;
 
- /** An InteriorMap represents any maps where players can walk. It usually belongs
-  *  to buildings. It does not implement the WotlasMap interface because it doesn't
-  *  possess players. Players are possessed by the InteriorMap's rooms.
-  *
-  * @author Petrus, Aldiss
-  */
+/** An InteriorMap represents any maps where players can walk. It usually belongs
+ *  to buildings. It does not implement the WotlasMap interface because it doesn't
+ *  possess players. Players are possessed by the InteriorMap's rooms.
+ *
+ * @author Petrus, Aldiss
+ */
 
 public class InteriorMap {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** ID of the InteriorMap (index in the array Building.interiorMaps)
-   */
+    /** ID of the InteriorMap (index in the array Building.interiorMaps)
+     */
     private int interiorMapID;
-  
-  /** Full name of the InteriorMap
-   */
+
+    /** Full name of the InteriorMap
+     */
     private String fullName;
-   
-  /** Short name of the InteriorMap
-   */
+
+    /** Short name of the InteriorMap
+     */
     private String shortName;
 
-  /** Full Image (identifier) of this interiorMap
-   */
+    /** Full Image (identifier) of this interiorMap
+     */
     private ImageIdentifier interiorMapImage;
-  
-  /** Image's Total Width
-   */
+
+    /** Image's Total Width
+     */
     private int imageWidth;
-    
-  /** Image's Total Height
-   */
+
+    /** Image's Total Height
+     */
     private int imageHeight;
 
-  /** Our image is a MultiRegionImage. This is the width of a region.
-   */
+    /** Our image is a MultiRegionImage. This is the width of a region.
+     */
     private int imageRegionWidth;
 
-  /** Our image is a MultiRegionImage. This is the height of a region.
-   */
+    /** Our image is a MultiRegionImage. This is the height of a region.
+     */
     private int imageRegionHeight;
-  
-  /** Music Name
-   */
+
+    /** Music Name
+     */
     private String musicName;
-  
-  /** List of the rooms of the Building
-   * non transient (rooms in the same file of the building)
-   */
+
+    /** List of the rooms of the Building
+     * non transient (rooms in the same file of the building)
+     */
     private Room[] rooms;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** A link to our father building...
-   */
+    /** A link to our father building...
+     */
     private transient Building myBuilding;
 
- /*------------------------------------------------------------------------------------*/
-  
-  /** Constructor
-   */
+    /*------------------------------------------------------------------------------------*/
+
+    /** Constructor
+     */
     public InteriorMap() {
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /*
-   * List of setter and getter used for persistence
-   */  
+    /*
+     * List of setter and getter used for persistence
+     */
 
     public void setInteriorMapID(int myInteriorMapID) {
-      this.interiorMapID = myInteriorMapID;
+        this.interiorMapID = myInteriorMapID;
     }
 
     public int getInteriorMapID() {
-      return interiorMapID;
+        return this.interiorMapID;
     }
 
     public void setImageWidth(int imageWidth) {
-      this.imageWidth = imageWidth;
+        this.imageWidth = imageWidth;
     }
 
     public int getImageWidth() {
-      return imageWidth;
+        return this.imageWidth;
     }
 
     public void setImageHeight(int imageHeight) {
-      this.imageHeight = imageHeight;
+        this.imageHeight = imageHeight;
     }
 
     public int getImageHeight() {
-      return imageHeight;
+        return this.imageHeight;
     }
 
     public void setImageRegionWidth(int imageRegionWidth) {
-      this.imageRegionWidth = imageRegionWidth;
+        this.imageRegionWidth = imageRegionWidth;
     }
 
     public int getImageRegionWidth() {
-      return imageRegionWidth;
+        return this.imageRegionWidth;
     }
 
     public void setImageRegionHeight(int imageRegionHeight) {
-      this.imageRegionHeight = imageRegionHeight;
+        this.imageRegionHeight = imageRegionHeight;
     }
 
     public int getImageRegionHeight() {
-      return imageRegionHeight;
+        return this.imageRegionHeight;
     }
 
     public void setFullName(String myFullName) {
-      this.fullName = myFullName;
+        this.fullName = myFullName;
     }
 
     public String getFullName() {
-      return fullName;
+        return this.fullName;
     }
 
     public void setShortName(String myShortName) {
-      this.shortName = myShortName;
+        this.shortName = myShortName;
     }
 
     public String getShortName() {
-      return shortName;
+        return this.shortName;
     }
 
     public void setRooms(Room[] myRooms) {
-      this.rooms = myRooms;
+        this.rooms = myRooms;
     }
 
     public Room[] getRooms() {
-      return rooms;
+        return this.rooms;
     }
 
     public void setInteriorMapImage(ImageIdentifier interiorMapImage) {
-      this.interiorMapImage = interiorMapImage;
+        this.interiorMapImage = interiorMapImage;
     }
 
     public ImageIdentifier getInteriorMapImage() {
-      return interiorMapImage;
+        return this.interiorMapImage;
     }
 
     public void setMusicName(String musicName) {
-      this.musicName = musicName;
+        this.musicName = musicName;
     }
 
     public String getMusicName() {
-      return musicName;
+        return this.musicName;
     }
 
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Transient fields getter & setter
-   */
+    /** Transient fields getter & setter
+     */
     public Building getMyBuilding() {
-      return myBuilding;
-    }
-  
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To Get a room by its ID.
-   *
-   * @param id roomID
-   * @return corresponding room, null if ID does not exist.
-   */
-    public Room getRoomFromID( int id ) {
-   	if(id>=rooms.length || id<0) {
-           Debug.signal( Debug.ERROR, this, "getRoomByID : Bad room ID "+id );
-   	   return null;
-   	}
-   	
-        return rooms[id];
+        return this.myBuilding;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Add a new Room object to the array rooms
-   *
-   * @return a new Room object
-   */
-    public Room addRoom() {
-      Room myRoom = new Room();
-    
-      if (rooms == null) {
-        rooms = new Room[1];
-        myRoom.setRoomID(0);
-        rooms[0] = myRoom;
-      } else {
-        Room[] myRooms = new Room[rooms.length+1];      
-        myRoom.setRoomID(rooms.length);
-        System.arraycopy(rooms, 0, myRooms, 0, rooms.length);
-        myRooms[rooms.length] = myRoom;
-        rooms = myRooms;
-      }
-
-      return myRoom;
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To init this interiorMap ( it rebuilds shortcuts ). DON'T CALL this method directly,
-   *  use the init() method of the associated world.
-   *
-   * @param myBuilding our father building
-   */
-    public void init( Building myBuilding ){
-
-       this.myBuilding = myBuilding;
-
-     // 1 - any data ?
-        if(rooms==null) {
-          Debug.signal(Debug.WARNING, this, "InteriorMap has no rooms: "+this);
-          return;
+    /** To Get a room by its ID.
+     *
+     * @param id roomID
+     * @return corresponding room, null if ID does not exist.
+     */
+    public Room getRoomFromID(int id) {
+        if (id >= this.rooms.length || id < 0) {
+            Debug.signal(Debug.ERROR, this, "getRoomByID : Bad room ID " + id);
+            return null;
         }
 
-     // 2 - we transmit the init() call
-        for( int i=0; i<rooms.length; i++ )
-            if( rooms[i]!=null )
-                rooms[i].init(this);
+        return this.rooms[id];
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** String Info.
-   */
-    public String toString(){
-         return "Interior - "+fullName;
+    /** Add a new Room object to the array rooms
+     *
+     * @return a new Room object
+     */
+    public Room addRoom() {
+        Room myRoom = new Room();
+
+        if (this.rooms == null) {
+            this.rooms = new Room[1];
+            myRoom.setRoomID(0);
+            this.rooms[0] = myRoom;
+        } else {
+            Room[] myRooms = new Room[this.rooms.length + 1];
+            myRoom.setRoomID(this.rooms.length);
+            System.arraycopy(this.rooms, 0, myRooms, 0, this.rooms.length);
+            myRooms[this.rooms.length] = myRoom;
+            this.rooms = myRooms;
+        }
+
+        return myRoom;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-} 
+    /** To init this interiorMap ( it rebuilds shortcuts ). DON'T CALL this method directly,
+     *  use the init() method of the associated world.
+     *
+     * @param myBuilding our father building
+     */
+    public void init(Building myBuilding) {
+
+        this.myBuilding = myBuilding;
+
+        // 1 - any data ?
+        if (this.rooms == null) {
+            Debug.signal(Debug.WARNING, this, "InteriorMap has no rooms: " + this);
+            return;
+        }
+
+        // 2 - we transmit the init() call
+        for (int i = 0; i < this.rooms.length; i++)
+            if (this.rooms[i] != null)
+                this.rooms[i].init(this);
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** String Info.
+     */
+    @Override
+    public String toString() {
+        return "Interior - " + this.fullName;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+}

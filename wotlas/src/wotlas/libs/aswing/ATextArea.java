@@ -19,57 +19,58 @@
 
 package wotlas.libs.aswing;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import javax.swing.JTextArea;
 
 /** Antialiased JTextArea : we use antialiasing to draw the text on a JTextArea
  *
  * @author Petrus
  */
-public class ATextArea extends JTextArea
-{
-  
- /*------------------------------------------------------------------------------------*/
-  
-  /** Constructor without arguments.
-   */
-  public ATextArea() {
-    super();
-  }
-  
- /*------------------------------------------------------------------------------------*/
-  
-  /** Constructor.
-   */
-  public ATextArea( String text ) {
-    super( text );      
-  }
+public class ATextArea extends JTextArea {
 
- /*------------------------------------------------------------------------------------*/
-  
-  /** Constructor.
-   */
-  public ATextArea( int a, int b ) {
-    super( a, b );      
-  }
+    /*------------------------------------------------------------------------------------*/
 
- /*------------------------------------------------------------------------------------*/
+    /** Constructor without arguments.
+     */
+    public ATextArea() {
+        super();
+    }
 
-  /** Mutated Paint Method.
-   */
-  public void paint( Graphics g ) {
-    Graphics2D g2D = (Graphics2D) g; 
-    RenderingHints saveRenderHints = g2D.getRenderingHints(); // save
-    
-    RenderingHints renderHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING,
-                                                        RenderingHints.VALUE_ANTIALIAS_ON);
-    renderHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-    
-    g2D.setRenderingHints( renderHints );
-    super.paint(g);
-    g2D.setRenderingHints( saveRenderHints ); // restore
-  }
+    /*------------------------------------------------------------------------------------*/
 
- /*------------------------------------------------------------------------------------*/
+    /** Constructor.
+     */
+    public ATextArea(String text) {
+        super(text);
+    }
+
+    /*------------------------------------------------------------------------------------*/
+
+    /** Constructor.
+     */
+    public ATextArea(int a, int b) {
+        super(a, b);
+    }
+
+    /*------------------------------------------------------------------------------------*/
+
+    /** Mutated Paint Method.
+     */
+    @Override
+    public void paint(Graphics g) {
+        Graphics2D g2D = (Graphics2D) g;
+        RenderingHints saveRenderHints = g2D.getRenderingHints(); // save
+
+        RenderingHints renderHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        renderHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+
+        g2D.setRenderingHints(renderHints);
+        super.paint(g);
+        g2D.setRenderingHints(saveRenderHints); // restore
+    }
+
+    /*------------------------------------------------------------------------------------*/
 
 }

@@ -19,18 +19,15 @@
 
 package wotlas.client.message.description;
 
-import java.io.IOException;
-import java.util.*;
-
-import wotlas.utils.Debug;
-
-import wotlas.libs.sound.*;
-
+import wotlas.client.DataManager;
+import wotlas.client.PlayerImpl;
+import wotlas.common.message.description.DoorStateMessage;
+import wotlas.common.universe.Door;
+import wotlas.common.universe.Room;
+import wotlas.common.universe.RoomLink;
 import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.message.description.*;
-import wotlas.common.universe.*;
-import wotlas.common.Player;
-import wotlas.client.*;
+import wotlas.libs.sound.SoundLibrary;
+import wotlas.utils.Debug;
 
 /**
  * Associated behaviour to the DoorStateMessage...
@@ -38,65 +35,62 @@ import wotlas.client.*;
  * @author Aldiss
  */
 
-public class DoorStateMsgBehaviour extends DoorStateMessage implements NetMessageBehaviour
-{
- /*------------------------------------------------------------------------------------*/
+public class DoorStateMsgBehaviour extends DoorStateMessage implements NetMessageBehaviour {
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public DoorStateMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+     */
+    public DoorStateMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
 
         // The sessionContext is here a DataManager
-           DataManager dataManager = (DataManager) sessionContext;
-           PlayerImpl myPlayer = dataManager.getMyPlayer();
+        DataManager dataManager = (DataManager) sessionContext;
+        PlayerImpl myPlayer = dataManager.getMyPlayer();
 
         // 1 - Control
-           if( !myPlayer.getLocation().isRoom() ) {
-               Debug.signal( Debug.ERROR, this, "Master player is not on an InteriorMap" );
-               return;
-           }
+        if (!myPlayer.getLocation().isRoom()) {
+            Debug.signal(Debug.ERROR, this, "Master player is not on an InteriorMap");
+            return;
+        }
 
-           Room room = dataManager.getWorldManager().getRoom( location );
+        Room room = dataManager.getWorldManager().getRoom(this.location);
 
-           if( room==null || room.getRoomLinks()==null ) {
-               Debug.signal( Debug.WARNING, this, "Room or RoomLink not found..." );
-               return;
-           }
+        if (room == null || room.getRoomLinks() == null) {
+            Debug.signal(Debug.WARNING, this, "Room or RoomLink not found...");
+            return;
+        }
 
         // 2 - Update
-           RoomLink roomLink = room.getRoomLink( roomLinkID );
-           Door door = null;
-                
-           if( roomLink!=null )
-               door = roomLink.getDoor();
-           
-           if( door==null) {
-               Debug.signal( Debug.WARNING, this, "RoomLink has no door !"+location );
-               return;
-           }
-           
-           if( isOpened ) {
-               SoundLibrary.getSoundPlayer().playSound("door-open.wav");
-               door.open();
-           }
-           else {
-               SoundLibrary.getSoundPlayer().playSound("door-close.wav");
-               door.close();
-           }
-     }
+        RoomLink roomLink = room.getRoomLink(this.roomLinkID);
+        Door door = null;
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        if (roomLink != null)
+            door = roomLink.getDoor();
+
+        if (door == null) {
+            Debug.signal(Debug.WARNING, this, "RoomLink has no door !" + this.location);
+            return;
+        }
+
+        if (this.isOpened) {
+            SoundLibrary.getSoundPlayer().playSound("door-open.wav");
+            door.open();
+        } else {
+            SoundLibrary.getSoundPlayer().playSound("door-close.wav");
+            door.close();
+        }
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

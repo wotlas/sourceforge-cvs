@@ -16,16 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.server.message.account;
 
-import java.io.IOException;
-
-
+import wotlas.common.message.account.CancelAccountCreationMessage;
 import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.message.account.*;
 import wotlas.server.AccountBuilder;
-
 
 /**
  * Associated behaviour to the CancelAccountCreationMessage...
@@ -33,30 +29,28 @@ import wotlas.server.AccountBuilder;
  * @author Aldiss
  */
 
-public class CancelAccountCreationMsgBehaviour extends CancelAccountCreationMessage implements NetMessageBehaviour
-{
- /*------------------------------------------------------------------------------------*/
+public class CancelAccountCreationMsgBehaviour extends CancelAccountCreationMessage implements NetMessageBehaviour {
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public CancelAccountCreationMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+     */
+    public CancelAccountCreationMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
 
         // the sessionContext is here an AccountBuilder
-           AccountBuilder builder = (AccountBuilder) sessionContext;
-           builder.cancelCreation();
-     }
+        AccountBuilder builder = (AccountBuilder) sessionContext;
+        builder.cancelCreation();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

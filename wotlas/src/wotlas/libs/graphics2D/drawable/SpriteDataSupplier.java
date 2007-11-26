@@ -21,7 +21,6 @@ package wotlas.libs.graphics2D.drawable;
 
 import wotlas.libs.graphics2D.ImageIdentifier;
 
-
 /** A SpriteDataSupplier defines the data access methods needed by a Sprite Object.
  *  If you plan not to use rotation / scaling / alpha, etc... just return the default
  *  value that is specified in the javadoc header.
@@ -32,58 +31,58 @@ import wotlas.libs.graphics2D.ImageIdentifier;
 
 public interface SpriteDataSupplier {
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the X image position.
-   *
-   * @return x image cordinate
-   */
+    /** To get the X image position.
+     *
+     * @return x image cordinate
+     */
     public int getX();
 
-  /** To get the Y image position.
-   *
-   * @return y image cordinate
-   */
+    /** To get the Y image position.
+     *
+     * @return y image cordinate
+     */
     public int getY();
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the image identifier to use.
-   *
-   * @return image identifier.
-   */
+    /** To get the image identifier to use.
+     *
+     * @return image identifier.
+     */
     public ImageIdentifier getImageIdentifier();
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the eventual rotation angle. 0 means no rotation.
-   *
-   * @return angle in radians.
-   */
+    /** To get the eventual rotation angle. 0 means no rotation.
+     *
+     * @return angle in radians.
+     */
     public double getAngle();
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the X factor for scaling... 1.0 means no X scaling
-   *
-   * @return X scale factor
-   */
+    /** To get the X factor for scaling... 1.0 means no X scaling
+     *
+     * @return X scale factor
+     */
     public double getScaleX();
 
-  /** To get the Y factor for scaling... 1.0 means no Y scaling
-   *
-   * @return Y scale factor
-   */
+    /** To get the Y factor for scaling... 1.0 means no Y scaling
+     *
+     * @return Y scale factor
+     */
     public double getScaleY();
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the image's transparency ( 0.0 means invisible, 1.0 means fully visible ). 
-   *
-   * @return alpha
-   */
+    /** To get the image's transparency ( 0.0 means invisible, 1.0 means fully visible ). 
+     *
+     * @return alpha
+     */
     public float getAlpha();
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

@@ -19,16 +19,22 @@
 
 package wotlas.common.character;
 
-import java.io.*;
 import java.awt.Color;
-
-import wotlas.common.*;
-import wotlas.common.universe.*;
-import wotlas.common.objects.inventories.*;
-import wotlas.libs.graphics2D.*;
-import wotlas.libs.graphics2D.drawable.*;
-import wotlas.libs.graphics2D.filter.*;
-
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import wotlas.common.ImageLibRef;
+import wotlas.common.Player;
+import wotlas.common.objects.inventories.AielWarriorInventory;
+import wotlas.common.objects.inventories.Inventory;
+import wotlas.common.universe.WotlasLocation;
+import wotlas.libs.graphics2D.Drawable;
+import wotlas.libs.graphics2D.ImageIdentifier;
+import wotlas.libs.graphics2D.drawable.AuraEffect;
+import wotlas.libs.graphics2D.drawable.ShadowSprite;
+import wotlas.libs.graphics2D.drawable.Sprite;
+import wotlas.libs.graphics2D.drawable.SpriteDataSupplier;
+import wotlas.libs.graphics2D.filter.ColorImageFilter;
 
 /** An Aiel Warrior character.
  *
@@ -38,285 +44,283 @@ import wotlas.libs.graphics2D.filter.*;
 
 public class AielWarrior extends Male {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Aiel rank
-   */
+    /** Aiel rank
+     */
     public final static String aielRank[][] = {
-          //        Rank Name                Rank Symbol
-                {   "Aiel Warrior",          "warrior-0",  },
-    };
+    //        Rank Name                Rank Symbol
+    { "Aiel Warrior", "warrior-0", }, };
 
-  /** Aiel rank
-   */
+    /** Aiel rank
+     */
     public final static Color aielColor[] = {
-         //        Rank Color
-                   new Color(180,170,90),
-    };
+    //        Rank Color
+    new Color(180, 170, 90), };
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Aiel status ( warrior, ... ). [PUBLIC INFO]
-   */
+    /** Aiel status ( warrior, ... ). [PUBLIC INFO]
+     */
     private String characterRank;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Current Sprite.
-   */
+    /** Current Sprite.
+     */
     transient private Sprite aielSprite;
 
-  /** Current Shadow.
-   */
+    /** Current Shadow.
+     */
     transient private ShadowSprite aielShadowSprite;
 
-  /** Current Aura.
-   */
+    /** Current Aura.
+     */
     transient private AuraEffect aielAuraEffect;
 
-  /** ColorImageFilter for InteriorMap Sprites.
-   */
+    /** ColorImageFilter for InteriorMap Sprites.
+     */
     transient private ColorImageFilter filter;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Constructor
-    */
+    /** Constructor
+     */
     public AielWarrior() {
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** To get a Drawable for this character. This should not be used on the
-    *  server side.
-    *
-    *  The returned Drawable is unique : we always return the same drawable per
-    *  AesSedai instance.
-    *
-    * @param player the player to chain the drawable to. If a XXXDataSupplier is needed
-    *               we sets it to this player object.
-    * @return a Drawable for this character
-    */
-      public Drawable getDrawable( Player player ) {
+    /** To get a Drawable for this character. This should not be used on the
+     *  server side.
+     *
+     *  The returned Drawable is unique : we always return the same drawable per
+     *  AesSedai instance.
+     *
+     * @param player the player to chain the drawable to. If a XXXDataSupplier is needed
+     *               we sets it to this player object.
+     * @return a Drawable for this character
+     */
+    public Drawable getDrawable(Player player) {
 
-         if(aielSprite!=null)
-             return (Drawable) aielSprite;
+        if (this.aielSprite != null)
+            return this.aielSprite;
 
-       // 1 - Sprite Creation + Filter
-          aielSprite = new Sprite( (SpriteDataSupplier) player, ImageLibRef.PLAYER_PRIORITY );
-          aielSprite.useAntialiasing(true);
-          updateColorFilter();
-         return aielSprite;
-      }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Updates the color filter that is used for the AesSedai sprite.
-   */
-      private void updateColorFilter() {
-         if(aielSprite==null)
-             return;
-         
-         // no color filter to set...
-      }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Return the character's shadow. Important: a character Drawable MUST have been created
-   *  previously ( via a getDrawable call ). You don't want to create a shadow with no
-   *  character, do you ?
-   *
-   *  @return character's Shadow Drawable.
-   */
-     public Drawable getShadow(){
-
-         if(aielShadowSprite!=null)
-             return (Drawable) aielShadowSprite;
-
-      // Shadow Creation
-         String path = null;
-
-         path = "players-0/shadows-3/aiel-w-walking-7";
-
-         aielShadowSprite = new ShadowSprite( aielSprite.getDataSupplier(),
-                                                  new ImageIdentifier( path ),
-                                                  ImageLibRef.SHADOW_PRIORITY, 4, 4 );
-         return aielShadowSprite;
-     }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Return the character's aura.
-   *  @return character's Aura Drawable.
-   */
-     public Drawable getAura(){
-
-         if(aielAuraEffect!=null) {
-             if(aielAuraEffect.isLive()) {
-                return null; // aura still displayed on screen
-             }
-
-             aielAuraEffect.reset();
-             return (Drawable) aielAuraEffect;
-         }
-
-      // Aura Creation
-         aielAuraEffect = new AuraEffect( aielSprite.getDataSupplier(), getAuraImage(),
-                                            ImageLibRef.AURA_PRIORITY, 5000 );
-         aielAuraEffect.useAntialiasing(true);
-         aielAuraEffect.setAuraMaxAlpha(0.5f);
-         return aielAuraEffect;
-     }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-   /** To get the Aura Image Identifier.
-    */
-    private ImageIdentifier getAuraImage() {
-      // symbol selection
-         String symbolName = null;
-
-            for( int i=0; i<aielRank.length; i++ )
-              if( characterRank.equals(aielRank[i][0]) ) {
-                  symbolName = aielRank[i][1];
-                  break;
-              }
-
-         if(symbolName==null) symbolName=aielRank[0][1]; // default if not found
-
-      // Aura Creation
-         return new ImageIdentifier( "players-0/symbols-2/aiel-symbols-5/"+symbolName+".gif" );
+        // 1 - Sprite Creation + Filter
+        this.aielSprite = new Sprite((SpriteDataSupplier) player, ImageLibRef.PLAYER_PRIORITY);
+        this.aielSprite.useAntialiasing(true);
+        updateColorFilter();
+        return this.aielSprite;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Return the character's color.
-   *  @return character's color
-   */
-     public Color getColor(){
-         for( int i=0; i<aielRank.length; i++ )
-              if( characterRank.equals(aielRank[i][0]) )
-                  return aielColor[i];
+    /** Updates the color filter that is used for the AesSedai sprite.
+     */
+    private void updateColorFilter() {
+        if (this.aielSprite == null)
+            return;
+
+        // no color filter to set...
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Return the character's shadow. Important: a character Drawable MUST have been created
+     *  previously ( via a getDrawable call ). You don't want to create a shadow with no
+     *  character, do you ?
+     *
+     *  @return character's Shadow Drawable.
+     */
+    public Drawable getShadow() {
+
+        if (this.aielShadowSprite != null)
+            return this.aielShadowSprite;
+
+        // Shadow Creation
+        String path = null;
+
+        path = "players-0/shadows-3/aiel-w-walking-7";
+
+        this.aielShadowSprite = new ShadowSprite(this.aielSprite.getDataSupplier(), new ImageIdentifier(path), ImageLibRef.SHADOW_PRIORITY, 4, 4);
+        return this.aielShadowSprite;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Return the character's aura.
+     *  @return character's Aura Drawable.
+     */
+    public Drawable getAura() {
+
+        if (this.aielAuraEffect != null) {
+            if (this.aielAuraEffect.isLive()) {
+                return null; // aura still displayed on screen
+            }
+
+            this.aielAuraEffect.reset();
+            return this.aielAuraEffect;
+        }
+
+        // Aura Creation
+        this.aielAuraEffect = new AuraEffect(this.aielSprite.getDataSupplier(), getAuraImage(), ImageLibRef.AURA_PRIORITY, 5000);
+        this.aielAuraEffect.useAntialiasing(true);
+        this.aielAuraEffect.setAuraMaxAlpha(0.5f);
+        return this.aielAuraEffect;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** To get the Aura Image Identifier.
+     */
+    private ImageIdentifier getAuraImage() {
+        // symbol selection
+        String symbolName = null;
+
+        for (int i = 0; i < AielWarrior.aielRank.length; i++)
+            if (this.characterRank.equals(AielWarrior.aielRank[i][0])) {
+                symbolName = AielWarrior.aielRank[i][1];
+                break;
+            }
+
+        if (symbolName == null)
+            symbolName = AielWarrior.aielRank[0][1]; // default if not found
+
+        // Aura Creation
+        return new ImageIdentifier("players-0/symbols-2/aiel-symbols-5/" + symbolName + ".gif");
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Return the character's color.
+     *  @return character's color
+     */
+    public Color getColor() {
+        for (int i = 0; i < AielWarrior.aielRank.length; i++)
+            if (this.characterRank.equals(AielWarrior.aielRank[i][0]))
+                return AielWarrior.aielColor[i];
 
         return Color.black;
-     }
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the WotCharacter community name.
-   * @return the name of the community.
-   */
-     public String getCommunityName() {
+    /** To get the WotCharacter community name.
+     * @return the name of the community.
+     */
+    public String getCommunityName() {
         return "Aiel";
-     }
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the rank of this WotCharacter in his/her community.
-   * @return the rank of this wotcharacter in his/her community.
-   */
-     public String getCharacterRank() {
-        return characterRank;
-     }
+    /** To get the rank of this WotCharacter in his/her community.
+     * @return the rank of this wotcharacter in his/her community.
+     */
+    public String getCharacterRank() {
+        return this.characterRank;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To set the rank of this WotCharacter in his/her community.
-   *  IMPORTANT : if the rank doesnot exist it is  set to "unknown".
-   *
-   * @param rank the rank of this wotcharacter in his/her community.
-   */
-     public void setCharacterRank( String rank ) {
+    /** To set the rank of this WotCharacter in his/her community.
+     *  IMPORTANT : if the rank doesnot exist it is  set to "unknown".
+     *
+     * @param rank the rank of this wotcharacter in his/her community.
+     */
+    public void setCharacterRank(String rank) {
 
-         if(rank!=null)
-            for( int i=0; i<aielRank.length; i++ )
-              if( rank.equals(aielRank[i][0]) ) {
-                  characterRank = rank;
-                  return; // success
-              }
+        if (rank != null)
+            for (int i = 0; i < AielWarrior.aielRank.length; i++)
+                if (rank.equals(AielWarrior.aielRank[i][0])) {
+                    this.characterRank = rank;
+                    return; // success
+                }
 
-         characterRank="unknown"; // not found
-     }
+        this.characterRank = "unknown"; // not found
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Returns an image for this character.
-   *
-   *  @param playerLocation player current location
-   *  @return image identifier of this character.
-   */
-     public ImageIdentifier getImage( WotlasLocation playerLocation ) {
+    /** Returns an image for this character.
+     *
+     *  @param playerLocation player current location
+     *  @return image identifier of this character.
+     */
+    @Override
+    public ImageIdentifier getImage(WotlasLocation playerLocation) {
 
-         ImageIdentifier imID = super.getImage(playerLocation);
+        ImageIdentifier imID = super.getImage(playerLocation);
 
-         if( imID==null ) {
-              if(aielSprite!=null && filter!=null)
-                 aielSprite.setDynamicImageFilter(filter);
+        if (imID == null) {
+            if (this.aielSprite != null && this.filter != null)
+                this.aielSprite.setDynamicImageFilter(this.filter);
 
-           // We return the default Aiel Image...
-              String path = null;
+            // We return the default Aiel Image...
+            String path = null;
 
-                 path = "players-0/aiel-9/aiel-warrior-walking-0";
+            path = "players-0/aiel-9/aiel-warrior-walking-0";
 
-              return new ImageIdentifier( path );
-         }
+            return new ImageIdentifier(path);
+        }
 
-         if(aielSprite!=null)
-            aielSprite.setDynamicImageFilter( null ); // no filter for player small image
+        if (this.aielSprite != null)
+            this.aielSprite.setDynamicImageFilter(null); // no filter for player small image
 
-         return imID;
-     }
+        return imID;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Returns the fanfare sound of this character class.
-   *  @return fanfare sound file name
-   */
-     public String getFanfareSound() {
+    /** Returns the fanfare sound of this character class.
+     *  @return fanfare sound file name
+     */
+    public String getFanfareSound() {
         return "fanfare-aiel.wav";
-     }
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get a new Inventory for this WotCharacter.<br>
-   * In this case, it is an AielWarriorInventory.
-   * @return a new inventory for this char
-   */
-     public Inventory createInventory()
-	 {
-	  return new AielWarriorInventory();
-	 }	 
-	 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** To get a new Inventory for this WotCharacter.<br>
+     * In this case, it is an AielWarriorInventory.
+     * @return a new inventory for this char
+     */
+    public Inventory createInventory() {
+        return new AielWarriorInventory();
+    }
 
- /** To put the WotCharacter's data on the network stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param ostream data stream where to put your data (see java.io.DataOutputStream)
-   * @param publicInfoOnly if false we write the player's full description, if true
-   *                     we only write public info
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-     public void encode( DataOutputStream ostream, boolean publicInfoOnly ) throws IOException {
-        super.encode( ostream, publicInfoOnly );
-        ostream.writeUTF( characterRank );
-     }
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** To put the WotCharacter's data on the network stream. You don't need
+      * to invoke this method yourself, it's done automatically.
+      *
+      * @param ostream data stream where to put your data (see java.io.DataOutputStream)
+      * @param publicInfoOnly if false we write the player's full description, if true
+      *                     we only write public info
+      * @exception IOException if the stream has been closed or is corrupted.
+      */
+    @Override
+    public void encode(DataOutputStream ostream, boolean publicInfoOnly) throws IOException {
+        super.encode(ostream, publicInfoOnly);
+        ostream.writeUTF(this.characterRank);
+    }
 
-  /** To retrieve your WotCharacter's data from the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
-   * @param publicInfoOnly if false it means the available data is the player's full description,
-   *                     if true it means we only have public info here.
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-     public void decode( DataInputStream istream, boolean publicInfoOnly ) throws IOException {
-        super.decode( istream, publicInfoOnly );
-        characterRank = istream.readUTF();
-     }
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** To retrieve your WotCharacter's data from the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
+     * @param publicInfoOnly if false it means the available data is the player's full description,
+     *                     if true it means we only have public info here.
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    @Override
+    public void decode(DataInputStream istream, boolean publicInfoOnly) throws IOException {
+        super.decode(istream, publicInfoOnly);
+        this.characterRank = istream.readUTF();
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

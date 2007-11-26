@@ -16,11 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.libs.net.message;
 
-import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.libs.net.NetClient;
+import wotlas.libs.net.NetMessageBehaviour;
 
 /** 
  * Associated behaviour to the ServerWelcomeMessage...
@@ -29,35 +29,33 @@ import wotlas.libs.net.NetClient;
  * @see wotlas.libs.net.message.ServerWelcomeMessage
  */
 
-public class ServerWelcomeMsgBehaviour extends ServerWelcomeMessage implements NetMessageBehaviour
-{
- /*------------------------------------------------------------------------------------*/
+public class ServerWelcomeMsgBehaviour extends ServerWelcomeMessage implements NetMessageBehaviour {
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public ServerWelcomeMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+     */
+    public ServerWelcomeMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to the ServerWelcomeMessage... well, we do nothing special...
-   *  the messages IDs were the only data...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {
+    /** Associated code to the ServerWelcomeMessage... well, we do nothing special...
+     *  the messages IDs were the only data...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
 
-         NetClient client = (NetClient) sessionContext;
+        NetClient client = (NetClient) sessionContext;
 
-       // we awake our client with no error message
-          synchronized( client ){
-             client.validateConnection();
-             client.notify();
-          }
-     }
+        // we awake our client with no error message
+        synchronized (client) {
+            client.validateConnection();
+            client.notify();
+        }
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

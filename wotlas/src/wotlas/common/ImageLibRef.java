@@ -28,23 +28,22 @@ import wotlas.libs.graphics2D.ImageLibraryReference;
  * @see wotlas.libs.graphics2D.ImageLibrary
  */
 
-public interface ImageLibRef extends ImageLibraryReference
-{
+public interface ImageLibRef extends ImageLibraryReference {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** DRAWABLE PRIORITIES
-   */
-    public final static short MAP_PRIORITY      = 0;      // lowest priority, drawn first
-    public final static short SHADOW_PRIORITY   = 5;      // shadows
-    public final static short AURA_PRIORITY     = 20;     // small player auras
-    public final static short OBJECT_PRIORITY   = 25;     // wotlas objects
-    public final static short ONEPOWER_PRIORITY = 30;     // one power effects
-    public final static short PLAYER_PRIORITY   = 50;     // players
-    public final static short DOOR_PRIORITY     = 100;    // doors
-    public final static short WAVE_PRIORITY     = 120;    // waves when the player emits sounds
-    public final static short TEXT_PRIORITY     = 150;    // doors
+    /** DRAWABLE PRIORITIES
+     */
+    public final static short MAP_PRIORITY = 0; // lowest priority, drawn first
+    public final static short SHADOW_PRIORITY = 5; // shadows
+    public final static short AURA_PRIORITY = 20; // small player auras
+    public final static short OBJECT_PRIORITY = 25; // wotlas objects
+    public final static short ONEPOWER_PRIORITY = 30; // one power effects
+    public final static short PLAYER_PRIORITY = 50; // players
+    public final static short DOOR_PRIORITY = 100; // doors
+    public final static short WAVE_PRIORITY = 120; // waves when the player emits sounds
+    public final static short TEXT_PRIORITY = 150; // doors
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
 }

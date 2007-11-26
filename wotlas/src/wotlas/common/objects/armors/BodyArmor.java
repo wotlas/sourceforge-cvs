@@ -16,10 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
-package wotlas.common.objects.armors;
 
-import wotlas.common.objects.interfaces.*;
+package wotlas.common.objects.armors;
 
 /** 
  * The body armor class.
@@ -29,39 +27,34 @@ import wotlas.common.objects.interfaces.*;
  * @see wotlas.common.objects.interfaces.ArmorInterface
  */
 
-public class BodyArmor extends Armor
-{
+public class BodyArmor extends Armor {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
- 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** The default constructor.
-  	* Invoques Armor's default constructor.
-   */			
-    public BodyArmor()
-	{
-	 super();
-	 
-	 this.className="BodyArmor";
-	 this.objectName="default body armor";
-	}															
+    /** The default constructor.
+    	* Invoques Armor's default constructor.
+     */
+    public BodyArmor() {
+        super();
 
-  /** The parametric constructor.
-  	* Invoques Armor's constructor.
-	* @param defense the defense of the armor - may be zero
-	* @param state the current state of the armor  	
-   */			
-    public BodyArmor(short defense,short state)
-	{
-	 super(defense,state);
-	 
-	 this.className="BodyArmor";
-	 this.objectName="default body armor";
-	}															
+        this.className = "BodyArmor";
+        this.objectName = "default body armor";
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
+    /** The parametric constructor.
+    	* Invoques Armor's constructor.
+    * @param defense the defense of the armor - may be zero
+    * @param state the current state of the armor  	
+     */
+    public BodyArmor(short defense, short state) {
+        super(defense, state);
+
+        this.className = "BodyArmor";
+        this.objectName = "default body armor";
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }
-

@@ -19,15 +19,14 @@
 
 package wotlas.client.screen;
 
+import java.awt.GridLayout;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import wotlas.client.DataManager;
-
-import wotlas.libs.graphics2D.*;
-
-import wotlas.utils.Debug;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import wotlas.libs.graphics2D.GraphicsDirector;
 
 /** JPanel to show the current map
  *
@@ -36,162 +35,163 @@ import java.awt.event.*;
 
 public class JMapPanel extends JPanel implements MouseListener, MouseMotionListener {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Different mouse movement steps...
-   */
+    /** Different mouse movement steps...
+     */
     public static final byte INIT_MOUSE_MOVEMENT = 0;
-    public static final byte MOUSE_MOVEMENT      = 1;
-    public static final byte END_MOUSE_MOVEMENT  = 2;
+    public static final byte MOUSE_MOVEMENT = 1;
+    public static final byte END_MOUSE_MOVEMENT = 2;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Our Graphics Director
-   */
+    /** Our Graphics Director
+     */
     private GraphicsDirector gDirector;
 
-  /** Our DataManager
-   */
+    /** Our DataManager
+     */
     private DataManager dataManager;
 
-  /** Left mouse button pressed
-   */
+    /** Left mouse button pressed
+     */
     private boolean isLeftMouseButtonPressed;
 
-  /** Mouse button dragged ?
-   */
+    /** Mouse button dragged ?
+     */
     private boolean mouseDragged;
 
-  /** Mouse Position
-   */
+    /** Mouse Position
+     */
     private int x, y;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor
-   * @param gDirector Graphics Director
-   */
+    /** Constructor
+     * @param gDirector Graphics Director
+     */
     public JMapPanel(GraphicsDirector gDirector, DataManager dataManager) {
-       super(new GridLayout(1,1,0,0));
+        super(new GridLayout(1, 1, 0, 0));
 
-       this.gDirector = gDirector;
-       this.dataManager = dataManager;
-       isLeftMouseButtonPressed = false;
+        this.gDirector = gDirector;
+        this.dataManager = dataManager;
+        this.isLeftMouseButtonPressed = false;
 
-       add(gDirector);
+        add(gDirector);
 
-    // Listen to Mouse clics
-       addMouseListener( this );
+        // Listen to Mouse clics
+        addMouseListener(this);
 
-    // ... and mouse motion
-       addMouseMotionListener( this );
-   }
+        // ... and mouse motion
+        addMouseMotionListener(this);
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To update the Graphics Director used.
-   */
+    /** To update the Graphics Director used.
+     */
     public void updateGraphicsDirector(GraphicsDirector gDirector) {
-       remove(this.gDirector);
-       this.gDirector = gDirector;
+        remove(this.gDirector);
+        this.gDirector = gDirector;
 
-       add(gDirector);
-       validate();
+        add(gDirector);
+        validate();
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /**
-   * Invoked when the mouse button is clicked
-   */
-    public void mouseClicked(MouseEvent e) {}
+    /**
+     * Invoked when the mouse button is clicked
+     */
+    public void mouseClicked(MouseEvent e) {
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /**
-   * Invoked when the mouse enters a component
-   */
-    public void mouseEntered(MouseEvent e) {}
+    /**
+     * Invoked when the mouse enters a component
+     */
+    public void mouseEntered(MouseEvent e) {
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /**
-   * Invoked when the mouse exits a component
-   */
-    public void mouseExited(MouseEvent e) {}
+    /**
+     * Invoked when the mouse exits a component
+     */
+    public void mouseExited(MouseEvent e) {
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /**
-   * Invoked when a mouse button has been pressed on a component
-   */
+    /**
+     * Invoked when a mouse button has been pressed on a component
+     */
     public void mousePressed(MouseEvent e) {
-       mouseDragged = false;
+        this.mouseDragged = false;
 
-       if (SwingUtilities.isRightMouseButton(e)) {
-           isLeftMouseButtonPressed = false;
-           x=e.getX();
-           y=e.getY();
-           dataManager.onRightButtonDragged( 0, 0, true );
-       }
-       else {
-           isLeftMouseButtonPressed = true;
-           x=e.getX();
-           y=e.getY();
-           dataManager.onLeftButtonDragged(e,0,0,INIT_MOUSE_MOVEMENT);
-       }
+        if (SwingUtilities.isRightMouseButton(e)) {
+            this.isLeftMouseButtonPressed = false;
+            this.x = e.getX();
+            this.y = e.getY();
+            this.dataManager.onRightButtonDragged(0, 0, true);
+        } else {
+            this.isLeftMouseButtonPressed = true;
+            this.x = e.getX();
+            this.y = e.getY();
+            this.dataManager.onLeftButtonDragged(e, 0, 0, JMapPanel.INIT_MOUSE_MOVEMENT);
+        }
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /**
-   * Invoked when a mouse button has been released on a component
-   */
+    /**
+     * Invoked when a mouse button has been released on a component
+     */
     public void mouseReleased(MouseEvent e) {
-    
-       if(DataManager.SHOW_DEBUG)
-          System.out.println("[JMapPanel] : clic sur (" + e.getX() + "," + e.getY() + ")");
 
-       if(SwingUtilities.isRightMouseButton(e)) {
-          if (DataManager.SHOW_DEBUG)
-             System.out.println("\tright clic");
+        if (DataManager.SHOW_DEBUG)
+            System.out.println("[JMapPanel] : clic sur (" + e.getX() + "," + e.getY() + ")");
 
-          if( Math.abs(e.getX()-x)<5 && Math.abs(e.getY()-y)<5 )
-             dataManager.onRightClicJMapPanel(e);
-       }
-       else {
-          isLeftMouseButtonPressed = false;
-          dataManager.onLeftButtonDragged(e,e.getX()-x,e.getY()-y,END_MOUSE_MOVEMENT);
+        if (SwingUtilities.isRightMouseButton(e)) {
+            if (DataManager.SHOW_DEBUG)
+                System.out.println("\tright clic");
 
-          if (DataManager.SHOW_DEBUG)
-             System.out.println("\tleft clic");
+            if (Math.abs(e.getX() - this.x) < 5 && Math.abs(e.getY() - this.y) < 5)
+                this.dataManager.onRightClicJMapPanel(e);
+        } else {
+            this.isLeftMouseButtonPressed = false;
+            this.dataManager.onLeftButtonDragged(e, e.getX() - this.x, e.getY() - this.y, JMapPanel.END_MOUSE_MOVEMENT);
 
-          if( Math.abs(e.getX()-x)<5 && Math.abs(e.getY()-y)<5 )
-              dataManager.onLeftClicJMapPanel(e);
-       }
+            if (DataManager.SHOW_DEBUG)
+                System.out.println("\tleft clic");
 
-       mouseDragged = false;
+            if (Math.abs(e.getX() - this.x) < 5 && Math.abs(e.getY() - this.y) < 5)
+                this.dataManager.onLeftClicJMapPanel(e);
+        }
+
+        this.mouseDragged = false;
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Called when the mouse is dragged.
-    */
-     public void mouseDragged(MouseEvent e) {
-     	mouseDragged = true;
-     	
-        if(isLeftMouseButtonPressed)
-           dataManager.onLeftButtonDragged( e, e.getX()-x, e.getY()-y, MOUSE_MOVEMENT );
+    /** Called when the mouse is dragged.
+     */
+    public void mouseDragged(MouseEvent e) {
+        this.mouseDragged = true;
+
+        if (this.isLeftMouseButtonPressed)
+            this.dataManager.onLeftButtonDragged(e, e.getX() - this.x, e.getY() - this.y, JMapPanel.MOUSE_MOVEMENT);
         else
-           dataManager.onRightButtonDragged( e.getX()-x, e.getY()-y, false );
-     }
+            this.dataManager.onRightButtonDragged(e.getX() - this.x, e.getY() - this.y, false);
+    }
 
-   /** Called when the mouse is moved.
-    */
-     public void mouseMoved(MouseEvent e) {
-        dataManager.onLeftButtonMoved( e.getX(), e.getY() );
-     }
+    /** Called when the mouse is moved.
+     */
+    public void mouseMoved(MouseEvent e) {
+        this.dataManager.onLeftButtonMoved(e.getX(), e.getY());
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
 }

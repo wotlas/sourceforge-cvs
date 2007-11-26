@@ -19,11 +19,14 @@
 
 package wotlas.libs.log;
 
-import wotlas.utils.Tools;
-
-import java.io.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import javax.swing.Timer;
+import wotlas.utils.Tools;
 
 /** A Log Stream prints message to a log file periodically.
  * 
@@ -31,76 +34,75 @@ import javax.swing.Timer;
  * @see java.io.PrintStream
  */
 
-public abstract class LogStream extends PrintStream implements ActionListener
-{
- /*------------------------------------------------------------------------------------*/
+public abstract class LogStream extends PrintStream implements ActionListener {
+    /*------------------------------------------------------------------------------------*/
 
-  /** Our timer
-   */
-     private Timer timer;
+    /** Our timer
+     */
+    private Timer timer;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Constructor with file name. The log is saved to disk when the periodBeforeSave
-    *  has elapsed.
-    *
-    * @param logFileName log file to create or use if already existing.
-    * @param append if true we add our log message at the beginning of the specified
-    *               log file. If false we erase the previous content of the log file.
-    * @param periodBeforeSave period of time (in ms) before we save the log to disk.
-    * @exception FileNotFoundException if we cannot use or create the given log file.
-    */
-     public LogStream( String logFileName, boolean append, int periodBeforeSave )
-     throws  FileNotFoundException {
-         super( new BufferedOutputStream( new FileOutputStream( logFileName, append ),
-                                          64*1024 ) );
+    /** Constructor with file name. The log is saved to disk when the periodBeforeSave
+     *  has elapsed.
+     *
+     * @param logFileName log file to create or use if already existing.
+     * @param append if true we add our log message at the beginning of the specified
+     *               log file. If false we erase the previous content of the log file.
+     * @param periodBeforeSave period of time (in ms) before we save the log to disk.
+     * @exception FileNotFoundException if we cannot use or create the given log file.
+     */
+    public LogStream(String logFileName, boolean append, int periodBeforeSave) throws FileNotFoundException {
+        super(new BufferedOutputStream(new FileOutputStream(logFileName, append), 64 * 1024));
 
-         println("Log opened the "+Tools.getLexicalDate()+" at "+Tools.getLexicalTime());
-         timer = new Timer( periodBeforeSave, this );
-         timer.start();
-     }
+        println("Log opened the " + Tools.getLexicalDate() + " at " + Tools.getLexicalTime());
+        this.timer = new Timer(periodBeforeSave, this);
+        this.timer.start();
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To print a string to this stream.
-   *
-   * @param x string to be printed.
-   */
-     public void println(String x) {
+    /** To print a string to this stream.
+     *
+     * @param x string to be printed.
+     */
+    @Override
+    public void println(String x) {
         super.println(x);
-        
+
         printedText(x);
-     }
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Method called each time text is added to the stream.
-   *  Useful if you want to display the log somewhere else.
-   *
-   * @param x text just printed to log.
-   */
-    abstract protected void printedText( final String x );
+    /** Method called each time text is added to the stream.
+     *  Useful if you want to display the log somewhere else.
+     *
+     * @param x text just printed to log.
+     */
+    abstract protected void printedText(final String x);
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To close this stream.
-   */
-     public void close() {
-        super.println("Log cleanly closed the "+Tools.getLexicalDate()+" at "+Tools.getLexicalTime());
+    /** To close this stream.
+     */
+    @Override
+    public void close() {
+        super.println("Log cleanly closed the " + Tools.getLexicalDate() + " at " + Tools.getLexicalTime());
         super.close();
-     }
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
- /** Timer Event interception.
-  */
-   synchronized public void actionPerformed( ActionEvent e) {
-     if(e.getSource()!=timer)
-       return;
+    /** Timer Event interception.
+     */
+    synchronized public void actionPerformed(ActionEvent e) {
+        if (e.getSource() != this.timer)
+            return;
 
-     flush(); // save
-   }
+        flush(); // save
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
 }

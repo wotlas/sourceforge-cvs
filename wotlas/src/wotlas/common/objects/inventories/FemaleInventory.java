@@ -16,13 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
-package wotlas.common.objects.inventories;
 
-import wotlas.common.objects.usefuls.*;
-import wotlas.common.objects.containers.*;
-import wotlas.common.objects.weapons.*;
-import wotlas.common.objects.armors.*;
+package wotlas.common.objects.inventories;
 
 /** 
  * This is the class for Regular Female's Inventory.<br>
@@ -31,16 +26,12 @@ import wotlas.common.objects.armors.*;
  * @see wotlas.common.objects.interfaces.InventoryInterface
  */
 
-public class FemaleInventory extends Inventory 
-{
+public class FemaleInventory extends Inventory {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
- 
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }

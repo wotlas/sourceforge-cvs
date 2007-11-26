@@ -19,17 +19,14 @@
 
 package wotlas.client.screen;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import javax.swing.BoxLayout;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import wotlas.client.ClientDirector;
-import wotlas.client.PlayerImpl;
 import wotlas.utils.Debug;
 import wotlas.utils.Tools;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-
-import java.io.*;
-
 
 /** JPanel that possesses & display various plugins that implement
  *  the JPanelPlugIn package.
@@ -39,172 +36,164 @@ import java.io.*;
 
 public class JPlayerPanel extends JPanel implements MouseListener {
 
- /*------------------------------------------------------------------------------------*/ 
+    /*------------------------------------------------------------------------------------*/
 
-  /** Our TabbedPane where are stored the plug-ins.
-   */
+    /** Our TabbedPane where are stored the plug-ins.
+     */
     private JTabbedPane playerTabbedPane;
-  
- /*------------------------------------------------------------------------------------*/ 
-  
-  /** Consctructor.
-   */
+
+    /*------------------------------------------------------------------------------------*/
+
+    /** Consctructor.
+     */
     public JPlayerPanel() {
-      super();
-      setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
-    
-      playerTabbedPane = new JTabbedPane();
-      add(playerTabbedPane);
+        super();
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
+        this.playerTabbedPane = new JTabbedPane();
+        add(this.playerTabbedPane);
     }
 
- /*------------------------------------------------------------------------------------*/ 
+    /*------------------------------------------------------------------------------------*/
 
-  /** To init the JPlayerPanel with the available plug-ins.
-   */
+    /** To init the JPlayerPanel with the available plug-ins.
+     */
     protected void init() {
 
-       /** We load the available plug-ins (we search everywhere).
-        */
-          Class classes[] = null;
-        
-          try{
-              String packages[] = { "wotlas.client.screen.plugin" };
-              classes = Tools.getImplementorsOf("wotlas.client.screen.JPanelPlugIn", packages);
-          }
-          catch( ClassNotFoundException e ) {
-              Debug.signal(Debug.CRITICAL, this, e );
-              return;
-          }
-          catch( SecurityException e ) {
-              Debug.signal(Debug.CRITICAL, this, e );
-              return;
-          }
-          catch( RuntimeException e ) {
-              Debug.signal(Debug.ERROR, this, e );
-              return;
-          }
+        /** We load the available plug-ins (we search everywhere).
+         */
+        Class classes[] = null;
 
-          if(classes==null || classes.length==0) {
-             // we retry in the plug-in package (this is neede dif we are not in a jar file)
-                try{
-                    String packageName[] = { "wotlas.client.screen.plugin" };
+        try {
+            String packages[] = { "wotlas.client.screen.plugin" };
+            classes = Tools.getImplementorsOf("wotlas.client.screen.JPanelPlugIn", packages);
+        } catch (ClassNotFoundException e) {
+            Debug.signal(Debug.CRITICAL, this, e);
+            return;
+        } catch (SecurityException e) {
+            Debug.signal(Debug.CRITICAL, this, e);
+            return;
+        } catch (RuntimeException e) {
+            Debug.signal(Debug.ERROR, this, e);
+            return;
+        }
 
-                    classes = Tools.getImplementorsOf("wotlas.client.screen.JPanelPlugIn", packageName );
-                }
-                catch( ClassNotFoundException e ) {
-                    Debug.signal(Debug.CRITICAL, this, e );
-                    return;
-                }
-                catch( SecurityException e ) {
-                    Debug.signal(Debug.CRITICAL, this, e );
-                    return;
-                }
-                catch( RuntimeException e ) {
-                    Debug.signal(Debug.ERROR, this, e );
-                    return;
-                }
-          }
+        if (classes == null || classes.length == 0) {
+            // we retry in the plug-in package (this is neede dif we are not in a jar file)
+            try {
+                String packageName[] = { "wotlas.client.screen.plugin" };
 
-          for( int i=0; i<classes.length; i++ ) {
+                classes = Tools.getImplementorsOf("wotlas.client.screen.JPanelPlugIn", packageName);
+            } catch (ClassNotFoundException e) {
+                Debug.signal(Debug.CRITICAL, this, e);
+                return;
+            } catch (SecurityException e) {
+                Debug.signal(Debug.CRITICAL, this, e);
+                return;
+            } catch (RuntimeException e) {
+                Debug.signal(Debug.ERROR, this, e);
+                return;
+            }
+        }
 
-           // We get an instance of the plug-in and add it to our JTabbedPane
-              try{
-                  Object o = classes[i].newInstance();
+        for (int i = 0; i < classes.length; i++) {
 
-                  if( o==null || !(o instanceof JPanelPlugIn) )
-                      continue;
+            // We get an instance of the plug-in and add it to our JTabbedPane
+            try {
+                Object o = classes[i].newInstance();
 
-                  JPanelPlugIn plugIn = (JPanelPlugIn) o;
-                  
-                  if( !plugIn.init() )
-                      continue; // init failed
+                if (o == null || !(o instanceof JPanelPlugIn))
+                    continue;
 
-               // Ok, we have a valid plug-in
-                  addPlugIn( plugIn, plugIn.getPlugInIndex() );
-              }
-              catch( Exception e ) {
-                  Debug.signal( Debug.WARNING, this, e );
-              }
-          }
+                JPanelPlugIn plugIn = (JPanelPlugIn) o;
 
-        Debug.signal(Debug.NOTICE,null,"Loaded "+playerTabbedPane.getTabCount()+" plug-ins...");                                
-        
+                if (!plugIn.init())
+                    continue; // init failed
+
+                // Ok, we have a valid plug-in
+                addPlugIn(plugIn, plugIn.getPlugInIndex());
+            } catch (Exception e) {
+                Debug.signal(Debug.WARNING, this, e);
+            }
+        }
+
+        Debug.signal(Debug.NOTICE, null, "Loaded " + this.playerTabbedPane.getTabCount() + " plug-ins...");
+
     }
 
- /*------------------------------------------------------------------------------------*/ 
+    /*------------------------------------------------------------------------------------*/
 
-  /** To add a plugin to our tabbed pane
-   *  @param plugIn plug-in to add
-   *  @param index index in the list, -1 means at the end.
-   */
-    public void addPlugIn( JPanelPlugIn plugIn, int index ) {
-         if(index<0 || index>playerTabbedPane.getTabCount()-1)
-            playerTabbedPane.addTab( plugIn.getPlugInName(),
-                                  ClientDirector.getResourceManager().getImageIcon("pin.gif"),
-                                  plugIn,
-                                  plugIn.getToolTipText() );
-         else
-            playerTabbedPane.insertTab( plugIn.getPlugInName(),
-                                  ClientDirector.getResourceManager().getImageIcon("pin.gif"),
-                                  plugIn,
-                                  plugIn.getToolTipText(), index );
+    /** To add a plugin to our tabbed pane
+     *  @param plugIn plug-in to add
+     *  @param index index in the list, -1 means at the end.
+     */
+    public void addPlugIn(JPanelPlugIn plugIn, int index) {
+        if (index < 0 || index > this.playerTabbedPane.getTabCount() - 1)
+            this.playerTabbedPane.addTab(plugIn.getPlugInName(), ClientDirector.getResourceManager().getImageIcon("pin.gif"), plugIn, plugIn.getToolTipText());
+        else
+            this.playerTabbedPane.insertTab(plugIn.getPlugInName(), ClientDirector.getResourceManager().getImageIcon("pin.gif"), plugIn, plugIn.getToolTipText(), index);
     }
 
- /*------------------------------------------------------------------------------------*/ 
-  
-  /** To get a PlugIn given its name.
-   * @param plugInName plug-in name as returned by plugIn.getPlugInName()
-   * @return plugIn, null if not found
-   */
-    public JPanelPlugIn getPlugIn( String plugInName ) {
+    /*------------------------------------------------------------------------------------*/
 
-        for(int i=0; i<playerTabbedPane.getTabCount();i++) {
-            JPanelPlugIn plugIn = (JPanelPlugIn) playerTabbedPane.getComponentAt(i);
+    /** To get a PlugIn given its name.
+     * @param plugInName plug-in name as returned by plugIn.getPlugInName()
+     * @return plugIn, null if not found
+     */
+    public JPanelPlugIn getPlugIn(String plugInName) {
 
-             if( plugIn.getPlugInName().equals(plugInName) )
-                  return plugIn;
+        for (int i = 0; i < this.playerTabbedPane.getTabCount(); i++) {
+            JPanelPlugIn plugIn = (JPanelPlugIn) this.playerTabbedPane.getComponentAt(i);
+
+            if (plugIn.getPlugInName().equals(plugInName))
+                return plugIn;
         }
 
         return null; // not found
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To reset the JPlayerPanel and the state of all its plug-ins.
-   */
+    /** To reset the JPlayerPanel and the state of all its plug-ins.
+     */
     public void reset() {
-        for(int i=0; i<playerTabbedPane.getTabCount();i++) {
-            JPanelPlugIn plugIn = (JPanelPlugIn) playerTabbedPane.getComponentAt(i);
+        for (int i = 0; i < this.playerTabbedPane.getTabCount(); i++) {
+            JPanelPlugIn plugIn = (JPanelPlugIn) this.playerTabbedPane.getComponentAt(i);
             plugIn.reset();
         }
     }
-  
- /*------------------------------------------------------------------------------------*/
 
-  /**
-   * Invoked when the mouse button is clicked
-   */
-    public void mouseClicked(MouseEvent e) {}
+    /*------------------------------------------------------------------------------------*/
 
-  /**
-   * Invoked when the mouse enters a component
-   */
-    public void mouseEntered(MouseEvent e) {}
+    /**
+     * Invoked when the mouse button is clicked
+     */
+    public void mouseClicked(MouseEvent e) {
+    }
 
-  /**
-   * Invoked when the mouse exits a component
-   */
-    public void mouseExited(MouseEvent e) {}
+    /**
+     * Invoked when the mouse enters a component
+     */
+    public void mouseEntered(MouseEvent e) {
+    }
 
-  /**
-   * Invoked when a mouse button has been pressed on a component
-   */
-    public void mousePressed(MouseEvent e) {}
+    /**
+     * Invoked when the mouse exits a component
+     */
+    public void mouseExited(MouseEvent e) {
+    }
 
-  /**
-   * Invoked when a mouse button has been released on a component
-   */
-    public void mouseReleased(MouseEvent e) {}
+    /**
+     * Invoked when a mouse button has been pressed on a component
+     */
+    public void mousePressed(MouseEvent e) {
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /**
+     * Invoked when a mouse button has been released on a component
+     */
+    public void mouseReleased(MouseEvent e) {
+    }
+
+    /*------------------------------------------------------------------------------------*/
 }

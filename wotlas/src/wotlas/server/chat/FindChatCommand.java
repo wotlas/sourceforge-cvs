@@ -19,124 +19,120 @@
 
 package wotlas.server.chat;
 
-import wotlas.server.*;
-import wotlas.common.message.chat.SendTextMessage;
 import wotlas.common.chat.ChatRoom;
-import wotlas.common.universe.*;
+import wotlas.common.message.chat.SendTextMessage;
+import wotlas.common.universe.Room;
+import wotlas.common.universe.TownMap;
+import wotlas.common.universe.WorldMap;
+import wotlas.common.universe.WotlasLocation;
+import wotlas.server.GameAccount;
+import wotlas.server.PlayerImpl;
+import wotlas.server.ServerDirector;
 
 /** "/find" chat command. To find where a player is.
  *
  * @author Aldiss
  */
 
-public class FindChatCommand implements ChatCommand
-{
- /*------------------------------------------------------------------------------------*/
+public class FindChatCommand implements ChatCommand {
+    /*------------------------------------------------------------------------------------*/
 
-   /** Returns the first part of the chat command. For example if your chat command
-    *  has the following format '/msg playerId message' the prefix is '/msg'.
-    *  Other example : if your command is '/who' the prefix is '/who'. 
-    *
-    * @return the chat command prefix that will help identify the command.
-    */
-      public String getChatCommandPrefix() {
-      	 return "/find";
-      }
+    /** Returns the first part of the chat command. For example if your chat command
+     *  has the following format '/msg playerId message' the prefix is '/msg'.
+     *  Other example : if your command is '/who' the prefix is '/who'. 
+     *
+     * @return the chat command prefix that will help identify the command.
+     */
+    public String getChatCommandPrefix() {
+        return "/find";
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Voice sound level needed to exec this command. While most commands only need to be
-    *  be spoken, others need to be shouted or whispered.
-    *  
-    *  @return ChatRoom.WHISPERING_VOICE_LEVEL if the command is to be whispered,
-    *          ChatRoom.NORMAL_VOICE_LEVEL  if the command just need to be spoken,
-    *          ChatRoom.SHOUTING_VOICE_LEVEL if the command needs to be shout.
-    */
-      public byte getChatCommandVoiceSoundLevel() {
-         return ChatRoom.NORMAL_VOICE_LEVEL;
-      }
+    /** Voice sound level needed to exec this command. While most commands only need to be
+     *  be spoken, others need to be shouted or whispered.
+     *  
+     *  @return ChatRoom.WHISPERING_VOICE_LEVEL if the command is to be whispered,
+     *          ChatRoom.NORMAL_VOICE_LEVEL  if the command just need to be spoken,
+     *          ChatRoom.SHOUTING_VOICE_LEVEL if the command needs to be shout.
+     */
+    public byte getChatCommandVoiceSoundLevel() {
+        return ChatRoom.NORMAL_VOICE_LEVEL;
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Is this a secret command that musn't be displayed in public commands list ?
-    * @return true if secret, false if public...
-    */
-      public boolean isHidden() {
-      	 return true;
-      }
+    /** Is this a secret command that musn't be displayed in public commands list ?
+     * @return true if secret, false if public...
+     */
+    public boolean isHidden() {
+        return true;
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** To get information on this command.
-    * @return command full documentation.
-    */
-      public String getCommandDocumentation() {
-      	return "<font size='4'>Command 'find'</font>" +
-      	       "<br><b> Syntax :</b> /find [playerKey] " +
-      	       "<br><b> Voice  :</b> normal voice level " +
-      	       "<br><b> Descr  :</b> returns a player's location." +
-      	       "<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use the /who command to find the player key." +
-      	       "<br><b> Example:</b> /find alice-1-34";
-      }
+    /** To get information on this command.
+     * @return command full documentation.
+     */
+    public String getCommandDocumentation() {
+        return "<font size='4'>Command 'find'</font>" + "<br><b> Syntax :</b> /find [playerKey] " + "<br><b> Voice  :</b> normal voice level " + "<br><b> Descr  :</b> returns a player's location." + "<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use the /who command to find the player key." + "<br><b> Example:</b> /find alice-1-34";
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Method called to execute the command. Just use the response.setMessage() before
-    *  sending it (if you have to).
-    *
-    *  @param message the string containing the chat command.
-    *  @param player the player on which the command is executed
-    *  @param response to use to send the result of the command to the client
-    *  @return true if the message process is finished, false if this command was
-    *          a 'modifier' to modify the rest of the message process.
-    */
-      public boolean exec( String message, PlayerImpl player, SendTextMessage response ) {
+    /** Method called to execute the command. Just use the response.setMessage() before
+     *  sending it (if you have to).
+     *
+     *  @param message the string containing the chat command.
+     *  @param player the player on which the command is executed
+     *  @param response to use to send the result of the command to the client
+     *  @return true if the message process is finished, false if this command was
+     *          a 'modifier' to modify the rest of the message process.
+     */
+    public boolean exec(String message, PlayerImpl player, SendTextMessage response) {
 
-              if(message.indexOf(' ')!=5)
-                 return true; // no parameters
+        if (message.indexOf(' ') != 5)
+            return true; // no parameters
 
-              message = message.substring(6);
+        message = message.substring(6);
 
-              if(message.length()==0) {
-                 response.setMessage("/cmd:/find command error:<font color='red'> no key entered</font>");
-                 player.sendMessage(response);
-                 return true;
-              }
+        if (message.length() == 0) {
+            response.setMessage("/cmd:/find command error:<font color='red'> no key entered</font>");
+            player.sendMessage(response);
+            return true;
+        }
 
-              GameAccount account = ServerDirector.getDataManager().getAccountManager().getAccount(message);
+        GameAccount account = ServerDirector.getDataManager().getAccountManager().getAccount(message);
 
-              if(account==null) {
-                 response.setMessage("/cmd:/find command error:<font color='red'> unknown player</font>");
-                 player.sendMessage(response);
-                 return true;
-              }
+        if (account == null) {
+            response.setMessage("/cmd:/find command error:<font color='red'> unknown player</font>");
+            player.sendMessage(response);
+            return true;
+        }
 
-              message = "/cmd:"+account.getPlayer().getFullPlayerName(player)+" found in ";
-              WotlasLocation flocation = account.getPlayer().getLocation();
+        message = "/cmd:" + account.getPlayer().getFullPlayerName(player) + " found in ";
+        WotlasLocation flocation = account.getPlayer().getLocation();
 
-              if( flocation.isRoom() ) {
-                  Room r = ServerDirector.getDataManager().getWorldManager().getRoom(flocation);
-                  if(r!=null)
-                     message += r.getFullName();
-              }
-              else if( flocation.isTown() ) {
-                  TownMap t = ServerDirector.getDataManager().getWorldManager().getTownMap(flocation);
-                  if(t!=null)
-                     message += t.getFullName();
-              }
-              else if( flocation.isWorld() ) {
-                  WorldMap w = ServerDirector.getDataManager().getWorldManager().getWorldMap(flocation);
-                  if(w!=null)
-                     message += w.getFullName();
-              }
-              else
-              	  message += " -- error: bad location! -- ( "+flocation+" )";
+        if (flocation.isRoom()) {
+            Room r = ServerDirector.getDataManager().getWorldManager().getRoom(flocation);
+            if (r != null)
+                message += r.getFullName();
+        } else if (flocation.isTown()) {
+            TownMap t = ServerDirector.getDataManager().getWorldManager().getTownMap(flocation);
+            if (t != null)
+                message += t.getFullName();
+        } else if (flocation.isWorld()) {
+            WorldMap w = ServerDirector.getDataManager().getWorldManager().getWorldMap(flocation);
+            if (w != null)
+                message += w.getFullName();
+        } else
+            message += " -- error: bad location! -- ( " + flocation + " )";
 
-              response.setMessage(message);
-              player.sendMessage(response);
+        response.setMessage(message);
+        player.sendMessage(response);
 
-          return true;
-      }
+        return true;
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 }

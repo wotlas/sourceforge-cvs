@@ -19,7 +19,6 @@
 
 package wotlas.libs.graphics2D;
 
-
 /** An interface where you can declare static ImageIdentifier's for an easier use of the
  * ImageLibrary. You can also declare here the priorities you are going to use for drawables.<br>
  *

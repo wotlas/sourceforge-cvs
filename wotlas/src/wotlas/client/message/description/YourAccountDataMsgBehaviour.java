@@ -16,18 +16,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.client.message.description;
 
-import java.io.IOException;
-
-import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.message.description.*;
-import wotlas.client.*;
-
-import wotlas.client.DataManager;
+import wotlas.client.ClientDirector;
 import wotlas.client.ClientManager;
-import wotlas.utils.Debug;
+import wotlas.client.DataManager;
+import wotlas.client.ProfileConfig;
+import wotlas.client.ProfileConfigList;
+import wotlas.common.message.description.YourAccountDataMessage;
+import wotlas.libs.net.NetMessageBehaviour;
 
 /**
  * Associated behaviour to the YourAccountDataMessage...
@@ -35,37 +33,35 @@ import wotlas.utils.Debug;
  * @author Petrus
  */
 
-public class YourAccountDataMsgBehaviour extends YourAccountDataMessage implements NetMessageBehaviour
-{
- /*------------------------------------------------------------------------------------*/
+public class YourAccountDataMsgBehaviour extends YourAccountDataMessage implements NetMessageBehaviour {
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public YourAccountDataMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+     */
+    public YourAccountDataMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {      
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
         DataManager dataManager = (DataManager) sessionContext;
         ClientManager clientManager = ClientDirector.getClientManager();
-        
+
         ProfileConfig currentProfileConfig = clientManager.getCurrentProfileConfig();
 
-        currentProfileConfig.setPlayerName(playerName);
-        currentProfileConfig.setServerID(serverID);
+        currentProfileConfig.setPlayerName(this.playerName);
+        currentProfileConfig.setServerID(this.serverID);
 
         ProfileConfigList profileConfigList = clientManager.getProfileConfigList();
         profileConfigList.updateProfile(currentProfileConfig);
         profileConfigList.save();
-     }
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

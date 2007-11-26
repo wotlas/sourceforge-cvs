@@ -31,13 +31,13 @@ package wotlas.server.bots;
 
 public interface BotPlayer {
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To send an answer from this bot to its local group.
-    * @param message chat message to send.
-    */
-     public void sendChatAnswer( String message );
+    /** To send an answer from this bot to its local group.
+     * @param message chat message to send.
+     */
+    public void sendChatAnswer(String message);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

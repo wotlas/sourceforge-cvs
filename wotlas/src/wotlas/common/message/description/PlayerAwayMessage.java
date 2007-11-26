@@ -16,15 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.message.description;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
 import wotlas.libs.net.NetMessage;
-
 
 /** 
  * To ask/get/save a player's away message (Message Sent by Client or Server)
@@ -32,65 +30,65 @@ import wotlas.libs.net.NetMessage;
  * @author Aldiss
  */
 
-public class PlayerAwayMessage extends NetMessage
-{
- /*------------------------------------------------------------------------------------*/
+public class PlayerAwayMessage extends NetMessage {
+    /*------------------------------------------------------------------------------------*/
 
-  /** playerAwayMessage
-   */
-      protected String playerAwayMessage;
+    /** playerAwayMessage
+     */
+    protected String playerAwayMessage;
 
-  /** associated player PrimaryKey
-   */
-      protected String primaryKey;
+    /** associated player PrimaryKey
+     */
+    protected String primaryKey;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor. Just initializes the message category and type.
-   */
-     public PlayerAwayMessage() {
-          super();
-     }
+    /** Constructor. Just initializes the message category and type.
+     */
+    public PlayerAwayMessage() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor with the client's player away message & primaryKey.
-   *
-   * @param primaryKey primaryKey
-   * @param playerAwayMessage playerAwayMessage
-   */
-     public PlayerAwayMessage( String primaryKey, String playerAwayMessage ) {
-         super();
-         this.primaryKey = primaryKey;
-         this.playerAwayMessage = playerAwayMessage;
-     }
+    /** Constructor with the client's player away message & primaryKey.
+     *
+     * @param primaryKey primaryKey
+     * @param playerAwayMessage playerAwayMessage
+     */
+    public PlayerAwayMessage(String primaryKey, String playerAwayMessage) {
+        super();
+        this.primaryKey = primaryKey;
+        this.playerAwayMessage = playerAwayMessage;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** This is where we put your message data on the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param ostream data stream where to put your data (see java.io.DataOutputStream)
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-     public void encode( DataOutputStream ostream ) throws IOException {
-         ostream.writeUTF( primaryKey );
-         ostream.writeUTF( playerAwayMessage );
-     }
+    /** This is where we put your message data on the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param ostream data stream where to put your data (see java.io.DataOutputStream)
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    @Override
+    public void encode(DataOutputStream ostream) throws IOException {
+        ostream.writeUTF(this.primaryKey);
+        ostream.writeUTF(this.playerAwayMessage);
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** This is where we retrieve our message data from the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-     public void decode( DataInputStream istream ) throws IOException {
-          primaryKey = istream.readUTF();
-          playerAwayMessage = istream.readUTF();
-     }
+    /** This is where we retrieve our message data from the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    @Override
+    public void decode(DataInputStream istream) throws IOException {
+        this.primaryKey = istream.readUTF();
+        this.playerAwayMessage = istream.readUTF();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

@@ -16,17 +16,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.client.message.account;
 
-import java.io.IOException;
-import javax.swing.*;
-
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import wotlas.common.message.account.StepErrorMessage;
 import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.message.account.*;
 import wotlas.libs.wizard.JWizard;
-import wotlas.client.*;
-
 import wotlas.utils.Debug;
 
 /**
@@ -35,61 +32,60 @@ import wotlas.utils.Debug;
  * @author Petrus
  */
 
-public class StepErrorMsgBehaviour extends StepErrorMessage implements NetMessageBehaviour
-{
- /*------------------------------------------------------------------------------------*/
+public class StepErrorMsgBehaviour extends StepErrorMessage implements NetMessageBehaviour {
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public StepErrorMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+     */
+    public StepErrorMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
 
         // the sessionContext is here a JWizard
-           JWizard wizard = (JWizard) sessionContext;
+        JWizard wizard = (JWizard) sessionContext;
 
-           wizard.awakeCurrentStep();
-           SwingUtilities.invokeLater( new StepErrorJDisplay(wizard,info) );
-           Debug.signal(Debug.ERROR,null,"Step Error : "+info);
-     }
+        wizard.awakeCurrentStep();
+        SwingUtilities.invokeLater(new StepErrorJDisplay(wizard, this.info));
+        Debug.signal(Debug.ERROR, null, "Step Error : " + this.info);
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Class for message display. We use this class for async display.
-    */
-     public static class StepErrorJDisplay implements Runnable {
+    /** Class for message display. We use this class for async display.
+     */
+    public static class StepErrorJDisplay implements Runnable {
 
-         private JWizard wizard;
-         private String message;
+        private JWizard wizard;
+        private String message;
 
-       /** Empty constructor for NetMessageFactory (needed if we want an error display)
-        */
-         public StepErrorJDisplay() {}
+        /** Empty constructor for NetMessageFactory (needed if we want an error display)
+         */
+        public StepErrorJDisplay() {
+        }
 
-       /** Constructor with parent wizard & message to display.
-        */
-         public StepErrorJDisplay(JWizard wizard, String message) {
-             this.message = message;
-             this.wizard = wizard;
-         }
+        /** Constructor with parent wizard & message to display.
+         */
+        public StepErrorJDisplay(JWizard wizard, String message) {
+            this.message = message;
+            this.wizard = wizard;
+        }
 
-       /** Thread Action.
-        */
-         public void run() {
-            JOptionPane.showMessageDialog( wizard, message, "Warning message!", JOptionPane.WARNING_MESSAGE);
-         }
-     }
+        /** Thread Action.
+         */
+        public void run() {
+            JOptionPane.showMessageDialog(this.wizard, this.message, "Warning message!", JOptionPane.WARNING_MESSAGE);
+        }
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

@@ -22,10 +22,9 @@ package wotlas.libs.net.connection;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
-
 import wotlas.libs.net.NetConnection;
-import wotlas.libs.net.NetSender;
 import wotlas.libs.net.NetReceiver;
+import wotlas.libs.net.NetSender;
 import wotlas.utils.Debug;
 
 /**
@@ -48,56 +47,54 @@ import wotlas.utils.Debug;
 
 public class AsynchronousNetConnection extends NetConnection {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor with an already opened socket.
-   *
-   * @param socket an already opened socket
-   * @exception IOException if the socket wasn't already connected.
-   */
-     public AsynchronousNetConnection( Socket socket ) throws IOException {
-           super( socket, null );
-     }
+    /** Constructor with an already opened socket.
+     *
+     * @param socket an already opened socket
+     * @exception IOException if the socket wasn't already connected.
+     */
+    public AsynchronousNetConnection(Socket socket) throws IOException {
+        super(socket, null);
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor with an already opened socket and a context object.
-   *
-   * @param socket an already opened socket
-   * @param sessionContext an object to give to messages as they arrive.
-   * @exception IOException if the socket wasn't already connected.
-   */
-     public AsynchronousNetConnection( Socket socket, Object sessionContext ) throws IOException {
-           super( socket, sessionContext );
-     }
+    /** Constructor with an already opened socket and a context object.
+     *
+     * @param socket an already opened socket
+     * @param sessionContext an object to give to messages as they arrive.
+     * @exception IOException if the socket wasn't already connected.
+     */
+    public AsynchronousNetConnection(Socket socket, Object sessionContext) throws IOException {
+        super(socket, sessionContext);
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** In this method we create our own NetSender and NetReceiver :
-   *  a AGGREGATE_MESSAGES NetSender and asynchronous NetReceiver.
-   *
-   * @param socket an already opened socket
-   * @param sessionContext an object to give to messages as they arrive.
-   * @exception IOException if the socket wasn't already connected.
-   */
-     protected void init( Socket socket, Object sessionContext )
-     throws IOException {
-       // We change both buffer size to 64k for this socket (default is normally 64k)
-	  try{
-              socket.setReceiveBufferSize(64*1024);
-              socket.setSendBufferSize(64*1024);
-          }
-          catch(SocketException e){
-         	Debug.signal( Debug.NOTICE, this, e );
-          }
+    /** In this method we create our own NetSender and NetReceiver :
+     *  a AGGREGATE_MESSAGES NetSender and asynchronous NetReceiver.
+     *
+     * @param socket an already opened socket
+     * @param sessionContext an object to give to messages as they arrive.
+     * @exception IOException if the socket wasn't already connected.
+     */
+    @Override
+    protected void init(Socket socket, Object sessionContext) throws IOException {
+        // We change both buffer size to 64k for this socket (default is normally 64k)
+        try {
+            socket.setReceiveBufferSize(64 * 1024);
+            socket.setSendBufferSize(64 * 1024);
+        } catch (SocketException e) {
+            Debug.signal(Debug.NOTICE, this, e);
+        }
 
-       // NetSender with default aggregation limit & timeout.
-          myNetsender = new NetSender( socket, this, NetSender.AGGREGATE_MESSAGES, 128*1024 );
+        // NetSender with default aggregation limit & timeout.
+        this.myNetsender = new NetSender(socket, this, NetSender.AGGREGATE_MESSAGES, 128 * 1024);
 
-       // NetReceiver, asynchronous. It processes messages as they arrive.
-          myNetreceiver = new NetReceiver( socket, this, false, sessionContext, 128*1024 );
-     }
+        // NetReceiver, asynchronous. It processes messages as they arrive.
+        this.myNetreceiver = new NetReceiver(socket, this, false, sessionContext, 128 * 1024);
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

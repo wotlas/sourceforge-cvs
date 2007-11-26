@@ -22,9 +22,7 @@ package wotlas.common.message.movement;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
-import wotlas.libs.net.NetMessage;
-import wotlas.common.universe.*;
+import wotlas.common.universe.WotlasLocation;
 
 /** 
  * To tell the server that we are changing location (Message Sent by Client).
@@ -32,66 +30,66 @@ import wotlas.common.universe.*;
  * @author Aldiss
  */
 
-public class CanLeaveIntMapMessage extends LocationChangeMessage
-{
- /*------------------------------------------------------------------------------------*/
+public class CanLeaveIntMapMessage extends LocationChangeMessage {
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor. Just initializes the message category and type.
-   */
-     public CanLeaveIntMapMessage() {
-          super();
-     }
+    /** Constructor. Just initializes the message category and type.
+     */
+    public CanLeaveIntMapMessage() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor with Player's primaryKey & location.
-   */
-     public CanLeaveIntMapMessage(String primaryKey, WotlasLocation location, int x, int y, float orientation) {
-          super();
-          this.primaryKey = primaryKey;
-          this.location = location;
-          this.x = x;
-          this.y = y;
-          this.orientation = orientation;
-     }
+    /** Constructor with Player's primaryKey & location.
+     */
+    public CanLeaveIntMapMessage(String primaryKey, WotlasLocation location, int x, int y, float orientation) {
+        super();
+        this.primaryKey = primaryKey;
+        this.location = location;
+        this.x = x;
+        this.y = y;
+        this.orientation = orientation;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor with data from a previous location message.
-   */
-     public CanLeaveIntMapMessage( LocationChangeMessage msg ) {
-          super();
-          this.primaryKey = msg.primaryKey;
-          this.location = msg.location;
-          this.x = msg.x;
-          this.y = msg.y;
-          this.orientation = msg.orientation;
-     }
+    /** Constructor with data from a previous location message.
+     */
+    public CanLeaveIntMapMessage(LocationChangeMessage msg) {
+        super();
+        this.primaryKey = msg.primaryKey;
+        this.location = msg.location;
+        this.x = msg.x;
+        this.y = msg.y;
+        this.orientation = msg.orientation;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** This is where we put your message data on the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param ostream data stream where to put your data (see java.io.DataOutputStream)
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-     public void encode( DataOutputStream ostream ) throws IOException {
-            super.encode( ostream );
-     }
+    /** This is where we put your message data on the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param ostream data stream where to put your data (see java.io.DataOutputStream)
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    @Override
+    public void encode(DataOutputStream ostream) throws IOException {
+        super.encode(ostream);
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** This is where we retrieve our message data from the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-     public void decode( DataInputStream istream ) throws IOException {
-            super.decode( istream );
-     }
+    /** This is where we retrieve our message data from the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    @Override
+    public void decode(DataInputStream istream) throws IOException {
+        super.decode(istream);
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

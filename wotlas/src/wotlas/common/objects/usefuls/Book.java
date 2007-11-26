@@ -16,13 +16,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.objects.usefuls;
 
 import wotlas.common.objects.interfaces.BookInterface;
-import wotlas.common.objects.valueds.ValuedObject;
-import wotlas.common.Player;
-
 import wotlas.utils.Debug;
 
 /** 
@@ -34,285 +31,256 @@ import wotlas.utils.Debug;
  * @see wotlas.common.objects.interfaces.BookInterface
  */
 
-public class Book extends Document implements BookInterface
-{
+public class Book extends Document implements BookInterface {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
- /** The content of the book.
-  */
-  protected Chapter[] chapters;
-  
- /** The current number of chapters in the book.
-  */
-  protected short nbChapters;
+    /** The content of the book.
+     */
+    protected Chapter[] chapters;
 
- /** The active chapter in the book.
-  */
-  protected short currentChapter;
+    /** The current number of chapters in the book.
+     */
+    protected short nbChapters;
 
- /** The title of the book.
-  */
-  protected String title;
- 
- /*------------------------------------------------------------------------------------*/
+    /** The active chapter in the book.
+     */
+    protected short currentChapter;
 
-  /** The default constructor.<br>
-   * Initialize members but does not allocate chapters.
-   */			
-    public Book()
-	{
-	 super();
-	
-	 className="Book";
-	 objectName="default book";
-	 
-	 chapters=null;
-	 nbChapters=0;
-	 currentChapter=-1;
-	 title="Untitled";
-	}															
- 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** The title of the book.
+     */
+    protected String title;
 
-  /** Use the object.<br>
-   * For a book, just calls open().  
-   */
-    public void use()
-	{
-	 if (!equipped)
-	 	return;
-		
-	 if (!ready)
-	 	return;
-		
-	 open();
-	}
+    /*------------------------------------------------------------------------------------*/
 
-  /** Ready the book.
-   */
-    public void ready()
-	{
-	 /* no op */
-	 ready=true;
-	}
+    /** The default constructor.<br>
+     * Initialize members but does not allocate chapters.
+     */
+    public Book() {
+        super();
 
-  /** Put the book "on".<br>
-   */
-    public void equip()
-	{
-	 /* no op */
-	 equipped=true;
-	}
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        this.className = "Book";
+        this.objectName = "default book";
 
-  /** Open the book.<br>
-   * First chapter active. <br>
-   * GUI should be launched at the end of this method.
-   */
-    public void open()
-	{
-	 if (nbChapters==-1)
-	 {
-	  Debug.signal(Debug.WARNING,this,"Trying to open an empty book");
-	  return;	  
-	 }
-	 
-	 if (currentChapter!=-1)
-	 {
-	  Debug.signal(Debug.WARNING,this,"Trying to open already opened book");
-	  return;	  
-	 }
-	 	
-	 currentChapter=0;					/* Chapter 0 should be something special */
-	 
-	 /* Launch the GUI */
-	}
+        this.chapters = null;
+        this.nbChapters = 0;
+        this.currentChapter = -1;
+        this.title = "Untitled";
+    }
 
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Get the current chapter.
-   * @return active chapter
-   */
-    public short getCurrentChapter()
-	{
-	 return currentChapter;
-	}
-	
-  /** Set the current chapter.<br>
-   * Range checking done here.
-   * @param targetChapter the new chapter.
-   */
-    public void setCurrentChapter(short targetChapter)
-	{
-	 if (this.nbChapters<targetChapter || targetChapter<0)
-	 {
-	  Debug.signal(Debug.WARNING,this,"Trying to go to unexistant chapter");
-	  return;	 
-	 }
-	 
-	 this.currentChapter=targetChapter;
-	}
-	
-  /** Get a chapter by index.<br>
-   * Range checking done here. Warning sent if invalid.
-   * @param index the index in the book
-   * @return the requested Chapter if available ; null else
-   */ 
-   	public Chapter getChapter(int index)
-	{
-	 if (nbChapters<index || index<0)
-	 {
-	  Debug.signal(Debug.WARNING,this,"Trying to get an unexistant chapter");
-	  return null;	 
-	 }
-	 
-	  return chapters[index];
-	}
+    /** Use the object.<br>
+     * For a book, just calls open().  
+     */
+    @Override
+    public void use() {
+        if (!this.equipped)
+            return;
 
-  /** Get the number of chapters in the book.
-   * @return nbChapters
-   */
-    public short getNbChapters()
-	{
-	 return nbChapters;
-	}
-	
-  /** Set the number of chapters in the book.<br>
-   * Should not be called directly. Array initialisation not done here.
-   * @param nbChapters the new number of chapters. 
-   */
-    public void setNbChapters(short nbChapters)
-	{
-	 this.nbChapters=nbChapters;
-	}
+        if (!this.ready)
+            return;
 
-  /** Get the document's text.<br>
-   * If the book is open, returns the current paragraph.<br>
-   * Otherwise returns the book's title (cover) which is chapters[0].
-   * @return current readable text
-   */
-    public String readText()
-	{
-	 if (currentChapter<0)
-	 	return title;
+        open();
+    }
 
-	 Chapter currChapter=chapters[currentChapter];
-	 Paragraph currParagraph=currChapter.getParagraph(currChapter.getCurrentParagraph());
-		
-	 return currParagraph.getText();		
-	}
-	
-	
-  /** Write to the document.
-   * @param text the text to write
-   */
-    public void writeText(String text)
-	{
-	 if (currentChapter<0)
-	 {
-	  Debug.signal(Debug.WARNING,this,"Trying to write in a closed book");
-	  return;		
-	 }
+    /** Ready the book.
+     */
+    @Override
+    public void ready() {
+        /* no op */
+        this.ready = true;
+    }
 
-	 Chapter currChapter=chapters[currentChapter];
-	 Paragraph currParagraph=currChapter.getParagraph(currChapter.getCurrentParagraph());
-		
-	 currParagraph.appendString(text);			
-	}
-	
+    /** Put the book "on".<br>
+     */
+    public void equip() {
+        /* no op */
+        this.equipped = true;
+    }
 
-  /** Search the book for a chapter.<br> 
-   * If the chapter is found, it becomes the current chapter. <br>Else returns -1.
-   * @param chapterName the name of the chapter searched.
-   * @return found index or -1
-   */
-    public short searchChapter(String chapterName)
-	{
-	 short index=0;
-	 while (chapters[index].getChapterTitle()!=chapterName && index<nbChapters)
-	 	   index++;
-	  
-	 if (index>nbChapters)
-	 	index=-1;
-	 else	   
-		 setCurrentChapter(index);
-		 
-	 return index;
-	}
-	
-  /** Get a chapter by title.
-   * @param title the title of the chapter
-   * @return the requested Chapter if available ; null else
-   */
-    public Chapter getChapterByTitle(String title)
-	{
-	 int index=0;
-	 while (chapters[index].getChapterTitle()!=title && index<nbChapters)
-	 	   index++;
-	  
-	 if (index>nbChapters)
-	 	return null;
-	 else	   
-	 	return chapters[index];	
-	}
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+    /** Open the book.<br>
+     * First chapter active. <br>
+     * GUI should be launched at the end of this method.
+     */
+    public void open() {
+        if (this.nbChapters == -1) {
+            Debug.signal(Debug.WARNING, this, "Trying to open an empty book");
+            return;
+        }
 
-  /** Set a chapter.<br>
-   * Create a new chapter at the end of the book.
-   * @param chapter the new chapter 
-   */ 
-   	public void setChapter(Chapter chapter)
-	{
-	 if (nbChapters==maxNbChaptersPerBook)
-	 {
-	  Debug.signal(Debug.WARNING,this,"Trying to add too much chapters");
-	  return;	 
-	 }
-	 Chapter tmp[]=new Chapter[++nbChapters];
-	 System.arraycopy( chapters, 0, tmp, 0, chapters.length );
-	 chapters=tmp;		  
-	 chapters[nbChapters-1]=chapter;
-	}
+        if (this.currentChapter != -1) {
+            Debug.signal(Debug.WARNING, this, "Trying to open already opened book");
+            return;
+        }
 
-  /** Add a chapter.<br>
-   * Create a new chapter at the end of the book.
-   * @return true if a new chapter was created
-   */ 
-   	public boolean addChapter()
-	{
-	 if (nbChapters==maxNbChaptersPerBook)
-	 {
-	  Debug.signal(Debug.WARNING,this,"Trying to add too much chapters");
-	  return false;
-	 }
-	 
-	 Chapter tmp[]=new Chapter[++nbChapters];
-	 System.arraycopy( chapters, 0, tmp, 0, chapters.length );
-	 chapters=tmp;		  
-	 chapters[nbChapters-1]=new Chapter();
-	 return true;	 	 
-	}
-	
-  /** Remove a chapter from the book.<br>
-   * Range checking done here.
-   * @param index the index of the chapter to delete. 
-   */
-    public void delChapter(short index)
-	{	
-	 if (nbChapters<index || index<0)
-	 {
-	  Debug.signal(Debug.WARNING,this,"Trying to delete an unexistant chapter");
-	  return;
-	 }
-	 chapters[index]=null;
-	 Chapter tmp[]=new Chapter[--nbChapters];
-	 System.arraycopy(chapters,0,tmp,0,index);	 
-	 System.arraycopy(chapters,index+1,tmp,index,chapters.length-index-1);
-	 chapters=tmp;	
-	}
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
+        this.currentChapter = 0; /* Chapter 0 should be something special */
+
+        /* Launch the GUI */
+    }
+
+    /** Get the current chapter.
+     * @return active chapter
+     */
+    public short getCurrentChapter() {
+        return this.currentChapter;
+    }
+
+    /** Set the current chapter.<br>
+     * Range checking done here.
+     * @param targetChapter the new chapter.
+     */
+    public void setCurrentChapter(short targetChapter) {
+        if (this.nbChapters < targetChapter || targetChapter < 0) {
+            Debug.signal(Debug.WARNING, this, "Trying to go to unexistant chapter");
+            return;
+        }
+
+        this.currentChapter = targetChapter;
+    }
+
+    /** Get a chapter by index.<br>
+     * Range checking done here. Warning sent if invalid.
+     * @param index the index in the book
+     * @return the requested Chapter if available ; null else
+     */
+    public Chapter getChapter(int index) {
+        if (this.nbChapters < index || index < 0) {
+            Debug.signal(Debug.WARNING, this, "Trying to get an unexistant chapter");
+            return null;
+        }
+
+        return this.chapters[index];
+    }
+
+    /** Get the number of chapters in the book.
+     * @return nbChapters
+     */
+    public short getNbChapters() {
+        return this.nbChapters;
+    }
+
+    /** Set the number of chapters in the book.<br>
+     * Should not be called directly. Array initialisation not done here.
+     * @param nbChapters the new number of chapters. 
+     */
+    public void setNbChapters(short nbChapters) {
+        this.nbChapters = nbChapters;
+    }
+
+    /** Get the document's text.<br>
+     * If the book is open, returns the current paragraph.<br>
+     * Otherwise returns the book's title (cover) which is chapters[0].
+     * @return current readable text
+     */
+    public String readText() {
+        if (this.currentChapter < 0)
+            return this.title;
+
+        Chapter currChapter = this.chapters[this.currentChapter];
+        Paragraph currParagraph = currChapter.getParagraph(currChapter.getCurrentParagraph());
+
+        return currParagraph.getText();
+    }
+
+    /** Write to the document.
+     * @param text the text to write
+     */
+    public void writeText(String text) {
+        if (this.currentChapter < 0) {
+            Debug.signal(Debug.WARNING, this, "Trying to write in a closed book");
+            return;
+        }
+
+        Chapter currChapter = this.chapters[this.currentChapter];
+        Paragraph currParagraph = currChapter.getParagraph(currChapter.getCurrentParagraph());
+
+        currParagraph.appendString(text);
+    }
+
+    /** Search the book for a chapter.<br> 
+     * If the chapter is found, it becomes the current chapter. <br>Else returns -1.
+     * @param chapterName the name of the chapter searched.
+     * @return found index or -1
+     */
+    public short searchChapter(String chapterName) {
+        short index = 0;
+        while (this.chapters[index].getChapterTitle() != chapterName && index < this.nbChapters)
+            index++;
+
+        if (index > this.nbChapters)
+            index = -1;
+        else
+            setCurrentChapter(index);
+
+        return index;
+    }
+
+    /** Get a chapter by title.
+     * @param title the title of the chapter
+     * @return the requested Chapter if available ; null else
+     */
+    public Chapter getChapterByTitle(String title) {
+        int index = 0;
+        while (this.chapters[index].getChapterTitle() != title && index < this.nbChapters)
+            index++;
+
+        if (index > this.nbChapters)
+            return null;
+        else
+            return this.chapters[index];
+    }
+
+    /** Set a chapter.<br>
+     * Create a new chapter at the end of the book.
+     * @param chapter the new chapter 
+     */
+    public void setChapter(Chapter chapter) {
+        if (this.nbChapters == BookInterface.maxNbChaptersPerBook) {
+            Debug.signal(Debug.WARNING, this, "Trying to add too much chapters");
+            return;
+        }
+        Chapter tmp[] = new Chapter[++this.nbChapters];
+        System.arraycopy(this.chapters, 0, tmp, 0, this.chapters.length);
+        this.chapters = tmp;
+        this.chapters[this.nbChapters - 1] = chapter;
+    }
+
+    /** Add a chapter.<br>
+     * Create a new chapter at the end of the book.
+     * @return true if a new chapter was created
+     */
+    public boolean addChapter() {
+        if (this.nbChapters == BookInterface.maxNbChaptersPerBook) {
+            Debug.signal(Debug.WARNING, this, "Trying to add too much chapters");
+            return false;
+        }
+
+        Chapter tmp[] = new Chapter[++this.nbChapters];
+        System.arraycopy(this.chapters, 0, tmp, 0, this.chapters.length);
+        this.chapters = tmp;
+        this.chapters[this.nbChapters - 1] = new Chapter();
+        return true;
+    }
+
+    /** Remove a chapter from the book.<br>
+     * Range checking done here.
+     * @param index the index of the chapter to delete. 
+     */
+    public void delChapter(short index) {
+        if (this.nbChapters < index || index < 0) {
+            Debug.signal(Debug.WARNING, this, "Trying to delete an unexistant chapter");
+            return;
+        }
+        this.chapters[index] = null;
+        Chapter tmp[] = new Chapter[--this.nbChapters];
+        System.arraycopy(this.chapters, 0, tmp, 0, index);
+        System.arraycopy(this.chapters, index + 1, tmp, index, this.chapters.length - index - 1);
+        this.chapters = tmp;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }
-

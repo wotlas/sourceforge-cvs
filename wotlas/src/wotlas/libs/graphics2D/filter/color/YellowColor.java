@@ -21,42 +21,41 @@ package wotlas.libs.graphics2D.filter.color;
 
 import wotlas.libs.graphics2D.filter.ColorType;
 
-
 /** Represents the "yellow" colors.
  *
  * @author Aldiss
  */
 
-public class YellowColor implements ColorType{
+public class YellowColor implements ColorType {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-     /** Return true if the given color is of our Color Type.
-      * @param r red component
-      * @param b blue component
-      * @param g green component
-      * @return true if it's of this color type.
-      */
-       public boolean isFromThisColorType( short r, short g, short b ) {
-       	     if( r >= g && b < 70 && b<g && r-g<=30 )
-       	         return true;
-       	     return false;
-       }
+    /** Return true if the given color is of our Color Type.
+     * @param r red component
+     * @param b blue component
+     * @param g green component
+     * @return true if it's of this color type.
+     */
+    public boolean isFromThisColorType(short r, short g, short b) {
+        if (r >= g && b < 70 && b < g && r - g <= 30)
+            return true;
+        return false;
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-     /** Given three level of luminosity we return a color of our color type.
-      * @param min min luminosity.
-      * @param mid medium luminosity.
-      * @param max maximum luminosity.
-      * @return a rgb integer with an alpha set to 0.
-      */
-       public int setToColorType( short min, short mid, short max ) {
-       	     if(max>=15)
-                return (max<<16) | ((max-15)<<8) | min;
-             return (max<<16) | (mid<<8) | min;
-       }
+    /** Given three level of luminosity we return a color of our color type.
+     * @param min min luminosity.
+     * @param mid medium luminosity.
+     * @param max maximum luminosity.
+     * @return a rgb integer with an alpha set to 0.
+     */
+    public int setToColorType(short min, short mid, short max) {
+        if (max >= 15)
+            return (max << 16) | ((max - 15) << 8) | min;
+        return (max << 16) | (mid << 8) | min;
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
 }

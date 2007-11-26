@@ -19,20 +19,15 @@
 
 package wotlas.server.message.chat;
 
-import java.io.IOException;
-import java.util.*;
-
-import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.message.chat.*;
-
-import wotlas.common.chat.*;
-import wotlas.common.Player;
+import java.util.Hashtable;
+import wotlas.common.chat.ChatList;
+import wotlas.common.chat.ChatRoom;
+import wotlas.common.message.chat.ChatRoomDeletedMessage;
+import wotlas.common.message.chat.RemPlayerFromChatRoomMessage;
 import wotlas.common.router.MessageRouter;
-import wotlas.common.universe.*;
-import wotlas.common.message.account.*;
-
-import wotlas.server.*;
-
+import wotlas.common.universe.WotlasLocation;
+import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.server.PlayerImpl;
 import wotlas.utils.Debug;
 
 /**
@@ -43,88 +38,87 @@ import wotlas.utils.Debug;
 
 public class RemPlayerFromChatRoomMsgBehaviour extends RemPlayerFromChatRoomMessage implements NetMessageBehaviour {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
+    /** Constructor.
+     */
     public RemPlayerFromChatRoomMsgBehaviour() {
-       super();
+        super();
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor with parameters : useful to directly call the behaviour.
-   */
+    /** Constructor with parameters : useful to directly call the behaviour.
+     */
     public RemPlayerFromChatRoomMsgBehaviour(String senderPrimaryKey, String chatRoomPrimaryKey) {
-       super(senderPrimaryKey,chatRoomPrimaryKey);
+        super(senderPrimaryKey, chatRoomPrimaryKey);
     }
 
- /*------------------------------------------------------------------------------------*/
-  
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-    public void doBehaviour( Object sessionContext ) {
-    
-    // The sessionContext is here a PlayerImpl.
-       PlayerImpl player = (PlayerImpl) sessionContext;
-       WotlasLocation location = player.getLocation();
+    /*------------------------------------------------------------------------------------*/
 
-    // 0 - security, is it our primary key ?
-       if( !player.getPrimaryKey().equals( senderPrimaryKey ) ) {
-           Debug.signal( Debug.ERROR, this, "Received a RemovePlayerFromChatMsg that was for: "+chatRoomPrimaryKey+" and not for us : "+player.getPrimaryKey() );
-       	   return;
-       }
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
 
-    // 1 - Set player Chat membership to defaults
-       if( chatRoomPrimaryKey.equals( ChatRoom.DEFAULT_CHAT ) )
-           return; // nothing to do
+        // The sessionContext is here a PlayerImpl.
+        PlayerImpl player = (PlayerImpl) sessionContext;
+        WotlasLocation location = player.getLocation();
 
-       player.setCurrentChatPrimaryKey( ChatRoom.DEFAULT_CHAT );
-       player.setIsChatMember(true);
+        // 0 - security, is it our primary key ?
+        if (!player.getPrimaryKey().equals(this.senderPrimaryKey)) {
+            Debug.signal(Debug.ERROR, this, "Received a RemovePlayerFromChatMsg that was for: " + this.chatRoomPrimaryKey + " and not for us : " + player.getPrimaryKey());
+            return;
+        }
 
-    // 2 - We suppress our entry in the chatList
-       ChatList chatList = player.getChatList();
+        // 1 - Set player Chat membership to defaults
+        if (this.chatRoomPrimaryKey.equals(ChatRoom.DEFAULT_CHAT))
+            return; // nothing to do
 
-       if( chatList==null ){
-           Debug.signal( Debug.ERROR, this, "No Chat List available ! can't remove player" );
-       	   return;
-       }
+        player.setCurrentChatPrimaryKey(ChatRoom.DEFAULT_CHAT);
+        player.setIsChatMember(true);
 
-       ChatRoom chatRoom = chatList.getChatRoom( chatRoomPrimaryKey );
+        // 2 - We suppress our entry in the chatList
+        ChatList chatList = player.getChatList();
 
-       if( chatRoom==null ){
-           Debug.signal( Debug.ERROR, this, "Chat room "+chatRoomPrimaryKey+" not found ! can't remove player" );
-       	   return;
-       }
+        if (chatList == null) {
+            Debug.signal(Debug.ERROR, this, "No Chat List available ! can't remove player");
+            return;
+        }
 
-       chatRoom.removePlayer( player );
-       player.sendMessage( this );    // validation sent to client
+        ChatRoom chatRoom = chatList.getChatRoom(this.chatRoomPrimaryKey);
 
-    // 3 - Need to suppress the ChatRoom ?
-       Hashtable players = chatRoom.getPlayers();
+        if (chatRoom == null) {
+            Debug.signal(Debug.ERROR, this, "Chat room " + this.chatRoomPrimaryKey + " not found ! can't remove player");
+            return;
+        }
 
-       synchronized( players ) {
-           if( players.size()<=0 )
-               chatList.removeChatRoom( chatRoomPrimaryKey ); // ok, we remove the chat room
-           else {
-             // chatRoom is not empty, we just advertise our departure & quit
-                chatRoom.sendMessageToChatRoom( this );
+        chatRoom.removePlayer(player);
+        player.sendMessage(this); // validation sent to client
+
+        // 3 - Need to suppress the ChatRoom ?
+        Hashtable players = chatRoom.getPlayers();
+
+        synchronized (players) {
+            if (players.size() <= 0)
+                chatList.removeChatRoom(this.chatRoomPrimaryKey); // ok, we remove the chat room
+            else {
+                // chatRoom is not empty, we just advertise our departure & quit
+                chatRoom.sendMessageToChatRoom(this);
                 return;
-           }
-       }
+            }
+        }
 
-    // 4 - ok, we've just suppressed our past chatRoom, we advertise the destruction...
-       ChatRoomDeletedMessage delMsg = new ChatRoomDeletedMessage( chatRoomPrimaryKey );
-       MessageRouter mRouter = player.getMessageRouter();
+        // 4 - ok, we've just suppressed our past chatRoom, we advertise the destruction...
+        ChatRoomDeletedMessage delMsg = new ChatRoomDeletedMessage(this.chatRoomPrimaryKey);
+        MessageRouter mRouter = player.getMessageRouter();
 
-       if( mRouter!=null )
-           mRouter.sendMessage( delMsg );
-  }
-  
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
+        if (mRouter != null)
+            mRouter.sendMessage(delMsg);
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }
-  

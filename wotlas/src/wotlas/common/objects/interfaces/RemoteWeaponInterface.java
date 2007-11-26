@@ -16,11 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.objects.interfaces;
 
-import wotlas.common.objects.weapons.Ammo;
 import wotlas.common.Player;
+import wotlas.common.objects.weapons.Ammo;
 
 /** 
  * The remote weapon interface. Provides methods common to all remote weapons.
@@ -29,30 +29,25 @@ import wotlas.common.Player;
  * @see wotlas.common.objects.weapons.RemoteWeapon 
  */
 
-public interface RemoteWeaponInterface
-{
+public interface RemoteWeaponInterface {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-
-  /** Arms the weapon. The weapon is ready to Aim()/Loose().
-   * @param ammo the ammo used 
-   */
+    /** Arms the weapon. The weapon is ready to Aim()/Loose().
+     * @param ammo the ammo used 
+     */
     public void arm(Ammo ammo);
 
-  /** Aims to the specified target. Needs to be armed.<br>
-   * May be char or build - should do another method to aim at a building.
-   * @param target the target to aim at. 
-   */
+    /** Aims to the specified target. Needs to be armed.<br>
+     * May be char or build - should do another method to aim at a building.
+     * @param target the target to aim at. 
+     */
     public void aim(Player target);
-	
-  /** Looses. Launch the ammo on the target.
-   */
+
+    /** Looses. Launch the ammo on the target.
+     */
     public void loose();
 
-
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

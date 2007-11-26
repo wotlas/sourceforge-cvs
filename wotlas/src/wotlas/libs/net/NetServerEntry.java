@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.libs.net;
 
 /** 
@@ -28,51 +28,49 @@ package wotlas.libs.net;
  * @see wotlas.libs.net.NetServer
  */
 
-public class NetServerEntry
-{
+public class NetServerEntry {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Our Server
-   */
-      private NetServer server;
+    /** Our Server
+     */
+    private NetServer server;
 
-  /** Our Connection.
-   */
-      private NetConnection connection;
+    /** Our Connection.
+     */
+    private NetConnection connection;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor of this association
-   *
-   * @param server our server 
-   * @param connection our connection
-   */
-     public NetServerEntry( NetServer server, NetConnection connection ) {
-         this.server = server;
-         this.connection = connection;
-     }
+    /** Constructor of this association
+     *
+     * @param server our server 
+     * @param connection our connection
+     */
+    public NetServerEntry(NetServer server, NetConnection connection) {
+        this.server = server;
+        this.connection = connection;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the NetServer.
-   * 
-   * @return the NetServer
-   */
-     public NetServer getServer() {
-           return server;
-     }
+    /** To get the NetServer.
+     * 
+     * @return the NetServer
+     */
+    public NetServer getServer() {
+        return this.server;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the NetConnection
-   * 
-   * @return the NetConnection
-   */
-     public NetConnection getConnection() {
-           return connection;
-     }
+    /** To get the NetConnection
+     * 
+     * @return the NetConnection
+     */
+    public NetConnection getConnection() {
+        return this.connection;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

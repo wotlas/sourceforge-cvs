@@ -19,12 +19,9 @@
 
 package wotlas.common.message.chat;
 
-import wotlas.common.universe.WotlasLocation;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
 import wotlas.libs.net.NetMessage;
 
 /** 
@@ -33,125 +30,126 @@ import wotlas.libs.net.NetMessage;
  * @author Petrus, Aldiss
  */
 
-public class SendTextMessage extends NetMessage
-{
- 
- /*------------------------------------------------------------------------------------*/
+public class SendTextMessage extends NetMessage {
 
-  /** Id of the sender
-   */
-  protected String senderPrimaryKey;
- 
-  /** Sender Full Player Name
-   */
-  protected String senderFullName;
- 
-  /** Id of the ChatRoom
-   */
-  protected String chatRoomPrimaryKey;
-  
-  /** The message to send
-   */
-  protected String message;
+    /*------------------------------------------------------------------------------------*/
 
-  /** Voice Sound Level, see wotlas.common.chat.ChatRoom
-   */
-  protected byte voiceSoundLevel;
-  
- /*------------------------------------------------------------------------------------*/
+    /** Id of the sender
+     */
+    protected String senderPrimaryKey;
 
-  /** Constructor. Just initializes the message category and type.
-   */
-  public SendTextMessage() {
-    super();        
-  }
+    /** Sender Full Player Name
+     */
+    protected String senderFullName;
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** Id of the ChatRoom
+     */
+    protected String chatRoomPrimaryKey;
 
-  /** Constructor with parameters.
-   */
-  public SendTextMessage(String senderPrimaryKey, String senderFullName, String chatRoomPrimaryKey, String message, byte voiceSoundLevel ) {
-    super();
-    this.senderPrimaryKey = senderPrimaryKey;
-    this.senderFullName = senderFullName;
-    this.chatRoomPrimaryKey = chatRoomPrimaryKey;
-    this.message = message;
-    this.voiceSoundLevel = voiceSoundLevel;
-  }
-  
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** The message to send
+     */
+    protected String message;
 
-  /** This is where we put your message data on the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param ostream data stream where to put your data (see java.io.DataOutputStream)
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-  public void encode( DataOutputStream ostream ) throws IOException {
-    ostream.writeUTF( senderPrimaryKey );
-    ostream.writeUTF( senderFullName );
-    ostream.writeUTF( chatRoomPrimaryKey );
-    ostream.writeUTF( message );
-    ostream.writeByte( voiceSoundLevel );
-  }
+    /** Voice Sound Level, see wotlas.common.chat.ChatRoom
+     */
+    protected byte voiceSoundLevel;
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** This is where we retrieve our message data from the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-  public void decode( DataInputStream istream ) throws IOException {
-    senderPrimaryKey = istream.readUTF();
-    senderFullName = istream.readUTF();
-    chatRoomPrimaryKey = istream.readUTF();
-    message = istream.readUTF();
-    voiceSoundLevel = istream.readByte();
-  }
+    /** Constructor. Just initializes the message category and type.
+     */
+    public SendTextMessage() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To set the message for this chat message...
-   */
-   public void setMessage( String message ) {
-      this.message = message;
-   }
+    /** Constructor with parameters.
+     */
+    public SendTextMessage(String senderPrimaryKey, String senderFullName, String chatRoomPrimaryKey, String message, byte voiceSoundLevel) {
+        super();
+        this.senderPrimaryKey = senderPrimaryKey;
+        this.senderFullName = senderFullName;
+        this.chatRoomPrimaryKey = chatRoomPrimaryKey;
+        this.message = message;
+        this.voiceSoundLevel = voiceSoundLevel;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the message for this chat message...
-   */
-   public String getMessage() {
-      return message;
-   }
+    /** This is where we put your message data on the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param ostream data stream where to put your data (see java.io.DataOutputStream)
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    @Override
+    public void encode(DataOutputStream ostream) throws IOException {
+        ostream.writeUTF(this.senderPrimaryKey);
+        ostream.writeUTF(this.senderFullName);
+        ostream.writeUTF(this.chatRoomPrimaryKey);
+        ostream.writeUTF(this.message);
+        ostream.writeByte(this.voiceSoundLevel);
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get chatRoomPrimaryKey for this chat message...
-   */
-   public String getChatRoomPrimaryKey() {
-      return chatRoomPrimaryKey;
-   }
+    /** This is where we retrieve our message data from the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    @Override
+    public void decode(DataInputStream istream) throws IOException {
+        this.senderPrimaryKey = istream.readUTF();
+        this.senderFullName = istream.readUTF();
+        this.chatRoomPrimaryKey = istream.readUTF();
+        this.message = istream.readUTF();
+        this.voiceSoundLevel = istream.readByte();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** To get the voice sound level of this message.
-   */
-   public byte getVoiceSoundLevel() {
-     return voiceSoundLevel;
-   }
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-  /** To set the voice sound level of this message.
-   *  @param voiceSoundLevel as defined in ChatRoom.
-   */
-   public void setVoiceSoundLevel( byte voiceSoundLevel ) {
-        this.voiceSoundLevel=voiceSoundLevel;
-   }
+    /** To set the message for this chat message...
+     */
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** To get the message for this chat message...
+     */
+    public String getMessage() {
+        return this.message;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** To get chatRoomPrimaryKey for this chat message...
+     */
+    public String getChatRoomPrimaryKey() {
+        return this.chatRoomPrimaryKey;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** To get the voice sound level of this message.
+     */
+    public byte getVoiceSoundLevel() {
+        return this.voiceSoundLevel;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** To set the voice sound level of this message.
+     *  @param voiceSoundLevel as defined in ChatRoom.
+     */
+    public void setVoiceSoundLevel(byte voiceSoundLevel) {
+        this.voiceSoundLevel = voiceSoundLevel;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

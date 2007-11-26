@@ -19,10 +19,12 @@
 
 package wotlas.libs.graphics2D;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.*;
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.image.VolatileImage;
 
 /** A EnhancedGraphicsDirector is a GraphicsDirector that uses Java 1.4 VolatileImage
  *  to store the offscreen image in the graphics adapter memory, thus enabling faster
@@ -36,141 +38,133 @@ import javax.swing.*;
 
 public class EnhancedGraphicsDirector extends GraphicsDirector {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** OffScreen image for the GraphicsDirector. 
-   */
+    /** OffScreen image for the GraphicsDirector. 
+     */
     protected VolatileImage vOffscreenImage;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor. The window policy is not supposed to change during the life of the
-   *  GraphicsDirector, but you can still change it by invoking the setWindowPolicy()
-   *  method. The ImageLibrary is set to the default one : ImageLibrary.getDefault...
-   *
-   * @param windowPolicy a policy that manages window scrolling.
-   * @exception ImageLibraryException if no ImageLibrary is found.
-   */
-    public EnhancedGraphicsDirector( WindowPolicy windowPolicy )
-    throws ImageLibraryException {
-    	this( windowPolicy, null );
+    /** Constructor. The window policy is not supposed to change during the life of the
+     *  GraphicsDirector, but you can still change it by invoking the setWindowPolicy()
+     *  method. The ImageLibrary is set to the default one : ImageLibrary.getDefault...
+     *
+     * @param windowPolicy a policy that manages window scrolling.
+     * @exception ImageLibraryException if no ImageLibrary is found.
+     */
+    public EnhancedGraphicsDirector(WindowPolicy windowPolicy) throws ImageLibraryException {
+        this(windowPolicy, null);
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor. The window policy is not supposed to change during the life of the
-   *  GraphicsDirector, but you can still change it by invoking the setWindowPolicy()
-   *  method. If the imageLibrary is set to null we seek for a default one.
-   *
-   * @param windowPolicy a policy that manages window scrolling.
-   * @param imageLib ImageLibrary to use for this GraphicsDirector.
-   * @exception ImageLibraryException if no ImageLibrary is found.
-   */
-    public EnhancedGraphicsDirector( WindowPolicy windowPolicy, ImageLibrary imageLib )
-    throws ImageLibraryException {
+    /** Constructor. The window policy is not supposed to change during the life of the
+     *  GraphicsDirector, but you can still change it by invoking the setWindowPolicy()
+     *  method. If the imageLibrary is set to null we seek for a default one.
+     *
+     * @param windowPolicy a policy that manages window scrolling.
+     * @param imageLib ImageLibrary to use for this GraphicsDirector.
+     * @exception ImageLibraryException if no ImageLibrary is found.
+     */
+    public EnhancedGraphicsDirector(WindowPolicy windowPolicy, ImageLibrary imageLib) throws ImageLibraryException {
         super(windowPolicy, imageLib);
 
-     // image creation - we don't know its size yet...
-//        vOffscreenImage = createVolatileImage(100, 100);
+        // image creation - we don't know its size yet...
+        //        vOffscreenImage = createVolatileImage(100, 100);
 
-//        System.out.println("acc: "+vOffscreenImage.getCapabilities().isAccelerated() );
-//        System.out.println("vol: "+vOffscreenImage.getCapabilities().isTrueVolatile() );
+        //        System.out.println("acc: "+vOffscreenImage.getCapabilities().isAccelerated() );
+        //        System.out.println("vol: "+vOffscreenImage.getCapabilities().isTrueVolatile() );
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Renders the image off screen...
-    */
+    /** Renders the image off screen...
+     */
     private void renderOffscreen() {
         do {
-            if (vOffscreenImage.validate(getGraphicsConfiguration()) ==
-                                                   VolatileImage.IMAGE_INCOMPATIBLE) {
-              // old vImg doesn't work with new GraphicsConfig; re-create it
-                 vOffscreenImage = createVolatileImage( getWidth(), getHeight() );
+            if (this.vOffscreenImage.validate(getGraphicsConfiguration()) == VolatileImage.IMAGE_INCOMPATIBLE) {
+                // old vImg doesn't work with new GraphicsConfig; re-create it
+                this.vOffscreenImage = createVolatileImage(getWidth(), getHeight());
             }
 
-            Graphics2D gc2D = vOffscreenImage.createGraphics();
+            Graphics2D gc2D = this.vOffscreenImage.createGraphics();
 
-         // Anti-aliasing init
+            // Anti-aliasing init
             RenderingHints savedRenderHints = gc2D.getRenderingHints(); // save    
-            RenderingHints antiARenderHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING,
-                                                                 RenderingHints.VALUE_ANTIALIAS_ON);
+            RenderingHints antiARenderHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             antiARenderHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
             boolean previousHadAntiA = false;
-            final Rectangle r_screen =  new Rectangle( screen );
+            final Rectangle r_screen = new Rectangle(this.screen);
 
-            gc2D.setColor( Color.white );
-            gc2D.fillRect( 0, 0, getWidth(), getHeight() );
+            gc2D.setColor(Color.white);
+            gc2D.fillRect(0, 0, getWidth(), getHeight());
 
-            if(display)
-              synchronized( drawables ) {
+            if (this.display)
+                synchronized (this.drawables) {
 
-                 drawables.resetIterator();
-        
-                 while( drawables.hasNext() ) {
-                        Drawable d = drawables.next();
+                    this.drawables.resetIterator();
 
-                     // Set Anti-aliasing or not ?
-                        if( d.wantAntialiasing() && !previousHadAntiA ) {
+                    while (this.drawables.hasNext()) {
+                        Drawable d = this.drawables.next();
+
+                        // Set Anti-aliasing or not ?
+                        if (d.wantAntialiasing() && !previousHadAntiA) {
                             previousHadAntiA = true;
-                            gc2D.setRenderingHints( antiARenderHints );
-                        }
-                        else if( !d.wantAntialiasing() && previousHadAntiA ) {
+                            gc2D.setRenderingHints(antiARenderHints);
+                        } else if (!d.wantAntialiasing() && previousHadAntiA) {
                             previousHadAntiA = false;
-                            gc2D.setRenderingHints( savedRenderHints );
+                            gc2D.setRenderingHints(savedRenderHints);
                         }
 
-                        d.paint( gc2D, r_screen );
-                 }
-              }
+                        d.paint(gc2D, r_screen);
+                    }
+                }
 
-         // Rendering Hints restore...
-            gc2D.setRenderingHints( savedRenderHints );
+            // Rendering Hints restore...
+            gc2D.setRenderingHints(savedRenderHints);
             gc2D.dispose();
 
-        }
-        while(vOffscreenImage.contentsLost());
+        } while (this.vOffscreenImage.contentsLost());
     }
 
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To paint this JPanel.
-   *
-   * @param gc graphics object.
-   */
+    /** To paint this JPanel.
+     *
+     * @param gc graphics object.
+     */
+    @Override
     public void paint(Graphics gc) {
-         if(gc==null || screen==null || getHeight()<=0 || getWidth()<=0) return;
+        if (gc == null || this.screen == null || getHeight() <= 0 || getWidth() <= 0)
+            return;
 
-       // Volatile Image created ?
-         if(vOffscreenImage==null) {
-            vOffscreenImage = createVolatileImage( getWidth(), getHeight() );
-            if(vOffscreenImage==null) return;
-         }
+        // Volatile Image created ?
+        if (this.vOffscreenImage == null) {
+            this.vOffscreenImage = createVolatileImage(getWidth(), getHeight());
+            if (this.vOffscreenImage == null)
+                return;
+        }
 
-       // Rendering Call
-         do{
-            int returnCode = vOffscreenImage.validate(getGraphicsConfiguration());
+        // Rendering Call
+        do {
+            int returnCode = this.vOffscreenImage.validate(getGraphicsConfiguration());
 
-           /** We check the returned image state code
-            */
-            if (returnCode == VolatileImage.IMAGE_INCOMPATIBLE
-                || getWidth() != vOffscreenImage.getWidth()
-                || getHeight() != vOffscreenImage.getHeight()) {
-               // old vImg doesn't work with new GraphicsConfig; re-create it
-                  vOffscreenImage = createVolatileImage( getWidth(), getHeight() );
-                  renderOffscreen();
-            }
-            else
-                  renderOffscreen(); // we refresh the image content
+            /** We check the returned image state code
+             */
+            if (returnCode == VolatileImage.IMAGE_INCOMPATIBLE || getWidth() != this.vOffscreenImage.getWidth() || getHeight() != this.vOffscreenImage.getHeight()) {
+                // old vImg doesn't work with new GraphicsConfig; re-create it
+                this.vOffscreenImage = createVolatileImage(getWidth(), getHeight());
+                renderOffscreen();
+            } else
+                renderOffscreen(); // we refresh the image content
 
-          // Double buffer print.
-             gc.drawImage(vOffscreenImage, 0, 0, this);
-         }
-         while (vOffscreenImage.contentsLost());
+            // Double buffer print.
+            gc.drawImage(this.vOffscreenImage, 0, 0, this);
+        } while (this.vOffscreenImage.contentsLost());
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

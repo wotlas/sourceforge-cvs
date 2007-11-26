@@ -16,9 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
-package wotlas.libs.net;
 
+package wotlas.libs.net;
 
 /** This interface contains only one variable that indicates the version of
  *  the Network Engine. When the client send a ClientRegisterMessage the message
@@ -30,7 +29,6 @@ package wotlas.libs.net;
 
 public interface NetEngineVersion {
 
-  public final static float VERSION    = 1.3f;
+    public final static float VERSION = 1.3f;
 
 }
-

@@ -16,11 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.objects.weapons;
 
-import wotlas.common.objects.interfaces.*;
 import wotlas.common.Player;
+import wotlas.common.objects.interfaces.RemoteWeaponInterface;
 
 /** 
  * The remote weapon class. All the weapons within this class can shoot at a distance.
@@ -31,51 +31,45 @@ import wotlas.common.Player;
  * @see wotlas.common.objects.weapons.Ammo
  */
 
-public abstract class RemoteWeapon extends Weapon implements RemoteWeaponInterface
-{
+public abstract class RemoteWeapon extends Weapon implements RemoteWeaponInterface {
 
- /** The weapon status.
-  */
-  protected boolean armed,aimed;
-  
- /** The weapon's ammo. The damage inflicted depends of this.
-  */
-  protected Ammo ammo; 
-  
- /** The weapon's target. Should have also a building as target.
-  */
-  protected Player target; 
+    /** The weapon status.
+     */
+    protected boolean armed, aimed;
 
- /*------------------------------------------------------------------------------------*/
-    
-  /** Arms the weapon. The weapon is ready to Aim()/Loose().
-   * @param ammo the ammo used 
-   */
-    public void arm(Ammo ammo)
-	{
-	 this.ammo=ammo;
-	 armed=true;
-	}
+    /** The weapon's ammo. The damage inflicted depends of this.
+     */
+    protected Ammo ammo;
 
-  /** Aims to the specified target. Needs to be armed.<br>
-   * May be char or build - should do another method to aim at a building.
-   * @param target the target to aim at. 
-   */
-    public void aim(Player target)
-	{
-	 this.target=target;
-	 aimed=true;
-	}
-	
-  /** Looses. Launch the ammo on the target.
-   */
-    public void loose()
-	{
-	 /* no op */
-	}
- 
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** The weapon's target. Should have also a building as target.
+     */
+    protected Player target;
+
+    /*------------------------------------------------------------------------------------*/
+
+    /** Arms the weapon. The weapon is ready to Aim()/Loose().
+     * @param ammo the ammo used 
+     */
+    public void arm(Ammo ammo) {
+        this.ammo = ammo;
+        this.armed = true;
+    }
+
+    /** Aims to the specified target. Needs to be armed.<br>
+     * May be char or build - should do another method to aim at a building.
+     * @param target the target to aim at. 
+     */
+    public void aim(Player target) {
+        this.target = target;
+        this.aimed = true;
+    }
+
+    /** Looses. Launch the ammo on the target.
+     */
+    public void loose() {
+        /* no op */
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

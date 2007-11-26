@@ -19,16 +19,11 @@
 
 package wotlas.client.message.movement;
 
-import java.io.IOException;
-import java.util.*;
-
-import wotlas.utils.Debug;
-
+import wotlas.client.DataManager;
+import wotlas.client.PlayerImpl;
+import wotlas.common.message.movement.YouCanLeaveMapMessage;
 import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.message.movement.*;
-import wotlas.common.universe.*;
-import wotlas.common.Player;
-import wotlas.client.*;
+import wotlas.utils.Debug;
 
 /**
  * Associated behaviour to the YouCanLeaveMapMessage...
@@ -36,65 +31,63 @@ import wotlas.client.*;
  * @author Aldiss
  */
 
-public class YouCanLeaveMapMsgBehaviour extends YouCanLeaveMapMessage implements NetMessageBehaviour
-{
- /*------------------------------------------------------------------------------------*/
+public class YouCanLeaveMapMsgBehaviour extends YouCanLeaveMapMessage implements NetMessageBehaviour {
+    /*------------------------------------------------------------------------------------*/
 
-   /** To tell if this message is to be invoked later or not.
-    */
-     private boolean invokeLater = true;
+    /** To tell if this message is to be invoked later or not.
+     */
+    private boolean invokeLater = true;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public YouCanLeaveMapMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+     */
+    public YouCanLeaveMapMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
 
         // The sessionContext is here a DataManager.
-           DataManager dataManager = (DataManager) sessionContext;
-           PlayerImpl myPlayer = dataManager.getMyPlayer();
+        DataManager dataManager = (DataManager) sessionContext;
+        PlayerImpl myPlayer = dataManager.getMyPlayer();
 
         // Direct Change
-           if( invokeLater ) {
-             if(DataManager.SHOW_DEBUG)
+        if (this.invokeLater) {
+            if (DataManager.SHOW_DEBUG)
                 System.out.println("YOU CAN LEAVE MAP MESSAGE");
 
-             if(primaryKey==null) {
-                Debug.signal( Debug.ERROR, this, "No primary key to identify player !" );
+            if (this.primaryKey == null) {
+                Debug.signal(Debug.ERROR, this, "No primary key to identify player !");
                 return;
-             }
+            }
 
-             if( !myPlayer.getPrimaryKey().equals( primaryKey ) ) {
-                 Debug.signal( Debug.ERROR, this, "This message is not for master player !" );
-                 return;
-             }
+            if (!myPlayer.getPrimaryKey().equals(this.primaryKey)) {
+                Debug.signal(Debug.ERROR, this, "This message is not for master player !");
+                return;
+            }
 
-             invokeLater = false;
-             dataManager.invokeLater( this );
-             return;
-           }
+            this.invokeLater = false;
+            dataManager.invokeLater(this);
+            return;
+        }
 
-         // Code to invoke after the current tick :
-           Debug.signal( Debug.NOTICE, this, "Location update sent by server !" );
-           myPlayer.getMovementComposer().resetMovement();
-           myPlayer.setX(x);
-           myPlayer.setY(y);
-           myPlayer.setAngle( orientation );
-           myPlayer.setLocation( location );
-           myPlayer.setSyncID( syncID );
-     }
+        // Code to invoke after the current tick :
+        Debug.signal(Debug.NOTICE, this, "Location update sent by server !");
+        myPlayer.getMovementComposer().resetMovement();
+        myPlayer.setX(this.x);
+        myPlayer.setY(this.y);
+        myPlayer.setAngle(this.orientation);
+        myPlayer.setLocation(this.location);
+        myPlayer.setSyncID(this.syncID);
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

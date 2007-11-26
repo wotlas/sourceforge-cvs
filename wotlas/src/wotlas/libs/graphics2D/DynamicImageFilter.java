@@ -32,15 +32,15 @@ import java.awt.image.BufferedImage;
 
 public interface DynamicImageFilter {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** To create a new filtered image from an image source.
-    *
-    * @param srcIm source BufferedImage we take our data from (not modified).
-    * @return new BufferedImage constructed from the given image.
-    */
-     public BufferedImage filterImage( BufferedImage srcIm );
+    /** To create a new filtered image from an image source.
+     *
+     * @param srcIm source BufferedImage we take our data from (not modified).
+     * @return new BufferedImage constructed from the given image.
+     */
+    public BufferedImage filterImage(BufferedImage srcIm);
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
 }

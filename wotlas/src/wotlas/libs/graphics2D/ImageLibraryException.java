@@ -27,10 +27,10 @@ package wotlas.libs.graphics2D;
 
 public class ImageLibraryException extends java.lang.RuntimeException {
 
- /** Exception Constructor with message.
-  */
-   public ImageLibraryException( String msg ) {
-        super( msg );
-   }
+    /** Exception Constructor with message.
+     */
+    public ImageLibraryException(String msg) {
+        super(msg);
+    }
 
 }

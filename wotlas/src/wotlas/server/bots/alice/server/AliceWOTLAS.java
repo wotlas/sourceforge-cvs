@@ -19,16 +19,12 @@
 
 package wotlas.server.bots.alice.server;
 
-import org.alicebot.server.net.listener.AliceChatListener;
-import org.alicebot.server.core.ActiveMultiplexor;
-import org.alicebot.server.core.Multiplexor;
-import org.alicebot.server.core.logging.Log;
-import org.alicebot.server.core.util.Trace;
-import org.alicebot.server.core.responder.Responder;
-import org.alicebot.server.core.responder.TextResponder;
-
-import java.net.*;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Properties;
+import org.alicebot.server.core.ActiveMultiplexor;
+import org.alicebot.server.core.logging.Log;
+import org.alicebot.server.net.listener.AliceChatListener;
 
 /**
  *  Alice Chat Listener for the wotlas protocol. More information on
@@ -44,308 +40,296 @@ import java.util.Properties;
 
 public class AliceWOTLAS implements AliceChatListener {
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Standard AliceWOTLAS port.
-   */
+    /** Standard AliceWOTLAS port.
+     */
     public static final int ALICE_WOTLAS_PORT = 21121;
 
-  /** Maximum number of connections we accept from other servers.
-   */
+    /** Maximum number of connections we accept from other servers.
+     */
     public static final int MAX_ALICE_WOTLAS_CONNECTIONS = 20;
 
-  /** Number of threads in our pool to handle Alice requests
-   */
+    /** Number of threads in our pool to handle Alice requests
+     */
     public static final int POOL_THREADS_NUMBER = 5;
 
-  /** Max number of requests a thread in our pool can accept at the same time.
-   */
+    /** Max number of requests a thread in our pool can accept at the same time.
+     */
     public static final int MAX_POOL_THREAD_REQUEST = 20;
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Our associated server which listens on the ALICE_WOTLAS_PORT and forward requests
-   *  to us.
-   */
+    /** Our associated server which listens on the ALICE_WOTLAS_PORT and forward requests
+     *  to us.
+     */
     protected AliceWotlasServer aliceWotlasServer;
 
-  /** A pool of threads (using FIFOs) on which we will dispatch our requests.
-   */
+    /** A pool of threads (using FIFOs) on which we will dispatch our requests.
+     */
     protected AliceRequestFIFO fifoPool[];
 
-  /** The index of the current thread we are using in our pool.
-   */
+    /** The index of the current thread we are using in our pool.
+     */
     protected int poolThreadIndex;
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor.
-   */
+    /** Constructor.
+     */
     public AliceWOTLAS() {
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /**
-   *  Given a properties set, initializes the listener if possible.
-   *
-   *  @param properties   the properties set that may (or may not!)
-   *                      contain necessary configuration values
-   *
-   *  @return <code>true</code> if the initialization was successful, <code>false</code> if not
-   */
-    public boolean initialize( Properties properties ) {
+    /**
+     *  Given a properties set, initializes the listener if possible.
+     *
+     *  @param properties   the properties set that may (or may not!)
+     *                      contain necessary configuration values
+     *
+     *  @return <code>true</code> if the initialization was successful, <code>false</code> if not
+     */
+    public boolean initialize(Properties properties) {
 
-       // 1 - We retrieve the host name
-          String hostName = "localhost";
+        // 1 - We retrieve the host name
+        String hostName = "localhost";
 
-          try {
-             hostName = InetAddress.getLocalHost().getHostName();
-          }
-          catch (UnknownHostException e) {
-              Log.userinfo("AliceWOTLAS: no host name found. Using localhost.", Log.STARTUP);
-              e.printStackTrace();
-          }
+        try {
+            hostName = InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException e) {
+            Log.userinfo("AliceWOTLAS: no host name found. Using localhost.", Log.STARTUP);
+            e.printStackTrace();
+        }
 
+        // 2 - We create some FIFO threads to handle the future incoming requests
+        this.fifoPool = new AliceRequestFIFO[AliceWOTLAS.POOL_THREADS_NUMBER];
+        this.poolThreadIndex = 0;
 
-       // 2 - We create some FIFO threads to handle the future incoming requests
-          fifoPool = new AliceRequestFIFO[POOL_THREADS_NUMBER];
-          poolThreadIndex = 0;
+        for (int i = 0; i < AliceWOTLAS.POOL_THREADS_NUMBER; i++) {
+            this.fifoPool[i] = new AliceRequestFIFO(AliceWOTLAS.MAX_POOL_THREAD_REQUEST);
+            this.fifoPool[i].start();
+        }
 
-          for( int i=0; i<POOL_THREADS_NUMBER; i++ ) {
-               fifoPool[i] = new AliceRequestFIFO( MAX_POOL_THREAD_REQUEST );
-               fifoPool[i].start();
-          }
+        Log.userinfo("AliceWOTLAS: created " + AliceWOTLAS.POOL_THREADS_NUMBER + " threads to process incoming requests", Log.STARTUP);
 
-          Log.userinfo("AliceWOTLAS: created "+POOL_THREADS_NUMBER+" threads to process incoming requests", Log.STARTUP);
+        // 3 - We create our server and start it !
+        String messagePackages[] = { "wotlas.server.bots.alice.server" };
 
-       // 3 - We create our server and start it !
-          String messagePackages[] = { "wotlas.server.bots.alice.server" };
+        this.aliceWotlasServer = new AliceWotlasServer(hostName, AliceWOTLAS.ALICE_WOTLAS_PORT, messagePackages, AliceWOTLAS.MAX_ALICE_WOTLAS_CONNECTIONS, this);
 
-          aliceWotlasServer = new AliceWotlasServer( hostName,
-                                             ALICE_WOTLAS_PORT,
-                                             messagePackages,
-                                             MAX_ALICE_WOTLAS_CONNECTIONS,
-                                             this );
-
-          Log.userinfo("Started AliceWOTLAS listener on "+hostName+":"+ALICE_WOTLAS_PORT, Log.STARTUP);
-          return true;
+        Log.userinfo("Started AliceWOTLAS listener on " + hostName + ":" + AliceWOTLAS.ALICE_WOTLAS_PORT, Log.STARTUP);
+        return true;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Starts the server of our listener.
-    */
-     public void run() {
-          aliceWotlasServer.start();
-     }
+    /** Starts the server of our listener.
+     */
+    public void run() {
+        this.aliceWotlasServer.start();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /**
-    *  Shuts down the process.
-    */
-     public void shutdown() {
-          Log.userinfo("Shutting down AliceWOTLAS listener & server.", Log.LISTENERS);
-          aliceWotlasServer.shutdown();
+    /**
+     *  Shuts down the process.
+     */
+    public void shutdown() {
+        Log.userinfo("Shutting down AliceWOTLAS listener & server.", Log.LISTENERS);
+        this.aliceWotlasServer.shutdown();
 
-            for( int i=0; i<POOL_THREADS_NUMBER; i++ )
-                 fifoPool[i].shutdown();
-     }
+        for (int i = 0; i < AliceWOTLAS.POOL_THREADS_NUMBER; i++)
+            this.fifoPool[i].shutdown();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To get an answer to a message. This is the root method processes must call
-    *  to get an ALICE answer. We dispatch the request call on one of our FIFO threads
-    *  in a way to perform load balancing.
-    *
-    *  If all the threads have reached their MAX_POOL_THREAD_REQUEST the request will
-    *  be discarded and an empty answer message will be sent to the client. This way
-    *  we ensure a maximum level of CPU use on the host computer.
-    *
-    * @param playerPrimaryKey primaryKey of the client asking this message (userID)
-    * @param botPrimaryKey primaryKey of the wotlas bot target of this message
-    * @param message message to ask ALICE
-    * @param serverID original server identifier sending this request (will be used
-    *        to send back the answer)
-    * @return true if the request was processed, false if it wasn't.
-    */
-     public boolean getAnswer( String playerPrimaryKey, String botPrimaryKey, String message, int serverID ) {
+    /** To get an answer to a message. This is the root method processes must call
+     *  to get an ALICE answer. We dispatch the request call on one of our FIFO threads
+     *  in a way to perform load balancing.
+     *
+     *  If all the threads have reached their MAX_POOL_THREAD_REQUEST the request will
+     *  be discarded and an empty answer message will be sent to the client. This way
+     *  we ensure a maximum level of CPU use on the host computer.
+     *
+     * @param playerPrimaryKey primaryKey of the client asking this message (userID)
+     * @param botPrimaryKey primaryKey of the wotlas bot target of this message
+     * @param message message to ask ALICE
+     * @param serverID original server identifier sending this request (will be used
+     *        to send back the answer)
+     * @return true if the request was processed, false if it wasn't.
+     */
+    public boolean getAnswer(String playerPrimaryKey, String botPrimaryKey, String message, int serverID) {
 
         // 1 - Try to dispatch the request on one of our threads
         //     This is a simple load balancing algo
-           AliceRequest request = new AliceRequest( playerPrimaryKey, botPrimaryKey, message, serverID );
-           int endLoop = poolThreadIndex; // the thread index we begin with
-           boolean succeeded;
+        AliceRequest request = new AliceRequest(playerPrimaryKey, botPrimaryKey, message, serverID);
+        int endLoop = this.poolThreadIndex; // the thread index we begin with
+        boolean succeeded;
 
-           do{
-             succeeded = fifoPool[poolThreadIndex].addRequest( request );
-             poolThreadIndex = (poolThreadIndex+1)%fifoPool.length; // move to next thread in any case
+        do {
+            succeeded = this.fifoPool[this.poolThreadIndex].addRequest(request);
+            this.poolThreadIndex = (this.poolThreadIndex + 1) % this.fifoPool.length; // move to next thread in any case
 
-             if( succeeded )
-                 return true; // success, the thread will process the request
-                              // also next time we'll begin the loop with the next thread
-           }
-           while( poolThreadIndex!=endLoop );  // have we tried all the threads in the pool ?
+            if (succeeded)
+                return true; // success, the thread will process the request
+            // also next time we'll begin the loop with the next thread
+        } while (this.poolThreadIndex != endLoop); // have we tried all the threads in the pool ?
 
         // 2 - Failed ! All the threads are busy ! We ignore the request...
-           aliceWotlasServer.sendAnswer( playerPrimaryKey, botPrimaryKey,
-                           "sorry, I didn't hear, can you repeat please ?", serverID );
-           return false;
-     }
+        this.aliceWotlasServer.sendAnswer(playerPrimaryKey, botPrimaryKey, "sorry, I didn't hear, can you repeat please ?", serverID);
+        return false;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** A Thread that processes alice requests. Requests are stored in a FIFO.
-    *  The FIFO has a FIXED length so that the CPU use is strictly controlled.
-    */
-     class AliceRequestFIFO extends Thread {
+    /** A Thread that processes alice requests. Requests are stored in a FIFO.
+     *  The FIFO has a FIXED length so that the CPU use is strictly controlled.
+     */
+    class AliceRequestFIFO extends Thread {
 
-      /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-       /** Our Request FIFO. Note it has a fixed length.
-        */
-         private AliceRequest fifo[];
+        /** Our Request FIFO. Note it has a fixed length.
+         */
+        private AliceRequest fifo[];
 
-       /** Current end cursor of the fifo. Gives us the next index (in the fifo)
-        *  where we can insert a new incoming request.
-        */
-         private int end;
+        /** Current end cursor of the fifo. Gives us the next index (in the fifo)
+         *  where we can insert a new incoming request.
+         */
+        private int end;
 
-       /** To tell the thread to stop.
-        */
-         private boolean shutdown;
+        /** To tell the thread to stop.
+         */
+        private boolean shutdown;
 
-      /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-       /** Constructor with length of the fifo to use.
-        */
-     	public AliceRequestFIFO( int fifoLength ) {
-     	   fifo = new AliceRequest[fifoLength];
-     	   end=0;
-     	   shutdown=false;
-     	}
+        /** Constructor with length of the fifo to use.
+         */
+        public AliceRequestFIFO(int fifoLength) {
+            this.fifo = new AliceRequest[fifoLength];
+            this.end = 0;
+            this.shutdown = false;
+        }
 
-      /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-       
-       /** FIFO process
-        */
-     	public void run() {
+        /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-            int index=0;            // our current index in the FIFO
-            String answer = null;   // answer given by ALICE
-            boolean sleep;          // do we have to sleep ? or is there requests to process ?
+        /** FIFO process
+         */
+        @Override
+        public void run() {
 
-         // We process our requests
-            while(!shutdown) {
+            int index = 0; // our current index in the FIFO
+            String answer = null; // answer given by ALICE
+            boolean sleep; // do we have to sleep ? or is there requests to process ?
 
-               // 1 - Wait for something to come
-                  synchronized(this) {
-                     while( fifo[index]==null )
-                       try{
-                          this.wait();
-                       }catch( Exception e ) {}
-                  }
+            // We process our requests
+            while (!this.shutdown) {
 
-                  if(shutdown)
-                     return;
+                // 1 - Wait for something to come
+                synchronized (this) {
+                    while (this.fifo[index] == null)
+                        try {
+                            this.wait();
+                        } catch (Exception e) {
+                        }
+                }
 
-               // 2 - Process Available Requests...
-                  do{
+                if (this.shutdown)
+                    return;
+
+                // 2 - Process Available Requests...
+                do {
                     // 2.1 - Get the answer to the request from Alice
-                       try{
-                         answer = ActiveMultiplexor.getInstance().getResponse(
-                                fifo[index].message,
-                                fifo[index].playerPrimaryKey+":"+fifo[index].botPrimaryKey );
-                       }
-                       catch(Exception e) {
-                         answer=null;
-                         e.printStackTrace();
-                       }
+                    try {
+                        answer = ActiveMultiplexor.getInstance().getResponse(this.fifo[index].message, this.fifo[index].playerPrimaryKey + ":" + this.fifo[index].botPrimaryKey);
+                    } catch (Exception e) {
+                        answer = null;
+                        e.printStackTrace();
+                    }
 
                     // 2.2 - Send the answer back to the wotlas server                
-                       if(answer!=null)
-                          aliceWotlasServer.sendAnswer( fifo[index].playerPrimaryKey,
-                                                        fifo[index].botPrimaryKey,
-                                                        answer, fifo[index].serverID );
+                    if (answer != null)
+                        AliceWOTLAS.this.aliceWotlasServer.sendAnswer(this.fifo[index].playerPrimaryKey, this.fifo[index].botPrimaryKey, answer, this.fifo[index].serverID);
 
                     // 2.3 - Move to next request in our FIFO
-                       synchronized(this) {
-                          fifo[index] = null;
-                          index = (index+1)%fifo.length;
-                          sleep = (fifo[index]==null);
-                       }
-                  }
-                  while(!sleep); // we continue while not told to go to sleep
+                    synchronized (this) {
+                        this.fifo[index] = null;
+                        index = (index + 1) % this.fifo.length;
+                        sleep = (this.fifo[index] == null);
+                    }
+                } while (!sleep); // we continue while not told to go to sleep
             }
-     	}
-
-      /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-     	
-       /** Adds a request to this FIFO
-        * @return true if the request was accepted, false if our FIFO is full.
-        */
-        public synchronized boolean addRequest( AliceRequest request ) {
-           if(fifo[end]!=null)
-              return false; // our FIFO is full, we can't accept the request
-           
-           fifo[end] = request;
-           end = (end+1)%fifo.length;  //  move the end of the FIFO
-           this.notify();              // notification to the thread ! wake up !
-           return true;
         }
 
-      /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-       /** To shutdown this FIFO.
-        */
+        /** Adds a request to this FIFO
+         * @return true if the request was accepted, false if our FIFO is full.
+         */
+        public synchronized boolean addRequest(AliceRequest request) {
+            if (this.fifo[this.end] != null)
+                return false; // our FIFO is full, we can't accept the request
+
+            this.fifo[this.end] = request;
+            this.end = (this.end + 1) % this.fifo.length; //  move the end of the FIFO
+            this.notify(); // notification to the thread ! wake up !
+            return true;
+        }
+
+        /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+        /** To shutdown this FIFO.
+         */
         public synchronized void shutdown() {
-           shutdown=true;
-           this.notify();
+            this.shutdown = true;
+            this.notify();
         }
 
-      /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-     }
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** A request for alice... We use this class in a C data structure way.
-    */
-     class AliceRequest {
+    /** A request for alice... We use this class in a C data structure way.
+     */
+    class AliceRequest {
 
-      /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-       
-       /** Primary Key (userID) of the player asking this message
-        */
-          public String playerPrimaryKey;
+        /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-       /** Primary Key of the bot target of this message
-        */
-          public String botPrimaryKey;
-       
-       /** Message to send to ALICE
-        */
-          public String message;
+        /** Primary Key (userID) of the player asking this message
+         */
+        public String playerPrimaryKey;
 
-       /** Server ID of the server that asked for the request. We'll use this ID
-        *  to send back ALICE's answer.
-        */
-          public int serverID;
+        /** Primary Key of the bot target of this message
+         */
+        public String botPrimaryKey;
 
-      /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        /** Message to send to ALICE
+         */
+        public String message;
 
-       /** Constructor.
-        */
-          public AliceRequest( String playerPrimaryKey, String botPrimaryKey, String message, int serverID ) {
-              this.playerPrimaryKey = playerPrimaryKey;
-              this.botPrimaryKey = botPrimaryKey;
-              this.message = message;
-              this.serverID = serverID;
-     	  }
+        /** Server ID of the server that asked for the request. We'll use this ID
+         *  to send back ALICE's answer.
+         */
+        public int serverID;
 
-      /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-     }
+        /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        /** Constructor.
+         */
+        public AliceRequest(String playerPrimaryKey, String botPrimaryKey, String message, int serverID) {
+            this.playerPrimaryKey = playerPrimaryKey;
+            this.botPrimaryKey = botPrimaryKey;
+            this.message = message;
+            this.serverID = serverID;
+        }
+
+        /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

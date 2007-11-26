@@ -16,13 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.server.message.description;
 
-import java.io.IOException;
-
+import wotlas.common.message.description.AccountRecoverMessage;
+import wotlas.common.message.description.YourAccountDataMessage;
 import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.message.description.*;
 import wotlas.server.PlayerImpl;
 import wotlas.server.ServerDirector;
 
@@ -34,30 +33,29 @@ import wotlas.server.ServerDirector;
 
 public class AccountRecoverMsgBehaviour extends AccountRecoverMessage implements NetMessageBehaviour {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public AccountRecoverMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+     */
+    public AccountRecoverMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {
-      
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
+
         // The sessionContext is here a PlayerImpl.
-           PlayerImpl player = (PlayerImpl) sessionContext;
-           
+        PlayerImpl player = (PlayerImpl) sessionContext;
+
         // We send player's profile
-           player.sendMessage( new YourAccountDataMessage( primaryKey, player.getPlayerName(), ServerDirector.getServerID() ) );
-     }
+        player.sendMessage(new YourAccountDataMessage(this.primaryKey, player.getPlayerName(), ServerDirector.getServerID()));
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

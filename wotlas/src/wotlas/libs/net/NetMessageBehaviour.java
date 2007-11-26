@@ -16,9 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
-package wotlas.libs.net;
 
+package wotlas.libs.net;
 
 /** 
  * A NetMessageBehaviour contains the code associated to a NetMessage.
@@ -51,18 +50,17 @@ package wotlas.libs.net;
 
 public interface NetMessageBehaviour {
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Where you put the code associated to your NetMessage.
-   *  The sessionContext object given as an argument is the sessionObject you give to the
-   *  NetServer or NetClient when you start it (see their constructor).
-   *
-   * @param sessionContext an object giving specific access to other objects needed
-   *        to process this message.
-   */
-     public void doBehaviour( Object sessionContext );
+    /** Where you put the code associated to your NetMessage.
+     *  The sessionContext object given as an argument is the sessionObject you give to the
+     *  NetServer or NetClient when you start it (see their constructor).
+     *
+     * @param sessionContext an object giving specific access to other objects needed
+     *        to process this message.
+     */
+    public void doBehaviour(Object sessionContext);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

@@ -19,119 +19,126 @@
 
 package wotlas.client.screen;
 
+import java.awt.Dimension;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 import wotlas.utils.JMonitor;
-
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.awt.geom.Line2D;
-import java.awt.geom.Rectangle2D;
-import java.util.Date;
-import javax.swing.*;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.TitledBorder;
-
 
 /**
  * Tracks Memory allocated & used, displayed in graph form.
  */
 public class JMemory extends JPanel implements Runnable {
 
- /*------------------------------------------------------------------*/
+    /*------------------------------------------------------------------*/
 
-  private JMonitor surf;
-  
-  /** Time between 2 pings.
-   */
-  private long sleepAmount = 1000;
-  
-  /** Our thread.
-   */
-  private Thread thread;
-  
-  /** Our runtime.
-   */
-  private Runtime r = Runtime.getRuntime();
+    private JMonitor surf;
 
- /*------------------------------------------------------------------*/
- 
-  /** Constructor.
-   */
-  public JMemory() {
-    add(surf = new JMonitor(200, 200));        
-  }
-  
-  /** Start thread.
-   */
-  public void start() {
-    thread = new Thread(this);
-    thread.setPriority(Thread.MIN_PRIORITY);
-    thread.setName("MemoryMonitor");
-    thread.start();
-  }
-  
-  /** Stop thread.
-   */
-  public synchronized void stop() {
-    thread = null;
-    notify();
-  }
-  
-  /** Run thread.
-   */
-  public void run() {
-    Thread me = Thread.currentThread();
-       
-    while (thread == me && isPinging()) {
-      ping();
-      try {
-        thread.sleep(sleepAmount);
-      } catch (InterruptedException e) { break; }
+    /** Time between 2 pings.
+     */
+    private long sleepAmount = 1000;
+
+    /** Our thread.
+     */
+    private Thread thread;
+
+    /** Our runtime.
+     */
+    private Runtime r = Runtime.getRuntime();
+
+    /*------------------------------------------------------------------*/
+
+    /** Constructor.
+     */
+    public JMemory() {
+        add(this.surf = new JMonitor(200, 200));
     }
-    thread = null;
-  }
-  
-  /** True if the JPanel is shown.
-   */
-  private boolean isPinging() {
-    return true;
-  }
 
-  /** Ping.
-   */
-  private void ping() {
-    
-    float freeMemory = (float) r.freeMemory();
-    float totalMemory = (float) r.totalMemory();
-    
-    surf.monitorInfo = String.valueOf(((int) (totalMemory - freeMemory))/1024) + "K used";
-    
-    surf.setMonitorScale(totalMemory);
-    surf.setMonitorValue(freeMemory);
-    
-    //System.out.println("freeMemory = " + (freeMemory/1024) );
-    //System.out.println("totalMemory = " + (totalMemory/1024) );
-    
-  }
-  
-  /** Main.
-   */
+    /** Start thread.
+     */
+    public void start() {
+        this.thread = new Thread(this);
+        this.thread.setPriority(Thread.MIN_PRIORITY);
+        this.thread.setName("MemoryMonitor");
+        this.thread.start();
+    }
+
+    /** Stop thread.
+     */
+    public synchronized void stop() {
+        this.thread = null;
+        notify();
+    }
+
+    /** Run thread.
+     */
+    public void run() {
+        Thread me = Thread.currentThread();
+
+        while (this.thread == me && isPinging()) {
+            ping();
+            try {
+                Thread.sleep(this.sleepAmount);
+            } catch (InterruptedException e) {
+                break;
+            }
+        }
+        this.thread = null;
+    }
+
+    /** True if the JPanel is shown.
+     */
+    private boolean isPinging() {
+        return true;
+    }
+
+    /** Ping.
+     */
+    private void ping() {
+
+        float freeMemory = this.r.freeMemory();
+        float totalMemory = this.r.totalMemory();
+
+        this.surf.monitorInfo = String.valueOf(((int) (totalMemory - freeMemory)) / 1024) + "K used";
+
+        this.surf.setMonitorScale(totalMemory);
+        this.surf.setMonitorValue(freeMemory);
+
+        //System.out.println("freeMemory = " + (freeMemory/1024) );
+        //System.out.println("totalMemory = " + (totalMemory/1024) );
+
+    }
+
+    /** Main.
+     */
     public void init() {
-       final JMemory monitor = new JMemory();
-       
-       JFrame f = new JFrame("Memory monitor");
-       
+        final JMemory monitor = new JMemory();
+
+        JFrame f = new JFrame("Memory monitor");
+
         WindowListener l = new WindowAdapter() {
-            public void windowClosing(WindowEvent e) { monitor.stop(); }
-            public void windowDeiconified(WindowEvent e) { monitor.start(); }
-            public void windowIconified(WindowEvent e) { monitor.stop(); }
+            @Override
+            public void windowClosing(WindowEvent e) {
+                monitor.stop();
+            }
+
+            @Override
+            public void windowDeiconified(WindowEvent e) {
+                monitor.start();
+            }
+
+            @Override
+            public void windowIconified(WindowEvent e) {
+                monitor.stop();
+            }
         };
         f.addWindowListener(l);
-        
-        
+
         f.getContentPane().add("Center", monitor);
         f.pack();
-        f.setSize(new Dimension(200,200));
+        f.setSize(new Dimension(200, 200));
         f.setVisible(true);
         monitor.start();
 

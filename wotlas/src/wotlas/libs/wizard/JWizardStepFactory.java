@@ -22,7 +22,6 @@ package wotlas.libs.wizard;
 import java.io.FileInputStream;
 import java.util.Hashtable;
 
-
 /** A factory that builds, initializes and stores JWizardStep objects. It is used by
  *  the JWizard class.<br>
  *
@@ -34,140 +33,136 @@ import java.util.Hashtable;
 
 public class JWizardStepFactory {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Our JWizardStep Buffer where we store static JWizard steps.
-   *  The hashtable's key is the JWizardStep java class 'stringified'.
-   */
-   private Hashtable staticSteps;
+    /** Our JWizardStep Buffer where we store static JWizard steps.
+     *  The hashtable's key is the JWizardStep java class 'stringified'.
+     */
+    private Hashtable staticSteps;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-   public JWizardStepFactory() {
-   	staticSteps = new Hashtable(10);
-   }
+    /** Constructor.
+     */
+    public JWizardStepFactory() {
+        this.staticSteps = new Hashtable(10);
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To clear the factory's buffer.
-   */
-   public void clear() {
-   	staticSteps.clear();
-   }
+    /** To clear the factory's buffer.
+     */
+    public void clear() {
+        this.staticSteps.clear();
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To get an instance of a static JWizardStep. This is a simple & fast method to get a
-   *  JWizardStep that only contains well-defined data fields. If you need to get
-   *  a JWizardStep that contains dynamic data use the other getJWizardStep method.<br>
-   *
-   *  IMPORTANT : because we don't use any JWizardStepParameters class here, it's your
-   *  own job to set all the parameters : title, properties, isLastStep, etc... and
-   *  it's mandatory ! The JWizardStep returned could contain previous unwanted data.<br>
-   *
-   *  ADVICE : only use this method to build simple wizards. Prefer the other available
-   *  getJWizardStep() method.
-   *
-   *  @param stepClass JWizardStep class to get an instance from.
-   *  @return the wanted JWizardStep instance, null if we failed to retrieve/build it.
-   */
-   public JWizardStep getJWizardStep(String stepClass) {
+    /** To get an instance of a static JWizardStep. This is a simple & fast method to get a
+     *  JWizardStep that only contains well-defined data fields. If you need to get
+     *  a JWizardStep that contains dynamic data use the other getJWizardStep method.<br>
+     *
+     *  IMPORTANT : because we don't use any JWizardStepParameters class here, it's your
+     *  own job to set all the parameters : title, properties, isLastStep, etc... and
+     *  it's mandatory ! The JWizardStep returned could contain previous unwanted data.<br>
+     *
+     *  ADVICE : only use this method to build simple wizards. Prefer the other available
+     *  getJWizardStep() method.
+     *
+     *  @param stepClass JWizardStep class to get an instance from.
+     *  @return the wanted JWizardStep instance, null if we failed to retrieve/build it.
+     */
+    public JWizardStep getJWizardStep(String stepClass) {
 
-     // Class already in our buffer ?
-        if( staticSteps.containsKey(stepClass) )
-            return (JWizardStep) staticSteps.get(stepClass);
-     
-     // We create, store and return a new instance
-        try{
+        // Class already in our buffer ?
+        if (this.staticSteps.containsKey(stepClass))
+            return (JWizardStep) this.staticSteps.get(stepClass);
+
+        // We create, store and return a new instance
+        try {
             Class myStepClass = Class.forName(stepClass);
 
             JWizardStep step = (JWizardStep) myStepClass.newInstance();
-            step.init( new JWizardStepParameters(stepClass, " ") );
+            step.init(new JWizardStepParameters(stepClass, " "));
 
-            staticSteps.put( stepClass, step );
+            this.staticSteps.put(stepClass, step);
             return step;
-        }
-        catch(Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
             return null;
         }
-   }
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To get an instance of a JWizardStep according to its parameters. The returned
-   *  JWizardStep is fully initialized.
-   *
-   *  @param parameters contains all the needed parameters to initialize/build the wanted
-   *         instance.
-   *  @return the wanted JWizardStep instance, null if we failed to retrieve/build it.
-   */
-   public JWizardStep getJWizardStep( JWizardStepParameters parameters ) {
+    /** To get an instance of a JWizardStep according to its parameters. The returned
+     *  JWizardStep is fully initialized.
+     *
+     *  @param parameters contains all the needed parameters to initialize/build the wanted
+     *         instance.
+     *  @return the wanted JWizardStep instance, null if we failed to retrieve/build it.
+     */
+    public JWizardStep getJWizardStep(JWizardStepParameters parameters) {
 
-     // Class already in our buffer ?
-        if( !parameters.getIsDynamic() && staticSteps.containsKey(parameters.getStepClass()) ) {
-            JWizardStep step = (JWizardStep) staticSteps.get(parameters.getStepClass());
+        // Class already in our buffer ?
+        if (!parameters.getIsDynamic() && this.staticSteps.containsKey(parameters.getStepClass())) {
+            JWizardStep step = (JWizardStep) this.staticSteps.get(parameters.getStepClass());
 
-            try{
-               step.init( parameters );
-               return step;
-            }
-            catch(Exception ex) {
-               ex.printStackTrace();
-               return null;
+            try {
+                step.init(parameters);
+                return step;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                return null;
             }
         }
-     
-     // We create, eventually store and return a new instance
-        try{
+
+        // We create, eventually store and return a new instance
+        try {
             Class myStepClass = Class.forName(parameters.getStepClass());
 
             JWizardStep step = (JWizardStep) myStepClass.newInstance();
-            step.init( parameters );
+            step.init(parameters);
 
-            if( !parameters.getIsDynamic() )
-                staticSteps.put( parameters.getStepClass(), step );
+            if (!parameters.getIsDynamic())
+                this.staticSteps.put(parameters.getStepClass(), step);
 
             return step;
-        }
-        catch(Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
             return null;
         }
-   }
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To get an instance of a JWizardStep according to its parameters. The parameters
-   *  are taken from a file which is given as parameter. We load the file using the
-   *  JWizardStepParameters.loadFromFile() method. We then try to create the JWizardStep
-   *  using these parameters. The returned JWizardStep is fully initialized.
-   *
-   *  @param parametersFile the JWizardStepParameters file to load.
-   *  @return the wanted JWizardStep instance, null if we failed to retrieve/build it.
-   */
-   public JWizardStep getJWizardStepFromFile( String parametersFile ) {
+    /** To get an instance of a JWizardStep according to its parameters. The parameters
+     *  are taken from a file which is given as parameter. We load the file using the
+     *  JWizardStepParameters.loadFromFile() method. We then try to create the JWizardStep
+     *  using these parameters. The returned JWizardStep is fully initialized.
+     *
+     *  @param parametersFile the JWizardStepParameters file to load.
+     *  @return the wanted JWizardStep instance, null if we failed to retrieve/build it.
+     */
+    public JWizardStep getJWizardStepFromFile(String parametersFile) {
 
-       FileInputStream fis = null;
+        FileInputStream fis = null;
 
-       try{
-         fis = new FileInputStream(parametersFile);
-       }
-       catch( Exception e ) {
-       	 e.printStackTrace();
-       	 return null;
-       }
+        try {
+            fis = new FileInputStream(parametersFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
 
-       JWizardStepParameters parameters = JWizardStepParameters.loadFromStream( fis );
+        JWizardStepParameters parameters = JWizardStepParameters.loadFromStream(fis);
 
-       if(parameters==null)
-          return null; // load failed
+        if (parameters == null)
+            return null; // load failed
 
-       return getJWizardStep(parameters);
-   }
+        return getJWizardStep(parameters);
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
 }

@@ -18,7 +18,7 @@
  */
 package wotlas.common.objects;
 
-import wotlas.common.objects.inventories.*;
+import wotlas.common.objects.inventories.Inventory;
 
 /** 
  * This is the base interface for both ObjectManagers.
@@ -27,27 +27,24 @@ import wotlas.common.objects.inventories.*;
  * @see wotlas.client.ClientObjectManager 
  * @see wotlas.server.ServerObjectManager
  */
-public interface ObjectManager
-{
+public interface ObjectManager {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /* ------- Getters / Setters --------- */
-	
-  /** Get the Inventory object owned by the Manager.
-  	  @return the Inventory
-   */
+    /* ------- Getters / Setters --------- */
+
+    /** Get the Inventory object owned by the Manager.
+    	  @return the Inventory
+     */
     public Inventory getInventory();
 
-  /** Set the Inventory of the Manager.
-  	  @param inventory the new Inventory
-   */
+    /** Set the Inventory of the Manager.
+    	  @param inventory the new Inventory
+     */
     public void setInventory(Inventory inventory);
-	
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

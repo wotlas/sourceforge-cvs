@@ -17,10 +17,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-
 package wotlas.libs.net.utils;
 
-import wotlas.libs.net.*;
+import wotlas.libs.net.NetMessageBehaviour;
 
 /** 
  * A simple queue of NetMessageBehaviour for synchronous calls.
@@ -29,75 +28,75 @@ import wotlas.libs.net.*;
  * @author aldiss
  */
 
-public class NetQueue
-{
-  /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+public class NetQueue {
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   // Our table of NetMessageBehaviour
-      private NetMessageBehaviour table[];
+    // Our table of NetMessageBehaviour
+    private NetMessageBehaviour table[];
 
-   // Nb of entries in our table of objects
-      private int nbEntries;
-      
-   // default size
-      private int defaultSize;
+    // Nb of entries in our table of objects
+    private int nbEntries;
 
-   // grow factor
-      private int growthFactor;
+    // default size
+    private int defaultSize;
 
- /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    // grow factor
+    private int growthFactor;
 
-   /** Constructor with default size and growth factor.
-    *
-    * @param defaultSize default size of queue
-    * @param growthFactor number we add to the queue's size when resizing.
-    */
-      public NetQueue( int defaultSize, int growthFactor ) {
-         this.defaultSize = defaultSize;
-         this.growthFactor = growthFactor;
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-         table = new NetMessageBehaviour[defaultSize];
-         nbEntries = 0;
-      }
+    /** Constructor with default size and growth factor.
+     *
+     * @param defaultSize default size of queue
+     * @param growthFactor number we add to the queue's size when resizing.
+     */
+    public NetQueue(int defaultSize, int growthFactor) {
+        this.defaultSize = defaultSize;
+        this.growthFactor = growthFactor;
 
- /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        this.table = new NetMessageBehaviour[defaultSize];
+        this.nbEntries = 0;
+    }
 
-   /** To queue a message.
-    *
-    * @param msg message to add
-    */
-      public synchronized void queueMessage( NetMessageBehaviour msg ) {
-         // re-allocation ?
-            if( table.length<=nbEntries ) {
-                NetMessageBehaviour tableSwap[] = new NetMessageBehaviour[nbEntries+growthFactor];
-                System.arraycopy( table, 0, tableSwap, 0, nbEntries );
-                table = tableSwap;
-            }
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-           table[nbEntries] = msg;
-           nbEntries++;
-     }
+    /** To queue a message.
+     *
+     * @param msg message to add
+     */
+    public synchronized void queueMessage(NetMessageBehaviour msg) {
+        // re-allocation ?
+        if (this.table.length <= this.nbEntries) {
+            NetMessageBehaviour tableSwap[] = new NetMessageBehaviour[this.nbEntries + this.growthFactor];
+            System.arraycopy(this.table, 0, tableSwap, 0, this.nbEntries);
+            this.table = tableSwap;
+        }
 
- /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        this.table[this.nbEntries] = msg;
+        this.nbEntries++;
+    }
 
-   /** To retrieve all the messages from the queue and get a table that has the same
-    *  size as the number of entries.
-    *
-    * @return message table (if it's empty, pullMessages().length = 0 )
-    */
-     public synchronized NetMessageBehaviour[] pullMessages() {
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-           if(nbEntries==0) return new NetMessageBehaviour[0];
+    /** To retrieve all the messages from the queue and get a table that has the same
+     *  size as the number of entries.
+     *
+     * @return message table (if it's empty, pullMessages().length = 0 )
+     */
+    public synchronized NetMessageBehaviour[] pullMessages() {
+
+        if (this.nbEntries == 0)
+            return new NetMessageBehaviour[0];
 
         // we swap the tables :
-           NetMessageBehaviour tableSwap[] = new NetMessageBehaviour[nbEntries];
-           System.arraycopy( table, 0, tableSwap, 0, nbEntries );
- 
-           table =new NetMessageBehaviour[defaultSize];
-           nbEntries = 0;
-           return tableSwap;
-     }
+        NetMessageBehaviour tableSwap[] = new NetMessageBehaviour[this.nbEntries];
+        System.arraycopy(this.table, 0, tableSwap, 0, this.nbEntries);
 
- /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        this.table = new NetMessageBehaviour[this.defaultSize];
+        this.nbEntries = 0;
+        return tableSwap;
+    }
+
+    /*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

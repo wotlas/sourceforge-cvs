@@ -16,12 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.objects.interfaces;
 
 //import wotlas.common.Knowledge;
-import wotlas.common.objects.valueds.Material;
 import wotlas.common.Player;
+import wotlas.common.objects.valueds.Material;
 
 /** 
  * The base interface for all repairable objects.
@@ -30,52 +30,48 @@ import wotlas.common.Player;
  * @see wotlas.common.objects.BaseObject
  */
 
-public interface RepairInterface
-{
+public interface RepairInterface {
 
-	  public static final String[] stateList={"Newly-made","Good state","Used","Worned out","Broken"}; 
-	  		  // that's just place-holder stuff, OK ?
-			  // may be a file or a static list
-			  // but better if in a file => internationalization 
+    public static final String[] stateList = { "Newly-made", "Good state", "Used", "Worned out", "Broken" };
 
- /*------------------------------------------------------------------------------------*/
+    // that's just place-holder stuff, OK ?
+    // may be a file or a static list
+    // but better if in a file => internationalization 
 
-  /** Returns the state of the object - string version
-    * @return a state string
-    */
-	public String getStateString();	
-	
-  /** Get the object's state
-   * @return state
-   */ 				
-   	public short getState();
-	
-  /** Sets the object's state
-   * @param state the new state
-   */ 				
-   	public void setState(short state);
+    /*------------------------------------------------------------------------------------*/
 
-  /** Get the knowledge needed to repair.
-   * @return knowledge needed
-   */ 																		
-    public String[]/*Knowledge[] */ getRepairKnowledge();
-	
-  /** Get the materials needed to repair.<br>
-   * Get this from the repairer.
-   * @return material list
-   * @param repairer the Player that repairs the object. May be the owner or not.
-   */
+    /** Returns the state of the object - string version
+      * @return a state string
+      */
+    public String getStateString();
+
+    /** Get the object's state
+     * @return state
+     */
+    public short getState();
+
+    /** Sets the object's state
+     * @param state the new state
+     */
+    public void setState(short state);
+
+    /** Get the knowledge needed to repair.
+     * @return knowledge needed
+     */
+    public String[]/*Knowledge[] */getRepairKnowledge();
+
+    /** Get the materials needed to repair.<br>
+     * Get this from the repairer.
+     * @return material list
+     * @param repairer the Player that repairs the object. May be the owner or not.
+     */
     public Material[] getRepairMaterial(Player repairer);
-	 
- 
-  /** Repair the object.
-   * @param repairer the Player that repairs the object. May be the owner or not.
-   */
+
+    /** Repair the object.
+     * @param repairer the Player that repairs the object. May be the owner or not.
+     */
     public void repair(Player repairer);
-	
-	 
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

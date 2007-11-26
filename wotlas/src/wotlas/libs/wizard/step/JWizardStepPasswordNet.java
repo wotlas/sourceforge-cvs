@@ -19,15 +19,12 @@
 
 package wotlas.libs.wizard.step;
 
-import wotlas.common.message.account.*;
+import javax.swing.JOptionPane;
+import wotlas.common.message.account.AccountStepMessage;
+import wotlas.common.message.account.PreviousStepMessage;
 import wotlas.libs.net.NetConnection;
-import wotlas.libs.wizard.*;
-import wotlas.libs.aswing.*;
-
-import java.awt.*;
-import java.awt.event.*;
-
-import javax.swing.*;
+import wotlas.libs.wizard.JWizard;
+import wotlas.libs.wizard.JWizardStepParameters;
 
 /** A step of a wizard with a AtextArea (info), ALabel, ATextField,
  *  ALabel, APasswordTextField, ALabel, APasswordTextField <br>
@@ -50,58 +47,61 @@ import javax.swing.*;
 
 public class JWizardStepPasswordNet extends JWizardStepPassword {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Called each time the step is shown on screen.
-   */
-   protected void onShow(Object context, JWizard wizard) {
-   }
-
-  /** Called when the "Next" button is clicked.
-   *  Use the wizard's setNextStep() method to set the next step to be displayed.
-   *  @return return true to validate the "Next" button action, false to cancel it...
-   */
-   protected boolean onNext(Object context, JWizard wizard) {
-    if( !super.onNext(context, wizard) )
-        return false;
-    
-    JWizardStepParameters parameters = new JWizardStepParameters();
-    //parameters.setStepClass(this.getClass().getName());
-    
-    parameters.setProperty("data.login", getLogin());
-    parameters.setProperty("data.password", getPassword());
-    
-    NetConnection connection = (NetConnection) context;
-
-    if( !connection.isConnected() ) {
-       JOptionPane.showMessageDialog( null, "The account server seems to have shutdown !\nPlease cancel & restart this wizard later...", "Connection Closed", JOptionPane.ERROR_MESSAGE);
-       return false;
+    /** Called each time the step is shown on screen.
+     */
+    @Override
+    protected void onShow(Object context, JWizard wizard) {
     }
 
-    connection.queueMessage(new AccountStepMessage(parameters)); 
-    await();
-    
-    return true;
-   }
+    /** Called when the "Next" button is clicked.
+     *  Use the wizard's setNextStep() method to set the next step to be displayed.
+     *  @return return true to validate the "Next" button action, false to cancel it...
+     */
+    @Override
+    protected boolean onNext(Object context, JWizard wizard) {
+        if (!super.onNext(context, wizard))
+            return false;
 
-  /** Called when Previous button is clicked.
-   *  Use the wizard's setNextStep() method to set the next step to be displayed.
-   *  @return return true to validate the "Previous" button action, false to cancel it...
-   */
-   protected boolean onPrevious(Object context, JWizard wizard) {
-    NetConnection connection = (NetConnection) context;
+        JWizardStepParameters parameters = new JWizardStepParameters();
+        //parameters.setStepClass(this.getClass().getName());
 
-    if( !connection.isConnected() ) {
-       JOptionPane.showMessageDialog( null, "The account server seems to have shutdown !\nPlease cancel & restart this wizard later...", "Connection Closed", JOptionPane.ERROR_MESSAGE);
-       return false;
+        parameters.setProperty("data.login", getLogin());
+        parameters.setProperty("data.password", getPassword());
+
+        NetConnection connection = (NetConnection) context;
+
+        if (!connection.isConnected()) {
+            JOptionPane.showMessageDialog(null, "The account server seems to have shutdown !\nPlease cancel & restart this wizard later...", "Connection Closed", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        connection.queueMessage(new AccountStepMessage(parameters));
+        await();
+
+        return true;
     }
 
-    connection.queueMessage(new PreviousStepMessage());
-    await();
-    
-    return true;
-   }
+    /** Called when Previous button is clicked.
+     *  Use the wizard's setNextStep() method to set the next step to be displayed.
+     *  @return return true to validate the "Previous" button action, false to cancel it...
+     */
+    @Override
+    protected boolean onPrevious(Object context, JWizard wizard) {
+        NetConnection connection = (NetConnection) context;
 
- /*------------------------------------------------------------------------------------*/
+        if (!connection.isConnected()) {
+            JOptionPane.showMessageDialog(null, "The account server seems to have shutdown !\nPlease cancel & restart this wizard later...", "Connection Closed", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        connection.queueMessage(new PreviousStepMessage());
+        await();
+
+        return true;
+    }
+
+    /*------------------------------------------------------------------------------------*/
 
 }

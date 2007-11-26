@@ -19,21 +19,11 @@
 
 package wotlas.client.message.description;
 
-import wotlas.client.*;
 import wotlas.client.DataManager;
-import wotlas.client.screen.*;
 import wotlas.client.screen.plugin.LiePlugIn;
-
-import wotlas.common.message.description.*;
-
+import wotlas.common.message.description.SetFakeNameMessage;
 import wotlas.libs.net.NetMessageBehaviour;
-
 import wotlas.utils.Debug;
-
-import java.awt.*;
-
-import java.io.IOException;
-
 
 /**
  * Associated behaviour to the SetFakeNameMessage...
@@ -43,34 +33,34 @@ import java.io.IOException;
 
 public class SetFakeNameMsgBehaviour extends SetFakeNameMessage implements NetMessageBehaviour {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-  public SetFakeNameMsgBehaviour() {
-    super();
-  }
+    /** Constructor.
+     */
+    public SetFakeNameMsgBehaviour() {
+        super();
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-   public void doBehaviour( Object sessionContext ) {
-       DataManager dataManager = (DataManager) sessionContext;
-    
-    // Update of the panel
-       LiePlugIn liePanel = (LiePlugIn) dataManager.getClientScreen().getPlayerPanel().getPlugIn("Lie");
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
+        DataManager dataManager = (DataManager) sessionContext;
 
-       if(liePanel==null) {
-       	  Debug.signal(Debug.ERROR,this,"LiePlugIn not found !");
-       	  return;
-       }
+        // Update of the panel
+        LiePlugIn liePanel = (LiePlugIn) dataManager.getClientScreen().getPlayerPanel().getPlugIn("Lie");
 
-       liePanel.setFakeName(index, fakeName);
-   }
+        if (liePanel == null) {
+            Debug.signal(Debug.ERROR, this, "LiePlugIn not found !");
+            return;
+        }
 
- /*------------------------------------------------------------------------------------*/
+        liePanel.setFakeName(this.index, this.fakeName);
+    }
+
+    /*------------------------------------------------------------------------------------*/
 }

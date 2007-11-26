@@ -19,21 +19,13 @@
 
 package wotlas.client.message.description;
 
-import java.io.IOException;
-import java.util.*;
-import java.awt.*;
-
-import wotlas.utils.Debug;
-
-import wotlas.libs.sound.*;
-import wotlas.libs.net.NetMessageBehaviour;
-
-import wotlas.common.message.description.*;
-import wotlas.common.universe.*;
+import wotlas.client.DataManager;
 import wotlas.common.Player;
 import wotlas.common.PlayerState;
-
-import wotlas.client.*;
+import wotlas.common.message.description.PlayerConnectedToGameMessage;
+import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.libs.sound.SoundLibrary;
+import wotlas.utils.Debug;
 
 /**
  * Associated behaviour to the PlayerConnectedToGameMessage...
@@ -41,53 +33,51 @@ import wotlas.client.*;
  * @author Aldiss
  */
 
-public class PlayerConnectedToGameMsgBehaviour extends PlayerConnectedToGameMessage implements NetMessageBehaviour
-{
- /*------------------------------------------------------------------------------------*/
+public class PlayerConnectedToGameMsgBehaviour extends PlayerConnectedToGameMessage implements NetMessageBehaviour {
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public PlayerConnectedToGameMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+     */
+    public PlayerConnectedToGameMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
 
         // The sessionContext is here a DataManager
-           DataManager dataManager = (DataManager) sessionContext;
-           Player searchedPlayer = (Player) dataManager.getPlayers().get(primaryKey);
+        DataManager dataManager = (DataManager) sessionContext;
+        Player searchedPlayer = (Player) dataManager.getPlayers().get(this.primaryKey);
 
         // 1 - Control
-           if( searchedPlayer==null ) {
-               Debug.signal( Debug.WARNING, this, "Player not found :"+primaryKey );
-               return;
-           }
+        if (searchedPlayer == null) {
+            Debug.signal(Debug.WARNING, this, "Player not found :" + this.primaryKey);
+            return;
+        }
 
         // 2 - Update of the player
-           searchedPlayer.setIsConnectedToGame( isConnectedToGame );
-           if (isConnectedToGame) {
-             searchedPlayer.getPlayerState().value = PlayerState.CONNECTED;
-           } else {
-             searchedPlayer.getPlayerState().value = PlayerState.DISCONNECTED;
-           }
-        
-        // 3 - Update the Chat players list about searchedPlayer's state
-           dataManager.getClientScreen().getChatPanel().updateAllChatRooms(searchedPlayer);
-      	 
-           if(isConnectedToGame)
-              SoundLibrary.getSoundPlayer().playSound("gong.wav");
-           else
-              SoundLibrary.getSoundPlayer().playSound("man-yawn.wav");
-     }
+        searchedPlayer.setIsConnectedToGame(this.isConnectedToGame);
+        if (this.isConnectedToGame) {
+            searchedPlayer.getPlayerState().value = PlayerState.CONNECTED;
+        } else {
+            searchedPlayer.getPlayerState().value = PlayerState.DISCONNECTED;
+        }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        // 3 - Update the Chat players list about searchedPlayer's state
+        dataManager.getClientScreen().getChatPanel().updateAllChatRooms(searchedPlayer);
+
+        if (this.isConnectedToGame)
+            SoundLibrary.getSoundPlayer().playSound("gong.wav");
+        else
+            SoundLibrary.getSoundPlayer().playSound("man-yawn.wav");
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

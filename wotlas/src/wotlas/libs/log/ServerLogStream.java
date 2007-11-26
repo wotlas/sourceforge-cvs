@@ -19,7 +19,7 @@
 
 package wotlas.libs.log;
 
-import java.io.*;
+import java.io.FileNotFoundException;
 
 /** A Server Log Stream prints messages to a log file every two minutes and also prints
  *  messages on the standard err output.
@@ -28,30 +28,30 @@ import java.io.*;
  * @see wotlas.libs.log.LogStream
  */
 
-public class ServerLogStream extends LogStream
-{
- /*------------------------------------------------------------------------------------*/
+public class ServerLogStream extends LogStream {
+    /*------------------------------------------------------------------------------------*/
 
-   /** Constructor with file name. The log is saved to disk every 2 minutes.
-    *
-    * @param logFileName log file to create or use if already existing.
-    * @exception FileNotFoundException if we cannot use or create the given log file.
-    */
-     public ServerLogStream( String logFileName ) throws FileNotFoundException {
-          super( logFileName, false, 120*1000 );
-     }
-
- /*------------------------------------------------------------------------------------*/
-
-  /** Method called each time text is added to the stream.
-   *  Useful if you want to display the log somewhere else.
-   *
-   * @param x text just printed to log.
-   */
-    protected void printedText( final String x ) {
-    	System.err.println( x );
+    /** Constructor with file name. The log is saved to disk every 2 minutes.
+     *
+     * @param logFileName log file to create or use if already existing.
+     * @exception FileNotFoundException if we cannot use or create the given log file.
+     */
+    public ServerLogStream(String logFileName) throws FileNotFoundException {
+        super(logFileName, false, 120 * 1000);
     }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
+
+    /** Method called each time text is added to the stream.
+     *  Useful if you want to display the log somewhere else.
+     *
+     * @param x text just printed to log.
+     */
+    @Override
+    protected void printedText(final String x) {
+        System.err.println(x);
+    }
+
+    /*------------------------------------------------------------------------------------*/
 
 }

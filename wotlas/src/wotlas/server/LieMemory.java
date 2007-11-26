@@ -19,111 +19,109 @@
 
 package wotlas.server;
 
-
 /** Wotlas Lie Memory
  * remembers player's meets
  *
  * @author Petrus
  */
-public class LieMemory
-{
+public class LieMemory {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
     /** key of the player we meet
      */
     public String otherPlayerKey;
-    
+
     /** fake name of other player
      */
     public short otherPlayerFakeNameIndex;
-    
+
     /** Number of times we meet a player
      */
     public int meetsNumber;
-    
+
     /** Last time we meet a player
      */
     public long lastMeetTime;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
     /** To get lastMeetTime
      */
     public long getLastMeetTime() {
-      return lastMeetTime;
+        return this.lastMeetTime;
     }
-    
+
     /** To set lastMeetTime
      */
     public void setLastMeetTime(long lastMeetTime) {
-      this.lastMeetTime = lastMeetTime;
+        this.lastMeetTime = lastMeetTime;
     }
-    
+
     /** To get meetsNumber
      */
     public int getMeetsNumber() {
-      return meetsNumber;
-    }  
-    
+        return this.meetsNumber;
+    }
+
     /** To set meetsNumber
      */
     public void setMeetsNumber(int meetsNumber) {
-      this.meetsNumber = meetsNumber;
+        this.meetsNumber = meetsNumber;
     }
-    
+
     /** To get otherPlayerKey
      */
     public String getOtherPlayerKey() {
-      return otherPlayerKey;
+        return this.otherPlayerKey;
     }
-    
+
     /** To set otherPlayerKey
      */
     public void setOtherPlayerKey(String otherPlayerKey) {
-      this.otherPlayerKey = otherPlayerKey;
-    }  
-    
+        this.otherPlayerKey = otherPlayerKey;
+    }
+
     /** To get otherPlayerFakeNameIndex
      */
     public short getOtherPlayerFakeNameIndex() {
-      return otherPlayerFakeNameIndex;
+        return this.otherPlayerFakeNameIndex;
     }
-    
+
     /** To set otherPlayerFakeNameIndex
      */
     public void setOtherPlayerFakeNameIndex(short otherPlayerFakeNameIndex) {
-      this.otherPlayerFakeNameIndex = otherPlayerFakeNameIndex;
+        this.otherPlayerFakeNameIndex = otherPlayerFakeNameIndex;
     }
-    
+
     /** Empty constructor for persistence
      */
     public LieMemory() {
-      ;
+        ;
     }
-    
+
     /** Constructor
      */
     public LieMemory(String otherPlayerKey, short otherPlayerFakeNameIndex, int meetType) {
-      this.otherPlayerKey = otherPlayerKey;
-      this.otherPlayerFakeNameIndex = otherPlayerFakeNameIndex;
-      this.meetsNumber = meetType;
-      this.lastMeetTime = System.currentTimeMillis();
+        this.otherPlayerKey = otherPlayerKey;
+        this.otherPlayerFakeNameIndex = otherPlayerFakeNameIndex;
+        this.meetsNumber = meetType;
+        this.lastMeetTime = System.currentTimeMillis();
     }
-    
-     /** Constructor
-     */
+
+    /** Constructor
+    */
     public LieMemory(String otherPlayerKey, short otherPlayerFakeNameIndex, int meetType, long lastMeetTime) {
-      this.otherPlayerKey = otherPlayerKey;
-      this.otherPlayerFakeNameIndex = otherPlayerFakeNameIndex;
-      this.meetsNumber = meetType;
-      this.lastMeetTime = lastMeetTime;
+        this.otherPlayerKey = otherPlayerKey;
+        this.otherPlayerFakeNameIndex = otherPlayerFakeNameIndex;
+        this.meetsNumber = meetType;
+        this.lastMeetTime = lastMeetTime;
     }
-    
+
     /** Constructor
      */
     public LieMemory(String otherPlayerKey, short otherPlayerFakeNameIndex) {
-      this(otherPlayerKey, otherPlayerFakeNameIndex, LieManager.MEET_SIMPLE);
+        this(otherPlayerKey, otherPlayerFakeNameIndex, LieManager.MEET_SIMPLE);
     }
-    
+
 }

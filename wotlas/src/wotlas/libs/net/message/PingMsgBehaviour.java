@@ -16,11 +16,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.libs.net.message;
 
 import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.libs.net.NetClient;
 
 /** 
  * Associated behaviour to the PingMessage...
@@ -29,27 +28,25 @@ import wotlas.libs.net.NetClient;
  * @see wotlas.libs.net.message.PingMessage
  */
 
-public class PingMsgBehaviour extends PingMessage implements NetMessageBehaviour
-{
- /*------------------------------------------------------------------------------------*/
+public class PingMsgBehaviour extends PingMessage implements NetMessageBehaviour {
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public PingMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+     */
+    public PingMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to the ServerErrorMessage... 
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {
+    /** Associated code to the ServerErrorMessage... 
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
         // none
-     }
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

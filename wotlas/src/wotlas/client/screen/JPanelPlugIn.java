@@ -33,65 +33,66 @@ import javax.swing.JPanel;
 
 public abstract class JPanelPlugIn extends JPanel {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Constructor
-    */
-      protected JPanelPlugIn() {
-      	   super();
-      }
+    /** Constructor
+     */
+    protected JPanelPlugIn() {
+        super();
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Called once to initialize the plug-in.
-    *
-    *  @return if true we display the plug-in, return false if something fails during
-    *          this init(), this way the plug-in won't be displayed.
-    */
-      abstract public boolean init();
+    /** Called once to initialize the plug-in.
+     *
+     *  @return if true we display the plug-in, return false if something fails during
+     *          this init(), this way the plug-in won't be displayed.
+     */
+    abstract public boolean init();
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Called when we need to reset the content of this plug-in.
-    */
-      abstract public void reset();
+    /** Called when we need to reset the content of this plug-in.
+     */
+    abstract public void reset();
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Returns the name of the plug-in that will be displayed in the JPlayerPanel.
-    * @return a short name for the plug-in
-    */
-      abstract public String getPlugInName();
+    /** Returns the name of the plug-in that will be displayed in the JPlayerPanel.
+     * @return a short name for the plug-in
+     */
+    abstract public String getPlugInName();
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Returns the name of the plug-in's author.
-    * @return author name.
-    */
-      abstract public String getPlugInAuthor();
+    /** Returns the name of the plug-in's author.
+     * @return author name.
+     */
+    abstract public String getPlugInAuthor();
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Returns the tool tip text that will be displayed in the JPlayerPanel.
-    * @return a short tool tip text
-    */
-      abstract public String getToolTipText();
+    /** Returns the tool tip text that will be displayed in the JPlayerPanel.
+     * @return a short tool tip text
+     */
+    @Override
+    abstract public String getToolTipText();
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Eventual index in the list of JPlayerPanels
-    * @return -1 if the plug-in has to be added at the end of the plug-in list,
-    *         otherwise a positive integer for a precise location.
-    */
-      abstract public int getPlugInIndex();
+    /** Eventual index in the list of JPlayerPanels
+     * @return -1 if the plug-in has to be added at the end of the plug-in list,
+     *         otherwise a positive integer for a precise location.
+     */
+    abstract public int getPlugInIndex();
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-   /** Tells if this plug-in is a system plug-in that represents some base
-    *  wotlas feature.
-    * @return true means system plug-in, false means user plug-in
-    */
-      abstract public boolean isSystemPlugIn();
+    /** Tells if this plug-in is a system plug-in that represents some base
+     *  wotlas feature.
+     * @return true means system plug-in, false means user plug-in
+     */
+    abstract public boolean isSystemPlugIn();
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 }

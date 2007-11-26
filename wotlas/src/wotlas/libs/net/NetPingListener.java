@@ -19,7 +19,6 @@
 
 package wotlas.libs.net;
 
-
 /** 
  * A NetPingListener listens to network ping information. Use the NetConnection methods
  * to register to this listener.
@@ -30,26 +29,25 @@ package wotlas.libs.net;
 
 public interface NetPingListener {
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To tell that the network connection is no longer available
-   */
-     public final static int PING_CONNECTION_CLOSED = -2;
+    /** To tell that the network connection is no longer available
+     */
+    public final static int PING_CONNECTION_CLOSED = -2;
 
-  /** To tell that the last ping failed.
-   */
-     public final static int PING_FAILED = -1;
+    /** To tell that the last ping failed.
+     */
+    public final static int PING_FAILED = -1;
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** This method is called when some ping information is available.
-   *
-   * @param ping if >=0 it's a valid ping value, if == PING_FAILED it means the
-   *        last ping failed, if == PING_CONNECTION_CLOSED it means the connection
-   *        has been closed.
-   */
-     public void pingComputed( int ping );
+    /** This method is called when some ping information is available.
+     *
+     * @param ping if >=0 it's a valid ping value, if == PING_FAILED it means the
+     *        last ping failed, if == PING_CONNECTION_CLOSED it means the connection
+     *        has been closed.
+     */
+    public void pingComputed(int ping);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

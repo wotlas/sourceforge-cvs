@@ -19,19 +19,11 @@
 
 package wotlas.server.message.description;
 
-import java.io.IOException;
-import java.util.*;
-
-import wotlas.utils.*;
-
-import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.message.description.*;
-import wotlas.common.universe.*;
-import wotlas.common.chat.*;
+import wotlas.common.message.description.PlayerPastMessage;
 import wotlas.common.router.MessageRouter;
-import wotlas.common.Player;
+import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.server.PlayerImpl;
-import wotlas.common.message.description.*;
+import wotlas.utils.Debug;
 
 /**
  * Associated behaviour to the PlayerPastMessage...
@@ -41,59 +33,58 @@ import wotlas.common.message.description.*;
 
 public class PlayerPastMsgBehaviour extends PlayerPastMessage implements NetMessageBehaviour {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public PlayerPastMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+     */
+    public PlayerPastMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
 
         // The sessionContext is here a PlayerImpl.
-           PlayerImpl player = (PlayerImpl) sessionContext;
+        PlayerImpl player = (PlayerImpl) sessionContext;
 
         // is our player the dest of this message
-           if( primaryKey.equals(player.getPrimaryKey()) ) {
-             // do we have to save the past for our player
-              if( player.getPlayerPast()==null || player.getPlayerPast().length()==0 )
-                  player.setPlayerPast( playerPast ); // we save the past...
+        if (this.primaryKey.equals(player.getPrimaryKey())) {
+            // do we have to save the past for our player
+            if (player.getPlayerPast() == null || player.getPlayerPast().length() == 0)
+                player.setPlayerPast(this.playerPast); // we save the past...
 
-              return;
-           }
+            return;
+        }
 
+        // no, it's another player we want...
+        if (!player.getLocation().isRoom()) {
+            Debug.signal(Debug.ERROR, this, "Location is not a room ! " + player.getLocation());
+            return;
+        }
 
-       // no, it's another player we want...
-           if( !player.getLocation().isRoom() ) {
-               Debug.signal( Debug.ERROR, this, "Location is not a room ! "+player.getLocation() );
-               return;
-           }
+        // we search for the player via our MessageRouter
+        MessageRouter mRouter = player.getMessageRouter();
+        if (mRouter == null)
+            return;
 
-       // we search for the player via our MessageRouter
-          MessageRouter mRouter = player.getMessageRouter();
-          if(mRouter==null) return;
+        PlayerImpl searchedPlayer = (PlayerImpl) mRouter.getPlayer(this.primaryKey);
 
-          PlayerImpl searchedPlayer = (PlayerImpl) mRouter.getPlayer( primaryKey );
+        if (searchedPlayer != null) {
+            String playerPast = searchedPlayer.getPlayerPast();
+            playerPast += "\n\nEncounter info: " + searchedPlayer.getLieManager().getLastMeetPlayer(player);
+            player.sendMessage(new PlayerPastMessage(this.primaryKey, playerPast));
+            return;
+        }
 
-            if( searchedPlayer!=null ) {
-                 String playerPast = searchedPlayer.getPlayerPast();
-                 playerPast += "\n\nEncounter info: "+searchedPlayer.getLieManager().getLastMeetPlayer(player);
-                 player.sendMessage( new PlayerPastMessage( primaryKey, playerPast ) );
-                 return;
-            }
+        Debug.signal(Debug.WARNING, this, "Could not find player : " + this.primaryKey);
+    }
 
-          Debug.signal( Debug.WARNING, this, "Could not find player : "+primaryKey );
-     }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

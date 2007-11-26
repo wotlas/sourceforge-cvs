@@ -19,17 +19,13 @@
 
 package wotlas.common.objects.inventories;
 
+import java.io.File;
 import wotlas.client.ClientDirector;
-
-import wotlas.common.character.*;
 import wotlas.common.ResourceManager;
-
+import wotlas.common.character.WotCharacter;
 import wotlas.libs.graphics2D.ImageIdentifier;
-
 import wotlas.utils.Debug;
 import wotlas.utils.ScreenRectangle;
-
-import java.io.*;
 
 /** An Inventory Layout to postion the inventory slots
  *
@@ -38,158 +34,167 @@ import java.io.*;
 
 public class InventoryLayout {
 
-  private ScreenRectangle bagSlot;
-  private ScreenRectangle beltSlot;
-  private ScreenRectangle bodySlot;
-  private ScreenRectangle bookSlot;
-  private ScreenRectangle feetSlot;
-  private ScreenRectangle headSlot;
-  private ScreenRectangle leftBootSlot;
-  private ScreenRectangle leftHandSlot;
-  private ScreenRectangle purseSlot;
-  private ScreenRectangle rightBootSlot;
-  private ScreenRectangle rightHandSlot;
-  private ScreenRectangle sleeveSlot;
-  
-  private ImageIdentifier backgroundId;
+    private ScreenRectangle bagSlot;
+    private ScreenRectangle beltSlot;
+    private ScreenRectangle bodySlot;
+    private ScreenRectangle bookSlot;
+    private ScreenRectangle feetSlot;
+    private ScreenRectangle headSlot;
+    private ScreenRectangle leftBootSlot;
+    private ScreenRectangle leftHandSlot;
+    private ScreenRectangle purseSlot;
+    private ScreenRectangle rightBootSlot;
+    private ScreenRectangle rightHandSlot;
+    private ScreenRectangle sleeveSlot;
 
-  /** Empty Constructor for persitence.
-   * Data is loaded by the PersistenceManager.
-   */
-  public InventoryLayout() {  
-  }
-  
-  public ScreenRectangle getBagSlot() {
-    return bagSlot;
-  }
-  public void setBagSlot(ScreenRectangle rect) {
-    bagSlot = rect;
-  }
-  
-  public ScreenRectangle getBeltSlot() {
-    return beltSlot;
-  }
-  public void setBeltSlot(ScreenRectangle rect) {
-    beltSlot = rect;
-  }
-  
-  public ScreenRectangle getBodySlot() {
-    return bodySlot;
-  }
-  public void setBodySlot(ScreenRectangle rect) {
-    bodySlot = rect;
-  }
-    
-  public ScreenRectangle getBookSlot() {
-    return bookSlot;
-  }
-  public void setBookSlot(ScreenRectangle rect) {
-    bookSlot = rect;
-  }
-  
-  public ScreenRectangle getFeetSlot() {
-    return feetSlot;
-  }
-  public void setFeetSlot(ScreenRectangle rect) {
-    feetSlot = rect;
-  }
-  
-  public ScreenRectangle getHeadSlot() {
-    return headSlot;
-  }
-  public void setHeadSlot(ScreenRectangle rect) {
-    headSlot = rect;
-  }  
-  
-  public ScreenRectangle getLeftBootSlot() {
-    return leftBootSlot;
-  }
-  public void setLeftBootSlot(ScreenRectangle rect) {
-    leftBootSlot = rect;
-  }
-  
-  public ScreenRectangle getLeftHandSlot() {
-    return leftHandSlot;
-  }
-  public void setLeftHandSlot(ScreenRectangle rect) {
-    leftHandSlot = rect;
-  }
-  
-  public ScreenRectangle getPurseSlot() {
-    return purseSlot;
-  }
-  public void setPurseSlot(ScreenRectangle rect) {
-    purseSlot = rect;
-  }
-     
-  public ScreenRectangle getRightBootSlot() {
-    return rightBootSlot;
-  }
-  public void setRightBootSlot(ScreenRectangle rect) {
-    rightBootSlot = rect;
-  }
-  
-  public ScreenRectangle getRightHandSlot() {
-    return rightHandSlot;
-  }
-  public void setRightHandSlot(ScreenRectangle rect) {
-    rightHandSlot = rect;
-  }
-  
-  public ScreenRectangle getSleeveSlot() {
-    return sleeveSlot;
-  }
-  public void setSleeveSlot(ScreenRectangle rect) {
-    sleeveSlot = rect;
-  }  
-  
-  public ImageIdentifier getBackgroundId() {
-    return backgroundId;
-  }
-  
-  public void setBackgroundId(ImageIdentifier imId) {
-    backgroundId = imId;
-  }
+    private ImageIdentifier backgroundId;
 
- /*------------------------------------------------------------------------------------*/ 
+    /** Empty Constructor for persitence.
+     * Data is loaded by the PersistenceManager.
+     */
+    public InventoryLayout() {
+    }
 
-  /** To save this client configuration.
-   */
-     public boolean save(WotCharacter character) {
-     	ResourceManager rManager = ClientDirector.getResourceManager();
-     	
-        if( !rManager.saveObject(this, rManager.getLayoutsDir()+character.getClass().getName() ) ) {
-            Debug.signal( Debug.ERROR, null, "Failed to save WotCharacter Layout.");
+    public ScreenRectangle getBagSlot() {
+        return this.bagSlot;
+    }
+
+    public void setBagSlot(ScreenRectangle rect) {
+        this.bagSlot = rect;
+    }
+
+    public ScreenRectangle getBeltSlot() {
+        return this.beltSlot;
+    }
+
+    public void setBeltSlot(ScreenRectangle rect) {
+        this.beltSlot = rect;
+    }
+
+    public ScreenRectangle getBodySlot() {
+        return this.bodySlot;
+    }
+
+    public void setBodySlot(ScreenRectangle rect) {
+        this.bodySlot = rect;
+    }
+
+    public ScreenRectangle getBookSlot() {
+        return this.bookSlot;
+    }
+
+    public void setBookSlot(ScreenRectangle rect) {
+        this.bookSlot = rect;
+    }
+
+    public ScreenRectangle getFeetSlot() {
+        return this.feetSlot;
+    }
+
+    public void setFeetSlot(ScreenRectangle rect) {
+        this.feetSlot = rect;
+    }
+
+    public ScreenRectangle getHeadSlot() {
+        return this.headSlot;
+    }
+
+    public void setHeadSlot(ScreenRectangle rect) {
+        this.headSlot = rect;
+    }
+
+    public ScreenRectangle getLeftBootSlot() {
+        return this.leftBootSlot;
+    }
+
+    public void setLeftBootSlot(ScreenRectangle rect) {
+        this.leftBootSlot = rect;
+    }
+
+    public ScreenRectangle getLeftHandSlot() {
+        return this.leftHandSlot;
+    }
+
+    public void setLeftHandSlot(ScreenRectangle rect) {
+        this.leftHandSlot = rect;
+    }
+
+    public ScreenRectangle getPurseSlot() {
+        return this.purseSlot;
+    }
+
+    public void setPurseSlot(ScreenRectangle rect) {
+        this.purseSlot = rect;
+    }
+
+    public ScreenRectangle getRightBootSlot() {
+        return this.rightBootSlot;
+    }
+
+    public void setRightBootSlot(ScreenRectangle rect) {
+        this.rightBootSlot = rect;
+    }
+
+    public ScreenRectangle getRightHandSlot() {
+        return this.rightHandSlot;
+    }
+
+    public void setRightHandSlot(ScreenRectangle rect) {
+        this.rightHandSlot = rect;
+    }
+
+    public ScreenRectangle getSleeveSlot() {
+        return this.sleeveSlot;
+    }
+
+    public void setSleeveSlot(ScreenRectangle rect) {
+        this.sleeveSlot = rect;
+    }
+
+    public ImageIdentifier getBackgroundId() {
+        return this.backgroundId;
+    }
+
+    public void setBackgroundId(ImageIdentifier imId) {
+        this.backgroundId = imId;
+    }
+
+    /*------------------------------------------------------------------------------------*/
+
+    /** To save this client configuration.
+     */
+    public boolean save(WotCharacter character) {
+        ResourceManager rManager = ClientDirector.getResourceManager();
+
+        if (!rManager.saveObject(this, rManager.getLayoutsDir() + character.getClass().getName())) {
+            Debug.signal(Debug.ERROR, null, "Failed to save WotCharacter Layout.");
             return false;
         }
-        
+
         return true;
-     }
+    }
 
- /*------------------------------------------------------------------------------------*/ 
+    /*------------------------------------------------------------------------------------*/
 
-  /** To load the default client configuration.
-   */
-     public static InventoryLayout load(WotCharacter character) {
-     	ResourceManager rManager = ClientDirector.getResourceManager();
-        String fileName = rManager.getLayoutsDir()+character.getClass().getName();
+    /** To load the default client configuration.
+     */
+    public static InventoryLayout load(WotCharacter character) {
+        ResourceManager rManager = ClientDirector.getResourceManager();
+        String fileName = rManager.getLayoutsDir() + character.getClass().getName();
         InventoryLayout cfg = null;
 
-         if( new File(fileName).exists() ) {
+        if (new File(fileName).exists()) {
             cfg = (InventoryLayout) rManager.loadObject(fileName);
-         }
-         
-         if(cfg==null) {
-            Debug.signal( Debug.ERROR, null, "Failed to load WotCharacter Layout. Creating a new one." );
+        }
+
+        if (cfg == null) {
+            Debug.signal(Debug.ERROR, null, "Failed to load WotCharacter Layout. Creating a new one.");
             return new InventoryLayout();
-         }
-         
-         
+        }
 
-         return cfg;
+        return cfg;
     }
-  
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

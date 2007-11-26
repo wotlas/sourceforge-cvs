@@ -16,18 +16,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.objects.weapons;
 
+import wotlas.common.Player;
+import wotlas.common.objects.BaseObject;
 import wotlas.common.objects.interfaces.HeavyWeaponInterface;
 import wotlas.common.objects.interfaces.RepairInterface;
 import wotlas.common.objects.interfaces.TransportableInterface;
-
-import wotlas.common.objects.valueds.ValuedObject;
-import wotlas.common.Player;
 import wotlas.common.objects.valueds.Material;
-import wotlas.common.objects.BaseObject;
-
+import wotlas.common.objects.valueds.ValuedObject;
 
 /** 
  * The heavy weapon class. All the weapons within this class cannot be hidden in the clothes.
@@ -39,170 +37,163 @@ import wotlas.common.objects.BaseObject;
  * @see wotlas.common.objects.interfaces.TransportableInterface 
  */
 
-public class HeavyWeapon extends Weapon implements HeavyWeaponInterface, RepairInterface, TransportableInterface
-{
+public class HeavyWeapon extends Weapon implements HeavyWeaponInterface, RepairInterface, TransportableInterface {
 
- /** The weapon visibility status
-  */
-  private boolean sheathed;
+    /** The weapon visibility status
+     */
+    private boolean sheathed;
 
- /** The current state of the weapon. Goes from newly-made to broken.
-   */
-   	  protected short state;  
+    /** The current state of the weapon. Goes from newly-made to broken.
+      */
+    protected short state;
 
- /** The knowledges needed to repair this.
-   */
-	  protected String[] /* Knowledge[] */ repairKnowledge;	  	  
-	  
- /*------------------------------------------------------------------------------------*/
+    /** The knowledges needed to repair this.
+      */
+    protected String[] /* Knowledge[] */repairKnowledge;
 
- /** Default constructor
-  */ 
-   public HeavyWeapon()
-   {
-   	super();
-	
-	this.className="HeavyWeapon";
-	this.objectName="default heavy weapon";
-   }
- 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Sheathes the weapon. The weapon can no longer be used without being unsheathed first but it'll escape casual look. 
-   */
-    public void sheathe()
-	{
-	 this.sheathed=true;
-	}
+    /** Default constructor
+     */
+    public HeavyWeapon() {
+        super();
 
-  /** Unsheathes the weapon. The weapon is ready to strike. It is plainly visible.
-   */
-    public void unsheathe()
-	{
-	 this.sheathed=false;
-	}
+        this.className = "HeavyWeapon";
+        this.objectName = "default heavy weapon";
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Puts on the weapon to enable attack.<br>
-   * Take at least one hand. 
-   */
-    public void equip()
-	{
-	 equipped=true;
-	 unsheathe();
-	}
-	
-  /** Attacks the specified target.
-   *
-   * @param target the Player attacked
-   * @return 0 because the damage is not instantly inflicted.
-   */
-    public short attack(Player target)
-	{
-	 short damage=0;
-	 /* no op */
-	 return damage;
-	}
+    /** Sheathes the weapon. The weapon can no longer be used without being unsheathed first but it'll escape casual look. 
+     */
+    public void sheathe() {
+        this.sheathed = true;
+    }
 
-  /** Alternative attack on the specified target.
-   * 
-   * @param target the Player attacked
-   * @return the damage inflicted
-   */
-    public short alternativeAttack(Player target)
-	{
-	 short damage=0;
-	 /* no op */
-	 return damage;
-	}
+    /** Unsheathes the weapon. The weapon is ready to strike. It is plainly visible.
+     */
+    public void unsheathe() {
+        this.sheathed = false;
+    }
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Repair the weapon.
-   * @param repairer the Player that repairs the object. May be the owner or not.
-   */
-    public void repair(Player repairer)
-	{
-	 /* no op */
-	}
+    /** Puts on the weapon to enable attack.<br>
+     * Take at least one hand. 
+     */
+    @Override
+    public void equip() {
+        this.equipped = true;
+        unsheathe();
+    }
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
-   /** Gets rid of the object. The object is dropped on the ground.
-   */
-    public void discard()
-	{
-	 /* no op */
-	}
+    /** Attacks the specified target.
+     *
+     * @param target the Player attacked
+     * @return 0 because the damage is not instantly inflicted.
+     */
+    @Override
+    public short attack(Player target) {
+        short damage = 0;
+        /* no op */
+        return damage;
+    }
 
-  /** Sells the object to somebody.
-  	  @param buyer The Player who buy the object. 
-  	  @return the prize paid.
-   */
-    public ValuedObject sellTo(Player buyer)
-	{
-	 /* no op */
-	 return new ValuedObject();
-	}
+    /** Alternative attack on the specified target.
+     * 
+     * @param target the Player attacked
+     * @return the damage inflicted
+     */
+    @Override
+    public short alternativeAttack(Player target) {
+        short damage = 0;
+        /* no op */
+        return damage;
+    }
 
-  /** Gives the object to somebody.
-  	  @param receiver The Player who receive the object.
-   */
-    public void giveTo(Player receiver)
-	{
-	 /* no op */
-	}
-	
-  /** Trade the object to somebody.<br>
-    * Here the transaction is already accepted.
-  	* @param buyer The Player who buy the object. 
-  	* @return the object given by the other player.
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Repair the weapon.
+     * @param repairer the Player that repairs the object. May be the owner or not.
+     */
+    public void repair(Player repairer) {
+        /* no op */
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Gets rid of the object. The object is dropped on the ground.
     */
-    public BaseObject tradeTo(Player buyer)
-	{
-	 /* no op */
-	 return new BaseObject();
-	}
-	
+    public void discard() {
+        /* no op */
+    }
 
- /* ----------------- Getters/Setters ----------------- */	
- 
-  /** Returns the state of the weapon - string version
-    * @return a state string
-    */
-	public String getStateString() { return stateList[this.state]; } // should check for size violation
+    /** Sells the object to somebody.
+    	  @param buyer The Player who buy the object. 
+    	  @return the prize paid.
+     */
+    public ValuedObject sellTo(Player buyer) {
+        /* no op */
+        return new ValuedObject();
+    }
 
-  /** Gets the state of the weapon - int version
-    * @return state
-    */
-	public short getState() {  return state; }
-	
-	
-  /** Sets the state of the weapon - int version
-    * @param state the state value
-    */
-	public void setState(short state) { this.state=state; }
+    /** Gives the object to somebody.
+    	  @param receiver The Player who receive the object.
+     */
+    public void giveTo(Player receiver) {
+        /* no op */
+    }
 
-	
-  /** Get the knowledge needed to repair.
-   * @return knowledge needed
-   */ 																		
-    public String[]/*Knowledge[] */ getRepairKnowledge() { return repairKnowledge; }
-	
-  /** Get the materials needed to repair.<br>
-   * Get this from the repairer.
-   * @return material list
-   * @param repairer the Player that repairs the object. May be the owner or not.
-   */
-    public Material[] getRepairMaterial(Player repairer) 
-	{  
-	   /* asks the repairer what he needs */
-	   return new Material[1];	   
-	}
- 
-	
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** Trade the object to somebody.<br>
+      * Here the transaction is already accepted.
+    	* @param buyer The Player who buy the object. 
+    	* @return the object given by the other player.
+      */
+    public BaseObject tradeTo(Player buyer) {
+        /* no op */
+        return new BaseObject();
+    }
+
+    /* ----------------- Getters/Setters ----------------- */
+
+    /** Returns the state of the weapon - string version
+      * @return a state string
+      */
+    public String getStateString() {
+        return RepairInterface.stateList[this.state];
+    } // should check for size violation
+
+    /** Gets the state of the weapon - int version
+      * @return state
+      */
+    public short getState() {
+        return this.state;
+    }
+
+    /** Sets the state of the weapon - int version
+      * @param state the state value
+      */
+    public void setState(short state) {
+        this.state = state;
+    }
+
+    /** Get the knowledge needed to repair.
+     * @return knowledge needed
+     */
+    public String[]/*Knowledge[] */getRepairKnowledge() {
+        return this.repairKnowledge;
+    }
+
+    /** Get the materials needed to repair.<br>
+     * Get this from the repairer.
+     * @return material list
+     * @param repairer the Player that repairs the object. May be the owner or not.
+     */
+    public Material[] getRepairMaterial(Player repairer) {
+        /* asks the repairer what he needs */
+        return new Material[1];
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

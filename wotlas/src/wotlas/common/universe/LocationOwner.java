@@ -16,28 +16,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.universe;
 
-import wotlas.common.Player;
-
-
- /** Represents an object that has a location in the world.
-  *
-  * @author Aldiss
-  * @see wotlas.common.universe.WorldMap
-  * @see wotlas.common.universe.PreciseLocationOwner
-  */
+/** Represents an object that has a location in the world.
+ *
+ * @author Aldiss
+ * @see wotlas.common.universe.WorldMap
+ * @see wotlas.common.universe.PreciseLocationOwner
+ */
 
 public interface LocationOwner {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** To get the wotlas location associated to this Map.
-   *  @return associated Wotlas Location
-   */
+    /** To get the wotlas location associated to this Map.
+     *  @return associated Wotlas Location
+     */
     public WotlasLocation getLocation();
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
 }

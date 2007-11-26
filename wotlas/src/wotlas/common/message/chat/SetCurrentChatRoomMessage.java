@@ -19,13 +19,12 @@
 
 package wotlas.common.message.chat;
 
-import wotlas.common.*;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.*;
-
+import java.util.Hashtable;
+import java.util.Iterator;
+import wotlas.common.Player;
 import wotlas.libs.net.NetMessage;
 
 /** 
@@ -34,107 +33,107 @@ import wotlas.libs.net.NetMessage;
  * @author Petrus, Aldiss
  */
 
-public class SetCurrentChatRoomMessage extends NetMessage
-{
- 
- /*------------------------------------------------------------------------------------*/
- 
-  /** Id of the ChatRoom
-   */
-  protected String chatRoomPrimaryKey;
-  
-  /** ChatRoom Players primaryKey
-   */
-  protected String playersPrimaryKey[];
+public class SetCurrentChatRoomMessage extends NetMessage {
 
-  /** ChatRoom Players full player name
-   */
-  protected String fullPlayerNames[];
+    /*------------------------------------------------------------------------------------*/
 
+    /** Id of the ChatRoom
+     */
+    protected String chatRoomPrimaryKey;
 
- /*------------------------------------------------------------------------------------*/
+    /** ChatRoom Players primaryKey
+     */
+    protected String playersPrimaryKey[];
 
-  /** Constructor. Just initializes the message category and type.
-   */
-  public SetCurrentChatRoomMessage() {
-       super();
-  }
+    /** ChatRoom Players full player name
+     */
+    protected String fullPlayerNames[];
 
- /*------------------------------------------------------------------------------------*/
-  
-  /** Constructor with parameters.
-   */
-  public SetCurrentChatRoomMessage( String chatRoomPrimaryKey, Hashtable players ) {
-    super();
-    this.chatRoomPrimaryKey = chatRoomPrimaryKey;
+    /*------------------------------------------------------------------------------------*/
 
-     if(players==null){
-        playersPrimaryKey = new String[0];
-        fullPlayerNames = new String[0];
-        return;
-     }
+    /** Constructor. Just initializes the message category and type.
+     */
+    public SetCurrentChatRoomMessage() {
+        super();
+    }
 
-     synchronized( players ) {
-        Iterator it = players.values().iterator();
-        int i=0;
+    /*------------------------------------------------------------------------------------*/
 
-        playersPrimaryKey = new String[players.size()];
-        fullPlayerNames = new String[players.size()];
-        
-        while( it.hasNext() ) {
-               Player p = (Player) it.next();
-               playersPrimaryKey[i] = p.getPrimaryKey();
-               fullPlayerNames[i] = p.getPlayerName();
-               i++;
+    /** Constructor with parameters.
+     */
+    public SetCurrentChatRoomMessage(String chatRoomPrimaryKey, Hashtable players) {
+        super();
+        this.chatRoomPrimaryKey = chatRoomPrimaryKey;
+
+        if (players == null) {
+            this.playersPrimaryKey = new String[0];
+            this.fullPlayerNames = new String[0];
+            return;
         }
-     }
-  }
-  
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** This is where we put your message data on the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param ostream data stream where to put your data (see java.io.DataOutputStream)
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-  public void encode( DataOutputStream ostream ) throws IOException {
-    ostream.writeUTF( chatRoomPrimaryKey );
+        synchronized (players) {
+            Iterator it = players.values().iterator();
+            int i = 0;
 
-    ostream.writeInt( playersPrimaryKey.length );    
+            this.playersPrimaryKey = new String[players.size()];
+            this.fullPlayerNames = new String[players.size()];
 
-    for( int i=0; i<playersPrimaryKey.length; i++ )
-         ostream.writeUTF( playersPrimaryKey[i] );
+            while (it.hasNext()) {
+                Player p = (Player) it.next();
+                this.playersPrimaryKey[i] = p.getPrimaryKey();
+                this.fullPlayerNames[i] = p.getPlayerName();
+                i++;
+            }
+        }
+    }
 
-    ostream.writeInt( fullPlayerNames.length );
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-    for( int i=0; i<fullPlayerNames.length; i++ )
-         ostream.writeUTF( fullPlayerNames[i] );
-  }
+    /** This is where we put your message data on the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param ostream data stream where to put your data (see java.io.DataOutputStream)
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    @Override
+    public void encode(DataOutputStream ostream) throws IOException {
+        ostream.writeUTF(this.chatRoomPrimaryKey);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        ostream.writeInt(this.playersPrimaryKey.length);
 
-  /** This is where we retrieve our message data from the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-  public void decode( DataInputStream istream ) throws IOException {
+        for (int i = 0; i < this.playersPrimaryKey.length; i++)
+            ostream.writeUTF(this.playersPrimaryKey[i]);
 
-    chatRoomPrimaryKey = istream.readUTF();
+        ostream.writeInt(this.fullPlayerNames.length);
 
-    playersPrimaryKey = new String[ istream.readInt() ];
+        for (int i = 0; i < this.fullPlayerNames.length; i++)
+            ostream.writeUTF(this.fullPlayerNames[i]);
+    }
 
-    for( int i=0; i<playersPrimaryKey.length; i++ )
-       playersPrimaryKey[i] = istream.readUTF();
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-    fullPlayerNames = new String[ istream.readInt() ];
+    /** This is where we retrieve our message data from the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    @Override
+    public void decode(DataInputStream istream) throws IOException {
 
-    for( int i=0; i<fullPlayerNames.length; i++ )
-       fullPlayerNames[i] = istream.readUTF();
-  }
+        this.chatRoomPrimaryKey = istream.readUTF();
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
+        this.playersPrimaryKey = new String[istream.readInt()];
+
+        for (int i = 0; i < this.playersPrimaryKey.length; i++)
+            this.playersPrimaryKey[i] = istream.readUTF();
+
+        this.fullPlayerNames = new String[istream.readInt()];
+
+        for (int i = 0; i < this.fullPlayerNames.length; i++)
+            this.fullPlayerNames[i] = istream.readUTF();
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }

@@ -19,10 +19,12 @@
 
 package wotlas.client.message.movement;
 
-import java.io.IOException;
-
-import wotlas.client.*;
-import wotlas.common.message.movement.*;
+import wotlas.client.ClientDirector;
+import wotlas.client.DataManager;
+import wotlas.client.PlayerImpl;
+import wotlas.client.ProfileConfig;
+import wotlas.client.ProfileConfigList;
+import wotlas.common.message.movement.RedirectConnectionMessage;
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.utils.Debug;
 
@@ -33,64 +35,61 @@ import wotlas.utils.Debug;
  * @see wotlas.client.DataManager
  */
 
-public class RedirectConnectionMsgBehaviour extends RedirectConnectionMessage implements NetMessageBehaviour
-{
- /*------------------------------------------------------------------------------------*/
+public class RedirectConnectionMsgBehaviour extends RedirectConnectionMessage implements NetMessageBehaviour {
+    /*------------------------------------------------------------------------------------*/
 
-   /** To tell if this message is to be invoked later or not.
-    */
-     private boolean invokeLater = true;
+    /** To tell if this message is to be invoked later or not.
+     */
+    private boolean invokeLater = true;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-  public RedirectConnectionMsgBehaviour() {
-    super();
-  }
+    /** Constructor.
+     */
+    public RedirectConnectionMsgBehaviour() {
+        super();
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-  public void doBehaviour( Object sessionContext ) {
-      DataManager dataManager = (DataManager) sessionContext;
-      PlayerImpl myPlayer = dataManager.getMyPlayer();
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
+        DataManager dataManager = (DataManager) sessionContext;
+        PlayerImpl myPlayer = dataManager.getMyPlayer();
 
-       if( invokeLater ) {
-       	   if(primaryKey==null || !primaryKey.equals(myPlayer.getPrimaryKey()) ) {
-       	   	Debug.signal(Debug.ERROR, this, "RECEIVED BAD REQUEST FOR CONNECTION !!!");
-       	   	return;
-       	   }
+        if (this.invokeLater) {
+            if (this.primaryKey == null || !this.primaryKey.equals(myPlayer.getPrimaryKey())) {
+                Debug.signal(Debug.ERROR, this, "RECEIVED BAD REQUEST FOR CONNECTION !!!");
+                return;
+            }
 
-           invokeLater = false;
-           dataManager.invokeLater( this );
-           return;
-       }
+            this.invokeLater = false;
+            dataManager.invokeLater(this);
+            return;
+        }
 
-   // 1 - Freeze player
-      Debug.signal( Debug.WARNING, this, "Connection Redirection : moving to another server !" );
-      myPlayer.getMovementComposer().resetMovement();
-      myPlayer = null;
+        // 1 - Freeze player
+        Debug.signal(Debug.WARNING, this, "Connection Redirection : moving to another server !");
+        myPlayer.getMovementComposer().resetMovement();
+        myPlayer = null;
 
-   // 2 - We update our current client profile
-      ProfileConfig currentProfile = dataManager.getCurrentProfileConfig();
-      currentProfile.setServerID(remoteServerID);
+        // 2 - We update our current client profile
+        ProfileConfig currentProfile = dataManager.getCurrentProfileConfig();
+        currentProfile.setServerID(this.remoteServerID);
 
-      ProfileConfigList profileConfigList = ClientDirector.getClientManager().getProfileConfigList();
-      profileConfigList.save();
+        ProfileConfigList profileConfigList = ClientDirector.getClientManager().getProfileConfigList();
+        profileConfigList.save();
 
-      
-   // 3 - Close current connection & wait reconnection to the new server
-      ClientDirector.getClientManager().setAutomaticLogin(true);
-      dataManager.closeConnection();
-      Debug.signal(Debug.NOTICE, this, "Connection redirection succeeded...");
-  }
+        // 3 - Close current connection & wait reconnection to the new server
+        ClientDirector.getClientManager().setAutomaticLogin(true);
+        dataManager.closeConnection();
+        Debug.signal(Debug.NOTICE, this, "Connection redirection succeeded...");
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
 }
-

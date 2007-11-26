@@ -16,15 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.message.description;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
 import wotlas.libs.net.NetMessage;
-
 
 /** 
  * The GameServer sends to client his profile informations (Message Sent by Server).s
@@ -32,73 +30,73 @@ import wotlas.libs.net.NetMessage;
  * @author Petrus
  */
 
-public class YourAccountDataMessage extends NetMessage
-{
- /*------------------------------------------------------------------------------------*/
+public class YourAccountDataMessage extends NetMessage {
+    /*------------------------------------------------------------------------------------*/
 
-   // client key;
-      protected String key;
-   
-   // client name;
-      protected String playerName;
-   
-   // server ID;
-      protected int serverID;
+    // client key;
+    protected String key;
 
- /*------------------------------------------------------------------------------------*/
+    // client name;
+    protected String playerName;
 
-  /** Constructor. Just initializes the message category and type.
-   */
-     public YourAccountDataMessage() {
-          super();
-     }
+    // server ID;
+    protected int serverID;
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor with IDs.
-   *
-   * @param key player primary key
-   * @param playerName player name
-   * @param serverID server ID who created the client account
-   * @param 
-   */
-     public YourAccountDataMessage(String key, String playerName, int serverID) {
-         super();
-         this.key = key;
-         this.playerName = playerName;
-         this.serverID = serverID;
-     }
+    /** Constructor. Just initializes the message category and type.
+     */
+    public YourAccountDataMessage() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** This is where we put your message data on the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param ostream data stream where to put your data (see java.io.DataOutputStream)
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-     public void encode( DataOutputStream ostream ) throws IOException {
-            ostream.writeUTF(key);
-            ostream.writeUTF(playerName);
-            ostream.writeInt(serverID);
-            
-     }
+    /** Constructor with IDs.
+     *
+     * @param key player primary key
+     * @param playerName player name
+     * @param serverID server ID who created the client account
+     * @param 
+     */
+    public YourAccountDataMessage(String key, String playerName, int serverID) {
+        super();
+        this.key = key;
+        this.playerName = playerName;
+        this.serverID = serverID;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** This is where we retrieve our message data from the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-     public void decode( DataInputStream istream ) throws IOException {
-            key = istream.readUTF();
-            playerName = istream.readUTF();
-            serverID = istream.readInt();
-     }
+    /** This is where we put your message data on the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param ostream data stream where to put your data (see java.io.DataOutputStream)
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    @Override
+    public void encode(DataOutputStream ostream) throws IOException {
+        ostream.writeUTF(this.key);
+        ostream.writeUTF(this.playerName);
+        ostream.writeInt(this.serverID);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** This is where we retrieve our message data from the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    @Override
+    public void decode(DataInputStream istream) throws IOException {
+        this.key = istream.readUTF();
+        this.playerName = istream.readUTF();
+        this.serverID = istream.readInt();
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }
-

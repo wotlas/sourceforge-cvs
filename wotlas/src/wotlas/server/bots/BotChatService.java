@@ -19,9 +19,8 @@
 
 package wotlas.server.bots;
 
-import wotlas.common.Player;
-
 import java.util.Properties;
+import wotlas.common.Player;
 
 /** A BotChatService is a service providing access to a remote AI chat bot.
  *  The service must possess a public empty constructor and is initialized
@@ -35,80 +34,80 @@ import java.util.Properties;
 
 public interface BotChatService {
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To init this chat service.
-    *  @param serverProperties server properties giving some information for this service
-    *  @return true if the initialization succeeded, false if it failed
-    */
-      public boolean init( Properties serverProperties );
+    /** To init this chat service.
+     *  @param serverProperties server properties giving some information for this service
+     *  @return true if the initialization succeeded, false if it failed
+     */
+    public boolean init(Properties serverProperties);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To initialize the connection with the remote chat service. The first connect()
-    *  is called just after the init() call. It's your job to eventually a thread to manage
-    *  the state of the connection.<br>
-    *
-    *  When the connection succeeds or fails you should refresh the bots state :<br>
-    *
-    *     ServerDirector.getDataManager().getBotManager().refreshBotState();
-    *
-    *  @return true if the connection was successfully established, false otherwise
-    */
-      public boolean connect();
+    /** To initialize the connection with the remote chat service. The first connect()
+     *  is called just after the init() call. It's your job to eventually a thread to manage
+     *  the state of the connection.<br>
+     *
+     *  When the connection succeeds or fails you should refresh the bots state :<br>
+     *
+     *     ServerDirector.getDataManager().getBotManager().refreshBotState();
+     *
+     *  @return true if the connection was successfully established, false otherwise
+     */
+    public boolean connect();
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To shut down the connection with the remote chat service. When this method is called
-    *  it means the system is about to shutdown. You should free resources and advertise
-    *  the shut.
-    *  @return true if the connection was successfully shutdown, false otherwise
-    */
-      public boolean shutdown();
+    /** To shut down the connection with the remote chat service. When this method is called
+     *  it means the system is about to shutdown. You should free resources and advertise
+     *  the shut.
+     *  @return true if the connection was successfully shutdown, false otherwise
+     */
+    public boolean shutdown();
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To get the state of this chat service (usually represents the connection state).
-   *  @return true if this BotChatService is available, false if it's not working at
-   *          the moment.
-   */
-      public boolean isAvailable();
+    /** To get the state of this chat service (usually represents the connection state).
+     *  @return true if this BotChatService is available, false if it's not working at
+     *          the moment.
+     */
+    public boolean isAvailable();
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Opens a chat session for the given player with the given bot. This method is
-    *  called each time a player arrives in the bot's area.
-    *
-    *  @param bot bot who's the target of the session.
-    *  @param player player arriving near our bot.
-    *  @return true if the session was opened successfully
-    */
-      public boolean openSession(  BotPlayer bot, Player player );
+    /** Opens a chat session for the given player with the given bot. This method is
+     *  called each time a player arrives in the bot's area.
+     *
+     *  @param bot bot who's the target of the session.
+     *  @param player player arriving near our bot.
+     *  @return true if the session was opened successfully
+     */
+    public boolean openSession(BotPlayer bot, Player player);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Player 'fromPlayer' sent a 'message' to 'toBot'. We ask to this service the
-    *  answer 'toBot' must send to 'fromPlayer'. This method SHOULD BE ASYNCHRONOUS.
-    *  I.E. we ask for an answer and return. Later, when the result is received we
-    *  call back the bot's sendChatAnswer method.
-    *
-    *  @param message message sent by 'fromPlayer'
-    *  @param fromPlayer the player that sent the chat 'message'.
-    *  @param toBot the bot which is supposed to answer the 'fromPlayer''s message.
-    */
-      public void askForAnswer( String message, Player fromPlayer, BotPlayer toBot );
+    /** Player 'fromPlayer' sent a 'message' to 'toBot'. We ask to this service the
+     *  answer 'toBot' must send to 'fromPlayer'. This method SHOULD BE ASYNCHRONOUS.
+     *  I.E. we ask for an answer and return. Later, when the result is received we
+     *  call back the bot's sendChatAnswer method.
+     *
+     *  @param message message sent by 'fromPlayer'
+     *  @param fromPlayer the player that sent the chat 'message'.
+     *  @param toBot the bot which is supposed to answer the 'fromPlayer''s message.
+     */
+    public void askForAnswer(String message, Player fromPlayer, BotPlayer toBot);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Closes a chat session for the given player with the given bot. This method is
-    *  called each time a player leaves the bot's area.
-    *
-    *  @param bot bot who's the target of the session.
-    *  @param player player leaving our bot.
-    *  @return true if the session was closed successfully
-    */
-      public boolean closeSession(  BotPlayer bot, Player player );
+    /** Closes a chat session for the given player with the given bot. This method is
+     *  called each time a player leaves the bot's area.
+     *
+     *  @param bot bot who's the target of the session.
+     *  @param player player leaving our bot.
+     *  @return true if the session was closed successfully
+     */
+    public boolean closeSession(BotPlayer bot, Player player);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

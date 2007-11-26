@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.knowledges;
 
 /** 
@@ -25,23 +25,21 @@ package wotlas.common.knowledges;
  * @author Elann
  */
 
-public interface Craft
-{
+public interface Craft {
 
- /*------------------------------------------------------------------------------------*/
-	  	 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Get the object class name of the craft.
-   * @return objectClassName
-   */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the object class name of the craft.
+     * @return objectClassName
+     */
     public String getObjectClassName();
-	
-  /** Set the object class name of the craft.
-   * @param objectClassName the new object class name
-   */
+
+    /** Set the object class name of the craft.
+     * @param objectClassName the new object class name
+     */
     public void setObjectClassName(String objectClassName);
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

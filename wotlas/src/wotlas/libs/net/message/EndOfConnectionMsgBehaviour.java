@@ -16,11 +16,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.libs.net.message;
 
 import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.libs.net.NetClient;
 
 /** 
  * Associated behaviour to the EndOfConnectionMessage...
@@ -31,25 +30,24 @@ import wotlas.libs.net.NetClient;
 
 public class EndOfConnectionMsgBehaviour extends EndOfConnectionMessage implements NetMessageBehaviour {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public EndOfConnectionMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+     */
+    public EndOfConnectionMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to the EndOfConnectionMessage... well, we do nothing special...
-   *  the messages IDs were the only data...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {
-     }
+    /** Associated code to the EndOfConnectionMessage... well, we do nothing special...
+     *  the messages IDs were the only data...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

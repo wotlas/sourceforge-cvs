@@ -19,13 +19,11 @@
 
 package wotlas.server.message.gateway;
 
-import wotlas.server.*;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
 import wotlas.libs.net.NetMessage;
+import wotlas.server.GameAccount;
 
 /** 
  * To transfert an account to a GatewayServer.
@@ -33,65 +31,66 @@ import wotlas.libs.net.NetMessage;
  * @author Aldiss
  */
 
-public class AccountTransactionMessage extends NetMessage
-{ 
- /*------------------------------------------------------------------------------------*/
+public class AccountTransactionMessage extends NetMessage {
+    /*------------------------------------------------------------------------------------*/
 
-  /** Game Account to transfert
-   */
+    /** Game Account to transfert
+     */
     protected GameAccount account;
- 
-  /** Wotlas Server ID of the server which is transfering this account.
-   */
-    protected int serverID;
-  
- /*------------------------------------------------------------------------------------*/
 
-  /** Constructor. Just initializes the message category and type.
-   */
+    /** Wotlas Server ID of the server which is transfering this account.
+     */
+    protected int serverID;
+
+    /*------------------------------------------------------------------------------------*/
+
+    /** Constructor. Just initializes the message category and type.
+     */
     public AccountTransactionMessage() {
-        super();        
+        super();
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Constructor with parameters.
-   */
-    public AccountTransactionMessage( GameAccount account, int serverID ) {
+    /** Constructor with parameters.
+     */
+    public AccountTransactionMessage(GameAccount account, int serverID) {
         super();
         this.account = account;
         this.serverID = serverID;
     }
-  
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** This is where we put your message data on the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param ostream data stream where to put your data (see java.io.DataOutputStream)
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-    public void encode( DataOutputStream ostream ) throws IOException {
-       account.encode( ostream );
-       ostream.writeInt( serverID );
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** This is where we put your message data on the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param ostream data stream where to put your data (see java.io.DataOutputStream)
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    @Override
+    public void encode(DataOutputStream ostream) throws IOException {
+        this.account.encode(ostream);
+        ostream.writeInt(this.serverID);
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** This is where we retrieve our message data from the stream. You don't need
-   * to invoke this method yourself, it's done automatically.
-   *
-   * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
-   * @exception IOException if the stream has been closed or is corrupted.
-   */
-    public void decode( DataInputStream istream ) throws IOException {
+    /** This is where we retrieve our message data from the stream. You don't need
+     * to invoke this method yourself, it's done automatically.
+     *
+     * @param istream data stream where you retrieve your data (see java.io.DataInputStream)
+     * @exception IOException if the stream has been closed or is corrupted.
+     */
+    @Override
+    public void decode(DataInputStream istream) throws IOException {
 
-      account = new GameAccount();
-      account.decode( istream );
+        this.account = new GameAccount();
+        this.account.decode(istream);
 
-      serverID = istream.readInt();
+        this.serverID = istream.readInt();
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
- 
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 }

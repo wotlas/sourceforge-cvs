@@ -19,65 +19,66 @@
 
 package wotlas.libs.aswing;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import javax.swing.JPasswordField;
 
 /** Antialiased JTextField : we use antialiasing to draw the text on a JTextField
  *
  * @author Petrus
  */
-public class APasswordField extends JPasswordField
-{
-  
- /*------------------------------------------------------------------------------------*/
-  
-  /** Constructor without arguments.
-   */
-  public APasswordField() {
-    super();
-  }
-  
- /*------------------------------------------------------------------------------------*/
-  
-  /** Constructor with the specified text.
-   */
-  public APasswordField( String text ) {
-    super( text );      
-  }
+public class APasswordField extends JPasswordField {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor with the specified text and columns.
-   */
-  public APasswordField( String text, int columns ) {
-    super( text, columns );
-  }
+    /** Constructor without arguments.
+     */
+    public APasswordField() {
+        super();
+    }
 
- /*------------------------------------------------------------------------------------*/
- 
- /** Constructor with the specified number of columns.
-  */
-  public APasswordField( int columns ) {
-    super( columns );
-  }
-  
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Mutated Paint Method.
-   */
-  public void paint( Graphics g ) {
-    Graphics2D g2D = (Graphics2D) g; 
-    RenderingHints saveRenderHints = g2D.getRenderingHints(); // save
-    
-    RenderingHints renderHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING,
-                                                        RenderingHints.VALUE_ANTIALIAS_ON);
-    renderHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-    
-    g2D.setRenderingHints( renderHints );
-    super.paint(g);
-    g2D.setRenderingHints( saveRenderHints ); // restore
-  }
+    /** Constructor with the specified text.
+     */
+    public APasswordField(String text) {
+        super(text);
+    }
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
+
+    /** Constructor with the specified text and columns.
+     */
+    public APasswordField(String text, int columns) {
+        super(text, columns);
+    }
+
+    /*------------------------------------------------------------------------------------*/
+
+    /** Constructor with the specified number of columns.
+     */
+    public APasswordField(int columns) {
+        super(columns);
+    }
+
+    /*------------------------------------------------------------------------------------*/
+
+    /** Mutated Paint Method.
+     */
+    @Override
+    public void paint(Graphics g) {
+        Graphics2D g2D = (Graphics2D) g;
+        RenderingHints saveRenderHints = g2D.getRenderingHints(); // save
+
+        RenderingHints renderHints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        renderHints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+
+        g2D.setRenderingHints(renderHints);
+        super.paint(g);
+        g2D.setRenderingHints(saveRenderHints); // restore
+    }
+
+    /*------------------------------------------------------------------------------------*/
 
 }

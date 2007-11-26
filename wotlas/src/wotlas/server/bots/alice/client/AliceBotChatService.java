@@ -19,21 +19,21 @@
 
 package wotlas.server.bots.alice.client;
 
-import wotlas.server.bots.alice.AliceWotlasMessage;
-import wotlas.server.bots.*;
-import wotlas.server.*;
-
-import wotlas.libs.net.*;
-import wotlas.common.Player;
-
-import wotlas.utils.Debug;
-import wotlas.common.PropertiesConfigFile;
-
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Properties;
 import javax.swing.Timer;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
+import wotlas.common.Player;
+import wotlas.common.PropertiesConfigFile;
+import wotlas.libs.net.NetClient;
+import wotlas.libs.net.NetConnection;
+import wotlas.libs.net.NetConnectionListener;
+import wotlas.server.PlayerImpl;
+import wotlas.server.ServerDirector;
+import wotlas.server.bots.BotChatService;
+import wotlas.server.bots.BotPlayer;
+import wotlas.server.bots.alice.AliceWotlasMessage;
+import wotlas.utils.Debug;
 
 /** A BotChatService which connects to an AliceBot server using the AliceWOTLAS
  *  AliceChatListener.
@@ -44,292 +44,280 @@ import java.awt.event.ActionEvent;
 
 public class AliceBotChatService implements BotChatService, ActionListener, NetConnectionListener {
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Period between two connection attempts. (beware it's an int !)
-    */
-      public static final int CONNECT_PERIOD = 1000*60*10;  // 10 minutes
+    /** Period between two connection attempts. (beware it's an int !)
+     */
+    public static final int CONNECT_PERIOD = 1000 * 60 * 10; // 10 minutes
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Alice Host Name
-    */
-      protected String aliceHost;
+    /** Alice Host Name
+     */
+    protected String aliceHost;
 
-   /** Alice Host Port
-    */
-      protected int alicePort;
+    /** Alice Host Port
+     */
+    protected int alicePort;
 
-   /** NetConnection that represents the connection with the Alice server
-    */
-      protected NetConnection connection;
+    /** NetConnection that represents the connection with the Alice server
+     */
+    protected NetConnection connection;
 
-   /** Timer to retry a connection if the previous attempt failed.
-    */
-      protected Timer timer;
+    /** Timer to retry a connection if the previous attempt failed.
+     */
+    protected Timer timer;
 
-   /** Connection Lock
-    */
-      protected byte connectionLock[] = new byte[0];
+    /** Connection Lock
+     */
+    protected byte connectionLock[] = new byte[0];
 
-   /** To tell that we are shutting down...
-    */
-      protected boolean shutdown;
+    /** To tell that we are shutting down...
+     */
+    protected boolean shutdown;
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** Empty constructor for dynamic construction.
-    */
-      public AliceBotChatService() {
-           alicePort = -1;
-           shutdown = false;
-      }
+    /** Empty constructor for dynamic construction.
+     */
+    public AliceBotChatService() {
+        this.alicePort = -1;
+        this.shutdown = false;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To init this chat service.
-    *  @param serverProperties server properties giving some information for this service
-    *  @return true if the initialization succeeded, false if it failed
-    */
-      public boolean init( Properties serverProperties ) {
+    /** To init this chat service.
+     *  @param serverProperties server properties giving some information for this service
+     *  @return true if the initialization succeeded, false if it failed
+     */
+    public boolean init(Properties serverProperties) {
 
-           PropertiesConfigFile serverProps = (PropertiesConfigFile) serverProperties;
-           Debug.signal(Debug.NOTICE, null, "Bot Chat Service used : alicebot");
+        PropertiesConfigFile serverProps = (PropertiesConfigFile) serverProperties;
+        Debug.signal(Debug.NOTICE, null, "Bot Chat Service used : alicebot");
 
         // 1 - We retrieve the alicebot server's address & port
-           if( !serverProps.isValid("bots.aliceHost") ) {
-               Debug.signal( Debug.FAILURE, this, "No alice host property set !" );
-               return false;
-           }
+        if (!serverProps.isValid("bots.aliceHost")) {
+            Debug.signal(Debug.FAILURE, this, "No alice host property set !");
+            return false;
+        }
 
-           if( !serverProps.isValidInteger("bots.alicePort") ) {
-               Debug.signal( Debug.FAILURE, this, "The given alice port is not a valid integer !" );
-               return false;
-           }
+        if (!serverProps.isValidInteger("bots.alicePort")) {
+            Debug.signal(Debug.FAILURE, this, "The given alice port is not a valid integer !");
+            return false;
+        }
 
-           aliceHost = serverProps.getProperty("bots.aliceHost");
-           alicePort = serverProps.getIntegerProperty("bots.alicePort");
+        this.aliceHost = serverProps.getProperty("bots.aliceHost");
+        this.alicePort = serverProps.getIntegerProperty("bots.alicePort");
 
-           shutdown = false;
-          return true;
-      }
+        this.shutdown = false;
+        return true;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To initialize the connection with the remote chat service. The first connect()
-    *  is called just after the init() call. It's your job to eventually a thread to manage
-    *  the state of the connection.<br>
-    *
-    *  When the connection succeeds or fails you should refresh the bots state :<br>
-    *
-    *     ServerDirector.getDataManager().getBotManager().refreshBotState();
-    *
-    *  @return true if the connection was successfully established, false otherwise
-    */
-      public boolean connect() {
+    /** To initialize the connection with the remote chat service. The first connect()
+     *  is called just after the init() call. It's your job to eventually a thread to manage
+     *  the state of the connection.<br>
+     *
+     *  When the connection succeeds or fails you should refresh the bots state :<br>
+     *
+     *     ServerDirector.getDataManager().getBotManager().refreshBotState();
+     *
+     *  @return true if the connection was successfully established, false otherwise
+     */
+    public boolean connect() {
 
-           if(alicePort==-1 || aliceHost==null || shutdown==true)
-              return false; // no alice info
-        
+        if (this.alicePort == -1 || this.aliceHost == null || this.shutdown == true)
+            return false; // no alice info
+
         // 1 - We try a connection...
-           NetClient client = new NetClient();
+        NetClient client = new NetClient();
 
-           String messagePackages[] = { "wotlas.server.bots.alice.client" };
+        String messagePackages[] = { "wotlas.server.bots.alice.client" };
 
-           connection = client.connectToServer(
-                                          aliceHost, alicePort,
-                                          "alicebot-access:"+ServerDirector.getServerID(),     // access key for that server (password)
-                                          ServerDirector.getDataManager().getAccountManager(), // context for NetMessageBehaviour
-                                          messagePackages ); // Message packages to load
+        this.connection = client.connectToServer(this.aliceHost, this.alicePort, "alicebot-access:" + ServerDirector.getServerID(), // access key for that server (password)
+        ServerDirector.getDataManager().getAccountManager(), // context for NetMessageBehaviour
+        messagePackages); // Message packages to load
 
-           synchronized( connectionLock ) {
-              if(connection==null) {
+        synchronized (this.connectionLock) {
+            if (this.connection == null) {
                 // We failed to connect... we create a timer to retry later
-                   Debug.signal(Debug.WARNING, null, "Bot Chat Service connect : failed to reach AliceBot server. We'll retry later.\n"
-                                                     +client.getErrorMessage());
+                Debug.signal(Debug.WARNING, null, "Bot Chat Service connect : failed to reach AliceBot server. We'll retry later.\n" + client.getErrorMessage());
 
-                   if(timer==null) {
-                   // we create a timer to retry a connection attempt in CONNECT_PERIOD
-                      timer = new Timer(CONNECT_PERIOD,this);
-                      timer.start();
-                   }
+                if (this.timer == null) {
+                    // we create a timer to retry a connection attempt in CONNECT_PERIOD
+                    this.timer = new Timer(AliceBotChatService.CONNECT_PERIOD, this);
+                    this.timer.start();
+                }
 
-                   return false;
-              }
-              else {
-                   connection.addConnectionListener( this ); // WE will monitor the state of the connection
+                return false;
+            } else {
+                this.connection.addConnectionListener(this); // WE will monitor the state of the connection
 
                 // Connection succeeded !
-                   if(timer!=null) {
-                      timer.stop();
-                      timer = null;
-                   }
-              }
-           }
+                if (this.timer != null) {
+                    this.timer.stop();
+                    this.timer = null;
+                }
+            }
+        }
 
-           Debug.signal(Debug.NOTICE, null, "Bot Chat Service connect : alice server reached !");
+        Debug.signal(Debug.NOTICE, null, "Bot Chat Service connect : alice server reached !");
 
         // 3 - We refresh the bots state
-           ServerDirector.getDataManager().getBotManager().refreshBotState();
-           return true;
-      }
+        ServerDirector.getDataManager().getBotManager().refreshBotState();
+        return true;
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-   /** To shut down the connection with the remote chat service. When this method is called
-    *  it means the system is about to shutdown. You should free resources and advertise
-    *  the shut.
-    *  @return true if the connection was successfully shutdown, false otherwise
-    */
-      public boolean shutdown() {
-      	  Debug.signal(Debug.NOTICE, null, "Bot Chat Service shutting down...");
-      	  
-          synchronized( connectionLock ) {
-             shutdown = true;
+    /** To shut down the connection with the remote chat service. When this method is called
+     *  it means the system is about to shutdown. You should free resources and advertise
+     *  the shut.
+     *  @return true if the connection was successfully shutdown, false otherwise
+     */
+    public boolean shutdown() {
+        Debug.signal(Debug.NOTICE, null, "Bot Chat Service shutting down...");
 
-             if(connection!=null) {
-      	        connection.close();
-                connection = null;
-             }
+        synchronized (this.connectionLock) {
+            this.shutdown = true;
 
-             if(timer!=null) {
-                timer.stop();
-                timer=null;
-             }
-          }
+            if (this.connection != null) {
+                this.connection.close();
+                this.connection = null;
+            }
 
-          return true;
-      }
+            if (this.timer != null) {
+                this.timer.stop();
+                this.timer = null;
+            }
+        }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+        return true;
+    }
 
-  /** To get the state of this chat service (usually represents the connection state).
-   *  @return true if this BotChatService is available, false if it's not working at
-   *          the moment.
-   */
-      public boolean isAvailable() {
-          synchronized( connectionLock ) {
-             return connection!=null;
-          }
-      }
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** To get the state of this chat service (usually represents the connection state).
+     *  @return true if this BotChatService is available, false if it's not working at
+     *          the moment.
+     */
+    public boolean isAvailable() {
+        synchronized (this.connectionLock) {
+            return this.connection != null;
+        }
+    }
 
-   /** Opens a chat session for the given player with the given bot. This method is
-    *  called each time a player arrives in the bot's area.
-    *
-    *  @param bot bot who's the target of the session.
-    *  @param player player arriving near our bot.
-    *  @return true if the session was opened successfully
-    */
-      public boolean openSession(  BotPlayer bot, Player player ) {
-      	  // nothing special to do, alicebot manages its session itself...
-          // We just send a hi! from the client
-             synchronized( connectionLock ) {
-                if(connection==null)
-                   return false;
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-              //  String message = "Hi, my name is "+((PlayerImpl) player).getFullPlayerName( (PlayerImpl) bot );
-                  String message = "Hi!";
-              
-                  connection.queueMessage(
-                          new AliceWotlasMessage( player.getPrimaryKey(),
-                                                  ((PlayerImpl)bot).getPrimaryKey(),
-                                                  message,
-                                                  ServerDirector.getServerID() ) );
-             }
+    /** Opens a chat session for the given player with the given bot. This method is
+     *  called each time a player arrives in the bot's area.
+     *
+     *  @param bot bot who's the target of the session.
+     *  @param player player arriving near our bot.
+     *  @return true if the session was opened successfully
+     */
+    public boolean openSession(BotPlayer bot, Player player) {
+        // nothing special to do, alicebot manages its session itself...
+        // We just send a hi! from the client
+        synchronized (this.connectionLock) {
+            if (this.connection == null)
+                return false;
 
-          return true;
-      }
+            //  String message = "Hi, my name is "+((PlayerImpl) player).getFullPlayerName( (PlayerImpl) bot );
+            String message = "Hi!";
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+            this.connection.queueMessage(new AliceWotlasMessage(player.getPrimaryKey(), ((PlayerImpl) bot).getPrimaryKey(), message, ServerDirector.getServerID()));
+        }
 
-   /** Player 'fromPlayer' sent a 'message' to 'toBot'. We ask to this service the
-    *  answer 'toBot' must send to 'fromPlayer'. This method SHOULD BE ASYNCHRONOUS.
-    *  I.E. we ask for an answer and return. Later, when the result is received we
-    *  call back the bot's sendChatAnswer method.
-    *
-    *  @param message message sent by 'fromPlayer'
-    *  @param fromPlayer the player that sent the chat 'message'.
-    *  @param toBot the bot which is supposed to answer the 'fromPlayer''s message.
-    */
-      public void askForAnswer( String message, Player fromPlayer, BotPlayer toBot ) {
-      	
-      	  // We send the request to the Alice Server
-             synchronized( connectionLock ) {
-                if(connection==null)
-                   return;
+        return true;
+    }
 
-                connection.queueMessage(
-                          new AliceWotlasMessage( fromPlayer.getPrimaryKey(),
-                                                  ((PlayerImpl)toBot).getPrimaryKey(),
-                                                  message,
-                                                  ServerDirector.getServerID() ) );
-             }
-      }
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** Player 'fromPlayer' sent a 'message' to 'toBot'. We ask to this service the
+     *  answer 'toBot' must send to 'fromPlayer'. This method SHOULD BE ASYNCHRONOUS.
+     *  I.E. we ask for an answer and return. Later, when the result is received we
+     *  call back the bot's sendChatAnswer method.
+     *
+     *  @param message message sent by 'fromPlayer'
+     *  @param fromPlayer the player that sent the chat 'message'.
+     *  @param toBot the bot which is supposed to answer the 'fromPlayer''s message.
+     */
+    public void askForAnswer(String message, Player fromPlayer, BotPlayer toBot) {
 
-   /** Closes a chat session for the given player with the given bot. This method is
-    *  called each time a player leaves the bot's area.
-    *
-    *  @param bot bot who's the target of the session.
-    *  @param player player leaving our bot.
-    *  @return true if the session was closed successfully
-    */
-      public boolean closeSession(  BotPlayer bot, Player player ) {
-      	  // nothing to do, alicebot manages its session itself...
-      	  return true;
-      }
+        // We send the request to the Alice Server
+        synchronized (this.connectionLock) {
+            if (this.connection == null)
+                return;
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+            this.connection.queueMessage(new AliceWotlasMessage(fromPlayer.getPrimaryKey(), ((PlayerImpl) toBot).getPrimaryKey(), message, ServerDirector.getServerID()));
+        }
+    }
 
-   /** This method is called when a new network connection is created on this player.
-    *
-    * @param connection the NetConnection object associated to this connection.
-    */
-      public void connectionCreated( NetConnection connection ) {
-          // nothing to do...
-      }
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** Closes a chat session for the given player with the given bot. This method is
+     *  called each time a player leaves the bot's area.
+     *
+     *  @param bot bot who's the target of the session.
+     *  @param player player leaving our bot.
+     *  @return true if the session was closed successfully
+     */
+    public boolean closeSession(BotPlayer bot, Player player) {
+        // nothing to do, alicebot manages its session itself...
+        return true;
+    }
 
-  /** This method is called when the network connection of the client is no longer
-   * of this world.
-   *
-   * @param connection the NetConnection object associated to this connection.
-   */
-     public void connectionClosed( NetConnection connection ) {
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-         // 1 - no more messages will be sent...
-             synchronized( connectionLock ) {
-                 connection = null;
+    /** This method is called when a new network connection is created on this player.
+     *
+     * @param connection the NetConnection object associated to this connection.
+     */
+    public void connectionCreated(NetConnection connection) {
+        // nothing to do...
+    }
 
-                 if(!shutdown)
-                    ServerDirector.getDataManager().getBotManager().refreshBotState();
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-                 if(timer==null) {
-                   // we create a timer to retry a connection attempt in CONNECT_PERIOD
-                    timer = new Timer(CONNECT_PERIOD,this);
-                    timer.start();
-                 }
-             }
+    /** This method is called when the network connection of the client is no longer
+     * of this world.
+     *
+     * @param connection the NetConnection object associated to this connection.
+     */
+    public void connectionClosed(NetConnection connection) {
 
-             Debug.signal(Debug.NOTICE, null, "Bot Chat Service : connection closed with alice server.");
-     }
+        // 1 - no more messages will be sent...
+        synchronized (this.connectionLock) {
+            connection = null;
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+            if (!this.shutdown)
+                ServerDirector.getDataManager().getBotManager().refreshBotState();
 
-  /** Timer Event interception
-   */
-   public void actionPerformed( ActionEvent e ) {
-        if(e.getSource()!=timer)
-           return;
+            if (this.timer == null) {
+                // we create a timer to retry a connection attempt in CONNECT_PERIOD
+                this.timer = new Timer(AliceBotChatService.CONNECT_PERIOD, this);
+                this.timer.start();
+            }
+        }
 
-     // New connection attempt
+        Debug.signal(Debug.NOTICE, null, "Bot Chat Service : connection closed with alice server.");
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Timer Event interception
+     */
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() != this.timer)
+            return;
+
+        // New connection attempt
         connect();
-   }
+    }
 
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 }

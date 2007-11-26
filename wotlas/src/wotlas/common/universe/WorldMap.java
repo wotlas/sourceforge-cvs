@@ -16,276 +16,277 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.universe;
 
-import wotlas.libs.graphics2D.ImageIdentifier;
-import wotlas.common.*;
-import wotlas.common.router.*;
-import wotlas.utils.*;
-
 import java.awt.Rectangle;
+import wotlas.common.WorldManager;
+import wotlas.common.router.MessageRouter;
+import wotlas.common.router.MessageRouterFactory;
+import wotlas.libs.graphics2D.ImageIdentifier;
+import wotlas.utils.Debug;
+import wotlas.utils.ScreenPoint;
 
- /** A WorldMap represents the root class of a whole world of our Game Universe.
-  *
-  * @author Petrus, Aldiss
-  * @see wotlas.common.universe.TownMap
-  */
- 
+/** A WorldMap represents the root class of a whole world of our Game Universe.
+ *
+ * @author Petrus, Aldiss
+ * @see wotlas.common.universe.TownMap
+ */
+
 public class WorldMap implements WotlasMap {
 
- /*------------------------------------------------------------------------------------*/
- 
-  /** ID of the World (index in the worldmap array in the worldmanager)
-   */
+    /*------------------------------------------------------------------------------------*/
+
+    /** ID of the World (index in the worldmap array in the worldmanager)
+     */
     private int worldMapID;
-     
-  /** Full name of the World
-   */
+
+    /** Full name of the World
+     */
     private String fullName;
-   
-  /** Short name of the World
-   */
+
+    /** Short name of the World
+     */
     private String shortName;
 
-  /** Full Image (identifier) of this world
-   */
+    /** Full Image (identifier) of this world
+     */
     private ImageIdentifier worldImage;
 
-  /** Point of insertion (teleportation, arrival)
-   */
+    /** Point of insertion (teleportation, arrival)
+     */
     private ScreenPoint insertionPoint;
 
-  /** Music Name
-   */
+    /** Music Name
+     */
     private String musicName;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Array of TownMap
-   */
+    /** Array of TownMap
+     */
     private transient TownMap[] townMaps;
 
-  /** Our message router. Owns the list of players of this map (not in Towns).
-   */
+    /** Our message router. Owns the list of players of this map (not in Towns).
+     */
     private transient MessageRouter messageRouter;
 
- /*------------------------------------------------------------------------------------*/
-  
-  /**
-   * Constructor
-   */
+    /*------------------------------------------------------------------------------------*/
+
+    /**
+     * Constructor
+     */
     public WorldMap() {
     }
-  
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /*
-   * List of setter and getter used for persistence
-   */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /*
+     * List of setter and getter used for persistence
+     */
 
     public void setWorldMapID(int myWorldMapID) {
-      this.worldMapID = myWorldMapID;
+        this.worldMapID = myWorldMapID;
     }
 
     public int getWorldMapID() {
-      return worldMapID;
+        return this.worldMapID;
     }
 
     public void setFullName(String myFullName) {
-      this.fullName = myFullName;
+        this.fullName = myFullName;
     }
 
     public String getFullName() {
-      return fullName;
+        return this.fullName;
     }
 
     public void setShortName(String myShortName) {
-      this.shortName = myShortName;
+        this.shortName = myShortName;
     }
 
     public String getShortName() {
-      return shortName;
+        return this.shortName;
     }
 
     public void setInsertionPoint(ScreenPoint myInsertionPoint) {
-      this.insertionPoint = myInsertionPoint;
+        this.insertionPoint = myInsertionPoint;
     }
 
     public ScreenPoint getInsertionPoint() {
-      return new ScreenPoint( insertionPoint );
+        return new ScreenPoint(this.insertionPoint);
     }
 
     public void setWorldImage(ImageIdentifier worldImage) {
-      this.worldImage = worldImage;
+        this.worldImage = worldImage;
     }
 
     public ImageIdentifier getWorldImage() {
-      return worldImage;
+        return this.worldImage;
     }
 
     public void setMusicName(String musicName) {
-      this.musicName = musicName;
+        this.musicName = musicName;
     }
 
     public String getMusicName() {
-      return musicName;
+        return this.musicName;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Transient fields getter & setter
-   */
+    /** Transient fields getter & setter
+     */
     public void setTownMaps(TownMap[] myTownMaps) {
-      this.townMaps = myTownMaps;
+        this.townMaps = myTownMaps;
     }
 
     public TownMap[] getTownMaps() {
-      return townMaps;
+        return this.townMaps;
     }
 
     public MessageRouter getMessageRouter() {
-      return messageRouter;
+        return this.messageRouter;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To Get a Town by its ID.
-   *
-   * @param id townMapID
-   * @return corresponding townMap, null if ID does not exist.
-   */
-    public TownMap getTownMapFromID( int id ) {
-   	if(id>=townMaps.length || id<0) {
-           Debug.signal( Debug.ERROR, this, "getTownMapFromID : Bad town ID "+id );
-   	   return null;
-   	}
-   	
-        return townMaps[id];
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Add a new TownMap object to the array {@link #townMaps townMaps}
-   *
-   * @param town TownMap object to add
-   */
-    public void addTownMap( TownMap town ) {
-      if (townMaps == null) {
-         townMaps = new TownMap[town.getTownMapID()+1];
-      }
-      else if( townMaps.length <= town.getTownMapID() ) {
-         TownMap[] myTownMaps = new TownMap[town.getTownMapID()+1];
-         System.arraycopy( townMaps, 0, myTownMaps, 0, townMaps.length );
-         townMaps = myTownMaps;
-      }
-
-      townMaps[town.getTownMapID()] = town;        
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** Add a new TownMap object to the array {@link #townMaps townMaps}
-   *
-   * @return a new TownMap object
-   */
-    public TownMap addNewTownMap() {
-       TownMap myTownMap = new TownMap();
-
-       if (townMaps == null) {
-           townMaps = new TownMap[1];
-           myTownMap.setTownMapID(0);
-           townMaps[0] = myTownMap;
-       } else {
-    	   TownMap[] myTownMaps = new TownMap[townMaps.length+1];
-    	   myTownMap.setTownMapID(townMaps.length);
-    	   System.arraycopy(townMaps, 0, myTownMaps, 0, townMaps.length);
-    	   myTownMaps[townMaps.length] = myTownMap;
-    	   townMaps = myTownMaps;
-       }
-
-       return myTownMap;
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To get the wotlas location associated to this Map.
-   *  @return associated Wotlas Location
-   */
-    public WotlasLocation getLocation() {
-    	return new WotlasLocation( worldMapID );
-    }
-
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-  /** To init this world ( it rebuilds shortcuts ). This method calls the init() method
-   *  of the TownMaps. You must only call this method when ALL the world data has been
-   *  loaded.
-   */
-    public void init() {
-
-     // 1 - any data ?
-        if(townMaps==null) {
-           Debug.signal(Debug.WARNING, this, "WorldMap init failed: No Towns.");
-           return;
+    /** To Get a Town by its ID.
+     *
+     * @param id townMapID
+     * @return corresponding townMap, null if ID does not exist.
+     */
+    public TownMap getTownMapFromID(int id) {
+        if (id >= this.townMaps.length || id < 0) {
+            Debug.signal(Debug.ERROR, this, "getTownMapFromID : Bad town ID " + id);
+            return null;
         }
 
-     // 2 - we transmit the init() call
-        for( int i=0; i<townMaps.length; i++ )
-            if( townMaps[i]!=null )
-                townMaps[i].init( this );
+        return this.townMaps[id];
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** To init this worldmap for message routing. We create an appropriate message router
-   *  for the world via the provided factory.
-   *
-   *  Don't call this method yourself it's called from the WorldManager !
-   *
-   * @param msgRouterFactory our router factory
-   */
-    public void initMessageRouting( MessageRouterFactory msgRouterFactory, WorldManager wManager ){
-       // build/get our router
-          messageRouter = msgRouterFactory.createMsgRouterForWorldMap( this, wManager );
+    /** Add a new TownMap object to the array {@link #townMaps townMaps}
+     *
+     * @param town TownMap object to add
+     */
+    public void addTownMap(TownMap town) {
+        if (this.townMaps == null) {
+            this.townMaps = new TownMap[town.getTownMapID() + 1];
+        } else if (this.townMaps.length <= town.getTownMapID()) {
+            TownMap[] myTownMaps = new TownMap[town.getTownMapID() + 1];
+            System.arraycopy(this.townMaps, 0, myTownMaps, 0, this.townMaps.length);
+            this.townMaps = myTownMaps;
+        }
 
-       // we transmit the call to other layers
-          for( int i=0; i<townMaps.length; i++ )
-             if( townMaps[i]!=null )
-                 townMaps[i].initMessageRouting( msgRouterFactory, wManager );
+        this.townMaps[town.getTownMapID()] = town;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** String Info.
-   */
-    public String toString(){
-         return "World - "+fullName;
+    /** Add a new TownMap object to the array {@link #townMaps townMaps}
+     *
+     * @return a new TownMap object
+     */
+    public TownMap addNewTownMap() {
+        TownMap myTownMap = new TownMap();
+
+        if (this.townMaps == null) {
+            this.townMaps = new TownMap[1];
+            myTownMap.setTownMapID(0);
+            this.townMaps[0] = myTownMap;
+        } else {
+            TownMap[] myTownMaps = new TownMap[this.townMaps.length + 1];
+            myTownMap.setTownMapID(this.townMaps.length);
+            System.arraycopy(this.townMaps, 0, myTownMaps, 0, this.townMaps.length);
+            myTownMaps[this.townMaps.length] = myTownMap;
+            this.townMaps = myTownMaps;
+        }
+
+        return myTownMap;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Tests if the given player rectangle has its x,y cordinates in a TownRectangle
-   *
-   * @param destX destination x position of the player movement ( endPoint of path )
-   * @param destY destination y position of the player movement ( endPoint of path )
-   * @param rCurrent rectangle containing the player's current position, width & height
-   * @return the TownMap the player is heading to (if he has reached it, or if there
-   *         are any), null if none.
-   */
-     public TownMap isEnteringTown( int destX, int destY, Rectangle rCurrent ) {
-        if(townMaps==null)
-           return null;
+    /** To get the wotlas location associated to this Map.
+     *  @return associated Wotlas Location
+     */
+    public WotlasLocation getLocation() {
+        return new WotlasLocation(this.worldMapID);
+    }
 
-        for( int i=0; i<townMaps.length; i++ ){
-             Rectangle townRect = townMaps[i].toRectangle();
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-             if( townRect.contains( destX, destY ) && townRect.intersects( rCurrent ) )
-                 return townMaps[i]; // town reached
+    /** To init this world ( it rebuilds shortcuts ). This method calls the init() method
+     *  of the TownMaps. You must only call this method when ALL the world data has been
+     *  loaded.
+     */
+    public void init() {
+
+        // 1 - any data ?
+        if (this.townMaps == null) {
+            Debug.signal(Debug.WARNING, this, "WorldMap init failed: No Towns.");
+            return;
+        }
+
+        // 2 - we transmit the init() call
+        for (int i = 0; i < this.townMaps.length; i++)
+            if (this.townMaps[i] != null)
+                this.townMaps[i].init(this);
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** To init this worldmap for message routing. We create an appropriate message router
+     *  for the world via the provided factory.
+     *
+     *  Don't call this method yourself it's called from the WorldManager !
+     *
+     * @param msgRouterFactory our router factory
+     */
+    public void initMessageRouting(MessageRouterFactory msgRouterFactory, WorldManager wManager) {
+        // build/get our router
+        this.messageRouter = msgRouterFactory.createMsgRouterForWorldMap(this, wManager);
+
+        // we transmit the call to other layers
+        for (int i = 0; i < this.townMaps.length; i++)
+            if (this.townMaps[i] != null)
+                this.townMaps[i].initMessageRouting(msgRouterFactory, wManager);
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** String Info.
+     */
+    @Override
+    public String toString() {
+        return "World - " + this.fullName;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Tests if the given player rectangle has its x,y cordinates in a TownRectangle
+     *
+     * @param destX destination x position of the player movement ( endPoint of path )
+     * @param destY destination y position of the player movement ( endPoint of path )
+     * @param rCurrent rectangle containing the player's current position, width & height
+     * @return the TownMap the player is heading to (if he has reached it, or if there
+     *         are any), null if none.
+     */
+    public TownMap isEnteringTown(int destX, int destY, Rectangle rCurrent) {
+        if (this.townMaps == null)
+            return null;
+
+        for (int i = 0; i < this.townMaps.length; i++) {
+            Rectangle townRect = this.townMaps[i].toRectangle();
+
+            if (townRect.contains(destX, destY) && townRect.intersects(rCurrent))
+                return this.townMaps[i]; // town reached
         }
 
         return null;
-     }
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }

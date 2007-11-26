@@ -16,12 +16,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.server.bots.alice.server;
 
 import wotlas.libs.net.NetMessageBehaviour;
-
-import wotlas.server.bots.alice.server.AliceWOTLAS;
 import wotlas.server.bots.alice.AliceWotlasMessage;
 
 /**
@@ -32,28 +30,27 @@ import wotlas.server.bots.alice.AliceWotlasMessage;
 
 public class AliceWotlasMsgBehaviour extends AliceWotlasMessage implements NetMessageBehaviour {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public AliceWotlasMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+     */
+    public AliceWotlasMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {
-      
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
+
         // The sessionContext is here a AliceWOTLAS chat listener.
-           AliceWOTLAS alice = (AliceWOTLAS) sessionContext;
-           alice.getAnswer( playerPrimaryKey, botPrimaryKey, message, serverID );
-     }
+        AliceWOTLAS alice = (AliceWOTLAS) sessionContext;
+        alice.getAnswer(this.playerPrimaryKey, this.botPrimaryKey, this.message, this.serverID);
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

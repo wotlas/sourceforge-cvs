@@ -19,20 +19,18 @@
 
 package wotlas.server.message.movement;
 
-import java.io.IOException;
-import java.util.*;
-
-import wotlas.utils.Debug;
-
-import wotlas.libs.net.NetMessageBehaviour;
-import wotlas.common.message.movement.*;
-import wotlas.common.message.chat.*;
+import java.util.Hashtable;
+import java.util.Iterator;
+import wotlas.common.chat.ChatList;
+import wotlas.common.chat.ChatRoom;
+import wotlas.common.message.chat.AddPlayerToChatRoomMessage;
+import wotlas.common.message.chat.SetCurrentChatRoomMessage;
+import wotlas.common.message.movement.PathUpdateMovementMessage;
 import wotlas.common.router.MessageRouter;
-import wotlas.common.universe.*;
-import wotlas.common.Player;
-import wotlas.common.chat.*;
-import wotlas.server.*;
-import wotlas.server.message.chat.*;
+import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.server.PlayerImpl;
+import wotlas.server.message.chat.RemPlayerFromChatRoomMsgBehaviour;
+import wotlas.utils.Debug;
 
 /**
  * Associated behaviour to the PathUpdateMovementMessage...
@@ -42,153 +40,146 @@ import wotlas.server.message.chat.*;
 
 public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage implements NetMessageBehaviour {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Constructor.
-   */
-     public PathUpdateMovementMsgBehaviour() {
-          super();
-     }
+    /** Constructor.
+     */
+    public PathUpdateMovementMsgBehaviour() {
+        super();
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Associated code to this Message...
-   *
-   * @param sessionContext an object giving specific access to other objects needed to process
-   *        this message.
-   */
-     public void doBehaviour( Object sessionContext ) {
+    /** Associated code to this Message...
+     *
+     * @param sessionContext an object giving specific access to other objects needed to process
+     *        this message.
+     */
+    public void doBehaviour(Object sessionContext) {
 
-       // 0 - The sessionContext is here a PlayerImpl.
-          PlayerImpl player = (PlayerImpl) sessionContext;
+        // 0 - The sessionContext is here a PlayerImpl.
+        PlayerImpl player = (PlayerImpl) sessionContext;
 
-          if( primaryKey==null || !player.getPrimaryKey().equals( primaryKey ) ) {
-             Debug.signal( Debug.ERROR, this, "The specified primary Key is not our player one's ! "+primaryKey );
-             return;
-          }
+        if (this.primaryKey == null || !player.getPrimaryKey().equals(this.primaryKey)) {
+            Debug.signal(Debug.ERROR, this, "The specified primary Key is not our player one's ! " + this.primaryKey);
+            return;
+        }
 
-       // 0 - Is the syncID of this message the same as ours ?
-          if( syncID!=player.getSyncID() ) {
-              Debug.signal( Debug.NOTICE, this, "Message discarded: bad sync ID." );
-              return;
-          }
+        // 0 - Is the syncID of this message the same as ours ?
+        if (this.syncID != player.getSyncID()) {
+            Debug.signal(Debug.NOTICE, this, "Message discarded: bad sync ID.");
+            return;
+        }
 
-       // 1 - We update our player
-          player.getMovementComposer().setUpdate( (MovementUpdateMessage)this );
-       
-       // 2 - We send the update to other players
-       // ... in the current Room & other rooms near me
-          if( !player.getLocation().isRoom() )
-              return; // nothing to do for worlds & towns...
+        // 1 - We update our player
+        player.getMovementComposer().setUpdate(this);
 
-          MessageRouter mRouter = player.getMessageRouter();
-          mRouter.sendMessage( this, player, MessageRouter.EXTENDED_GROUP );
-          PlayerImpl nearPlayer = null;
+        // 2 - We send the update to other players
+        // ... in the current Room & other rooms near me
+        if (!player.getLocation().isRoom())
+            return; // nothing to do for worlds & towns...
 
-       // 3 - Chat selection/quit
-          ChatList chatList = player.getChatList();
-          if( chatList==null )  return; // nothing to do
+        MessageRouter mRouter = player.getMessageRouter();
+        mRouter.sendMessage(this, player, MessageRouter.EXTENDED_GROUP);
+        PlayerImpl nearPlayer = null;
 
-          if( isMoving ) {
-             // chat reset
-                if( player.getCurrentChatPrimaryKey().equals( ChatRoom.DEFAULT_CHAT ) )
-                    return; // nothing to do
+        // 3 - Chat selection/quit
+        ChatList chatList = player.getChatList();
+        if (chatList == null)
+            return; // nothing to do
 
-             // we leave the current chatroom IF there are still chatters in it
-             // and if we are not its creator...
-                ChatRoom chatRoom = chatList.getChatRoom( player.getCurrentChatPrimaryKey() );
-             
-                if( chatRoom!=null && ( chatRoom.getPlayers().size()>1
-                    || !chatRoom.getCreatorPrimaryKey().equals(primaryKey) ) ) {
-                    RemPlayerFromChatRoomMsgBehaviour remPlayerFromChat =
-                        new RemPlayerFromChatRoomMsgBehaviour( primaryKey, player.getCurrentChatPrimaryKey() );
+        if (this.isMoving) {
+            // chat reset
+            if (player.getCurrentChatPrimaryKey().equals(ChatRoom.DEFAULT_CHAT))
+                return; // nothing to do
 
-                 // We Send the message to ourselves & the others...
-                    try{
-                      remPlayerFromChat.doBehaviour( player );
-                    }catch( Exception e ) {
-                       Debug.signal( Debug.ERROR, this, e );
-                       player.setCurrentChatPrimaryKey(ChatRoom.DEFAULT_CHAT);
-                    }
+            // we leave the current chatroom IF there are still chatters in it
+            // and if we are not its creator...
+            ChatRoom chatRoom = chatList.getChatRoom(player.getCurrentChatPrimaryKey());
+
+            if (chatRoom != null && (chatRoom.getPlayers().size() > 1 || !chatRoom.getCreatorPrimaryKey().equals(this.primaryKey))) {
+                RemPlayerFromChatRoomMsgBehaviour remPlayerFromChat = new RemPlayerFromChatRoomMsgBehaviour(this.primaryKey, player.getCurrentChatPrimaryKey());
+
+                // We Send the message to ourselves & the others...
+                try {
+                    remPlayerFromChat.doBehaviour(player);
+                } catch (Exception e) {
+                    Debug.signal(Debug.ERROR, this, e);
+                    player.setCurrentChatPrimaryKey(ChatRoom.DEFAULT_CHAT);
                 }
-          }
-          else {
-             // chat selection, we search for the closest player
-                Hashtable players = mRouter.getPlayers();
-                ChatRoom chatRoom = null;
+            }
+        } else {
+            // chat selection, we search for the closest player
+            Hashtable players = mRouter.getPlayers();
+            ChatRoom chatRoom = null;
 
-                synchronized( players ) {
-                    Iterator it = players.values().iterator();
-                 
-                    while( it.hasNext() ) {
-                       PlayerImpl p = (PlayerImpl)it.next();
-                       nearPlayer=null;
+            synchronized (players) {
+                Iterator it = players.values().iterator();
 
-                       if( p!=player && p.isConnectedToGame() ) {
-                         int dx = p.getX()-player.getX();
-                         int dy = p.getY()-player.getY();
-                         
-                          if( dx*dx+dy*dy < ChatRoom.MIN_CHAT_DISTANCE ) {
+                while (it.hasNext()) {
+                    PlayerImpl p = (PlayerImpl) it.next();
+                    nearPlayer = null;
 
-                              boolean weAreInDefaultChat = player.getCurrentChatPrimaryKey().equals( ChatRoom.DEFAULT_CHAT );
-                              boolean heIsInDefaultChat = p.getCurrentChatPrimaryKey().equals( ChatRoom.DEFAULT_CHAT );
+                    if (p != player && p.isConnectedToGame()) {
+                        int dx = p.getX() - player.getX();
+                        int dy = p.getY() - player.getY();
 
-                              if( !weAreInDefaultChat && heIsInDefaultChat ) {
+                        if (dx * dx + dy * dy < ChatRoom.MIN_CHAT_DISTANCE) {
+
+                            boolean weAreInDefaultChat = player.getCurrentChatPrimaryKey().equals(ChatRoom.DEFAULT_CHAT);
+                            boolean heIsInDefaultChat = p.getCurrentChatPrimaryKey().equals(ChatRoom.DEFAULT_CHAT);
+
+                            if (!weAreInDefaultChat && heIsInDefaultChat) {
                                 // we add the near player to our chat
-                                   chatRoom = chatList.getChatRoom( player.getCurrentChatPrimaryKey() );
-                                   nearPlayer = p;
-                              }
-                              else if( weAreInDefaultChat && !heIsInDefaultChat ) {
+                                chatRoom = chatList.getChatRoom(player.getCurrentChatPrimaryKey());
+                                nearPlayer = p;
+                            } else if (weAreInDefaultChat && !heIsInDefaultChat) {
                                 // we add the near player to our chat
-                                   chatRoom = chatList.getChatRoom( p.getCurrentChatPrimaryKey() );
-                              }
+                                chatRoom = chatList.getChatRoom(p.getCurrentChatPrimaryKey());
+                            }
 
-                              if( chatRoom==null )
-                                  continue; // no near chat room change
+                            if (chatRoom == null)
+                                continue; // no near chat room change
 
-                              if(nearPlayer==null) {
+                            if (nearPlayer == null) {
                                 // we are influenced by the nearest player, we do not influence him
-                                 chatRoom.addPlayer( player );
-                                 player.setCurrentChatPrimaryKey( chatRoom.getPrimaryKey() );
-                                 player.setIsChatMember( false );
-                              }
-                              else {
+                                chatRoom.addPlayer(player);
+                                player.setCurrentChatPrimaryKey(chatRoom.getPrimaryKey());
+                                player.setIsChatMember(false);
+                            } else {
                                 // we influence the nearest player, he does not influence us
-                                 chatRoom.addPlayer( nearPlayer );
-                                 nearPlayer.setCurrentChatPrimaryKey( chatRoom.getPrimaryKey() );
-                                 nearPlayer.setIsChatMember( false );
-                              }
+                                chatRoom.addPlayer(nearPlayer);
+                                nearPlayer.setCurrentChatPrimaryKey(chatRoom.getPrimaryKey());
+                                nearPlayer.setIsChatMember(false);
+                            }
 
-                              break; // END OF THIS LOOP ! we successfully found a near player
-                          }
-                       }
+                            break; // END OF THIS LOOP ! we successfully found a near player
+                        }
                     }
                 }
+            }
 
-                if( chatRoom==null )
-                    return; // no player near us, or no chat...
+            if (chatRoom == null)
+                return; // no player near us, or no chat...
 
-             // New chat selected !
-                if(nearPlayer==null)
-                   player.sendMessage( new SetCurrentChatRoomMessage( chatRoom.getPrimaryKey(), chatRoom.getPlayers() ) );
-                else
-                   nearPlayer.sendMessage( new SetCurrentChatRoomMessage( chatRoom.getPrimaryKey(), chatRoom.getPlayers() ) );
+            // New chat selected !
+            if (nearPlayer == null)
+                player.sendMessage(new SetCurrentChatRoomMessage(chatRoom.getPrimaryKey(), chatRoom.getPlayers()));
+            else
+                nearPlayer.sendMessage(new SetCurrentChatRoomMessage(chatRoom.getPrimaryKey(), chatRoom.getPlayers()));
 
-             // A player is a plain member of a chat only
-             // when he speaks the first time, but his/her name appear
-             // in the chatters's list.
-             // So, we advertise our presence
-                if(nearPlayer==null)
-                   chatRoom.sendMessageToChatRoom(
-                       new AddPlayerToChatRoomMessage( primaryKey, chatRoom.getPrimaryKey() ) );
-                else
-                   chatRoom.sendMessageToChatRoom(
-                       new AddPlayerToChatRoomMessage( nearPlayer.getPrimaryKey(), chatRoom.getPrimaryKey() ) );
-          }
+            // A player is a plain member of a chat only
+            // when he speaks the first time, but his/her name appear
+            // in the chatters's list.
+            // So, we advertise our presence
+            if (nearPlayer == null)
+                chatRoom.sendMessageToChatRoom(new AddPlayerToChatRoomMessage(this.primaryKey, chatRoom.getPrimaryKey()));
+            else
+                chatRoom.sendMessageToChatRoom(new AddPlayerToChatRoomMessage(nearPlayer.getPrimaryKey(), chatRoom.getPrimaryKey()));
+        }
 
-       // end !
-     }
+        // end !
+    }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

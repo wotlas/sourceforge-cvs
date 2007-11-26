@@ -16,12 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
-package wotlas.common.objects.containers;
 
-import wotlas.common.objects.interfaces.*;
-import wotlas.common.objects.valueds.ValuedObject;
-import wotlas.common.Player;
+package wotlas.common.objects.containers;
 
 /** 
  * A shelf. Used in shops, houses, store-rooms, ...
@@ -29,35 +25,30 @@ import wotlas.common.Player;
  * @author Elann
  * @see wotlas.common.objects.containers.ContainerObject
  */
-public class Shelf extends ContainerObject
-{
+public class Shelf extends ContainerObject {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
- 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
- /** The default constructor. Calls ContainerObject's constructor.
-  */
-  public Shelf()
-  {
-   super();  
-   
-   className="Shelf";
-   objectName="standard shelf";
-  }
+    /** The default constructor. Calls ContainerObject's constructor.
+     */
+    public Shelf() {
+        super();
 
- /** The parametric constructor. Calls ContainerObject's constructor.
-  * @param capacity the number of objects that can be contained
-  */
-  public Shelf(short capacity)
-  {
-   super(capacity);  
-   className="Shelf";
-   objectName="standard shelf";
-  }
-  
- /*------------------------------------------------------------------------------------*/
+        this.className = "Shelf";
+        this.objectName = "standard shelf";
+    }
+
+    /** The parametric constructor. Calls ContainerObject's constructor.
+     * @param capacity the number of objects that can be contained
+     */
+    public Shelf(short capacity) {
+        super(capacity);
+        this.className = "Shelf";
+        this.objectName = "standard shelf";
+    }
+
+    /*------------------------------------------------------------------------------------*/
 
 }
-

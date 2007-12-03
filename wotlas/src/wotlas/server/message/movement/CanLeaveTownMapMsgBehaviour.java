@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.server.message.movement;
 
 import wotlas.common.WorldManager;
@@ -44,11 +43,9 @@ import wotlas.utils.ScreenPoint;
  *
  * @author Aldiss
  */
-
 public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implements NetMessageBehaviour {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public CanLeaveTownMapMsgBehaviour() {
@@ -56,7 +53,6 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
@@ -138,24 +134,26 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
         }
 
         // Going to a room ?
-        if (this.location.isRoom() && currentTown.getBuildings() != null)
+        if (this.location.isRoom() && currentTown.getBuildings() != null) {
             for (int i = 0; i < currentTown.getBuildings().length; i++) {
                 Building building = currentTown.getBuildings()[i];
 
-                if (building.getBuildingExits() == null)
+                if (building.getBuildingExits() == null) {
                     continue;
+                }
 
                 for (int j = 0; j < building.getBuildingExits().length; j++) {
                     MapExit mapExit = building.getBuildingExits()[j];
 
-                    if (!mapExit.getMapExitLocation().equals(this.location))
+                    if (!mapExit.getMapExitLocation().equals(this.location)) {
                         continue;
+                    }
 
                     // Ok target mapExit found
                     // is the building on the same server ?
                     int targetServerID = building.getServerID();
 
-                    if (targetServerID != ServerDirector.getServerID()) {
+                    if (targetServerID != Building.SERVER_ID_NONE && targetServerID != ServerDirector.getServerID()) {
                         // ok ! we must transfer this account to another server !!   
                         GatewayServer gateway = ServerDirector.getServerManager().getGatewayServer();
 
@@ -222,13 +220,13 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
                     return;
                 }
             }
+        }
 
         // MapExit not found...
         sendError(player, "Target Map not found ! " + this.location);
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To send an error message to the client.
      */
     public void sendError(PlayerImpl player, String message) {
@@ -238,20 +236,22 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
         ScreenPoint pReset = null;
         player.updateSyncID();
 
-        if (player.getLocation().isRoom())
+        if (player.getLocation().isRoom()) {
             pReset = player.getMyRoom().getInsertionPoint();
-        else {
+        } else {
             // We get the world manager
             WorldManager wManager = ServerDirector.getDataManager().getWorldManager();
 
             if (player.getLocation().isTown()) {
                 TownMap myTown = wManager.getTownMap(this.location);
-                if (myTown != null)
+                if (myTown != null) {
                     pReset = myTown.getInsertionPoint();
+                }
             } else if (player.getLocation().isWorld()) {
                 WorldMap myWorld = wManager.getWorldMap(this.location);
-                if (myWorld != null)
+                if (myWorld != null) {
                     pReset = myWorld.getInsertionPoint();
+                }
             }
         }
 
@@ -266,5 +266,4 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

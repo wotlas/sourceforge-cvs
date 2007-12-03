@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.server.message.movement;
 
 import wotlas.common.WorldManager;
@@ -25,6 +24,7 @@ import wotlas.common.message.movement.RedirectConnectionMessage;
 import wotlas.common.message.movement.RedirectErrorMessage;
 import wotlas.common.message.movement.ResetPositionMessage;
 import wotlas.common.message.movement.YouCanLeaveMapMessage;
+import wotlas.common.universe.Building;
 import wotlas.common.universe.MapExit;
 import wotlas.common.universe.Room;
 import wotlas.common.universe.TownMap;
@@ -43,11 +43,9 @@ import wotlas.utils.ScreenPoint;
  *
  * @author Aldiss
  */
-
 public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements NetMessageBehaviour {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public CanLeaveIntMapMsgBehaviour() {
@@ -55,7 +53,6 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
@@ -113,13 +110,14 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
 
         if (this.location.isRoom()) {
             Room targetRoom = wManager.getRoom(this.location);
-            if (targetRoom == null)
+            if (targetRoom == null) {
                 error = true;
+            }
 
             // LEAVING BUILDING ? ACCOUNT TRANSFER ?
             int targetServerID = targetRoom.getMyInteriorMap().getMyBuilding().getServerID();
 
-            if (!error && targetServerID != ServerDirector.getServerID()) {
+            if (!error && targetServerID != Building.SERVER_ID_NONE && targetServerID != ServerDirector.getServerID()) {
 
                 // ok ! we must transfer this account to another server !!   
                 GatewayServer gateway = ServerDirector.getServerManager().getGatewayServer();
@@ -165,15 +163,18 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
         } else if (this.location.isTown()) {
             // move to our new town
             TownMap targetTown = wManager.getTownMap(this.location);
-            if (targetTown == null)
+            if (targetTown == null) {
                 error = true;
+            }
         } else if (this.location.isWorld()) {
             // move to our new world
             WorldMap targetWorld = wManager.getWorldMap(this.location);
-            if (targetWorld == null)
+            if (targetWorld == null) {
                 error = true;
-        } else
-            error = true; // Bad MapExit location !!
+            }
+        } else {
+            error = true;
+        } // Bad MapExit location !!
 
         if (error) {
             sendError(player, "Target Map not found ! " + this.location);
@@ -199,7 +200,6 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To send an error message to the client.
      */
     public void sendError(PlayerImpl player, String message) {
@@ -209,20 +209,22 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
         ScreenPoint pReset = null;
         player.updateSyncID();
 
-        if (player.getLocation().isRoom())
+        if (player.getLocation().isRoom()) {
             pReset = player.getMyRoom().getInsertionPoint();
-        else {
+        } else {
             // We get the world manager
             WorldManager wManager = ServerDirector.getDataManager().getWorldManager();
 
             if (player.getLocation().isTown()) {
                 TownMap myTown = wManager.getTownMap(this.location);
-                if (myTown != null)
+                if (myTown != null) {
                     pReset = myTown.getInsertionPoint();
+                }
             } else if (player.getLocation().isWorld()) {
                 WorldMap myWorld = wManager.getWorldMap(this.location);
-                if (myWorld != null)
+                if (myWorld != null) {
                     pReset = myWorld.getInsertionPoint();
+                }
             }
         }
 
@@ -237,5 +239,4 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

@@ -37,6 +37,9 @@ public class Building extends ScreenRectangle {
     /** True if we show debug informations
      */
     public static boolean SHOW_DEBUG = false;
+    
+    /** Server ID not initialized : no gateway to remote server */
+    public static int SERVER_ID_NONE = 0;
 
     /*------------------------------------------------------------------------------------*/
 
@@ -91,6 +94,7 @@ public class Building extends ScreenRectangle {
     /** Constructor for persistence.
      */
     public Building() {
+        this.serverID = Building.SERVER_ID_NONE; // Not initialized.
         this.hasBuildingExits = false; // default
         this.hasTownExits = false; // default
     }
@@ -105,6 +109,7 @@ public class Building extends ScreenRectangle {
      */
     public Building(int x, int y, int width, int height) {
         super(x, y, width, height);
+        this.serverID = Building.SERVER_ID_NONE; // Not initialized.
         this.hasBuildingExits = false; // default
         this.hasTownExits = false; // default
     }

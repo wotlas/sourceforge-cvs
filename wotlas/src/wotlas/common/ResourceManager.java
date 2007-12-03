@@ -85,6 +85,10 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
     /** A part of the Wotlas Server JAR file name.
      */
     public static final String WOTLAS_SERVER_JAR = "server.jar";
+    
+    /** All Wotlas sources JAR file name.
+     */
+    public static final String WOTLAS_ALL_JAR = "wotlas.jar";    
 
     /** Wotlas root dir for resources located in a JAR. We'll search in this
      *  directory for every kind of resources.
@@ -256,6 +260,24 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
 
             return; // ResourceManager created
         }
+        
+        // Are we in a client JAR File ?
+        if (this.jarName.indexOf(ResourceManager.WOTLAS_ALL_JAR) >= 0) {
+            this.inClientJar = true;
+            this.inJar = true;
+
+            try {
+                repairClassPath();
+                createExternalClientDirectories();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Tools.displayDebugMessage("Deployment Failed", "Wotlas failed to extract config files to the local directory." + "\nCheck the access rights of the installation directory of wotlas.");
+                Debug.exit();
+            }
+
+            return; // ResourceManager created
+        }
+        
 
         Tools.displayDebugMessage("Wrong Jar Name", "The Jar file name should end with a 'client' or 'server' keyword");
         Debug.exit();

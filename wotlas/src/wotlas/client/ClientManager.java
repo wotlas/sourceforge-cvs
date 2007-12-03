@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client;
 
 import java.awt.BorderLayout;
@@ -71,11 +70,9 @@ import wotlas.utils.Debug;
  * @author Petrus
  * @see wotlas.client.gui.JIntroWizard
  */
-
 public class ClientManager extends JIntroWizard implements ActionListener {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Available steps for this Client Manager
      */
     final static public int FIRST_INIT = -1;
@@ -88,54 +85,44 @@ public class ClientManager extends JIntroWizard implements ActionListener {
     final static public int DATAMANAGER_DISPLAY = 20;
 
     /*------------------------------------------------------------------------------------*/
-
     /** Do we have to remember passwords ? i.e. save them to disk. (default is true).
      */
     private static boolean rememberPasswords = true;
 
     /*------------------------------------------------------------------------------------*/
-
     /** Our ProfileConfigList file.
      */
     private ProfileConfigList profileConfigList;
-
     /** Current profileConfig
      */
     private ProfileConfig currentProfileConfig;
-
     /** Our ServerConfigManager file.
      */
     private ServerConfigManager serverConfigManager;
-
     /** Current serverConfig
      */
     private ServerConfig currentServerConfig;
-
     /** Index of current screen shown
      */
     private int indexScreen;
-
     /** Number of tries to reach wotlas *web* server
      */
     private short nbTry;
-
     /** pictures of buttons
      */
-    private ImageIcon im_okup, im_okdo, im_okun;
-    private ImageIcon im_cancelup, im_canceldo, im_cancelun;
-    private ImageIcon im_newup, im_newdo;
-    private ImageIcon im_loadup, im_loaddo, im_loadun;
-    private ImageIcon im_recoverup, im_recoverdo, im_recoverun;
-    private ImageIcon im_delup, im_deldo, im_delun;
-    private ImageIcon im_exitup, im_exitdo;
-    private ImageIcon im_aboutup, im_aboutdo;
-    private ImageIcon im_helpup, im_helpdo;
-    private ImageIcon im_optionsup, im_optionsdo;
-
+    private ImageIcon im_okup,  im_okdo,  im_okun;
+    private ImageIcon im_cancelup,  im_canceldo,  im_cancelun;
+    private ImageIcon im_newup,  im_newdo;
+    private ImageIcon im_loadup,  im_loaddo,  im_loadun;
+    private ImageIcon im_recoverup,  im_recoverdo,  im_recoverun;
+    private ImageIcon im_delup,  im_deldo,  im_delun;
+    private ImageIcon im_exitup,  im_exitdo;
+    private ImageIcon im_aboutup,  im_aboutdo;
+    private ImageIcon im_helpup,  im_helpdo;
+    private ImageIcon im_optionsup,  im_optionsdo;
     /** Default font
      */
     private Font f;
-
     /** Do we have to login the user automatically if his password is in memory ?
      *  Automatic login makes that the password prompt doesn't displays if
      *  there is already a password in memory.
@@ -146,7 +133,6 @@ public class ClientManager extends JIntroWizard implements ActionListener {
     private boolean automaticLogin;
 
     /*------------------------------------------------------------------------------------*/
-
     /** To set if we have to remember passwords or not
      */
     static public void setRememberPasswords(boolean remember) {
@@ -160,7 +146,6 @@ public class ClientManager extends JIntroWizard implements ActionListener {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor. Loads/create the different config files but does not display anything.
      */
     public ClientManager(ResourceManager rManager) {
@@ -173,8 +158,9 @@ public class ClientManager extends JIntroWizard implements ActionListener {
         if (this.profileConfigList == null) {
             Debug.signal(Debug.NOTICE, this, "no client's profile found : creating a new one...");
             this.profileConfigList = new ProfileConfigList();
-        } else
+        } else {
             Debug.signal(Debug.NOTICE, null, "Client Configs loaded with success !");
+        }
 
         if (!ClientManager.rememberPasswords) {
             this.profileConfigList.deletePasswords(); // make sure we don't save any password here
@@ -191,7 +177,6 @@ public class ClientManager extends JIntroWizard implements ActionListener {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get the Profile Config.
      * @return the Profile Config
      */
@@ -207,7 +192,6 @@ public class ClientManager extends JIntroWizard implements ActionListener {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get the ServerConfigManager.
      *
      * @return the ServerConfigManager
@@ -217,7 +201,6 @@ public class ClientManager extends JIntroWizard implements ActionListener {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To set automatic login or not.
      *  Automatic login makes that the password prompt doesn't displays if
      *  there is already a password in memory.
@@ -236,7 +219,6 @@ public class ClientManager extends JIntroWizard implements ActionListener {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Starts the Wizard at the beginning of the game
      */
     public void start(int state) {
@@ -292,11 +274,12 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                 this.serverConfigManager.getLatestConfigFiles(this);
                 timer.stop();
 
-                if (!this.serverConfigManager.hasRemoteServersInfo())
+                if (!this.serverConfigManager.hasRemoteServersInfo()) {
                     JOptionPane.showMessageDialog(this, "We failed to contact the wotlas web server. So we could not update\n" + "our servers addresses. If this is not the first time you start wotlas on\n" + "your computer, you can try to connect with the previous server config\n" + "files. Otherwise please restart wotlas later.\n\n" + "Note also that wotlas is not firewall/proxy friendly. See our FAQ for\n" + "more details ( from the help section or 'wotlas.html' local file ).", "Warning", JOptionPane.WARNING_MESSAGE);
-                else
-                    // Wotlas News
+                } else // Wotlas News
+                {
                     new JHTMLWindow(this, "Wotlas News", ClientDirector.getRemoteServerConfigHomeURL() + "news.html", 320, 400, false, ClientDirector.getResourceManager());
+                }
 
                 // Load images of buttons
                 this.im_cancelup = ClientDirector.getResourceManager().getImageIcon("cancel-up.gif");
@@ -329,8 +312,9 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                 state = ClientManager.MAIN_SCREEN;
 
                 // Hide the Log Window ?
-                if (!ClientDirector.getClientConfiguration().getDisplayLogWindow())
+                if (!ClientDirector.getClientConfiguration().getDisplayLogWindow()) {
                     ClientDirector.getLogStream().setVisible(false);
+                }
 
                 // Test if an account exists
                 if (this.profileConfigList.size() == 0) {
@@ -453,13 +437,15 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                 profilesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
                 ListSelectionModel rowProfilesSM = profilesTable.getSelectionModel();
                 rowProfilesSM.addListSelectionListener(new ListSelectionListener() {
+
                     public void valueChanged(ListSelectionEvent e) {
                         //Ignore extra messages.
-                        if (e.getValueIsAdjusting())
+                        if (e.getValueIsAdjusting()) {
                             return;
+                        }
                         ListSelectionModel lsm = (ListSelectionModel) e.getSource();
                         if (lsm.isSelectionEmpty()) {
-                            //no rows are selected
+                        //no rows are selected
                         } else {
                             int selectedRow = lsm.getMinSelectionIndex();
                             ClientManager.this.currentProfileConfig = ClientManager.this.profileConfigList.getProfiles()[selectedRow];
@@ -480,6 +466,7 @@ public class ClientManager extends JIntroWizard implements ActionListener {
 
                 b_load.setEnabled(false);
                 b_load.addActionListener(new ActionListener() {
+
                     public void actionPerformed(ActionEvent e) {
                         start(ClientManager.ACCOUNT_LOGIN_SCREEN);
                     }
@@ -487,6 +474,7 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                 rightPanel.add(b_load);
 
                 b_newProfile.addActionListener(new ActionListener() {
+
                     public void actionPerformed(ActionEvent e) {
                         start(ClientManager.ACCOUNT_CREATION_SCREEN);
                     }
@@ -497,6 +485,7 @@ public class ClientManager extends JIntroWizard implements ActionListener {
 
                 b_recoverProfile.setEnabled(true);
                 b_recoverProfile.addActionListener(new ActionListener() {
+
                     public void actionPerformed(ActionEvent e) {
                         start(ClientManager.RECOVER_ACCOUNT_SCREEN);
                     }
@@ -506,6 +495,7 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                 b_delProfile.setEnabled(false);
 
                 b_delProfile.addActionListener(new ActionListener() {
+
                     public void actionPerformed(ActionEvent e) {
                         start(ClientManager.DELETE_ACCOUNT_SCREEN);
                     }
@@ -516,6 +506,7 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                 rightPanel.add(new JLabel(ClientDirector.getResourceManager().getImageIcon("separator.gif"))); // SEPARATOR
 
                 b_option.addActionListener(new ActionListener() {
+
                     public void actionPerformed(ActionEvent e) {
                         new JConfigurationDlg(ClientManager.this);
                     }
@@ -523,6 +514,7 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                 rightPanel.add(b_option);
 
                 b_help.addActionListener(new ActionListener() {
+
                     public void actionPerformed(ActionEvent e) {
                         new JHTMLWindow(ClientManager.this, "Help", ClientDirector.getResourceManager().getHelpDocsDir() + "index.html", 640, 340, false, ClientDirector.getResourceManager());
                     }
@@ -532,6 +524,7 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                 rightPanel.add(new JLabel(ClientDirector.getResourceManager().getImageIcon("separator.gif"))); // SEPARATOR
 
                 b_about.addActionListener(new ActionListener() {
+
                     public void actionPerformed(ActionEvent e) {
                         try {
                             new JAbout(ClientManager.this);
@@ -543,6 +536,7 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                 rightPanel.add(b_about);
 
                 b_exitProfile.addActionListener(new ActionListener() {
+
                     public void actionPerformed(ActionEvent e) {
                         ClientDirector.getDataManager().exit();
                     }
@@ -606,14 +600,17 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                 pfield1 = new APasswordField(10);
                 pfield1.setFont(this.f.deriveFont(18f));
 
-                if (this.currentProfileConfig.getPassword() != null)
+                if (this.currentProfileConfig.getPassword() != null) {
                     pfield1.setText(this.currentProfileConfig.getPassword());
+                }
 
                 pfield1.addKeyListener(new KeyAdapter() {
+
                     @Override
                     public void keyReleased(KeyEvent e) {
-                        if (e.getKeyCode() == KeyEvent.VK_ENTER)
+                        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                             b_ok.doClick();
+                        }
                     }
                 });
 
@@ -627,6 +624,7 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                 // *** Right Panel ***
 
                 b_ok.addActionListener(new ActionListener() {
+
                     public void actionPerformed(ActionEvent e) {
                         char charPasswd[] = pfield1.getPassword();
                         if (charPasswd.length < 4) {
@@ -643,8 +641,9 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                             if (jgconnect.hasSucceeded()) {
                                 ClientManager.this.currentProfileConfig.setPassword(passwd);
 
-                                if (ClientManager.rememberPasswords)
+                                if (ClientManager.rememberPasswords) {
                                     ClientManager.this.profileConfigList.save();
+                                }
 
                                 Debug.signal(Debug.NOTICE, null, "ClientManager connected to GameServer");
                                 start(ClientManager.DATAMANAGER_DISPLAY);
@@ -658,6 +657,7 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                 rightPanel.add(b_ok);
 
                 b_cancel.addActionListener(new ActionListener() {
+
                     public void actionPerformed(ActionEvent e) {
                         start(ClientManager.MAIN_SCREEN);
                     }
@@ -727,15 +727,18 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                 pfield1.setFont(this.f.deriveFont(18f));
 
                 pfield1.addKeyListener(new KeyAdapter() {
+
                     @Override
                     public void keyReleased(KeyEvent e) {
-                        if (e.getKeyCode() == KeyEvent.VK_ENTER)
+                        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                             b_delProfile.doClick();
+                        }
                     }
                 });
 
-                if (this.currentProfileConfig.getPassword() != null)
+                if (this.currentProfileConfig.getPassword() != null) {
                     pfield1.setText(this.currentProfileConfig.getPassword());
+                }
 
                 formPanel_02_right.add(pfield1);
                 ALabel alabel2 = new ALabel(this.currentProfileConfig.getLogin() + "-" + this.currentProfileConfig.getKey());
@@ -747,6 +750,7 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                 // *** Right Panel ***
 
                 b_delProfile.addActionListener(new ActionListener() {
+
                     public void actionPerformed(ActionEvent e) {
                         char charPasswd[] = pfield1.getPassword();
                         String passwd = "";
@@ -765,10 +769,11 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                                 Debug.signal(Debug.NOTICE, this, "Account deleted.");
 
                                 // Save accounts informations
-                                if (!ClientManager.this.profileConfigList.removeProfile(ClientManager.this.currentProfileConfig))
+                                if (!ClientManager.this.profileConfigList.removeProfile(ClientManager.this.currentProfileConfig)) {
                                     Debug.signal(Debug.ERROR, this, "Failed to delete player profile !");
-                                else
+                                } else {
                                     ClientManager.this.profileConfigList.save();
+                                }
                             }
 
                             start(ClientManager.MAIN_SCREEN); // return to main screen
@@ -778,6 +783,7 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                 rightPanel.add(b_delProfile);
 
                 b_cancel.addActionListener(new ActionListener() {
+
                     public void actionPerformed(ActionEvent e) {
                         start(ClientManager.MAIN_SCREEN);
                     }
@@ -844,10 +850,12 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                 pfield1 = new APasswordField(10);
                 pfield1.setFont(this.f.deriveFont(18f));
                 pfield1.addKeyListener(new KeyAdapter() {
+
                     @Override
                     public void keyReleased(KeyEvent e) {
-                        if (e.getKeyCode() == KeyEvent.VK_ENTER)
+                        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                             b_ok.doClick();
+                        }
                     }
                 });
                 formPanel_03_right.add(pfield1);
@@ -858,6 +866,7 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                 // *** Right Panel ***
 
                 b_ok.addActionListener(new ActionListener() {
+
                     public void actionPerformed(ActionEvent e) {
                         char charPasswd[] = pfield1.getPassword();
 
@@ -924,6 +933,7 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                 rightPanel.add(b_ok);
 
                 b_cancel.addActionListener(new ActionListener() {
+
                     public void actionPerformed(ActionEvent e) {
                         start(ClientManager.MAIN_SCREEN);
                     }
@@ -997,6 +1007,7 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                 // *** Right Panel ***/
 
                 b_ok.addActionListener(new ActionListener() {
+
                     public void actionPerformed(ActionEvent e) {
                         JGameConnectionDialog jgconnect = new JGameConnectionDialog(ClientManager.this, ClientManager.this.currentServerConfig.getServerName(), ClientManager.this.currentServerConfig.getGameServerPort(), ClientManager.this.currentServerConfig.getServerID(), ClientManager.this.currentProfileConfig.getLogin(), ClientManager.this.currentProfileConfig.getPassword(), ClientManager.this.currentProfileConfig.getLocalClientID(), ClientManager.this.currentProfileConfig.getOriginalServerID(), ClientDirector.getDataManager());
 
@@ -1011,6 +1022,7 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                 rightPanel.add(b_ok);
 
                 b_cancel.addActionListener(new ActionListener() {
+
                     public void actionPerformed(ActionEvent e) {
                         start(ClientManager.MAIN_SCREEN);
                     }
@@ -1033,6 +1045,7 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                 hide();
 
                 Thread heavyProcessThread = new Thread() {
+
                     @Override
                     public void run() {
                         ClientDirector.getDataManager().showInterface();
@@ -1050,7 +1063,6 @@ public class ClientManager extends JIntroWizard implements ActionListener {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To add a new profile to the player's profile list. This method is called by
      *  the AccountCreationEndedMsgBehaviour when an account has been successfully created.
      */
@@ -1064,7 +1076,9 @@ public class ClientManager extends JIntroWizard implements ActionListener {
         this.currentProfileConfig.setPassword(password);
         this.currentProfileConfig.setLocalClientID(clientID);
         this.currentProfileConfig.setOriginalServerID(serverID);
-        this.currentProfileConfig.setServerID(serverID);
+        // FIXME must be current server id in config files ???
+        // ??? int serverCurrentId = this.serverConfigManager.getServerConfig(serverID).getServerID();
+        this.currentProfileConfig.setServerID(serverID); //serverCurrentId);
 
         // Save profile informations
         this.profileConfigList.addProfile(this.currentProfileConfig);
@@ -1075,7 +1089,6 @@ public class ClientManager extends JIntroWizard implements ActionListener {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Timer Event interception
      * @param e supposed timer event
      */

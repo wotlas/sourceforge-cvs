@@ -114,42 +114,42 @@ public class Inventory implements InventoryInterface {
     public boolean receiveObject(BaseObject object) {
         String clName = object.getClassName();
 
-        if (clName == "Bag") {
+        if ("Bag".equals(clName)) {
             if (this.bag == null) {
                 this.bag = (Bag) object;
                 return true;
             }
-        } else if (clName == "Belt") {
+        } else if ("Belt".equals(clName)) {
             if (this.belt == null) {
                 this.belt = (Belt) object;
                 return true;
             }
-        } else if (clName == "BodyArmor") {
+        } else if ("BodyArmor".equals(clName)) {
             if (this.bodyArmor == null) {
                 this.bodyArmor = (BodyArmor) object;
                 return true;
             }
-        } else if (clName == "Book") {
+        } else if ("Book".equals(clName)) {
             if (this.book == null) {
                 this.book = (Book) object;
                 return true;
             }
-        } else if (clName == "Bow") {
+        } else if ("Bow".equals(clName)) {
             if (this.bow == null) {
                 this.bow = (Bow) object;
                 return true;
             }
-        } else if (clName == "HeadArmor") {
+        } else if ("HeadArmor".equals(clName)) {
             if (this.headArmor == null) {
                 this.headArmor = (HeadArmor) object;
                 return true;
             }
-        } else if (clName == "HeavyWeapon") {
+        } else if ("HeavyWeapon".equals(clName)) {
             if (this.heavyWeapon == null) {
                 this.heavyWeapon = (HeavyWeapon) object;
                 return true;
             }
-        } else if (clName == "Purse") {
+        } else if ("Purse".equals(clName)) {
             if (this.purse == null) {
                 this.purse = (Purse) object;
                 return true;

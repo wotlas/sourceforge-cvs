@@ -52,8 +52,8 @@ public class Purse extends ContainerObject implements TransportableInterface {
     public Purse() {
         super(Purse.defaultPurseCapacity);
 
-        this.className = "Purse";
-        this.objectName = "standard purse";
+        className = "Purse";
+        objectName = "standard purse";
     }
 
     /** The parametric constructor.<br>
@@ -63,8 +63,8 @@ public class Purse extends ContainerObject implements TransportableInterface {
     public Purse(short capacity) {
         super(capacity);
 
-        this.className = "Purse";
-        this.objectName = "standard purse";
+        className = "Purse";
+        objectName = "standard purse";
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -75,7 +75,7 @@ public class Purse extends ContainerObject implements TransportableInterface {
      */
     @Override
     public boolean addObject(BaseObject o) {
-        if (o.getClassName() != "ValuedObject")
+        if (!"ValuedObject".equals(o.getClassName()))
             return false;
 
         return super.addObject(o);
@@ -86,7 +86,7 @@ public class Purse extends ContainerObject implements TransportableInterface {
      */
     @Override
     public void removeObject(BaseObject o) {
-        if (o.getClassName() != "ValuedObject")
+        if (!"ValuedObject".equals(o.getClassName()))
             return; // throw ?
 
         super.removeObject(o);

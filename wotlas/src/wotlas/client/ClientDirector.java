@@ -134,9 +134,10 @@ public class ClientDirector {
             else
                 ClientDirector.logStream = new JLogStream(new javax.swing.JFrame(), ClientDirector.resourceManager.getExternalLogsDir() + ClientDirector.CLIENT_LOG_NAME, "log-title-dark.jpg", ClientDirector.resourceManager);
 
-            Debug.setPrintStream(ClientDirector.logStream);
-            System.setOut(ClientDirector.logStream);
-            System.setErr(ClientDirector.logStream);
+// TODO delete comment when alpha release works.            
+//            Debug.setPrintStream(ClientDirector.logStream);
+//             System.setOut(ClientDirector.logStream);
+//             System.setErr(ClientDirector.logStream);
         } catch (Exception e) {
             e.printStackTrace();
             Tools.displayDebugMessage("Start-up Error", "" + e);

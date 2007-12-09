@@ -6,9 +6,11 @@ set JARS_MODULE=dist
 
 set CLIENT_JARS=
 
+REM...Choose between the use of build/classes and the standard base directory
 set CLIENT_JARS=%CLIENT_JARS%;build\classes
-REM... Need to fix ResourceManager before !
-REM... set CLIENT_JARS=%CLIENT_JARS%;%JARS_MODULE%\wotlas.jar
+
+REM...or the wotlas jar and the dist/base-ext directory :
+REM...set CLIENT_JARS=%CLIENT_JARS%;%JARS_MODULE%\wotlas.jar
 
 REM... set CLIENT_JARS=%CLIENT_JARS%;%JARS_MODULE%\lib\ant.jar
 REM... set CLIENT_JARS=%CLIENT_JARS%;%JARS_MODULE%\lib\crimson.jar

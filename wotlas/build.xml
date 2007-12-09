@@ -74,11 +74,13 @@
        <echo>[Wotlas specific build] Adding resources from ./base to jar.</echo>
        <jar compress="${jar.compress}" jarfile="${dist.jar}" update="true">
             <fileset dir="${basedir}">
+                <include name="base/resources.lst"/>
                 <include name="base/configs/client.cfg"/>
                 <include name="base/configs/remote-servers.cfg"/>
                 <include name="base/graphics/**"/>
                 <include name="base/fonts/**"/>
                 <include name="base/gui/**"/>
+                <include name="base/layouts/**"/>
                 <include name="base/music/**"/>
                 <include name="base/sounds/**"/>
                 <include name="base/universe/**"/>

@@ -16,11 +16,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.utils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -29,6 +32,8 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.swing.JOptionPane;
@@ -37,11 +42,9 @@ import javax.swing.JOptionPane;
  *
  * @author Aldiss
  */
-
 public class Tools {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Waits ms milliseconds with a very low CPU use.
      *
      * @param ms number of milliseconds to wait.
@@ -58,7 +61,6 @@ public class Tools {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Is the Java version higher than the "min_required_version" string ?
      *  If it's not the case we return false and signal an ERROR to the Debug utility.
      *
@@ -83,7 +85,6 @@ public class Tools {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get a date formated in a lexical way ( year-month-day).
      *  Example: "2001-09-25". Note that we write "09" instead of "9".
      *
@@ -96,15 +97,17 @@ public class Tools {
         String month = null;
         String day = null;
 
-        if (rightNow.get(Calendar.MONTH) <= 9)
+        if (rightNow.get(Calendar.MONTH) <= 9) {
             month = "0" + (rightNow.get(Calendar.MONTH) + 1);
-        else
+        } else {
             month = "" + (rightNow.get(Calendar.MONTH) + 1);
+        }
 
-        if (rightNow.get(Calendar.DAY_OF_MONTH) <= 9)
+        if (rightNow.get(Calendar.DAY_OF_MONTH) <= 9) {
             day = "0" + rightNow.get(Calendar.DAY_OF_MONTH);
-        else
+        } else {
             day = "" + rightNow.get(Calendar.DAY_OF_MONTH);
+        }
 
         return year + "-" + month + "-" + day;
     }
@@ -121,21 +124,22 @@ public class Tools {
         String month = null;
         String day = null;
 
-        if (currentTime.get(Calendar.MONTH) <= 9)
+        if (currentTime.get(Calendar.MONTH) <= 9) {
             month = "0" + (currentTime.get(Calendar.MONTH) + 1);
-        else
+        } else {
             month = "" + (currentTime.get(Calendar.MONTH) + 1);
+        }
 
-        if (currentTime.get(Calendar.DAY_OF_MONTH) <= 9)
+        if (currentTime.get(Calendar.DAY_OF_MONTH) <= 9) {
             day = "0" + currentTime.get(Calendar.DAY_OF_MONTH);
-        else
+        } else {
             day = "" + currentTime.get(Calendar.DAY_OF_MONTH);
+        }
 
         return year + "-" + month + "-" + day;
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get the time in pre-formated way.
      *  Example: "10h-05m-03s". Note that we write "03" instead of "3".
      *
@@ -148,26 +152,28 @@ public class Tools {
         String min = null;
         String sec = null;
 
-        if (rightNow.get(Calendar.HOUR_OF_DAY) <= 9)
+        if (rightNow.get(Calendar.HOUR_OF_DAY) <= 9) {
             hour = "0" + rightNow.get(Calendar.HOUR_OF_DAY);
-        else
+        } else {
             hour = "" + rightNow.get(Calendar.HOUR_OF_DAY);
+        }
 
-        if (rightNow.get(Calendar.MINUTE) <= 9)
+        if (rightNow.get(Calendar.MINUTE) <= 9) {
             min = "0" + rightNow.get(Calendar.MINUTE);
-        else
+        } else {
             min = "" + rightNow.get(Calendar.MINUTE);
+        }
 
-        if (rightNow.get(Calendar.SECOND) <= 9)
+        if (rightNow.get(Calendar.SECOND) <= 9) {
             sec = "0" + rightNow.get(Calendar.SECOND);
-        else
+        } else {
             sec = "" + rightNow.get(Calendar.SECOND);
+        }
 
         return hour + "h-" + min + "m-" + sec + "s";
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get an instance of an object from its class name. We assume that the
      *  object has an empty constructor.
      *
@@ -185,7 +191,6 @@ public class Tools {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To display a GUI Debug Message.
      */
     public static void displayDebugMessage(String title, String msg) {
@@ -193,7 +198,6 @@ public class Tools {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get a System property. If the property is not found we return an empty String.
      *
      *  @param key property key
@@ -203,28 +207,28 @@ public class Tools {
 
         String value = System.getProperty(key);
 
-        if (value == null)
+        if (value == null) {
             return "";
+        }
 
         return value;
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To tell if we are on a Windows or Unix System. This can be used if shell scripts are
      *  needed.
      */
     public static boolean isWindowsOS() {
         String os = System.getProperty("os.name").toLowerCase();
 
-        if (os.indexOf("windows") < 0)
+        if (os.indexOf("windows") < 0) {
             return false;
-        else
+        } else {
             return true;
+        }
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /**
      * Returns a new string where the 'newStr' string has replaced all 'find' patterns.
      * @param in String to edit
@@ -242,14 +246,14 @@ public class Tools {
             cur = nxt + find.length();
         }
 
-        if (cur < in.length())
+        if (cur < in.length()) {
             buf.append(in.substring(cur, in.length()));
+        }
 
         return buf.toString();
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To create a random key of 'nbChars' chars.
      *  ( I smile because I'm sure there will be someone one day seeking this code
      *    to find the key's logic... well, as you see, they keys are generated very
@@ -262,17 +266,17 @@ public class Tools {
         Random r = new Random(System.currentTimeMillis() * seed);
 
         for (int i = 0; i < nbChars; i++) {
-            if (r.nextInt(2) == 1)
+            if (r.nextInt(2) == 1) {
                 buf.append((char) ('A' + r.nextInt(26)));
-            else
+            } else {
                 buf.append((char) ('0' + r.nextInt(10)));
+            }
         }
 
         return buf.toString();
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /**
      *  <p> Search for classes that implement a given interface. You can specify in which
      *  packages to search. This method works EVEN if the classes are nested in a
@@ -501,7 +505,6 @@ public class Tools {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Returns true if we have the given jar name in our classpath.
      * @param jarName jar file name, such as "wotlas.jar"
      * @return true if the JAR is in the classpath, false if not
@@ -511,119 +514,113 @@ public class Tools {
 
         // We extract the last part of the JAR name
         int index = jarName.lastIndexOf("/"); // is a '/' because it comes from an URL
-        if (index >= 0)
+        if (index >= 0) {
             jarName = jarName.substring(index + 1, jarName.length());
+        }
 
         StringTokenizer tokenizer = new StringTokenizer(System.getProperty("java.class.path", "."), System.getProperty("path.separator", ";"));
 
         while (tokenizer.hasMoreTokens()) {
             String directory = tokenizer.nextToken().toLowerCase();
 
-            if (directory.endsWith(jarName))
+            if (directory.endsWith(jarName)) {
                 return true;
+            }
         }
 
         return false; // not found
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /**
      *  Returns all the files that are in the given jar, have in the specified path and
      *  have the given extension. IF you don't specify an extension (ext==null)
      *  we search for directories not files. In any case we don't recurse between
      *  eventual sub-directories.
      *
-     *  @param jarName jar file to analyze
+     *  @param resourcesLstName name of resources file that give us the complete list of the resources that we are seeking.
      *  @param dirPath path to search "base/gui/chat" for example.
      *  @param ext extension of the files to list : ".gif" for example.
-     *  @return the pathes of the files found, an empty array otherwise
+     *  @return the paths of the files found, an empty array otherwise
      */
-    public static String[] listFilesInJar(String jarName, String dirPath, String ext) {
-
-        // 1 - Prepare the search
-        dirPath = Tools.subString(dirPath, "\\", "/"); // jar uses "/" separator
-
-        if (!dirPath.endsWith("/"))
-            dirPath = dirPath + "/";
-
-        if (dirPath.startsWith("/"))
-            dirPath = dirPath.substring(1, dirPath.length());
-
-        // 2 - We analyze our JAR file
-        JarFile jar = null;
+    public static String[] listFilesInJar(String resourcesLstName, String dirPath, String ext) {
 
         try {
-            jar = new JarFile(jarName);
-        } catch (IOException e) {
-            Debug.signal(Debug.ERROR, null, "JAR not found " + jarName + " msg:" + e);
-            return new String[0];
-        }
-
-        Enumeration entries = jar.entries();
-        Vector list = new Vector(10);
-
-        if (entries == null)
-            return new String[0]; // empty Jar file
-
-        while (entries.hasMoreElements()) {
-            JarEntry entry = (JarEntry) entries.nextElement();
-
-            if (ext == null) {
-                if (!entry.isDirectory())
+            // 1 - Prepare the search
+            dirPath = Tools.subString(dirPath, "\\", "/");
+            if (!dirPath.endsWith("/")) {
+                dirPath = dirPath + "/";
+            }
+            if (dirPath.startsWith("/")) {
+                dirPath = dirPath.substring(1, dirPath.length());
+            }
+            // 2 - We analyze our list of resources.
+            InputStream is = Tools.class.getResourceAsStream(resourcesLstName);
+            if (is == null) {
+                String msg = "File not found " + resourcesLstName;
+                Debug.signal(Debug.ERROR, null, msg);
+                return new String[0];
+            }
+            BufferedReader in = new BufferedReader(new InputStreamReader(is));
+            // 1st line is a comment.
+            String name = in.readLine();
+            ArrayList<String> list = new ArrayList<String>(10);
+            while (name != null) {
+                name = in.readLine();
+                if (name == null) {
                     continue;
+                }
 
-                String name = entry.getName();
+                if (ext != null && !name.endsWith(ext)) {
+                    continue;
+                }
 
-                if (!name.endsWith("/"))
+                if (name.indexOf('.') == -1 && !name.endsWith("/")) {
+                    // We search for directories not files.
                     name = name + "/";
+                }
 
                 int index = name.indexOf(dirPath);
-                if (index < 0)
-                    continue; // entry not in our dir
+                if (index < 0) {
+                    // entry not in our dir.
+                    continue;
+                }
 
                 // immediate sub-directory ? must be only one "/" after the dirPath
                 index += dirPath.length();
-
-                if (index >= name.length() - 1)
-                    continue; // this is our dirPath entry in the JAR
-
-                index = name.indexOf("/", index);
-
-                if (index < 0 || index < name.length() - 1)
-                    continue; // error, or not an immediate sub-directory
-
-                list.addElement("/" + name);
-            } else if (entry.getName().endsWith(ext)) {
-                if (entry.isDirectory())
+                if (index >= name.length() - 1) {
+                    // this is our dirPath entry in the JAR.
                     continue;
-
-                String name = entry.getName();
-
-                int index = name.indexOf(dirPath);
-                if (index < 0)
-                    continue; // entry not in our dir
-
-                // immediate sub-directory ? must be no "/" after the dirPath
-                index += dirPath.length();
-
-                if (index >= name.length() - 1)
-                    continue; // not a valid entry
+                }
 
                 index = name.indexOf("/", index);
+                if (ext != null && ( name.endsWith("/") || index >=0)) {
+                    // not an immediate file or directory ...
+                    continue;
+                } else if (ext == null && (index < 0 || index < name.length() - 1)) {
+                    // error, or not an immediate sub-directory
+                    continue;
+                }
 
-                if (index >= 0)
-                    continue; // not an immediate file...
+                list.add("/" + name);
 
-                list.addElement("/" + name);
+
             }
-        }
 
-        // 2 - Return the results...
-        String toReturn[] = {};
-        return (String[]) list.toArray(toReturn);
+            // Close the stream.
+            is.close();
+
+            // 2 - Return the results...
+            String[] toReturn = {};
+            return list.toArray(toReturn);
+
+        } catch (IOException ioe) {
+            // Logger.getLogger(Tools.class.getName()).log(Level.SEVERE, null, ex);
+            String msg = "Error reading file " + resourcesLstName + " caused by " + ioe;
+            Debug.signal(Debug.ERROR, null, msg);
+            return new String[0];
+        }
     }
 
     /*------------------------------------------------------------------------------------*/
-
 }

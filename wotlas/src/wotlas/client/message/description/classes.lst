@@ -1,0 +1,15 @@
+# File used to find list of classes in a loaded jar.
+wotlas/client/message/description
+wotlas/client/message/description/AddPlayerToRoomMsgBehaviour.class
+wotlas/client/message/description/CleanGhostsMsgBehaviour.class
+wotlas/client/message/description/DoorsStateMsgBehaviour.class
+wotlas/client/message/description/DoorStateMsgBehaviour.class
+wotlas/client/message/description/PlayerAwayMsgBehaviour.class
+wotlas/client/message/description/PlayerConnectedToGameMsgBehaviour.class
+wotlas/client/message/description/PlayerPastMsgBehaviour.class
+wotlas/client/message/description/RemovePlayerFromRoomMsgBehaviour.class
+wotlas/client/message/description/RoomPlayerDataMsgBehaviour.class
+wotlas/client/message/description/SetFakeNameMsgBehaviour.class
+wotlas/client/message/description/YourAccountDataMsgBehaviour.class
+wotlas/client/message/description/YourFakeNamesMsgBehaviour.class
+wotlas/client/message/description/YourPlayerDataMsgBehaviour.class

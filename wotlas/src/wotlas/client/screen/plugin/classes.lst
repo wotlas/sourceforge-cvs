@@ -1,0 +1,7 @@
+# File used to find list of classes in a loaded jar.
+wotlas/client/screen/plugin
+wotlas/client/screen/plugin/AwayPlugIn.class
+wotlas/client/screen/plugin/InfoPlugIn.class
+wotlas/client/screen/plugin/InventoryPlugIn.class
+wotlas/client/screen/plugin/LiePlugIn.class
+wotlas/client/screen/plugin/MacroPlugIn.class

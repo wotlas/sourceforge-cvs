@@ -466,6 +466,27 @@ public class Tools {
                 }
             }
 
+            // 2.1 bis - 0 reference : we are in WebStart, we will search the classes.lst files.
+            if (list.size() == 0) {
+                String[] entries;
+                String name;
+                for (int i = 0; i < packages.length; i++) {
+                    name = "/" + packages[i].replace('.', '/') + "/classes.lst";
+                    entries = Tools.listFilesInJar(name, packages[i].replace('.', '/'), "class");
+                    if (entries == null || entries.length == 0) {
+                        Debug.signal(Debug.WARNING, null, "Trying to find : " + name + " -> classes not found ");
+                        continue;
+                    }
+                    Debug.signal(Debug.WARNING, null, "Trying to find : " + name + " -> found " + entries.length + ".class");
+                    for (int j = 0; j < entries.length; j++) {
+                        // Debug.signal(Debug.WARNING, null, "Found : " + name + " -> "+entries[j]);
+                        name = entries[j].substring(1, entries[j].lastIndexOf(".class"));
+                        name = name.replace('/', '.');
+                        list.addElement(name);
+                    }
+                }
+            }
+
             // 2.2 - OK. Now we can search for the wanted interface among the
             // files we found
             // for the current classpath entry !
@@ -594,7 +615,7 @@ public class Tools {
                 }
 
                 index = name.indexOf("/", index);
-                if (ext != null && ( name.endsWith("/") || index >=0)) {
+                if (ext != null && (name.endsWith("/") || index >= 0)) {
                     // not an immediate file or directory ...
                     continue;
                 } else if (ext == null && (index < 0 || index < name.length() - 1)) {

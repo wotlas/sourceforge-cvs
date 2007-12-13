@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.message.chat;
 
 import java.util.Hashtable;
@@ -32,11 +31,9 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-
 public class RemPlayerFromChatRoomMsgBehaviour extends RemPlayerFromChatRoomMessage implements NetMessageBehaviour {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public RemPlayerFromChatRoomMsgBehaviour() {
@@ -44,26 +41,27 @@ public class RemPlayerFromChatRoomMsgBehaviour extends RemPlayerFromChatRoomMess
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
      *        this message.
      */
     public void doBehaviour(Object sessionContext) {
-        if (DataManager.SHOW_DEBUG)
+        if (DataManager.SHOW_DEBUG) {
             System.out.println("RemPlayerFromChatRoomMsgBehaviour::doBehaviour: " + this.chatRoomPrimaryKey);
+        }
 
         // The sessionContext is here a DataManager.
         DataManager dataManager = (DataManager) sessionContext;
         PlayerImpl player = dataManager.getMyPlayer();
 
         // We seek for the player to remove
-        Hashtable players = dataManager.getPlayers();
+        Hashtable<String, PlayerImpl> players = dataManager.getPlayers();
         PlayerImpl sender = null;
 
-        if (players != null)
-            sender = (PlayerImpl) players.get(this.senderPrimaryKey);
+        if (players != null) {
+            sender = players.get(this.senderPrimaryKey);
+        }
 
         if (sender == null) {
             Debug.signal(Debug.ERROR, this, "Could not find the subject player of this message : " + this.senderPrimaryKey);
@@ -80,5 +78,4 @@ public class RemPlayerFromChatRoomMsgBehaviour extends RemPlayerFromChatRoomMess
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

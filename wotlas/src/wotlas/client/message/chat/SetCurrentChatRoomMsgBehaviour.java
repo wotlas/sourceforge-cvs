@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.message.chat;
 
 import java.util.Hashtable;
@@ -32,7 +31,6 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-
 public class SetCurrentChatRoomMsgBehaviour extends SetCurrentChatRoomMessage implements NetMessageBehaviour {
     /*------------------------------------------------------------------------------------*/
 
@@ -41,7 +39,6 @@ public class SetCurrentChatRoomMsgBehaviour extends SetCurrentChatRoomMessage im
     private boolean invokeLater = true;
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public SetCurrentChatRoomMsgBehaviour() {
@@ -49,15 +46,15 @@ public class SetCurrentChatRoomMsgBehaviour extends SetCurrentChatRoomMessage im
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
      *        this message.
      */
     public void doBehaviour(Object sessionContext) {
-        if (DataManager.SHOW_DEBUG)
+        if (DataManager.SHOW_DEBUG) {
             System.out.println("SetCurrentChatRoomMsgBehaviour::doBehaviour: " + this.chatRoomPrimaryKey);
+        }
 
         // The sessionContext is here a DataManager.
         DataManager dataManager = (DataManager) sessionContext;
@@ -72,8 +69,9 @@ public class SetCurrentChatRoomMsgBehaviour extends SetCurrentChatRoomMessage im
                 return;
             }
 
-            if (!player.getLocation().isRoom())
+            if (!player.getLocation().isRoom()) {
                 return;
+            }
 
             this.invokeLater = false;
             dataManager.invokeLater(this);
@@ -88,24 +86,26 @@ public class SetCurrentChatRoomMsgBehaviour extends SetCurrentChatRoomMessage im
             return;
         }
 
-        Hashtable players = dataManager.getPlayers();
+        Hashtable<String, PlayerImpl> players = dataManager.getPlayers();
         PlayerImpl sender = null;
 
         for (int i = 0; i < this.playersPrimaryKey.length; i++) {
-            if (players != null)
-                sender = (PlayerImpl) players.get(this.playersPrimaryKey[i]);
+            if (players != null) {
+                sender = players.get(this.playersPrimaryKey[i]);
+            }
 
-            if (sender == null)
+            if (sender == null) {
                 Debug.signal(Debug.WARNING, this, "Could not find the player for chat... " + this.playersPrimaryKey[i]);
-            else
+            } else {
                 this.fullPlayerNames[i] = sender.getFullPlayerName();
+            }
 
             // We add the player
-            if (!this.playersPrimaryKey[i].equals(player.getPrimaryKey()))
+            if (!this.playersPrimaryKey[i].equals(player.getPrimaryKey())) {
                 chatRoom.addPlayer(this.playersPrimaryKey[i], this.fullPlayerNames[i]);
+            }
         }
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

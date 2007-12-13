@@ -16,11 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.server.message.chat;
 
 import java.util.Hashtable;
 import java.util.Iterator;
+import wotlas.common.Player;
 import wotlas.common.chat.ChatRoom;
 import wotlas.common.message.account.WarningMessage;
 import wotlas.common.message.chat.SendTextMessage;
@@ -38,11 +38,9 @@ import wotlas.utils.Debug;
  *
  * @author Petrus
  */
-
 public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageBehaviour {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public SendTextMsgBehaviour() {
@@ -50,7 +48,6 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
@@ -61,25 +58,28 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
         PlayerImpl player = (PlayerImpl) sessionContext;
 
         // 0 - big messages are truncated
-        if (this.message.length() > ChatRoom.MAXIMUM_MESSAGE_SIZE)
+        if (this.message.length() > ChatRoom.MAXIMUM_MESSAGE_SIZE) {
             this.message = this.message.substring(0, ChatRoom.MAXIMUM_MESSAGE_SIZE - 4) + "...";
+        }
 
-        Hashtable players = null;
+        Hashtable<String, Player> players = null;
         WotlasLocation myLocation = player.getLocation();
 
         // 0.1 - test shortcut/commands...
         if (this.message.charAt(0) == '/') {
             ChatCommandProcessor processor = ServerDirector.getDataManager().getChatCommandProcessor();
 
-            if (processor.processCommand(this.message, player, this))
-                return; // end of message process if the command returns true
-            // if the command returns false we continue the message process
+            if (processor.processCommand(this.message, player, this)) {
+                return;
+            } // end of message process if the command returns true
+        // if the command returns false we continue the message process
         }
 
         // 1 - We send the message back to the user.
         if (this.chatRoomPrimaryKey.equals(player.getCurrentChatPrimaryKey())) {
-            if (this.voiceSoundLevel == ChatRoom.SHOUTING_VOICE_LEVEL)
+            if (this.voiceSoundLevel == ChatRoom.SHOUTING_VOICE_LEVEL) {
                 this.message = this.message.toUpperCase();
+            }
             player.sendMessage(this);
         } else if (this.voiceSoundLevel != ChatRoom.SHOUTING_VOICE_LEVEL) {
             // player is trying to speak in a ChatRoom not near to him.
@@ -106,9 +106,9 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
                     // is it the default chat ? or another ?
                     boolean isDefaultChat = this.chatRoomPrimaryKey.equals(ChatRoom.DEFAULT_CHAT);
 
-                    if (isDefaultChat)
+                    if (isDefaultChat) {
                         players = myRoom.getMessageRouter().getPlayers();
-                    else {
+                    } else {
                         player.setIsChatMember(true);
 
                         if (player.getChatList() == null) {
@@ -126,13 +126,14 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
 
                     // send the message
                     synchronized (players) {
-                        Iterator it = players.values().iterator();
+                        Iterator<Player> it = players.values().iterator();
                         PlayerImpl p = null;
 
                         while (it.hasNext()) {
                             p = (PlayerImpl) it.next();
-                            if (p != player && (p.isChatMember() || isDefaultChat))
+                            if (p != player && (p.isChatMember() || isDefaultChat)) {
                                 p.sendChatMessage(this, player);
+                            }
                         }
                     }
 
@@ -140,9 +141,9 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
 
                 case ChatRoom.NORMAL_VOICE_LEVEL:
                     // is it the default chat ? or another ?
-                    if (this.chatRoomPrimaryKey.equals(ChatRoom.DEFAULT_CHAT))
+                    if (this.chatRoomPrimaryKey.equals(ChatRoom.DEFAULT_CHAT)) {
                         players = myRoom.getMessageRouter().getPlayers();
-                    else {
+                    } else {
                         player.setIsChatMember(true);
 
                         if (player.getChatList() == null) {
@@ -160,13 +161,14 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
 
                     // send the message
                     synchronized (players) {
-                        Iterator it = players.values().iterator();
+                        Iterator<Player> it = players.values().iterator();
                         PlayerImpl p = null;
 
                         while (it.hasNext()) {
                             p = (PlayerImpl) it.next();
-                            if (p != player)
+                            if (p != player) {
                                 p.sendChatMessage(this, player);
+                            }
                         }
                     }
 
@@ -184,30 +186,33 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
 
                     // send the message to the players of the room
                     synchronized (players) {
-                        Iterator it = players.values().iterator();
+                        Iterator<Player> it = players.values().iterator();
                         PlayerImpl p = null;
 
                         while (it.hasNext()) {
                             p = (PlayerImpl) it.next();
-                            if (p != player)
+                            if (p != player) {
                                 p.sendChatMessage(this, player);
+                            }
                         }
                     }
 
                     // And players in other rooms
-                    if (myRoom.getRoomLinks() == null)
+                    if (myRoom.getRoomLinks() == null) {
                         return;
+                    }
 
                     for (int j = 0; j < myRoom.getRoomLinks().length; j++) {
                         Room otherRoom = myRoom.getRoomLinks()[j].getRoom1();
 
-                        if (otherRoom == myRoom)
+                        if (otherRoom == myRoom) {
                             otherRoom = myRoom.getRoomLinks()[j].getRoom2();
+                        }
 
                         players = otherRoom.getMessageRouter().getPlayers();
 
                         synchronized (players) {
-                            Iterator it = players.values().iterator();
+                            Iterator<Player> it = players.values().iterator();
 
                             while (it.hasNext()) {
                                 PlayerImpl p = (PlayerImpl) it.next();
@@ -234,17 +239,17 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
         players = mRouter.getPlayers();
 
         synchronized (players) {
-            Iterator it = players.values().iterator();
+            Iterator<Player> it = players.values().iterator();
 
             while (it.hasNext()) {
                 PlayerImpl p = (PlayerImpl) it.next();
 
-                if (p != player)
+                if (p != player) {
                     p.sendChatMessage(this, player);
+                }
             }
         }
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

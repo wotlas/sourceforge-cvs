@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.server.chat;
 
 import java.util.Hashtable;
@@ -31,25 +30,21 @@ import wotlas.utils.Tools;
  *
  * @author Aldiss
  */
-
 public class ChatCommandProcessor {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Our chat commands table where we store commands by their prefix name.
      */
-    private Hashtable commands;
+    private Hashtable<String, ChatCommand> commands;
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public ChatCommandProcessor() {
-        this.commands = new Hashtable(20);
+        this.commands = new Hashtable<String, ChatCommand>(20);
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To init the processor with the available commands.
      */
     public void init() {
@@ -57,7 +52,7 @@ public class ChatCommandProcessor {
         /** We load the available plug-ins (we search in our local directory).
          */
         Class classes[] = null;
-        String packages[] = { "wotlas.server.chat" };
+        String packages[] = {"wotlas.server.chat"};
 
         try {
             classes = Tools.getImplementorsOf("wotlas.server.chat.ChatCommand", packages);
@@ -78,8 +73,9 @@ public class ChatCommandProcessor {
             try {
                 Object o = classes[i].newInstance();
 
-                if (o == null || !(o instanceof ChatCommand))
+                if (o == null || !(o instanceof ChatCommand)) {
                     continue;
+                }
 
                 // Ok, we have a valid chat command Class.
                 addChatCommand((ChatCommand) o);
@@ -92,7 +88,6 @@ public class ChatCommandProcessor {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Adds a new chat command to our table.
      */
     protected void addChatCommand(ChatCommand newCommand) {
@@ -106,7 +101,6 @@ public class ChatCommandProcessor {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Method called to execute the given command.
      *
      *  @param commandName command name as it was given to you by the getCommandName() method.
@@ -122,10 +116,11 @@ public class ChatCommandProcessor {
         int separator = message.indexOf(' ');
         String commandName;
 
-        if (separator < 0)
+        if (separator < 0) {
             commandName = message.trim();
-        else
+        } else {
             commandName = message.substring(0, separator).trim();
+        }
 
         // 2 - test existence
         if (!this.commands.containsKey(commandName)) {
@@ -135,16 +130,16 @@ public class ChatCommandProcessor {
         }
 
         // 3 - we run the command
-        ChatCommand command = (ChatCommand) this.commands.get(commandName);
+        ChatCommand command = this.commands.get(commandName);
 
-        if (response.getVoiceSoundLevel() != command.getChatCommandVoiceSoundLevel())
-            return false; // not the right sound level for this command !
+        if (response.getVoiceSoundLevel() != command.getChatCommandVoiceSoundLevel()) {
+            return false;
+        } // not the right sound level for this command !
 
         return command.exec(message, player, response);
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get the list of public commands
      *  @param seeHidden set to true to display all commands
      */
@@ -152,54 +147,57 @@ public class ChatCommandProcessor {
 
         StringBuffer list = new StringBuffer("<div align='center'><table width='60%' border='0' bgcolor='#B4D0EF'>");
         int cellCounter = 0;
-        Iterator it = this.commands.values().iterator();
+        Iterator<ChatCommand> it = this.commands.values().iterator();
 
         synchronized (this.commands) {
 
             while (it.hasNext()) {
-                ChatCommand command = (ChatCommand) it.next();
+                ChatCommand command = it.next();
 
-                if (command.isHidden() && !seeHidden)
+                if (command.isHidden() && !seeHidden) {
                     continue;
+                }
 
-                if (cellCounter % 4 == 0)
+                if (cellCounter % 4 == 0) {
                     list.append("<tr>");
+                }
 
                 list.append("<td><div align='center'>" + command.getChatCommandPrefix() + "</div></td>");
 
-                if (cellCounter % 4 == 3)
+                if (cellCounter % 4 == 3) {
                     list.append("</tr>");
+                }
                 cellCounter++;
             }
         }
 
-        if (cellCounter % 4 == 1)
+        if (cellCounter % 4 == 1) {
             list.append("<td></td><td></td><td></td></tr></table></div>");
-        else if (cellCounter % 4 == 2)
+        } else if (cellCounter % 4 == 2) {
             list.append("<td></td><td></td></tr></table></div>");
-        else if (cellCounter % 4 == 3)
+        } else if (cellCounter % 4 == 3) {
             list.append("<td></td></tr></table></div>");
-        else
+        } else {
             list.append("</table></div>");
+        }
 
         return list.toString();
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get the documentation of a command.
      * @param commandName command name
      * @return null if the command doesn't exist, the documentation otherwise.
      */
     public String getCommandDocumentation(String commandName) {
 
-        if (!this.commands.containsKey(commandName))
+        if (!this.commands.containsKey(commandName)) {
             return null;
+        }
 
-        ChatCommand command = (ChatCommand) this.commands.get(commandName);
+        ChatCommand command = this.commands.get(commandName);
         return command.getCommandDocumentation();
     }
 
     /*------------------------------------------------------------------------------------*/
-
 }

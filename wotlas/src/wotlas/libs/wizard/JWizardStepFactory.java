@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.libs.wizard;
 
 import java.io.FileInputStream;
@@ -30,26 +29,22 @@ import java.util.Hashtable;
  *
  * @author Aldiss
  */
-
 public class JWizardStepFactory {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Our JWizardStep Buffer where we store static JWizard steps.
      *  The hashtable's key is the JWizardStep java class 'stringified'.
      */
-    private Hashtable staticSteps;
+    private Hashtable<String, JWizardStep> staticSteps;
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public JWizardStepFactory() {
-        this.staticSteps = new Hashtable(10);
+        this.staticSteps = new Hashtable<String, JWizardStep>(10);
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To clear the factory's buffer.
      */
     public void clear() {
@@ -57,7 +52,6 @@ public class JWizardStepFactory {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get an instance of a static JWizardStep. This is a simple & fast method to get a
      *  JWizardStep that only contains well-defined data fields. If you need to get
      *  a JWizardStep that contains dynamic data use the other getJWizardStep method.<br>
@@ -75,8 +69,9 @@ public class JWizardStepFactory {
     public JWizardStep getJWizardStep(String stepClass) {
 
         // Class already in our buffer ?
-        if (this.staticSteps.containsKey(stepClass))
-            return (JWizardStep) this.staticSteps.get(stepClass);
+        if (this.staticSteps.containsKey(stepClass)) {
+            return this.staticSteps.get(stepClass);
+        }
 
         // We create, store and return a new instance
         try {
@@ -94,7 +89,6 @@ public class JWizardStepFactory {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get an instance of a JWizardStep according to its parameters. The returned
      *  JWizardStep is fully initialized.
      *
@@ -106,7 +100,7 @@ public class JWizardStepFactory {
 
         // Class already in our buffer ?
         if (!parameters.getIsDynamic() && this.staticSteps.containsKey(parameters.getStepClass())) {
-            JWizardStep step = (JWizardStep) this.staticSteps.get(parameters.getStepClass());
+            JWizardStep step = this.staticSteps.get(parameters.getStepClass());
 
             try {
                 step.init(parameters);
@@ -124,8 +118,9 @@ public class JWizardStepFactory {
             JWizardStep step = (JWizardStep) myStepClass.newInstance();
             step.init(parameters);
 
-            if (!parameters.getIsDynamic())
+            if (!parameters.getIsDynamic()) {
                 this.staticSteps.put(parameters.getStepClass(), step);
+            }
 
             return step;
         } catch (Exception ex) {
@@ -135,7 +130,6 @@ public class JWizardStepFactory {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get an instance of a JWizardStep according to its parameters. The parameters
      *  are taken from a file which is given as parameter. We load the file using the
      *  JWizardStepParameters.loadFromFile() method. We then try to create the JWizardStep
@@ -157,12 +151,12 @@ public class JWizardStepFactory {
 
         JWizardStepParameters parameters = JWizardStepParameters.loadFromStream(fis);
 
-        if (parameters == null)
-            return null; // load failed
+        if (parameters == null) {
+            return null;
+        } // load failed
 
         return getJWizardStep(parameters);
     }
 
     /*------------------------------------------------------------------------------------*/
-
 }

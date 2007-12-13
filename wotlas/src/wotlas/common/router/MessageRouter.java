@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.common.router;
 
 import java.util.Hashtable;
@@ -31,13 +30,10 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-
 public abstract class MessageRouter {
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /*** Options available when sending messages ***/
-
     /** Available send options. Send message(s) to local group only (default).
      */
     public final static byte LOCAL_GROUP = 0;
@@ -55,21 +51,18 @@ public abstract class MessageRouter {
     public final static byte EXC_EXTENDED_GROUP = 2;
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Our players.
      */
-    protected Hashtable players;
+    protected Hashtable<String, Player> players;
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Constructor. Just creates internals.
      */
     public MessageRouter() {
-        this.players = new Hashtable(5);
+        this.players = new Hashtable<String, Player>(5);
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Inititializes this MessageRouter.
      *
      * @param location location this MessageRouter is linked to.
@@ -78,7 +71,6 @@ public abstract class MessageRouter {
     abstract public void init(WotlasLocation location, WorldManager wManager);
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To add a player to this group. The default implementation of this method just
      *  add the player to our list WITHOUT sending any messages.
      *
@@ -96,7 +88,6 @@ public abstract class MessageRouter {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To remove a player from this group. The default implementation of this method just
      *  removes the player of our list WITHOUT sending any messages.
      *
@@ -114,7 +105,6 @@ public abstract class MessageRouter {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To remove all the players of this group. The default implementation of this method
      *  just removes all the players WITHOUT sending any messages.
      */
@@ -123,7 +113,6 @@ public abstract class MessageRouter {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To move a player from this group to another.
      *
      * @param player player to move
@@ -132,7 +121,6 @@ public abstract class MessageRouter {
     abstract public boolean movePlayer(Player player, WotlasLocation targetLocation);
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To get the list of all the players managed by this router.
      *  IMPORTANT: before ANY process on this list, synchronize your code on it :<br>
      *
@@ -145,33 +133,30 @@ public abstract class MessageRouter {
      *
      * @return our players hashtable, the player.getPrimaryKey() is the key.
      */
-    public Hashtable getPlayers() {
+    public Hashtable<String, Player> getPlayers() {
         return this.players;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To find a player by its primary key. We search in our local group. MessageRouters
      *  may extend this search.
      * @param primaryKey player to find
      * @return null if not found, the player otherwise
      */
     public Player getPlayer(String primaryKey) {
-        return (Player) this.players.get(primaryKey);
+        return this.players.get(primaryKey);
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To send a message to the local group.
      *  @param msg message to send to the group
      */
     public void sendMessage(NetMessage msg) {
-        NetMessage list[] = { msg };
+        NetMessage list[] = {msg};
         sendMessages(list, null, MessageRouter.LOCAL_GROUP);
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To send a list of messages to the local group.
      *  @param msg messages to send to the group
      */
@@ -180,7 +165,6 @@ public abstract class MessageRouter {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To send a message to the local group with the exception of a player.
      *  @param msg message to send to the group
      *  @param exceptThisPlayer player to except from the send of messages, if the
@@ -188,12 +172,11 @@ public abstract class MessageRouter {
      *         group. 
      */
     public void sendMessage(NetMessage msg, Player exceptThisPlayer) {
-        NetMessage list[] = { msg };
+        NetMessage list[] = {msg};
         sendMessages(list, exceptThisPlayer, MessageRouter.LOCAL_GROUP);
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To send a list of messages to the local group with the exception of a player.
      *  @param msg messages to send to the group
      *  @param exceptThisPlayer player to except from the send of messages, if the
@@ -205,7 +188,6 @@ public abstract class MessageRouter {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To send a message to the specified group with the exception of a player.
      *  @param msg message to send to the group
      *  @param exceptThisPlayer player to except from the send of messages, if the
@@ -215,12 +197,11 @@ public abstract class MessageRouter {
      *         defined in this class : LOCAL_GROUP, EXTENDED_GROUP, EXC_EXTENDED_GROUP
      */
     public void sendMessage(NetMessage msg, Player exceptThisPlayer, byte groupOption) {
-        NetMessage list[] = { msg };
+        NetMessage list[] = {msg};
         sendMessages(list, exceptThisPlayer, groupOption);
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To send a list of messages to the specified group with the exception of a player.
      *  @param msg message to send to the group
      *  @param exceptThisPlayer player to except from the send of messages, if the
@@ -232,5 +213,4 @@ public abstract class MessageRouter {
     abstract public void sendMessages(NetMessage msg[], Player exceptThisPlayer, byte groupOption);
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

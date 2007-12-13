@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.screen;
 
 import java.awt.BorderLayout;
@@ -62,11 +61,9 @@ import wotlas.utils.Debug;
  *
  * @author Petrus, MasterBob
  */
-
 public class JChatPanel extends JPanel implements MouseListener, ActionListener {
 
     /*------------------------------------------------------------------------------------*/
-
     private ImageIcon iconUp = ClientDirector.getResourceManager().getImageIcon("pin.gif");
 
     /** Our tabbedPane
@@ -107,7 +104,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
 
     /** To iterate the players hashtable
      */
-    private Enumeration e = null;
+    private Enumeration<PlayerState> e = null;
 
     /** the name we want to autocomplete
      */
@@ -118,7 +115,6 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
     private String input;
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public JChatPanel() {
@@ -164,6 +160,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
         this.inputBox.getCaret().setVisible(true);
         //inputBox.setInputVerifier(new NoFocusInputVerifier());
         this.inputBox.addKeyListener(new KeyAdapter() {
+
             @Override
             public void keyPressed(KeyEvent keyEvent) {
                 // Tab key
@@ -190,6 +187,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
                 // Default
                 JChatPanel.this.e = null;
             }
+
         });
 
         this.chatVoiceLevel = new JSlider(SwingConstants.HORIZONTAL, 0, 2, ChatRoom.NORMAL_VOICE_LEVEL);
@@ -219,7 +217,6 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get current ChatRoom primaryKey
      */
     public String getMyCurrentChatPrimaryKey() {
@@ -235,7 +232,6 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To set the input box text and send the message
      *
      * @param text the new text of input box
@@ -246,7 +242,6 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To enable/disable a chatRoom
      *
      * @param primaryKey the ChatRoom primary key
@@ -262,7 +257,6 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To reset the state of the JChatPanel
      */
     public void reset() {
@@ -271,28 +265,31 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
         this.currentPrimaryKey = ChatRoom.DEFAULT_CHAT;
         this.b_createChatRoom.setEnabled(true);
 
-        if (DataManager.SHOW_DEBUG)
+        if (DataManager.SHOW_DEBUG) {
             System.out.println("TAB number:" + this.tabbedPane.getTabCount());
+        }
         for (int i = this.tabbedPane.getTabCount() - 1; i >= 0; i--) {
-            if (DataManager.SHOW_DEBUG)
+            if (DataManager.SHOW_DEBUG) {
                 System.out.println("" + this.tabbedPane.getComponentAt(i).getName());
+            }
 
             if (!this.tabbedPane.getComponentAt(i).getName().equals(ChatRoom.DEFAULT_CHAT)) {
                 this.tabbedPane.remove(i);
-                if (DataManager.SHOW_DEBUG)
+                if (DataManager.SHOW_DEBUG) {
                     System.out.println("tab removed");
+                }
             } else {
                 ((JChatRoom) this.tabbedPane.getComponentAt(i)).removeAllPlayers();
-                if (DataManager.SHOW_DEBUG)
+                if (DataManager.SHOW_DEBUG) {
                     System.out.println("DEFAULT CHAT player list reseted");
+                }
             }
         }
 
-        //       addPlayer( ChatRoom.DEFAULT_CHAT, DataManager.getDefaultDataManager().getMyPlayer() );
+    //       addPlayer( ChatRoom.DEFAULT_CHAT, DataManager.getDefaultDataManager().getMyPlayer() );
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To set the current ChatRoom.
      */
     public boolean setCurrentJChatRoom(String primaryKey) {
@@ -324,23 +321,25 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To add a JChatRoom.<br>
      * called by wotlas.client.message.chat.ChatRoomCreatedMessage
      */
     public JChatRoom addJChatRoom(ChatRoom chatRoom) {
         JChatRoom jchatRoom = new JChatRoom(chatRoom);
-        if (DataManager.SHOW_DEBUG)
+        if (DataManager.SHOW_DEBUG) {
             System.out.println("JChatRoom::addJChatRoom " + jchatRoom.getName() + " created !");
+        }
 
-        if (DataManager.SHOW_DEBUG)
+        if (DataManager.SHOW_DEBUG) {
             System.out.println("\tcreatorPrimaryKey = " + chatRoom.getCreatorPrimaryKey());
+        }
         this.tabbedPane.addTab(chatRoom.getName(), this.iconUp, jchatRoom, chatRoom.getName() + " channel");
 
-        if (this.tabbedPane.getTabCount() >= ChatRoom.MAXIMUM_CHATROOMS_PER_ROOM)
+        if (this.tabbedPane.getTabCount() >= ChatRoom.MAXIMUM_CHATROOMS_PER_ROOM) {
             this.b_createChatRoom.setEnabled(false);
-        else
+        } else {
             this.b_createChatRoom.setEnabled(true);
+        }
 
         return jchatRoom;
     }
@@ -353,42 +352,44 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
         // We can't remove the first ChatRoom
         for (int i = 1; i < this.tabbedPane.getTabCount(); i++) {
             if (this.tabbedPane.getComponentAt(i).getName().equals(primaryKey)) {
-                if (DataManager.SHOW_DEBUG)
+                if (DataManager.SHOW_DEBUG) {
                     System.out.println("removeChatRoom");
+                }
                 this.tabbedPane.remove(i);
 
-                if (primaryKey.equals(this.currentPrimaryKey))
+                if (primaryKey.equals(this.currentPrimaryKey)) {
                     setCurrentJChatRoom(ChatRoom.DEFAULT_CHAT);
+                }
 
-                if (this.tabbedPane.getTabCount() >= ChatRoom.MAXIMUM_CHATROOMS_PER_ROOM)
+                if (this.tabbedPane.getTabCount() >= ChatRoom.MAXIMUM_CHATROOMS_PER_ROOM) {
                     this.b_createChatRoom.setEnabled(false);
-                else
+                } else {
                     this.b_createChatRoom.setEnabled(true);
+                }
 
                 return true;
             }
         }
-        if (DataManager.SHOW_DEBUG)
+        if (DataManager.SHOW_DEBUG) {
             System.out.println("ERROR : Couldn't removeJChatRoom");
+        }
         return false;
     }
 
     /** To remove currentChatRoom
      *
     public void removeCurrentChatRoom() {
-      int chatTabIndex = tabbedPane.getSelectedIndex();
-      // We can't remove first ChatRoom
-       if (chatTabIndex == 0)
-           return;
-
-       tabbedPane.remove(chatTabIndex);
-
-       if (tabbedPane.getTabCount()>=ChatRoom.MAXIMUM_CHATROOMS_PER_ROOM)
-             b_createChatRoom.setEnabled(false);
-       else
-             b_createChatRoom.setEnabled(true);
+    int chatTabIndex = tabbedPane.getSelectedIndex();
+    // We can't remove first ChatRoom
+    if (chatTabIndex == 0)
+    return;
+    tabbedPane.remove(chatTabIndex);
+    if (tabbedPane.getTabCount()>=ChatRoom.MAXIMUM_CHATROOMS_PER_ROOM)
+    b_createChatRoom.setEnabled(false);
+    else
+    b_createChatRoom.setEnabled(true);
     }
-    */
+     */
     /** To change the title of main JChatRoom associated to the room (first index)
      */
     public void changeMainJChatRoom(String roomName) {
@@ -404,13 +405,15 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
     public JChatRoom getJChatRoom(String primaryKey) {
         for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
             if (this.tabbedPane.getComponentAt(i).getName().equals(primaryKey)) {
-                if (DataManager.SHOW_DEBUG)
+                if (DataManager.SHOW_DEBUG) {
                     System.out.println("getJChatRoom");
+                }
                 return (JChatRoom) this.tabbedPane.getComponentAt(i);
             }
         }
-        if (DataManager.SHOW_DEBUG)
+        if (DataManager.SHOW_DEBUG) {
             System.out.println("ERROR : Couldn't getJChatRoom");
+        }
         return null;
     }
 
@@ -425,20 +428,19 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
      * @param primaryKey primary key of current ChatRoom
      *
     public boolean setCurrentJChatRoom(String primaryKey) {
-      this.currentPrimaryKey = primaryKey;
-      for (int i=0; i<tabbedPane.getTabCount();i++) {
-        if ( tabbedPane.getComponentAt(i).getName().equals(primaryKey) ) {
-          tabbedPane.setEnabledAt(i, true);
-          tabbedPane.setSelectedIndex(i);
-          return true;
-        }
-      }
-      System.out.println("ERROR : Couldn't setCurrentJChatRoom");
-      return false;
+    this.currentPrimaryKey = primaryKey;
+    for (int i=0; i<tabbedPane.getTabCount();i++) {
+    if ( tabbedPane.getComponentAt(i).getName().equals(primaryKey) ) {
+    tabbedPane.setEnabledAt(i, true);
+    tabbedPane.setSelectedIndex(i);
+    return true;
     }
-    */
+    }
+    System.out.println("ERROR : Couldn't setCurrentJChatRoom");
+    return false;
+    }
+     */
     /*------------------------------------------------------------------------------------*/
-
     /** To add a player to a JChatRoom.
      *
      * @param primaryKey primary key of ChatRoom to modify
@@ -452,8 +454,9 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
                 return true;
             }
         }
-        if (DataManager.SHOW_DEBUG)
+        if (DataManager.SHOW_DEBUG) {
             System.out.println("ERROR : Couldn't addPlayer");
+        }
         return false;
     }
 
@@ -470,8 +473,9 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
                 return true;
             }
         }
-        if (DataManager.SHOW_DEBUG)
+        if (DataManager.SHOW_DEBUG) {
             System.out.println("ERROR : Couldn't removePlayer");
+        }
         return false;
     }
 
@@ -490,7 +494,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
      *
      * @param primaryKey primary key of the ChatRoom
      */
-    public Hashtable getPlayers(String primaryKey) {
+    public Hashtable<String, PlayerState> getPlayers(String primaryKey) {
 
         for (int i = 0; i < this.tabbedPane.getTabCount(); i++) {
             if (this.tabbedPane.getComponentAt(i).getName().equals(primaryKey)) {
@@ -498,13 +502,13 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
                 return jchatRoom.getPlayers();
             }
         }
-        if (DataManager.SHOW_DEBUG)
+        if (DataManager.SHOW_DEBUG) {
             System.out.println("ERROR : Couldn't get players");
+        }
         return null;
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** action when the user wants to send a message
      */
     private void okAction() {
@@ -513,33 +517,38 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
         message = this.inputBox.getText();
 
         // I - We control the length of the message the user wants to send.
-        if (message.length() == 0)
+        if (message.length() == 0) {
             return;
+        }
 
         this.messageHistory.add(message);
 
         // We get the MacroPlugIn and process the chat message with it.
         MacroPlugIn macroPlugIn = (MacroPlugIn) ClientDirector.getDataManager().getClientScreen().getPlayerPanel().getPlugIn("Macro");
 
-        if (macroPlugIn != null)
+        if (macroPlugIn != null) {
             message = macroPlugIn.processMacros(message);
+        }
 
-        if (message.length() > ChatRoom.MAXIMUM_MESSAGE_SIZE)
+        if (message.length() > ChatRoom.MAXIMUM_MESSAGE_SIZE) {
             message = message.substring(0, ChatRoom.MAXIMUM_MESSAGE_SIZE - 4) + "...";
+        }
 
         // II - Any Shortcuts ?
         if (message.startsWith("/whisper")) {
             this.chatVoiceLevel.setValue(ChatRoom.WHISPERING_VOICE_LEVEL);
             message = message.substring(8);
             this.inputBox.setText(message);
-            if (message.length() == 0)
+            if (message.length() == 0) {
                 return;
+            }
         } else if (message.startsWith("/shout")) {
             this.chatVoiceLevel.setValue(ChatRoom.SHOUTING_VOICE_LEVEL);
             message = message.substring(6);
             this.inputBox.setText(message);
-            if (message.length() == 0)
+            if (message.length() == 0) {
                 return;
+            }
         }
 
         // III - We send the message
@@ -553,14 +562,14 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To auto complete the name of a player
      */
     private String nameCompletion() {
         if (this.e == null) {
             this.input = this.inputBox.getText();
-            if (this.input.length() == 0)
+            if (this.input.length() == 0) {
                 return this.input;
+            }
             int lastIndex = this.input.lastIndexOf(' ');
             this.autoName = this.input.substring(lastIndex + 1, this.input.length());
             this.input = this.input.substring(0, lastIndex + 1);
@@ -569,7 +578,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
 
         String playerKey;
         for (; this.e.hasMoreElements();) {
-            playerKey = ((PlayerState) this.e.nextElement()).fullName;
+            playerKey = (this.e.nextElement()).fullName;
             if (playerKey.startsWith(this.autoName)) {
                 // player found      
                 return this.input + playerKey;
@@ -582,20 +591,20 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** ActionListener Implementation **/
-
     /** Called when an action is performed.
      */
-    public void actionPerformed(ActionEvent e) {
-        String actionCommand = e.getActionCommand();
+    public void actionPerformed(ActionEvent ae) {
+        String actionCommand = ae.getActionCommand();
 
         // 0 - Command Control
-        if (actionCommand == null)
+        if (actionCommand == null) {
             return;
+        }
 
-        if (DataManager.SHOW_DEBUG)
+        if (DataManager.SHOW_DEBUG) {
             System.out.println("Action command : " + actionCommand);
+        }
 
         DataManager dataManager = ClientDirector.getDataManager();
         PlayerImpl myPlayer = dataManager.getMyPlayer();
@@ -612,20 +621,23 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
 
             String chatRoomName = JOptionPane.showInputDialog("Please enter a Name:");
 
-            if (chatRoomName == null || chatRoomName.length() == 0)
+            if (chatRoomName == null || chatRoomName.length() == 0) {
                 return;
+            }
 
-            if (this.tabbedPane.getTabCount() >= ChatRoom.MAXIMUM_CHATROOMS_PER_ROOM - 1)
+            if (this.tabbedPane.getTabCount() >= ChatRoom.MAXIMUM_CHATROOMS_PER_ROOM - 1) {
                 this.b_createChatRoom.setEnabled(false);
-            else
+            } else {
                 this.b_createChatRoom.setEnabled(true);
+            }
 
             myPlayer.sendMessage(new ChatRoomCreationMessage(chatRoomName, myPlayer.getPrimaryKey()));
         } else if (actionCommand.equals("leaveChatRoom")) {
             //removeCurrentChatRoom();
             // Sending Message
-            if (!this.currentPrimaryKey.equals(ChatRoom.DEFAULT_CHAT))
+            if (!this.currentPrimaryKey.equals(ChatRoom.DEFAULT_CHAT)) {
                 myPlayer.sendMessage(new RemPlayerFromChatRoomMessage(myPlayer.getPrimaryKey(), this.currentPrimaryKey));
+            }
         } else if (actionCommand.equals("helpChat")) {
             DataManager dManager = ClientDirector.getDataManager();
 
@@ -635,8 +647,9 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
             // ask for an image URL
             String imageURL = JOptionPane.showInputDialog("Please enter your image's URL:\nExample: http://wotlas.sf.net/images/wotlas.gif");
 
-            if (imageURL == null || imageURL.length() == 0)
+            if (imageURL == null || imageURL.length() == 0) {
                 return;
+            }
 
             // control the URL & image
             try {
@@ -687,9 +700,7 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** MouseListener Implementation **/
-
     /**
      * Invoked when the mouse button is clicked
      */
@@ -721,15 +732,14 @@ public class JChatPanel extends JPanel implements MouseListener, ActionListener 
     }
 
     /*------------------------------------------------------------------------------------*/
-
 }
 
 /*------------------------------------------------------------------------------------*/
-
 /**
  * Private class to prevent loss of focus of a JComponent
  */
 class NoFocusInputVerifier extends InputVerifier {
+
     /** Checks whether the JComponent's input is valid.
      */
     @Override
@@ -737,14 +747,15 @@ class NoFocusInputVerifier extends InputVerifier {
         // returning false prevents loss of focus
         return false;
     }
+
 }
 
 /*------------------------------------------------------------------------------------*/
-
 /**
  * Private class to prevent loss of focus of a JComponent
  */
 class NoFocusJTextField extends JTextField {
+
     /** Override this method and return true if your JComponent manages focus
      */
     @Override
@@ -752,6 +763,7 @@ class NoFocusJTextField extends JTextField {
         // return true to inform focus manager that component is managing focus changes
         return true;
     }
+
 }
 
 /*------------------------------------------------------------------------------------*/

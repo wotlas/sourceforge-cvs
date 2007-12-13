@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.message.description;
 
 import java.util.Hashtable;
@@ -31,7 +30,6 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-
 public class RemovePlayerFromRoomMsgBehaviour extends RemovePlayerFromRoomMessage implements NetMessageBehaviour {
     /*------------------------------------------------------------------------------------*/
 
@@ -42,15 +40,15 @@ public class RemovePlayerFromRoomMsgBehaviour extends RemovePlayerFromRoomMessag
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
      *        this message.
      */
     public void doBehaviour(Object sessionContext) {
-        if (DataManager.SHOW_DEBUG)
+        if (DataManager.SHOW_DEBUG) {
             System.out.println("REMOVE PLAYER MESSAGE p:" + this.primaryKey);
+        }
 
         // The sessionContext is here a DataManager.
         DataManager dataManager = (DataManager) sessionContext;
@@ -68,17 +66,19 @@ public class RemovePlayerFromRoomMsgBehaviour extends RemovePlayerFromRoomMessag
         }
 
         // 2 - We remove the player
-        Hashtable players = dataManager.getPlayers();
+        Hashtable<String, PlayerImpl> players = dataManager.getPlayers();
         PlayerImpl playerImpl = null;
 
         synchronized (players) {
-            playerImpl = (PlayerImpl) players.get(this.primaryKey);
+            playerImpl = players.get(this.primaryKey);
 
-            if (playerImpl == null)
+            if (playerImpl == null) {
                 return;
+            }
 
-            if (DataManager.SHOW_DEBUG)
+            if (DataManager.SHOW_DEBUG) {
                 System.out.println("REMOVING PLAYER " + this.primaryKey);
+            }
 
             players.remove(this.primaryKey);
             dataManager.getClientScreen().getChatPanel().removePlayerFromAllchatRooms(this.primaryKey);
@@ -86,10 +86,10 @@ public class RemovePlayerFromRoomMsgBehaviour extends RemovePlayerFromRoomMessag
 
         playerImpl.cleanVisualProperties(dataManager.getGraphicsDirector());
 
-        if (dataManager.getSelectedPlayerKey() != null && this.primaryKey.equals(dataManager.getSelectedPlayerKey()))
+        if (dataManager.getSelectedPlayerKey() != null && this.primaryKey.equals(dataManager.getSelectedPlayerKey())) {
             dataManager.removeCircle();
+        }
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

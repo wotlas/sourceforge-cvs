@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.message.description;
 
 import wotlas.client.DataManager;
@@ -32,7 +31,6 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-
 public class PlayerAwayMsgBehaviour extends PlayerAwayMessage implements NetMessageBehaviour {
     /*------------------------------------------------------------------------------------*/
 
@@ -43,7 +41,6 @@ public class PlayerAwayMsgBehaviour extends PlayerAwayMessage implements NetMess
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
@@ -53,7 +50,7 @@ public class PlayerAwayMsgBehaviour extends PlayerAwayMessage implements NetMess
 
         // The sessionContext is here a DataManager
         DataManager dataManager = (DataManager) sessionContext;
-        Player searchedPlayer = (Player) dataManager.getPlayers().get(this.primaryKey);
+        Player searchedPlayer = dataManager.getPlayers().get(this.primaryKey);
 
         // 1 - Control
         if (searchedPlayer == null) {
@@ -70,5 +67,4 @@ public class PlayerAwayMsgBehaviour extends PlayerAwayMessage implements NetMess
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

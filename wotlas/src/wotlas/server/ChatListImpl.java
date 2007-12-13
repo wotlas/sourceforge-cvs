@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.server;
 
 import java.util.Hashtable;
@@ -28,26 +27,24 @@ import wotlas.utils.Debug;
 /** Implementation of a Chat by the server
  *
  * @author Petrus
- * @see wotlas.server.ChatImpl
- * @see wotlas.client.ChatImpl
+ * @see wotlas.server.ChatListImpl
+ * @see wotlas.client.ChatListImpl
  */
-
 public class ChatListImpl implements ChatList {
     /*------------------------------------------------------------------------------------*/
 
     /** List of player's ChatRooms
      */
-    protected Hashtable chatRooms = new Hashtable(2);
+    protected Hashtable<String, ChatRoom> chatRooms = new Hashtable<String, ChatRoom>(2);
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor
      */
     public ChatListImpl() {
+        super();
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get the number of existing ChatRooms.
      */
     public int getNumberOfChatRooms() {
@@ -55,7 +52,6 @@ public class ChatListImpl implements ChatList {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To add a chatRoom.
      *
      * @param chatRoom ChatRoom to add
@@ -71,7 +67,6 @@ public class ChatListImpl implements ChatList {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To remove a ChatRoom.
      *
      * @param primaryKey ChatRoom primary key
@@ -95,34 +90,31 @@ public class ChatListImpl implements ChatList {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get a ChatRoom.
      *
      * @param primaryKey primary key of ChatRoom we want to get
      */
     public ChatRoom getChatRoom(String primaryKey) {
-        return (ChatRoom) this.chatRooms.get(primaryKey);
+        return this.chatRooms.get(primaryKey);
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get all the ChatRooms. Use with : synchronized( ... ) {} please !
      *
      * @param primaryKey primary key of ChatRoom we want to get
      */
-    public Hashtable getChatRooms() {
+    public Hashtable<String, ChatRoom> getChatRooms() {
         return this.chatRooms;
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To add a player to a ChatRoom.
      *
      * @param primaryKey primary key of ChatRoom to modify
      * @param player Player to add
      */
     public boolean addPlayer(String primaryKey, Player player) {
-        ChatRoom chatRoom = (ChatRoom) this.chatRooms.get(primaryKey);
+        ChatRoom chatRoom = this.chatRooms.get(primaryKey);
 
         if (chatRoom == null) {
             Debug.signal(Debug.ERROR, this, "No chatRoom " + primaryKey + " found. Can't add player.");
@@ -133,14 +125,13 @@ public class ChatListImpl implements ChatList {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To remove a player from a ChatRoom.
      *
      * @param primaryKey primary key of ChatRoom to modify
      * @param player Player to remove
      */
     public boolean removePlayer(String primaryKey, Player player) {
-        ChatRoom chatRoom = (ChatRoom) this.chatRooms.get(primaryKey);
+        ChatRoom chatRoom = this.chatRooms.get(primaryKey);
 
         if (chatRoom == null) {
             Debug.signal(Debug.ERROR, this, "No chatRoom " + primaryKey + " found. Can't remove player.");
@@ -151,13 +142,12 @@ public class ChatListImpl implements ChatList {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get the list of players of a ChatRoom
      *
      * @param primaryKey primary key of the ChatRoom
      */
-    public Hashtable getPlayers(String primaryKey) {
-        ChatRoom chatRoom = (ChatRoom) this.chatRooms.get(primaryKey);
+    public Hashtable<String, Player> getPlayers(String primaryKey) {
+        ChatRoom chatRoom = this.chatRooms.get(primaryKey);
 
         if (chatRoom == null) {
             Debug.signal(Debug.ERROR, this, "No chatRoom " + primaryKey + " found. Can't get player list.");
@@ -168,5 +158,4 @@ public class ChatListImpl implements ChatList {
     }
 
     /*------------------------------------------------------------------------------------*/
-
 }

@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.screen;
 
 import java.awt.event.MouseEvent;
@@ -33,17 +32,19 @@ import wotlas.utils.Tools;
  *
  * @author Petrus, Aldiss
  */
-
 public class JPlayerPanel extends JPanel implements MouseListener {
 
     /*------------------------------------------------------------------------------------*/
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     /** Our TabbedPane where are stored the plug-ins.
      */
-    private JTabbedPane playerTabbedPane;
+    private final JTabbedPane playerTabbedPane;
 
     /*------------------------------------------------------------------------------------*/
-
     /** Consctructor.
      */
     public JPlayerPanel() {
@@ -55,17 +56,16 @@ public class JPlayerPanel extends JPanel implements MouseListener {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To init the JPlayerPanel with the available plug-ins.
      */
     protected void init() {
 
         /** We load the available plug-ins (we search everywhere).
          */
-        Class classes[] = null;
+        Class<wotlas.client.screen.JPanelPlugIn> classes[] = null;
 
         try {
-            String packages[] = { "wotlas.client.screen.plugin" };
+            String packages[] = {"wotlas.client.screen.plugin"};
             classes = Tools.getImplementorsOf("wotlas.client.screen.JPanelPlugIn", packages);
         } catch (ClassNotFoundException e) {
             Debug.signal(Debug.CRITICAL, this, e);
@@ -81,7 +81,7 @@ public class JPlayerPanel extends JPanel implements MouseListener {
         if (classes == null || classes.length == 0) {
             // we retry in the plug-in package (this is neede dif we are not in a jar file)
             try {
-                String packageName[] = { "wotlas.client.screen.plugin" };
+                String packageName[] = {"wotlas.client.screen.plugin"};
 
                 classes = Tools.getImplementorsOf("wotlas.client.screen.JPanelPlugIn", packageName);
             } catch (ClassNotFoundException e) {
@@ -102,13 +102,15 @@ public class JPlayerPanel extends JPanel implements MouseListener {
             try {
                 Object o = classes[i].newInstance();
 
-                if (o == null || !(o instanceof JPanelPlugIn))
+                if (o == null || !(o instanceof JPanelPlugIn)) {
                     continue;
+                }
 
                 JPanelPlugIn plugIn = (JPanelPlugIn) o;
 
-                if (!plugIn.init())
-                    continue; // init failed
+                if (!plugIn.init()) {
+                    continue;
+                } // init failed
 
                 // Ok, we have a valid plug-in
                 addPlugIn(plugIn, plugIn.getPlugInIndex());
@@ -122,20 +124,19 @@ public class JPlayerPanel extends JPanel implements MouseListener {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To add a plugin to our tabbed pane
      *  @param plugIn plug-in to add
      *  @param index index in the list, -1 means at the end.
      */
     public void addPlugIn(JPanelPlugIn plugIn, int index) {
-        if (index < 0 || index > this.playerTabbedPane.getTabCount() - 1)
+        if (index < 0 || index > this.playerTabbedPane.getTabCount() - 1) {
             this.playerTabbedPane.addTab(plugIn.getPlugInName(), ClientDirector.getResourceManager().getImageIcon("pin.gif"), plugIn, plugIn.getToolTipText());
-        else
+        } else {
             this.playerTabbedPane.insertTab(plugIn.getPlugInName(), ClientDirector.getResourceManager().getImageIcon("pin.gif"), plugIn, plugIn.getToolTipText(), index);
+        }
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get a PlugIn given its name.
      * @param plugInName plug-in name as returned by plugIn.getPlugInName()
      * @return plugIn, null if not found
@@ -145,15 +146,15 @@ public class JPlayerPanel extends JPanel implements MouseListener {
         for (int i = 0; i < this.playerTabbedPane.getTabCount(); i++) {
             JPanelPlugIn plugIn = (JPanelPlugIn) this.playerTabbedPane.getComponentAt(i);
 
-            if (plugIn.getPlugInName().equals(plugInName))
+            if (plugIn.getPlugInName().equals(plugInName)) {
                 return plugIn;
+            }
         }
 
         return null; // not found
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To reset the JPlayerPanel and the state of all its plug-ins.
      */
     public void reset() {
@@ -164,7 +165,6 @@ public class JPlayerPanel extends JPanel implements MouseListener {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /**
      * Invoked when the mouse button is clicked
      */

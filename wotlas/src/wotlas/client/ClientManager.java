@@ -110,16 +110,31 @@ public class ClientManager extends JIntroWizard implements ActionListener {
     private short nbTry;
     /** pictures of buttons
      */
-    private ImageIcon im_okup,  im_okdo,  im_okun;
-    private ImageIcon im_cancelup,  im_canceldo,  im_cancelun;
-    private ImageIcon im_newup,  im_newdo;
-    private ImageIcon im_loadup,  im_loaddo,  im_loadun;
-    private ImageIcon im_recoverup,  im_recoverdo,  im_recoverun;
-    private ImageIcon im_delup,  im_deldo,  im_delun;
-    private ImageIcon im_exitup,  im_exitdo;
-    private ImageIcon im_aboutup,  im_aboutdo;
-    private ImageIcon im_helpup,  im_helpdo;
-    private ImageIcon im_optionsup,  im_optionsdo;
+    private ImageIcon im_okup;
+    private ImageIcon im_okdo;
+    private ImageIcon im_okun;
+    private ImageIcon im_cancelup;
+    private ImageIcon im_canceldo;
+    private ImageIcon im_cancelun;
+    private ImageIcon im_newup;
+    private ImageIcon im_newdo;
+    private ImageIcon im_loadup;
+    private ImageIcon im_loaddo;
+    private ImageIcon im_loadun;
+    private ImageIcon im_recoverup;
+    private ImageIcon im_recoverdo;
+    private ImageIcon im_recoverun;
+    private ImageIcon im_delup;
+    private ImageIcon im_deldo;
+    private ImageIcon im_delun;
+    private ImageIcon im_exitup;
+    private ImageIcon im_exitdo;
+    private ImageIcon im_aboutup;
+    private ImageIcon im_aboutdo;
+    private ImageIcon im_helpup;
+    private ImageIcon im_helpdo;
+    private ImageIcon im_optionsup;
+    private ImageIcon im_optionsdo;
     /** Default font
      */
     private Font f;
@@ -445,7 +460,7 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                         }
                         ListSelectionModel lsm = (ListSelectionModel) e.getSource();
                         if (lsm.isSelectionEmpty()) {
-                        //no rows are selected
+                            //no rows are selected
                         } else {
                             int selectedRow = lsm.getMinSelectionIndex();
                             ClientManager.this.currentProfileConfig = ClientManager.this.profileConfigList.getProfiles()[selectedRow];

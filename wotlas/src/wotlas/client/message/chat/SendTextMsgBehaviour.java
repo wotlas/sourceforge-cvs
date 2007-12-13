@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.message.chat;
 
 import java.util.Hashtable;
@@ -38,11 +37,9 @@ import wotlas.utils.Debug;
  *
  * @author Petrus
  */
-
 public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageBehaviour {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public SendTextMsgBehaviour() {
@@ -50,7 +47,6 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
@@ -73,8 +69,9 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
             SoundLibrary.getSoundPlayer().playSound("bell.wav");
         } else if (this.message.startsWith("/FANFARE")) {
             int index = this.message.indexOf(' ');
-            if (index < 0 || index == this.message.length() - 1)
+            if (index < 0 || index == this.message.length() - 1) {
                 return;
+            }
 
             String soundFileName = this.message.substring(index + 1, this.message.length()).toLowerCase();
             SoundLibrary.getSoundPlayer().playSound(soundFileName);
@@ -86,17 +83,19 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
         }
 
         // We get the sender of this message
-        Hashtable players = dataManager.getPlayers();
+        Hashtable<String, PlayerImpl> players = dataManager.getPlayers();
         PlayerImpl sender = null;
 
-        if (players != null)
-            sender = (PlayerImpl) players.get(this.senderPrimaryKey);
+        if (players != null) {
+            sender = players.get(this.senderPrimaryKey);
+        }
 
-        if (sender == null)
+        if (sender == null) {
             Debug.signal(Debug.WARNING, this, "Couldnot find the sender of this message : " + this.senderPrimaryKey);
-        else {
-            if (sender.getWotCharacter() instanceof DarkOne && fanfare)
+        } else {
+            if (sender.getWotCharacter() instanceof DarkOne && fanfare) {
                 return;
+            }
             dataManager.addWaveDrawable(sender);
             this.senderFullName = sender.getFullPlayerName();
         }
@@ -106,10 +105,11 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
             WotCharacter wotC = sender.getWotCharacter();
 
             if (wotC instanceof AesSedai) {
-                if (((AesSedai) wotC).toggleBlackAjah())
+                if (((AesSedai) wotC).toggleBlackAjah()) {
                     dataManager.getClientScreen().getChatPanel().getCurrentJChatRoom().appendText("<font color='black'><b>[DARK ONE]<i> NOW YOU ARE MINE " + sender.getPlayerName().toUpperCase() + " !</i></b></font>");
-                else
+                } else {
                     dataManager.getClientScreen().getChatPanel().getCurrentJChatRoom().appendText("<font color='black'><b>[DARK ONE]<i> YOU CAN'T HIDE FROM ME. YOUR SOUL IS MINE " + sender.getPlayerName().toUpperCase() + ".</i></b></font>");
+                }
             }
 
             return;
@@ -136,8 +136,9 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
             if (index >= 0 && index + 1 < this.message.length()) {
                 String otherPlayerName = this.message.substring(0, index);
                 this.message = "<font color='blue'><i>" + this.senderFullName + " says to " + otherPlayerName + this.message.substring(index) + "</i></font>";
-            } else
+            } else {
                 this.message = "/to:" + this.message + " <font color='red'>ERROR: bad format</font>";
+            }
         } else if (sender != null && sender.getWotCharacter() instanceof DarkOne) {
             // display the message in the "dark one manner..."
             this.message = "<b>[DARK ONE] " + this.message.toUpperCase() + " </b>";
@@ -160,8 +161,9 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
                         chatRoom.appendText(this.message);
                         break;
                 }
-            } else
+            } else {
                 Debug.signal(Debug.ERROR, this, "No JChatRoom " + this.chatRoomPrimaryKey + " found !");
+            }
         } else {
             JChatRoom chatRoom = dataManager.getClientScreen().getChatPanel().getCurrentJChatRoom();
             chatRoom.appendText("<font color='red'>" + this.message + "</font>"); // if it wasn't already the case              
@@ -170,5 +172,4 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

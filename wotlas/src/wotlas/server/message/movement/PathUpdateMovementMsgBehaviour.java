@@ -16,11 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.server.message.movement;
 
 import java.util.Hashtable;
 import java.util.Iterator;
+import wotlas.common.Player;
 import wotlas.common.chat.ChatList;
 import wotlas.common.chat.ChatRoom;
 import wotlas.common.message.chat.AddPlayerToChatRoomMessage;
@@ -37,11 +37,9 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-
 public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage implements NetMessageBehaviour {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public PathUpdateMovementMsgBehaviour() {
@@ -49,7 +47,6 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
@@ -76,8 +73,9 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
 
         // 2 - We send the update to other players
         // ... in the current Room & other rooms near me
-        if (!player.getLocation().isRoom())
-            return; // nothing to do for worlds & towns...
+        if (!player.getLocation().isRoom()) {
+            return;
+        } // nothing to do for worlds & towns...
 
         MessageRouter mRouter = player.getMessageRouter();
         mRouter.sendMessage(this, player, MessageRouter.EXTENDED_GROUP);
@@ -85,13 +83,15 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
 
         // 3 - Chat selection/quit
         ChatList chatList = player.getChatList();
-        if (chatList == null)
-            return; // nothing to do
+        if (chatList == null) {
+            return;
+        } // nothing to do
 
         if (this.isMoving) {
             // chat reset
-            if (player.getCurrentChatPrimaryKey().equals(ChatRoom.DEFAULT_CHAT))
-                return; // nothing to do
+            if (player.getCurrentChatPrimaryKey().equals(ChatRoom.DEFAULT_CHAT)) {
+                return;
+            } // nothing to do
 
             // we leave the current chatroom IF there are still chatters in it
             // and if we are not its creator...
@@ -110,11 +110,11 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
             }
         } else {
             // chat selection, we search for the closest player
-            Hashtable players = mRouter.getPlayers();
+            Hashtable<String, Player> players = mRouter.getPlayers();
             ChatRoom chatRoom = null;
 
             synchronized (players) {
-                Iterator it = players.values().iterator();
+                Iterator<Player> it = players.values().iterator();
 
                 while (it.hasNext()) {
                     PlayerImpl p = (PlayerImpl) it.next();
@@ -138,8 +138,9 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
                                 chatRoom = chatList.getChatRoom(p.getCurrentChatPrimaryKey());
                             }
 
-                            if (chatRoom == null)
-                                continue; // no near chat room change
+                            if (chatRoom == null) {
+                                continue;
+                            } // no near chat room change
 
                             if (nearPlayer == null) {
                                 // we are influenced by the nearest player, we do not influence him
@@ -159,26 +160,29 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
                 }
             }
 
-            if (chatRoom == null)
-                return; // no player near us, or no chat...
+            if (chatRoom == null) {
+                return;
+            } // no player near us, or no chat...
 
             // New chat selected !
-            if (nearPlayer == null)
+            if (nearPlayer == null) {
                 player.sendMessage(new SetCurrentChatRoomMessage(chatRoom.getPrimaryKey(), chatRoom.getPlayers()));
-            else
+            } else {
                 nearPlayer.sendMessage(new SetCurrentChatRoomMessage(chatRoom.getPrimaryKey(), chatRoom.getPlayers()));
+            }
 
             // A player is a plain member of a chat only
             // when he speaks the first time, but his/her name appear
             // in the chatters's list.
             // So, we advertise our presence
-            if (nearPlayer == null)
+            if (nearPlayer == null) {
                 chatRoom.sendMessageToChatRoom(new AddPlayerToChatRoomMessage(this.primaryKey, chatRoom.getPrimaryKey()));
-            else
+            } else {
                 chatRoom.sendMessageToChatRoom(new AddPlayerToChatRoomMessage(nearPlayer.getPrimaryKey(), chatRoom.getPrimaryKey()));
+            }
         }
 
-        // end !
+    // end !
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

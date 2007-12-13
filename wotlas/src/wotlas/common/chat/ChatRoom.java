@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.common.chat;
 
 import java.util.Hashtable;
@@ -30,7 +29,6 @@ import wotlas.utils.Debug;
  *
  * @author Petrus
  */
-
 public class ChatRoom {
     /*------------------------------------------------------------------------------------*/
 
@@ -47,7 +45,6 @@ public class ChatRoom {
     final public static String DEFAULT_CHAT = "chat-0";
 
     /*------------------------------------------------------------------------------------*/
-
     /** Voice Sound Level Definition - Whispering
      */
     final public static byte WHISPERING_VOICE_LEVEL = 0;
@@ -61,7 +58,6 @@ public class ChatRoom {
     final public static byte SHOUTING_VOICE_LEVEL = 2;
 
     /*------------------------------------------------------------------------------------*/
-
     /** Chat message maximum size ( in number of chars )
      */
     final public static int MAXIMUM_MESSAGE_SIZE = 250;
@@ -80,7 +76,6 @@ public class ChatRoom {
     final public static int MIN_CHAT_DISTANCE = 2500;
 
     /*------------------------------------------------------------------------------------*/
-
     /** ID of the ChatRoom
      */
     private String primaryKey;
@@ -103,10 +98,9 @@ public class ChatRoom {
 
     /** List of players' primary key in the ChatRoom
      */
-    private Hashtable players = new Hashtable(2);
+    private Hashtable<String, Player> players = new Hashtable<String, Player>(2);
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get a valid ChatRoom primaryKey
      */
     synchronized static public String getNewChatPrimaryKey() {
@@ -115,14 +109,13 @@ public class ChatRoom {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor
      */
     public ChatRoom() {
+        super();
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** List of setters and getters
      */
     public String getPrimaryKey() {
@@ -157,12 +150,11 @@ public class ChatRoom {
         this.location = location;
     }
 
-    public Hashtable getPlayers() {
+    public Hashtable<String, Player> getPlayers() {
         return this.players;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Add a player to this ChatRoom. The player must have been previously initialized.  
      *
      * @param player player to add
@@ -174,7 +166,6 @@ public class ChatRoom {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Removes a player from this ChatRoom.   
      *
      * @param player player to remove
@@ -190,21 +181,20 @@ public class ChatRoom {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To send a message to the players that are in our chat room.
      * @param msg message to send
      */
     public void sendMessageToChatRoom(NetMessage msg) {
         synchronized (this.players) {
-            Iterator it = this.players.values().iterator();
+            Iterator<Player> it = this.players.values().iterator();
 
-            while (it.hasNext())
-                ((Player) it.next()).sendMessage(msg);
+            while (it.hasNext()) {
+                it.next().sendMessage(msg);
+            }
         }
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** String Info.
      */
     @Override
@@ -213,5 +203,4 @@ public class ChatRoom {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

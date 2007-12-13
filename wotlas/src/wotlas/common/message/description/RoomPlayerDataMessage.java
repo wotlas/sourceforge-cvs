@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.common.message.description;
 
 import java.io.DataInputStream;
@@ -34,7 +33,6 @@ import wotlas.common.universe.WotlasLocation;
  *
  * @author Aldiss
  */
-
 public class RoomPlayerDataMessage extends PlayerDataMessage {
     /*------------------------------------------------------------------------------------*/
 
@@ -44,14 +42,13 @@ public class RoomPlayerDataMessage extends PlayerDataMessage {
 
     /** Players.
      */
-    protected Hashtable players;
+    protected Hashtable<String, Player> players;
 
     /** Wotlas Location
      */
     protected WotlasLocation location;
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor. Just initializes the message category and type.
      */
     public RoomPlayerDataMessage() {
@@ -59,7 +56,6 @@ public class RoomPlayerDataMessage extends PlayerDataMessage {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Constructor with the Players object and our Player ( myPlayer ). The 'myPlayer'
      *  parameter is needed as we don't want to send our Player's data with the other
      *  players.
@@ -78,7 +74,6 @@ public class RoomPlayerDataMessage extends PlayerDataMessage {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** This is where we put your message data on the stream. You don't need
      * to invoke this method yourself, it's done automatically.
      *
@@ -97,24 +92,25 @@ public class RoomPlayerDataMessage extends PlayerDataMessage {
 
         // Players
         synchronized (this.players) {
-            if (this.players.containsKey(this.myPlayer.getPrimaryKey()))
+            if (this.players.containsKey(this.myPlayer.getPrimaryKey())) {
                 ostream.writeInt(this.players.size() - 1);
-            else
+            } else {
                 ostream.writeInt(this.players.size());
+            }
 
-            Iterator it = this.players.values().iterator();
+            Iterator<Player> it = this.players.values().iterator();
 
             while (it.hasNext()) {
-                this.player = (Player) it.next();
+                this.player = it.next();
 
-                if (this.myPlayer != this.player)
+                if (this.myPlayer != this.player) {
                     super.encode(ostream);
+                }
             }
         }
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** This is where we retrieve our message data from the stream. You don't need
      * to invoke this method yourself, it's done automatically.
      *
@@ -136,10 +132,10 @@ public class RoomPlayerDataMessage extends PlayerDataMessage {
         // Players
         int nbPlayers = istream.readInt();
 
-        if (nbPlayers > 0)
-            this.players = new Hashtable((int) (nbPlayers * 1.6));
-        else {
-            this.players = new Hashtable();
+        if (nbPlayers > 0) {
+            this.players = new Hashtable<String, Player>((int) (nbPlayers * 1.6));
+        } else {
+            this.players = new Hashtable<String, Player>();
             return;
         }
 

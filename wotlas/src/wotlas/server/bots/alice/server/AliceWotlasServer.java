@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.server.bots.alice.server;
 
 import java.util.Hashtable;
@@ -33,11 +32,9 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-
 public class AliceWotlasServer extends NetServer implements NetConnectionListener, ErrorCodeList {
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Our WOTLAS alice chat listener. We use this class to handle our alicebot answer
      *  requests.
      */
@@ -46,10 +43,9 @@ public class AliceWotlasServer extends NetServer implements NetConnectionListene
     /** List of the remote wotlas servers we are connected to. The key of the hashtable
      *  is the server's id.
      */
-    protected Hashtable serverLinks;
+    protected Hashtable<String, NetConnection> serverLinks;
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Constructor (see wotlas.libs.net.NetServer for details)
      *
      *  @param serverInterface the host interface to bind to. Example: wotlas.tower.org
@@ -61,14 +57,13 @@ public class AliceWotlasServer extends NetServer implements NetConnectionListene
     public AliceWotlasServer(String serverInterface, int port, String packages[], int nbMaxSockets, AliceWOTLAS aliceWotlas) {
         super(serverInterface, port, packages);
         this.aliceWotlas = aliceWotlas;
-        this.serverLinks = new Hashtable(10);
+        this.serverLinks = new Hashtable<String, NetConnection>(10);
 
         setMaximumOpenedSockets(nbMaxSockets);
         Debug.displayExceptionStack(false);
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** This method is called automatically when a new client establishes a connection
      *  with this server ( the client sends a ClientRegisterMessage ).
      *
@@ -107,7 +102,6 @@ public class AliceWotlasServer extends NetServer implements NetConnectionListene
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To send back Alice's answer to the 'botPrimaryKey' player on server 'serverID'.
      *
      *  @param playerPrimaryKey pk of the player whose the answer is for
@@ -118,28 +112,27 @@ public class AliceWotlasServer extends NetServer implements NetConnectionListene
     public void sendAnswer(String playerPrimaryKey, String botPrimaryKey, String answer, int serverID) {
 
         // 1 - Search for the server's connection
-        NetConnection connection = (NetConnection) this.serverLinks.get("" + serverID);
+        NetConnection connection = this.serverLinks.get("" + serverID);
 
         // 2 - Send the message...
-        if (connection != null)
+        if (connection != null) {
             connection.queueMessage(new AliceWotlasMessage(playerPrimaryKey, botPrimaryKey, answer, serverID));
-        else
+        } else {
             Debug.signal(Debug.ERROR, this, "AliceWotlasServer server " + serverID + " connection not found...");
+        }
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** This method is called when a new network connection is created.
      *
      * @param connection the NetConnection object associated to this connection.
      */
     @Override
     public void connectionCreated(NetConnection connection) {
-        // well nothing to do here...
+    // well nothing to do here...
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** This method is called when a network connection is no longer of this world.
      *
      * @param connection the NetConnection object associated to this connection.
@@ -150,10 +143,10 @@ public class AliceWotlasServer extends NetServer implements NetConnectionListene
         // We perform some cleaning...
         // We search the server NetConnection entry in our table
         synchronized (this.serverLinks) {
-            Iterator it = this.serverLinks.values().iterator();
+            Iterator<NetConnection> it = this.serverLinks.values().iterator();
 
             while (it.hasNext()) {
-                NetConnection np = (NetConnection) it.next();
+                NetConnection np = it.next();
 
                 if (np == connection) {
                     // ok, we found it... we can remove it...
@@ -168,7 +161,6 @@ public class AliceWotlasServer extends NetServer implements NetConnectionListene
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /**
      *  Shuts down the process.
      */
@@ -178,15 +170,14 @@ public class AliceWotlasServer extends NetServer implements NetConnectionListene
 
         // 2 - Shuts down all connections
         synchronized (this.serverLinks) {
-            Iterator it = this.serverLinks.values().iterator();
+            Iterator<NetConnection> it = this.serverLinks.values().iterator();
 
             while (it.hasNext()) {
-                NetConnection np = (NetConnection) it.next();
+                NetConnection np = it.next();
                 np.close();
             }
         }
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

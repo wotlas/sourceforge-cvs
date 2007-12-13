@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.common.objects.containers;
 
 import wotlas.common.Player;
@@ -35,7 +34,6 @@ import wotlas.common.objects.valueds.ValuedObject;
 public class Purse extends ContainerObject implements TransportableInterface {
 
     /*------------------------------------------------------------------------------------*/
-
     /** The default capacity of a purse. Used when the default constructor is invoked.
      */
     public final static short defaultPurseCapacity = 50;
@@ -45,15 +43,14 @@ public class Purse extends ContainerObject implements TransportableInterface {
     protected ValuedObject content;
 
     /*------------------------------------------------------------------------------------*/
-
     /** The default constructor.<br>
      * Calls ContainerObject's constructor.
      */
     public Purse() {
         super(Purse.defaultPurseCapacity);
 
-        className = "Purse";
-        objectName = "standard purse";
+        this.className = "Purse";
+        this.objectName = "standard purse";
     }
 
     /** The parametric constructor.<br>
@@ -63,20 +60,20 @@ public class Purse extends ContainerObject implements TransportableInterface {
     public Purse(short capacity) {
         super(capacity);
 
-        className = "Purse";
-        objectName = "standard purse";
+        this.className = "Purse";
+        this.objectName = "standard purse";
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Add a valued object to the purse.
      * @param o the object to add
      * @return true if added - false if a problem occurs
      */
     @Override
     public boolean addObject(BaseObject o) {
-        if (!"ValuedObject".equals(o.getClassName()))
+        if (!"ValuedObject".equals(o.getClassName())) {
             return false;
+        }
 
         return super.addObject(o);
     }
@@ -86,8 +83,9 @@ public class Purse extends ContainerObject implements TransportableInterface {
      */
     @Override
     public void removeObject(BaseObject o) {
-        if (!"ValuedObject".equals(o.getClassName()))
-            return; // throw ?
+        if (!"ValuedObject".equals(o.getClassName())) {
+            return;
+        } // throw ?
 
         super.removeObject(o);
     }
@@ -111,16 +109,15 @@ public class Purse extends ContainerObject implements TransportableInterface {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Gets rid of the object. The object is dropped on the ground.
-    */
+     */
     public void discard() {
-        /* no op */
+    /* no op */
     }
 
     /** Sells the object to somebody.
-    	  @param buyer The Player who buy the object. 
-    	  @return the prize paid.
+    @param buyer The Player who buy the object. 
+    @return the prize paid.
      */
     public ValuedObject sellTo(Player buyer) {
         /* no op */
@@ -128,22 +125,21 @@ public class Purse extends ContainerObject implements TransportableInterface {
     }
 
     /** Gives the object to somebody.
-    	  @param receiver The Player who receive the object.
+    @param receiver The Player who receive the object.
      */
     public void giveTo(Player receiver) {
-        /* no op */
+    /* no op */
     }
 
     /** Trade the object to somebody.<br>
-      * Here the transaction is already accepted.
-    	* @param buyer The Player who buy the object. 
-    	* @return the object given by the other player.
-      */
+     * Here the transaction is already accepted.
+     * @param buyer The Player who buy the object. 
+     * @return the object given by the other player.
+     */
     public BaseObject tradeTo(Player buyer) {
         /* no op */
         return new BaseObject();
     }
 
     /*------------------------------------------------------------------------------------*/
-
 }

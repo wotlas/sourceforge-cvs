@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client;
 
 import java.awt.Color;
@@ -71,18 +70,16 @@ import wotlas.utils.Tools;
  * @author Petrus, Aldiss
  * @see wotlas.common.NetConnectionListener
  */
-
 public class DataManager extends Thread implements NetConnectionListener, Tickable, Menu2DListener {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Image Library
      */
-    public final static String IMAGE_LIBRARY = "graphics/imagelib";
+    public static final String IMAGE_LIBRARY = "graphics/imagelib";
 
     /** size of a mask's cell (in pixels)
      */
-    public final static int TILE_SIZE = 5;
+    public static final int TILE_SIZE = 5;
 
     /** TIMEOUT to the Account Server
      */
@@ -97,12 +94,10 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     public static boolean SHOW_DEBUG = false;
 
     /*------------------------------------------------------------------------------------*/
-
     /*** THE MAIN DATA WE MANAGE ***/
-
     /** Our World Manager
      */
-    private WorldManager worldManager;
+    private final WorldManager worldManager;
 
     /** Our MapData : data of the current map displayed on screen.
      */
@@ -132,7 +127,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
      *  tick should call a queueMessage() on this NetQueue.
      *  NetMessageBehaviours should use the invokeLater() method to queue a message.
      */
-    private NetQueue syncMessageQueue;
+    private final NetQueue syncMessageQueue;
 
     /** Our player data.
      */
@@ -144,16 +139,14 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
     /** List of all the players displayed on screen.
      */
-    private Hashtable players;
+    private final Hashtable<String, PlayerImpl> players;
 
     /** Our menu manager.
      */
     private MenuManager menuManager;
 
     /*------------------------------------------------------------------------------------*/
-
     /*** DATA ACCESS CONTROLLER ***/
-
     /** Connection Lock
      */
     private byte connectionLock[] = new byte[1];
@@ -187,9 +180,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     private double refOrientation;
 
     /*------------------------------------------------------------------------------------*/
-
     /*** SELECTION CIRCLE ***/
-
     /** Circle selection
      */
     private CircleDrawable circle;
@@ -203,17 +194,17 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     private byte circleLock[] = new byte[1];
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor with resource manager.
+     * @param rManager resources for WorldManager datas.
      */
-    public DataManager(ResourceManager rManager) {
+    public DataManager(final ResourceManager rManager) {
 
         // 1 - We create our world Manager. It will load the universe data.
         this.worldManager = new WorldManager(rManager, false);
 
         // 2 - Misc inits
         this.syncMessageQueue = new NetQueue(1, 3);
-        this.players = new Hashtable();
+        this.players = new Hashtable<String, PlayerImpl>();
         this.connectionLock = new byte[1];
         this.startGameLock = new Object();
 
@@ -227,7 +218,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get the world manager.
      *
      * @return the world manager.
@@ -237,7 +227,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get the graphicsDirector
      *
      * @return the graphicsDirector
@@ -247,7 +236,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get the image Library
      *
      * @return the image library
@@ -257,9 +245,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /*** GETTERS ***/
-
     /** To get MapData
      */
     public MapData getMapData() {
@@ -273,7 +259,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Set to true to show debug information
      */
     public void showDebug(boolean value) {
@@ -281,18 +266,20 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get the hashtable players
+     * @return table of (String, PlayerImpl)
      */
-    public Hashtable getPlayers() {
+    public Hashtable<String, PlayerImpl> getPlayers() {
         return this.players;
     }
 
     /** To get selected player
+     * @return his primaryKey.
      */
     public String getSelectedPlayerKey() {
-        if (this.selectedPlayer != null)
+        if (this.selectedPlayer != null) {
             return this.selectedPlayer.getPrimaryKey();
+        }
         return null;
     }
 
@@ -304,22 +291,22 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To set the current profileConfig<br>
      * (called by client.message.account.AccountCreatedMsgBehaviour)
+     * @param currentProfileConfig current config.
      */
     public void setCurrentProfileConfig(ProfileConfig currentProfileConfig) {
         this.currentProfileConfig = currentProfileConfig;
     }
 
     /** To get the current profileConfig.
+     * @return current config.
      */
     public ProfileConfig getCurrentProfileConfig() {
         return this.currentProfileConfig;
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To test if player was diconnected
      *
      * @return true if player was disconnected
@@ -329,13 +316,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
     /** To set whether player has finished resuming the game
+     * @param value true if finished.
      */
     public void setIsResuming(boolean value) {
         this.isResuming = value;
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** This method is called when a new network connection is created
      *
      * @param connection the NetConnection object associated to this connection.
@@ -364,7 +351,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To wait (timeout max) for the connection to be established.
      */
     public void waitForConnection(long timeout) {
@@ -375,19 +361,19 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
             do {
                 long now = System.currentTimeMillis();
 
-                if (this.connection == null && timeout > (now - t0))
+                if (this.connection == null && timeout > (now - t0)) {
                     try {
                         this.connectionLock.wait(timeout - (now - t0));
                     } catch (Exception e) {
                     }
-                else
+                } else {
                     return;
+                }
             } while (true);
         }
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** This method is called when the network connection of the client is closed
      *
      * @param connection the NetConnection object associated to this connection.
@@ -409,17 +395,21 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
             }
 
             Runnable runnable = new Runnable() {
+
                 public void run() {
                     ClientDirector.getClientManager().start(ClientManager.ACCOUNT_LOGIN_SCREEN); // we restart the ClientManager
                 } // on the Login entry
+
             };
 
             SwingUtilities.invokeLater(runnable);
         } else if (this.clientScreen != null) {
             Runnable runnable = new Runnable() {
+
                 public void run() {
                     ClientDirector.getClientManager().start(ClientManager.MAIN_SCREEN);
                 }
+
             };
 
             SwingUtilities.invokeLater(runnable);
@@ -427,7 +417,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Use this method to send a NetMessage to the server.
      *
      * @param message message to send to the player.
@@ -441,18 +430,17 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To close the network connection if any.
      */
     public void closeConnection() {
         synchronized (this.connectionLock) {
-            if (this.connection != null)
+            if (this.connection != null) {
                 this.connection.close();
+            }
         }
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To show the client's interface.
      */
     public void showInterface() {
@@ -486,28 +474,32 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
         SoundLibrary.getMusicPlayer().setNoMusicState(clientConfiguration.getNoMusic());
 
-        if (clientConfiguration.getMusicVolume() > 0)
+        if (clientConfiguration.getMusicVolume() > 0) {
             SoundLibrary.getMusicPlayer().setMusicVolume(clientConfiguration.getMusicVolume());
+        }
 
         SoundLibrary.getSoundPlayer().setNoSoundState(clientConfiguration.getNoSound());
 
-        if (clientConfiguration.getSoundVolume() > 0)
+        if (clientConfiguration.getSoundVolume() > 0) {
             SoundLibrary.getSoundPlayer().setSoundVolume(clientConfiguration.getSoundVolume());
+        }
 
         pMonitor.setProgress("Creating 2D Engine...", 15);
 
         // 3 - Create Graphics Director
         WindowPolicy wPolicy = null;
 
-        if (clientConfiguration.getCenterScreenPolicy())
+        if (clientConfiguration.getCenterScreenPolicy()) {
             wPolicy = new CenterWindowPolicy();
-        else
+        } else {
             wPolicy = new LimitWindowPolicy();
+        }
 
-        if (clientConfiguration.getUseHardwareAcceleration())
+        if (clientConfiguration.getUseHardwareAcceleration()) {
             this.gDirector = new EnhancedGraphicsDirector(wPolicy, this.imageLib);
-        else
+        } else {
             this.gDirector = new GraphicsDirector(wPolicy, this.imageLib);
+        }
 
         Debug.signal(Debug.NOTICE, null, "Graphics Engine is using hardware mode : " + clientConfiguration.getUseHardwareAcceleration());
 
@@ -516,8 +508,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         // 4 - Creation of the GUI components
         this.clientScreen = new JClientScreen(this.gDirector, this);
 
-        if (DataManager.SHOW_DEBUG)
+        if (DataManager.SHOW_DEBUG) {
             System.out.println("JClientScreen created");
+        }
 
         pMonitor.setProgress("Loading Player Data from Server...", 30);
 
@@ -546,8 +539,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         this.myPlayer.tick(); // we tick the player to validate data recreation
         addPlayer(this.myPlayer);
 
-        if (DataManager.SHOW_DEBUG)
+        if (DataManager.SHOW_DEBUG) {
             System.out.println("POSITION set to x:" + this.myPlayer.getX() + " y:" + this.myPlayer.getY() + " location is " + this.myPlayer.getLocation());
+        }
 
         pMonitor.setProgress("Setting Preferences...", 80);
 
@@ -556,8 +550,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
         this.clientScreen.init();
 
-        if ((clientConfiguration.getClientWidth() > 0) && (clientConfiguration.getClientHeight() > 0))
+        if ((clientConfiguration.getClientWidth() > 0) && (clientConfiguration.getClientHeight() > 0)) {
             this.clientScreen.setSize(clientConfiguration.getClientWidth(), clientConfiguration.getClientHeight());
+        }
 
         this.menuManager = new MenuManager(this.myPlayer, this.gDirector);
         this.menuManager.addMenu2DListener(this);
@@ -567,8 +562,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         // 7 - Init the map display...
         changeMapData();
 
-        if (DataManager.SHOW_DEBUG)
+        if (DataManager.SHOW_DEBUG) {
             System.out.println("Changed map data !");
+        }
 
         pMonitor.setProgress("Starting Game...", 95);
 
@@ -580,20 +576,22 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         pMonitor.setProgress("Done...", 100);
         pMonitor.close();
 
-        if (DataManager.SHOW_DEBUG)
+        if (DataManager.SHOW_DEBUG) {
             System.out.println("Frame displayed on screen...");
+        }
 
         // 9 - Welcome message
         sendMessage(new WelcomeMessage());
 
-        if (DataManager.SHOW_DEBUG)
+        if (DataManager.SHOW_DEBUG) {
             System.out.println("End of DataManager's showInterface !");
+        }
 
         // 10 - Add extra plugin
         //clientScreen.getPlayerPanel().addPlugIn((JPanelPlugIn) new ChangeAspectPlugIn(), -1);
 
         // Test Petrus
-        String empty[] = { "head", "body", "left hand", "right hand" };
+        String empty[] = {"head", "body", "left hand", "right hand"};
         SimpleMenu2D emptyMenu = new SimpleMenu2D("emptyMenu", empty);
         emptyMenu.setItemEnabled("head", true);
         emptyMenu.setItemEnabled("body", true);
@@ -601,14 +599,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         emptyMenu.setItemEnabled("right hand", true);
         ((SimpleMenu2D) this.menuManager.getRootMenu()).addItemLink(MenuManager.OBJECT_ITEM_NAME, emptyMenu);
 
-        /*SimpleMenu2D objectMenu = (SimpleMenu2D) menuManager.findByName(MenuManager.OBJECT_ITEM_NAME);
-        objectMenu.addItem("head");
-        */
-        // end Test Petrus
+    /*SimpleMenu2D objectMenu = (SimpleMenu2D) menuManager.findByName(MenuManager.OBJECT_ITEM_NAME);
+    objectMenu.addItem("head");
+     */
+    // end Test Petrus
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Resumes the game screen in case of server connection shut.
      */
     public void resumeInterface() {
@@ -620,22 +617,25 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         // 1 - We recreate the graphics director...
         WindowPolicy wPolicy = null;
 
-        if (ClientDirector.getClientConfiguration().getCenterScreenPolicy())
+        if (ClientDirector.getClientConfiguration().getCenterScreenPolicy()) {
             wPolicy = new CenterWindowPolicy();
-        else
+        } else {
             wPolicy = new LimitWindowPolicy();
+        }
 
-        if (ClientDirector.getClientConfiguration().getUseHardwareAcceleration())
+        if (ClientDirector.getClientConfiguration().getUseHardwareAcceleration()) {
             this.gDirector = new EnhancedGraphicsDirector(wPolicy, this.imageLib);
-        else
+        } else {
             this.gDirector = new GraphicsDirector(wPolicy, this.imageLib);
+        }
 
         Debug.signal(Debug.NOTICE, null, "Graphics Engine is using hardware mode : " + ClientDirector.getClientConfiguration().getUseHardwareAcceleration());
 
         this.clientScreen.getMapPanel().updateGraphicsDirector(this.gDirector);
 
-        if (this.menuManager != null)
+        if (this.menuManager != null) {
             this.menuManager.clear();
+        }
 
         // 2 - Retrieve player's informations
         pMonitor.setProgress("Loading Player Data from Server...", 30);
@@ -662,8 +662,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         this.myPlayer.tick();
         addPlayer(this.myPlayer);
 
-        if (DataManager.SHOW_DEBUG)
+        if (DataManager.SHOW_DEBUG) {
             System.out.println("POSITION set to x:" + this.myPlayer.getX() + " y:" + this.myPlayer.getY() + " location is " + this.myPlayer.getLocation());
+        }
 
         // 3 - Reset previous the data
         pMonitor.setProgress("Setting Preferences...", 80);
@@ -693,7 +694,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Main loop to tick the graphics director every 50ms.
      */
     @Override
@@ -720,11 +720,12 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
             // Pause Thread ?
             synchronized (this.pauseTickThreadLock) {
-                if (this.pauseTickThread)
+                if (this.pauseTickThread) {
                     try {
                         this.pauseTickThreadLock.wait();
                     } catch (Exception e) {
                     }
+                }
             }
 
             // Tick
@@ -732,13 +733,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
             deltaT = (int) (System.currentTimeMillis() - now);
 
-            if (deltaT < delay)
+            if (deltaT < delay) {
                 Tools.waitTime(delay - deltaT);
+            }
         }
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Tick Action. We propagate the tick on the players & GraphicsDirector.
      */
     public void tick() {
@@ -748,30 +749,34 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
         // II - Update players drawings    
         synchronized (this.players) {
-            Iterator it = this.players.values().iterator();
+            Iterator<PlayerImpl> it = this.players.values().iterator();
 
-            while (it.hasNext())
-                ((PlayerImpl) it.next()).tick();
+            while (it.hasNext()) {
+                it.next().tick();
+            }
         }
 
-        if (this.circle != null)
+        if (this.circle != null) {
             this.circle.tick();
+        }
 
         // III - Graphics Director update & redraw
-        if (this.clientScreen.getState() == Frame.ICONIFIED)
-            Tools.waitTime(400); // we reduce our tick rate... and don't refresh the screen
-        else
-            this.gDirector.tick(); // game screen update
+        if (this.clientScreen.getState() == Frame.ICONIFIED) {
+            Tools.waitTime(400);
+        } // we reduce our tick rate... and don't refresh the screen
+        else {
+            this.gDirector.tick();
+        } // game screen update
 
         // IV - Sync Messages Execution
         NetMessageBehaviour syncMessages[] = this.syncMessageQueue.pullMessages();
 
-        for (int i = 0; i < syncMessages.length; i++)
+        for (int i = 0; i < syncMessages.length; i++) {
             syncMessages[i].doBehaviour(this);
+        }
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To pause the tick thread.
      */
     private void pauseTickThread() {
@@ -781,7 +786,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To resume the tick thread.
      */
     private void resumeTickThread() {
@@ -792,20 +796,19 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To tell if the DataManager's tick thread is running.
      * @return true if it's running, false otherwise
      */
     public boolean isRunning() {
         synchronized (this.pauseTickThreadLock) {
-            if (!this.pauseTickThread && this.myPlayer != null)
+            if (!this.pauseTickThread && this.myPlayer != null) {
                 return true;
+            }
             return false;
         }
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To invoke the code of the specified message just after the current tick.
      *  This method can be called multiple times and is synchronized.
      */
@@ -814,7 +817,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To show a warning message
      */
     public void showWarningMessage(String warningMsg) {
@@ -828,27 +830,31 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Called when user left-clic on JMapPanel
      */
     public void onLeftClicJMapPanel(MouseEvent e) {
 
-        if (DataManager.SHOW_DEBUG)
+        if (DataManager.SHOW_DEBUG) {
             System.out.println("DataManager::onLeftClicJMapPanel");
+        }
 
-        if (this.updatingMapData)
-            return; // updating Map Location
+        if (this.updatingMapData) {
+            return;
+        } // updating Map Location
 
         // Menu clicked ?
-        if (this.menuManager.isVisible())
-            if (!this.menuManager.mouseClicked(e))
+        if (this.menuManager.isVisible()) {
+            if (!this.menuManager.mouseClicked(e)) {
                 this.menuManager.hide();
-            else
+            } else {
                 return;
+            }
+        }
 
         // Object/Player selected ?
-        if (mouseSelect(e.getX(), e.getY(), true))
+        if (mouseSelect(e.getX(), e.getY(), true)) {
             return;
+        }
 
         // Clicked object is the game screen...
         // We move the player to that location.
@@ -858,37 +864,38 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
             this.myPlayer.moveTo(new Point(e.getX() + (int) screen.getX(), e.getY() + (int) screen.getY()), this.worldManager);
         }
 
-        if (DataManager.SHOW_DEBUG)
+        if (DataManager.SHOW_DEBUG) {
             System.out.println("END of DataManager::onLeftClicJMapPanel");
+        }
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Called when user right-clic on JMapPanel
      */
     public void onRightClicJMapPanel(MouseEvent e) {
-        if (DataManager.SHOW_DEBUG)
+        if (DataManager.SHOW_DEBUG) {
             System.out.println("DataManager::onRightClicJMapPanel");
+        }
 
-        if (this.menuManager.isVisible())
+        if (this.menuManager.isVisible()) {
             this.menuManager.hide();
-        else {
+        } else {
             // Menu selection & display
             mouseSelect(e.getX(), e.getY(), false);
 
-            if (this.selectedPlayer != null)
+            if (this.selectedPlayer != null) {
                 this.menuManager.initContent(this.selectedPlayer);
-            //        else if(selectedObject!=null)
+            } //        else if(selectedObject!=null)
             //             ADD menuManager initContent here
-            else
+            else {
                 this.menuManager.initNoContent();
+            }
 
             this.menuManager.show(new Point(e.getX(), e.getY()));
         }
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Called when the mouse cursor is dragged with the left button.
      * @param e mouse event
      * @param dx delta x since mouse pressed
@@ -898,8 +905,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     public void onLeftButtonDragged(MouseEvent e, int dx, int dy, byte movementType) {
 
         // if the player is moving we return
-        if (this.myPlayer.getMovementComposer().isMoving())
+        if (this.myPlayer.getMovementComposer().isMoving()) {
             return;
+        }
 
         double orientation = this.myPlayer.getMovementComposer().getOrientationAngle();
 
@@ -910,8 +918,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
             return;
         }
 
-        if (Math.abs((double) dx / 100) > 3.4)
+        if (Math.abs((double) dx / 100) > 3.4) {
             return;
+        }
 
         this.myPlayer.getMovementComposer().setOrientationAngle(this.refOrientation - (double) dx / 100);
         orientation = this.myPlayer.getMovementComposer().getOrientationAngle();
@@ -924,34 +933,33 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Called when the mouse cursor is moved.
      * @param x mouse's x
      * @param y mouse's y
      */
     public void onLeftButtonMoved(int x, int y) {
-        if (!this.menuManager.isVisible())
+        if (!this.menuManager.isVisible()) {
             return;
+        }
 
         this.menuManager.mouseMoved(x, y);
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Called when the mouse cursor is dragged with the left button.
      * @param dx delta x since mouse pressed
      * @param dy delta y since mouse pressed
      * @param startsNow tells if the drag movement is just about to start
      */
     public void onRightButtonDragged(int dx, int dy, boolean startsNow) {
-        if (!this.menuManager.isVisible())
+        if (!this.menuManager.isVisible()) {
             return;
+        }
 
         this.menuManager.mouseDragged(dx, dy, startsNow);
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To select an object/player on screen via a mouse click
      * @param screen game screen dimension
      * @param x x position of the mouse
@@ -971,8 +979,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
             // We display selection and player info
             String previouslySelectedPlayerKey = "";
 
-            if (this.selectedPlayer != null)
+            if (this.selectedPlayer != null) {
                 previouslySelectedPlayerKey = this.selectedPlayer.getPrimaryKey();
+            }
 
             this.selectedPlayer = (PlayerImpl) object; // new player selected
 
@@ -996,8 +1005,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
                 this.gDirector.addDrawable(this.selectedPlayer.getWotCharacter().getAura());
                 this.selectedPlayer = null;
 
-                if (infoPanel != null)
+                if (infoPanel != null) {
                     infoPanel.reset();
+                }
                 return true;
             }
 
@@ -1007,28 +1017,33 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
             this.gDirector.addDrawable(this.selectedPlayer.getTextDrawable());
             this.gDirector.addDrawable(this.selectedPlayer.getWotCharacter().getAura());
 
-            if (infoPanel != null)
+            if (infoPanel != null) {
                 infoPanel.setPlayerInfo(this.selectedPlayer);
+            }
 
             // Connection state
-            if (this.selectedPlayer.getPlayerState().value == PlayerState.CONNECTED)
+            if (this.selectedPlayer.getPlayerState().value == PlayerState.CONNECTED) {
                 return true;
+            }
 
-            if (!isLeftClick)
-                return true; // no away message displayed if right click
+            if (!isLeftClick) {
+                return true;
+            } // no away message displayed if right click
 
             // Away Message
             String awayMessage = this.selectedPlayer.getPlayerAwayMessage();
 
-            if (!this.selectedPlayer.canDisplayAwayMessage())
+            if (!this.selectedPlayer.canDisplayAwayMessage()) {
                 return true;
+            }
 
             if (awayMessage != null) {
                 JChatRoom chatRoom = this.clientScreen.getChatPanel().getCurrentJChatRoom();
                 if (this.selectedPlayer.getPlayerState().value == PlayerState.DISCONNECTED) {
                     chatRoom.appendText("<font color='gray'> " + this.selectedPlayer.getFullPlayerName() + " (disconnected) says: <i> " + this.selectedPlayer.getPlayerAwayMessage() + " </i></font>");
-                } else
+                } else {
                     chatRoom.appendText("<font color='gray'> " + this.selectedPlayer.getFullPlayerName() + " (away) says: <i> " + this.selectedPlayer.getPlayerAwayMessage() + " </i></font>");
+                }
             }
 
             return true;
@@ -1036,8 +1051,9 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
             // We open/close the door IF the player is near enough...
             Door door = (Door) object;
 
-            if (DataManager.SHOW_DEBUG)
+            if (DataManager.SHOW_DEBUG) {
                 System.out.println("A door has been clicked...");
+            }
 
             // player near enough the door ?
             if (door.isPlayerNear(this.myPlayer.getCurrentRectangle())) {
@@ -1049,20 +1065,20 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
                     sendMessage(new DoorStateMessage(location, door.getMyRoomLinkID(), !door.isOpened()));
                 } else {
-                    // Door Selection ?
+                // Door Selection ?
 
                 }
             } else {
                 // we go to the door
                 Point doorPoint = door.getPointNearDoor(this.myPlayer.getCurrentRectangle());
 
-                if (doorPoint != null)
+                if (doorPoint != null) {
                     this.myPlayer.moveTo(doorPoint, this.worldManager);
+                }
             }
 
             return true;
-        }
-        //      else if( object instanceof BaseObject ) {
+        } //      else if( object instanceof BaseObject ) {
         //
         //             ADD HERE SELECTION CODE FOR OBJECTS (use the player selection as example)
         //      }
@@ -1076,16 +1092,15 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To add a wave arc effect on the player.
      */
     public void addWaveDrawable(PlayerImpl player) {
-        if (this.gDirector != null)
+        if (this.gDirector != null) {
             this.gDirector.addDrawable(player.getWaveArcDrawable());
+        }
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To add a new player to the screen<br>
      * (called by client.message.description.PlayerDataMsgBehaviour)
      *
@@ -1118,14 +1133,14 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To change the current MapData ( TownMap, WorldMap, InteriorMap ).
      */
     public void changeMapData() {
         this.updatingMapData = true;
 
-        if (this.menuManager.isVisible())
+        if (this.menuManager.isVisible()) {
             this.menuManager.hide();
+        }
 
         try {
             if (this.myPlayer.getLocation().isRoom()) {
@@ -1146,7 +1161,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To suppress drawables, shadows, data
      */
     public void cleanInteriorMapData() {
@@ -1156,7 +1170,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To draw a rectangle on the screen
      *
      * @param rect the rectangle to display
@@ -1178,7 +1191,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To exit wotlas.
      */
     public void exit() {
@@ -1187,11 +1199,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
             int clientScreenWidth = this.clientScreen.getWidth();
             int clientScreenHeight = this.clientScreen.getHeight();
 
-            if (clientScreenWidth > 100)
+            if (clientScreenWidth > 100) {
                 ClientDirector.getClientConfiguration().setClientWidth(clientScreenWidth);
+            }
 
-            if (clientScreenHeight > 100)
+            if (clientScreenHeight > 100) {
                 ClientDirector.getClientConfiguration().setClientHeight(clientScreenHeight);
+            }
         }
 
         ClientDirector.getClientConfiguration().save();
@@ -1200,7 +1214,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get the master player.
      */
     public PlayerImpl getMyPlayer() {
@@ -1208,13 +1221,13 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Method called when an item has been clicked on an item who is not a menu link.
      *  @param e menu event generated.
      */
     public void menuItemClicked(Menu2DEvent e) {
-        if (DataManager.SHOW_DEBUG)
+        if (DataManager.SHOW_DEBUG) {
             System.out.println("Menu Item Clicked : " + e.toString());
+        }
         // Test petrus
         if (e.getItemName().equals("test inventory plugin")) {
             System.out.println("ok");
@@ -1224,5 +1237,4 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     }
 
     /*------------------------------------------------------------------------------------*/
-
 }

@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.libs.graphics2D.drawable;
 
 import java.awt.AlphaComposite;
@@ -25,6 +24,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.font.FontRenderContext;
+import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.util.Map;
 import wotlas.libs.graphics2D.Drawable;
@@ -35,14 +35,13 @@ import wotlas.libs.graphics2D.ImageLibrary;
  *
  * @author MasterBob, Aldiss, Petrus
  */
-
 public class MultiLineText extends Drawable {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Alignement of the text
      */
     static public short LEFT_ALIGNMENT = 0;
+
     static public short RIGHT_ALIGNMENT = 1;
 
     /** Default Font Name used.
@@ -50,7 +49,6 @@ public class MultiLineText extends Drawable {
     static private String defaultFontName = "Lucida Blackletter Regular";
 
     /*------------------------------------------------------------------------------------*/
-
     /** The text to write
      */
     private String[] text;
@@ -74,10 +72,11 @@ public class MultiLineText extends Drawable {
      *  s for screen coordinate
      */
     int xs;
+
     int ys;
 
     /** the dimension of the text.
-    */
+     */
     private float size = 20.0f;
 
     /** True if we must recalculate text width & height
@@ -105,7 +104,6 @@ public class MultiLineText extends Drawable {
     private boolean isLeftAligned = true;
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get the default font name.
      */
     static public String getDefaultFontName() {
@@ -113,7 +111,6 @@ public class MultiLineText extends Drawable {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To set the default font name.
      */
     static public void setDefaultFontName(String fontName) {
@@ -121,7 +118,6 @@ public class MultiLineText extends Drawable {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor. We use the default font (see static getter/setter). 
      *
      * @param xs MultiLineText's xs top left corner of the text
@@ -133,7 +129,6 @@ public class MultiLineText extends Drawable {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      *
      * @param xs space between top left corner and left border if LEFT_ALIGNMENT<br>
@@ -161,7 +156,6 @@ public class MultiLineText extends Drawable {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To initialize this drawable with the ImageLibrary. Don't call it yourself ! it's
      *  done automatically when you call addDrawable on the GraphicsDirector.
      *
@@ -179,7 +173,6 @@ public class MultiLineText extends Drawable {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /**
      * define the text
      */
@@ -189,7 +182,6 @@ public class MultiLineText extends Drawable {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /**
      * define the color
      */
@@ -198,30 +190,27 @@ public class MultiLineText extends Drawable {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /**
      * define the size
      */
     public void setSize(float size) {
         this.size = size;
         this.font = this.font.deriveFont(Font.PLAIN, size);
-        Map fontAttributes = this.font.getAttributes();
+        Map<TextAttribute, ?> fontAttributes = this.font.getAttributes();
         this.recalculate = true;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To set the current font.
      */
     public void setFont(String fontName) {
         this.font = FontFactory.getDefaultFontFactory().getFont(fontName);
         this.font = this.font.deriveFont(Font.PLAIN, this.size);
-        Map fontAttributes = this.font.getAttributes();
+        Map<TextAttribute, ?> fontAttributes = this.font.getAttributes();
         this.recalculate = true;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Paint method called by the GraphicsDirector. The specified rectangle represents
      *  the displayed screen in background cordinates ( see GraphicsDirector ).
      *
@@ -232,11 +221,13 @@ public class MultiLineText extends Drawable {
     @Override
     public void paint(Graphics2D gc, Rectangle screen) {
 
-        if (this.font != null)
+        if (this.font != null) {
             gc.setFont(this.font);
+        }
 
-        if (this.text == null)
+        if (this.text == null) {
             return;
+        }
 
         if (this.recalculate) {
             this.heightsText = null;
@@ -249,25 +240,28 @@ public class MultiLineText extends Drawable {
             this.widthText = (int) t.getBounds().getWidth();
             gc.setColor(this.color);
 
-            if (this.isLeftAligned)
+            if (this.isLeftAligned) {
                 gc.drawString(this.text[0], this.xs, this.ys + this.heightsText[0]);
-            else
+            } else {
                 gc.drawString(this.text[0], (int) screen.getWidth() - this.xs - this.widthText, this.ys + this.heightsText[0]);
+            }
 
             this.gap = this.heightsText[0] / 2; //spaces between lines (half height of the text)
 
             for (int i = 1; i < this.text.length; i++) {
                 t = new TextLayout(this.text[i], gc.getFont(), frc);
 
-                if (((int) t.getBounds().getWidth()) > this.widthText)
+                if (((int) t.getBounds().getWidth()) > this.widthText) {
                     this.widthText = ((int) t.getBounds().getWidth());
+                }
 
                 this.heightsText[i] = this.heightsText[i - 1] + (int) t.getBounds().getHeight() + this.gap;
 
-                if (this.isLeftAligned)
+                if (this.isLeftAligned) {
                     gc.drawString(this.text[i], this.xs, this.ys + this.heightsText[i]);
-                else
+                } else {
                     gc.drawString(this.text[i], (int) screen.getWidth() - this.xs - this.widthText, this.ys + this.heightsText[i]);
+                }
             }
 
             this.r.width = this.widthText + 12;
@@ -299,17 +293,19 @@ public class MultiLineText extends Drawable {
             // display text
             gc.setColor(this.color);
 
-            if (this.isLeftAligned)
-                for (int i = 0; i < this.text.length; i++)
+            if (this.isLeftAligned) {
+                for (int i = 0; i < this.text.length; i++) {
                     gc.drawString(this.text[i], this.xs, this.ys + this.heightsText[i]);
-            else
-                for (int i = 0; i < this.text.length; i++)
+                }
+            } else {
+                for (int i = 0; i < this.text.length; i++) {
                     gc.drawString(this.text[i], (int) screen.getWidth() - this.xs - this.widthText, this.ys + this.heightsText[i]);
+                }
+            }
         }
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Tick method called by the GraphicsDirector. This tick method has a returned value
      *  that indicates if the drawable is still living or must be deleted. Some Drawables
      *  always return "still living", it is then the task of the program that uses

@@ -16,13 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.message.description;
 
 import java.util.Hashtable;
 import java.util.Iterator;
 import wotlas.client.DataManager;
 import wotlas.client.PlayerImpl;
+import wotlas.common.Player;
 import wotlas.common.message.description.RoomPlayerDataMessage;
 import wotlas.common.universe.Room;
 import wotlas.common.universe.WotlasLocation;
@@ -34,7 +34,6 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-
 public class RoomPlayerDataMsgBehaviour extends RoomPlayerDataMessage implements NetMessageBehaviour {
     /*------------------------------------------------------------------------------------*/
 
@@ -45,15 +44,15 @@ public class RoomPlayerDataMsgBehaviour extends RoomPlayerDataMessage implements
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
      *        this message.
      */
     public void doBehaviour(Object sessionContext) {
-        if (DataManager.SHOW_DEBUG)
+        if (DataManager.SHOW_DEBUG) {
             System.out.println("ROOM PLAYER DATA MESSAGE " + this.location);
+        }
 
         // The sessionContext is here a DataManager.
         DataManager dataManager = (DataManager) sessionContext;
@@ -94,8 +93,9 @@ public class RoomPlayerDataMsgBehaviour extends RoomPlayerDataMessage implements
             for (int i = 0; i < myRoom.getRoomLinks().length; i++) {
                 Room otherRoom = myRoom.getRoomLinks()[i].getRoom1();
 
-                if (otherRoom == myRoom)
+                if (otherRoom == myRoom) {
                     otherRoom = myRoom.getRoomLinks()[i].getRoom2();
+                }
 
                 if (otherRoom.getRoomID() == this.location.getRoomID()) {
                     merge(dataManager);
@@ -109,20 +109,20 @@ public class RoomPlayerDataMsgBehaviour extends RoomPlayerDataMessage implements
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To merge our players the DataManager's hashtable...
      */
     private void merge(DataManager dataManager) {
-        Hashtable dest = dataManager.getPlayers();
+        Hashtable<String, PlayerImpl> dest = dataManager.getPlayers();
 
         synchronized (dest) {
-            Iterator it = this.players.values().iterator();
+            Iterator<Player> it = this.players.values().iterator();
 
             while (it.hasNext()) {
                 PlayerImpl playerImpl = (PlayerImpl) it.next();
 
-                if (dest.containsKey(playerImpl.getPrimaryKey()))
+                if (dest.containsKey(playerImpl.getPrimaryKey())) {
                     continue;
+                }
 
                 dest.put(playerImpl.getPrimaryKey(), playerImpl);
                 playerImpl.init();
@@ -132,5 +132,4 @@ public class RoomPlayerDataMsgBehaviour extends RoomPlayerDataMessage implements
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.common.power;
 
 import java.io.File;
@@ -31,35 +30,31 @@ import wotlas.utils.Debug;
  * @see wotlas.common.power.Weave
  * @see wotlas.libs.graphics2D.Drawable
  */
-
 public abstract class Channeller {
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
     /** Storage for the list of Weaves usable by this Channeller
      */
-    private HashMap weaveList = new HashMap();
+    private HashMap<String, Weave> weaveList = new HashMap<String, Weave>();
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Storage for the full list of Weaves
      */
-    private HashMap fullWeaveList = new HashMap();
+    private HashMap<String, Weave> fullWeaveList = new HashMap<String, Weave>();
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Storage for the status of the True Source
      */
     private boolean trueSourceUsable = false;
+
     private boolean trueSourceInUse = false;
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Storage for the status of the Source
      */
     private boolean isChannelling = false;
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Constructor
      */
     public Channeller() {
@@ -76,23 +71,26 @@ public abstract class Channeller {
 
         for (int i = 0; i < weavesFiles.length; i++) {
 
-            if (!weavesFiles[i].isFile() || !weavesFiles[i].getName().endsWith(".class"))
+            if (!weavesFiles[i].isFile() || !weavesFiles[i].getName().endsWith(".class")) {
                 continue;
+            }
 
             // Load the class
             try {
                 String name = weavesFiles[i].getName();
                 Class cl = Class.forName("wotlas.common.power.Weaves." + name.substring(0, name.lastIndexOf(".class")));
 
-                if (cl == null || cl.isInterface())
+                if (cl == null || cl.isInterface()) {
                     continue;
+                }
 
                 Object o = cl.newInstance();
 
-                if (o == null || !(o instanceof Weave))
+                if (o == null || !(o instanceof Weave)) {
                     continue;
+                }
                 // Ok, we have a valid Weave class.
-                this.fullWeaveList.put(((Weave) o).getName(), o);
+                this.fullWeaveList.put(((Weave) o).getName(), (Weave) o);
             } catch (Exception e) {
                 Debug.signal(Debug.WARNING, this, e);
             }
@@ -101,7 +99,6 @@ public abstract class Channeller {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To get a list of Weaves usable by this Channeller.</P>
      * Not modifiable directly, it is generated each time this method is called.
      *
@@ -112,7 +109,6 @@ public abstract class Channeller {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Add a weave to the Channeller's list
      *
      * @param weaveName the name of the new weave to be added.
@@ -128,18 +124,16 @@ public abstract class Channeller {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To get a Weave
      *
      * @param weaveName the name of the Power (see the list produced by getPowerList())
      * @return the Power
      */
     public Weave getWeave(String weaveName) {
-        return (Weave) this.weaveList.get(weaveName);
+        return this.weaveList.get(weaveName);
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Seize/Embrace the Source
      * This is here for when I implement time spent holding the Source effects
      *
@@ -151,7 +145,6 @@ public abstract class Channeller {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Release the Source
      *
      * This is here for when I implement time spent holding the source effects
@@ -162,7 +155,6 @@ public abstract class Channeller {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To get the Power Points the Channeller has remaining
      * NOT YET IMPLEMENTED
      *
@@ -173,7 +165,6 @@ public abstract class Channeller {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To get the Power level of the Channeller
      *
      * Power level will control how much of the Source can be handled, this will
@@ -189,7 +180,6 @@ public abstract class Channeller {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Test if the True Source is available
      *
      * @return success status
@@ -199,7 +189,6 @@ public abstract class Channeller {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Toggle whether or not the True Source is in use, or the One Source
      *
      * @return the status of the True Source, true=in use
@@ -214,7 +203,6 @@ public abstract class Channeller {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Test if the Channeller can Channel
      *
      * @return success status

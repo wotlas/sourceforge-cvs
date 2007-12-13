@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.common.chat;
 
 import java.util.Hashtable;
@@ -25,11 +24,11 @@ import wotlas.common.Player;
 /** Interface of a Chat.
  *
  * @author Petrus
- * @see wotlas.server.ChatImpl
- * @see wotlas.client.ChatImpl
+ * @see wotlas.server.ChatListImpl
+ * @see wotlas.client.ChatListImpl
  */
-
 public interface ChatList {
+
     /** To get the number of existing ChatRooms.
      */
     public int getNumberOfChatRooms();
@@ -68,12 +67,12 @@ public interface ChatList {
      *
      * @param primaryKey primary key of the ChatRoom
      */
-    public Hashtable getPlayers(String primaryKey);
+    public Hashtable<String, Player> getPlayers(String primaryKey);
 
     /** To get all the ChatRooms. Use with : synchronized( ... ) {} please !
      *
      * @param primaryKey primary key of ChatRoom we want to get
      */
-    public Hashtable getChatRooms();
+    public Hashtable<String, ChatRoom> getChatRooms();
 
 }

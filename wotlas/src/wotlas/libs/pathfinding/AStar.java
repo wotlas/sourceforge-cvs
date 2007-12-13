@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.libs.pathfinding;
 
 import java.awt.Point;
@@ -36,7 +35,6 @@ import wotlas.utils.List;
  * @author Petrus
  * @see wotlas.libs.pathfinding.Node
  */
-
 public class AStar {
     /*------------------------------------------------------------------------------------*/
 
@@ -62,11 +60,11 @@ public class AStar {
 
     /** list of not visited {@link Node Nodes}
      */
-    private Hashtable open = new Hashtable(500);
+    private Hashtable<Point, Node> open = new Hashtable<Point, Node>(500);
 
     /** list of visited {@link Node Nodes}
      */
-    private Hashtable closed = new Hashtable(500);
+    private Hashtable<Point, Node> closed = new Hashtable<Point, Node>(500);
 
     /** sorted open {@link Node Node}
      */
@@ -74,7 +72,6 @@ public class AStar {
     private List nodes = new List();
 
     /*------------------------------------------------------------------------------------*/
-
     /**
      * Estimates the distance between 2 points
      * 
@@ -84,11 +81,11 @@ public class AStar {
      */
     private int estimate(Point pointFrom, Point pointTo) {
         return (int) pointFrom.distanceSq(pointTo);
-        /** 
-         * Other distances:
-         * return Math.max(Math.abs(pointFrom.x-pointTo.x),Math.abs(pointFrom.y-pointTo.y));
-         * return (pointFrom.x-pointTo.x)*(pointFrom.x-pointTo.x)+(pointFrom.y-pointTo.y)*(pointFrom.y-pointTo.y);
-         */
+    /** 
+     * Other distances:
+     * return Math.max(Math.abs(pointFrom.x-pointTo.x),Math.abs(pointFrom.y-pointTo.y));
+     * return (pointFrom.x-pointTo.x)*(pointFrom.x-pointTo.x)+(pointFrom.y-pointTo.y)*(pointFrom.y-pointTo.y);
+     */
     }
 
     /**
@@ -122,7 +119,7 @@ public class AStar {
                 //System.out.println("yes");
                 return bestNode;
             } else {
-                //System.out.println("no");
+            //System.out.println("no");
             }
 
             children.removeAllElements();
@@ -141,8 +138,8 @@ public class AStar {
                 childCost = bestNode.g + 1; // ?? In fact, we have to calculate the childCost
 
                 // test if childPoint was in closed or open
-                if ((closedNode = (Node) this.closed.get(childPoint)) == null) {
-                    openNode = (Node) this.open.get(childPoint);
+                if ((closedNode = this.closed.get(childPoint)) == null) {
+                    openNode = this.open.get(childPoint);
                 }
                 oldNode = (openNode != null) ? openNode : closedNode;
 
@@ -173,7 +170,7 @@ public class AStar {
                         oldNode.f = childCost + oldNode.h;
                         children.addElement(oldNode);
                     }
-                    // if childCost > oldNode.g ie if newcost > oldcost => do nothing
+                // if childCost > oldNode.g ie if newcost > oldcost => do nothing
                 } else // if childPoint was not in open or closed
                 {
                     //System.out.println("Test : childPoint was in open or closed ? no");
@@ -206,12 +203,14 @@ public class AStar {
      *
      */
     private int rbsearch(int l, int h, int tot, int costs) {
-        if (l > h)
-            return l; //insert before l
+        if (l > h) {
+            return l;
+        } //insert before l
         int cur = (l + h) / 2;
         int ot = ((Node) this.nodes.elementAt(cur)).f;
-        if ((tot < ot) || (tot == ot && costs >= ((Node) this.nodes.elementAt(cur)).g))
+        if ((tot < ot) || (tot == ot && costs >= ((Node) this.nodes.elementAt(cur)).g)) {
             return rbsearch(l, cur - 1, tot, costs);
+        }
         return rbsearch(cur + 1, h, tot, costs);
     }
 
@@ -224,10 +223,11 @@ public class AStar {
         while (lo <= hi) {
             int cur = (lo + hi) / 2;
             int ot = ((Node) this.nodes.elementAt(cur)).f;
-            if ((tot < ot) || (tot == ot && costs >= ((Node) this.nodes.elementAt(cur)).g))
+            if ((tot < ot) || (tot == ot && costs >= ((Node) this.nodes.elementAt(cur)).g)) {
                 hi = cur - 1;
-            else
+            } else {
                 lo = cur + 1;
+            }
         }
         return lo; //insert before lo
     }
@@ -254,8 +254,9 @@ public class AStar {
      * @return true if point is valid (not blocked) in the {@link #mask mask}
      */
     public boolean isNotBlock(int x, int y) {
-        if ((x < 0) || (x == this.mapWidth) || (y < 0) || (y == this.mapHeight))
+        if ((x < 0) || (x == this.mapWidth) || (y < 0) || (y == this.mapHeight)) {
             return false;
+        }
         return this.map[x][y];
     }
 

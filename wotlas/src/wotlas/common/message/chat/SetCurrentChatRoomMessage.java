@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.common.message.chat;
 
 import java.io.DataInputStream;
@@ -32,11 +31,9 @@ import wotlas.libs.net.NetMessage;
  *
  * @author Petrus, Aldiss
  */
-
 public class SetCurrentChatRoomMessage extends NetMessage {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Id of the ChatRoom
      */
     protected String chatRoomPrimaryKey;
@@ -50,7 +47,6 @@ public class SetCurrentChatRoomMessage extends NetMessage {
     protected String fullPlayerNames[];
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor. Just initializes the message category and type.
      */
     public SetCurrentChatRoomMessage() {
@@ -58,10 +54,9 @@ public class SetCurrentChatRoomMessage extends NetMessage {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor with parameters.
      */
-    public SetCurrentChatRoomMessage(String chatRoomPrimaryKey, Hashtable players) {
+    public SetCurrentChatRoomMessage(String chatRoomPrimaryKey, Hashtable<String, Player> players) {
         super();
         this.chatRoomPrimaryKey = chatRoomPrimaryKey;
 
@@ -72,14 +67,14 @@ public class SetCurrentChatRoomMessage extends NetMessage {
         }
 
         synchronized (players) {
-            Iterator it = players.values().iterator();
+            Iterator<Player> it = players.values().iterator();
             int i = 0;
 
             this.playersPrimaryKey = new String[players.size()];
             this.fullPlayerNames = new String[players.size()];
 
             while (it.hasNext()) {
-                Player p = (Player) it.next();
+                Player p = it.next();
                 this.playersPrimaryKey[i] = p.getPrimaryKey();
                 this.fullPlayerNames[i] = p.getPlayerName();
                 i++;
@@ -88,7 +83,6 @@ public class SetCurrentChatRoomMessage extends NetMessage {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** This is where we put your message data on the stream. You don't need
      * to invoke this method yourself, it's done automatically.
      *
@@ -101,17 +95,18 @@ public class SetCurrentChatRoomMessage extends NetMessage {
 
         ostream.writeInt(this.playersPrimaryKey.length);
 
-        for (int i = 0; i < this.playersPrimaryKey.length; i++)
+        for (int i = 0; i < this.playersPrimaryKey.length; i++) {
             ostream.writeUTF(this.playersPrimaryKey[i]);
+        }
 
         ostream.writeInt(this.fullPlayerNames.length);
 
-        for (int i = 0; i < this.fullPlayerNames.length; i++)
+        for (int i = 0; i < this.fullPlayerNames.length; i++) {
             ostream.writeUTF(this.fullPlayerNames[i]);
+        }
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** This is where we retrieve our message data from the stream. You don't need
      * to invoke this method yourself, it's done automatically.
      *
@@ -125,15 +120,16 @@ public class SetCurrentChatRoomMessage extends NetMessage {
 
         this.playersPrimaryKey = new String[istream.readInt()];
 
-        for (int i = 0; i < this.playersPrimaryKey.length; i++)
+        for (int i = 0; i < this.playersPrimaryKey.length; i++) {
             this.playersPrimaryKey[i] = istream.readUTF();
+        }
 
         this.fullPlayerNames = new String[istream.readInt()];
 
-        for (int i = 0; i < this.fullPlayerNames.length; i++)
+        for (int i = 0; i < this.fullPlayerNames.length; i++) {
             this.fullPlayerNames[i] = istream.readUTF();
+        }
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

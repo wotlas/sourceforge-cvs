@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.libs.graphics2D.drawable;
 
 import java.awt.AlphaComposite;
@@ -27,6 +26,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.font.FontRenderContext;
+import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.util.Map;
@@ -39,11 +39,9 @@ import wotlas.libs.graphics2D.ImageLibrary;
  *
  * @author MasterBob, Aldiss, Petrus
  */
-
 public class TextDrawable extends Drawable {
 
     /*------------------------------------------------------------------------------------*/
-
     /** To set High Quality / Medium Quality text display
      */
     private static boolean highQualityTextDisplay = false;
@@ -53,7 +51,6 @@ public class TextDrawable extends Drawable {
     static private String defaultFontName = "Lucida Blackletter Regular";
 
     /*------------------------------------------------------------------------------------*/
-
     /** Text to write
      */
     private String text;
@@ -71,7 +68,7 @@ public class TextDrawable extends Drawable {
     private String fontName;
 
     /** Text Font Size. .
-    */
+     */
     private float size;
 
     /** Drawable with which we are linked. helps to define our x and y and to display if
@@ -106,7 +103,6 @@ public class TextDrawable extends Drawable {
     private TextLayout t;
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get if this TextDrawable must be high/medium quality
      */
     public static boolean getHighQualityTextDisplay() {
@@ -114,7 +110,6 @@ public class TextDrawable extends Drawable {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To set if this TextDrawable must be high/medium quality
      */
     public static void setHighQualityTextDisplay(boolean highQualityTextDisplay) {
@@ -122,7 +117,6 @@ public class TextDrawable extends Drawable {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get the default font name.
      */
     static public String getDefaultFontName() {
@@ -130,7 +124,6 @@ public class TextDrawable extends Drawable {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To set the default font name.
      */
     static public void setDefaultFontName(String fontName) {
@@ -138,7 +131,6 @@ public class TextDrawable extends Drawable {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor with drawable to use as reference. We use the default font name.
      *  The default color is black & size 12.
      *
@@ -153,7 +145,6 @@ public class TextDrawable extends Drawable {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor with our reference Drawable, text color, size, fontName.
      *
      *  The TextDrawable has infinite life.
@@ -171,7 +162,6 @@ public class TextDrawable extends Drawable {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor with our reference Drawable, text color, size, fontName & lifeTime.
      *
      * @param text textDrawble's text
@@ -198,7 +188,6 @@ public class TextDrawable extends Drawable {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To initialize this drawable with the ImageLibrary. Don't call it yourself ! it's
      *  done automatically when you call addDrawable on the GraphicsDirector.
      *
@@ -216,7 +205,6 @@ public class TextDrawable extends Drawable {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /**
      *  Define our reference drawable;
      */
@@ -225,7 +213,6 @@ public class TextDrawable extends Drawable {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /**
      * define the text;
      */
@@ -235,7 +222,6 @@ public class TextDrawable extends Drawable {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /**
      * define the color
      */
@@ -244,31 +230,28 @@ public class TextDrawable extends Drawable {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /**
      * define the font size.
      */
     public void setSize(float size) {
         this.size = size;
         this.font = this.font.deriveFont(Font.PLAIN, size);
-        Map fontAttributes = this.font.getAttributes();
+        Map<TextAttribute, ?> fontAttributes = this.font.getAttributes();
         this.recalculate = true;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /**
      * To set the font for this Drawable.
      */
     public void setFont(String fontName) {
         this.font = FontFactory.getDefaultFontFactory().getFont(fontName);
         this.font = this.font.deriveFont(Font.PLAIN, this.size);
-        Map fontAttributes = this.font.getAttributes();
+        Map<TextAttribute, ?> fontAttributes = this.font.getAttributes();
         this.recalculate = true;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /**
      * To get the current font.
      */
@@ -277,7 +260,6 @@ public class TextDrawable extends Drawable {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Paint method called by the GraphicsDirector. The specified rectangle represents
      *  the displayed screen in background cordinates ( see GraphicsDirector ).
      *
@@ -328,7 +310,6 @@ public class TextDrawable extends Drawable {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Tick method called by the GraphicsDirector. This tick method has a returned value
      *  that indicates if the drawable is still living or must be deleted. Some Drawables
      *  always return "still living", it is then the task of the program that uses
@@ -345,34 +326,36 @@ public class TextDrawable extends Drawable {
         }
 
         // persistent TextDrawable
-        if (this.lifeTime == -1)
+        if (this.lifeTime == -1) {
             return true;
+        }
 
         if (this.timeLimit < 0) {
             return true;
         }
 
-        if (this.timeLimit - System.currentTimeMillis() < 0)
+        if (this.timeLimit - System.currentTimeMillis() < 0) {
             return false;
+        }
         return true;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Returns true if the text is still displayed on screen
      */
     public boolean isLive() {
         // persistent TextDrawable
-        if (this.lifeTime == -1)
+        if (this.lifeTime == -1) {
             return true;
+        }
 
-        if (this.timeLimit - System.currentTimeMillis() < 0)
+        if (this.timeLimit - System.currentTimeMillis() < 0) {
             return false;
+        }
         return true;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To reset the current time limit of display.
      */
     public void resetTimeLimit() {

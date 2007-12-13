@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.message.description;
 
 import java.util.Hashtable;
@@ -34,7 +33,6 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-
 public class AddPlayerToRoomMsgBehaviour extends AddPlayerToRoomMessage implements NetMessageBehaviour {
     /*------------------------------------------------------------------------------------*/
 
@@ -45,15 +43,15 @@ public class AddPlayerToRoomMsgBehaviour extends AddPlayerToRoomMessage implemen
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
      *        this message.
      */
     public void doBehaviour(Object sessionContext) {
-        if (DataManager.SHOW_DEBUG)
+        if (DataManager.SHOW_DEBUG) {
             System.out.println("ADD PLAYER TO ROOM MESSAGE player: " + this.player.getPrimaryKey());
+        }
 
         // The sessionContext is here a DataManager.
         DataManager dataManager = (DataManager) sessionContext;
@@ -75,11 +73,11 @@ public class AddPlayerToRoomMsgBehaviour extends AddPlayerToRoomMessage implemen
 
         // Search in Current Room
         if (myRoom.getRoomID() == this.player.getLocation().getRoomID()) {
-            Hashtable players = dataManager.getPlayers();
+            Hashtable<String, PlayerImpl> players = dataManager.getPlayers();
 
             synchronized (players) {
                 if (!players.containsKey(this.player.getPrimaryKey())) {
-                    players.put(this.player.getPrimaryKey(), this.player);
+                    players.put(this.player.getPrimaryKey(), (PlayerImpl) this.player);
                     ((PlayerImpl) this.player).init();
                     ((PlayerImpl) this.player).initVisualProperties(dataManager.getGraphicsDirector());
                     SoundLibrary.getSoundPlayer().playSound("human-steps.wav");
@@ -90,21 +88,23 @@ public class AddPlayerToRoomMsgBehaviour extends AddPlayerToRoomMessage implemen
         }
 
         // Search in other rooms
-        if (myRoom.getRoomLinks() == null)
-            return; // not found
+        if (myRoom.getRoomLinks() == null) {
+            return;
+        } // not found
 
         for (int i = 0; i < myRoom.getRoomLinks().length; i++) {
             Room otherRoom = myRoom.getRoomLinks()[i].getRoom1();
 
-            if (otherRoom == myRoom)
+            if (otherRoom == myRoom) {
                 otherRoom = myRoom.getRoomLinks()[i].getRoom2();
+            }
 
             if (otherRoom.getRoomID() == this.player.getLocation().getRoomID()) {
-                Hashtable players = dataManager.getPlayers();
+                Hashtable<String, PlayerImpl> players = dataManager.getPlayers();
 
                 synchronized (players) {
                     if (!players.containsKey(this.player.getPrimaryKey())) {
-                        players.put(this.player.getPrimaryKey(), this.player);
+                        players.put(this.player.getPrimaryKey(), (PlayerImpl) this.player);
                         ((PlayerImpl) this.player).init();
                         ((PlayerImpl) this.player).initVisualProperties(dataManager.getGraphicsDirector());
                         SoundLibrary.getSoundPlayer().playSound("human-steps.wav");
@@ -120,5 +120,4 @@ public class AddPlayerToRoomMsgBehaviour extends AddPlayerToRoomMessage implemen
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

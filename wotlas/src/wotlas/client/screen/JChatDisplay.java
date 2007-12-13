@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.screen;
 
 import java.io.File;
@@ -38,11 +37,9 @@ import wotlas.utils.MyHTMLEditorKit;
  *
  * @author Petrus
  */
-
 public class JChatDisplay extends LogStream {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Chat Log Name Format
      */
     public final static String CHAT_LOG_SUFFIX = ".html";
@@ -50,35 +47,33 @@ public class JChatDisplay extends LogStream {
     /** The smileys we recognize :
      */
     public final static String SMILEYS[][] = {
-    /**   smiley        width   height  file name         **/
-    { "0:)", "16", "20", "angel.gif" }, { ":,(", "15", "15", "cry.gif" }, { "<,(", "16", "16", "cry2.gif" }, { ":o", "15", "15", "eek.gif" }, { ":D", "15", "15", "laugh.gif" }, { ":(", "15", "15", "mad.gif" }, { ">o", "15", "15", "rant.gif" }, { ":)", "15", "15", "smile.gif" }, { ":-)", "15", "15", "smile.gif" }, { ":|", "15", "15", "squint.gif" }, { ";)", "15", "15", "wink.gif" }, { "<|", "15", "15", "rolleyes.gif" }, { ":/", "15", "22", "confused.gif" }, { ">)", "15", "15", "devil.gif" }, { ">D", "15", "15", "evilgrin.gif" }, { ">(", "16", "16", "madfire.gif" }, { ">|", "15", "15", "hum.gif" }, { ";P", "15", "15", "flirt.gif" }, { ">#", "15", "15", "nono.gif" }, { "|o", "15", "15", "yawn.gif" }, { "8D", "15", "15", "horny.gif" }, { "8)", "15", "15", "cool.gif" }, { "8(", "15", "15", "argh.gif" }, { ";D", "120", "15", "roll.gif" }, { "%(", "15", "15", "arg.gif" }, { ":yes:", "15", "15", "yes.gif" }, { ":no:", "15", "15", "shake.gif" }, { ":sleep:", "15", "24", "sleep.gif" }, { ":storm:", "31", "34", "storm.gif" }, { ":agree:", "15", "15", "agree.gif" }, { ":coffee:", "15", "15", "coffee.gif" }, { ":disagree:", "15", "15", "disagree.gif" }, { ":help:", "23", "15", "help.gif" }, { ":warning:", "15", "15", "warning.gif" }, { ":idea:", "60", "60", "idea.gif" }, { ":music:", "18", "22", "note.gif" }, { ":phone:", "25", "22", "phone.gif" }, };
+        /**   smiley        width   height  file name         **/
+        {"0:)", "16", "20", "angel.gif"}, {":,(", "15", "15", "cry.gif"}, {"<,(", "16", "16", "cry2.gif"}, {":o", "15", "15", "eek.gif"}, {":D", "15", "15", "laugh.gif"}, {":(", "15", "15", "mad.gif"}, {">o", "15", "15", "rant.gif"}, {":)", "15", "15", "smile.gif"}, {":-)", "15", "15", "smile.gif"}, {":|", "15", "15", "squint.gif"}, {";)", "15", "15", "wink.gif"}, {"<|", "15", "15", "rolleyes.gif"}, {":/", "15", "22", "confused.gif"}, {">)", "15", "15", "devil.gif"}, {">D", "15", "15", "evilgrin.gif"}, {">(", "16", "16", "madfire.gif"}, {">|", "15", "15", "hum.gif"}, {";P", "15", "15", "flirt.gif"}, {">#", "15", "15", "nono.gif"}, {"|o", "15", "15", "yawn.gif"}, {"8D", "15", "15", "horny.gif"}, {"8)", "15", "15", "cool.gif"}, {"8(", "15", "15", "argh.gif"}, {";D", "120", "15", "roll.gif"}, {"%(", "15", "15", "arg.gif"}, {":yes:", "15", "15", "yes.gif"}, {":no:", "15", "15", "shake.gif"}, {":sleep:", "15", "24", "sleep.gif"}, {":storm:", "31", "34", "storm.gif"}, {":agree:", "15", "15", "agree.gif"}, {":coffee:", "15", "15", "coffee.gif"}, {":disagree:", "15", "15", "disagree.gif"}, {":help:", "23", "15", "help.gif"}, {":warning:", "15", "15", "warning.gif"}, {":idea:", "60", "60", "idea.gif"}, {":music:", "18", "22", "note.gif"}, {":phone:", "25", "22", "phone.gif"},     };
 
     /** The sounds we recognize :
      */
     public final static String SOUNDS[][] = {
     /**   smiley        file name      **/
-    { "*doh*", "doh.wav" }, { "*toh*", "toh.wav" }, };
+    { "*doh*", "doh.wav"}, {"*toh*", "toh.wav"},     };
 
     /** max number of messages to display on screen at the same time
      */
     public final static int MAX_DISPLAYED_MESSAGES = 25;
 
     /*------------------------------------------------------------------------------------*/
-
     /** messages number.
      */
     private int msg_number;
 
     /** Where messages appear.
      */
-    private JEditorPane messagesPane;
+    private final JEditorPane messagesPane;
 
     /** string buffer.
      */
     private String strBuffer;
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      *
      * @param chatRoom chatRoom associated to this JChatDisplay
@@ -86,8 +81,8 @@ public class JChatDisplay extends LogStream {
     public JChatDisplay(ChatRoom chatRoom) throws FileNotFoundException {
         super(ClientDirector.getResourceManager().getExternalLogsDir() + chatRoom.getPrimaryKey() + JChatDisplay.CHAT_LOG_SUFFIX, true, 60 * 1000);
 
-        this.msg_number = 0;
-        this.strBuffer = "";
+        msg_number = 0;
+        strBuffer = "";
 
         URL url = null;
         String smileysHome = ClientDirector.getResourceManager().getGuiSmileysDir();
@@ -106,36 +101,35 @@ public class JChatDisplay extends LogStream {
                     e.printStackTrace();
                 }
             }
-        } else
+        } else {
             try {
                 url = new File(smileysHome).toURL();
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
 
-        this.messagesPane = new JEditorPane();
+        messagesPane = new JEditorPane();
 
-        this.messagesPane.setEditable(false);
+        messagesPane.setEditable(false);
 
         MyHTMLEditorKit kit = new MyHTMLEditorKit();
-        this.messagesPane.setEditorKit(kit);
+        messagesPane.setEditorKit(kit);
 
-        ((HTMLDocument) this.messagesPane.getDocument()).setBase(url);
+        ((HTMLDocument) messagesPane.getDocument()).setBase(url);
 
         print("<font color='green'><i>Entering " + chatRoom.getName() + " chat room</i></font><br>\n");
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get the scroll pane
      */
     public JScrollPane getPanel() {
-        JScrollPane displayScroller = new JScrollPane(this.messagesPane);
+        JScrollPane displayScroller = new JScrollPane(messagesPane);
         return displayScroller;
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To append some text
      * 
      * @param text string to append
@@ -163,8 +157,9 @@ public class JChatDisplay extends LogStream {
                     buf.append("' src='");
                     buf.append(JChatDisplay.SMILEYS[i][3]);
                     buf.append("'> ");
-                } else
+                } else {
                     buf.append(JChatDisplay.SMILEYS[i][0]);
+                }
 
                 posD = pos + JChatDisplay.SMILEYS[i][0].length();
             }
@@ -173,18 +168,18 @@ public class JChatDisplay extends LogStream {
             text = buf.toString();
         }
 
-        for (int i = 0; i < JChatDisplay.SOUNDS.length; i++)
+        for (int i = 0; i < JChatDisplay.SOUNDS.length; i++) {
             if (text.indexOf(JChatDisplay.SOUNDS[i][0]) >= 0) {
                 SoundLibrary.getSoundPlayer().playSound(JChatDisplay.SOUNDS[i][1]);
                 break;
             }
+        }
 
         text += "<br>";
         println(text);
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To print some text to the screen
      *
      * @param text string to print
@@ -192,42 +187,45 @@ public class JChatDisplay extends LogStream {
     @Override
     protected void printedText(final String text) {
 
-        if (this.messagesPane == null || text == null || text.length() == 0)
-            return; // nothing to print... or constructor not fully initialized
+        if (messagesPane == null || text == null || text.length() == 0) {
+            return;
+        } // nothing to print... or constructor not fully initialized
 
         // too much messages displayed ?
-        this.msg_number++;
+        msg_number++;
 
-        if (DataManager.SHOW_DEBUG)
-            System.out.println("msg_number = " + this.msg_number);
-
-        if (this.msg_number > JChatDisplay.MAX_DISPLAYED_MESSAGES) {
-            int pos = this.strBuffer.indexOf("\n");
-            this.strBuffer = this.strBuffer.substring(pos + 1);
-            this.msg_number--;
+        if (DataManager.SHOW_DEBUG) {
+            System.out.println("msg_number = " + msg_number);
         }
 
-        this.strBuffer += text + "\n";
+        if (msg_number > JChatDisplay.MAX_DISPLAYED_MESSAGES) {
+            int pos = strBuffer.indexOf("\n");
+            strBuffer = strBuffer.substring(pos + 1);
+            msg_number--;
+        }
+
+        strBuffer += text + "\n";
 
         Runnable runnable = new Runnable() {
+
             public void run() {
-                JChatDisplay.this.messagesPane.setText(JChatDisplay.this.strBuffer);
-                JChatDisplay.this.messagesPane.repaint();
+                messagesPane.setText(strBuffer);
+                messagesPane.repaint();
             }
+
         };
 
         SwingUtilities.invokeLater(runnable);
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Finalize this chat display.
      */
     @Override
-    protected void finalize() {
+    protected void finalize() throws Throwable {
         flush();
+        super.finalize();
     }
 
     /*------------------------------------------------------------------------------------*/
-
 }

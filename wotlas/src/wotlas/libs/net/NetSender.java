@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.libs.net;
 
 import java.io.DataOutputStream;
@@ -34,11 +33,9 @@ import wotlas.utils.Debug;
  * @author Aldiss
  * @see wotlas.libs.net.NetThread
  */
-
 public class NetSender extends NetThread {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Mode 1 : we send messages as they arrive.
      */
     public static final byte SEND_IMMEDIATELY = 1;
@@ -52,7 +49,6 @@ public class NetSender extends NetThread {
     public static final byte USER_AGGREGATION = 3;
 
     /*------------------------------------------------------------------------------------*/
-
     /** A link to our NetConnection
      */
     private NetConnection connection;
@@ -83,7 +79,6 @@ public class NetSender extends NetThread {
     private boolean locked;
 
     /*------------------------------------------------------------------------------------*/
-
     /** NetMessages to send.
      */
     private NetMessage messageList[];
@@ -93,7 +88,6 @@ public class NetSender extends NetThread {
     private int nbMessages;
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor. Should be called only by the NetConnection implementations.
      *  Default values :
      *<br>
@@ -110,10 +104,11 @@ public class NetSender extends NetThread {
         super(socket);
         this.connection = connection;
 
-        if (senderType < 1 || 3 < senderType)
+        if (senderType < 1 || 3 < senderType) {
             this.senderType = NetSender.SEND_IMMEDIATELY;
-        else
+        } else {
             this.senderType = senderType;
+        }
 
         // default values
         this.aggregationTimeout = 20; // 20 ms
@@ -128,24 +123,26 @@ public class NetSender extends NetThread {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** NetSender Thread action.
      *  Never call this method it's done automatically.
      */
     @Override
     public void run() {
         if (this.senderType == NetSender.USER_AGGREGATION) // we have nothing to do here
+        {
             return;
+        }
 
         try {
             do {
                 synchronized (this) {
                     // 1 - we wait for some action...
-                    while (this.nbMessages == 0 && !shouldStopThread())
+                    while (this.nbMessages == 0 && !shouldStopThread()) {
                         try {
                             wait();
                         } catch (InterruptedException e) {
                         }
+                    }
 
                     // 2 - ok, we have at least one message... what do we do ?
                     if (this.senderType == NetSender.AGGREGATE_MESSAGES) {
@@ -161,11 +158,13 @@ public class NetSender extends NetThread {
                                 }
 
                                 tr = this.aggregationTimeout - System.currentTimeMillis() - t0;
-                                if (tr < 3)
-                                    break; // aggregation end, we are not going to loop again for 3ms
+                                if (tr < 3) {
+                                    break;
+                                } // aggregation end, we are not going to loop again for 3ms
                             }
-                        } else
+                        } else {
                             this.stopAggregation = false;
+                        }
                     }
 
                     // we send all the messages
@@ -187,7 +186,6 @@ public class NetSender extends NetThread {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To queue a message. With the SEND_IMMEDIATELY & AGGREGATE_MESSAGES NetSender
      *  we signal the new message to the thread. For the USER_AGGREGATION NetSender
      *  use the pleaseSendMessagesNow() after your queueMessage() calls.
@@ -203,12 +201,12 @@ public class NetSender extends NetThread {
         this.messageList[this.nbMessages] = message;
         this.nbMessages++;
 
-        if (this.senderType != NetSender.USER_AGGREGATION)
+        if (this.senderType != NetSender.USER_AGGREGATION) {
             notify();
+        }
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Method to use for the USER_AGGREGATION NetSender when you want it to send
      *  the queued messages. For the AGGREGATION_MESSAGES it asks for the immediate
      *  send of the queued messages. For the SEND_IMMEDIATELY type we do nothing but
@@ -257,17 +255,23 @@ public class NetSender extends NetThread {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Sends all queued messages.
      * @exception IOException if something goes wrong while sending this message
      */
     synchronized private void sendQueuedMessages() throws IOException {
-        if (shouldStopThread())
+        if (shouldStopThread()) {
             return;
+        }
 
         for (short i = 0; i < this.nbMessages; i++) {
-            if (this.messageList[i] == null)
+            if (this.messageList[i] == null) {
                 continue;
+            }
+
+            // TODO remove system.err (debug mode)
+            if (this.messageList[i].getMessageClassName().indexOf("Ping") == -1) {
+                System.out.println("NetSender => " + this.messageList[i].getMessageClassName());
+            }
 
             // 1 - We first write the header of the message : the message class name.
             this.outStream.writeUTF(this.messageList[i].getMessageClassName());
@@ -288,7 +292,6 @@ public class NetSender extends NetThread {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To change the aggregation message limit. 
      *
      *  IMPORTANT: your change can be refused if you want to reduce the
@@ -314,7 +317,6 @@ public class NetSender extends NetThread {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To change the aggregation timeout.
      *  IMPORTANT: this change takes its effects only after the current aggregation.
      *
@@ -325,7 +327,6 @@ public class NetSender extends NetThread {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To get the aggregation timeout.
      *
      * @return aggregation timeout
@@ -335,7 +336,6 @@ public class NetSender extends NetThread {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To get the aggregation message limit.
      *
      * @return aggregation message limit
@@ -345,5 +345,4 @@ public class NetSender extends NetThread {
     }
 
     /*------------------------------------------------------------------------------------*/
-
 }

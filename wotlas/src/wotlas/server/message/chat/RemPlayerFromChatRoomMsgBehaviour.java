@@ -16,10 +16,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.server.message.chat;
 
 import java.util.Hashtable;
+import wotlas.common.Player;
 import wotlas.common.chat.ChatList;
 import wotlas.common.chat.ChatRoom;
 import wotlas.common.message.chat.ChatRoomDeletedMessage;
@@ -35,11 +35,9 @@ import wotlas.utils.Debug;
  *
  * @author Petrus, Aldiss
  */
-
 public class RemPlayerFromChatRoomMsgBehaviour extends RemPlayerFromChatRoomMessage implements NetMessageBehaviour {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public RemPlayerFromChatRoomMsgBehaviour() {
@@ -47,7 +45,6 @@ public class RemPlayerFromChatRoomMsgBehaviour extends RemPlayerFromChatRoomMess
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor with parameters : useful to directly call the behaviour.
      */
     public RemPlayerFromChatRoomMsgBehaviour(String senderPrimaryKey, String chatRoomPrimaryKey) {
@@ -55,7 +52,6 @@ public class RemPlayerFromChatRoomMsgBehaviour extends RemPlayerFromChatRoomMess
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
@@ -74,8 +70,9 @@ public class RemPlayerFromChatRoomMsgBehaviour extends RemPlayerFromChatRoomMess
         }
 
         // 1 - Set player Chat membership to defaults
-        if (this.chatRoomPrimaryKey.equals(ChatRoom.DEFAULT_CHAT))
-            return; // nothing to do
+        if (this.chatRoomPrimaryKey.equals(ChatRoom.DEFAULT_CHAT)) {
+            return;
+        } // nothing to do
 
         player.setCurrentChatPrimaryKey(ChatRoom.DEFAULT_CHAT);
         player.setIsChatMember(true);
@@ -99,11 +96,12 @@ public class RemPlayerFromChatRoomMsgBehaviour extends RemPlayerFromChatRoomMess
         player.sendMessage(this); // validation sent to client
 
         // 3 - Need to suppress the ChatRoom ?
-        Hashtable players = chatRoom.getPlayers();
+        Hashtable<String, Player> players = chatRoom.getPlayers();
 
         synchronized (players) {
-            if (players.size() <= 0)
-                chatList.removeChatRoom(this.chatRoomPrimaryKey); // ok, we remove the chat room
+            if (players.size() <= 0) {
+                chatList.removeChatRoom(this.chatRoomPrimaryKey);
+            } // ok, we remove the chat room
             else {
                 // chatRoom is not empty, we just advertise our departure & quit
                 chatRoom.sendMessageToChatRoom(this);
@@ -115,10 +113,10 @@ public class RemPlayerFromChatRoomMsgBehaviour extends RemPlayerFromChatRoomMess
         ChatRoomDeletedMessage delMsg = new ChatRoomDeletedMessage(this.chatRoomPrimaryKey);
         MessageRouter mRouter = player.getMessageRouter();
 
-        if (mRouter != null)
+        if (mRouter != null) {
             mRouter.sendMessage(delMsg);
+        }
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

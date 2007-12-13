@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.message.description;
 
 import java.util.Hashtable;
@@ -33,7 +32,6 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-
 public class CleanGhostsMsgBehaviour extends CleanGhostsMessage implements NetMessageBehaviour {
     /*------------------------------------------------------------------------------------*/
 
@@ -44,15 +42,15 @@ public class CleanGhostsMsgBehaviour extends CleanGhostsMessage implements NetMe
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
      *        this message.
      */
     public void doBehaviour(Object sessionContext) {
-        if (DataManager.SHOW_DEBUG)
+        if (DataManager.SHOW_DEBUG) {
             System.out.println("CLEAN GHOSTS MESSAGE");
+        }
 
         // The sessionContext is here a DataManager.
         DataManager dataManager = (DataManager) sessionContext;
@@ -76,8 +74,9 @@ public class CleanGhostsMsgBehaviour extends CleanGhostsMessage implements NetMe
 
         // 2 - We compute the Rooms ID list of the visible rooms.
         Room myRoom = myPlayer.getMyRoom();
-        if (myRoom == null)
+        if (myRoom == null) {
             return;
+        }
 
         int roomIDs[] = null;
 
@@ -87,49 +86,53 @@ public class CleanGhostsMsgBehaviour extends CleanGhostsMessage implements NetMe
             for (int i = 0; i < myRoom.getRoomLinks().length; i++) {
                 Room otherRoom = myRoom.getRoomLinks()[i].getRoom1();
 
-                if (otherRoom == myRoom)
+                if (otherRoom == myRoom) {
                     otherRoom = myRoom.getRoomLinks()[i].getRoom2();
+                }
 
                 roomIDs[i] = otherRoom.getRoomID();
             }
-        } else
+        } else {
             roomIDs = new int[1];
+        }
 
         roomIDs[roomIDs.length - 1] = myRoom.getRoomID();
 
         // 3 - We remove the ghosts players
-        Hashtable players = dataManager.getPlayers();
+        Hashtable<String, PlayerImpl> players = dataManager.getPlayers();
         PlayerImpl playerImpl = null;
 
         synchronized (players) {
-            Iterator it = players.values().iterator();
+            Iterator<PlayerImpl> it = players.values().iterator();
 
             while (it.hasNext()) {
-                playerImpl = (PlayerImpl) it.next();
+                playerImpl = it.next();
 
                 // Is this player in our list ?
                 boolean isInList = false;
                 int roomIDToTest = playerImpl.getLocation().getRoomID();
 
-                for (int i = 0; i < roomIDs.length; i++)
+                for (int i = 0; i < roomIDs.length; i++) {
                     if (roomIDToTest == roomIDs[i]) {
                         isInList = true;
                         break;
                     }
+                }
 
                 if (!isInList) {
                     it.remove(); // GHOST !!
-                    if (DataManager.SHOW_DEBUG)
+                    if (DataManager.SHOW_DEBUG) {
                         System.out.println("REMOVING GHOSTS !!!!" + playerImpl.getPrimaryKey() + " rID" + playerImpl.getLocation().getRoomID());
+                    }
                     playerImpl.cleanVisualProperties(dataManager.getGraphicsDirector());
 
-                    if (dataManager.getSelectedPlayerKey() != null && playerImpl.getPrimaryKey().equals(dataManager.getSelectedPlayerKey()))
+                    if (dataManager.getSelectedPlayerKey() != null && playerImpl.getPrimaryKey().equals(dataManager.getSelectedPlayerKey())) {
                         dataManager.removeCircle();
+                    }
                 }
             }
         }
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

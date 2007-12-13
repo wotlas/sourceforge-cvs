@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.message.movement;
 
 import java.util.Hashtable;
@@ -32,7 +31,6 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-
 public class LocationChangeMsgBehaviour extends LocationChangeMessage implements NetMessageBehaviour {
     /*------------------------------------------------------------------------------------*/
 
@@ -43,15 +41,15 @@ public class LocationChangeMsgBehaviour extends LocationChangeMessage implements
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
      *        this message.
      */
     public void doBehaviour(Object sessionContext) {
-        if (DataManager.SHOW_DEBUG)
+        if (DataManager.SHOW_DEBUG) {
             System.out.println("LOCATION CHANGED FOR PLAYER " + this.primaryKey + " !");
+        }
 
         // The sessionContext is here a DataManager.
         DataManager dataManager = (DataManager) sessionContext;
@@ -68,11 +66,12 @@ public class LocationChangeMsgBehaviour extends LocationChangeMessage implements
         }
 
         // We seek for this player
-        Hashtable players = dataManager.getPlayers();
+        Hashtable<String, PlayerImpl> players = dataManager.getPlayers();
         Player uPlayer = null;
 
-        if (players != null)
-            uPlayer = (Player) players.get(this.primaryKey);
+        if (players != null) {
+            uPlayer = players.get(this.primaryKey);
+        }
 
         if (uPlayer == null) {
             Debug.signal(Debug.ERROR, this, "Player " + this.primaryKey + " not found !");
@@ -82,8 +81,9 @@ public class LocationChangeMsgBehaviour extends LocationChangeMessage implements
         // SUCCESS ! we update the player location !
         uPlayer.setLocation(this.location);
 
-        if (!uPlayer.getLocation().equals(player.getLocation()))
+        if (!uPlayer.getLocation().equals(player.getLocation())) {
             dataManager.getClientScreen().getChatPanel().removePlayerFromAllchatRooms(this.primaryKey);
+        }
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

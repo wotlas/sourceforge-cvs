@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.libs.pathfinding;
 
 import java.awt.Point;
@@ -44,7 +43,6 @@ import wotlas.utils.List;
  * @author Petrus, Aldiss
  * @see wotlas.libs.pathfinding.NodeDouble
  */
-
 public class AStarDouble {
     /*------------------------------------------------------------------------------------*/
 
@@ -77,7 +75,6 @@ public class AStarDouble {
     static public boolean SHOW_DEBUG = false;
 
     /*------------------------------------------------------------------------------------*/
-
     /** To set sprite size
      */
     static public void setSpriteSize(int size) {
@@ -91,7 +88,6 @@ public class AStarDouble {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To set the tile size
      */
     static public void setTileSize(int tileSize) {
@@ -105,14 +101,12 @@ public class AStarDouble {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Empty constructor.
      */
     public AStarDouble() {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get AStarDouble object
      */
     static public AStarDouble getAStar() {
@@ -128,7 +122,6 @@ public class AStarDouble {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /**
      * Estimates the distance between 2 points
      *
@@ -139,23 +132,22 @@ public class AStarDouble {
     private double estimate(Point pointFrom, Point pointTo) {
         //return (int) pointFrom.distanceSq(pointTo);
         return pointFrom.distance(pointTo);
-        /**
-         * Other distances:
-         * return Math.max(Math.abs(pointFrom.x-pointTo.x),Math.abs(pointFrom.y-pointTo.y));
-         * return (pointFrom.x-pointTo.x)*(pointFrom.x-pointTo.x)+(pointFrom.y-pointTo.y)*(pointFrom.y-pointTo.y);
-         */
+    /**
+     * Other distances:
+     * return Math.max(Math.abs(pointFrom.x-pointTo.x),Math.abs(pointFrom.y-pointTo.y));
+     * return (pointFrom.x-pointTo.x)*(pointFrom.x-pointTo.x)+(pointFrom.y-pointTo.y)*(pointFrom.y-pointTo.y);
+     */
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /**
      * begins optimal path search
      */
     private NodeDouble searchNode(Point pointStart, Point pointGoal) {
         /* list of not visited Nodes */
-        Hashtable open = new Hashtable(300);
+        Hashtable<Point, NodeDouble> open = new Hashtable<Point, NodeDouble>(300);
         /* list of visited Nodes */
-        Hashtable closed = new Hashtable(300);
+        Hashtable<Point, NodeDouble> closed = new Hashtable<Point, NodeDouble>(300);
         /* sorted open Nodes */
         List nodes = new List();
 
@@ -195,7 +187,7 @@ public class AStarDouble {
                 closed.clear();
                 return bestNode;
             } else {
-                //System.out.println("no");
+            //System.out.println("no");
             }
 
             children.removeAllElements();
@@ -221,8 +213,8 @@ public class AStarDouble {
                 //childCost = bestNode.g + estimate(childPoint, bestNode.point);
 
                 // test if childPoint was in closed or open
-                if ((closedNode = (NodeDouble) closed.get(childPoint)) == null) {
-                    openNode = (NodeDouble) open.get(childPoint);
+                if ((closedNode = closed.get(childPoint)) == null) {
+                    openNode = open.get(childPoint);
                 }
                 oldNode = (openNode != null) ? openNode : closedNode;
 
@@ -253,7 +245,7 @@ public class AStarDouble {
                         oldNode.f = childCost + oldNode.h;
                         children.addElement(oldNode);
                     }
-                    // if childCost > oldNode.g ie if newcost > oldcost => do nothing
+                // if childCost > oldNode.g ie if newcost > oldcost => do nothing
                 } else // if childPoint was not in open or closed
                 {
                     //System.out.println("Test : childPoint was in open or closed ? no");
@@ -276,8 +268,9 @@ public class AStarDouble {
             nodes.removeFirstElement();
             addToNodes(children, nodes);
         }
-        if (AStarDouble.SHOW_DEBUG)
+        if (AStarDouble.SHOW_DEBUG) {
             System.out.println("no path found");
+        }
 
         nodes.removeAllElements();
         open.clear();
@@ -289,12 +282,14 @@ public class AStarDouble {
      *
      */
     private int rbsearch(int l, int h, double tot, double costs, List nodes) {
-        if (l > h)
-            return l; //insert before l
+        if (l > h) {
+            return l;
+        } //insert before l
         int cur = (l + h) / 2;
         double ot = ((NodeDouble) nodes.elementAt(cur)).f;
-        if ((tot < ot) || (tot == ot && costs >= ((NodeDouble) nodes.elementAt(cur)).g))
+        if ((tot < ot) || (tot == ot && costs >= ((NodeDouble) nodes.elementAt(cur)).g)) {
             return rbsearch(l, cur - 1, tot, costs, nodes);
+        }
         return rbsearch(cur + 1, h, tot, costs, nodes);
     }
 
@@ -308,10 +303,11 @@ public class AStarDouble {
         while (lo <= hi) {
             int cur = (lo + hi) / 2;
             double ot = ((NodeDouble) nodes.elementAt(cur)).f;
-            if ((tot < ot) || (tot == ot && costs >= ((NodeDouble) nodes.elementAt(cur)).g))
+            if ((tot < ot) || (tot == ot && costs >= ((NodeDouble) nodes.elementAt(cur)).g)) {
                 hi = cur - 1;
-            else
+            } else {
                 lo = cur + 1;
+            }
         }
         return lo; //insert before lo
     }
@@ -331,7 +327,6 @@ public class AStarDouble {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /**
      * test if a point is valid for the path
      * regarding the sprite size
@@ -342,16 +337,15 @@ public class AStarDouble {
      */
     public boolean isNotBlock(int x, int y) {
         /*if ( (x+SPRITE_SIZE==mapWidth) && (y+SPRITE_SIZE<mapHeight) )
-          return (map[x][y] && map[x][y+SPRITE_SIZE]);
-
+        return (map[x][y] && map[x][y+SPRITE_SIZE]);
         if ( (x+SPRITE_SIZE<mapWidth) && (y+SPRITE_SIZE==mapHeight) )
-          return (map[x][y] && map[x+SPRITE_SIZE][y]);
-
+        return (map[x][y] && map[x+SPRITE_SIZE][y]);
         if ( (x+SPRITE_SIZE==mapWidth) && (y+SPRITE_SIZE==mapHeight) )
-          return map[x][y];*/
+        return map[x][y];*/
 
-        if ((x < 0) || (x + AStarDouble.SPRITE_SIZE >= AStarDouble.mapWidth) || (y < 0) || (y + AStarDouble.SPRITE_SIZE >= AStarDouble.mapHeight))
+        if ((x < 0) || (x + AStarDouble.SPRITE_SIZE >= AStarDouble.mapWidth) || (y < 0) || (y + AStarDouble.SPRITE_SIZE >= AStarDouble.mapHeight)) {
             return false;
+        }
 
         return (AStarDouble.map[x][y] && AStarDouble.map[x][y + AStarDouble.SPRITE_SIZE] && AStarDouble.map[x + AStarDouble.SPRITE_SIZE][y] && AStarDouble.map[x + AStarDouble.SPRITE_SIZE][y + AStarDouble.SPRITE_SIZE] && AStarDouble.map[x + AStarDouble.SPRITE_SIZE / 2][y + AStarDouble.SPRITE_SIZE / 2]);
     }
@@ -367,7 +361,6 @@ public class AStarDouble {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /**
      * test if a point (in CELL units) is a valid goal,
      * and correct the position regarding the sprite size
@@ -380,8 +373,9 @@ public class AStarDouble {
         int y = pointGoal.y;
 
         if (isNotBlock(x, y)) {
-            if (AStarDouble.SHOW_DEBUG)
+            if (AStarDouble.SHOW_DEBUG) {
                 System.out.println("AStarDouble \t (" + x + "," + y + ") is valid point");
+            }
             return true;
         } else {
             if (AStarDouble.SHOW_DEBUG) {
@@ -394,46 +388,52 @@ public class AStarDouble {
             Debug.signal(Debug.NOTICE, null, "not a valid goal point -> search a valid point");
         }
 
-        if (x < 0)
+        if (x < 0) {
             pointGoal.x = 0;
-        if (y < 0)
+        }
+        if (y < 0) {
             pointGoal.y = 0;
+        }
 
         // test if player is near border    
         if (x + AStarDouble.SPRITE_SIZE >= AStarDouble.mapWidth) {
             //      if (SHOW_DEBUG)
             //        System.out.println("test x near border");
             //      if (map[x-SPRITE_SIZE-1][y]) {
-            if (AStarDouble.SHOW_DEBUG)
+            if (AStarDouble.SHOW_DEBUG) {
                 System.out.print("player near border -> change x=mapWidth-SPRITE_SIZE-1");
+            }
             pointGoal.x = AStarDouble.mapWidth - AStarDouble.SPRITE_SIZE - 1;
-            //        return true;
-            //      }
+        //        return true;
+        //      }
         }
         if (y + AStarDouble.SPRITE_SIZE >= AStarDouble.mapHeight) {
             //      if (SHOW_DEBUG)
             //        System.out.println("test y near border");
             //      if (map[x][mapHeight-SPRITE_SIZE-1]) {
-            if (AStarDouble.SHOW_DEBUG)
+            if (AStarDouble.SHOW_DEBUG) {
                 System.out.print("player near border -> change y=mapHeight-SPRITE_SIZE-1");
+            }
             pointGoal.y = AStarDouble.mapHeight - AStarDouble.SPRITE_SIZE - 1;
-            //        return true;
-            //      }
+        //        return true;
+        //      }
         }
 
         // Correct the position
         if (x + AStarDouble.SPRITE_SIZE < AStarDouble.mapWidth) {
             if (isNotBlock(x + AStarDouble.SPRITE_SIZE, y)) {
-                if (AStarDouble.SHOW_DEBUG)
+                if (AStarDouble.SHOW_DEBUG) {
                     System.out.print("change x+");
+                }
                 pointGoal.x += AStarDouble.SPRITE_SIZE;
                 return true;
             }
         }
         if ((x + AStarDouble.SPRITE_SIZE < AStarDouble.mapWidth) && (y + AStarDouble.SPRITE_SIZE < AStarDouble.mapHeight)) {
             if (isNotBlock(x + AStarDouble.SPRITE_SIZE, y + AStarDouble.SPRITE_SIZE)) {
-                if (AStarDouble.SHOW_DEBUG)
+                if (AStarDouble.SHOW_DEBUG) {
                     System.out.print("change x+ y+");
+                }
                 pointGoal.x += AStarDouble.SPRITE_SIZE;
                 pointGoal.y += AStarDouble.SPRITE_SIZE;
                 return true;
@@ -441,16 +441,18 @@ public class AStarDouble {
         }
         if (y + AStarDouble.SPRITE_SIZE < AStarDouble.mapHeight) {
             if (isNotBlock(x, y + AStarDouble.SPRITE_SIZE)) {
-                if (AStarDouble.SHOW_DEBUG)
+                if (AStarDouble.SHOW_DEBUG) {
                     System.out.print("change y+");
+                }
                 pointGoal.y += AStarDouble.SPRITE_SIZE;
                 return true;
             }
         }
         if ((x > AStarDouble.SPRITE_SIZE) && (y + AStarDouble.SPRITE_SIZE < AStarDouble.mapHeight)) {
             if (isNotBlock(x - AStarDouble.SPRITE_SIZE, y + AStarDouble.SPRITE_SIZE)) {
-                if (AStarDouble.SHOW_DEBUG)
+                if (AStarDouble.SHOW_DEBUG) {
                     System.out.print("change x- y+");
+                }
                 pointGoal.x -= AStarDouble.SPRITE_SIZE;
                 pointGoal.y += AStarDouble.SPRITE_SIZE;
                 return true;
@@ -458,16 +460,18 @@ public class AStarDouble {
         }
         if (x > AStarDouble.SPRITE_SIZE) {
             if (isNotBlock(x - AStarDouble.SPRITE_SIZE, y)) {
-                if (AStarDouble.SHOW_DEBUG)
+                if (AStarDouble.SHOW_DEBUG) {
                     System.out.print("change x-");
+                }
                 pointGoal.x -= AStarDouble.SPRITE_SIZE;
                 return true;
             }
         }
         if ((x > AStarDouble.SPRITE_SIZE) && (y > AStarDouble.SPRITE_SIZE)) {
             if (isNotBlock(x - AStarDouble.SPRITE_SIZE, y - AStarDouble.SPRITE_SIZE)) {
-                if (AStarDouble.SHOW_DEBUG)
+                if (AStarDouble.SHOW_DEBUG) {
                     System.out.print("change x- y-");
+                }
                 pointGoal.x -= AStarDouble.SPRITE_SIZE;
                 pointGoal.y -= AStarDouble.SPRITE_SIZE;
                 return true;
@@ -475,16 +479,18 @@ public class AStarDouble {
         }
         if (y > AStarDouble.SPRITE_SIZE) {
             if (isNotBlock(x, y - AStarDouble.SPRITE_SIZE)) {
-                if (AStarDouble.SHOW_DEBUG)
+                if (AStarDouble.SHOW_DEBUG) {
                     System.out.print("change y-");
+                }
                 pointGoal.y -= AStarDouble.SPRITE_SIZE;
                 return true;
             }
         }
         if ((x + AStarDouble.SPRITE_SIZE < AStarDouble.mapWidth) && (y > AStarDouble.SPRITE_SIZE)) {
             if (isNotBlock(x + AStarDouble.SPRITE_SIZE, y - AStarDouble.SPRITE_SIZE)) {
-                if (AStarDouble.SHOW_DEBUG)
+                if (AStarDouble.SHOW_DEBUG) {
                     System.out.print("change x+ y-");
+                }
                 pointGoal.x += AStarDouble.SPRITE_SIZE;
                 pointGoal.y -= AStarDouble.SPRITE_SIZE;
                 return true;
@@ -495,7 +501,6 @@ public class AStarDouble {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /**
      * test if a point (in CELL units) is a valid start,
      * and correct the position regarding the sprite size
@@ -530,26 +535,30 @@ public class AStarDouble {
             //if (SHOW_DEBUG)
             //  System.out.println("not a valid point -> search a valid point");
             Debug.signal(Debug.NOTICE, null, "not a valid start point -> search a valid point");
-            //Debug.signal( Debug.NOTICE, null, "  x = " + x + " ,  y = " + y);
+        //Debug.signal( Debug.NOTICE, null, "  x = " + x + " ,  y = " + y);
         }
 
         // test if player is near border
         if (x + AStarDouble.SPRITE_SIZE > AStarDouble.mapWidth) {
-            if (AStarDouble.SHOW_DEBUG)
+            if (AStarDouble.SHOW_DEBUG) {
                 System.out.println("test x near border");
+            }
             if (AStarDouble.map[x - AStarDouble.SPRITE_SIZE - 1][y]) {
-                if (AStarDouble.SHOW_DEBUG)
+                if (AStarDouble.SHOW_DEBUG) {
                     System.out.print("player near border -> change x=mapWidth-SPRITE_SIZE-1");
+                }
                 pointGoal.x = AStarDouble.mapWidth - AStarDouble.SPRITE_SIZE - 1;
                 return true;
             }
         }
         if (y + AStarDouble.SPRITE_SIZE > AStarDouble.mapHeight) {
-            if (AStarDouble.SHOW_DEBUG)
+            if (AStarDouble.SHOW_DEBUG) {
                 System.out.println("test y near border");
+            }
             if (AStarDouble.map[x][AStarDouble.mapHeight - AStarDouble.SPRITE_SIZE - 1]) {
-                if (AStarDouble.SHOW_DEBUG)
+                if (AStarDouble.SHOW_DEBUG) {
                     System.out.print("player near border -> change y=mapHeight-SPRITE_SIZE-1");
+                }
                 pointGoal.y = AStarDouble.mapHeight - AStarDouble.SPRITE_SIZE - 1;
                 return true;
             }
@@ -636,7 +645,6 @@ public class AStarDouble {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /**
      * Generates all the not blocked children of a Node
      *
@@ -675,7 +683,6 @@ public class AStarDouble {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /**
      * Finds the optimal path between 2 points.
      *
@@ -683,23 +690,28 @@ public class AStarDouble {
      * @param pointGoal end of the path (in CELL units)
      */
     static public List findPath(Point pointStart, Point pointGoal) {
-        if (AStarDouble.SHOW_DEBUG)
+        if (AStarDouble.SHOW_DEBUG) {
             System.out.println("AStarDouble::findPath");
+        }
 
-        if (AStarDouble.aStar == null)
+        if (AStarDouble.aStar == null) {
             AStarDouble.aStar = new AStarDouble();
+        }
 
         //if ( (!isNotBlock(pointStart.x, pointStart.y)) || (!isNotBlock(pointGoal.x, pointGoal.y)) )
 
-        if (AStarDouble.SHOW_DEBUG)
+        if (AStarDouble.SHOW_DEBUG) {
             System.out.print(pointGoal);
+        }
         if ((!AStarDouble.aStar.isValidGoal(pointGoal))) {
-            if (AStarDouble.SHOW_DEBUG)
+            if (AStarDouble.SHOW_DEBUG) {
                 System.err.println("error : invalid point");
+            }
             return null;
         }
-        if (AStarDouble.SHOW_DEBUG)
+        if (AStarDouble.SHOW_DEBUG) {
             System.out.println(" -> " + pointGoal);
+        }
 
         NodeDouble solution = AStarDouble.aStar.searchNode(pointStart, pointGoal);
         return AStarDouble.aStar.getPath(solution);
@@ -707,7 +719,6 @@ public class AStarDouble {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /**
      * constructs the path from the start node to the node n
      */
@@ -736,7 +747,6 @@ public class AStarDouble {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /**
      * initializes the array "map" with a BufferedImage
      */
@@ -755,28 +765,28 @@ public class AStarDouble {
     /** To set the mask
      */
     static public void setMask(boolean mask[][]) {
-        if (AStarDouble.aStar == null)
+        if (AStarDouble.aStar == null) {
             AStarDouble.aStar = new AStarDouble();
+        }
         AStarDouble.map = mask;
         AStarDouble.mapWidth = mask.length;
         AStarDouble.mapHeight = mask[0].length;
     }
 
     /*------------------------------------------------------------------------------------*/
-
     static public List smoothPath(List path) {
         return AStarDouble.aStar.smoothPath1(path);
     }
 
     /** SMOOTH PATH ALGO FROM GAMASUTRA **/
-
     /** To smooth a path.
      * @param path a previously created path via Astar
      * @return smoothed path...
      */
     public List smoothPath1(List path) {
-        if ((path == null) || (path.size() < 3))
+        if ((path == null) || (path.size() < 3)) {
             return path;
+        }
 
         List smoothedPath = new List(path.size());
 
@@ -785,14 +795,16 @@ public class AStarDouble {
 
         smoothedPath.addElement(path.elementAt(0)); // first point
 
-        while (index + 1 < path.size())
-            if (walkable(checkPoint, (Point) path.elementAt(index + 1)))
-                index++; // no need for this point, we check the next one
+        while (index + 1 < path.size()) {
+            if (walkable(checkPoint, (Point) path.elementAt(index + 1))) {
+                index++;
+            } // no need for this point, we check the next one
             else {
                 checkPoint = (Point) path.elementAt(index);
                 smoothedPath.addElement(checkPoint); // point needed
                 index++;
             }
+        }
 
         smoothedPath.addElement(path.elementAt(index)); // end point
         return smoothedPath;
@@ -817,7 +829,7 @@ public class AStarDouble {
                 cosinus = 0;
                 sinus = -1;
             }
-            //else angle = 0.0f;
+        //else angle = 0.0f;
         } else {
             double angle = Math.atan((double) (b.y - a.y) / (b.x - a.x));
             if (b.x < a.x) {
@@ -843,7 +855,6 @@ public class AStarDouble {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To dynamically modify the mask setting all pixels of a rectangle to a boolean value
      *
      * @param r the rectangle to fill (in screen pixels coordinate)
@@ -855,20 +866,26 @@ public class AStarDouble {
         int cy = (r.y / maskTileSize);
 
         int cWidth = (int) (r.getWidth() / maskTileSize);
-        if (cWidth == 0)
+        if (cWidth == 0) {
             cWidth = 1;
+        }
 
         int cHeight = (int) (r.getHeight() / maskTileSize);
-        if (cHeight == 0)
+        if (cHeight == 0) {
             cHeight = 1;
+        }
 
-        if (AStarDouble.SHOW_DEBUG)
+        if (AStarDouble.SHOW_DEBUG) {
             System.out.println("cWidth = " + cWidth + " cHeight = " + cHeight);
+        }
 
-        for (int i = 0; i < cWidth; i++)
-            for (int j = 0; j < cHeight; j++)
-                if (cx + i < AStarDouble.map.length && cy + j < AStarDouble.map[0].length)
+        for (int i = 0; i < cWidth; i++) {
+            for (int j = 0; j < cHeight; j++) {
+                if (cx + i < AStarDouble.map.length && cy + j < AStarDouble.map[0].length) {
                     AStarDouble.map[cx + i][cy + j] = value;
+                }
+            }
+        }
     }
 
     /** To dynamically modify the mask setting all pixels
@@ -890,5 +907,4 @@ public class AStarDouble {
     }
 
     /*------------------------------------------------------------------------------------*/
-
 }

@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.libs.graphics2D;
 
 import java.awt.Font;
@@ -32,11 +31,9 @@ import java.util.Hashtable;
  *
  * @author Aldiss
  */
-
 public class FontFactory {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Debug mode
      */
     public static boolean DEBUG_MODE = false;
@@ -46,10 +43,9 @@ public class FontFactory {
     private static FontFactory defaultFontFactory;
 
     /*------------------------------------------------------------------------------------*/
-
     /** Our font table where we store fonts by their name.
      */
-    protected Hashtable fonts;
+    protected Hashtable<String, Font> fonts;
 
     /** Path where user fonts are stored (ex: ../base/fonts that contains "Lucida.ttf").
      */
@@ -60,29 +56,28 @@ public class FontFactory {
     protected FontResourceLocator resourceLocator;
 
     /*------------------------------------------------------------------------------------*/
-
     /** To create the default factory.
      * @param userFontPath where the user fonts are stored
      */
     public static FontFactory createDefaultFontFactory(FontResourceLocator resourceLocator) {
-        if (FontFactory.defaultFontFactory == null)
+        if (FontFactory.defaultFontFactory == null) {
             FontFactory.defaultFontFactory = new FontFactory(resourceLocator);
+        }
         return FontFactory.defaultFontFactory;
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To create the default factory.
      * @param userFontPath where the user fonts are stored
      */
     public static FontFactory createDefaultFontFactory(String userFontPath) {
-        if (FontFactory.defaultFontFactory == null)
+        if (FontFactory.defaultFontFactory == null) {
             FontFactory.defaultFontFactory = new FontFactory(userFontPath);
+        }
         return FontFactory.defaultFontFactory;
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get the default font factory.
      * @return null if there are none
      */
@@ -91,29 +86,26 @@ public class FontFactory {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor with font resource locator.
      * @param resourceLocator to get access to fonts
      */
     protected FontFactory(FontResourceLocator resourceLocator) {
-        this.fonts = new Hashtable(5);
+        this.fonts = new Hashtable<String, Font>(5);
         this.resourceLocator = resourceLocator;
         init();
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor with user font path.
      * @param userFontPath where the user fonts are stored
      */
     protected FontFactory(String userFontPath) {
-        this.fonts = new Hashtable(5);
+        this.fonts = new Hashtable<String, Font>(5);
         this.userFontPath = userFontPath;
         init();
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To init the factory with the available fonts.
      */
     public void init() {
@@ -131,16 +123,17 @@ public class FontFactory {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Adds a new font to our table.
      */
     protected void addFont(String name, Font f) {
-        if (f == null)
+        if (f == null) {
             return;
+        }
 
         if (this.fonts.containsKey(f.getFontName()) || (name != null && this.fonts.containsKey(name))) {
-            if (FontFactory.DEBUG_MODE)
+            if (FontFactory.DEBUG_MODE) {
                 System.out.println("Font already exists ! " + f.getFontName());
+            }
             return;
         }
 
@@ -150,12 +143,12 @@ public class FontFactory {
             this.fonts.put(name, f);
         }
 
-        if (FontFactory.DEBUG_MODE)
+        if (FontFactory.DEBUG_MODE) {
             System.out.println("Added font: " + f.getFontName());
+        }
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get a font
      *  @param fontName the font name as returned by the Font.getFontName() method.
      *  @return the wanted font, the "Dialog" font if the specified font is not found.
@@ -163,17 +156,17 @@ public class FontFactory {
     public Font getFont(String fontName) {
 
         if (!this.fonts.containsKey(fontName)) {
-            if (FontFactory.DEBUG_MODE)
+            if (FontFactory.DEBUG_MODE) {
                 System.out.println("Font " + fontName + " not found !");
+            }
 
-            return (Font) this.fonts.get("dialog");
+            return this.fonts.get("dialog");
         }
 
-        return (Font) this.fonts.get(fontName);
+        return this.fonts.get(fontName);
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To load a font from the user font directory.
      *
      * @param fontFileName font file name in the user directory.
@@ -188,22 +181,25 @@ public class FontFactory {
             } catch (Exception e) {
                 e.printStackTrace();
 
-                if (FontFactory.DEBUG_MODE)
+                if (FontFactory.DEBUG_MODE) {
                     System.out.println("Failed to load font from file : " + fontFileName);
+                }
 
                 return null;
             }
         } else {
             InputStream is = this.resourceLocator.getFontStream(fontFileName);
-            if (is == null)
+            if (is == null) {
                 return null;
+            }
             try {
                 return Font.createFont(Font.TRUETYPE_FONT, is);
             } catch (Exception e) {
                 e.printStackTrace();
 
-                if (FontFactory.DEBUG_MODE)
+                if (FontFactory.DEBUG_MODE) {
                     System.out.println("Failed to load font from file : " + fontFileName);
+                }
 
                 return null;
             }
@@ -211,5 +207,4 @@ public class FontFactory {
     }
 
     /*------------------------------------------------------------------------------------*/
-
 }

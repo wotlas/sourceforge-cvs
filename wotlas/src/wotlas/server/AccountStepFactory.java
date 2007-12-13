@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.server;
 
 import java.io.File;
@@ -32,11 +31,9 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-
 public class AccountStepFactory {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Suffix of the wizard files.
      */
     public static final String WIZARD_SUFFIX = ".wiz";
@@ -47,21 +44,19 @@ public class AccountStepFactory {
     public static final String FIRST_STEP = "index.wiz";
 
     /*------------------------------------------------------------------------------------*/
-
     /** Our JWizardStep Buffer where we store static JWizard steps.
      *  The hashtable's key is the file name that contains the persistent version
      *  of the JWizardStepParameters.
      */
-    private Hashtable staticStepParameters;
+    private Hashtable<String, JWizardStepParameters> staticStepParameters;
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor. We load the wizard steps.
      *
      * @param rManager our resource manager
      */
     public AccountStepFactory(ResourceManager rManager) {
-        this.staticStepParameters = new Hashtable(20);
+        this.staticStepParameters = new Hashtable<String, JWizardStepParameters>(20);
 
         String accountWizardHome = rManager.getWizardStepsDir();
 
@@ -85,10 +80,12 @@ public class AccountStepFactory {
             if (index < 0) {
                 index = list[i].lastIndexOf("/");
 
-                if (index > 0)
+                if (index > 0) {
                     name = name.substring(index + 1, name.length());
-            } else
+                }
+            } else {
                 name = name.substring(index + File.separator.length(), name.length());
+            }
 
             this.staticStepParameters.put(name, parameters);
             nbSteps++;
@@ -98,7 +95,6 @@ public class AccountStepFactory {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To get a JWizardStepParameters object from the file name of its persistent state.
      *
      *  @param stepFileName file name
@@ -107,12 +103,12 @@ public class AccountStepFactory {
     public JWizardStepParameters getStep(String stepFileName) {
 
         // Class already in our buffer ?
-        if (this.staticStepParameters.containsKey(stepFileName))
-            return (JWizardStepParameters) this.staticStepParameters.get(stepFileName);
+        if (this.staticStepParameters.containsKey(stepFileName)) {
+            return this.staticStepParameters.get(stepFileName);
+        }
 
         return null; // not found
     }
 
     /*------------------------------------------------------------------------------------*/
-
 }

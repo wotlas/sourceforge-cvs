@@ -15,7 +15,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.screen.plugin;
 
 import java.awt.BorderLayout;
@@ -44,16 +43,19 @@ import wotlas.utils.ScreenRectangle;
 public class InventoryPlugIn extends JPanelPlugIn {
 
     /*------------------------------------------------------------------------------------*/
+    private final InventoryLayout inventoryLayout;
 
-    private InventoryLayout inventoryLayout;
     private JPanel whitePanel;
+
     private Image background;
-    private BufferedImage dstIm;
-    private int width;
-    private int height;
+
+    private final BufferedImage dstIm;
+
+    private final int width;
+
+    private final int height;
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public InventoryPlugIn() {
@@ -62,54 +64,53 @@ public class InventoryPlugIn extends JPanelPlugIn {
         setOpaque(false);
         setBackground(Color.black);
 
-        this.width = 200;
-        this.height = 300;
-        this.dstIm = new BufferedImage(this.width, this.height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = this.dstIm.createGraphics();
+        width = 200;
+        height = 300;
+        dstIm = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = dstIm.createGraphics();
 
         PlayerImpl player = ClientDirector.getDataManager().getMyPlayer();
-        this.inventoryLayout = InventoryLayout.load(player.getWotCharacter());
+        inventoryLayout = InventoryLayout.load(player.getWotCharacter());
 
         ScreenRectangle slot;
 
         // We load the background        
         ImageLibrary imLib = ClientDirector.getDataManager().getImageLibrary();
-        BufferedImage background = imLib.getImage(this.inventoryLayout.getBackgroundId());
+        BufferedImage background = imLib.getImage(inventoryLayout.getBackgroundId());
         g.drawImage(background, 0, 0, null);
 
         // Debug
         BaseObject bObject = new BaseObject();
-        String path[] = { "players-0", "symbols-2", "aes-sedai-symbols-0", "amyrlin-symbol-0.gif" };
+        String path[] = {"players-0", "symbols-2", "aes-sedai-symbols-0", "amyrlin-symbol-0.gif"};
         ImageIdentifier im = new ImageIdentifier(path);
         bObject.setInventoryPicture(im);
         setHeadArmor(bObject);
         // Fin debug
 
         //drawSlot(dstIm, inventoryLayout.getBagSlot());               
-        drawSlot(this.dstIm, this.inventoryLayout.getBeltSlot());
-        drawSlot(this.dstIm, this.inventoryLayout.getBodySlot());
+        drawSlot(dstIm, inventoryLayout.getBeltSlot());
+        drawSlot(dstIm, inventoryLayout.getBodySlot());
         //drawSlot(dstIm, inventoryLayout.getBookSlot());               
-        drawSlot(this.dstIm, this.inventoryLayout.getFeetSlot());
-        drawSlot(this.dstIm, this.inventoryLayout.getHeadSlot());
-        drawSlot(this.dstIm, this.inventoryLayout.getLeftBootSlot());
-        drawSlot(this.dstIm, this.inventoryLayout.getLeftHandSlot());
-        drawSlot(this.dstIm, this.inventoryLayout.getRightBootSlot());
-        drawSlot(this.dstIm, this.inventoryLayout.getRightHandSlot());
-        //drawSlot(dstIm, inventoryLayout.getPurseSlot());               
-        //drawSlot(dstIm, inventoryLayout.getSleeveSlot());     
+        drawSlot(dstIm, inventoryLayout.getFeetSlot());
+        drawSlot(dstIm, inventoryLayout.getHeadSlot());
+        drawSlot(dstIm, inventoryLayout.getLeftBootSlot());
+        drawSlot(dstIm, inventoryLayout.getLeftHandSlot());
+        drawSlot(dstIm, inventoryLayout.getRightBootSlot());
+        drawSlot(dstIm, inventoryLayout.getRightHandSlot());
+    //drawSlot(dstIm, inventoryLayout.getPurseSlot());               
+    //drawSlot(dstIm, inventoryLayout.getSleeveSlot());     
 
     }
 
     /*------------------------------------------------------------------------------------*/
-
     @Override
     public void paintComponent(Graphics g) {
-        if (this.dstIm != null)
-            g.drawImage(this.dstIm, 0, 0, this);
-    };
+        if (dstIm != null) {
+            g.drawImage(dstIm, 0, 0, this);
+        }
+    }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Called once to initialize the plug-in.
      *  @return if true we display the plug-in, return false if something fails during
      *          this init(), this way the plug-in won't be displayed.
@@ -120,7 +121,6 @@ public class InventoryPlugIn extends JPanelPlugIn {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Called when we need to reset the content of this plug-in.
      */
     @Override
@@ -129,7 +129,6 @@ public class InventoryPlugIn extends JPanelPlugIn {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Returns the name of the plug-in that will be displayed in the JPlayerPanel.
      * @return a short name for the plug-in
      */
@@ -139,7 +138,6 @@ public class InventoryPlugIn extends JPanelPlugIn {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Returns the name of the plug-in's author.
      * @return author name.
      */
@@ -149,7 +147,6 @@ public class InventoryPlugIn extends JPanelPlugIn {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Returns the tool tip text that will be displayed in the JPlayerPanel.
      * @return a short tool tip text
      */
@@ -159,7 +156,6 @@ public class InventoryPlugIn extends JPanelPlugIn {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Eventual index in the list of JPlayerPanels
      * @return -1 if the plug-in has to be added at the end of the plug-in list,
      *         otherwise a positive integer for a precise location.
@@ -170,7 +166,6 @@ public class InventoryPlugIn extends JPanelPlugIn {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Tells if this plug-in is a system plug-in that represents some base
      *  wotlas feature.
      * @return true means system plug-in, false means user plug-in
@@ -181,7 +176,6 @@ public class InventoryPlugIn extends JPanelPlugIn {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Draws a slot on a background picture
      * @param dstIm background picture
      * @param slot slot to draw
@@ -190,14 +184,14 @@ public class InventoryPlugIn extends JPanelPlugIn {
         if (slot != null) {
             Graphics2D g = dstIm.createGraphics();
             g.drawRect(slot.getX(), slot.getY(), slot.getWidth(), slot.getHeight());
-            /*for (int x=slot.getX();x<slot.getX()+slot.getWidth(); x++) {
-              dstIm.setRGB(x,slot.getY(),Color.red.getRGB());
-              dstIm.setRGB(x,slot.getY()+slot.getHeight(),Color.red.getRGB());
-            }
-            for (int y=slot.getY();y<slot.getY()+slot.getHeight(); y++) {
-              dstIm.setRGB(slot.getX(),y,Color.red.getRGB());  
-              dstIm.setRGB(slot.getX()+slot.getWidth(),y,Color.red.getRGB());  
-            }*/
+        /*for (int x=slot.getX();x<slot.getX()+slot.getWidth(); x++) {
+        dstIm.setRGB(x,slot.getY(),Color.red.getRGB());
+        dstIm.setRGB(x,slot.getY()+slot.getHeight(),Color.red.getRGB());
+        }
+        for (int y=slot.getY();y<slot.getY()+slot.getHeight(); y++) {
+        dstIm.setRGB(slot.getX(),y,Color.red.getRGB());  
+        dstIm.setRGB(slot.getX()+slot.getWidth(),y,Color.red.getRGB());  
+        }*/
         }
     }
 
@@ -212,7 +206,7 @@ public class InventoryPlugIn extends JPanelPlugIn {
             ImageLibrary imLib = ClientDirector.getDataManager().getImageLibrary();
             BufferedImage buffIm = imLib.getImage(imId);
             if (buffIm != null) {
-                Graphics2D g = this.dstIm.createGraphics();
+                Graphics2D g = dstIm.createGraphics();
                 g.drawImage(imLib.getImage(imId), slot.getX(), slot.getY(), this);
             }
         }
@@ -223,31 +217,29 @@ public class InventoryPlugIn extends JPanelPlugIn {
      */
     private void unsetSlot(ScreenRectangle slot) {
         if (slot != null) {
-            Graphics2D g = this.dstIm.createGraphics();
+            Graphics2D g = dstIm.createGraphics();
 
         }
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /**
      * Inventory Interface implementation
      */
 
     /*------------------------------------------------------------------------------------*/
-
     /** Set the body armor.
      * @param bodyArmor the new body armor
      */
     public void setBodyArmor(BaseObject bObject) {
-        setSlot(this.inventoryLayout.getBodySlot(), bObject);
+        setSlot(inventoryLayout.getBodySlot(), bObject);
     }
 
     /** Set the head armor.
      * @param headArmor the new head armor
      */
     public void setHeadArmor(BaseObject bObject) {
-        setSlot(this.inventoryLayout.getHeadSlot(), bObject);
+        setSlot(inventoryLayout.getHeadSlot(), bObject);
     }
 
     /** Set the heavy weapon.
@@ -267,7 +259,7 @@ public class InventoryPlugIn extends JPanelPlugIn {
      * @param beltWeapon the new belt weapon
      */
     public void setBeltWeapon(BaseObject bObject) {
-        setSlot(this.inventoryLayout.getBeltSlot(), bObject);
+        setSlot(inventoryLayout.getBeltSlot(), bObject);
     }
 
     /** Set the weapon hidden in right sleeve.
@@ -288,58 +280,57 @@ public class InventoryPlugIn extends JPanelPlugIn {
      * @param rightBootWeapon the new weapon hidden in right boot
      */
     public void setRightBootWeapon(BaseObject bObject) {
-        setSlot(this.inventoryLayout.getRightBootSlot(), bObject);
+        setSlot(inventoryLayout.getRightBootSlot(), bObject);
     }
 
     /** Set the weapon hidden in left boot.
      * @param leftBootWeapon the new weapon hidden in left boot
      */
     public void setLeftBootWeapon(BaseObject bObject) {
-        setSlot(this.inventoryLayout.getLeftBootSlot(), bObject);
+        setSlot(inventoryLayout.getLeftBootSlot(), bObject);
     }
 
     /** Set the purse.
      * @param purse the new purse
      */
     public void setPurse(BaseObject bObject) {
-        setSlot(this.inventoryLayout.getPurseSlot(), bObject);
+        setSlot(inventoryLayout.getPurseSlot(), bObject);
     }
 
     /** Set the bag.
      * @param bag the new bag
      */
     public void setBag(BaseObject bObject) {
-        setSlot(this.inventoryLayout.getBagSlot(), bObject);
+        setSlot(inventoryLayout.getBagSlot(), bObject);
     }
 
     /** Set the belt.
      * @param belt the new belt
      */
     public void setBelt(BaseObject bObject) {
-        setSlot(this.inventoryLayout.getBeltSlot(), bObject);
+        setSlot(inventoryLayout.getBeltSlot(), bObject);
     }
 
     /** Set the object ready for right hand.
      * @param rightObject the new object ready for right hand
      */
     public void setRightObject(BaseObject bObject) {
-        setSlot(this.inventoryLayout.getRightHandSlot(), bObject);
+        setSlot(inventoryLayout.getRightHandSlot(), bObject);
     }
 
     /** Set the object ready for left hand.
      * @param leftObject the new object ready for left hand
      */
     public void setLeftObject(BaseObject bObject) {
-        setSlot(this.inventoryLayout.getLeftHandSlot(), bObject);
+        setSlot(inventoryLayout.getLeftHandSlot(), bObject);
     }
 
     /** Set the book.
      * @param book the new book
      */
     public void setBook(BaseObject bObject) {
-        setSlot(this.inventoryLayout.getBookSlot(), bObject);
+        setSlot(inventoryLayout.getBookSlot(), bObject);
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

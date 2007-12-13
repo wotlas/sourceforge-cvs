@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.message.movement;
 
 import java.util.Hashtable;
@@ -32,7 +31,6 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-
 public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage implements NetMessageBehaviour {
     /*------------------------------------------------------------------------------------*/
 
@@ -43,15 +41,15 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
      *        this message.
      */
     public void doBehaviour(Object sessionContext) {
-        if (DataManager.SHOW_DEBUG)
+        if (DataManager.SHOW_DEBUG) {
             System.out.println("PATH UPDATE MESSAGE FOR PLAYER " + this.primaryKey);
+        }
 
         // The sessionContext is here a DataManager.
         DataManager dataManager = (DataManager) sessionContext;
@@ -72,20 +70,22 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
             Player playerToUpdate = null;
 
             // Search in Current Room
-            Hashtable players = dataManager.getPlayers();
+            Hashtable<String, PlayerImpl> players = dataManager.getPlayers();
 
             synchronized (players) {
-                playerToUpdate = (Player) players.get(this.primaryKey);
+                playerToUpdate = players.get(this.primaryKey);
             }
 
             if (playerToUpdate != null && playerToUpdate.getPrimaryKey().equals(this.primaryKey)) {
-                if (DataManager.SHOW_DEBUG)
+                if (DataManager.SHOW_DEBUG) {
                     System.out.println("Movement successfully updated for " + this.primaryKey);
+                }
                 playerToUpdate.getMovementComposer().setUpdate(this);
                 return; // success !
             } else {
-                if (DataManager.SHOW_DEBUG)
+                if (DataManager.SHOW_DEBUG) {
                     System.out.println("Movement NOOOT updated for " + this.primaryKey);
+                }
             }
         }
 

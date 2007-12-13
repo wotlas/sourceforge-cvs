@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
- 
+
 package wotlas.common.knowledges;
 
 //import java.rmi.Remote;
@@ -30,129 +30,117 @@ import wotlas.common.character.levels; // THIS CLASS DOES NOT EXISTS
  * @author Elann
  */
 
-public class BaseKnowledge
-{
+public class BaseKnowledge {
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
+    /** The name of the knowledge.
+     */
+    private String knowledgeName;
 
-  /** The name of the knowledge.
-   */
-      private String knowledgeName;
+    /** The kind of knowledge (the base class name).
+     */
+    private String kindName;
 
-  /** The kind of knowledge (the base class name).
-   */
-      private String kindName;
-	  
-  /** The maximum duration of use.
-   */
-      private short maxDuration;
+    /** The maximum duration of use.
+     */
+    private short maxDuration;
 
-  /** The required levels. THE CLASS LEVEL DOESN'T EXISTS 
-   */
-      private Level[] requiredLevels;
+    /** The required levels. THE CLASS LEVEL DOESN'T EXISTS 
+     */
+    private Level[] requiredLevels;
 
-  /** The pre-required knowledges to learn this one.
-   */
-      private BaseKnowledge[] preRequiredKnowledges;
-	  
+    /** The pre-required knowledges to learn this one.
+     */
+    private BaseKnowledge[] preRequiredKnowledges;
 
- /*------------------------------------------------------------------------------------*/
+    /*------------------------------------------------------------------------------------*/
 
-  /** Default constructor
-   */
-     public BaseKnowledge();
-	 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /** Default constructor
+     */
+    public BaseKnowledge() {
+        super();
+    }
 
-  /** Get the knowledge name.
-   * @return knowledgeName
-   */
-    public String getKnowledgeName()
-    {
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** Get the knowledge name.
+     * @return knowledgeName
+     */
+    public String getKnowledgeName() {
         return knowledgeName;
     }
 
-  /** Set the knowledge name.
-   * @param knowledgeName the new knowledge name
-   */
-    public void setKnowledgeName(String knowledgeName)
-    {
-        this.knowledgeName=knowledgeName;
+    /** Set the knowledge name.
+     * @param knowledgeName the new knowledge name
+     */
+    public void setKnowledgeName(String knowledgeName) {
+        this.knowledgeName = knowledgeName;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Get the knowledge kind name.
-   * @return kindName
-   */
-    public String getKindName()
-    {
+    /** Get the knowledge kind name.
+     * @return kindName
+     */
+    public String getKindName() {
         return kindName;
     }
 
-  /** Set the knowledge kind name.
-   * @param kindName the new knowledge kind name
-   */
-    public void setKindName(String kindName)
-    {
-        this.kindName=kindName;
+    /** Set the knowledge kind name.
+     * @param kindName the new knowledge kind name
+     */
+    public void setKindName(String kindName) {
+        this.kindName = kindName;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Get the maximum duration of continuous use.
-   * @return maxDuration
-   */
-    public short getMaxDuration()
-    {
+    /** Get the maximum duration of continuous use.
+     * @return maxDuration
+     */
+    public short getMaxDuration() {
         return maxDuration;
     }
 
-  /** Set the maximum duration of continuous use.
-   * @param maxDuration the new maximum duration
-   */
-    public void setMaxDuration(short maxDuration)
-    {
-        this.maxDuration=maxDuration;
+    /** Set the maximum duration of continuous use.
+     * @param maxDuration the new maximum duration
+     */
+    public void setMaxDuration(short maxDuration) {
+        this.maxDuration = maxDuration;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Get the pre-required knowledges to learn this one.
-   * @return preRequiredKnowledges
-   */
-    public BaseKnowledge[] getPreRequiredKnowledges()
-    {
+    /** Get the pre-required knowledges to learn this one.
+     * @return preRequiredKnowledges
+     */
+    public BaseKnowledge[] getPreRequiredKnowledges() {
         return preRequiredKnowledges;
     }
 
-  /** Set the pre-required knowledges to learn this one.
-   * @param preRequiredKnowledges the new pre-required knowledges
-   */
-    public void setPreRequiredKnowledges(BaseKnowledge[] preRequiredKnowledges)
-    {
-        this.preRequiredKnowledges=preRequiredKnowledges;
+    /** Set the pre-required knowledges to learn this one.
+     * @param preRequiredKnowledges the new pre-required knowledges
+     */
+    public void setPreRequiredKnowledges(BaseKnowledge[] preRequiredKnowledges) {
+        this.preRequiredKnowledges = preRequiredKnowledges;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  /** Get the pre-required levels to learn this knowledge.
-   * @return preRequiredLevels
-   */
-    public String[]/*Level[]*/ getPreRequiredLevels()
-    {
+    /** Get the pre-required levels to learn this knowledge.
+     * @return preRequiredLevels
+     */
+    public String[]/*Level[]*/getPreRequiredLevels() {
         return preRequiredLevels;
     }
 
-  /** Set the pre-required levels to learn this knowledge.
-   * @param preRequiredLevels the new pre-required levels
-   */
-    public void setPreRequiredLevels(String[]/*Level[]*/ preRequiredLevels)
-    {
-        this.preRequiredLevels=preRequiredLevels;
+    /** Set the pre-required levels to learn this knowledge.
+     * @param preRequiredLevels the new pre-required levels
+     */
+    public void setPreRequiredLevels(String[]/*Level[]*/preRequiredLevels) {
+        this.preRequiredLevels = preRequiredLevels;
     }
 
- /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 }
-

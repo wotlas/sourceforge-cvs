@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+OpenIDE-Module: wotlas.client.jars
+OpenIDE-Module-Implementation-Version: 131
+OpenIDE-Module-Localizing-Bundle: wotlas/client/jars/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.3
+

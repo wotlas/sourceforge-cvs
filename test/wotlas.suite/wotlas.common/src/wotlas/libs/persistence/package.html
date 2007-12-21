@@ -1,0 +1,28 @@
+<HTML>
+<BODY>
+<h1>Persistence Engine : allows you to save/restore objects in/from "dot-properties" files. </h1><br>
+See the package's full description for more details.
+
+<h2>Usage:</h2>
+
+<pre>
+public static void save(Object object, String name) throws PersistenceException
+Save the <I>object</I> in the file which path is <I>name</I>
+
+public static void save(Object object, OutputStream os) throws PersistenceException
+Save the <I>object</I> in the <I>os</I> OutputStream
+
+public static Object load(String name) throws PersistenceException
+Return the <I>Object</I> loaded from the file which path is <I>name</I>
+
+public static Object load(InputStream is) throws PersistenceException
+Return the <I>Object</I> loaded from the <I>is</I> OutputStream<P>
+</pre><br>
+
+<H2>Known limitations</H2>
+To be saved/loaded, a property should have a public getter and setter and should not be transient:</P>
+If the field is xxx, setXxx() and getXxx() should be public.<P>
+To be saved/loaded, a property should have a name beginning with a lowercase (xxx for setXxx and getXxx) <P>
+Array are supported either with indexed setter/getter or with a global setter/getter (taking an array as
+an argument), but only one-dimension array are supported.
+</BODY>

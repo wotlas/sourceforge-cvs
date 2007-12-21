@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+OpenIDE-Module: wotlas.server.bots.alice
+OpenIDE-Module-Implementation-Version: 131
+OpenIDE-Module-Layer: wotlas/server/bots/alice/layer.xml
+OpenIDE-Module-Localizing-Bundle: wotlas/server/bots/alice/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.3
+

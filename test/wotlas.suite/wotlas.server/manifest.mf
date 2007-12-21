@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+OpenIDE-Module: wotlas.server
+OpenIDE-Module-Implementation-Version: 131
+OpenIDE-Module-Layer: wotlas/server/layer.xml
+OpenIDE-Module-Localizing-Bundle: wotlas/server/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.3
+

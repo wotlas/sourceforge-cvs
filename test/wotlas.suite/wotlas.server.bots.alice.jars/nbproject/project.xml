@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>org.netbeans.modules.apisupport.project</type>
+    <configuration>
+        <data xmlns="http://www.netbeans.org/ns/nb-module-project/3">
+            <code-name-base>wotlas.server.bots.alice.jars</code-name-base>
+            <suite-component/>
+            <module-dependencies/>
+            <class-path-extension>
+                <runtime-relative-path>ext/js.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/js.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/org.mortbay.jetty.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/org.mortbay.jetty.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/servlet.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/servlet.jar</binary-origin>
+            </class-path-extension>
+            <public-packages>
+                <package>org.alicebot.server.core</package>
+                <package>org.alicebot.server.core.logging</package>
+                <package>org.alicebot.server.net.listener</package>
+                <package>org.mortbay.html</package>
+            </public-packages>
+        </data>
+    </configuration>
+</project>

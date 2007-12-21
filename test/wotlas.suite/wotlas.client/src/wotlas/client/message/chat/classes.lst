@@ -1,0 +1,8 @@
+# File used to find list of classes in a loaded jar.
+wotlas/client/message/chat
+wotlas/client/message/chat/AddPlayerToChatRoomMsgBehaviour.class
+wotlas/client/message/chat/ChatRoomCreatedMsgBehaviour.class
+wotlas/client/message/chat/ChatRoomDeletedMsgBehaviour.class
+wotlas/client/message/chat/RemPlayerFromChatRoomMsgBehaviour.class
+wotlas/client/message/chat/SendTextMsgBehaviour.class
+wotlas/client/message/chat/SetCurrentChatRoomMsgBehaviour.class

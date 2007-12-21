@@ -127,7 +127,7 @@ public class ServerConfig {
         this.maxNumberOfAccountConnections = 20;
         this.maxNumberOfGatewayConnections = 20;
         this.description = new String("Enter a description for your server...");
-        this.location = new String("France / USA / Germany / England / ...");
+        this.location = new String("France / USA / Germany / England / Italy...");
         this.adminEmail = new String("myAdress@foobar.net");
         this.lastUpdateTime = 0;
 

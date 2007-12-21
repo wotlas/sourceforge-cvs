@@ -38,7 +38,7 @@ import wotlas.common.TextEditorPanel;
 import wotlas.common.WorldManager;
 import wotlas.libs.aswing.AButton;
 import wotlas.libs.aswing.ATextArea;
-import wotlas.libs.graphics2D.FontFactory;
+import wotlas.libs.graphics2d.FontFactory;
 import wotlas.server.ServerDirector;
 import wotlas.utils.Debug;
 

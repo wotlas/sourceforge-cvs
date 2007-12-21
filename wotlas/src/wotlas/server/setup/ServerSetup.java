@@ -37,7 +37,7 @@ import wotlas.common.ServerConfigManager;
 import wotlas.libs.aswing.ALabel;
 import wotlas.libs.aswing.ARadioButton;
 import wotlas.libs.aswing.ATextField;
-import wotlas.libs.graphics2D.FontFactory;
+import wotlas.libs.graphics2d.FontFactory;
 import wotlas.libs.net.utils.NetInterface;
 import wotlas.libs.wizard.JWizard;
 import wotlas.libs.wizard.JWizardStep;

@@ -37,7 +37,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import wotlas.common.ServerConfigManager;
-import wotlas.libs.graphics2D.FontFactory;
+import wotlas.libs.graphics2d.FontFactory;
 import wotlas.libs.wizard.JWizard;
 import wotlas.libs.wizard.JWizardStep;
 import wotlas.libs.wizard.JWizardStepParameters;

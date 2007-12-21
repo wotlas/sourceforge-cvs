@@ -28,9 +28,8 @@ import wotlas.client.ClientDirector;
 import wotlas.client.PlayerImpl;
 import wotlas.client.screen.JPanelPlugIn;
 import wotlas.common.objects.BaseObject;
-import wotlas.common.objects.inventories.InventoryLayout;
-import wotlas.libs.graphics2D.ImageIdentifier;
-import wotlas.libs.graphics2D.ImageLibrary;
+import wotlas.libs.graphics2d.ImageIdentifier;
+import wotlas.libs.graphics2d.ImageLibrary;
 import wotlas.utils.ScreenRectangle;
 
 /** Plug In that shows inventory of the player.

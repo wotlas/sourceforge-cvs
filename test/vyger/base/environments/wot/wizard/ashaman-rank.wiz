@@ -1,0 +1,51 @@
+#WotLas 1.0 Saved Object
+#Sat Dec 23 21:36:16 CET 2000
+class=wotlas.libs.wizard.JWizardStepParameters
+isDynamic=false
+isLastStep=false
+isNextButtonEnabled=true
+isPrevButtonEnabled=true
+
+stepClass=wotlas.libs.wizard.step.JWizardStepRadioNet
+stepTitle=Asha'man\ Character\ Rank
+
+stepPropertiesKey=11
+stepPropertiesValue=11
+
+stepPropertiesKey.0=init.label0
+stepPropertiesValue.0=Here\ are\ the\ ranks\ available\ to\ you\ :
+
+stepPropertiesKey.1=init.nbChoices
+stepPropertiesValue.1=3
+
+stepPropertiesKey.2=init.choice0
+stepPropertiesValue.2=Soldier
+
+stepPropertiesKey.3=init.info0
+stepPropertiesValue.3=\ \ \ \ \ \ \ \ When\ newly\ enrolled,\ a\ man\ is\ termed\ a\ Soldier,\ he\ wears\ a\ plain\ black\ coat\ with\ a\ high\ collar,\ in\ the\ Andoran\ fashion.
+
+stepPropertiesKey.4=init.choice1
+stepPropertiesValue.4=Dedicated
+
+stepPropertiesKey.5=init.info1
+stepPropertiesValue.5=\ \ \ \ \ \ \ \ Being\ raised\ to\ Dedicated\ brings\ the\ right\ to\ wear\ a\ silver\ pin,\ called\ the\ Sword,\ on\ the\ collar\ of\ his\ coat.
+
+stepPropertiesKey.6=init.choice2
+stepPropertiesValue.6=Asha'man
+
+stepPropertiesKey.7=init.info2
+stepPropertiesValue.7=\ \ \ \ \ \ \ \ Promotion\ to\ Asha'man\ brings\ the\ right\ to\ wear\ a\ Dragon\ pin,\ in\ gold\ and\ red\ enamel,\ on\ the\ collar\ opposite\ to\ the\ Sword.
+
+
+# SERVER SIDE INCLUDES
+
+# Method to call to proceed data
+stepPropertiesKey.8=server.method
+stepPropertiesValue.8=setWotCharacterRank
+
+# Links
+stepPropertiesKey.9=server.next
+stepPropertiesValue.9=ashaman-hair.wiz
+
+stepPropertiesKey.10=server.previous
+stepPropertiesValue.10=wotclass.wiz

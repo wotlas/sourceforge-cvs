@@ -1,0 +1,51 @@
+#WotLas 1.0 Saved Object
+#Sat Dec 23 21:36:28 CET 2000
+class=wotlas.libs.wizard.JWizardStepParameters
+isDynamic=false
+isLastStep=false
+isNextButtonEnabled=true
+isPrevButtonEnabled=true
+
+stepClass=wotlas.libs.wizard.step.JWizardStepRadioNet
+stepTitle=Character\ Class
+
+stepPropertiesKey=11
+stepPropertiesValue=11
+
+stepPropertiesKey.0=init.label0
+stepPropertiesValue.0=Please\ select\ your\ character race:
+
+stepPropertiesKey.1=init.nbChoices
+stepPropertiesValue.1=2
+
+stepPropertiesKey.2=init.choice0
+stepPropertiesValue.2=Human
+
+stepPropertiesKey.3=init.info0
+stepPropertiesValue.3=\ \ \ \ \ \ \ \ the\ most\ common\ race\ on\ Ozran\ universe\
+
+stepPropertiesKey.4=init.choice1
+stepPropertiesValue.4=Dwarf
+
+stepPropertiesKey.5=init.info1
+stepPropertiesValue.5=\ \ \ \ \ \ \ \ People\ from\ this\ race\ are\ more\ resistent\ to\ magic\ and\ fights\.\n\ \n\ \n\ 
+
+
+# SERVER SIDE INCLUDES
+
+# Method to call to proceed data
+stepPropertiesKey.6=server.method
+stepPropertiesValue.6=setRLikeCharacterRace
+
+# Links
+stepPropertiesKey.7=server.previous
+stepPropertiesValue.7=index.wiz
+
+stepPropertiesKey.8=server.choice0.next
+stepPropertiesValue.8=classes.wiz
+
+stepPropertiesKey.9=server.choice1.next
+stepPropertiesValue.9=classes.wiz
+
+stepPropertiesKey.10=server.choice7.next
+stepPropertiesValue.10=special-chars.wiz

@@ -1,0 +1,64 @@
+#WotLas 1.0 Saved Object
+#Sat Dec 23 21:36:16 CET 2000
+class=wotlas.libs.wizard.JWizardStepParameters
+isDynamic=false
+isLastStep=false
+isNextButtonEnabled=true
+isPrevButtonEnabled=true
+
+stepClass=wotlas.libs.wizard.step.JWizardStepRadioNet
+stepTitle=Warder\ Character\ Rank
+
+stepPropertiesKey=15
+stepPropertiesValue=15
+
+stepPropertiesKey.0=init.label0
+stepPropertiesValue.0=Here\ are\ the\ ranks\ available\ to\ you\ :
+
+stepPropertiesKey.1=init.nbChoices
+stepPropertiesValue.1=4
+
+stepPropertiesKey.2=init.choice0
+stepPropertiesValue.2=Youngling
+
+stepPropertiesKey.3=init.info0
+stepPropertiesValue.3=Youngling\ are\ young\ men\ that\ are\ trained\ to\ become\ Warder.\n
+
+stepPropertiesKey.4=init.choice1
+stepPropertiesValue.4=Tower\ Guard
+
+stepPropertiesKey.5=init.info1
+stepPropertiesValue.5=A\ youngling\ can\ also\ become\ a\ White\ Tower\ guard\ if\ he\ doesn't\ have\ the\ skills\ required\ to\ become\ Warder.
+
+stepPropertiesKey.6=init.choice2
+stepPropertiesValue.6=Warder
+
+stepPropertiesKey.7=init.info2
+stepPropertiesValue.7=A\ warrior\ that\ may\ be\ bonded\ to\ an\ Aes Sedai.\n
+
+stepPropertiesKey.8=init.choice3
+stepPropertiesValue.8=Blade\ Master
+
+stepPropertiesKey.9=init.info3
+stepPropertiesValue.9=Warder\ that\ has\ reached\ a\ high\ level\ in\ warcraft.\ Some\ stay\ at\ Tar Valon\ to\ teach\ younglings,\ others\ are\ bonded\ to\ Aes\ Sedai.
+
+
+
+# SERVER SIDE INCLUDES
+
+# Method to call to proceed data
+stepPropertiesKey.10=server.method
+stepPropertiesValue.10=setWotCharacterRank
+
+# Links
+stepPropertiesKey.11=server.next
+stepPropertiesValue.11=warder-hair.wiz
+
+stepPropertiesKey.12=server.previous
+stepPropertiesValue.12=wotclass.wiz
+
+stepPropertiesKey.13=server.choice2.next
+stepPropertiesValue.13=warder-cloak.wiz
+
+stepPropertiesKey.14=server.choice3.next
+stepPropertiesValue.14=warder-cloak.wiz

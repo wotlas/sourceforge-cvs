@@ -1,0 +1,45 @@
+from wotlas.libs.npc import NpcDefinition, Npc, NpcManager
+from wotlas.common.character import CharData
+import java.util
+
+elencoN = NpcManager.npcDef
+
+ADD CREATURE dwarf warrior
+RLRACE Dwarf
+RLCLASS Warrior
+PICTURE 0,43
+LEVEL 5
+END
+
+ADD CREATURE dwarf wizard
+RLRACE Dwarf
+RLCLASS Wizard
+PICTURE 0,41
+LEVEL 5
+END
+
+CLONE CREATURE dwarf warrior
+NAME dwarf berserk
+PICTURE 0,43
+LEVEL 12
+STR 19
+END
+
+
+ADD CREATURE dwarf cleric
+RLRACE Dwarf
+RLCLASS Warrior
+PICTURE 0,44
+LEVEL 5
+WIS 18
+END
+
+ADD CREATURE dwarf king
+RLRACE Dwarf
+RLCLASS Warrior
+PICTURE 0,43
+LEVEL 20
+STR 17
+CON 18
+WIS 15
+END

@@ -1,0 +1,9 @@
+<html>
+<body>
+
+A Wizard that provides an interface with a central panel (JWizardStep) and buttons (previous, next, cancel). The JWizardSteps defines the interface's content and the behaviour of the previous and next buttons. What's interesting here is that the JWizardStep only represent the GUI, the JWizardStep's data & initializarion parameters are contained by a JWizardStepParameters class. The JWizardStepParameters class <b>entirely</b> describes a JWizardStep (class name, inits, data) can be saved/loaded from disk or from a stream ( DataInputStream/DataOutputStream). We use a factory pattern to create the JWizardSteps from their JWizardStepParameters.
+<p>We've tried to make this library indepedent from other libraries, but we still use some of our wotlas code :
+package wotlas.utils.aswing for antialiased components, wotlas.libs.graphics2d.FontFactory for our font management, wotlas.utils.SwingTools for the centerComponent method. A future version of this library will focus on the removal of these links.
+</p>
+</body>
+</html>

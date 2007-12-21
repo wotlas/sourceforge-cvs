@@ -1,0 +1,87 @@
+#WotLas 1.0 Saved Object
+#Sat Dec 23 21:36:16 CET 2000
+class=wotlas.libs.wizard.JWizardStepParameters
+isDynamic=false
+isLastStep=false
+isNextButtonEnabled=true
+isPrevButtonEnabled=true
+
+stepClass=wotlas.libs.wizard.step.JWizardStepRadioNet
+stepTitle=Aes\ Sedai\ Character\ Rank
+
+stepPropertiesKey=23
+stepPropertiesValue=23
+
+stepPropertiesKey.0=init.label0
+stepPropertiesValue.0=Here\ are\ the\ ranks\ available\ to\ you\ :
+
+stepPropertiesKey.1=init.nbChoices
+stepPropertiesValue.1=9
+
+stepPropertiesKey.2=init.choice0
+stepPropertiesValue.2=Novice
+
+stepPropertiesKey.3=init.info0
+stepPropertiesValue.3=Novice\ are\ young\ women\ that\ want\ to\ become\ Aes\ Sedai.\ They\ remain\ Novice\ some\ years\ before\ becoming\ Accepted.
+
+stepPropertiesKey.4=init.choice1
+stepPropertiesValue.4=Accepted
+
+stepPropertiesKey.5=init.info1
+stepPropertiesValue.5=Accepted\ are\ young\ women\ in\ training\ to\ be\ Aes\ Sedai\ who\ have\ reached\ a\ certain\ level\ of\ power\ and\ passed\ certain\ tests.
+
+stepPropertiesKey.6=init.choice2
+stepPropertiesValue.6=White\ Ajah
+
+stepPropertiesKey.7=init.info2
+stepPropertiesValue.7=The\ White\ Ajah\ devotes\ itself\ to\ questions\ of\ philosophy\ and\ truth.\n
+
+stepPropertiesKey.8=init.choice3
+stepPropertiesValue.8=Blue\ Ajah
+
+stepPropertiesKey.9=init.info3
+stepPropertiesValue.9=Blue\ Ajah\ sisters\ involve\ themselves\ with\ causes\ and\ justice.\n
+
+stepPropertiesKey.10=init.choice4
+stepPropertiesValue.10=Red\ Ajah
+
+stepPropertiesKey.11=init.info4
+stepPropertiesValue.11=The\ Red\ Ajah\ bends\ its\ energies\ to\ finding\ men\ who\ can\ channel,\ and\ to\ gentling\ them.
+
+stepPropertiesKey.12=init.choice5
+stepPropertiesValue.12=Yellow\ Ajah
+
+stepPropertiesKey.13=init.info5
+stepPropertiesValue.13=Yellow\ Ajah\ sisters\ concentrates\ on\ the\ study\ of\ healing.\n
+
+stepPropertiesKey.14=init.choice6
+stepPropertiesValue.14=Green\ Ajah
+
+stepPropertiesKey.15=init.info6
+stepPropertiesValue.15=The\ Green\ Ajah\ (called\ the\ Battle\ Ajah\ during\ the\ Trolloc\ Wars)\ holds\ itself\ ready\ for\ Tarmon\ Gai'don.
+
+stepPropertiesKey.16=init.choice7
+stepPropertiesValue.16=Gray\ Ajah
+
+stepPropertiesKey.17=init.info7
+stepPropertiesValue.17=Gray\ Ajah\ sisters\ are\ mediators,\ seeking\ harmony\ and\ consensus.\n
+
+stepPropertiesKey.18=init.choice8
+stepPropertiesValue.18=Brown\ Ajah
+
+stepPropertiesKey.19=init.info8
+stepPropertiesValue.19=Brown\ Ajah\ sisters\ forsakes\ involvment\ with\ the\ mundane\ world\ and\ dedicates\ itself\ to\ seeking\ knowledge\ (literature,\ science,...)
+
+
+# SERVER SIDE INCLUDES
+
+# Method to call to proceed data
+stepPropertiesKey.20=server.method
+stepPropertiesValue.20=setWotCharacterRank
+
+# Links
+stepPropertiesKey.21=server.next
+stepPropertiesValue.21=aes-sedai-hair.wiz
+
+stepPropertiesKey.22=server.previous
+stepPropertiesValue.22=wotclass.wiz

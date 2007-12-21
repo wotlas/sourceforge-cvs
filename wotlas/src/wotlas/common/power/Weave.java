@@ -21,13 +21,13 @@ package wotlas.common.power;
 
 import wotlas.common.Player;
 import wotlas.common.universe.WotlasLocation;
-import wotlas.libs.graphics2D.Drawable;
+import wotlas.libs.graphics2d.Drawable;
 
 /** Generic Wotlas Weave. Each Channeller object possess a collection (HashMap in the default implementation) of Weave objects for their amusement.
  *
  * @author Chris
  * @see wotlas.common.power.Channeller
- * @see wotlas.libs.graphics2D.Drawable
+ * @see wotlas.libs.graphics2d.Drawable
  */
 
 public abstract class Weave {

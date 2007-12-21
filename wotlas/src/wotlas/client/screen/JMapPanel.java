@@ -26,7 +26,7 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import wotlas.client.DataManager;
-import wotlas.libs.graphics2D.GraphicsDirector;
+import wotlas.libs.graphics2d.GraphicsDirector;
 
 /** JPanel to show the current map
  *

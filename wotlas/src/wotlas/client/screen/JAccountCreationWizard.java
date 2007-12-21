@@ -41,7 +41,7 @@ import wotlas.common.message.account.AccountCreationMessage;
 import wotlas.common.message.account.CancelAccountCreationMessage;
 import wotlas.libs.aswing.ATableCellRenderer;
 import wotlas.libs.aswing.ATextArea;
-import wotlas.libs.graphics2D.FontFactory;
+import wotlas.libs.graphics2d.FontFactory;
 import wotlas.libs.net.NetConnection;
 import wotlas.libs.wizard.JWizard;
 import wotlas.libs.wizard.JWizardStep;

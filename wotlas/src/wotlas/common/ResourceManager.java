@@ -29,8 +29,8 @@ import java.net.URL;
 import java.util.Properties;
 import javax.swing.ImageIcon;
 import wotlas.libs.aswing.ASwingResourceLocator;
-import wotlas.libs.graphics2D.FontResourceLocator;
-import wotlas.libs.graphics2D.ImageResourceLocator;
+import wotlas.libs.graphics2d.FontResourceLocator;
+import wotlas.libs.graphics2d.ImageResourceLocator;
 import wotlas.libs.log.LogResourceLocator;
 import wotlas.libs.persistence.PersistenceException;
 import wotlas.libs.persistence.PropertiesConverter;
@@ -61,10 +61,12 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
      *  (2) no other base path is provided at start-up.
      */
     public static final String DEFAULT_BASE_PATH = "base";
+
     /** Default location where are stored help docs when NOT packed in a Jar.
      *  We only use this default value if we are not in a JAR file.
      */
     public static final String DEFAULT_HELP_DOCS_PATH = "docs/help";
+
     /** Default location for binaries and OS dependent scripts
      *  This is always an external directory.
      */
@@ -74,12 +76,15 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
     /** A part of the Wotlas client JAR file name.
      */
     public static final String WOTLAS_CLIENT_JAR = "client.jar";
+
     /** A part of the Wotlas Server JAR file name.
      */
     public static final String WOTLAS_SERVER_JAR = "server.jar";
+
     /** All Wotlas sources JAR file name.
      */
     public static final String WOTLAS_ALL_JAR = "wotlas.jar";
+    
     /** Wotlas root dir for resources located in a JAR. We'll search in this
      *  directory for every kind of resources.
      *  MUST START WITH A "/".
@@ -336,8 +341,8 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
      */
     protected void repairClassPath() {
         if (Tools.hasJar(this.jarName)) {
-            return;
-        } // our classpath has the current Jar name... nothing to repair.
+            return; // our classpath has the current Jar name... nothing to repair.
+        } 
 
         System.setProperty("java.class.path", System.getProperty("java.class.path", ".") + System.getProperty("path.separator", ";") + this.jarName);
     }
@@ -911,8 +916,8 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
      */
     public String getExternalTransferScript() {
         if (this.inClientJar) {
-            return null;
-        } // this method is for the server side only
+            return null; // this method is for the server side only
+        } 
 
         if (Tools.isWindowsOS()) {
             return ResourceManager.DEFAULT_BIN_PATH + File.separator + ResourceManager.WIN_BINARY_DIR + File.separator + ResourceManager.TRANSFER_SCRIPT_NAME + ".bat";
@@ -928,8 +933,8 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
      */
     public String getExternalScriptsDir() {
         if (this.inClientJar) {
-            return null;
-        } // this method is for the server side only
+            return null; // this method is for the server side only
+        } 
 
         if (Tools.isWindowsOS()) {
             return ResourceManager.DEFAULT_BIN_PATH + File.separator + ResourceManager.WIN_BINARY_DIR + File.separator;

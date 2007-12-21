@@ -28,13 +28,13 @@ import wotlas.common.Player;
 import wotlas.common.objects.inventories.AshamanInventory;
 import wotlas.common.objects.inventories.Inventory;
 import wotlas.common.universe.WotlasLocation;
-import wotlas.libs.graphics2D.Drawable;
-import wotlas.libs.graphics2D.ImageIdentifier;
-import wotlas.libs.graphics2D.drawable.AuraEffect;
-import wotlas.libs.graphics2D.drawable.ShadowSprite;
-import wotlas.libs.graphics2D.drawable.Sprite;
-import wotlas.libs.graphics2D.drawable.SpriteDataSupplier;
-import wotlas.libs.graphics2D.filter.ColorImageFilter;
+import wotlas.libs.graphics2d.Drawable;
+import wotlas.libs.graphics2d.ImageIdentifier;
+import wotlas.libs.graphics2d.drawable.AuraEffect;
+import wotlas.libs.graphics2d.drawable.ShadowSprite;
+import wotlas.libs.graphics2d.drawable.Sprite;
+import wotlas.libs.graphics2d.drawable.SpriteDataSupplier;
+import wotlas.libs.graphics2d.filter.ColorImageFilter;
 
 /** A Ashaman character.
  *

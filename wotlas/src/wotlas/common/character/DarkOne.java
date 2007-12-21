@@ -27,17 +27,17 @@ import wotlas.common.ImageLibRef;
 import wotlas.common.Player;
 import wotlas.common.objects.inventories.Inventory;
 import wotlas.common.universe.WotlasLocation;
-import wotlas.libs.graphics2D.Drawable;
-import wotlas.libs.graphics2D.ImageIdentifier;
-import wotlas.libs.graphics2D.drawable.ShadowSprite;
-import wotlas.libs.graphics2D.drawable.Sprite;
-import wotlas.libs.graphics2D.drawable.SpriteDataSupplier;
+import wotlas.libs.graphics2d.Drawable;
+import wotlas.libs.graphics2d.ImageIdentifier;
+import wotlas.libs.graphics2d.drawable.ShadowSprite;
+import wotlas.libs.graphics2d.drawable.Sprite;
+import wotlas.libs.graphics2d.drawable.SpriteDataSupplier;
 
 /** The Dark One.
  *
  * @author Aldiss, Elann
  * @see wotlas.common.Player
- * @see wotlas.libs.graphics2D.Drawable
+ * @see wotlas.libs.graphics2d.Drawable
  */
 
 public class DarkOne implements WotCharacter {

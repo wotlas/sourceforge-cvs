@@ -19,13 +19,13 @@
 
 package wotlas.common;
 
-import wotlas.libs.graphics2D.ImageLibraryReference;
+import wotlas.libs.graphics2d.ImageLibraryReference;
 
 /**
  * Ids for an easier use of the ImageLibrary...
  *
  * @author aldiss
- * @see wotlas.libs.graphics2D.ImageLibrary
+ * @see wotlas.libs.graphics2d.ImageLibrary
  */
 
 public interface ImageLibRef extends ImageLibraryReference {

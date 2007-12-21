@@ -23,7 +23,7 @@ import java.awt.Rectangle;
 import wotlas.common.WorldManager;
 import wotlas.common.router.MessageRouter;
 import wotlas.common.router.MessageRouterFactory;
-import wotlas.libs.graphics2D.ImageIdentifier;
+import wotlas.libs.graphics2d.ImageIdentifier;
 import wotlas.utils.Debug;
 import wotlas.utils.ScreenPoint;
 

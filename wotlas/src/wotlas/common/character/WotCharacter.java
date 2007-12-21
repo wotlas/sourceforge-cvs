@@ -26,14 +26,14 @@ import java.io.IOException;
 import wotlas.common.Player;
 import wotlas.common.objects.inventories.Inventory;
 import wotlas.common.universe.WotlasLocation;
-import wotlas.libs.graphics2D.Drawable;
-import wotlas.libs.graphics2D.ImageIdentifier;
+import wotlas.libs.graphics2d.Drawable;
+import wotlas.libs.graphics2d.ImageIdentifier;
 
 /** Interface of a Wotlas Character. Each Player object possess one Character object.
  *
  * @author Aldiss, Elann
  * @see wotlas.common.Player
- * @see wotlas.libs.graphics2D.Drawable
+ * @see wotlas.libs.graphics2d.Drawable
  */
 
 public interface WotCharacter {

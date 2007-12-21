@@ -28,7 +28,7 @@ import wotlas.utils.Debug;
  * @author Chris
  * @see wotlas.common.Player
  * @see wotlas.common.power.Weave
- * @see wotlas.libs.graphics2D.Drawable
+ * @see wotlas.libs.graphics2d.Drawable
  */
 public abstract class Channeller {
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

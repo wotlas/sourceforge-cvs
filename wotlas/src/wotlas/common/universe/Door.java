@@ -22,9 +22,9 @@ package wotlas.common.universe;
 import java.awt.Point;
 import java.awt.Rectangle;
 import wotlas.common.ImageLibRef;
-import wotlas.libs.graphics2D.Drawable;
-import wotlas.libs.graphics2D.ImageIdentifier;
-import wotlas.libs.graphics2D.drawable.DoorDrawable;
+import wotlas.libs.graphics2d.Drawable;
+import wotlas.libs.graphics2d.ImageIdentifier;
+import wotlas.libs.graphics2d.drawable.DoorDrawable;
 import wotlas.libs.pathfinding.AStarDouble;
 
 /** A Door on an InteriorMap... Doors are possessed by RoomLinks.

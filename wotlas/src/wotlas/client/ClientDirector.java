@@ -21,7 +21,7 @@ package wotlas.client;
 
 import wotlas.common.RemoteServersPropertiesFile;
 import wotlas.common.ResourceManager;
-import wotlas.libs.graphics2D.FontFactory;
+import wotlas.libs.graphics2d.FontFactory;
 import wotlas.libs.log.JLogStream;
 import wotlas.libs.sound.SoundLibrary;
 import wotlas.utils.Debug;
@@ -150,7 +150,7 @@ public class ClientDirector {
         // STEP 3 - We control the VM version and load our vital config files.
         Debug.signal(Debug.NOTICE, null, "*-------------------------------------*");
         Debug.signal(Debug.NOTICE, null, "|    Wheel Of Time - Light & Shadow   |");
-        Debug.signal(Debug.NOTICE, null, "| Copyright (C) 2001-2002 WOTLAS Team |");
+        Debug.signal(Debug.NOTICE, null, "| Copyright (C) 2001-2008 WOTLAS Team |");
         Debug.signal(Debug.NOTICE, null, "*-------------------------------------*\n");
 
         Debug.signal(Debug.NOTICE, null, "Code version       : " + ResourceManager.WOTLAS_VERSION);

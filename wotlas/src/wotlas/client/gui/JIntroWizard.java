@@ -28,7 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import wotlas.client.ClientDirector;
-import wotlas.libs.graphics2D.FontFactory;
+import wotlas.libs.graphics2d.FontFactory;
 import wotlas.utils.SwingTools;
 
 /** A wizard that displays a content (left panel) and navigation buttons (right panel).

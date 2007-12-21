@@ -20,7 +20,7 @@
 package wotlas.common.universe;
 
 import java.awt.Point;
-import wotlas.libs.graphics2D.ImageIdentifier;
+import wotlas.libs.graphics2d.ImageIdentifier;
 import wotlas.utils.Debug;
 import wotlas.utils.ScreenRectangle;
 

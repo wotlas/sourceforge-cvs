@@ -47,7 +47,7 @@ import wotlas.client.ClientConfiguration;
 import wotlas.client.ClientDirector;
 import wotlas.client.ClientManager;
 import wotlas.libs.aswing.ALabel;
-import wotlas.libs.graphics2D.drawable.TextDrawable;
+import wotlas.libs.graphics2d.drawable.TextDrawable;
 import wotlas.libs.sound.SoundLibrary;
 import wotlas.utils.SwingTools;
 import wotlas.utils.Tools;

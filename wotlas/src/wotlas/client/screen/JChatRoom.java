@@ -118,21 +118,23 @@ public class JChatRoom extends JPanel implements MouseListener {
     /** To add some players to the JList.
      */
     /*synchronized public void addPlayers(PlayerImpl players[]) {
-    for (int i=0; i<players.length; i++) {
-    // we detect non valid entries
-    if(players[i]==null ||  this.players.containsKey( players[i].getPrimaryKey() ))
-    continue;
-    // ok, we add this one...
-    playersListModel.addElement(players[i].getFullPlayerName());
-    this.players.put( players[i].getPrimaryKey(), players[i] );
-    }
+      for (int i=0; i<players.length; i++) {
+        // we detect non valid entries
+       	 if(players[i]==null ||  this.players.containsKey( players[i].getPrimaryKey() ))
+      	    continue;
+
+        // ok, we add this one...
+           playersListModel.addElement(players[i].getFullPlayerName());
+           this.players.put( players[i].getPrimaryKey(), players[i] );
+      }
     }*/
+
     /** To add a player to the JList.
      */
     synchronized public void addPlayer(String primaryKey, String senderFullName) {
         if (this.players.containsKey(primaryKey)) {
-            return;
-        } // already in this chat
+            return; // already in this chat
+        } 
         if (DataManager.SHOW_DEBUG) {
             System.out.println("ADDING PLAYER " + primaryKey);
         }
@@ -143,10 +145,10 @@ public class JChatRoom extends JPanel implements MouseListener {
         final PlayerState newPlayerItem;
 
         /*if(newPlayer!=null)
-        newPlayerItem = new PlayerState(senderFullName, newPlayer.isConnectedToGame());
+           newPlayerItem = new PlayerState(senderFullName, newPlayer.isConnectedToGame());
         else
-        newPlayerItem = new PlayerState(senderFullName, true );
-         */
+           newPlayerItem = new PlayerState(senderFullName, true );
+        */
         if (newPlayer != null) {
             newPlayerItem = new PlayerState(senderFullName, newPlayer.getPlayerState().value);
         } else {
@@ -187,8 +189,8 @@ public class JChatRoom extends JPanel implements MouseListener {
      */
     synchronized public void removePlayer(String primaryKey) {
         if (!this.players.containsKey(primaryKey)) {
-            return;
-        } // not in this chat
+            return; // not in this chat
+        } 
         if (DataManager.SHOW_DEBUG) {
             System.out.println("REMOVING PLAYER " + primaryKey);
         }
@@ -215,8 +217,8 @@ public class JChatRoom extends JPanel implements MouseListener {
      */
     synchronized public void updatePlayer(String primaryKey, String newName) {
         if (!this.players.containsKey(primaryKey)) {
-            return;
-        } // not in this chat
+            return; // not in this chat
+        }
         if (DataManager.SHOW_DEBUG) {
             System.out.println("UPDATING PLAYER " + primaryKey);
         }
@@ -242,29 +244,32 @@ public class JChatRoom extends JPanel implements MouseListener {
     /** To update a player's state from the JList.
      */
     /*synchronized public void updatePlayer(String primaryKey, boolean isNotAway) {
-    if( !players.containsKey( primaryKey ) )
-    return; // not in this chat
-    if (DataManager.SHOW_DEBUG)
-    System.out.println("UPDATING PLAYER "+primaryKey);
-    final PlayerState oldPlayerItem = (PlayerState) players.get(primaryKey);
-    final PlayerState newPlayerItem = new PlayerState(oldPlayerItem.fullName, isNotAway);
-    players.put(primaryKey, newPlayerItem);
-    Runnable runnable = new Runnable() {
-    public void run() {
-    playersListModel.removeElement(oldPlayerItem);
-    playersListModel.addElement(newPlayerItem);
-    revalidate();
-    repaint();
-    }
-    };
-    SwingUtilities.invokeLater( runnable );
+      if( !players.containsKey( primaryKey ) )
+          return; // not in this chat
+      if (DataManager.SHOW_DEBUG)
+        System.out.println("UPDATING PLAYER "+primaryKey);
+
+      final PlayerState oldPlayerItem = (PlayerState) players.get(primaryKey);
+      final PlayerState newPlayerItem = new PlayerState(oldPlayerItem.fullName, isNotAway);
+      players.put(primaryKey, newPlayerItem);
+
+      Runnable runnable = new Runnable() {
+        public void run() {
+          playersListModel.removeElement(oldPlayerItem);
+          playersListModel.addElement(newPlayerItem);
+          revalidate();
+          repaint();
+        }
+      };
+      SwingUtilities.invokeLater( runnable );
     }*/
+
     /** To update a player's state from the JList.
      */
     synchronized public void updatePlayer(String primaryKey, byte value) {
         if (!this.players.containsKey(primaryKey)) {
-            return;
-        } // not in this chat
+            return; // not in this chat
+        }
         if (DataManager.SHOW_DEBUG) {
             System.out.println("UPDATING PLAYER " + primaryKey);
         }

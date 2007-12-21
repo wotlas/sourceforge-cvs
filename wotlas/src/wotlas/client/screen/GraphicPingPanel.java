@@ -34,7 +34,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import wotlas.client.ClientDirector;
 import wotlas.client.DataManager;
-import wotlas.libs.graphics2D.FontFactory;
+import wotlas.libs.graphics2d.FontFactory;
 import wotlas.libs.net.NetPingListener;
 import wotlas.utils.SwingTools;
 

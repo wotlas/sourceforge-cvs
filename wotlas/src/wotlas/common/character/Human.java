@@ -23,7 +23,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import wotlas.common.universe.WotlasLocation;
-import wotlas.libs.graphics2D.ImageIdentifier;
+import wotlas.libs.graphics2d.ImageIdentifier;
 
 /** A Human Wotlas Character.
  *

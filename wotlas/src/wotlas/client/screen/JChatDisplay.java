@@ -81,8 +81,8 @@ public class JChatDisplay extends LogStream {
     public JChatDisplay(ChatRoom chatRoom) throws FileNotFoundException {
         super(ClientDirector.getResourceManager().getExternalLogsDir() + chatRoom.getPrimaryKey() + JChatDisplay.CHAT_LOG_SUFFIX, true, 60 * 1000);
 
-        msg_number = 0;
-        strBuffer = "";
+        this.msg_number = 0;
+        this.strBuffer = "";
 
         URL url = null;
         String smileysHome = ClientDirector.getResourceManager().getGuiSmileysDir();
@@ -109,14 +109,14 @@ public class JChatDisplay extends LogStream {
             }
         }
 
-        messagesPane = new JEditorPane();
+        this.messagesPane = new JEditorPane();
 
-        messagesPane.setEditable(false);
+        this.messagesPane.setEditable(false);
 
         MyHTMLEditorKit kit = new MyHTMLEditorKit();
-        messagesPane.setEditorKit(kit);
+        this.messagesPane.setEditorKit(kit);
 
-        ((HTMLDocument) messagesPane.getDocument()).setBase(url);
+        ((HTMLDocument) this.messagesPane.getDocument()).setBase(url);
 
         print("<font color='green'><i>Entering " + chatRoom.getName() + " chat room</i></font><br>\n");
     }
@@ -125,7 +125,7 @@ public class JChatDisplay extends LogStream {
     /** To get the scroll pane
      */
     public JScrollPane getPanel() {
-        JScrollPane displayScroller = new JScrollPane(messagesPane);
+        JScrollPane displayScroller = new JScrollPane(this.messagesPane);
         return displayScroller;
     }
 
@@ -187,32 +187,30 @@ public class JChatDisplay extends LogStream {
     @Override
     protected void printedText(final String text) {
 
-        if (messagesPane == null || text == null || text.length() == 0) {
-            return;
-        } // nothing to print... or constructor not fully initialized
+        if (this.messagesPane == null || text == null || text.length() == 0) {
+            return; // nothing to print... or constructor not fully initialized
+        } 
 
         // too much messages displayed ?
-        msg_number++;
+        this.msg_number++;
 
         if (DataManager.SHOW_DEBUG) {
-            System.out.println("msg_number = " + msg_number);
+            System.out.println("msg_number = " + this.msg_number);
         }
 
-        if (msg_number > JChatDisplay.MAX_DISPLAYED_MESSAGES) {
-            int pos = strBuffer.indexOf("\n");
-            strBuffer = strBuffer.substring(pos + 1);
-            msg_number--;
+        if (this.msg_number > JChatDisplay.MAX_DISPLAYED_MESSAGES) {
+            int pos = this.strBuffer.indexOf("\n");
+            this.strBuffer = this.strBuffer.substring(pos + 1);
+            this.msg_number--;
         }
 
-        strBuffer += text + "\n";
+        this.strBuffer += text + "\n";
 
         Runnable runnable = new Runnable() {
-
             public void run() {
-                messagesPane.setText(strBuffer);
-                messagesPane.repaint();
+                JChatDisplay.this.messagesPane.setText(JChatDisplay.this.strBuffer);
+                JChatDisplay.this.messagesPane.repaint();
             }
-
         };
 
         SwingUtilities.invokeLater(runnable);

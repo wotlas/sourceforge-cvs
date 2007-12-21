@@ -38,7 +38,7 @@ import javax.swing.JSplitPane;
 import wotlas.client.ClientDirector;
 import wotlas.client.ClientManager;
 import wotlas.client.DataManager;
-import wotlas.libs.graphics2D.GraphicsDirector;
+import wotlas.libs.graphics2d.GraphicsDirector;
 
 /** The main frame of the wotlas client interface.<br>
  * It contains a :<br>

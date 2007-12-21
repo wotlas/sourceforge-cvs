@@ -19,7 +19,7 @@
 
 package wotlas.common.universe;
 
-import wotlas.libs.graphics2D.ImageIdentifier;
+import wotlas.libs.graphics2d.ImageIdentifier;
 import wotlas.utils.Debug;
 
 /** An InteriorMap represents any maps where players can walk. It usually belongs

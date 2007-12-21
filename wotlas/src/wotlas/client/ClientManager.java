@@ -59,7 +59,7 @@ import wotlas.libs.aswing.ALabel;
 import wotlas.libs.aswing.APasswordField;
 import wotlas.libs.aswing.ATableCellRenderer;
 import wotlas.libs.aswing.ATextField;
-import wotlas.libs.graphics2D.FontFactory;
+import wotlas.libs.graphics2d.FontFactory;
 import wotlas.libs.sound.SoundLibrary;
 import wotlas.utils.Debug;
 

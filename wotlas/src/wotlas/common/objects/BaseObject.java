@@ -21,8 +21,8 @@ package wotlas.common.objects;
 
 import wotlas.common.Player;
 import wotlas.common.universe.WotlasLocation;
-import wotlas.libs.graphics2D.Drawable;
-import wotlas.libs.graphics2D.ImageIdentifier;
+import wotlas.libs.graphics2d.Drawable;
+import wotlas.libs.graphics2d.ImageIdentifier;
 
 /** 
  * The base class for all game objects that may be encountered in wotlas.

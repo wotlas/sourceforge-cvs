@@ -43,18 +43,18 @@ import wotlas.common.message.description.WelcomeMessage;
 import wotlas.common.universe.Door;
 import wotlas.common.universe.WotlasLocation;
 import wotlas.libs.aswing.AProgressMonitor;
-import wotlas.libs.graphics2D.Drawable;
-import wotlas.libs.graphics2D.EnhancedGraphicsDirector;
-import wotlas.libs.graphics2D.GraphicsDirector;
-import wotlas.libs.graphics2D.ImageLibrary;
-import wotlas.libs.graphics2D.WindowPolicy;
-import wotlas.libs.graphics2D.drawable.CircleDrawable;
-import wotlas.libs.graphics2D.drawable.PathDrawable;
-import wotlas.libs.graphics2D.menu.Menu2DEvent;
-import wotlas.libs.graphics2D.menu.Menu2DListener;
-import wotlas.libs.graphics2D.menu.SimpleMenu2D;
-import wotlas.libs.graphics2D.policy.CenterWindowPolicy;
-import wotlas.libs.graphics2D.policy.LimitWindowPolicy;
+import wotlas.libs.graphics2d.Drawable;
+import wotlas.libs.graphics2d.EnhancedGraphicsDirector;
+import wotlas.libs.graphics2d.GraphicsDirector;
+import wotlas.libs.graphics2d.ImageLibrary;
+import wotlas.libs.graphics2d.WindowPolicy;
+import wotlas.libs.graphics2d.drawable.CircleDrawable;
+import wotlas.libs.graphics2d.drawable.PathDrawable;
+import wotlas.libs.graphics2d.menu.Menu2DEvent;
+import wotlas.libs.graphics2d.menu.Menu2DListener;
+import wotlas.libs.graphics2d.menu.SimpleMenu2D;
+import wotlas.libs.graphics2d.policy.CenterWindowPolicy;
+import wotlas.libs.graphics2d.policy.LimitWindowPolicy;
 import wotlas.libs.net.NetConnection;
 import wotlas.libs.net.NetConnectionListener;
 import wotlas.libs.net.NetMessage;
@@ -762,11 +762,10 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
         // III - Graphics Director update & redraw
         if (this.clientScreen.getState() == Frame.ICONIFIED) {
-            Tools.waitTime(400);
-        } // we reduce our tick rate... and don't refresh the screen
-        else {
-            this.gDirector.tick();
-        } // game screen update
+            Tools.waitTime(400); // we reduce our tick rate... and don't refresh the screen
+        } else {
+            this.gDirector.tick(); // game screen update
+        } 
 
         // IV - Sync Messages Execution
         NetMessageBehaviour syncMessages[] = this.syncMessageQueue.pullMessages();
@@ -839,8 +838,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         }
 
         if (this.updatingMapData) {
-            return;
-        } // updating Map Location
+            return; // updating Map Location
+        } 
 
         // Menu clicked ?
         if (this.menuManager.isVisible()) {
@@ -885,7 +884,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
             if (this.selectedPlayer != null) {
                 this.menuManager.initContent(this.selectedPlayer);
-            } //        else if(selectedObject!=null)
+            } 
+            //        else if(selectedObject!=null)
             //             ADD menuManager initContent here
             else {
                 this.menuManager.initNoContent();
@@ -1027,8 +1027,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
             }
 
             if (!isLeftClick) {
-                return true;
-            } // no away message displayed if right click
+                return true; // no away message displayed if right click
+            } 
 
             // Away Message
             String awayMessage = this.selectedPlayer.getPlayerAwayMessage();
@@ -1078,7 +1078,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
             }
 
             return true;
-        } //      else if( object instanceof BaseObject ) {
+        } 
+        //      else if( object instanceof BaseObject ) {
         //
         //             ADD HERE SELECTION CODE FOR OBJECTS (use the player selection as example)
         //      }

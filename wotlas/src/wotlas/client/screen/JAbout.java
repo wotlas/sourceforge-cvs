@@ -39,7 +39,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import wotlas.client.ClientDirector;
-import wotlas.libs.graphics2D.FontFactory;
+import wotlas.libs.graphics2d.FontFactory;
 import wotlas.libs.log.JCroppedWindow;
 import wotlas.libs.sound.SoundLibrary;
 import wotlas.utils.SwingTools;

@@ -19,14 +19,14 @@
 
 package wotlas.client;
 
-import wotlas.libs.graphics2D.GraphicsDirector;
-import wotlas.libs.graphics2D.menu.Menu2D;
-import wotlas.libs.graphics2D.menu.Menu2DManager;
-import wotlas.libs.graphics2D.menu.SimpleMenu2D;
+import wotlas.libs.graphics2d.GraphicsDirector;
+import wotlas.libs.graphics2d.menu.Menu2D;
+import wotlas.libs.graphics2d.menu.Menu2DManager;
+import wotlas.libs.graphics2d.menu.SimpleMenu2D;
 
 /** Manages all the game menus the user can access by right-clicking on game objects, players, etc ...
  * @author Aldiss
- * @see wotlas.libs.graphics2D.menu.Menu2DManager
+ * @see wotlas.libs.graphics2d.menu.Menu2DManager
  */
 
 public class MenuManager extends Menu2DManager {

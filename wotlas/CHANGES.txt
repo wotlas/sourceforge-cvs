@@ -19,6 +19,7 @@ Sleeping Owl - Preparing library separation and vyger
  - 12/21/07 - Moving the class 'wotlas.common.objects.inventories.InventoryLayout' : it uses wotlas 
 client references, it should be moved in wotlas.client.screen.plugin.
  - 12/21/07 - Fix wotlas.utils.Tools : using HashSet in order to have once time a class or a resource.
+ - 12/21/07 - Fix: font 'dialog' cause NullPointerException in menu 2D
 
 Sleeping Owl - Jdk 1.6 compliant task - more clean up
  - 12/13/07 - eclipse-netbeans development : cleanup and checkstyle

@@ -84,14 +84,14 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
         // 3 - Chat selection/quit
         ChatList chatList = player.getChatList();
         if (chatList == null) {
-            return;
-        } // nothing to do
+            return; // nothing to do
+        }
 
         if (this.isMoving) {
             // chat reset
             if (player.getCurrentChatPrimaryKey().equals(ChatRoom.DEFAULT_CHAT)) {
-                return;
-            } // nothing to do
+                return; // nothing to do
+            }
 
             // we leave the current chatroom IF there are still chatters in it
             // and if we are not its creator...
@@ -139,8 +139,8 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
                             }
 
                             if (chatRoom == null) {
-                                continue;
-                            } // no near chat room change
+                                continue; // no near chat room change
+                            }
 
                             if (nearPlayer == null) {
                                 // we are influenced by the nearest player, we do not influence him
@@ -161,8 +161,8 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
             }
 
             if (chatRoom == null) {
-                return;
-            } // no player near us, or no chat...
+                return; // no player near us, or no chat...
+            } 
 
             // New chat selected !
             if (nearPlayer == null) {

@@ -135,6 +135,7 @@ public class NetReceiver extends NetThread {
                     } else
                         msg.doBehaviour(this.sessionContext); // execute the message's behaviour code...
                 } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
                     Debug.signal(Debug.WARNING, this, e);
                     this.inStream.skipBytes(this.inStream.available()); // cleanse the source ;)
                 }
@@ -147,6 +148,7 @@ public class NetReceiver extends NetThread {
             Debug.signal(Debug.WARNING, this, "Connection closed : " + ioe.toString());
         } catch (Exception e) {
             // Real error !
+            // e.printStackTrace();
             Debug.signal(Debug.ERROR, this, e); // serious error while processing message
         }
 
@@ -191,6 +193,7 @@ public class NetReceiver extends NetThread {
                     } else
                         msg.doBehaviour(this.sessionContext); // execute the message's behaviour code...
                 } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
                     Debug.signal(Debug.WARNING, this, e);
                     this.inStream.skipBytes(this.inStream.available()); // cleanse the source ;)
                     return;

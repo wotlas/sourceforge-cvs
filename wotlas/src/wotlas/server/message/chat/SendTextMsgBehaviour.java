@@ -70,8 +70,8 @@ public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageB
             ChatCommandProcessor processor = ServerDirector.getDataManager().getChatCommandProcessor();
 
             if (processor.processCommand(this.message, player, this)) {
-                return;
-            } // end of message process if the command returns true
+                return;  // end of message process if the command returns true
+            }
         // if the command returns false we continue the message process
         }
 

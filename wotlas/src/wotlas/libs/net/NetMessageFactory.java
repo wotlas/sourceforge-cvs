@@ -177,8 +177,9 @@ public class NetMessageFactory {
 
         Class searchedClass = (Class) this.msgClasses.get(msgSuperClassName);
 
-        if (searchedClass == null)
+        if (searchedClass == null) {
             throw new ClassNotFoundException(msgSuperClassName);
+        }
 
         return (NetMessageBehaviour) searchedClass.newInstance();
     }

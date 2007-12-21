@@ -173,8 +173,8 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
                 error = true;
             }
         } else {
-            error = true;
-        } // Bad MapExit location !!
+            error = true; // Bad MapExit location !!
+        } 
 
         if (error) {
             sendError(player, "Target Map not found ! " + this.location);

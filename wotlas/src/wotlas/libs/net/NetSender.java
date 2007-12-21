@@ -128,9 +128,8 @@ public class NetSender extends NetThread {
      */
     @Override
     public void run() {
-        if (this.senderType == NetSender.USER_AGGREGATION) // we have nothing to do here
-        {
-            return;
+        if (this.senderType == NetSender.USER_AGGREGATION) {
+            return; // // we have nothing to do here
         }
 
         try {
@@ -159,8 +158,8 @@ public class NetSender extends NetThread {
 
                                 tr = this.aggregationTimeout - System.currentTimeMillis() - t0;
                                 if (tr < 3) {
-                                    break;
-                                } // aggregation end, we are not going to loop again for 3ms
+                                    break; // aggregation end, we are not going to loop again for 3ms
+                                } 
                             }
                         } else {
                             this.stopAggregation = false;

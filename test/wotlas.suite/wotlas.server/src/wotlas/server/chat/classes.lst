@@ -1,0 +1,17 @@
+# File used to find list of classes in a loaded jar.
+wotlas/server/chat
+wotlas/server/chat/AwayChatCommand.class
+wotlas/server/chat/BellChatCommand.class
+wotlas/server/chat/BlackAjahChatCommand.class
+wotlas/server/chat/FanfareChatCommand.class
+wotlas/server/chat/FindChatCommand.class
+wotlas/server/chat/HelpChatCommand.class
+wotlas/server/chat/KillChatCommand.class
+wotlas/server/chat/KnockChatCommand.class
+wotlas/server/chat/LieChatCommand.class
+wotlas/server/chat/LogChatCommand.class
+wotlas/server/chat/MakeBotChatCommand.class
+wotlas/server/chat/ManualChatCommand.class
+wotlas/server/chat/MsgChatCommand.class
+wotlas/server/chat/ServerChatCommand.class
+wotlas/server/chat/WhoChatCommand.class

@@ -383,7 +383,7 @@ public class FileTools {
         Vector list = new Vector(10);
 
         for (int i = 0; i < flist.length; i++) {
-            if (!flist[i].isDirectory())
+            if (!flist[i].isDirectory() || flist[i].getPath().indexOf("CVS")!=-1)
                 continue;
 
             if (flist[i].getPath().endsWith(File.separator))

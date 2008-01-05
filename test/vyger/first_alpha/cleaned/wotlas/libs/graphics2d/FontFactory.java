@@ -116,7 +116,10 @@ public class FontFactory {
          **  Note : this manual load is temporary, when I'll have time I'll implement
          **  a simple dynamic font download method and suppress manual declaration.
          **/
-        addFont(null, new Font("Dialog", Font.PLAIN, 10));
+        Font ftDialog = new Font("Dialog", Font.PLAIN, 10);
+        addFont("dialog", ftDialog);
+        addFont(null, ftDialog);
+        
         Font ftLucida = loadUserFont("Lblack.ttf");
         addFont("Lucida Blackletter Regular", ftLucida);
         addFont("Lucida Blackletter", ftLucida);

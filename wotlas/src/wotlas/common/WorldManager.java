@@ -454,9 +454,6 @@ public class WorldManager {
         for (int w = 0; w < worldList.length; w++) {
 
             // we load the world object
-            if (worldList[w].endsWith("/CVS/") || worldList[w].endsWith("\\CVS\\"))
-                continue; // this is a CVS directory
-
             WorldMap world = (WorldMap) this.rManager.loadObject(worldList[w] + WorldManager.WORLD_FILE);
 
             if (world == null) {
@@ -542,10 +539,6 @@ public class WorldManager {
 
             // ok, here we go ! we load all the objects we can find...
             for (int w = 0; w < worldList.length; w++) {
-
-                // we load the world that contain objects
-                if (worldList[w].endsWith("/CVS/") || worldList[w].endsWith("\\CVS\\"))
-                    continue; // this is a CVS directory
 
                 // we load all the towns of this world
                 String townList[] = this.rManager.listUniverseDirectories(worldList[w]);

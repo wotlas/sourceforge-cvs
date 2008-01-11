@@ -1,0 +1,34 @@
+#WotLas 1.0 Saved Object
+#Sat Dec 23 21:36:15 CET 2000
+class=wotlas.libs.wizard.JWizardStepParameters
+isDynamic=false
+isLastStep=false
+isNextButtonEnabled=true
+isPrevButtonEnabled=true
+
+stepClass=wotlas.libs.wizard.step.JWizardStepComboBoxNet
+stepTitle=Information\ Choice\ Step\ (JWizardStepComboBox)
+
+stepPropertiesKey=7
+stepPropertiesValue=7
+
+stepPropertiesKey.0=init.label0
+stepPropertiesValue.0=Kyzophrenic\ Proton\ \:
+
+stepPropertiesKey.1=init.nbChoices
+stepPropertiesValue.1=4
+
+stepPropertiesKey.2=init.choice0
+stepPropertiesValue.2=Proton
+
+stepPropertiesKey.3=init.choice1
+stepPropertiesValue.3=Neutron
+
+stepPropertiesKey.4=init.choice2
+stepPropertiesValue.4=Krypton
+
+stepPropertiesKey.5=init.choice3
+stepPropertiesValue.5=Trypton
+
+stepPropertiesKey.6=init.info0
+stepPropertiesValue.6=\nPlease\ note\ these\ fields\ are\ very\ important\ and\ should\ not\ be\ set\ without\ a\ good\ understanding\ of\ neutronic\ computing.

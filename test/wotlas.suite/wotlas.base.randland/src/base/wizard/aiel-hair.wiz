@@ -1,0 +1,41 @@
+#WotLas 1.0 Saved Object
+#Sat Dec 23 21:36:16 CET 2000
+class=wotlas.libs.wizard.JWizardStepParameters
+isDynamic=false
+isLastStep=false
+isNextButtonEnabled=true
+isPrevButtonEnabled=true
+
+stepClass=wotlas.libs.wizard.step.JWizardStepListNet
+stepTitle=Aiel\ Hair\ Color
+
+stepPropertiesKey=8
+stepPropertiesValue=8
+
+stepPropertiesKey.0=init.label0
+stepPropertiesValue.0=Select\ your\ hair\ color\ :
+
+stepPropertiesKey.1=init.nbChoices
+stepPropertiesValue.1=3
+
+stepPropertiesKey.2=init.choice0
+stepPropertiesValue.2=reddish
+
+stepPropertiesKey.3=init.choice1
+stepPropertiesValue.3=gray
+
+stepPropertiesKey.4=init.choice2
+stepPropertiesValue.4=white
+
+# SERVER SIDE INCLUDES
+
+# Method to call to proceed data
+stepPropertiesKey.5=server.method
+stepPropertiesValue.5=setHairColor
+
+# Links
+stepPropertiesKey.6=server.next
+stepPropertiesValue.6=player-name.wiz
+
+stepPropertiesKey.7=server.previous
+stepPropertiesValue.7=aiel-rank.wiz

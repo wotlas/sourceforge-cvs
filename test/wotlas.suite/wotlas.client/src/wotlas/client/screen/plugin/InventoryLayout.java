@@ -49,10 +49,11 @@ public class InventoryLayout {
 
     private ImageIdentifier backgroundId;
 
-    /** Empty Constructor for persitence.
+    /** Empty Constructor for persistence.
      * Data is loaded by the PersistenceManager.
      */
     public InventoryLayout() {
+        super();
     }
 
     public ScreenRectangle getBagSlot() {
@@ -183,9 +184,7 @@ public class InventoryLayout {
         String fileName = rManager.getLayoutsDir() + character.getClass().getName();
         InventoryLayout cfg = null;
 
-        if (new File(fileName).exists()) {
-            cfg = (InventoryLayout) rManager.loadObject(fileName);
-        }
+        cfg = (InventoryLayout) rManager.loadObject(fileName);
 
         if (cfg == null) {
             Debug.signal(Debug.ERROR, null, "Failed to load WotCharacter Layout. Creating a new one.");

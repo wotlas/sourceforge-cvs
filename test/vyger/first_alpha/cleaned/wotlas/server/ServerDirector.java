@@ -207,10 +207,7 @@ public class ServerDirector implements Runnable, NetServerListener {
         }
 
         // STEP 1 - Creation of the ResourceManager
-        ServerDirector.resourceManager = new ResourceManager();
-
-        if (!ServerDirector.resourceManager.inJar())
-            ServerDirector.resourceManager.setBasePath(basePath);
+        ServerDirector.resourceManager = new ResourceManager(basePath, true);
 
         // STEP 2 - We create a LogStream to save our Debug messages to disk.
         try {

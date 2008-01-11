@@ -114,10 +114,7 @@ public class EditTile {
         }
 
         // STEP 1 - Creation of the ResourceManager
-        EditTile.resourceManager = new ResourceManager();
-
-        if (!EditTile.resourceManager.inJar())
-            EditTile.resourceManager.setBasePath(basePath);
+        EditTile.resourceManager = new ResourceManager(basePath, true);
 
         // STEP 2 - Start a JLogStream to display our Debug messages
         try {

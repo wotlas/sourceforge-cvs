@@ -50,22 +50,15 @@ import wotlas.utils.ScreenRectangle;
 public class WorldGenerator {
 
     /*------------------------------------------------------------------------------------*/
-
-    /** Main method.
-    *  @param argv not used
-    */
-    public static void main(String argv[]) {
-
-        /*  first of all Manage the Preloader for WorldGenerator*/
-        WorldManager.PRELOADER_STATUS = PreloaderEnabled.LOAD_ALL;
-
+    /**
+     *  WORLD CREATION : RANDLAND
+     * @return Randland World.
+     */
+    public static final WorldMap createRandlandWorld() {        
+	
         float halfPI = (float) (Math.PI / 2);
 
-        // STEP 2 - WORLD CREATION : RANDLAND
-        WorldMap worldMaps[] = new WorldMap[1];
-
         WorldMap worldMap = new WorldMap();
-        worldMaps[0] = worldMap;
 
         worldMap.setWorldMapID(0);
         worldMap.setFullName("RandLand");
@@ -170,7 +163,6 @@ public class WorldGenerator {
         worldMap.setTownMaps(townMaps);
 
         // Tar Valon Creation
-
         TownMap townMap = new TownMap(755, 277, 17, 17);
         townMaps[0] = townMap;
 
@@ -2424,8 +2416,47 @@ public class WorldGenerator {
 
         rooms[8].addRoomLink(rooms[5].getRoomLinks()[0]);
 
+        return worldMap;
+    }
+
+    /*------------------------------------------------------------------------------------*/
+
+    /** Main method.
+     *  @param argv : -debug or -base=xxx
+     */
+    public static void main(String argv[]) {
+
+        /*  first of all Manage the Preloader for WorldGenerator*/
+        WorldManager.PRELOADER_STATUS = PreloaderEnabled.LOAD_ALL;
+        String basePath = null;
+        for (int i = 0; i < argv.length; i++) {
+
+            if (!argv[i].startsWith("-"))
+                continue;
+            
+            if (argv[i].equals("-debug")) { 
+
+                // -- TO SET THE DEBUG MODE --
+                System.out.println("mode DEBUG on");
+                Debug.displayExceptionStack(true);
+                
+            } else if (argv[i].equals("-base")) { 
+
+                // -- TO SET THE CONFIG FILES LOCATION --
+                if (i == argv.length - 1) {
+                    System.out.println("Location missing.");
+                    return;
+                }
+                basePath = argv[i + 1];
+            }
+        }
+        
+        // STEP 2 - WORLD CREATION : RANDLAND
+        WorldMap worldMaps[] = new WorldMap[1];
+        worldMaps[0] = WorldGenerator.createRandlandWorld();
+
         // STEP XX - We save this simple universe.
-        ResourceManager rManager = new ResourceManager();
+        ResourceManager rManager = new ResourceManager(basePath, true);
         WorldManager wManager = new WorldManager(worldMaps, rManager);
 
         if (wManager.saveUniverse(true))

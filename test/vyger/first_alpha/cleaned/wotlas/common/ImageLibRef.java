@@ -35,6 +35,7 @@ public interface ImageLibRef extends ImageLibraryReference {
     /** DRAWABLE PRIORITIES
      */
     public final static short MAP_PRIORITY = 0; // lowest priority, drawn first
+
     public final static short SECONDARY_MAP_PRIORITY = 3;
     public final static short HOUSE_FLOOR_PRIORITY = 5;
     public final static short CARPET_FLOOR_PRIORITY = 7;
@@ -43,6 +44,7 @@ public interface ImageLibRef extends ImageLibraryReference {
     public final static short PRIMARY_WALL_POS2_PRIORITY = 13;
     public final static short PRIMARY_WALL_END_PRIORITY = 15;
     public final static short CENTRAL_FLOOR_PRIORITY = 17;
+
     public final static short SHADOW_PRIORITY = 30; // shadows
     public final static short AURA_PRIORITY = 50; // small player auras
     public final static short OBJECT_PRIORITY = 70; // wotlas objects
@@ -50,10 +52,12 @@ public interface ImageLibRef extends ImageLibraryReference {
     public final static short ONEPOWER_PRIORITY = 110; // one power effects
     public final static short DOOR_PRIORITY = 130; // doors
     public final static short WAVE_PRIORITY = 150; // waves when the player emits sounds
+
     public final static short SECONDARY_WALL_ANGLE_PRIORITY = 170;
     public final static short SECONDARY_WALL_POS1_PRIORITY = 172;
     public final static short SECONDARY_WALL_POS2_PRIORITY = 174;
     public final static short SECONDARY_WALL_END_PRIORITY = 176;
+
     public final static short TEXT_PRIORITY = 200;
 
     /*------------------------------------------------------------------------------------*/

@@ -25,11 +25,11 @@ import wotlas.common.Player;
 /** Interface of a Chat.
  *
  * @author Petrus
- * @see wotlas.server.ChatImpl
- * @see wotlas.client.ChatImpl
+ * @see wotlas.server.ChatListImpl
+ * @see wotlas.client.ChatListImpl
  */
-
 public interface ChatList {
+
     /** To get the number of existing ChatRooms.
      */
     public int getNumberOfChatRooms();

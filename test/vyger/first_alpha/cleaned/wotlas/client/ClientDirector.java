@@ -129,10 +129,7 @@ public class ClientDirector {
         }
 
         // STEP 1 - Creation of the ResourceManager
-        ClientDirector.resourceManager = new ResourceManager();
-
-        if (!ClientDirector.resourceManager.inJar())
-            ClientDirector.resourceManager.setBasePath(basePath);
+        ClientDirector.resourceManager = new ResourceManager(basePath, false);
 
         // STEP 2 - Start a JLogStream to display our Debug messages
         try {

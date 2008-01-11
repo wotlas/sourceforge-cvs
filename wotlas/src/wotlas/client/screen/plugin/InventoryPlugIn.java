@@ -75,8 +75,11 @@ public class InventoryPlugIn extends JPanelPlugIn {
 
         // We load the background        
         ImageLibrary imLib = ClientDirector.getDataManager().getImageLibrary();
-        BufferedImage background = imLib.getImage(inventoryLayout.getBackgroundId());
-        g.drawImage(background, 0, 0, null);
+        ImageIdentifier bgId = inventoryLayout.getBackgroundId();
+        if (bgId!=null) {
+          BufferedImage background = imLib.getImage(inventoryLayout.getBackgroundId());
+          g.drawImage(background, 0, 0, null);
+        }
 
         // Debug
         BaseObject bObject = new BaseObject();

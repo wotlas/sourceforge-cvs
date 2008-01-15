@@ -23,18 +23,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.StringTokenizer;
-import java.util.Vector;
-import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.swing.JOptionPane;
@@ -65,7 +60,7 @@ public class Tools {
     /** Is the Java version higher than the "min_required_version" string ?
      *  If it's not the case we return false and signal an ERROR to the Debug utility.
      *
-     * @param required_min_version the minimum version number acceptable for this JVM
+     * @param min_required_version the minimum version number acceptable for this JVM
      *        ("1.2.2" for example).
      * @return true if the JVM version is higher, false otherwise.
      */
@@ -310,7 +305,7 @@ public class Tools {
      *
      *  @param interfaceName the fully-qualified name of the interface whose implementations are wanted
      *                       such as wotlas.server.chat.ChatCommand
-     *  @param filters package names where to perform the search, if you want to search
+     *  @param packages package names where to perform the search, if you want to search
      *                 everywhere just give a null value or new String[0].
      *  @return the found classes that implement the given interface.
      *  @exception ClassNotFoundException if the class of the interface
@@ -385,7 +380,7 @@ public class Tools {
 
                         entry = entry.substring(0, entry.lastIndexOf(".class"));
                         // jar & zip entries use '/'.
-                        entry = entry.replace('/', '.'); 
+                        entry = entry.replace('/', '.');
 
                         if (packageNames != null) {
                             // is it a class from one of our packages ?

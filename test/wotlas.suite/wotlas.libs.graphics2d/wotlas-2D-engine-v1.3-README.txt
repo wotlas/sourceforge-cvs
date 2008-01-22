@@ -1,0 +1,53 @@
+Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
+Copyright (C) 2001 - 2008 WOTLAS Team
+
+WOTLAS Graphics - 2D engine v1.3 RELEASE NOTES
+22 January 2008
+
+
+ This is the package you need to download if you want to use our 2D graphics engine.
+
+CONTENTS
+--------
+
+ * wotlas 2D graphics engine source code v1.3 (wotlas directory).
+ * JAR file of the 2D graphics engine v1.3 .
+ * API documentation.
+
+ * demo source code & jar (wotlas.libs.graphics2d.demo directory).
+ * shell scripts to re-build the API and demo.
+
+
+FEATURES
+--------
+
+ * See the 'dev-docs/index.html' file of the package.
+
+
+CHANGES
+--------
+
+ * See the 'CHANGES.txt' file of the package.
+
+
+INSTALLATION
+------------
+
+ To run the demo and use the JAR you only need the Java 1.5 or higher.
+
+ 1 - Put the 'wotlas-libs-graphics2d.jar' file in your Java JAR directory (if you have one).
+
+ 2 - edit your environment's CLASSPATH variable. Should be something like this CLASSPATH=/usr/local/apps/java/jar/wotlas-libs-graphics2d.jar;.;/usr/local/apps/java/jar/other.jar
+
+
+CONTACT FOR MORE INFOS, BUG REPORT, SUPPORT
+-------------------------------------------
+
+ Please go to http://wotlas.sourceforge.net/
+ 
+
+WOTLAS HOME PAGE
+----------------
+
+ Please go to http://sourceforge.net/projects/wotlas/
+

@@ -1,0 +1,63 @@
+*
+* Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
+* Copyright (C) 2001-2008 WOTLAS Team
+*
+* CHANGES BETWEEN VERSIONS
+* ( File Best Viewed in 1024x768 or above)
+
+* The version numbers of this 2D graphics engine follows the version
+* numbers of our wotlas project.
+*
+
+CHANGES BETWEEN 1.3.1 AND ?
+-------------------------
+
+Sleeping Owl - Preparing library separation and vyger
+
+ - 01/22/08 - test/wotlas.suite : adding wotlas.libs.graphics2d.demo module
+to test the graphics2d library and dev documents from the wotlas-2D-engine-v1.3.zip 
+archive. After building the wotlas.suite, the script launch.bat/launch.sh in
+the demo module works and launch the same example as in the archive.
+
+
+CHANGES BETWEEN V1.2.2 AND V1.3 (25 May 2002)
+----------------------------------------------
+
+ - updated the ImageLibrary to support the use of images from a non-disk source : JAR, Network
+ - separated the FontFactory from the ImageLibrary.
+ - updated the FontFactory to support the use of images from a non-disk source : JAR, Network
+ - added a pop-up menu system : transparent, animated, draggable, allowing high numbers of items.
+ - added new brightness filter hability for sprites, enabled the use brightness masks.
+
+
+CHANGES BETWEEN V1.2.2 AND V1.2 (6 April 2002)
+----------------------------------------------
+
+ - added a new graphics director : EnhancedGraphicsDirector. This new director uses Java 1.4 Volatile Images for double buffering.
+ - added a screen==null test in the graphics directors. This is to prevent rendering before the init() method is called.
+
+
+CHANGES BETWEEN V1.2 AND V1.1.2 (18 March 2002)
+-----------------------------------------------
+
+ - added a FontFactory to manage the fonts usage in the 2D engine. This is a static factory that will become
+   more dynamic in a next version. The ImageLibrary uses the userFontPath string (second constructor parameter)
+   to create the FontFactory.
+ - added support of other image types to our 2D graphics engine (thanks to an idea of D. Moonfire)
+ - corrected a bug in TextDrawable due to a behaviour change of Java 1.4 for Rectangle.intersects()
+   (thanks to knut).
+ - made some exception messages more explicit.
+
+
+CHANGES BETWEEN V1.1.2 AND V1.1.1 (20 January 2002)
+---------------------------------------------------
+
+ - The ImageLibrary now has a tree structure (composed of directories and images).
+ - ImageIdentifier are now easier to use (see the package's demo).
+ - corrected some minor a MultiRegionImage bug.
+
+
+CHANGES BETWEEN V1.1.1 AND V1.0 (20 December 2001)
+--------------------------------------------------
+
+ - bugs found since v1.0 have been fixed.

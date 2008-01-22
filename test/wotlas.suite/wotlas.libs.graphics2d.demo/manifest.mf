@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+OpenIDE-Module: wotlas.libs.graphics2d.demo
+OpenIDE-Module-Implementation-Version: 131
+OpenIDE-Module-Layer: wotlas/libs/graphics2d/demo/layer.xml
+OpenIDE-Module-Localizing-Bundle: wotlas/libs/graphics2d/demo/Bundle.properties
+OpenIDE-Module-Specification-Version: 1.3
+

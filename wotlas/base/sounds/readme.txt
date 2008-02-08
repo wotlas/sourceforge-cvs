@@ -1,0 +1,1 @@
+This is where the wotlas sounds are stored. Do not remove this file or this directory.

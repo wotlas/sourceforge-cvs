@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -572,12 +573,13 @@ public class Tools {
                 dirPath = dirPath.substring(1, dirPath.length());
             }
             // 2 - We analyze our list of resources.
-            InputStream is = Tools.class.getResourceAsStream(resourcesLstName);
-            if (is == null) {
+            URL url = ResourceLookup.getClassResourceUrl(Tools.class, resourcesLstName);
+            if (url == null) {
                 String msg = "File not found " + resourcesLstName;
                 Debug.signal(Debug.ERROR, null, msg);
                 return new String[0];
             }
+            InputStream is = url.openStream();
             BufferedReader in = new BufferedReader(new InputStreamReader(is));
             // 1st line is a comment.
             String name = in.readLine();

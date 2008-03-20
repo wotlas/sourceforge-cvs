@@ -23,6 +23,7 @@ import java.awt.Color;
 import wotlas.common.ImageLibRef;
 import wotlas.common.Player;
 import wotlas.common.environment.EnvironmentManager;
+import wotlas.common.objects.inventories.Inventory;
 import wotlas.libs.graphics2d.Drawable;
 import wotlas.libs.graphics2d.ImageIdentifier;
 import wotlas.libs.graphics2d.drawable.FakeSprite;
@@ -199,7 +200,21 @@ public class DarkOne extends WotCharacter {
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-    /** write object data with serialize.
+    /**
+     * To get a new Inventory for this WotCharacter.<br>
+     * In this case, it is null. The Dark One has no Inventory.
+     * 
+     * @return null
+     */
+    @Override
+    public Inventory createInventory() {
+	return null;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+    /**
+     * write object data with serialize.
      */
     @Override
     public void writeExternal(java.io.ObjectOutput objectOutput) throws java.io.IOException {

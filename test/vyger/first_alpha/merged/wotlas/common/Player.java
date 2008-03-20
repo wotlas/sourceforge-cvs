@@ -21,6 +21,7 @@ package wotlas.common;
 
 import wotlas.common.character.BasicChar;
 import wotlas.common.movement.MovementComposer;
+import wotlas.common.objects.ObjectManager;
 import wotlas.common.screenobject.PlayerOnTheScreen;
 import wotlas.common.universe.PreciseLocationOwner;
 import wotlas.common.universe.Room;
@@ -165,7 +166,26 @@ public interface Player extends PreciseLocationOwner {
      */
     public void setBasicChar(BasicChar basicChar);
 
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+    /**
+     * To get the player's object manager
+     * 
+     * @return player object manager
+     */
+    public ObjectManager getObjectManager();
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+    /**
+     * To set the player's object manager.
+     * 
+     * @param objectManager
+     *                player object manager
+     */
+    public void setObjectManager(ObjectManager objectManager);
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
     /** To get the player's movement Composer.
      *

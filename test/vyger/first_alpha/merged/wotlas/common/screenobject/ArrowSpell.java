@@ -18,18 +18,15 @@
 
 package wotlas.common.screenobject;
 
-import java.awt.Point;
-import wotlas.client.ClientDirector;
 import wotlas.common.ImageLibRef;
+import wotlas.common.PrimaryKeyGenerator;
 import wotlas.common.environment.EnvironmentManager;
 import wotlas.common.movement.ScreenObjectPathFollower;
-import wotlas.common.movement.ServerPathFollower;
 import wotlas.common.router.MessageRouter;
 import wotlas.libs.graphics2d.Drawable;
 import wotlas.libs.graphics2d.GraphicsDirector;
 import wotlas.libs.graphics2d.drawable.FakeSprite;
 import wotlas.libs.pathfinding.AStarDoubleServer;
-import wotlas.server.ServerDirector;
 
 /** 
  *
@@ -47,7 +44,7 @@ public class ArrowSpell extends SpellOnTheScreen {
         this.name = "arrowSpell";
         this.x = x;
         this.y = y;
-        this.primaryKey = "" + ServerDirector.GenUniqueKeyId();
+	this.primaryKey = "" + PrimaryKeyGenerator.GenUniqueKeyId();
         this.loc = null;
         this.routerMsg = routerMsg;
         this.indexOfImage = new short[2];
@@ -90,14 +87,14 @@ public class ArrowSpell extends SpellOnTheScreen {
     @Override
     public void serverInit(AStarDoubleServer aStarDoubleServer) {
         this.trajectoryLock = new byte[0];
-        this.movementComposer = new ServerPathFollower(this.x, this.y, 0, aStarDoubleServer);
-        this.movementComposer.init(this);
-        this.movementComposer.resetMovement();
+        // FIXME ???? this.movementComposer = new ServerPathFollower(this.x, this.y, 0, aStarDoubleServer);
+        //this.movementComposer.init(this);
+        //this.movementComposer.resetMovement();
     }
 
     public void startMove() {
         System.out.println(" arrowSpell : startMove");
-        this.movementComposer.moveTo(new Point(this.endX, this.endY), ServerDirector.getDataManager().getWorldManager());
+        // FIXME ???? this.movementComposer.moveTo(new Point(this.endX, this.endY), ServerDirector.getDataManager().getWorldManager());
     }
 
     /** Tick
@@ -182,7 +179,7 @@ public class ArrowSpell extends SpellOnTheScreen {
     }
 
     public void destroy() {
-        ClientDirector.getDataManager().getGraphicsDirector().removeDrawable(getDrawable());
-        ClientDirector.getDataManager().removeScreenObject(this);
+        // FIXME ???? ClientDirector.getDataManager().getGraphicsDirector().removeDrawable(getDrawable());
+        // FIXME ???? ClientDirector.getDataManager().removeScreenObject(this);
     }
 }

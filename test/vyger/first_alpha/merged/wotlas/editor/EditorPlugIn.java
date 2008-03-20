@@ -45,8 +45,10 @@ import wotlas.common.ImageLibRef;
 import wotlas.common.environment.EnvironmentManager;
 import wotlas.common.universe.MapExit;
 import wotlas.common.universe.PreloaderEnabled;
+import wotlas.common.universe.StoreTileMapBackground;
 import wotlas.common.universe.TileManagerFlat;
 import wotlas.common.universe.TileMap;
+import wotlas.common.universe.TileMapManager;
 import wotlas.common.universe.WotlasLocation;
 import wotlas.libs.aswing.AButton;
 import wotlas.libs.graphics2d.Drawable;
@@ -67,6 +69,11 @@ public class EditorPlugIn extends JPanelPlugIn {
 
     /** extension to store files of editor
     */
+    private static final long serialVersionUID = -3476939669879908936L;
+
+    /**
+     * extension to store files of editor
+     */
     public static final String GRAPHIC_DATA_EXPORTED_EXT = ".background";
 
     /*------------------------------------------------------------------------------------*/

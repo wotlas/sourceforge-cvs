@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.message.chat;
 
 import java.util.Hashtable;
@@ -32,17 +31,14 @@ import wotlas.utils.Debug;
  *
  * @author Petrus
  */
-
 public class ChatRoomCreatedMsgBehaviour extends ChatRoomCreatedMessage implements NetMessageBehaviour {
 
     /*------------------------------------------------------------------------------------*/
-
     /** To tell if this message is to be invoked later or not.
      */
     private boolean invokeLater = true;
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public ChatRoomCreatedMsgBehaviour() {
@@ -50,7 +46,6 @@ public class ChatRoomCreatedMsgBehaviour extends ChatRoomCreatedMessage implemen
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
@@ -76,15 +71,18 @@ public class ChatRoomCreatedMsgBehaviour extends ChatRoomCreatedMessage implemen
         Hashtable<String, PlayerImpl> players = dataManager.getPlayers();
         PlayerImpl sender = null;
 
-        if (players != null)
+        if (players != null) {
             sender = players.get(this.creatorPrimaryKey);
+        }
 
-        if (sender == null)
+        if (sender == null) {
             Debug.signal(Debug.WARNING, this, "Could not find the sender of this message : " + this.creatorPrimaryKey);
+        }
 
         // We create the new chat
-        if (this.primaryKey == null || this.name == null || this.creatorPrimaryKey == null)
+        if (this.primaryKey == null || this.name == null || this.creatorPrimaryKey == null) {
             Debug.signal(Debug.ERROR, this, "Created new chat with bad parameters !");
+        }
 
         ChatRoom chatRoom = new ChatRoom();
         chatRoom.setPrimaryKey(this.primaryKey);
@@ -97,10 +95,11 @@ public class ChatRoomCreatedMsgBehaviour extends ChatRoomCreatedMessage implemen
             // We created this chat !
             boolean success = dataManager.getClientScreen().getChatPanel().setCurrentJChatRoom(this.primaryKey);
 
-            if (success)
+            if (success) {
                 dataManager.getClientScreen().getChatPanel().addPlayer(this.primaryKey, player);
-            else
+            } else {
                 Debug.signal(Debug.ERROR, this, "Failed to create owner's new ChatRoom");
+            }
         } else {
             // someone else created the chatroom
             dataManager.getClientScreen().getChatPanel().setEnabledAt(this.primaryKey, false);
@@ -109,5 +108,4 @@ public class ChatRoomCreatedMsgBehaviour extends ChatRoomCreatedMessage implemen
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

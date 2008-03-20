@@ -48,9 +48,7 @@ public class SimpleMenu2DDrawable extends Drawable {
 
     /** Default Font Name used.
      */
-    // static private String defaultFontName = "dialog";
-    // diego : i cant see menu 'cause it seems dialog isnt the right name, at least on my pc with win2k
-    static private String defaultFontName = "Dialog.plain";
+    static private String defaultFontName = "dialog";
 
     /*------------------------------------------------------------------------------------*/
 

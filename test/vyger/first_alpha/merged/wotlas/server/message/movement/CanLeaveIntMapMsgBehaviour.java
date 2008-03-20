@@ -33,6 +33,7 @@ import wotlas.common.universe.WorldMap;
 import wotlas.common.universe.WotlasLocation;
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.server.GatewayServer;
+import wotlas.server.LieManager;
 import wotlas.server.PlayerImpl;
 import wotlas.server.ServerDirector;
 import wotlas.utils.Debug;
@@ -136,6 +137,8 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
                 player.setX(this.x);
                 player.setY(this.y);
                 player.setOrientation(this.orientation);
+                player.getLieManager().removeMeet(LieManager.FORGET_INTERIORMAP);
+                player.getLieManager().forget(LieManager.MEET_CHANGEINTERIORMAP);
 
                 if (gateway.transfertAccount(this.primaryKey, targetServerID)) {
                     Debug.signal(Debug.NOTICE, null, "Account Transaction " + this.primaryKey + " succeeded... sending redirection message.");
@@ -194,6 +197,8 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
         player.setX(this.x);
         player.setY(this.y);
         player.setOrientation(this.orientation);
+        player.getLieManager().removeMeet(LieManager.FORGET_INTERIORMAP);
+        player.getLieManager().forget(LieManager.MEET_CHANGEINTERIORMAP);
 
         player.sendMessage(new YouCanLeaveMapMessage(this.primaryKey, this.location, this.x, this.y, this.orientation, player.getSyncID()));
     }

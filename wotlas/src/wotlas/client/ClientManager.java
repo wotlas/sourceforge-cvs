@@ -328,6 +328,7 @@ public class ClientManager extends JIntroWizard implements ActionListener {
 
                 // Hide the Log Window ?
                 if (!ClientDirector.getClientConfiguration().getDisplayLogWindow()) {
+                    // ADD by DIEGO : REMOVE by DIEGO if( !ClientDirector.SHOW_DEBUG )
                     ClientDirector.getLogStream().setVisible(false);
                 }
 

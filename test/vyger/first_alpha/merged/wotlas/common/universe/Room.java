@@ -21,6 +21,7 @@ package wotlas.common.universe;
 
 import java.awt.Rectangle;
 import wotlas.common.WorldManager;
+import wotlas.common.objects.inventories.RoomInventory;
 import wotlas.common.router.MessageRouter;
 import wotlas.common.router.MessageRouterFactory;
 import wotlas.utils.Debug;
@@ -78,6 +79,12 @@ public class Room implements WotlasMap {
     /** Our message router. Owns the list of players of this map.
      */
     private transient MessageRouter messageRouter;
+
+    /**
+     * RoomInventory used to get objects here.<br>
+     * Transient because there are saved elsewhere.
+     */
+    private transient RoomInventory inventory;
 
     /*------------------------------------------------------------------------------------*/
 
@@ -158,6 +165,15 @@ public class Room implements WotlasMap {
 
     public MessageRouter getMessageRouter() {
         return this.messageRouter;
+    }
+
+    public RoomInventory getInventory() {
+        return this.inventory;
+    }
+
+    public void setInventory(RoomInventory inventory) {
+        this.inventory = inventory;
+        inventory.setOwnerRoom(this);
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

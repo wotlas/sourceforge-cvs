@@ -31,6 +31,7 @@ import wotlas.common.universe.TileMap;
 import wotlas.common.universe.TownMap;
 import wotlas.common.universe.WorldMap;
 import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.server.LieManager;
 import wotlas.server.PlayerImpl;
 import wotlas.server.ServerDirector;
 import wotlas.utils.Debug;
@@ -39,6 +40,16 @@ import wotlas.utils.ScreenPoint;
 /**
  * Associated behaviour to the CanLeaveTownMapMessage...
  *
+ *          TO LieManager should be addes the TILEMAPS
+ *
+ *                      player.getLieManager().removeMeet(LieManager.FORGET_TOWNMAP);
+ *                      player.getLieManager().forget(LieManager.MEET_CHANGETOWNMAP);
+ *
+ *                      player.getLieManager().removeMeet(LieManager.FORGET_TOWNMAP);
+ *                      player.getLieManager().forget(LieManager.MEET_CHANGETOWNMAP);
+ *
+ *
+
  * @author Aldiss
  */
 
@@ -122,6 +133,8 @@ public class CanLeaveTileMapMsgBehaviour extends CanLeaveTileMapMessage implemen
             player.setX(this.x);
             player.setY(this.y);
             player.setOrientation(this.orientation);
+            player.getLieManager().removeMeet(LieManager.FORGET_TOWNMAP);
+            player.getLieManager().forget(LieManager.MEET_CHANGETOWNMAP);
 
             player.sendMessage(new YouCanLeaveMapMessage(this.primaryKey, this.location, this.x, this.y, this.orientation, player.getSyncID()));
             return;
@@ -170,6 +183,8 @@ public class CanLeaveTileMapMsgBehaviour extends CanLeaveTileMapMessage implemen
             player.setX(this.x);
             player.setY(this.y);
             player.setOrientation(this.orientation);
+            player.getLieManager().removeMeet(LieManager.FORGET_TOWNMAP);
+            player.getLieManager().forget(LieManager.MEET_CHANGETOWNMAP);
 
             player.sendMessage(new YouCanLeaveMapMessage(this.primaryKey, this.location, this.x, this.y, this.orientation, player.getSyncID()));
             return;

@@ -488,8 +488,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         synchronized (this.connectionLock) {
             if (this.connection != null) {
                 this.connection.close();
+            }
         }
-    }
     }
 
     /*------------------------------------------------------------------------------------*/
@@ -785,7 +785,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
             // Tick
             tick();
             deltaT = (int) (System.currentTimeMillis() - now);
-            
+
             if (deltaT < delay) {
                 Tools.waitTime(delay - deltaT);
             }
@@ -816,7 +816,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
             while (it.hasNext()) {
                 item = (ScreenObject) it.next();
                 if (item instanceof PlayerOnTheScreen || item instanceof SpellOnTheScreen || item instanceof NpcOnTheScreen) {
-                   item.tick();
+                    item.tick();
                 }
             }
         }
@@ -905,11 +905,11 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         if (DataManager.SHOW_DEBUG) {
             System.out.println("DataManager::onLeftClicJMapPanel");
         }
-        
+
         if (this.updatingMapData) {
             return; // updating Map Location
         }
-        
+
         // Menu clicked ?
         if (this.menuManager.isVisible()) {
             if (!this.menuManager.mouseClicked(e)) {
@@ -927,7 +927,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         // Clicked object is the game screen...
         // We move the player to that location.
         Rectangle screen = this.gDirector.getScreenRectangle();
-        
+
         synchronized (this.players) {
             //!?!?!? why? : wahy syncr playERS to move playER ?
             this.myPlayer.moveTo(new Point(e.getX() + (int) screen.getX(), e.getY() + (int) screen.getY()), this.worldManager);
@@ -1228,7 +1228,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
             this.circle = new CircleDrawable(this.myPlayer.getDrawable(), 20, this.myPlayer.getBasicChar().getColor(), true, ImageLibRef.AURA_PRIORITY);
             this.gDirector.addDrawable(this.circle);
             this.gDirector.addDrawable(this.myPlayer.getTextDrawable());
-            if (!this.selectedPlayer.getLocation().isTileMap())
+            if (this.selectedPlayer != null && !this.selectedPlayer.getLocation().isTileMap())
                 this.gDirector.addDrawable(this.selectedPlayer.getBasicChar().getAura());
             if (infoPanel != null)
                 infoPanel.setPlayerInfo(this.myPlayer);

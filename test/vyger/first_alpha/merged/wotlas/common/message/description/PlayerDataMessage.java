@@ -132,7 +132,7 @@ public class PlayerDataMessage extends NetMessage {
             ostream.writeByte(this.player.getSyncID());
 
         // Movement Composer
-        // blocked 'cause it cant be saved : on serverside is ServerPathFollower
+        // FIXME blocked 'cause it cant be saved : on serverside is ServerPathFollower
         // but on clientside should be only PathFollower
         //        ostream.writeUTF( player.getMovementComposer().getClass().getName() );
         ostream.writeUTF("wotlas.common.movement.PathFollower");

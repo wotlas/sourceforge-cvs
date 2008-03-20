@@ -1,0 +1,6 @@
+# File used to find list of classes in a loaded jar.
+wotlas/server/message/action
+wotlas/server/message/action/BasicActionWithPositionMsgBehaviour.class
+wotlas/server/message/action/BasicActionWithTargetMsgBehaviour.class
+wotlas/server/message/action/CastActionWithPositionMsgBehaviour.class
+wotlas/server/message/action/CastActionWithTargetMsgBehaviour.class

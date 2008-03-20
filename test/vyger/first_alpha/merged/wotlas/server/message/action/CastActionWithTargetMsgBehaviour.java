@@ -27,6 +27,7 @@ import wotlas.common.screenobject.NpcOnTheScreen;
 import wotlas.common.screenobject.ScreenObject;
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.server.PlayerImpl;
+import wotlas.server.action.ServerCastAction;
 
 /**
  * Associated behaviour to the ActionWithPositionMessage... 
@@ -110,15 +111,19 @@ public class CastActionWithTargetMsgBehaviour extends CastActionWithTargetMessag
         }
 
         // let's try to cast
-        if (CastAction.getCastAction(this.idOfAction).CanExecute(targetType, this.targetRange)) {
+        CastAction ca = new ServerCastAction(CastAction.getCastAction(this.idOfAction));
+        if (ca.CanExecute(targetType, this.targetRange)) {
             if (targetType == UserAction.TARGET_TYPE_SELF) {
-                CastAction.getCastAction(this.idOfAction).ExecuteToSelf(caster.getBasicChar());
-            } else
-                CastAction.getCastAction(this.idOfAction).ExecuteToTarget(caster.getBasicChar(), target.getCharData());
-        } else
-            // do cast magic : return action id, return dont work, return mana lose
+                ca.ExecuteToSelf(caster.getBasicChar());
+            } else {
+                ca.ExecuteToTarget(caster.getBasicChar(), target.getCharData());
+            }
+        } else {
+            // do cast magic : return action id, return dont work, return mana
+            // lose
             // System.out.println("uhm nothing done .....");
             ;
+        }
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

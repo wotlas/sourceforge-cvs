@@ -20,6 +20,7 @@
 package wotlas.client.screen;
 
 import java.awt.GridLayout;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -152,14 +153,11 @@ public class JMapPanel extends JPanel implements MouseListener, MouseMotionListe
     
             if (DataManager.SHOW_DEBUG)
             System.out.println("[JMapPanel] : clic sur (" + e.getX() + "," + e.getY() + ")");
-        /*    
-               if(DataManager.SHOW_DEBUG){
-                  Rectangle screen = gDirector.getScreenRectangle();
-                  System.out.println("[JMPanel] : data cut for tilemaps (" 
-                  + new Integer( (e.getX()+screen.x)/32 ) + ","
-                  + new Integer( (e.getY()+screen.y)/32 ) + ")");
-               }
-        */
+    if (DataManager.SHOW_DEBUG) {
+	    Rectangle screen = this.gDirector.getScreenRectangle();
+	    System.out.println("[JMPanel] : data cut for tilemaps (" + new Integer((e.getX() + screen.x) / 32) + ","
+		    + new Integer((e.getY() + screen.y) / 32) + ")");
+	}
         if (SwingUtilities.isRightMouseButton(e)) {
             if (DataManager.SHOW_DEBUG)
                 System.out.println("\tright clic");

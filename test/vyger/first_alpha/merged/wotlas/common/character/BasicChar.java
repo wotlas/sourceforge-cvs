@@ -21,6 +21,7 @@ package wotlas.common.character;
 
 import java.awt.Color;
 import wotlas.common.Player;
+import wotlas.common.objects.inventories.Inventory;
 import wotlas.libs.graphics2d.Drawable;
 
 /** basic class of a Character.Each Player object possess
@@ -148,4 +149,15 @@ public abstract class BasicChar extends CharData {
     }
 
     abstract public void clone(BasicChar value) throws Exception;
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+    /**
+     * To get a new Inventory for this WotCharacter.<br>
+     * In this case, it is an AielWarriorInventory.
+     * 
+     * @return a new inventory for this char
+     */
+    abstract public Inventory createInventory();
+
 }

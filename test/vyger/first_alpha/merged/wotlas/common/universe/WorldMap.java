@@ -246,9 +246,11 @@ public class WorldMap implements WotlasMap {
 
         // 1 - any data ?
         if (this.townMaps == null) {
+            this.townMaps = new TownMap[0];
             Debug.signal(Debug.WARNING, this, "WorldMap init failed: No Towns.");
         }
         if (this.tileMaps == null) {
+            this.tileMaps = new TileMap[0];
             Debug.signal(Debug.WARNING, this, "WorldMap init failed: No TileMap.");
         }
         if (this.townMaps == null && this.tileMaps == null) {

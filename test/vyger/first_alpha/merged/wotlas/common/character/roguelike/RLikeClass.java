@@ -19,10 +19,11 @@
 
 package wotlas.common.character.roguelike;
 
+import wotlas.common.DiceRollerManager;
 import wotlas.common.character.CharData;
 import wotlas.common.character.RLikeCharacter;
+import wotlas.common.objects.inventories.Inventory;
 import wotlas.libs.persistence.BackupReady;
-import wotlas.server.ServerDirector;
 
 /** Super class of Rogue Like Class character, it's added into a RLikeCharacter
  *
@@ -95,13 +96,13 @@ public abstract class RLikeClass implements BackupReady {
         int prevTotal = 0, total = 0;
         short stat;
         for (int a = 0; a < 6; a++) {
-            stat = ServerDirector.roll(3, 6);
+	    stat = DiceRollerManager.roll(3, 6);
             prevStats[a] = stat;
             prevTotal += stat;
         }
         for (int b = 0; b < 4; b++) {
             for (int i = 0; i < 6; i++) {
-                stat = ServerDirector.roll(3, 6);
+		stat = DiceRollerManager.roll(3, 6);
                 stats[i] = stat;
                 total += stat;
             }
@@ -133,10 +134,23 @@ public abstract class RLikeClass implements BackupReady {
      * to add hp, mana ; to add skills and spells and knowledge
      */
     public void gainLevel() {
-        short value = ServerDirector.roll(1, getHitDice());
+	short value = DiceRollerManager.roll(1, getHitDice());
         this.myChar.addCharAttr(CharData.ATTR_HP, value);
     }
 
     public void clone(RLikeClass value) throws Exception {
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+    /**
+     * To get a new Inventory for this WotCharacter.<br>
+     * In this case, it is an AielWarriorInventory.
+     * 
+     * @return a new inventory for this char
+     */
+    public Inventory createInventory() {
+	// TODO inventory
+	return null;
     }
 }

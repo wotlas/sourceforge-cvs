@@ -5,4 +5,4 @@ bodySlot.height=30
 bodySlot.width=20
 bodySlot.x=10
 bodySlot.y=10
-class=wotlas.common.objects.inventories.InventoryLayout
+class=wotlas.client.screen.plugin.InventoryLayout

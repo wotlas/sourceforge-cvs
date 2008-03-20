@@ -38,6 +38,8 @@ public class EnvironmentManager implements SendObjectReady {
     */
     public static boolean SHOW_DEBUG = true;
 
+    // FIXME Determine which EnvironmentManager to instanciate.
+    //static private EnvironmentManager serverEnvironment = EnvironmentManager.WotEnvironment();
     static private EnvironmentManager serverEnvironment = EnvironmentManager.RLikeEnvironment();
 
     public static final byte ENVIRONMENT_WOT = 0;

@@ -32,6 +32,7 @@ import wotlas.common.message.description.PlayerAwayMessage;
 import wotlas.common.message.description.PlayerPastMessage;
 import wotlas.common.movement.MovementComposer;
 import wotlas.common.movement.PathFollower;
+import wotlas.common.objects.ObjectManager;
 import wotlas.common.screenobject.PlayerOnTheScreen;
 import wotlas.common.universe.Room;
 import wotlas.common.universe.TileMap;
@@ -83,6 +84,10 @@ public class PlayerImpl implements Player, SpriteDataSupplier, FakeSpriteDataSup
     /** Wotlas Character
     */
     private BasicChar wotCharacter;
+    /**
+     * Object manager
+     */
+    private ClientObjectManager objectManager;
 
     /** Player state
     */
@@ -332,7 +337,29 @@ public class PlayerImpl implements Player, SpriteDataSupplier, FakeSpriteDataSup
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-    /** To get the player character past.
+    /**
+     * To get the player's object manager
+     * 
+     * @return player object manager
+     */
+    public ObjectManager getObjectManager() {
+	return this.objectManager;
+    }
+
+    /**
+     * To set the player's object manager.
+     * 
+     * @param objectManager
+     *                player object manager
+     */
+    public void setObjectManager(ObjectManager objectManager) {
+	this.objectManager = (ClientObjectManager) objectManager;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+    /**
+     * To get the player character past.
     *
     *  @return player past
     */

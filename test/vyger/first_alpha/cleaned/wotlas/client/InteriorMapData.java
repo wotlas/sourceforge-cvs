@@ -282,7 +282,7 @@ public class InteriorMapData implements MapData {
         gDirector.addDrawable(myPlayer.getGameScreenFullPlayerName());
 
         String[] strTemp2 = { room.getFullName() };
-        this.mltLocationName = new MultiLineText(strTemp2, 10, 10, Color.black, 15.0f, "Lucida Blackletter", ImageLibRef.TEXT_PRIORITY, MultiLineText.RIGHT_ALIGNMENT);
+        this.mltLocationName = new MultiLineText(strTemp2, 10, 10, Color.black, 15.0f, "Lucida Blackletter Regular", ImageLibRef.TEXT_PRIORITY, MultiLineText.RIGHT_ALIGNMENT);
         gDirector.addDrawable(this.mltLocationName);
 
         // 11 - We add eventual doors...

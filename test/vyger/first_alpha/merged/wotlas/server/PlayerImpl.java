@@ -29,6 +29,8 @@ import wotlas.common.message.chat.SendTextMessage;
 import wotlas.common.message.description.PlayerConnectedToGameMessage;
 import wotlas.common.movement.MovementComposer;
 import wotlas.common.movement.ServerPathFollower;
+// FIXME ??? import wotlas.common.movement.ServerPathFollower;
+import wotlas.common.objects.ObjectManager;
 import wotlas.common.router.MessageRouter;
 import wotlas.common.screenobject.PlayerOnTheScreen;
 import wotlas.common.universe.Room;
@@ -90,7 +92,20 @@ public class PlayerImpl implements Player, NetConnectionListener, BackupReady {
     //    protected MovementComposer movementComposer = (MovementComposer) new PathFollower();
     protected MovementComposer movementComposer = new ServerPathFollower();
 
-    /** Last time player disconnected (in days)
+    /**
+     * Lie Manager
+     */
+    protected LieManager lieManager = new LieManager();
+
+    /**
+     * Object manager
+     */
+    protected ServerObjectManager objectManager;
+    // FIXME ???
+    // transient protected ServerObjectManager objectManager;
+
+    /**
+     * Last time player disconnected (in days)
     */
     protected long lastDisconnectedTime;
 
@@ -179,6 +194,8 @@ public class PlayerImpl implements Player, NetConnectionListener, BackupReady {
 
         setMovementComposer(playerToClone.getMovementComposer());
         this.movementComposer.init(this);
+
+        setLieManager(playerToClone.getLieManager());
 
         setChatList(playerToClone.getChatList());
         setCurrentChatPrimaryKey(playerToClone.getCurrentChatPrimaryKey());
@@ -338,7 +355,8 @@ public class PlayerImpl implements Player, NetConnectionListener, BackupReady {
     /** To get the player's full name
     */
     public String getFullPlayerName() {
-        return "fullname-should be implremented";
+        return this.lieManager.getCurrentFakeName();
+        // FIXME return "fullname-should be implremented";
     }
 
     /** To get the player's full name or fake name
@@ -346,7 +364,15 @@ public class PlayerImpl implements Player, NetConnectionListener, BackupReady {
     * @return player full name
     */
     public String getFullPlayerName(PlayerImpl otherPlayer) {
-        return getFullPlayerName();
+        if (otherPlayer == null) {
+            return this.lieManager.getCurrentFakeName();
+        }
+        if (otherPlayer.getPrimaryKey().equals(getPrimaryKey())) {
+            return this.lieManager.getCurrentFakeName();
+        } else {
+            // return lieManager.getFakeName(otherPlayer);
+            return otherPlayer.getLieManager().getFakeName(this);
+        }
     }
 
     public String getFullPlayerName(Player otherPlayer) {
@@ -436,7 +462,29 @@ public class PlayerImpl implements Player, NetConnectionListener, BackupReady {
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-    /** To get the player's movement Composer.
+    /**
+     * To get the player's object manager
+     * 
+     * @return player object manager
+     */
+    public ObjectManager getObjectManager() {
+        return this.objectManager;
+    }
+
+    /**
+     * To set the player's object manager.
+     * 
+     * @param objectManager
+     *                player object manager
+     */
+    public void setObjectManager(ObjectManager objectManager) {
+        this.objectManager = (ServerObjectManager) objectManager;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+    /**
+     * To get the player's movement Composer.
     *
     *  @return player MovementComposer
     */
@@ -456,7 +504,22 @@ public class PlayerImpl implements Player, NetConnectionListener, BackupReady {
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-    /** To get lastDisconnectedTime.
+    /**
+     * To get the Lie Manager.
+     */
+    public LieManager getLieManager() {
+        return this.lieManager;
+    }
+
+    /**
+     * To set the Lie Manager.
+     */
+    public void setLieManager(LieManager lieManager) {
+        this.lieManager = lieManager;
+    }
+
+    /**
+     * To get lastDisconnectedTime.
     */
     public long getLastDisconnectedTime() {
         return this.lastDisconnectedTime;
@@ -677,6 +740,14 @@ public class PlayerImpl implements Player, NetConnectionListener, BackupReady {
             this.connection = connection;
         }
 
+        // We forget a little about players we met if we last connected 5
+        // days ago
+        if (this.lastDisconnectedTime - System.currentTimeMillis() > 5 * 86400000) {
+            this.lieManager.removeMeet(LieManager.FORGET_RECONNECT_LONG);
+        } else {
+            this.lieManager.removeMeet(LieManager.FORGET_RECONNECT);
+        }
+
         // We update our state
         this.playerState.value = PlayerState.CONNECTED;
 
@@ -826,6 +897,10 @@ public class PlayerImpl implements Player, NetConnectionListener, BackupReady {
                 if (ServerDirector.SHOW_DEBUG)
                     System.out.println("Player " + getPrimaryKey() + " sending to:" + otherPlayer.getPrimaryKey() + " msg: " + message);
                 this.connection.queueMessage(message);
+
+                if (!getPrimaryKey().equals(otherPlayer.getPrimaryKey())) {
+                    this.lieManager.addMeet(otherPlayer, LieManager.MEET_CHATMESSAGE);
+                }
             }
         }
     }
@@ -881,8 +956,13 @@ public class PlayerImpl implements Player, NetConnectionListener, BackupReady {
         objectOutput.writeObject(this.wotCharacter);
         objectOutput.writeLong(this.lastDisconnectedTime);
 
+        objectOutput.writeObject(this.lieManager);
         objectOutput.writeObject(this.playerState);
         objectOutput.writeObject(this.movementComposer);
+        /*
+         * FIXME ??? PlayerState playerState = new PlayerState()); MovementComposer movementComposer = (MovementComposer) new
+         * PathFollower()); LieManager lieManager = new LieManager());
+         */
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -899,8 +979,13 @@ public class PlayerImpl implements Player, NetConnectionListener, BackupReady {
             this.lastDisconnectedTime = objectInput.readLong();
             ;
 
+            this.lieManager = (LieManager) objectInput.readObject();
             this.playerState = (PlayerState) objectInput.readObject();
             this.movementComposer = (MovementComposer) objectInput.readObject();
+            /*
+             * FIXME ??? PlayerState playerState = new PlayerState(); MovementComposer movementComposer = (MovementComposer) new
+             * PathFollower(); LieManager lieManager = new LieManager();
+             */
         } else {
             // to do.... when new version
         }

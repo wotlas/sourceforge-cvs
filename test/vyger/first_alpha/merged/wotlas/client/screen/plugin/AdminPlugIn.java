@@ -153,56 +153,56 @@ public class AdminPlugIn extends JPanelPlugIn {
     }//GEN-END:initComponents
 
     private void moveHereActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveHereActionPerformed
-        ClientDirector.getDataManager().commandRequest = DataManager.COMMAND_CAST;
+        ClientDirector.getDataManager().setCommandRequest(DataManager.COMMAND_CAST);
         ClientDirector.getDataManager().getClientScreen().getMapPanel().setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
-        ClientDirector.getDataManager().commandAction = CastAction.getCastAction(CastAction.CAST_COMEHERE);
+        ClientDirector.getDataManager().setCommandAction(CastAction.getCastAction(CastAction.CAST_COMEHERE));
     }//GEN-LAST:event_moveHereActionPerformed
 
     private void plasmaBoltSpellActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_plasmaBoltSpellActionPerformed
-        ClientDirector.getDataManager().commandRequest = DataManager.COMMAND_CAST;
+        ClientDirector.getDataManager().setCommandRequest(DataManager.COMMAND_CAST);
         ClientDirector.getDataManager().getClientScreen().getMapPanel().setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
-        ClientDirector.getDataManager().commandAction = CastAction.getCastAction(CastAction.CAST_ADMIN_PLASMA);
+        ClientDirector.getDataManager().setCommandAction(CastAction.getCastAction(CastAction.CAST_ADMIN_PLASMA));
     }//GEN-LAST:event_plasmaBoltSpellActionPerformed
 
     private void attackCommandActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_attackCommandActionPerformed
-        ClientDirector.getDataManager().commandRequest = DataManager.COMMAND_BASIC;
+        ClientDirector.getDataManager().setCommandRequest(DataManager.COMMAND_BASIC);
         ClientDirector.getDataManager().getClientScreen().getMapPanel().setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
-        ClientDirector.getDataManager().commandAction = BasicAction.getBasicAction(BasicAction.BASIC_ATTACK);
+        ClientDirector.getDataManager().setCommandAction(BasicAction.getBasicAction(BasicAction.BASIC_ATTACK));
     }//GEN-LAST:event_attackCommandActionPerformed
 
     private void summDwarfWizardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_summDwarfWizardActionPerformed
-        ClientDirector.getDataManager().commandRequest = DataManager.COMMAND_CAST;
+        ClientDirector.getDataManager().setCommandRequest(DataManager.COMMAND_CAST);
         ClientDirector.getDataManager().getClientScreen().getMapPanel().setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
-        ClientDirector.getDataManager().commandAction = CastAction.getCastAction(CastAction.CAST_ADMIN_SUMMON4);
+        ClientDirector.getDataManager().setCommandAction(CastAction.getCastAction(CastAction.CAST_ADMIN_SUMMON4));
     }//GEN-LAST:event_summDwarfWizardActionPerformed
 
     private void summDwarfClericActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_summDwarfClericActionPerformed
-        ClientDirector.getDataManager().commandRequest = DataManager.COMMAND_CAST;
+        ClientDirector.getDataManager().setCommandRequest(DataManager.COMMAND_CAST);
         ClientDirector.getDataManager().getClientScreen().getMapPanel().setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
-        ClientDirector.getDataManager().commandAction = CastAction.getCastAction(CastAction.CAST_ADMIN_SUMMON3);
+        ClientDirector.getDataManager().setCommandAction(CastAction.getCastAction(CastAction.CAST_ADMIN_SUMMON3));
     }//GEN-LAST:event_summDwarfClericActionPerformed
 
     private void summDwarfKingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_summDwarfKingActionPerformed
-        ClientDirector.getDataManager().commandRequest = DataManager.COMMAND_CAST;
+        ClientDirector.getDataManager().setCommandRequest(DataManager.COMMAND_CAST);
         ClientDirector.getDataManager().getClientScreen().getMapPanel().setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
-        ClientDirector.getDataManager().commandAction = CastAction.getCastAction(CastAction.CAST_ADMIN_SUMMON2);
+        ClientDirector.getDataManager().setCommandAction(CastAction.getCastAction(CastAction.CAST_ADMIN_SUMMON2));
     }//GEN-LAST:event_summDwarfKingActionPerformed
 
     private void ItemCrea1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ItemCrea1ActionPerformed
         // Add your handling code here:
         System.out.println("Calling item creation I");
-        ClientDirector.getDataManager().commandRequest = DataManager.COMMAND_CAST;
+        ClientDirector.getDataManager().setCommandRequest(DataManager.COMMAND_CAST);
         ClientDirector.getDataManager().getClientScreen().getMapPanel().setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
-        ClientDirector.getDataManager().commandAction = CastAction.getCastAction(CastAction.CAST_ADMIN_CREATE);
+        ClientDirector.getDataManager().setCommandAction(CastAction.getCastAction(CastAction.CAST_ADMIN_CREATE));
     }//GEN-LAST:event_ItemCrea1ActionPerformed
 
     private void MobCrea1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MobCrea1ActionPerformed
         // Add your handling code here:
         System.out.println("Calling mob creation I");
         // avvisare l'inventory del player e il panel della mappa.
-        ClientDirector.getDataManager().commandRequest = DataManager.COMMAND_CAST;
+        ClientDirector.getDataManager().setCommandRequest(DataManager.COMMAND_CAST);
         ClientDirector.getDataManager().getClientScreen().getMapPanel().setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
-        ClientDirector.getDataManager().commandAction = CastAction.getCastAction(CastAction.CAST_ADMIN_SUMMON);
+        ClientDirector.getDataManager().setCommandAction(CastAction.getCastAction(CastAction.CAST_ADMIN_SUMMON));
     }//GEN-LAST:event_MobCrea1ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -21,6 +21,7 @@ package wotlas.common;
 
 import java.io.File;
 import javax.swing.tree.DefaultMutableTreeNode;
+import wotlas.common.objects.inventories.RoomInventory;
 import wotlas.common.router.MessageRouterFactory;
 import wotlas.common.universe.Building;
 import wotlas.common.universe.InteriorMap;
@@ -30,7 +31,6 @@ import wotlas.common.universe.TileMap;
 import wotlas.common.universe.TownMap;
 import wotlas.common.universe.WorldMap;
 import wotlas.common.universe.WotlasLocation;
-import wotlas.editor.EditorPlugIn;
 import wotlas.utils.Debug;
 
 /** A WorldManager provides all the methods needed to handle & manage the game world
@@ -68,6 +68,10 @@ public class WorldManager {
     public final static String TILEMAP_DIR_EXT = ".tilemap";
     public final static String AREA_EXT = ".area";
     public final static String TILEMAP_EXT = ".bin";
+
+    public final static String DEFAULT_UNIVERSE_OBJECTS = "objects";
+    public final static String INVENTORY_PREFIX = "room-inventory-";
+    public final static String INVENTORY_SUFFIX = ".cfg";
 
     /*------------------------------------------------------------------------------------*/
 
@@ -569,8 +573,9 @@ public class WorldManager {
                 }
             }
 
-            if (pleaseLoadTreeForEditor)
-                EditorPlugIn.treeOfTileMapNode = new DefaultMutableTreeNode("World : Tile Maps");
+	    if (pleaseLoadTreeForEditor) {
+		EditorManager.setTreeOfTileMapNode(new DefaultMutableTreeNode("World : Tile Maps"));
+	    }
             DefaultMutableTreeNode area = null;
             DefaultMutableTreeNode map = null;
 
@@ -589,8 +594,11 @@ public class WorldManager {
                 world.addTileMap(tileMap);
                 tileMapCount++;
                 if (pleaseLoadTreeForEditor) {
-                    map = EditorPlugIn.createNode(tileMap);
-                    EditorPlugIn.treeOfTileMapNode.add(map);
+                    //map = EditorPlugIn.createNode(tileMap);
+                    //EditorPlugIn.treeOfTileMapNode.add(map);
+		    map = EditorManager.createNode(tileMap);
+		    EditorManager.getTreeOfTileMapNode().add(map);
+
                 }
             }
             // managing tile maps : PART II
@@ -609,10 +617,12 @@ public class WorldManager {
                     tileMapCount++;
                     if (pleaseLoadTreeForEditor && index2 == 0) {
                         area = new DefaultMutableTreeNode(tileMap.getAreaName());
-                        EditorPlugIn.treeOfTileMapNode.add(area);
+                        //EditorPlugIn.treeOfTileMapNode.add(area);
+               			EditorManager.getTreeOfTileMapNode().add(area);
                     }
                     if (pleaseLoadTreeForEditor) {
-                        map = EditorPlugIn.createNode(tileMap);
+                        //map = EditorPlugIn.createNode(tileMap);
+                     			map = EditorManager.createNode(tileMap);
                         area.add(map);
                     }
                 }
@@ -621,6 +631,66 @@ public class WorldManager {
         }
 
         Debug.signal(Debug.NOTICE, null, "World Manager loaded " + worldCount + " worlds, " + townCount + " towns, " + buildingCount + " buildings, " + mapCount + " maps ans " + tileMapCount + " TileMaps.");
+
+        /** * STEP 2 - WE LOAD OBJECTS (latest data) ** */
+        int roomInventoryCount = 0;
+
+        if (!loadDefault) { // if loaddefault==true we only want to save default
+            // location data, not objects
+
+            String objectsHome = this.rManager.getUniverseDataDir() + WorldManager.DEFAULT_UNIVERSE_OBJECTS + "/";
+
+            worldList = this.rManager.listUniverseDirectories(objectsHome);
+
+            // ok, here we go ! we load all the objects we can find...
+            for (int w = 0; w < worldList.length; w++) {
+
+                // we load the world that contain objects
+                if (worldList[w].endsWith("/CVS/") || worldList[w].endsWith("\\CVS\\")) {
+                    continue; // this is a CVS directory
+                }
+
+                // we load all the towns of this world
+                String townList[] = this.rManager.listUniverseDirectories(worldList[w]);
+
+                for (int t = 0; t < townList.length; t++) {
+
+                    // we load all this town's buildings
+                    String buildingList[] = this.rManager.listUniverseDirectories(townList[t]);
+
+                    for (int b = 0; b < buildingList.length; b++) {
+
+                        // we load all this building's maps
+                        String mapList[] = this.rManager.listUniverseFiles(buildingList[b], WorldManager.MAP_SUFFIX);
+
+                        for (int m = 0; m < mapList.length; m++) {
+
+                            // we load the map objects
+                            RoomInventory roomInv = (RoomInventory) this.rManager.loadObject(mapList[m]);
+
+                            if (roomInv == null) {
+                                Debug.signal(Debug.WARNING, this, "Failed to load inventory : " + mapList[m]);
+                                continue;
+                            }
+
+                            // we associate the RoomInventory to its Room
+                            Room associatedRoom = getRoom(roomInv.getLocation());
+
+                            if (associatedRoom == null) {
+                                Debug.signal(Debug.ERROR, this, "Failed to find room for roomInventory : " + mapList[m]);
+                                continue;
+                            }
+
+                            associatedRoom.setInventory(roomInv);
+                            roomInventoryCount++;
+                        }
+                    }
+                }
+            }
+        }
+
+        Debug.signal(Debug.NOTICE, null, "World Manager loaded " + roomInventoryCount + " room inventories.");
+
         /*** STEP 3 - WE INIT THE WORLD ***/
         init();
     }
@@ -754,8 +824,107 @@ public class WorldManager {
             }
         }
 
+        /***********************************************************************************************************************************
+         * * STEP 2 - WE SAVE OBJECTS DATA ** ** Note that objects are only stored in Rooms (RoomInventory).
+         **********************************************************************************************************************************/
+        int inventoryCount = 0;
+
+        if (!isDefault) { // we only save objects if default==false ( default
+            // means location data only )
+
+            String objectsHome = this.rManager.getUniverseDataDir() + WorldManager.DEFAULT_UNIVERSE_OBJECTS + "/";
+
+            // We create this directory... (we expect that the directory is
+            // outside
+            // the JAR)
+            new File(objectsHome).mkdirs();
+
+            // ok, here we go ! we save all our world data...
+            Debug.signal(Debug.NOTICE, this, "Saving Universe's Objects to :" + objectsHome);
+
+            for (int w = 0; w < this.worldMaps.length; w++) {
+                if (this.worldMaps[w] == null) {
+                    continue;
+                }
+
+                // we create the world directory
+                String worldHome = objectsHome + this.worldMaps[w].getShortName() + "/";
+                new File(worldHome).mkdir();
+
+                // we save all the town objects of this world
+                TownMap towns[] = this.worldMaps[w].getTownMaps();
+                if (towns == null) {
+                    continue;
+                }
+
+                for (int t = 0; t < towns.length; t++) {
+                    if (towns[t] == null) {
+                        continue;
+                    }
+
+                    // we save the town object
+                    String townHome = worldHome + towns[t].getShortName() + "/";
+                    new File(townHome).mkdir();
+
+                    // we save all this town's buildings
+                    Building buildings[] = towns[t].getBuildings();
+                    if (buildings == null) {
+                        continue;
+                    }
+
+                    for (int b = 0; b < buildings.length; b++) {
+                        if (buildings[b] == null) {
+                            continue;
+                        }
+
+                        // we save the building's objects
+                        String buildingHome = townHome + buildings[b].getShortName() + "/";
+                        new File(buildingHome).mkdir();
+
+                        // we save all this building's maps
+                        InteriorMap interiorMaps[] = buildings[b].getInteriorMaps();
+                        if (interiorMaps == null) {
+                            continue;
+                        }
+
+                        for (int m = 0; m < interiorMaps.length; m++) {
+                            if (interiorMaps[m] == null) {
+                                continue;
+                            }
+
+                            // we save all the RoomInventories
+                            Room rooms[] = interiorMaps[m].getRooms();
+                            if (rooms == null) {
+                                continue;
+                            }
+
+                            for (int r = 0; r < rooms.length; r++) {
+                                if (rooms[r] == null || rooms[r].getInventory() == null) {
+                                    continue;
+                                }
+
+                                String inventoryName = buildingHome + WorldManager.INVENTORY_PREFIX + rooms[r].getMyInteriorMap().getInteriorMapID() + "-" + rooms[r].getRoomID() + WorldManager.INVENTORY_SUFFIX;
+
+                                if (!this.rManager.saveObject(rooms[r].getInventory(), inventoryName)) {
+                                    Debug.signal(Debug.ERROR, this, "Failed to save room inventory : " + inventoryName);
+                                    continue;
+                                }
+
+                                inventoryCount++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         /*** STEP 3 - Print some stats for control ***/
-        Debug.signal(Debug.NOTICE, this, "Saved " + worldCount + " worlds, " + townCount + " towns, " + buildingCount + " buildings, " + mapCount + " maps, and " + tileMapCount + " tilemaps.");
+        if (isDefault) {
+            Debug.signal(Debug.NOTICE, this, "Saved " + worldCount + " worlds, " + townCount + " towns, " + buildingCount + " buildings, " + mapCount + " maps, and " + tileMapCount + " tilemaps.");
+        } else {
+            Debug.signal(Debug.NOTICE, this, "Saved " + inventoryCount + " room inventories.");
+        }
+
         return true;
     }
 }

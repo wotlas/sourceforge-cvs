@@ -23,6 +23,8 @@ import java.awt.Color;
 import wotlas.common.ImageLibRef;
 import wotlas.common.Player;
 import wotlas.common.environment.EnvironmentManager;
+import wotlas.common.objects.inventories.AielWarriorInventory;
+import wotlas.common.objects.inventories.Inventory;
 import wotlas.libs.graphics2d.Drawable;
 import wotlas.libs.graphics2d.ImageIdentifier;
 import wotlas.libs.graphics2d.drawable.AuraEffect;
@@ -300,6 +302,19 @@ public class AielWarrior extends Male {
     @Override
     public String getFanfareSound() {
         return "fanfare-aiel.wav";
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+    /**
+     * To get a new Inventory for this WotCharacter.<br>
+     * In this case, it is an AielWarriorInventory.
+     * 
+     * @return a new inventory for this char
+     */
+    @Override
+    public Inventory createInventory() {
+	return new AielWarriorInventory();
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

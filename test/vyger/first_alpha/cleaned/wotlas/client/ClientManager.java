@@ -202,7 +202,7 @@ public class ClientManager extends JIntroWizard implements ActionListener {
         Debug.signal(Debug.NOTICE, null, "Server config Manager started with success !");
 
         // 3 - We get the font we are going to use...
-        this.f = FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter");
+        this.f = FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter Regular");
     }
 
     /*------------------------------------------------------------------------------------*/
@@ -251,7 +251,6 @@ public class ClientManager extends JIntroWizard implements ActionListener {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Starts the Wizard at the beginning of the game
      */
     public void start(int state) {

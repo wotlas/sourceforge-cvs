@@ -383,6 +383,16 @@ public class ScreenObjectPathFollower implements MovementComposer, BackupReady {
     */
     public void stopMovement() {
         resetMovement();
+
+	// FIXME ???
+	// if( screenObject.isTheServerSide() )
+	// if( screenObject instanceof NpcOnTheScreen )
+	// // player.sendMessage( new PathUpdateMovementMessage( this,
+	// player.getPrimaryKey(), player.getSyncID() ) );
+	// ((NpcOnTheScreen)screenObject).getRouter().sendMessage(
+	// new ScreenObjectPathUpdateMovementMessage( this,
+	// screenObject.getPrimaryKey()
+	// , screenObject.getSyncID()),null, MessageRouter.EXTENDED_GROUP );
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -493,10 +503,14 @@ public class ScreenObjectPathFollower implements MovementComposer, BackupReady {
                 Point target = getTargetPosition();
 
                 if (msg.isMoving) {
-                    if (ScreenObjectPathFollower.distance(msg.srcPoint, getPosition()) > ScreenObjectPathFollower.MAX_DISTANCE_DELAY || ScreenObjectPathFollower.findPath(getPosition(), msg.dstPoint, this.screenObject.getLocation().isRoom()) == null)
+                    if (ScreenObjectPathFollower.distance(msg.srcPoint, getPosition()) > ScreenObjectPathFollower.MAX_DISTANCE_DELAY || ScreenObjectPathFollower.findPath(getPosition(), msg.dstPoint, this.screenObject.getLocation().isRoom()) == null) {
+                        // FIXME ??? findPath( getPosition(), msg.dstPoint,
+                        // screenObject.getLocation().isTileMap() )==null )
+                        // ScreenObjectPathFollower.findPath(getPosition(), msg.dstPoint, this.screenObject.getLocation().isRoom()) == null) {
                         takeUpdate = true;
-                    else
+                    } else {
                         recreateTrajectory(msg.dstPoint, 0);
+                    }
                 } else {
                     // no movement, we received the master replica's ending trajectory position
                     if (target.x != msg.srcPoint.x || target.y != msg.srcPoint.y || ScreenObjectPathFollower.distance(target, getPosition()) > ScreenObjectPathFollower.MAX_DISTANCE_DELAY) {
@@ -560,6 +574,7 @@ public class ScreenObjectPathFollower implements MovementComposer, BackupReady {
         if (this.screenObject == null || this.screenObject.getLocation() == null)
             return;
 
+		// FIXME ???
         //         if ( screenObject.getLocation().isRoom() )
         //              realisticRotations = true;
 
@@ -667,6 +682,34 @@ public class ScreenObjectPathFollower implements MovementComposer, BackupReady {
     /** To set a player's movement : movement from current position to the given point.
     */
     public void moveTo(Point endPosition, WorldManager wManager) {
+
+	// FIXME ???
+	// why all rem? 'cause mob can get to a new map : we will reinit data
+	// when getting
+	// out of tilemap if will enable this.
+	/*
+	 * // Test if xPosition,yPosition is a valid point Point startPt = new Point( (int)xPosition, (int)yPosition ); if (
+	 * !AStarDouble.isValidStart(startPt) ) { Debug.signal(Debug.WARNING,this,"PathFollower : invalid start point"); // We reset the
+	 * position WotlasLocation location = screenObject.getLocation(); // We search for a valid insertion point ScreenPoint pReset =
+	 * null; if ( location.isRoom() ){ pReset = screenObject.getMyRoom().getInsertionPoint(); else { if ( location.isTown() ) { TownMap
+	 * myTown = wManager.getTownMap( location ); if (myTown!=null) pReset = myTown.getInsertionPoint(); } else if ( location.isWorld() ) {
+	 * WorldMap myWorld = wManager.getWorldMap( location ); if (myWorld!=null) pReset = myWorld.getInsertionPoint(); } } if
+	 * (pReset==null) { pReset = new ScreenPoint(0, 0); Debug.signal(Debug.CRITICAL,this,"Could not find a valid start point !"); } else
+	 * Debug.signal(Debug.NOTICE,this,"Found a new valid start point..."); screenObject.setX(pReset.x); screenObject.setY(pReset.y);
+	 * startPt.x = pReset.x; startPt.y = pReset.y; } // path = findPath( startPt, new Point( endPosition.x, endPosition.y
+	 * ),player.getLocation().isRoom() ); path = findPath( startPt, new Point( endPosition.x, endPosition.y ),
+	 * screenObject.getLocation().isTileMap() );
+	 * 
+	 * if( path==null ) { if( walkingAlongPath ) stopMovement(); // a message is sent : we were moving... else resetMovement(); // no
+	 * message sent : we were already still... return; // no movement }
+	 * 
+	 * updateMovementAspect(); initMovement( path );
+	 * 
+	 * if( screenObject.isTheServerSide() ) if( screenObject instanceof NpcOnTheScreen)
+	 * ((NpcOnTheScreen)screenObject).getRouter().sendMessage( new ScreenObjectPathUpdateMovementMessage( this,
+	 * screenObject.getPrimaryKey() , screenObject.getSyncID()),null, MessageRouter.EXTENDED_GROUP );
+	 */
+
         // Test if xPosition,yPosition is a valid point
         Point startPt = new Point((int) this.xPosition, (int) this.yPosition);
         this.path = ScreenObjectPathFollower.findPath(startPt, new Point(endPosition.x, endPosition.y), this.screenObject.getLocation().isRoom());
@@ -688,6 +731,14 @@ public class ScreenObjectPathFollower implements MovementComposer, BackupReady {
      */
     public void rotateTo(double finalOrientation) {
         this.orientationAngle = finalOrientation;
+
+	// FIXME ???
+	// if( screenObject.isTheServerSide() )
+	// if( screenObject instanceof NpcOnTheScreen)
+	// ((NpcOnTheScreen)screenObject).getRouter().sendMessage(
+	// new ScreenObjectPathUpdateMovementMessage( this,
+	// screenObject.getPrimaryKey()
+	// , screenObject.getSyncID()),null, MessageRouter.EXTENDED_GROUP );
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -695,10 +746,15 @@ public class ScreenObjectPathFollower implements MovementComposer, BackupReady {
     /** To recreate a trajectory from a dest. point & a DeltaTime.
      */
     public void recreateTrajectory(Point pDst, int movementDeltaTime) {
+	    // FIXME ??? new Point( pDst.x, pDst.y ), screenObject.getLocation().isTileMap() );
         this.path = ScreenObjectPathFollower.findPath(new Point((int) this.xPosition, (int) this.yPosition), new Point(pDst.x, pDst.y), this.screenObject.getLocation().isRoom());
 
         if (this.path == null) {
             Debug.signal(Debug.ERROR, this, "Failed to re-create path !");
+	    // FIXME ???
+	    // if( screenObject.isTheServerSide() )
+	    // stopMovement();
+	    // else
             resetMovement();
             return;
         }
@@ -813,6 +869,10 @@ public class ScreenObjectPathFollower implements MovementComposer, BackupReady {
         this.xPosition = a1.x;
         this.yPosition = a1.y;
 
+	// FIXME ???
+	// if( screenObject.isTheServerSide() )
+	// stopMovement();
+	// else
         resetMovement();
     }
 

@@ -34,6 +34,7 @@ import wotlas.common.environment.EnvironmentManager;
 import wotlas.common.message.account.AccountCreationEndedMessage;
 import wotlas.common.message.account.AccountStepMessage;
 import wotlas.common.message.account.StepErrorMessage;
+import wotlas.common.objects.inventories.Inventory;
 import wotlas.common.universe.WotlasLocation;
 import wotlas.libs.net.NetConnection;
 import wotlas.libs.net.NetConnectionListener;
@@ -99,7 +100,7 @@ public class AccountBuilder implements NetConnectionListener {
         // the account is empty for now...
         this.account = new GameAccount();
         this.player = new PlayerImpl();
-        // player.setDefaultPlayerLocation();
+        // FIXME player.setDefaultPlayerLocation();
     }
 
     /*------------------------------------------------------------------------------------*/
@@ -408,6 +409,11 @@ public class AccountBuilder implements NetConnectionListener {
         this.account.setOriginalServerID(ServerDirector.getServerID());
         this.account.setLastConnectionTimeNow();
         this.player.setPrimaryKey(this.account.getAccountName());
+
+        Inventory inventory = this.player.getBasicChar().createInventory();
+        ServerObjectManager objectManager = new ServerObjectManager();
+        objectManager.setInventory(inventory);
+        this.player.setObjectManager(objectManager);
 
         // 2 - We add the account to the game server
         if (accountManager.checkAccountName(this.account.getAccountName()))

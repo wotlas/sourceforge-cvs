@@ -77,6 +77,7 @@ public class PlayerPastMsgBehaviour extends PlayerPastMessage implements NetMess
 
         if (searchedPlayer != null) {
             String playerPast = searchedPlayer.getPlayerPast();
+            playerPast += "\n\nEncounter info: " + searchedPlayer.getLieManager().getLastMeetPlayer(player);
             player.sendMessage(new PlayerPastMessage(this.primaryKey, playerPast));
             return;
         }

@@ -34,6 +34,7 @@ import wotlas.common.universe.WorldMap;
 import wotlas.common.universe.WotlasLocation;
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.server.GatewayServer;
+import wotlas.server.LieManager;
 import wotlas.server.PlayerImpl;
 import wotlas.server.ServerDirector;
 import wotlas.utils.Debug;
@@ -130,6 +131,8 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
             player.setX(this.x);
             player.setY(this.y);
             player.setOrientation(this.orientation);
+            player.getLieManager().removeMeet(LieManager.FORGET_TOWNMAP);
+            player.getLieManager().forget(LieManager.MEET_CHANGETOWNMAP);
 
             player.sendMessage(new YouCanLeaveMapMessage(this.primaryKey, this.location, this.x, this.y, this.orientation, player.getSyncID()));
             return;
@@ -170,6 +173,8 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
                         player.setX(this.x);
                         player.setY(this.y);
                         player.setOrientation(this.orientation);
+                        player.getLieManager().removeMeet(LieManager.FORGET_TOWNMAP);
+                        player.getLieManager().forget(LieManager.MEET_CHANGETOWNMAP);
 
                         if (gateway.transfertAccount(this.primaryKey, targetServerID)) {
                             Debug.signal(Debug.NOTICE, null, "Account Transaction " + this.primaryKey + " succeeded... sending redirection message.");
@@ -213,6 +218,8 @@ public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implemen
                     player.setX(this.x);
                     player.setY(this.y);
                     player.setOrientation(this.orientation);
+                    player.getLieManager().removeMeet(LieManager.FORGET_TOWNMAP);
+                    player.getLieManager().forget(LieManager.MEET_CHANGETOWNMAP);
 
                     player.sendMessage(new YouCanLeaveMapMessage(this.primaryKey, this.location, this.x, this.y, this.orientation, player.getSyncID()));
                     return;

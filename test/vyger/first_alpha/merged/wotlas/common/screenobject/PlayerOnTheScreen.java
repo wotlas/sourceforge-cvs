@@ -44,6 +44,8 @@ public class PlayerOnTheScreen extends ScreenObject {
     private static final long serialVersionUID = 556565L;
 
     transient private Player player;
+    // FIXME ???
+    // transient private ScreenObjectPathFollower movementComposer;
     private byte trajectoryLock[] = new byte[0];
 
     /**
@@ -135,7 +137,7 @@ public class PlayerOnTheScreen extends ScreenObject {
         //            ,13.0f, "Lucida Blackletter", ImageLibRef.TEXT_PRIORITY, -1));
 
         this.trajectoryLock = new byte[0];
-        //        movementComposer = new ScreenObjectPathFollower(x,y,0);
+		// FIXME ??? movementComposer = new ScreenObjectPathFollower(x,y,0);
         this.movementComposer.init(this);
     }
 
@@ -212,4 +214,28 @@ public class PlayerOnTheScreen extends ScreenObject {
         // System.out.println("end-> x,y:["+getX()+","+getY()+"] ");
         return false;
     }
+
+    // FIXME ???
+    /**
+     * To get the X image position.
+     * 
+     * @return x image cordinate
+     */
+    // public int getX() {
+    // if( movementComposer == null )
+    // return x;
+    // else
+    // return (int)movementComposer.getXPosition();
+    // }
+    /**
+     * To get the Y image position.
+     * 
+     * @return y image cordinate
+     */
+    // public int getY() {
+    // if( movementComposer == null )
+    // return y;
+    // else
+    // return (int)movementComposer.getYPosition();
+    // }
 }

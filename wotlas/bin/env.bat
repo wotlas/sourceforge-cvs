@@ -7,6 +7,7 @@ set JARS_MODULE=dist
 set CLIENT_JARS=
 
 REM...Choose between the use of build/classes and the standard base directory
+REM... 
 set CLIENT_JARS=%CLIENT_JARS%;build\classes
 
 REM...or the wotlas jar and the dist/base-ext directory :

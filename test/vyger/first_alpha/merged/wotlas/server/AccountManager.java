@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import wotlas.common.ResourceManager;
 import wotlas.common.WorldManager;
+import wotlas.common.objects.inventories.Inventory;
 import wotlas.utils.Debug;
 import wotlas.utils.FileTools;
 import wotlas.utils.Tools;
@@ -50,8 +51,14 @@ public class AccountManager {
     public final static String PLAYER_PREFIX = "player-save-";
     public final static String PLAYER_SUFFIX = ".cfg";
 
-    /** Maximum number of save in a client account. If this number is reached we delete
-     *  the oldest entry.
+    /**
+     * Inventory file name format ( I changed the suffix to be sure to don't mess with the player saves )
+     */
+    public final static String INVENTORY_PREFIX = "inventory-save-";
+    public final static String INVENTORY_SUFFIX = ".ifg";
+
+    /**
+     * Maximum number of save in a client account. If this number is reached we delete the oldest entry.
      */
     public final static int MAX_NUMBER_OF_SAVE = 3;
 
@@ -327,6 +334,34 @@ public class AccountManager {
                 Debug.signal(Debug.ERROR, this, "Failed to load " + latest + " for player " + accounts[i].getPrimaryKey());
                 accounts[i] = null;
             }
+
+            // we now search for the latest saved inventory file.
+            latest = FileTools.findSave(this.rManager.listFiles(accountList[i], AccountManager.INVENTORY_SUFFIX), AccountManager.INVENTORY_PREFIX, AccountManager.INVENTORY_SUFFIX, true);
+
+            // have we found the latest saved inventory file ?
+            if (latest == null) {
+                // nope, then it's an invalid account, we ignore it...
+                Debug.signal(Debug.ERROR, this, "Failed to load account's inventory: " + accountList[i]);
+                accounts[i] = null;
+                continue;
+            }
+
+            Inventory inventory = (Inventory) this.rManager.loadObject(latest);
+
+            if (inventory != null) {
+                // Aldiss : we create a new ServerObjectManager and give it its
+                // inventory
+                ServerObjectManager objManager = new ServerObjectManager();
+                player.setObjectManager(objManager);
+                objManager.setInventory(inventory);
+            } else {
+                Debug.signal(Debug.ERROR, this, "Failed to load " + latest + " inventory for player " + accounts[i].getPrimaryKey());
+                // accounts[i] = null;
+                // Petrus : if no inventory found : create a new one
+                ServerObjectManager objManager = new ServerObjectManager();
+                player.setObjectManager(objManager);
+                objManager.setInventory(new Inventory());
+            }
         }
 
         return accounts;
@@ -347,6 +382,13 @@ public class AccountManager {
         //                                    +PLAYER_PREFIX+Tools.getLexicalDate()+PLAYER_SUFFIX ) ) {
         if (!this.rManager.BackupObject(account.getPlayer(), accountHome + account.getAccountName() + File.separator + AccountManager.PLAYER_PREFIX + Tools.getLexicalDate() + AccountManager.PLAYER_SUFFIX)) {
             Debug.signal(Debug.ERROR, this, "Failed to save account: " + accountHome + account.getAccountName());
+            return false;
+        }
+
+        // Aldiss : we save the player's inventory
+        Inventory inventory = account.getPlayer().getObjectManager().getInventory();
+        if (inventory != null && !this.rManager.saveObject(inventory, accountHome + account.getAccountName() + File.separator + AccountManager.INVENTORY_PREFIX + Tools.getLexicalDate() + AccountManager.INVENTORY_SUFFIX)) {
+            Debug.signal(Debug.ERROR, this, "Failed to save account inventory: " + accountHome + account.getAccountName());
             return false;
         }
 

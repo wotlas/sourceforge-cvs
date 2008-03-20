@@ -20,6 +20,7 @@ package wotlas.common.screenobject;
 
 import java.awt.Color;
 import wotlas.common.ImageLibRef;
+import wotlas.common.PrimaryKeyGenerator;
 import wotlas.common.action.UserAction;
 import wotlas.common.character.CharData;
 import wotlas.common.environment.EnvironmentManager;
@@ -31,7 +32,6 @@ import wotlas.libs.graphics2d.ImageIdentifier;
 import wotlas.libs.graphics2d.drawable.FakeSprite;
 import wotlas.libs.graphics2d.drawable.TextDrawable;
 import wotlas.libs.pathfinding.AStarDoubleServer;
-import wotlas.server.ServerDirector;
 
 /** 
  *
@@ -52,7 +52,7 @@ public class ItemOnTheScreen extends ScreenObject {
     public ItemOnTheScreen(int x, int y, String name, short[] indexOfImage) {
         this.x = x;
         this.y = y;
-        this.primaryKey = "" + ServerDirector.GenUniqueKeyId();
+	this.primaryKey = "" + PrimaryKeyGenerator.GenUniqueKeyId();
         this.name = name;
         this.loc = null;
         this.indexOfImage = indexOfImage;

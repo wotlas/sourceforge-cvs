@@ -41,6 +41,7 @@ import wotlas.libs.sound.SoundResourceLocator;
 import wotlas.libs.wizard.WizardResourceLocator;
 import wotlas.utils.Debug;
 import wotlas.utils.FileTools;
+import wotlas.utils.ResourceLookup;
 import wotlas.utils.Tools;
 
 /** Manages the different resources found in wotlas. Resources are searched in a JAR
@@ -473,8 +474,14 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
         if (Tools.hasJar(this.jarName)) {
             return; // our classpath has the current Jar name... nothing to repair.
         }
-
-        System.setProperty("java.class.path", System.getProperty("java.class.path", ".") + System.getProperty("path.separator", ";") + this.jarName);
+        // FIXME Probleme dans netbeans aucun des modules n'est dans le classpath.
+        String cp = System.getProperty("java.class.path", ".") + System.getProperty("path.separator", ";") + this.jarName;
+        if (this.jarName.indexOf("wotlas-common") != -1) {
+            String libdir = this.jarName.substring(0, this.jarName.lastIndexOf("/"));
+            cp = cp + System.getProperty("path.separator", ";") + libdir + "/wotlas-base-common.jar";
+            cp = cp + System.getProperty("path.separator", ";") + libdir + "/wotlas-base-randland.jar";
+        }
+        System.setProperty("java.class.path", cp);
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -489,8 +496,9 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
         if (pathName.startsWith(this.wotlasJarExternalDir)) {
             return true;
         }
-        if (pathName.indexOf(ResourceManager.PLAYERS_HOME_DIR)!=-1)
+        if (pathName.indexOf(ResourceManager.PLAYERS_HOME_DIR) != -1) {
             return true;
+        }
         return false;
     }
 
@@ -836,34 +844,33 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
      */
     public Object loadObject(String filePath) {
         if (this.inClientJar && !isExternal(filePath)) {
-            InputStream is = this.getClass().getResourceAsStream(filePath);
-            if (is == null) {
-                return null;
-            }
-
-            Object o = null;
-
+            URL uri = getClassResourceUrl(this.getClass(), filePath);
             try {
-                o = PropertiesConverter.load(is);
-            } catch (PersistenceException pe) {
-                Debug.signal(Debug.ERROR, this, pe);
+                if (uri != null) {
+                    InputStream is = uri.openStream();
+                    Object o = null;
+
+                    try {
+                        o = PropertiesConverter.load(is);
+                    } catch (PersistenceException pe) {
+                        Debug.signal(Debug.ERROR, this, pe);
+                    }
+                    is.close();
+                    return o;
+                }
+
+            } catch (IOException ioe) {
+                Debug.signal(Debug.ERROR, this, ioe);
             }
 
-            try {
-                is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return o;
         } else {
             try {
                 return PropertiesConverter.load(filePath);
             } catch (PersistenceException pe) {
                 Debug.signal(Debug.ERROR, this, "" + pe);
-                return null;
             }
         }
+        return null;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -914,12 +921,20 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
      */
     public String loadText(String filePath) {
         if (this.inJar && !isExternal(filePath)) {
-            InputStream is = this.getClass().getResourceAsStream(filePath);
-            if (is == null) {
-                return "";
-            }
+            URL uri = getClassResourceUrl(this.getClass(), filePath);
+            try {
+                if (uri != null) {
+                    InputStream is = uri.openStream();
+                    String txt = FileTools.loadTextFromStream(is);
+                    is.close();
+                    return txt;
+                }
 
-            return FileTools.loadTextFromStream(is);
+            } catch (IOException ioe) {
+                Debug.signal(Debug.ERROR, this, ioe);
+            }
+            return "";
+
         } else {
             return FileTools.loadTextFromFile(filePath);
         }
@@ -947,12 +962,19 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
      */
     public Properties loadProperties(String filePath) {
         if (this.inJar && !isExternal(filePath)) {
-            InputStream is = this.getClass().getResourceAsStream(filePath);
-            if (is == null) {
-                return new Properties();
+            URL uri = getClassResourceUrl(this.getClass(), filePath);
+            try {
+                if (uri != null) {
+                    InputStream is = uri.openStream();
+                    Properties prop = FileTools.loadPropertiesFromStream(is);
+                    is.close();
+                    return prop;
+                }
+            } catch (IOException ioe) {
+                Debug.signal(Debug.ERROR, this, ioe);
             }
+            return new Properties();
 
-            return FileTools.loadPropertiesFromStream(is);
         } else {
             return FileTools.loadPropertiesFile(filePath);
         }
@@ -1061,15 +1083,23 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
         }
 
         if (this.inJar) {
-            return this.getClass().getResourceAsStream(fontPath);
+            try {
+                URL uri = getClassResourceUrl(this.getClass(), fontPath);
+                if (uri != null) {
+                    return uri.openStream();
+                }
+            } catch (IOException ioe) {
+                Debug.signal(Debug.ERROR, this, ioe);
+            }
+
         } else {
             try {
                 return new FileInputStream(fontPath);
             } catch (FileNotFoundException fe) {
                 Debug.signal(Debug.ERROR, this, fe);
-                return null;
             }
         }
+        return null;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -1087,15 +1117,23 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
         }
 
         if (this.inJar) {
-            return this.getClass().getResourceAsStream(musicName);
+            try {
+                URL uri = getClassResourceUrl(this.getClass(), musicName);
+                if (uri != null) {
+                    return uri.openStream();
+                }
+            } catch (IOException ioe) {
+                Debug.signal(Debug.ERROR, this, ioe);
+            }
+
         } else {
             try {
                 return new FileInputStream(musicName);
             } catch (FileNotFoundException fe) {
                 Debug.signal(Debug.ERROR, this, fe);
-                return null;
             }
         }
+        return null;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -1113,15 +1151,25 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
         }
 
         if (this.inJar) {
-            return this.getClass().getResourceAsStream(soundName);
+            try {
+                URL url = getClassResourceUrl(this.getClass(), soundName);
+                if (url != null) {
+                    return url.openStream();
+                // return this.getClass().getResourceAsStream(soundName);
+                }
+            } catch (IOException ioe) {
+                Debug.signal(Debug.ERROR, this, ioe);
+            }
+
         } else {
             try {
                 return new FileInputStream(soundName);
             } catch (FileNotFoundException fe) {
                 Debug.signal(Debug.ERROR, this, fe);
-                return null;
             }
         }
+        return null;
+
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -1133,15 +1181,24 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
     public InputStream getFileStream(String filePath) {
 
         if (this.inJar) {
-            return this.getClass().getResourceAsStream(filePath);
+            try {
+                URL url = getClassResourceUrl(this.getClass(), filePath);
+                if (url != null) {
+                    return url.openStream();
+                //return this.getClass().getResourceAsStream(filePath);
+                }
+            } catch (IOException ioe) {
+                Debug.signal(Debug.ERROR, this, ioe);
+            }
+
         } else {
             try {
                 return new FileInputStream(filePath);
             } catch (FileNotFoundException fe) {
                 Debug.signal(Debug.ERROR, this, fe);
-                return null;
             }
         }
+        return null;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -1160,11 +1217,14 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
         }
 
         if (this.inJar) {
-            URL url = this.getClass().getResource(imageName);
-            return new ImageIcon(url);
+            URL url = getClassResourceUrl(this.getClass(), imageName);
+            if (url != null) {
+                return new ImageIcon(url);
+            }
         } else {
             return new ImageIcon(imageName);
         }
+        return null;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -1183,11 +1243,14 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
         }
 
         if (this.inJar) {
-            URL url = this.getClass().getResource(imageName);
-            return Toolkit.getDefaultToolkit().getImage(url);
+            URL url = getClassResourceUrl(this.getClass(), imageName);
+            if (url != null) {
+                return Toolkit.getDefaultToolkit().getImage(url);
+            }
         } else {
             return Toolkit.getDefaultToolkit().getImage(imageName);
         }
+        return null;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -1199,11 +1262,31 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
      */
     public Image getLibraryImage(String imagePath) {
         if (this.inJar) {
-            URL url = this.getClass().getResource(imagePath);
-            return Toolkit.getDefaultToolkit().getImage(url);
+            URL url = getClassResourceUrl(this.getClass(), imagePath);
+            if (url != null) {
+                return Toolkit.getDefaultToolkit().getImage(url);
+            }
         } else {
             return Toolkit.getDefaultToolkit().getImage(imagePath);
         }
+        return null;
+    }
+
+    /**
+     * Returns the wanted resource url from the jars loaded.
+     * @param resourceName resource name with FULL resource path.
+     * @return url or null if the image was not found.
+     */
+    public URL getClassResourceUrl(Class claRef, String resourceName) {
+        Class cla = claRef;
+        if (cla == null) {
+            cla = this.getClass();
+        }
+        URL url = ResourceLookup.getClassResourceUrl(cla, resourceName);
+        if (url == null) {
+            Debug.signal(Debug.WARNING, this, "Resource (" + resourceName + ") not found !");
+        }
+        return url;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

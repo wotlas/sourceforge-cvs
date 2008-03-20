@@ -390,6 +390,7 @@ public class ServerPathFollower implements MovementComposer, BackupReady {
         this.nextPoint = null;
         this.prevPoint = null;
         this.endPoint = null;
+        // FIXME : remove reference of ServerDirector !!!
         // set the right AStart of the map
         if (this.screenObject.getLocation().isTileMap())
             this.aStarDoubleServer = ServerDirector.getDataManager().getWorldManager().getTileMap(this.screenObject.getLocation()).getAStar();

@@ -18,11 +18,11 @@
 
 package wotlas.common.screenobject;
 
+import wotlas.common.PrimaryKeyGenerator;
 import wotlas.libs.graphics2d.Drawable;
 import wotlas.libs.graphics2d.GraphicsDirector;
 import wotlas.libs.graphics2d.ImageIdentifier;
 import wotlas.libs.pathfinding.AStarDoubleServer;
-import wotlas.server.ServerDirector;
 
 /** 
  *
@@ -39,10 +39,10 @@ public class StaticSpell extends SpellOnTheScreen {
     }
 
     public StaticSpell(int imageNr, String text) {
-        //    public StaticSpell(int imageNr, int x,int y, MessageRouter routerMsg, int duration) {
-        //this.x = x;
-        //this.y = y;
-        this.primaryKey = "" + ServerDirector.GenUniqueKeyId();
+	// public StaticSpell(int imageNr, int x,int y, MessageRouter routerMsg, int duration) {
+	// FIXME x = x;
+	// FIXME y = y;
+        this.primaryKey = "" + PrimaryKeyGenerator.GenUniqueKeyId();
         this.loc = null;
         //        this.routerMsg = routerMsg;
         this.text = text;

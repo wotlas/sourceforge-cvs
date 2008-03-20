@@ -94,7 +94,7 @@ public class JChatDisplay extends LogStream {
 
         if (ClientDirector.getResourceManager().inJar()) {
 
-            url = this.getClass().getResource(smileysHome + "smileys.html");
+            url = ClientDirector.getResourceManager().getClassResourceUrl(this.getClass(), smileysHome + "smileys.html");
 
             if (url != null) {
                 String urlName = url.toString();

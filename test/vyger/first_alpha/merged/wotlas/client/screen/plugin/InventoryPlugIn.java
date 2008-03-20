@@ -28,6 +28,9 @@ import javax.swing.JPanel;
 import wotlas.client.ClientDirector;
 import wotlas.client.PlayerImpl;
 import wotlas.client.screen.JPanelPlugIn;
+import wotlas.common.objects.BaseObject;
+import wotlas.libs.graphics2d.ImageIdentifier;
+import wotlas.libs.graphics2d.ImageLibrary;
 import wotlas.utils.ScreenRectangle;
 
 /** Plug In that shows inventory of the player.
@@ -41,7 +44,11 @@ public class InventoryPlugIn extends JPanelPlugIn {
 
     /*------------------------------------------------------------------------------------*/
 
-    // private InventoryLayout inventoryLayout;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6471461002822649310L;
+    private InventoryLayout inventoryLayout;
     private JPanel whitePanel;
     private Image background;
     private BufferedImage dstIm;
@@ -64,37 +71,38 @@ public class InventoryPlugIn extends JPanelPlugIn {
         Graphics2D g = this.dstIm.createGraphics();
 
         PlayerImpl player = ClientDirector.getDataManager().getMyPlayer();
-        /*
-              inventoryLayout = InventoryLayout.load(player.getBasicChar());
-              
-              ScreenRectangle slot;
-              
-              // We load the background        
-              ImageLibrary imLib = ClientDirector.getDataManager().getImageLibrary();
-              BufferedImage background = imLib.getImage(inventoryLayout.getBackgroundId());
-              g.drawImage(background, 0, 0, null);
-              
+        this.inventoryLayout = InventoryLayout.load(player.getBasicChar());
+
+        ScreenRectangle slot;
+
+        // We load the background        
+        ImageLibrary imLib = ClientDirector.getDataManager().getImageLibrary();
+        if (this.inventoryLayout.getBackgroundId() != null) {
+            BufferedImage background = imLib.getImage(this.inventoryLayout.getBackgroundId());
+            g.drawImage(background, 0, 0, null);
+        }
+
         // Debug
-              BaseObject bObject = new BaseObject();
-              String path[] = { "players-0", "symbols-2", "aes-sedai-symbols-0", "amyrlin-symbol-0.gif" };
-              ImageIdentifier im = new ImageIdentifier( path );
-              bObject.setInventoryPicture(im);
-              setHeadArmor(bObject);       
+        BaseObject bObject = new BaseObject();
+        String path[] = { "players-0", "symbols-2", "aes-sedai-symbols-0", "amyrlin-symbol-0.gif" };
+        ImageIdentifier im = new ImageIdentifier(path);
+        bObject.setInventoryPicture(im);
+        setHeadArmor(bObject);
         // Fin debug
 
-              //drawSlot(dstIm, inventoryLayout.getBagSlot());               
-              drawSlot(dstIm, inventoryLayout.getBeltSlot());        
-              drawSlot(dstIm, inventoryLayout.getBodySlot());               
-              //drawSlot(dstIm, inventoryLayout.getBookSlot());               
-              drawSlot(dstIm, inventoryLayout.getFeetSlot());                      
-              drawSlot(dstIm, inventoryLayout.getHeadSlot());               
-              drawSlot(dstIm, inventoryLayout.getLeftBootSlot());               
-              drawSlot(dstIm, inventoryLayout.getLeftHandSlot());     
-              drawSlot(dstIm, inventoryLayout.getRightBootSlot());               
-              drawSlot(dstIm, inventoryLayout.getRightHandSlot());    
-              //drawSlot(dstIm, inventoryLayout.getPurseSlot());               
-              //drawSlot(dstIm, inventoryLayout.getSleeveSlot());                    
-        */
+        //drawSlot(dstIm, inventoryLayout.getBagSlot());               
+        drawSlot(this.dstIm, this.inventoryLayout.getBeltSlot());
+        drawSlot(this.dstIm, this.inventoryLayout.getBodySlot());
+        //drawSlot(dstIm, inventoryLayout.getBookSlot());               
+        drawSlot(this.dstIm, this.inventoryLayout.getFeetSlot());
+        drawSlot(this.dstIm, this.inventoryLayout.getHeadSlot());
+        drawSlot(this.dstIm, this.inventoryLayout.getLeftBootSlot());
+        drawSlot(this.dstIm, this.inventoryLayout.getLeftHandSlot());
+        drawSlot(this.dstIm, this.inventoryLayout.getRightBootSlot());
+        drawSlot(this.dstIm, this.inventoryLayout.getRightHandSlot());
+        //drawSlot(dstIm, inventoryLayout.getPurseSlot());               
+        //drawSlot(dstIm, inventoryLayout.getSleeveSlot());                    
+
     }
 
     /*------------------------------------------------------------------------------------*/
@@ -202,20 +210,18 @@ public class InventoryPlugIn extends JPanelPlugIn {
      * @param slot slot to fill
      * @param bObject wotlas base object
      */
-    /*
-          private void setSlot(ScreenRectangle slot, BaseObject bObject) {
-            if (slot!=null) {  
-              unsetSlot(slot);        
-              ImageIdentifier imId = bObject.getInventoryPicture();          
-              ImageLibrary imLib = ClientDirector.getDataManager().getImageLibrary();
-              BufferedImage buffIm = imLib.getImage(imId);           
-              if (buffIm!=null) {
-                Graphics2D g = dstIm.createGraphics();  
+    private void setSlot(ScreenRectangle slot, BaseObject bObject) {
+        if (slot != null) {
+            unsetSlot(slot);
+            ImageIdentifier imId = bObject.getInventoryPicture();
+            ImageLibrary imLib = ClientDirector.getDataManager().getImageLibrary();
+            BufferedImage buffIm = imLib.getImage(imId);
+            if (buffIm != null) {
+                Graphics2D g = this.dstIm.createGraphics();
                 g.drawImage(imLib.getImage(imId), slot.getX(), slot.getY(), this);
-              }          
-            }        
-          }
-     */
+            }
+        }
+    }
 
     /** Clears a slot
     * @param slot to clear
@@ -225,5 +231,164 @@ public class InventoryPlugIn extends JPanelPlugIn {
             Graphics2D g = this.dstIm.createGraphics();
         }
     }
+
+    /*------------------------------------------------------------------------------------*/
+
+    /**
+     * Inventory Interface implementation
+     */
+
+    /*------------------------------------------------------------------------------------*/
+
+    /**
+     * Set the body armor.
+     * 
+     * @param bodyArmor
+     *                the new body armor
+     */
+    public void setBodyArmor(BaseObject bObject) {
+        setSlot(this.inventoryLayout.getBodySlot(), bObject);
+    }
+
+    /**
+     * Set the head armor.
+     * 
+     * @param headArmor
+     *                the new head armor
+     */
+    public void setHeadArmor(BaseObject bObject) {
+        setSlot(this.inventoryLayout.getHeadSlot(), bObject);
+    }
+
+    /**
+     * Set the heavy weapon.
+     * 
+     * @param heavyWeapon
+     *                the new heavy weapon
+     */
+    public void setHeavyWeapon(BaseObject bObject) {
+    }
+
+    /**
+     * Set the bow.
+     * 
+     * @param bow
+     *                the new bow
+     */
+    public void setBow(BaseObject bObject) {
+        ;
+    }
+
+    /**
+     * Set the belt weapon.
+     * 
+     * @param beltWeapon
+     *                the new belt weapon
+     */
+    public void setBeltWeapon(BaseObject bObject) {
+        setSlot(this.inventoryLayout.getBeltSlot(), bObject);
+    }
+
+    /**
+     * Set the weapon hidden in right sleeve.
+     * 
+     * @param rightSleeveWeapon
+     *                the new weapon hidden in right sleeve
+     */
+    public void setRightSleeveWeapon(BaseObject bObject) {
+        ;
+    }
+
+    /**
+     * Set the weapon hidden in left sleeve.
+     * 
+     * @param leftSleeveWeapon
+     *                the new weapon hidden in left sleeve
+     */
+    public void setLeftSleeveWeapon(BaseObject bObject) {
+        ;
+    }
+
+    /**
+     * Set the weapon hidden in right boot.
+     * 
+     * @param rightBootWeapon
+     *                the new weapon hidden in right boot
+     */
+    public void setRightBootWeapon(BaseObject bObject) {
+        setSlot(this.inventoryLayout.getRightBootSlot(), bObject);
+    }
+
+    /**
+     * Set the weapon hidden in left boot.
+     * 
+     * @param leftBootWeapon
+     *                the new weapon hidden in left boot
+     */
+    public void setLeftBootWeapon(BaseObject bObject) {
+        setSlot(this.inventoryLayout.getLeftBootSlot(), bObject);
+    }
+
+    /**
+     * Set the purse.
+     * 
+     * @param purse
+     *                the new purse
+     */
+    public void setPurse(BaseObject bObject) {
+        setSlot(this.inventoryLayout.getPurseSlot(), bObject);
+    }
+
+    /**
+     * Set the bag.
+     * 
+     * @param bag
+     *                the new bag
+     */
+    public void setBag(BaseObject bObject) {
+        setSlot(this.inventoryLayout.getBagSlot(), bObject);
+    }
+
+    /**
+     * Set the belt.
+     * 
+     * @param belt
+     *                the new belt
+     */
+    public void setBelt(BaseObject bObject) {
+        setSlot(this.inventoryLayout.getBeltSlot(), bObject);
+    }
+
+    /**
+     * Set the object ready for right hand.
+     * 
+     * @param rightObject
+     *                the new object ready for right hand
+     */
+    public void setRightObject(BaseObject bObject) {
+        setSlot(this.inventoryLayout.getRightHandSlot(), bObject);
+    }
+
+    /**
+     * Set the object ready for left hand.
+     * 
+     * @param leftObject
+     *                the new object ready for left hand
+     */
+    public void setLeftObject(BaseObject bObject) {
+        setSlot(this.inventoryLayout.getLeftHandSlot(), bObject);
+    }
+
+    /**
+     * Set the book.
+     * 
+     * @param book
+     *                the new book
+     */
+    public void setBook(BaseObject bObject) {
+        setSlot(this.inventoryLayout.getBookSlot(), bObject);
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 }

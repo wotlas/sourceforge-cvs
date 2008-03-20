@@ -41,6 +41,17 @@ import java.util.Vector;
  */
 
 public class FileTools {
+    
+    /**
+     * Name of a directory to be ignored and used for CVS synchronization.
+     */
+    public static final String CVS_REPOSITORY_FILES = "CVS";
+    
+    /**
+     * Extension filename used by resources list files.
+     */
+    public static final String EXT_RESOURCES_LIST_FILES = ".lst";
+    
     /*------------------------------------------------------------------------------------*/
 
     /** Finds the file/directory having the highest (or lowest) name (lexical order) in the
@@ -358,6 +369,9 @@ public class FileTools {
         for (int i = 0; i < flist.length; i++) {
             if (flist[i].isDirectory() || !flist[i].getName().endsWith(ext))
                 continue;
+            // Ignore CVS and resources.lst.
+            if (flist[i].getName().indexOf(CVS_REPOSITORY_FILES)!=-1 || flist[i].getName().endsWith(EXT_RESOURCES_LIST_FILES))
+                continue;
 
             list.addElement(flist[i].getPath());
         }
@@ -384,6 +398,9 @@ public class FileTools {
 
         for (int i = 0; i < flist.length; i++) {
             if (!flist[i].isDirectory())
+                continue;
+            // Ignore CVS.
+            if (flist[i].getName().indexOf(CVS_REPOSITORY_FILES)!=-1)
                 continue;
 
             if (flist[i].getPath().endsWith(File.separator))

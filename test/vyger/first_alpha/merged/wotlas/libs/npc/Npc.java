@@ -16,13 +16,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.libs.npc;
 
+// package wotlas.libs.npc;
+
+import wotlas.common.PrimaryKeyGenerator;
 import wotlas.common.character.BasicChar;
 import wotlas.common.router.MessageRouter;
 import wotlas.common.screenobject.NpcOnTheScreen;
-import wotlas.server.ServerDirector;
 
 /**  Npc 
   *
@@ -47,8 +48,8 @@ public class Npc {
             this.npcDef = (NpcDefinition) NpcManager.npcDef.get(this.npcDefName);
             this.basicChar = this.npcDef.getBasicChar().getClass().newInstance();
             this.basicChar.clone(this.npcDef.getBasicChar());
-            this.basicChar.setPrimaryKey(ServerDirector.GenUniqueKeyId());
-            this.npcOnTheScreen = new NpcOnTheScreen(x, y, this, this.npcDef.getPicture(), msgRouter);
+            this.basicChar.setPrimaryKey(PrimaryKeyGenerator.GenUniqueKeyId());
+            this.npcOnTheScreen = new NpcOnTheScreen(x, y, name, this.getBasicChar(), this.npcDef.getPicture(), msgRouter);
             msgRouter.addScreenObject(this.npcOnTheScreen);
         } catch (Exception e) {
             e.printStackTrace();

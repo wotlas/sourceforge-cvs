@@ -495,6 +495,9 @@ public class WorldManager {
         for (int w = 0; w < worldList.length; w++) {
 
             // we load the world object
+            if (worldList[w].endsWith("/CVS/") || worldList[w].endsWith("\\CVS\\"))
+                continue; // this is a CVS directory
+
             WorldMap world = (WorldMap) this.rManager.loadObject(worldList[w] + WorldManager.WORLD_FILE);
 
             if (world == null) {

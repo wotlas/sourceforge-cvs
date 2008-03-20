@@ -198,25 +198,28 @@ public class JAccountCreationWizard extends JWizard {
                 public void valueChanged(ListSelectionEvent e) {
 
                     ListSelectionModel lsm = (ListSelectionModel) e.getSource();
-                    if (lsm.isSelectionEmpty())
+                    if (lsm.isSelectionEmpty()) {
                         return; //no rows were selected
+                    }
 
                     int selectedRow = lsm.getMinSelectionIndex();
 
                     //selectedRow is selected
                     ServerSelectionStep.this.currentServerConfig = ServerSelectionStep.this.serverConfigManager.serverConfigAt(selectedRow);
 
-                    if (this.htmlDescr == null)
+                    if (this.htmlDescr == null) {
                         this.htmlDescr = new JHTMLWindow(ClientDirector.getClientManager(), "Wotlas Server", "text:" + ServerSelectionStep.this.currentServerConfig.toHTML(), 350, 250, false, ClientDirector.getResourceManager());
-                    else {
+                    } else {
                         this.htmlDescr.setText(ServerSelectionStep.this.currentServerConfig.toHTML());
-                        if (!this.htmlDescr.isShowing())
+                        if (!this.htmlDescr.isShowing()) {
                             this.htmlDescr.show();
+                        }
                     }
 
                     //Ignore extra messages.
-                    if (e.getValueIsAdjusting())
+                    if (e.getValueIsAdjusting()) {
                         return;
+                    }
 
                     //selectedRow is selected
                     ServerSelectionStep.this.currentServerConfig = ServerSelectionStep.this.serverConfigManager.serverConfigAt(selectedRow);

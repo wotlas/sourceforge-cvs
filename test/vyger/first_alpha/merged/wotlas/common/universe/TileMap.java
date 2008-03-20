@@ -26,10 +26,9 @@ import wotlas.common.WorldManager;
 import wotlas.common.environment.EnvironmentManager;
 import wotlas.common.router.MessageRouter;
 import wotlas.common.router.MessageRouterFactory;
-import wotlas.editor.StoreTileMapBackground;
 import wotlas.libs.graphics2d.GraphicsDirector;
 import wotlas.libs.graphics2d.ImageIdentifier;
-import wotlas.libs.npc.Npc;
+// FIXME ??? import wotlas.libs.npc.Npc;
 import wotlas.libs.pathfinding.AStarDoubleServer;
 import wotlas.libs.persistence.BackupReady;
 import wotlas.libs.persistence.SendObjectReady;
@@ -528,13 +527,20 @@ public class TileMap extends PreloaderEnabled implements WotlasMap, BackupReady,
         this.fullName = data.fullName;
     }
 
-    /** add an npc to this map, so the map can manage it actions and movement
-     *
-     *
+    /**
+     * add an npc to this map, so the map can manage it actions and movement
+     * 
+     * 
      */
-    public void addNpc(Npc npc) {
+    public void addNpc(Object npc) {// FIXME ??? Npc npc) {
         this.npcs.add(npc);
+        // FIXME ???
+        // short[] picture = {2,2};
+        // getMessageRouter().addScreenObject( new
+        // NpcOnTheScreen(npc.x,npc.y,npc.getName()
+        // ,picture,getMessageRouter()) );
     }
+
 
     /** Return the AstarDouble for this map. The class is AStarDoubleServer
      * 'cause there isnt a static AStartDouble for all the maps, but one

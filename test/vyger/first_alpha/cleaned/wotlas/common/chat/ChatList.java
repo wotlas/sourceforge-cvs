@@ -68,12 +68,12 @@ public interface ChatList {
      *
      * @param primaryKey primary key of the ChatRoom
      */
-    public Hashtable getPlayers(String primaryKey);
+    public Hashtable<String, Player> getPlayers(String primaryKey);
 
     /** To get all the ChatRooms. Use with : synchronized( ... ) {} please !
      *
      * @param primaryKey primary key of ChatRoom we want to get
      */
-    public Hashtable getChatRooms();
+    public Hashtable<String, ChatRoom> getChatRooms();
 
 }

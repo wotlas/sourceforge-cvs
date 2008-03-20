@@ -22,6 +22,8 @@ package wotlas.common.character;
 import java.awt.Color;
 import wotlas.common.character.roguelike.RLikeClass;
 import wotlas.common.environment.EnvironmentManager;
+import wotlas.common.objects.inventories.Inventory;
+import wotlas.common.objects.inventories.MaleInventory;
 import wotlas.libs.graphics2d.Drawable;
 import wotlas.libs.graphics2d.ImageIdentifier;
 import wotlas.libs.graphics2d.drawable.FakeSprite;
@@ -230,5 +232,19 @@ public abstract class RLikeCharacter extends BasicChar {
         this.myClass = ((RLikeCharacter) value).myClass.getClass().newInstance();
         this.myClass.clone(((RLikeCharacter) value).myClass);
         this.myClass.setMyChar(this);
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+    /**
+     * To get a new Inventory for this WotCharacter.<br>
+     * In this case, it is an MaleInventory.
+     * 
+     * @return a new inventory for this char
+     */
+    @Override
+    public Inventory createInventory() {
+	// TODO inventory
+	return new MaleInventory();
     }
 }

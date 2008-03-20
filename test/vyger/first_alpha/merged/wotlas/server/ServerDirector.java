@@ -22,8 +22,8 @@ package wotlas.server;
 import java.awt.Frame;
 import java.io.File;
 import java.util.Properties;
-import java.util.Random;
 import org.python.util.PythonInterpreter;
+import wotlas.common.DiceRollerManager;
 import wotlas.common.RemoteServersPropertiesFile;
 import wotlas.common.ResourceManager;
 import wotlas.common.WorldManager;
@@ -96,6 +96,12 @@ public class ServerDirector implements Runnable, NetServerListener {
     */
     private static ActionManager actionManager;
 
+    /**
+     * our defult Npc Manager (FIXME ???)
+     * 
+     */
+    private static NpcManager npcManager;
+
     /*------------------------------------------------------------------------------------*/
 
     /** Shutdown Thread.
@@ -114,7 +120,15 @@ public class ServerDirector implements Runnable, NetServerListener {
     */
     private static String password;
 
-    /** To stop the persistence thread.
+    /**
+     * @return Python interpreter.
+     */
+    public static PythonInterpreter getPythonInterp() {
+        return ServerDirector.interp;
+    }
+
+    /**
+     * To stop the persistence thread.
     */
     private boolean mustStop = false;
 
@@ -125,8 +139,6 @@ public class ServerDirector implements Runnable, NetServerListener {
     /** Show debug information ?
     */
     public static boolean SHOW_DEBUG = false;
-
-    static private long genUniqueKeyId;
 
     static public PythonInterpreter interp;
 
@@ -140,7 +152,7 @@ public class ServerDirector implements Runnable, NetServerListener {
         /*  first of all Manage the Preloader for WorldGenerator*/
         WorldManager.PRELOADER_STATUS = PreloaderEnabled.LOAD_SERVER_DATA;
         // set random variable to roll dices
-        ServerDirector.initRoll();
+        DiceRollerManager.initRoll();
 
         // STEP 0 - We parse the command line options
         boolean isDaemon = false;
@@ -207,10 +219,7 @@ public class ServerDirector implements Runnable, NetServerListener {
         }
 
         // STEP 1 - Creation of the ResourceManager
-        ServerDirector.resourceManager = new ResourceManager();
-
-        if (!ServerDirector.resourceManager.inJar())
-            ServerDirector.resourceManager.setBasePath(basePath);
+        ServerDirector.resourceManager = new ResourceManager(basePath, true);
 
         // STEP 2 - We create a LogStream to save our Debug messages to disk.
         try {
@@ -276,9 +285,10 @@ public class ServerDirector implements Runnable, NetServerListener {
         ServerDirector.dataManager.init(ServerDirector.serverProperties);
 
         // STEP 7 - Loading Npc Definition
-        new NpcManager().init();
-        //        npcManager = new NpcManager();
-        //        npcManager.init();
+        // FIXME ???
+        // new NpcManager().init();
+        ServerDirector.npcManager = new NpcManager();
+        ServerDirector.npcManager.init();
         UserAction.InitAllActions(true);
         Debug.signal(Debug.NOTICE, null, "Npc Definition,Action and Spells loaded...");
 
@@ -335,6 +345,7 @@ public class ServerDirector implements Runnable, NetServerListener {
         Debug.signal(Debug.NOTICE, null, "Starting npc/map(encounterSchedule) thread...");
         ServerDirector.actionManager = new ActionManager();
         ServerDirector.actionManager.start();
+        // FIXME ??? npcManager.start();
 
         // If we are in "daemon" mode the only way to stop the server is via signals.
         // Otherwise we wait 2s and wait for a key to be pressed to shutdown...
@@ -357,6 +368,7 @@ public class ServerDirector implements Runnable, NetServerListener {
             }
 
             ServerDirector.actionManager.shouldQuit(true);
+            // FIXME ??? npcManager.shouldQuit(true);
             ServerDirector.serverDirector.shutdown();
         }
     }
@@ -684,32 +696,5 @@ public class ServerDirector implements Runnable, NetServerListener {
      */
     public static DataManager getDataManager() {
         return ServerDirector.dataManager;
-    }
-
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-    static synchronized public String GenUniqueKeyId() {
-        return System.currentTimeMillis() + "" + ServerDirector.genUniqueKeyId++;
-    }
-
-    /* - - - - - - - - ROLL DICE SECTION - - - - - - - - - - - - - - - - -*/
-
-    static private Random Dice;
-    static private boolean needInit = true;
-
-    static public final short roll(int dices, int diceSize) {
-        short value = 0;
-        for (int i = 0; i < dices; i++) {
-            value += new Double(1 + (ServerDirector.Dice.nextDouble() * (diceSize))).shortValue();
-            ;
-        }
-        return value;
-    }
-
-    static private void initRoll() {
-        if (!ServerDirector.needInit)
-            return;
-        ServerDirector.Dice = new Random(System.currentTimeMillis());
-        ServerDirector.needInit = false;
     }
 }

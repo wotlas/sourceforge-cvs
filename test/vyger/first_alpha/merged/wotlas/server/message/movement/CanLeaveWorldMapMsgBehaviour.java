@@ -34,6 +34,7 @@ import wotlas.common.universe.WorldMap;
 import wotlas.common.universe.WotlasLocation;
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.server.GatewayServer;
+import wotlas.server.LieManager;
 import wotlas.server.PlayerImpl;
 import wotlas.server.ServerDirector;
 import wotlas.utils.Debug;
@@ -122,6 +123,8 @@ public class CanLeaveWorldMapMsgBehaviour extends CanLeaveWorldMapMessage implem
             player.setX(this.x + 100);
             player.setY(this.y + 100);
             player.setOrientation(this.orientation);
+            player.getLieManager().removeMeet(LieManager.FORGET_WORLDMAP);
+            player.getLieManager().forget(LieManager.MEET_CHANGEWORLDMAP);
 
             // We validate the update...
             player.sendMessage(new YouCanLeaveMapMessage(this.primaryKey, this.location, this.x, this.y, this.orientation, player.getSyncID()));
@@ -169,6 +172,8 @@ public class CanLeaveWorldMapMsgBehaviour extends CanLeaveWorldMapMessage implem
             player.setX(this.x);
             player.setY(this.y);
             player.setOrientation(this.orientation);
+            player.getLieManager().removeMeet(LieManager.FORGET_WORLDMAP);
+            player.getLieManager().forget(LieManager.MEET_CHANGEWORLDMAP);
 
             // We validate the update...
             player.sendMessage(new YouCanLeaveMapMessage(this.primaryKey, this.location, this.x, this.y, this.orientation, player.getSyncID()));
@@ -204,6 +209,8 @@ public class CanLeaveWorldMapMsgBehaviour extends CanLeaveWorldMapMessage implem
                 player.setX(this.x);
                 player.setY(this.y);
                 player.setOrientation(this.orientation);
+                player.getLieManager().removeMeet(LieManager.FORGET_WORLDMAP);
+                player.getLieManager().forget(LieManager.MEET_CHANGEWORLDMAP);
 
                 if (gateway.transfertAccount(this.primaryKey, targetServerID)) {
                     Debug.signal(Debug.NOTICE, null, "Account Transaction " + this.primaryKey + " succeeded... sending redirection message.");
@@ -239,6 +246,8 @@ public class CanLeaveWorldMapMsgBehaviour extends CanLeaveWorldMapMessage implem
             player.setX(this.x);
             player.setY(this.y);
             player.setOrientation(this.orientation);
+            player.getLieManager().removeMeet(LieManager.FORGET_WORLDMAP);
+            player.getLieManager().forget(LieManager.MEET_CHANGEWORLDMAP);
 
             player.sendMessage(new YouCanLeaveMapMessage(this.primaryKey, this.location, this.x, this.y, this.orientation, player.getSyncID()));
             return;

@@ -20,6 +20,7 @@
 package wotlas.server.message.description;
 
 import wotlas.common.message.description.MyPlayerDataPleaseMessage;
+import wotlas.common.message.description.YourFakeNamesMessage;
 import wotlas.common.message.description.YourPlayerDataMessage;
 import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.server.PlayerImpl;
@@ -54,6 +55,9 @@ public class MyPlayerDataPleaseMsgBehaviour extends MyPlayerDataPleaseMessage im
 
         // We send the player's data
         player.sendMessage(new YourPlayerDataMessage(player));
+
+        // We send the player's fake names
+        player.sendMessage(new YourFakeNamesMessage(player.getLieManager().getFakeNames(), player.getLieManager().getCurrentFakeNameIndex()));
 
         // We send possessed objects... (release 2.0)
 

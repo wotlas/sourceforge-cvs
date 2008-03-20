@@ -48,7 +48,7 @@ public class MultiLineText extends Drawable {
 
     /** Default Font Name used.
      */
-    static private String defaultFontName = "Lucida Blackletter";
+    static private String defaultFontName = "Lucida Blackletter Regular";
 
     /*------------------------------------------------------------------------------------*/
 
@@ -246,33 +246,38 @@ public class MultiLineText extends Drawable {
             this.heightsText = new int[this.text.length];
 
             FontRenderContext frc = gc.getFontRenderContext();
+            TextLayout t;
+            
+            if (this.text[0].length() > 0) {
+             	t= new TextLayout(this.text[0], gc.getFont(), frc);
+	            this.heightsText[0] = (int) t.getBounds().getHeight();
+    	        this.widthText = (int) t.getBounds().getWidth();
+        	    gc.setColor(this.color);
 
-            TextLayout t = new TextLayout(this.text[0], gc.getFont(), frc);
-            this.heightsText[0] = (int) t.getBounds().getHeight();
-            this.widthText = (int) t.getBounds().getWidth();
-            gc.setColor(this.color);
+            	if (this.isLeftAligned) {
+                	gc.drawString(this.text[0], this.xs, this.ys + this.heightsText[0]);
+	            } else {
+    	            gc.drawString(this.text[0], (int) screen.getWidth() - this.xs - this.widthText, this.ys + this.heightsText[0]);
+	            }
 
-            if (this.isLeftAligned) {
-                gc.drawString(this.text[0], this.xs, this.ys + this.heightsText[0]);
-            } else {
-                gc.drawString(this.text[0], (int) screen.getWidth() - this.xs - this.widthText, this.ys + this.heightsText[0]);
-            }
-
-            this.gap = this.heightsText[0] / 2; //spaces between lines (half height of the text)
+    	        this.gap = this.heightsText[0] / 2; //spaces between lines (half height of the text)
+   	        }
 
             for (int i = 1; i < this.text.length; i++) {
-                t = new TextLayout(this.text[i], gc.getFont(), frc);
+                if (this.text[i].length() > 0) {
+	                t = new TextLayout(this.text[i], gc.getFont(), frc);
 
-                if (((int) t.getBounds().getWidth()) > this.widthText) {
-                    this.widthText = ((int) t.getBounds().getWidth());
-                }
+	                if (((int) t.getBounds().getWidth()) > this.widthText) {
+    	                this.widthText = ((int) t.getBounds().getWidth());
+        	        }
 
-                this.heightsText[i] = this.heightsText[i - 1] + (int) t.getBounds().getHeight() + this.gap;
+	                this.heightsText[i] = this.heightsText[i - 1] + (int) t.getBounds().getHeight() + this.gap;
 
-                if (this.isLeftAligned) {
-                    gc.drawString(this.text[i], this.xs, this.ys + this.heightsText[i]);
-                } else {
-                    gc.drawString(this.text[i], (int) screen.getWidth() - this.xs - this.widthText, this.ys + this.heightsText[i]);
+	                if (this.isLeftAligned) {
+    	                gc.drawString(this.text[i], this.xs, this.ys + this.heightsText[i]);
+        	        } else {
+            	        gc.drawString(this.text[i], (int) screen.getWidth() - this.xs - this.widthText, this.ys + this.heightsText[i]);
+                	}
                 }
             }
 

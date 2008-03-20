@@ -24,6 +24,7 @@ import javax.swing.JOptionPane;
 import wotlas.common.ResourceManager;
 import wotlas.common.WorldManager;
 import wotlas.common.universe.PreloaderEnabled;
+import wotlas.common.universe.StoreTileMapBackground;
 import wotlas.common.universe.TileMap;
 import wotlas.libs.graphics2d.FontFactory;
 import wotlas.libs.log.JLogStream;
@@ -114,10 +115,7 @@ public class EditTile {
         }
 
         // STEP 1 - Creation of the ResourceManager
-        EditTile.resourceManager = new ResourceManager();
-
-        if (!EditTile.resourceManager.inJar())
-            EditTile.resourceManager.setBasePath(basePath);
+        EditTile.resourceManager = new ResourceManager(basePath, true);
 
         // STEP 2 - Start a JLogStream to display our Debug messages
         try {

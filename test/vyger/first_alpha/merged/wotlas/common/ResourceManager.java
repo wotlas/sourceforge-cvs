@@ -16,6 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
 package wotlas.common;
 
 import java.awt.Image;
@@ -40,6 +41,7 @@ import wotlas.libs.sound.SoundResourceLocator;
 import wotlas.libs.wizard.WizardResourceLocator;
 import wotlas.utils.Debug;
 import wotlas.utils.FileTools;
+import wotlas.utils.ResourceLookup;
 import wotlas.utils.Tools;
 
 /** Manages the different resources found in wotlas. Resources are searched in a JAR
@@ -88,7 +90,9 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
     /** All Wotlas sources JAR file name.
      */
     public static final String WOTLAS_ALL_JAR = "wotlas.jar";
-    
+    /** Wotlas common resources JAR.
+     */
+    public static final String WOTLAS_COMMON_JAR = "common";
     /** Wotlas root dir for resources located in a JAR. We'll search in this
      *  directory for every kind of resources.
      *  MUST START WITH A "/".
@@ -102,18 +106,9 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
 
     /** Tells in which dir we can store external files. This directory will be created in the
      *  directory where the JAR is stored. See the wotlasJarExternalDir member field for the
-     *  complete path.
+     *  complete path.<BR>Must be different from other root dirs.
      */
-    public static final String WOTLAS_JAR_EXTERNAL_DIR = "base-ext"; // must be different from other root dirs
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-    /**
-     * List of files used for the universe definitions loaded from jar files.
-     */
-    public static final String JAR_LIST_UNIVERSE_FILES = "/base/universe/resources.lst";
-    /**
-     * List of files used in Wotlas loaded from jar files.
-     */
-    public static final String JAR_LIST_BASE_FILES = "/base/resources.lst";
+    public static final String WOTLAS_JAR_EXTERNAL_DIR = "base-ext";
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -204,6 +199,31 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
     /** Transfer script name (without the file extension)
      */
     public static final String TRANSFER_SCRIPT_NAME = "transferScript";
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /**
+     * Filename of a file defining the list of resources present in the jars loaded.
+     */
+    public static final String JAR_RES_LIST_FILENAME = "resources.lst";
+    /**
+     * Jar directory separator.
+     */
+    public static final String JAR_SEP = "/";
+    /**
+     * List of files used for the universe definitions and loaded from jar files.
+     */
+    public static final String JAR_LIST_UNIVERSE_FILES = WOTLAS_JAR_ROOT_RESOURCE_DIR + JAR_SEP + UNIVERSE_DATA_DIR + JAR_SEP + JAR_RES_LIST_FILENAME;
+    /**
+     * List of files used in Wotlas and loaded from jar files.
+     */
+    public static final String JAR_LIST_BASE_FILES = WOTLAS_JAR_ROOT_RESOURCE_DIR + JAR_SEP + JAR_RES_LIST_FILENAME;
+    /**
+     * List of files for the image library used in Wotlas and loaded from jar files.
+     */
+    public static final String JAR_LIST_IMAGE_LIBRARY_FILES = WOTLAS_JAR_ROOT_RESOURCE_DIR + JAR_SEP + IMAGE_LIBRARY_DIR + JAR_SEP + JAR_RES_LIST_FILENAME;
+    /**
+     * List of files for the wizard steps used in Wotlas and loaded from jar files.
+     */
+    public static final String JAR_LIST_WIZARD_STEPS_FILES = WOTLAS_JAR_ROOT_RESOURCE_DIR + JAR_SEP + WIZARD_STEPS_DIR + JAR_SEP + JAR_RES_LIST_FILENAME;
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -239,9 +259,11 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
      *  JAR file names we'll seek (see the beginning of this class).
      *
      *  IMPORTANT : if the wotlas jar file is not found in the classpath
-     *  we'll use the local classes and the default directory pathes.
+     *  we'll use the local classes and the default directory paths.
+     * @param defaultBasePath if not null, the default base directory path;
+     * @param serverSide true if it is a server side resourceManager.
      */
-    public ResourceManager() {
+    public ResourceManager(String defaultBasePath, boolean serverSide) {
 
         // Are we in a JAR FILE ?
         this.inJar = false;
@@ -251,12 +273,16 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
 
         if (this.jarName == null) {
             // OK we are not in a JAR. We'll use the default external location for resources
+            if (defaultBasePath == null || defaultBasePath.length() == 0) {
             this.basePath = ResourceManager.DEFAULT_BASE_PATH;
+            } else {
+                this.basePath = defaultBasePath;
+            }
             return;
         }
 
-        // creation of an absolute path to our external resources.
-        this.wotlasJarExternalDir = getJarDir() + ResourceManager.WOTLAS_JAR_EXTERNAL_DIR;
+        // Creation of an absolute path to our external resources.
+        this.wotlasJarExternalDir = createJarExternalDir(defaultBasePath);
         Debug.signal(Debug.NOTICE, this, "ResourceManager jarExternalDir= " + this.wotlasJarExternalDir);
 
         // Are we in a client JAR File ?
@@ -283,7 +309,7 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
 
             try {
                 repairClassPath();
-                createExternalClientDirectories();
+                createExternalServerDirectories();
             } catch (Exception e) {
                 e.printStackTrace();
                 Tools.displayDebugMessage("Deployment Failed", "Wotlas failed to extract config files to the local directory." + "\nCheck the access rights of the installation directory of wotlas.");
@@ -294,13 +320,22 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
         }
 
         // Are we in a client JAR File ?
-        if (this.jarName.indexOf(ResourceManager.WOTLAS_ALL_JAR) >= 0) {
-            this.inClientJar = true;
+        if (this.jarName.indexOf(ResourceManager.WOTLAS_ALL_JAR) >= 0 || this.jarName.indexOf(ResourceManager.WOTLAS_COMMON_JAR) >= 0) {
+            if (serverSide) {
+                this.inServerJar = true;
+            } else {
+                this.inClientJar = true;
+            }
             this.inJar = true;
 
             try {
                 repairClassPath();
-                createExternalClientDirectories();
+                if (serverSide) {
+                    createExternalServerDirectories();
+                } else {
+                    createExternalClientDirectories();
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
                 Tools.displayDebugMessage("Deployment Failed", "Wotlas failed to extract config files to the local directory." + "\nCheck the access rights of the installation directory of wotlas.");
@@ -312,6 +347,47 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
 
         Tools.displayDebugMessage("Wrong Jar Name", "The Jar file name should end with a 'client' or 'server' keyword");
         Debug.exit();
+    }
+
+    /**
+     * Creation of an absolute path to our external resources.
+     * @param defaultBasePath if not null, the default base directory path;
+     * @return path for external resources.
+     */
+    private String createJarExternalDir(String defaultBasePath) {
+        String extDir = null;
+        String userDir = null;
+        try {
+            userDir = System.getProperty("user.dir");
+        } catch (SecurityException se) {
+        // JavaWebStart security.
+        }
+        if (defaultBasePath != null && defaultBasePath.length() != 0) {
+            File extFile = new File(defaultBasePath);
+            if (extFile.exists() && extFile.canWrite()) {
+                // External directory is the directory given in launch arguments.
+                extDir = extFile.getAbsolutePath().replace('\\', '/');
+            }
+            if (extDir == null && userDir != null && userDir.length() != 0) {
+                extFile = new File(userDir, defaultBasePath);
+                if (extFile.exists() && extFile.canWrite()) {
+                    // External directory is the directory given in launch arguments.
+                    extDir = extFile.getAbsolutePath().replace('\\', '/');
+                }
+            }
+        }
+        if (extDir == null && userDir != null && userDir.length() != 0) {
+            File extFile = new File(userDir, ResourceManager.WOTLAS_JAR_EXTERNAL_DIR);
+            if (extFile.exists() && extFile.canWrite()) {
+                // External directory is the directory given in launch arguments.
+                extDir = extFile.getAbsolutePath().replace('\\', '/');
+            }
+        }
+        if (extDir == null) {
+            // Old default externalDir.
+            extDir = getJarDir() + ResourceManager.WOTLAS_JAR_EXTERNAL_DIR;
+        }
+        return extDir;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -398,8 +474,14 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
         if (Tools.hasJar(this.jarName)) {
             return; // our classpath has the current Jar name... nothing to repair.
         }
-
-        System.setProperty("java.class.path", System.getProperty("java.class.path", ".") + System.getProperty("path.separator", ";") + this.jarName);
+        // FIXME Probleme dans netbeans aucun des modules n'est dans le classpath.
+        String cp = System.getProperty("java.class.path", ".") + System.getProperty("path.separator", ";") + this.jarName;
+        if (this.jarName.indexOf("wotlas-common") != -1) {
+            String libdir = this.jarName.substring(0, this.jarName.lastIndexOf("/"));
+            cp = cp + System.getProperty("path.separator", ";") + libdir + "/wotlas-base-common.jar";
+            cp = cp + System.getProperty("path.separator", ";") + libdir + "/wotlas-base-randland.jar";
+        }
+        System.setProperty("java.class.path", cp);
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -412,6 +494,9 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
      */
     public boolean isExternal(String pathName) {
         if (pathName.startsWith(this.wotlasJarExternalDir)) {
+            return true;
+        }
+        if (pathName.indexOf(ResourceManager.PLAYERS_HOME_DIR) != -1) {
             return true;
         }
         return false;
@@ -758,35 +843,34 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
      *        provided by this ResourceManager.
      */
     public Object loadObject(String filePath) {
-        if (this.inJar && !isExternal(filePath)) {
-            InputStream is = this.getClass().getResourceAsStream(filePath);
-            if (is == null) {
-                return null;
-            }
-
-            Object o = null;
-
+        if (this.inClientJar && !isExternal(filePath)) {
+            URL uri = getClassResourceUrl(this.getClass(), filePath);
             try {
-                o = PropertiesConverter.load(is);
-            } catch (PersistenceException pe) {
-                Debug.signal(Debug.ERROR, this, pe);
+                if (uri != null) {
+                    InputStream is = uri.openStream();
+                    Object o = null;
+
+                    try {
+                        o = PropertiesConverter.load(is);
+                    } catch (PersistenceException pe) {
+                        Debug.signal(Debug.ERROR, this, pe);
+                    }
+                    is.close();
+                    return o;
+                }
+
+            } catch (IOException ioe) {
+                Debug.signal(Debug.ERROR, this, ioe);
             }
 
-            try {
-                is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return o;
         } else {
             try {
                 return PropertiesConverter.load(filePath);
             } catch (PersistenceException pe) {
                 Debug.signal(Debug.ERROR, this, "" + pe);
-                return null;
             }
         }
+        return null;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -837,12 +921,20 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
      */
     public String loadText(String filePath) {
         if (this.inJar && !isExternal(filePath)) {
-            InputStream is = this.getClass().getResourceAsStream(filePath);
-            if (is == null) {
-                return "";
-            }
+            URL uri = getClassResourceUrl(this.getClass(), filePath);
+            try {
+                if (uri != null) {
+                    InputStream is = uri.openStream();
+                    String txt = FileTools.loadTextFromStream(is);
+                    is.close();
+                    return txt;
+                }
 
-            return FileTools.loadTextFromStream(is);
+            } catch (IOException ioe) {
+                Debug.signal(Debug.ERROR, this, ioe);
+            }
+            return "";
+
         } else {
             return FileTools.loadTextFromFile(filePath);
         }
@@ -870,12 +962,19 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
      */
     public Properties loadProperties(String filePath) {
         if (this.inJar && !isExternal(filePath)) {
-            InputStream is = this.getClass().getResourceAsStream(filePath);
-            if (is == null) {
-                return new Properties();
+            URL uri = getClassResourceUrl(this.getClass(), filePath);
+            try {
+                if (uri != null) {
+                    InputStream is = uri.openStream();
+                    Properties prop = FileTools.loadPropertiesFromStream(is);
+                    is.close();
+                    return prop;
+                }
+            } catch (IOException ioe) {
+                Debug.signal(Debug.ERROR, this, ioe);
             }
+            return new Properties();
 
-            return FileTools.loadPropertiesFromStream(is);
         } else {
             return FileTools.loadPropertiesFile(filePath);
         }
@@ -927,6 +1026,14 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
         }
 
         if (this.inJar && !isExternal(dirName)) {
+            if (dirName.indexOf(IMAGE_LIBRARY_DIR) != -1) {
+                return Tools.listFilesInJar(ResourceManager.JAR_LIST_IMAGE_LIBRARY_FILES, dirName, ext);
+            }
+            if (dirName.indexOf(WIZARD_STEPS_DIR) != -1) {
+                return Tools.listFilesInJar(ResourceManager.JAR_LIST_WIZARD_STEPS_FILES, dirName, ext);
+            }
+            // Prefer use of specific resources list as for ImageLibrary.
+            Debug.signal(Debug.WARNING, this, "Attempt to find a list of files in the default resources list :" + dirName + ", " + ResourceManager.JAR_LIST_BASE_FILES);
             return Tools.listFilesInJar(ResourceManager.JAR_LIST_BASE_FILES, dirName, ext);
         } else {
             return FileTools.listFiles(dirName, ext);
@@ -947,6 +1054,14 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
     public String[] listDirectories(String dirName) {
 
         if (this.inJar && !isExternal(dirName)) {
+            if (dirName.indexOf(IMAGE_LIBRARY_DIR) != -1) {
+                return Tools.listFilesInJar(ResourceManager.JAR_LIST_IMAGE_LIBRARY_FILES, dirName, null);
+            }
+            if (dirName.indexOf(WIZARD_STEPS_DIR) != -1) {
+                return Tools.listFilesInJar(ResourceManager.JAR_LIST_WIZARD_STEPS_FILES, dirName, null);
+            }
+            // Prefer use of specific resources list as for ImageLibrary.
+            Debug.signal(Debug.WARNING, this, "Attempt to find a list of directories in the default resources list :" + dirName + ", " + ResourceManager.JAR_LIST_BASE_FILES);
             return Tools.listFilesInJar(ResourceManager.JAR_LIST_BASE_FILES, dirName, null);
         } else {
             return FileTools.listDirs(dirName);
@@ -968,15 +1083,23 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
         }
 
         if (this.inJar) {
-            return this.getClass().getResourceAsStream(fontPath);
+            try {
+                URL uri = getClassResourceUrl(this.getClass(), fontPath);
+                if (uri != null) {
+                    return uri.openStream();
+                }
+            } catch (IOException ioe) {
+                Debug.signal(Debug.ERROR, this, ioe);
+            }
+
         } else {
             try {
                 return new FileInputStream(fontPath);
             } catch (FileNotFoundException fe) {
                 Debug.signal(Debug.ERROR, this, fe);
-                return null;
             }
         }
+        return null;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -994,15 +1117,23 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
         }
 
         if (this.inJar) {
-            return this.getClass().getResourceAsStream(musicName);
+            try {
+                URL uri = getClassResourceUrl(this.getClass(), musicName);
+                if (uri != null) {
+                    return uri.openStream();
+                }
+            } catch (IOException ioe) {
+                Debug.signal(Debug.ERROR, this, ioe);
+            }
+
         } else {
             try {
                 return new FileInputStream(musicName);
             } catch (FileNotFoundException fe) {
                 Debug.signal(Debug.ERROR, this, fe);
-                return null;
             }
         }
+        return null;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -1020,15 +1151,25 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
         }
 
         if (this.inJar) {
-            return this.getClass().getResourceAsStream(soundName);
+            try {
+                URL url = getClassResourceUrl(this.getClass(), soundName);
+                if (url != null) {
+                    return url.openStream();
+                // return this.getClass().getResourceAsStream(soundName);
+                }
+            } catch (IOException ioe) {
+                Debug.signal(Debug.ERROR, this, ioe);
+            }
+
         } else {
             try {
                 return new FileInputStream(soundName);
             } catch (FileNotFoundException fe) {
                 Debug.signal(Debug.ERROR, this, fe);
-                return null;
             }
         }
+        return null;
+
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -1040,15 +1181,24 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
     public InputStream getFileStream(String filePath) {
 
         if (this.inJar) {
-            return this.getClass().getResourceAsStream(filePath);
+            try {
+                URL url = getClassResourceUrl(this.getClass(), filePath);
+                if (url != null) {
+                    return url.openStream();
+                //return this.getClass().getResourceAsStream(filePath);
+                }
+            } catch (IOException ioe) {
+                Debug.signal(Debug.ERROR, this, ioe);
+            }
+
         } else {
             try {
                 return new FileInputStream(filePath);
             } catch (FileNotFoundException fe) {
                 Debug.signal(Debug.ERROR, this, fe);
-                return null;
             }
         }
+        return null;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -1067,11 +1217,14 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
         }
 
         if (this.inJar) {
-            URL url = this.getClass().getResource(imageName);
-            return new ImageIcon(url);
+            URL url = getClassResourceUrl(this.getClass(), imageName);
+            if (url != null) {
+                return new ImageIcon(url);
+            }
         } else {
             return new ImageIcon(imageName);
         }
+        return null;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -1090,11 +1243,14 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
         }
 
         if (this.inJar) {
-            URL url = this.getClass().getResource(imageName);
-            return Toolkit.getDefaultToolkit().getImage(url);
+            URL url = getClassResourceUrl(this.getClass(), imageName);
+            if (url != null) {
+                return Toolkit.getDefaultToolkit().getImage(url);
+            }
         } else {
             return Toolkit.getDefaultToolkit().getImage(imageName);
         }
+        return null;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -1106,11 +1262,31 @@ public class ResourceManager implements LogResourceLocator, ImageResourceLocator
      */
     public Image getLibraryImage(String imagePath) {
         if (this.inJar) {
-            URL url = this.getClass().getResource(imagePath);
-            return Toolkit.getDefaultToolkit().getImage(url);
+            URL url = getClassResourceUrl(this.getClass(), imagePath);
+            if (url != null) {
+                return Toolkit.getDefaultToolkit().getImage(url);
+            }
         } else {
             return Toolkit.getDefaultToolkit().getImage(imagePath);
         }
+        return null;
+    }
+
+    /**
+     * Returns the wanted resource url from the jars loaded.
+     * @param resourceName resource name with FULL resource path.
+     * @return url or null if the image was not found.
+     */
+    public URL getClassResourceUrl(Class claRef, String resourceName) {
+        Class cla = claRef;
+        if (cla == null) {
+            cla = this.getClass();
+        }
+        URL url = ResourceLookup.getClassResourceUrl(cla, resourceName);
+        if (url == null) {
+            Debug.signal(Debug.WARNING, this, "Resource (" + resourceName + ") not found !");
+        }
+        return url;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

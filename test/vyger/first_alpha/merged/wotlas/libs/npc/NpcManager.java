@@ -16,8 +16,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.libs.npc;
+
+// package wotlas.libs.npc;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -28,7 +29,14 @@ import wotlas.server.ServerDirector;
   *
   * @author Diego
  */
-public class NpcManager {
+public class NpcManager implements Runnable {
+
+    /**
+     * Our thread.
+     */
+    private Thread thread;
+
+    private boolean quit;
 
     static protected final String NPC_SCRIPTS_FILE = "npc_def.txt";
 
@@ -104,7 +112,7 @@ public class NpcManager {
                     for (int i = 0; i < this.commands.length; i++)
                         parse = this.commands[i].controll(parse);
                     if (parse.length() > 2)
-                        ServerDirector.interp.exec(parse);
+                        ServerDirector.getPythonInterp().exec(parse);
 
                 }
                 tmp.close();
@@ -123,5 +131,55 @@ public class NpcManager {
             }
         }
         this.commands = null;
+    }
+
+    // FIXME ??? -> fin du fichier ???
+
+    public void run() {
+        Thread me = Thread.currentThread();
+        while (this.thread == me && !shouldQuit()) {
+            action();
+            try {
+                Thread.sleep(1000 * 2);
+            } catch (InterruptedException e) {
+                // the VM doesn't want us to sleep anymore,
+                // so get back to work
+                break;
+            }
+        }
+        this.thread = null;
+    }
+
+    /**
+     * Start thread.
+     */
+    public void start() {
+        this.thread = new Thread(this);
+        this.thread.setPriority(Thread.NORM_PRIORITY);
+        this.thread.setName("NpcManager");
+        this.thread.start();
+    }
+
+    /**
+     * Stop thread.
+     */
+    public synchronized void stop() {
+        this.thread = null;
+        notify();
+    }
+
+    public boolean shouldQuit() {
+        return this.quit;
+    }
+
+    public void shouldQuit(boolean quit) {
+        this.quit = quit;
+    }
+
+    public void action() {
+        System.out.println("it's time to action for Npc!");
+        // check for maps with players
+        // check for npc inside map
+        // :------------- HOW and WITH HOW DELAY an attack
     }
 }

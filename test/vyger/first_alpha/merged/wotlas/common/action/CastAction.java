@@ -18,13 +18,7 @@
  */
 package wotlas.common.action;
 
-import wotlas.common.action.spell.Create;
-import wotlas.common.action.spell.MoveHere;
-import wotlas.common.action.spell.Plasma;
 import wotlas.common.action.spell.Spell;
-import wotlas.common.action.spell.Summon;
-import wotlas.common.action.spell.TimeAnchor;
-import wotlas.common.action.spell.TimeStop;
 import wotlas.common.character.CharData;
 import wotlas.common.screenobject.ScreenObject;
 
@@ -34,6 +28,10 @@ import wotlas.common.screenobject.ScreenObject;
  */
 public class CastAction extends UserAction {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1026246019652545781L;
     static public final int CAST_ADMIN_SUMMON = 0;
     static public final int CAST_ADMIN_CREATE = 1;
     static public final int CAST_ADMIN_SUMMON2 = 2;
@@ -51,7 +49,16 @@ public class CastAction extends UserAction {
     protected int minimumLevel;
     protected Spell spell;
 
-    public CastAction(int id, String name, String description, byte maskTarget, byte targetRange, int manaCost, int minimumLevel,
+    public CastAction(int id, String name, String description, byte maskTarget, byte targetRange, int manaCost, int minimumLevel) {
+	this();
+	init(id, name, description, maskTarget, targetRange, manaCost, minimumLevel, null);
+    }
+
+    public CastAction() {
+	super();
+    }
+
+    protected void init(int id, String name, String description, byte maskTarget, byte targetRange, int manaCost, int minimumLevel,
             Spell spell) {
         this.name = name;
         this.description = description;
@@ -64,6 +71,14 @@ public class CastAction extends UserAction {
         this.effectRange = UserAction.EFFECT_RANGE_NONE;
         this.maskInform = 0;
         this.spell = spell;
+    }
+
+    public Spell getSpell() {
+	return this.spell;
+    }
+
+    public void setSpell(Spell spell) {
+	this.spell = spell;
     }
 
     @Override
@@ -88,23 +103,34 @@ public class CastAction extends UserAction {
 
         CastAction.castActions = new CastAction[CastAction.CAST_LAST_CAST];
 
-        CastAction.castActions[CastAction.CAST_ADMIN_SUMMON] = new CastAction(CastAction.CAST_ADMIN_SUMMON, "Summon monster", "Summon any monster anywhere!", (byte) (1 << UserAction.TARGET_TYPE_GROUND), UserAction.TARGET_RANGE_SAME_MAP, 0, 0, new Summon("dwarf berserk"));
+	CastAction.castActions[CastAction.CAST_ADMIN_SUMMON] = new CastAction(CastAction.CAST_ADMIN_SUMMON, "Summon monster",
+		"Summon any monster anywhere!", (byte) (1 << UserAction.TARGET_TYPE_GROUND), UserAction.TARGET_RANGE_SAME_MAP, 0, 0);
 
-        CastAction.castActions[CastAction.CAST_ADMIN_CREATE] = new CastAction(CastAction.CAST_ADMIN_CREATE, "Create item", "Create item anywhere!", (byte) (1 << UserAction.TARGET_TYPE_GROUND), UserAction.TARGET_RANGE_SAME_MAP, 0, 0, new Create("oggdef1-name"));
+	CastAction.castActions[CastAction.CAST_ADMIN_CREATE] = new CastAction(CastAction.CAST_ADMIN_CREATE, "Create item",
+		"Create item anywhere!", (byte) (1 << UserAction.TARGET_TYPE_GROUND), UserAction.TARGET_RANGE_SAME_MAP, 0, 0);
 
-        CastAction.castActions[CastAction.CAST_ADMIN_SUMMON2] = new CastAction(CastAction.CAST_ADMIN_SUMMON2, "Summon monster dwarf king", "Summon any monster anywhere!", (byte) (1 << UserAction.TARGET_TYPE_GROUND), UserAction.TARGET_RANGE_SAME_MAP, 0, 0, new Summon("dwarf king"));
+	CastAction.castActions[CastAction.CAST_ADMIN_SUMMON2] = new CastAction(CastAction.CAST_ADMIN_SUMMON2, "Summon monster dwarf king",
+		"Summon any monster anywhere!", (byte) (1 << UserAction.TARGET_TYPE_GROUND), UserAction.TARGET_RANGE_SAME_MAP, 0, 0);
 
-        CastAction.castActions[CastAction.CAST_ADMIN_SUMMON3] = new CastAction(CastAction.CAST_ADMIN_SUMMON3, "Summon dwarf cleric", "Summon any monster anywhere!", (byte) (1 << UserAction.TARGET_TYPE_GROUND), UserAction.TARGET_RANGE_SAME_MAP, 0, 0, new Summon("dwarf cleric"));
+	CastAction.castActions[CastAction.CAST_ADMIN_SUMMON3] = new CastAction(CastAction.CAST_ADMIN_SUMMON3, "Summon dwarf cleric",
+		"Summon any monster anywhere!", (byte) (1 << UserAction.TARGET_TYPE_GROUND), UserAction.TARGET_RANGE_SAME_MAP, 0, 0);
 
-        CastAction.castActions[CastAction.CAST_ADMIN_SUMMON4] = new CastAction(CastAction.CAST_ADMIN_SUMMON4, "Summon dwarf wizard", "Summon any monster anywhere!", (byte) (1 << UserAction.TARGET_TYPE_GROUND), UserAction.TARGET_RANGE_SAME_MAP, 0, 0, new Summon("dwarf wizard"));
+	CastAction.castActions[CastAction.CAST_ADMIN_SUMMON4] = new CastAction(CastAction.CAST_ADMIN_SUMMON4, "Summon dwarf wizard",
+		"Summon any monster anywhere!", (byte) (1 << UserAction.TARGET_TYPE_GROUND), UserAction.TARGET_RANGE_SAME_MAP, 0, 0);
 
-        CastAction.castActions[CastAction.CAST_ADMIN_PLASMA] = new CastAction(CastAction.CAST_ADMIN_PLASMA, "plasma bolt", "Cast plasma bolt to harm target!", new Integer((1 << UserAction.TARGET_TYPE_NPC) + (1 << UserAction.TARGET_TYPE_PLAYER)).byteValue(), UserAction.TARGET_RANGE_SAME_MAP, 0, 0, new Plasma(51, 30)); // image , damage
+	CastAction.castActions[CastAction.CAST_ADMIN_PLASMA] = new CastAction(CastAction.CAST_ADMIN_PLASMA, "plasma bolt",
+		"Cast plasma bolt to harm target!", new Integer((1 << UserAction.TARGET_TYPE_NPC) + (1 << UserAction.TARGET_TYPE_PLAYER))
+			.byteValue(), UserAction.TARGET_RANGE_SAME_MAP, 0, 0); // image , damage
 
-        CastAction.castActions[CastAction.CAST_TIME_STOP] = new CastAction(CastAction.CAST_TIME_STOP, "Time Stop", "Stop the world's time!", (byte) (1 << UserAction.TARGET_TYPE_SELF), UserAction.TARGET_RANGE_SAME_MAP, 0, 0, new TimeStop());
+	CastAction.castActions[CastAction.CAST_TIME_STOP] = new CastAction(CastAction.CAST_TIME_STOP, "Time Stop",
+		"Stop the world's time!", (byte) (1 << UserAction.TARGET_TYPE_SELF), UserAction.TARGET_RANGE_SAME_MAP, 0, 0);
 
-        CastAction.castActions[CastAction.CAST_TIME_ANCHOR] = new CastAction(CastAction.CAST_TIME_ANCHOR, "Time Anchor", "Psionicist power, prevent the psionicist to be moved or" + "  holded in time.", (byte) (1 << UserAction.TARGET_TYPE_SELF), UserAction.TARGET_RANGE_SAME_MAP, 0, 0, new TimeAnchor());
+	CastAction.castActions[CastAction.CAST_TIME_ANCHOR] = new CastAction(CastAction.CAST_TIME_ANCHOR, "Time Anchor",
+		"Psionicist power, prevent the psionicist to be moved or" + "  holded in time.", (byte) (1 << UserAction.TARGET_TYPE_SELF),
+		UserAction.TARGET_RANGE_SAME_MAP, 0, 0);
 
-        CastAction.castActions[CastAction.CAST_COMEHERE] = new CastAction(CastAction.CAST_COMEHERE, "Command", "Come Here! and it comes.....", (byte) (1 << UserAction.TARGET_TYPE_NPC), UserAction.TARGET_RANGE_SAME_MAP, 0, 0, new MoveHere());
+	CastAction.castActions[CastAction.CAST_COMEHERE] = new CastAction(CastAction.CAST_COMEHERE, "Command",
+		"Come Here! and it comes.....", (byte) (1 << UserAction.TARGET_TYPE_NPC), UserAction.TARGET_RANGE_SAME_MAP, 0, 0);
     }
 
     static public CastAction getCastAction(int id) {

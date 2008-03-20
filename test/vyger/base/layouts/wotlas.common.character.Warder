@@ -72,5 +72,5 @@ sleeveSlot.width=20
 sleeveSlot.x=10
 sleeveSlot.y=10
 
-class=wotlas.common.objects.inventories.InventoryLayout
+class=wotlas.client.screen.plugin.InventoryLayout
 

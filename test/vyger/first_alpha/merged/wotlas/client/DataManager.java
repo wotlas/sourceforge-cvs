@@ -49,6 +49,7 @@ import wotlas.common.message.description.DoorStateMessage;
 import wotlas.common.message.description.MyPlayerDataPleaseMessage;
 import wotlas.common.message.description.TheServerEnvironmentPleaseMessage;
 import wotlas.common.message.description.WelcomeMessage;
+import wotlas.common.screenobject.ItemOnTheScreen;
 import wotlas.common.screenobject.NpcOnTheScreen;
 import wotlas.common.screenobject.PlayerOnTheScreen;
 import wotlas.common.screenobject.ScreenObject;
@@ -92,9 +93,6 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     public final static byte COMMAND_ABILITY = 2;
     public final static byte COMMAND_BASIC = 3;
 
-    public byte commandRequest = DataManager.COMMAND_NOTHING;
-    public UserAction commandAction = null;
-
     /*------------------------------------------------------------------------------------*/
 
     /** Image Library
@@ -123,7 +121,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
     /** Our World Manager
      */
-    private final WorldManager worldManager;
+    private WorldManager worldManager;
 
     /** Our MapData : data of the current map displayed on screen.
      */
@@ -153,7 +151,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
      *  tick should call a queueMessage() on this NetQueue.
      *  NetMessageBehaviours should use the invokeLater() method to queue a message.
      */
-    private final NetQueue syncMessageQueue;
+    private NetQueue syncMessageQueue;
 
     /** Our player data.
      */
@@ -165,7 +163,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
 
     /** List of all the players displayed on screen.
      */
-    private final Hashtable<String, PlayerImpl> players;
+    private Hashtable<String, PlayerImpl> players;
 
     /** List of all the ScreenObjects displayed on screen.
      */
@@ -228,19 +226,40 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
     private byte circleLock[] = new byte[1];
 
     /*------------------------------------------------------------------------------------*/
+    private byte commandRequest = DataManager.COMMAND_NOTHING;
+    private UserAction commandAction = null;
 
-    /** Constructor with resource manager.
-     * @param rManager resources for WorldManager datas.
-    */
-    public DataManager(final ResourceManager rManager) {
+    /*------------------------------------------------------------------------------------*/
+    /**
+     * Default constructor.
+     */
+    public DataManager() {
+        this(null);
+    }
 
+    /**
+     * Constructor with resource manager.
+     */
+    public DataManager(ResourceManager rManager) {
+        super();
+        init(rManager);
+    }
+
+    /**
+     * @return true if the worldManager is instanciated.
+     */
+    public boolean isInitOk() {
+        return this.worldManager != null;
+    }
+
+    public final void init(ResourceManager rManager) {
         // 1 - We create our world Manager. It will load the universe data.
         this.worldManager = new WorldManager(rManager, false);
 
         // 2 - Misc inits
         this.syncMessageQueue = new NetQueue(1, 3);
         this.players = new Hashtable<String, PlayerImpl>();
-        this.screenObjects = new Hashtable();
+        this.screenObjects = new Hashtable<String, ScreenObject>();
         this.connectionLock = new byte[1];
         this.startGameLock = new Object();
 
@@ -488,8 +507,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         synchronized (this.connectionLock) {
             if (this.connection != null) {
                 this.connection.close();
+            }
         }
-    }
     }
 
     /*------------------------------------------------------------------------------------*/
@@ -657,8 +676,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         emptyMenu.setItemEnabled("right hand", true);
         ((SimpleMenu2D) this.menuManager.getRootMenu()).addItemLink(MenuManager.OBJECT_ITEM_NAME, emptyMenu);
 
-        /*SimpleMenu2D objectMenu = (SimpleMenu2D) menuManager.findByName(MenuManager.OBJECT_ITEM_NAME);
-        objectMenu.addItem("head");
+        /*
+         * SimpleMenu2D objectMenu = (SimpleMenu2D) menuManager.findByName(MenuManager.OBJECT_ITEM_NAME); objectMenu.addItem("head");
         */
         // end Test Petrus
     }
@@ -785,7 +804,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
             // Tick
             tick();
             deltaT = (int) (System.currentTimeMillis() - now);
-            
+
             if (deltaT < delay) {
                 Tools.waitTime(delay - deltaT);
             }
@@ -815,8 +834,8 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
             Iterator it = this.screenObjects.values().iterator();
             while (it.hasNext()) {
                 item = (ScreenObject) it.next();
-                if (item instanceof PlayerOnTheScreen || item instanceof SpellOnTheScreen || item instanceof NpcOnTheScreen) {
-                   item.tick();
+                if (item instanceof PlayerOnTheScreen || item instanceof ItemOnTheScreen || item instanceof SpellOnTheScreen || item instanceof NpcOnTheScreen) {
+                    item.tick();
                 }
             }
         }
@@ -905,11 +924,11 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         if (DataManager.SHOW_DEBUG) {
             System.out.println("DataManager::onLeftClicJMapPanel");
         }
-        
+
         if (this.updatingMapData) {
             return; // updating Map Location
         }
-        
+
         // Menu clicked ?
         if (this.menuManager.isVisible()) {
             if (!this.menuManager.mouseClicked(e)) {
@@ -927,7 +946,7 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         // Clicked object is the game screen...
         // We move the player to that location.
         Rectangle screen = this.gDirector.getScreenRectangle();
-        
+
         synchronized (this.players) {
             //!?!?!? why? : wahy syncr playERS to move playER ?
             this.myPlayer.moveTo(new Point(e.getX() + (int) screen.getX(), e.getY() + (int) screen.getY()), this.worldManager);
@@ -1523,5 +1542,12 @@ public class DataManager extends Thread implements NetConnectionListener, Tickab
         }
     }
 
+    public void setCommandAction(UserAction action) {
+        this.commandAction = action;
+    }
+
+    public void setCommandRequest(byte cmdRequest) {
+        this.commandRequest = cmdRequest;
+    }
     /*------------------------------------------------------------------------------------*/
 }

@@ -1,12 +1,88 @@
 *
 * Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
-* Copyright (C) 2001-2008 WOTLAS Team
+* Copyright (C) 2001-2010 WOTLAS Team
 *
 * CHANGES BETWEEN VERSIONS
 * ( File Best Viewed in 1024x768 or above)
 *
+CHANGES BETWEEN 1.3.1b AND ?
+-------------------------
 
-CHANGES BETWEEN 1.3.1 AND ?
+
+CHANGES BETWEEN 1.3.1a AND 1.3.1b
+-------------------------
+
+08/18/08 - see CHANGES.txt - version 1.3.1b
+Sleeping Owl - in test/wotlas.suite directories
+ 
+ A- Adding WotlasGameDefinition in services lookup.
+ B- Adding Standalone server and Standalone server and IOChannelFactory;
+ C- Generating release files by ant script;
+ D- Adding a 'disclaimer.txt'; 
+
+---
+A- WotlasGameDefinition in services lookup.
+---
+All the services in Wotlas are instantiated by the class wotlas.utils.Tools using the netbeans lookup to find the 
+implementation needed for the execution of the asked service.
+The current modification will allow 
+ - to differentiate the implementation needed for the requester;
+ - to easy the choice of services depending on the game played; 
+
+Planned changes  :
+ 01 - wotlas.utils : as we have to instantiate both sides classes, we need a filter to choose wich part we have to
+instantiate.
+For this purpose all the classes instantiated by the wotlas.utils.Tools.getImplementorsOf(Class) will be filtered by 
+a specific class wotlas.utils.WotlasGameDefinition. By doing this, with two different filters instantiated by the
+client side and the other server side, we would instantiate the classes needed by each of these.
+
+All the classes instantiated by Tools will extend the WishGameExtension interfaces in order to better recognize them.
+The WotlasGameDefinition would be instantiated in the wotlas.client.ClientDirector and wotlas.server.ServerDirector 
+at the very start of the application.
+
+---
+B- Standalone server and IOChannelFactory
+---
+The standalone server is a server of a wotlas game that is instantiated in the same Java Runtime Environment that of 
+the client side. The first purpose of the standalone server is to allow testing without launching a specific server.
+The first limitation is that it can not be connected to an other client outside from the JRE.
+
+In order to develop this functionality, we need first to allow the instantiation of both side of the Wotlas framework.
+Then we have to change the behavior associated to the instantiation of the socket input and output.
+
+Planned changes  :
+ 01 - wotlas.utils : adding WotlasGameDefinition (see above)
+
+ 02 - wotlas.libs.net : create an abstraction for the instantiation of wotlas's input and output client and server 
+sides.
+The wotlas.libs.io.IOChannelFactory would have the charge to create the client and server io channels. Next we have to
+move the socket code into the wotlas.libs.net.io.SocketChannelFactory and the different classes associated.
+We have to replace all the java.net.Socket and java.net.ServerSocket by their abstraction parts : 
+wotlas.libs.net.IOChannel and wotlas.libs.net.IOServerChannel.
+As it will be two different wotlas.libs.net.NetMessageFactory in the same JRE : the one for the client side and the 
+other for the server, we have to give the reference of it in each specific side.
+
+ 03 - wotlas.libs.net : for the standalone server we need a Pipe Input and output channels.
+It will be the wotlas.libs.net.io.PipedChannelFactory and the Piped* classes.
+
+ 04 - wotlas.libs.net : defining what is a server config to better distinguish what is a standalone server 
+ confirguration.
+
+---
+C- Generating release files by ant script
+---
+Planned changes  :
+ - Creating two ant script to allow fast creation of the different released files.
+The main script 'Build-release.xml' could be used either by ant using 'build-release.bat' or by ant in eclipse 
+or netbeans.
+
+build-product.xml = define macro-targets used for compilation and packaging; 
+                    define macro-packaging of ressources and projects;
+build-release.xml = define the release files targets;
+
+
+
+CHANGES BETWEEN 1.3.1 AND 1.3.1a
 -------------------------
 
 Sleeping Owl - Preparing library separation and vyger

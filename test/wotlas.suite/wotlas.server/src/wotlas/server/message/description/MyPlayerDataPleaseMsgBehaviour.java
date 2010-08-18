@@ -16,13 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.server.message.description;
 
 import wotlas.common.message.description.MyPlayerDataPleaseMessage;
+import wotlas.common.message.description.WishServerDescriptionNetMsgBehaviour;
 import wotlas.common.message.description.YourFakeNamesMessage;
 import wotlas.common.message.description.YourPlayerDataMessage;
-import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.server.PlayerImpl;
 
 /**
@@ -30,11 +29,9 @@ import wotlas.server.PlayerImpl;
  *
  * @author Aldiss
  */
-
-public class MyPlayerDataPleaseMsgBehaviour extends MyPlayerDataPleaseMessage implements NetMessageBehaviour {
+public class MyPlayerDataPleaseMsgBehaviour extends MyPlayerDataPleaseMessage implements WishServerDescriptionNetMsgBehaviour {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public MyPlayerDataPleaseMsgBehaviour() {
@@ -42,7 +39,6 @@ public class MyPlayerDataPleaseMsgBehaviour extends MyPlayerDataPleaseMessage im
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
@@ -59,7 +55,7 @@ public class MyPlayerDataPleaseMsgBehaviour extends MyPlayerDataPleaseMessage im
         // We send the player's fake names
         player.sendMessage(new YourFakeNamesMessage(player.getLieManager().getFakeNames(), player.getLieManager().getCurrentFakeNameIndex()));
 
-        // We send possessed objects... (release 2.0)
+    // We send possessed objects... (release 2.0)
 
     }
 

@@ -16,23 +16,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.message.description;
 
 import wotlas.client.DataManager;
+import wotlas.common.message.description.WishClientDescriptionNetMsgBehaviour;
 import wotlas.common.message.description.YourPlayerDataMessage;
-import wotlas.libs.net.NetMessageBehaviour;
 
 /**
  * Associated behaviour to the YourPlayerDataMessage...
  *
  * @author Aldiss, Petrus
  */
-
-public class YourPlayerDataMsgBehaviour extends YourPlayerDataMessage implements NetMessageBehaviour {
+public class YourPlayerDataMsgBehaviour extends YourPlayerDataMessage implements WishClientDescriptionNetMsgBehaviour {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public YourPlayerDataMsgBehaviour() {
@@ -40,7 +37,6 @@ public class YourPlayerDataMsgBehaviour extends YourPlayerDataMessage implements
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
@@ -52,5 +48,4 @@ public class YourPlayerDataMsgBehaviour extends YourPlayerDataMessage implements
     }
 
     /*------------------------------------------------------------------------------------*/
-
 }

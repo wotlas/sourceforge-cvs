@@ -16,13 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.message.account;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import wotlas.common.message.account.StepErrorMessage;
-import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.common.message.account.WishClientAccountNetMsgBehaviour;
 import wotlas.libs.wizard.JWizard;
 import wotlas.utils.Debug;
 
@@ -31,8 +30,7 @@ import wotlas.utils.Debug;
  *
  * @author Petrus
  */
-
-public class StepErrorMsgBehaviour extends StepErrorMessage implements NetMessageBehaviour {
+public class StepErrorMsgBehaviour extends StepErrorMessage implements WishClientAccountNetMsgBehaviour {
     /*------------------------------------------------------------------------------------*/
 
     /** Constructor.
@@ -42,7 +40,6 @@ public class StepErrorMsgBehaviour extends StepErrorMessage implements NetMessag
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
@@ -59,7 +56,6 @@ public class StepErrorMsgBehaviour extends StepErrorMessage implements NetMessag
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Class for message display. We use this class for async display.
      */
     public static class StepErrorJDisplay implements Runnable {
@@ -87,5 +83,4 @@ public class StepErrorMsgBehaviour extends StepErrorMessage implements NetMessag
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

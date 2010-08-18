@@ -23,7 +23,7 @@ import wotlas.client.DataManager;
 import wotlas.client.PlayerImpl;
 import wotlas.common.chat.ChatRoom;
 import wotlas.common.message.chat.ChatRoomCreatedMessage;
-import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.common.message.chat.WishClientChatNetMsgBehaviour;
 import wotlas.utils.Debug;
 
 /**
@@ -31,7 +31,7 @@ import wotlas.utils.Debug;
  *
  * @author Petrus
  */
-public class ChatRoomCreatedMsgBehaviour extends ChatRoomCreatedMessage implements NetMessageBehaviour {
+public class ChatRoomCreatedMsgBehaviour extends ChatRoomCreatedMessage implements WishClientChatNetMsgBehaviour {
 
     /*------------------------------------------------------------------------------------*/
     /** To tell if this message is to be invoked later or not.

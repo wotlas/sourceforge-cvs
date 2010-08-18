@@ -34,6 +34,8 @@ import wotlas.server.setup.ServerAdminGUI;
 import wotlas.utils.Debug;
 import wotlas.utils.FileTools;
 import wotlas.utils.Tools;
+import wotlas.utils.WotlasDefaultGameDefinition;
+import wotlas.utils.WotlasGameDefinition;
 
 /** The MAIN server class. It starts the PersistenceManager, the ServerManager
  *  and the DataManager. So got it ? yeah, it's the boss on the server side...
@@ -60,29 +62,29 @@ public class ServerDirector implements Runnable, NetServerListener {
 
     /** Our server properties.
      */
-    private static ServerPropertiesFile serverProperties;
+    private ServerPropertiesFile serverProperties;
 
     /** Our remote server properties.
      */
-    private static RemoteServersPropertiesFile remoteServersProperties;
+    private RemoteServersPropertiesFile remoteServersProperties;
 
     /** Our resource manager
      */
-    private static ResourceManager resourceManager;
+    private ResourceManager resourceManager;
 
     /*------------------------------------------------------------------------------------*/
 
     /** Our Server Manager.
      */
-    private static ServerManager serverManager;
+    private ServerManager serverManager;
 
     /** Our Data Manager.
      */
-    private static DataManager dataManager;
+    private DataManager dataManager;
 
     /** Our default ServerDirector (Peristence Thread).
      */
-    private static ServerDirector serverDirector;
+    private static ServerDirector _serverDirector;
 
     /*------------------------------------------------------------------------------------*/
 
@@ -92,15 +94,15 @@ public class ServerDirector implements Runnable, NetServerListener {
 
     /** Period for changing the keys.
      */
-    public static byte updateKeysPeriod = 0;
+    public byte updateKeysPeriod = 0;
 
     /** Immediate stop of persistence thread ?
      */
-    public static boolean immediatePersistenceThreadStop = false;
+    public boolean immediatePersistenceThreadStop = false;
 
     /** Default password for transfer
      */
-    private static String password;
+    private String password;
 
     /** To stop the persistence thread.
      */
@@ -160,11 +162,11 @@ public class ServerDirector implements Runnable, NetServerListener {
 
                 displayAdminGUI = true;
             } else if (argv[i].equals("-daemon")) { // -- DAEMON MODE --
-                if (ServerDirector.SHOW_DEBUG) {
-                    System.out.println("Incompatible options.");
-                    System.out.println(ServerDirector.SERVER_COMMAND_LINE_HELP);
-                    return;
-                }
+                //if (ServerDirector.SHOW_DEBUG) {
+                //    System.out.println("Incompatible options.");
+                //    System.out.println(ServerDirector.SERVER_COMMAND_LINE_HELP);
+                //    return;
+                //}
 
                 isDaemon = true;
                 Debug.displayExceptionStack(true);
@@ -185,23 +187,43 @@ public class ServerDirector implements Runnable, NetServerListener {
             }
         }
 
+        // TODO STEP 0 - Define the game context. 
+        WotlasGameDefinition wgd = new WotlasDefaultGameDefinition(WotlasGameDefinition.ID_WOTLAS_SERVER, new String[] { "client", "Client" }, new String[] { "server", "Server" });
+
+        ServerDirector.runServer(isDaemon, displayAdminGUI, basePath, wgd, true, ServerPropertiesFile.SERVER_CONFIG);
+    }
+
+    /**
+     * Create and run the serverDirector as described by the WotlasGameDefinition.
+     * 
+     * @param isDaemon
+     * @param displayAdminGUI
+     * @param basePath
+     * @param wgd
+     * @param shutdownJreOnClose shutdown the current JRE with a call of System.exit(x).
+     */
+    public static ServerDirector runServer(boolean isDaemon, boolean displayAdminGUI, String basePath, WotlasGameDefinition wgd, boolean shutdownJreOnClose, String serverCfgFile) {
+
+        final ServerDirector serverDirector = new ServerDirector();
+        ServerDirector._serverDirector = serverDirector;
+
         // STEP 1 - Creation of the ResourceManager
-        ServerDirector.resourceManager = new ResourceManager(basePath, true);
+        serverDirector.resourceManager = new ResourceManager(basePath, true, wgd);
 
         // STEP 2 - We create a LogStream to save our Debug messages to disk.
         try {
             if (isDaemon) {
                 // We don't print the Debug messages on System.err
-                Debug.setPrintStream(new DaemonLogStream(ServerDirector.resourceManager.getExternalLogsDir() + ServerDirector.SERVER_LOG_PREFIX + System.currentTimeMillis() + ServerDirector.SERVER_LOG_SUFFIX));
+                Debug.setPrintStream(new DaemonLogStream(serverDirector.resourceManager.getExternalLogsDir() + ServerDirector.SERVER_LOG_PREFIX + System.currentTimeMillis() + ServerDirector.SERVER_LOG_SUFFIX));
             } else if (displayAdminGUI) {
-                Debug.setPrintStream(new JLogStream(new javax.swing.JFrame(), ServerDirector.resourceManager.getExternalLogsDir() + "server-setup.log", "log-title-dark.jpg", ServerDirector.resourceManager));
+                Debug.setPrintStream(new JLogStream(new javax.swing.JFrame(), serverDirector.resourceManager.getExternalLogsDir() + "server-setup.log", "log-title-dark.jpg", serverDirector.resourceManager));
             } else {
                 // We also print the Debug messages on System.err
-                Debug.setPrintStream(new ServerLogStream(ServerDirector.resourceManager.getExternalLogsDir() + ServerDirector.SERVER_LOG_PREFIX + System.currentTimeMillis() + ServerDirector.SERVER_LOG_SUFFIX));
+                Debug.setPrintStream(new ServerLogStream(serverDirector.resourceManager.getExternalLogsDir() + ServerDirector.SERVER_LOG_PREFIX + System.currentTimeMillis() + ServerDirector.SERVER_LOG_SUFFIX));
             }
         } catch (java.io.FileNotFoundException e) {
             e.printStackTrace();
-            return;
+            return null;
         }
 
         // STEP 3 - We control the VM version and load our vital config files.
@@ -215,57 +237,56 @@ public class ServerDirector implements Runnable, NetServerListener {
 
         Debug.signal(Debug.NOTICE, null, "Code version       : " + ResourceManager.WOTLAS_VERSION);
 
-        if (!ServerDirector.resourceManager.inJar())
+        if (!serverDirector.resourceManager.inJar())
             Debug.signal(Debug.NOTICE, null, "Data directory     : " + basePath);
         else
             Debug.signal(Debug.NOTICE, null, "Data directory     : JAR File");
 
-        ServerDirector.serverProperties = new ServerPropertiesFile(ServerDirector.resourceManager);
-        ServerDirector.remoteServersProperties = new RemoteServersPropertiesFile(ServerDirector.resourceManager);
+        serverDirector.serverProperties = new ServerPropertiesFile(serverDirector.resourceManager, serverCfgFile);
+        serverDirector.remoteServersProperties = new RemoteServersPropertiesFile(serverDirector.resourceManager);
 
         if (displayAdminGUI) {
             ServerAdminGUI.create();
-            return; // we just display the admin GUI, we don't start the server.
+            return null; // we just display the admin GUI, we don't start the server.
         }
 
         // STEP 4 - We ask the ServerManager to get ready
-        ServerDirector.serverManager = new ServerManager(ServerDirector.resourceManager);
+        serverDirector.serverManager = new ServerManager(serverDirector.resourceManager);
         Debug.signal(Debug.NOTICE, null, "Server Manager created...");
 
         // STEP 5 - We ask the DataManager to load the worlds & client accounts
-        ServerDirector.dataManager = new DataManager(ServerDirector.resourceManager);
-        ServerDirector.dataManager.init(ServerDirector.serverProperties);
+        serverDirector.dataManager = new DataManager(serverDirector.resourceManager);
+        serverDirector.dataManager.init(serverDirector.serverProperties);
 
         // STEP 6 - Sound Library for alerts... (we only create a sound player)
-        SoundLibrary.createSoundLibrary(ServerDirector.serverProperties, null, ServerDirector.resourceManager);
+        SoundLibrary.createSoundLibrary(serverDirector.serverProperties, null, serverDirector.resourceManager);
 
         // STEP 7 - Start of the GameServer, AccountServer & GatewayServer !
         Debug.signal(Debug.NOTICE, null, "Starting Game server, Account server & Gateway server...");
 
-        ServerDirector.serverDirector = new ServerDirector();
-        ServerDirector.serverManager.getGameServer().addServerListener(ServerDirector.serverDirector);
-        ServerDirector.serverManager.start();
+        serverDirector.serverManager.getGameServer().addServerListener(serverDirector);
+        serverDirector.serverManager.start();
 
         // STEP 8 - We generate new keys for special characters
-        ServerDirector.updateKeys();
+        serverDirector.updateKeys();
 
         // STEP 9 - Adding Shutdown Hook
         ServerDirector.shutdownThread = new Thread() {
             @Override
             public void run() {
-                ServerDirector.immediatePersistenceThreadStop = true;
+                serverDirector.immediatePersistenceThreadStop = true;
                 Debug.signal(Debug.CRITICAL, null, "Received VM Shutdown Signal.");
 
                 // 1 - Lock servers...
-                ServerDirector.serverManager.lockServers();
+                serverDirector.serverManager.lockServers();
 
                 // 2 - We warn connected clients
-                ServerDirector.serverManager.sendWarningMessage("Your server has been stopped.\n" + "Try to reconnect in a few minutes.");
+                serverDirector.serverManager.sendWarningMessage("Your server has been stopped.\n" + "Try to reconnect in a few minutes.");
 
                 // 3 - We close all remaining connections & save the data
-                ServerDirector.serverManager.closeAllConnections();
-                ServerDirector.dataManager.shutdown(true);
-                ServerDirector.serverManager.shutdown();
+                serverDirector.serverManager.closeAllConnections();
+                serverDirector.dataManager.shutdown(true);
+                serverDirector.serverManager.shutdown();
                 SoundLibrary.clear();
 
                 Debug.signal(Debug.CRITICAL, null, "Data Saved. Exiting.");
@@ -278,7 +299,7 @@ public class ServerDirector implements Runnable, NetServerListener {
         // STEP 10 - Everything is ok ! we enter the persistence loop
         Debug.signal(Debug.NOTICE, null, "Starting persistence thread...");
 
-        Thread persistenceThread = new Thread(ServerDirector.serverDirector);
+        Thread persistenceThread = new Thread(serverDirector);
         persistenceThread.start();
 
         // If we are in "daemon" mode the only way to stop the server is via signals.
@@ -298,11 +319,12 @@ public class ServerDirector implements Runnable, NetServerListener {
             try {
                 Runtime.getRuntime().removeShutdownHook(ServerDirector.shutdownThread);
             } catch (Exception e) {
-                return; // we couldn't remove the hook, it means the VM is already exiting
+                return null; // we couldn't remove the hook, it means the VM is already exiting
             }
 
-            ServerDirector.serverDirector.shutdown();
+            serverDirector.shutdown();
         }
+        return ServerDirector.getCurrentServerDirector();
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -314,12 +336,12 @@ public class ServerDirector implements Runnable, NetServerListener {
             // 1 - we wait the persistence period minus 2 minutes
             synchronized (this) {
                 try {
-                    wait(ServerDirector.serverProperties.getIntegerProperty("init.persistencePeriod") * 1000 * 3600 - 1000 * 120);
+                    wait(this.serverProperties.getIntegerProperty("init.persistencePeriod") * 1000 * 3600 - 1000 * 120);
                 } catch (Exception e) {
                 }
             }
 
-            if (ServerDirector.immediatePersistenceThreadStop)
+            if (this.immediatePersistenceThreadStop)
                 return;
 
             // 2 - Start persistence action
@@ -327,8 +349,8 @@ public class ServerDirector implements Runnable, NetServerListener {
         } while (!mustStopThread());
 
         // We shutdown the server
-        ServerDirector.dataManager.shutdown(false);
-        ServerDirector.serverManager.shutdown();
+        this.dataManager.shutdown(false);
+        this.serverManager.shutdown();
 
         Tools.waitTime(1000 * 10); // 10s
         Debug.signal(Debug.NOTICE, null, "Leaving Persistence Thread...");
@@ -348,29 +370,29 @@ public class ServerDirector implements Runnable, NetServerListener {
         // maintenance mode for 2-3 minutes, in 2 minutes.
         // If we are not in maintenance mode ( maintenance=false )
         // the message is a "server shuting down" message.
-        ServerDirector.serverManager.lockServers();
+        this.serverManager.lockServers();
 
         if (maintenance) {
             Debug.signal(Debug.NOTICE, null, "Server will enter maintenance mode in 2 minutes...");
-            ServerDirector.serverManager.sendWarningMessage("Your server will enter maintenance mode in 2 minutes.\n" + "Please disconnect and reconnect in 5 minutes");
+            this.serverManager.sendWarningMessage("Your server will enter maintenance mode in 2 minutes.\n" + "Please disconnect and reconnect in 5 minutes");
             Tools.waitTime(1000 * 120); // 2mn 
             Debug.signal(Debug.WARNING, null, "Server enters maintenance mode now... (" + Tools.getLexicalTime() + ")");
         } else {
             Debug.signal(Debug.NOTICE, null, "Sending warning messages to connected clients...");
-            ServerDirector.serverManager.sendWarningMessage("Your server is about to shutdown in 30s.\n" + "Please disconnect and reconnect later.");
+            this.serverManager.sendWarningMessage("Your server is about to shutdown in 30s.\n" + "Please disconnect and reconnect later.");
             Tools.waitTime(1000 * 30); // 30s
             Debug.signal(Debug.NOTICE, null, "Saving world & player data... (" + Tools.getLexicalTime() + ")");
         }
 
         // 2 - We close all remaining connections
         //     and save the data
-        ServerDirector.serverManager.closeAllConnections();
-        ServerDirector.dataManager.save();
+        this.serverManager.closeAllConnections();
+        this.dataManager.save();
 
         // 3 - Leaving Maintenance Mode...
         if (maintenance) {
-            ServerDirector.updateKeys(); // we update the keys...
-            ServerDirector.serverManager.unlockServers();
+            this.updateKeys(); // we update the keys...
+            this.serverManager.unlockServers();
             Debug.signal(Debug.NOTICE, null, "Leaving maintenance mode... (" + Tools.getLexicalTime() + ")");
         }
     }
@@ -399,7 +421,7 @@ public class ServerDirector implements Runnable, NetServerListener {
      * @return serverID
      */
     public static int getServerID() {
-        return ServerDirector.serverProperties.getIntegerProperty("init.serverID");
+        return ServerDirector.getCurrentServerDirector().serverProperties.getIntegerProperty("init.serverID");
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -410,7 +432,7 @@ public class ServerDirector implements Runnable, NetServerListener {
      * @return remoteServerConfigHomeURL
      */
     public static String getRemoteServerConfigHomeURL() {
-        return ServerDirector.remoteServersProperties.getProperty("info.remoteServerHomeURL");
+        return ServerDirector.getCurrentServerDirector().remoteServersProperties.getProperty("info.remoteServerHomeURL");
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -419,7 +441,7 @@ public class ServerDirector implements Runnable, NetServerListener {
      * @return server properties
      */
     public static Properties getServerProperties() {
-        return ServerDirector.serverProperties;
+        return ServerDirector.getCurrentServerDirector().serverProperties;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -428,34 +450,34 @@ public class ServerDirector implements Runnable, NetServerListener {
      * @return remote servers properties
      */
     public static Properties getRemoteServersProperties() {
-        return ServerDirector.remoteServersProperties;
+        return ServerDirector.getCurrentServerDirector().remoteServersProperties;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
     /** To change the keys used for special players & the bot's controlKey
      */
-    public static void updateKeys() {
+    protected void updateKeys() {
 
-        int period = ServerDirector.serverProperties.getIntegerProperty("init.persistencePeriod");
+        int period = this.serverProperties.getIntegerProperty("init.persistencePeriod");
         int nbIteration = 24 / period;
 
         if (period < 24) {
-            if ((ServerDirector.updateKeysPeriod % nbIteration) == 0)
-                ServerDirector.updateKeysPeriod = 1;
+            if ((this.updateKeysPeriod % nbIteration) == 0)
+                this.updateKeysPeriod = 1;
             else {
-                ServerDirector.updateKeysPeriod++;
+                this.updateKeysPeriod++;
                 return;
             }
         }
 
-        ServerDirector.serverProperties.setProperty("key.shaitan", Tools.keyGenerator(23, ServerDirector.getServerID() + 1));
-        ServerDirector.serverProperties.setProperty("key.amyrlin", Tools.keyGenerator(23, ServerDirector.getServerID() + 2));
-        ServerDirector.serverProperties.setProperty("key.chronicles", Tools.keyGenerator(23, ServerDirector.getServerID() + 3));
-        ServerDirector.serverProperties.setProperty("key.mhael", Tools.keyGenerator(23, ServerDirector.getServerID() + 4));
+        this.serverProperties.setProperty("key.shaitan", Tools.keyGenerator(23, ServerDirector.getServerID() + 1));
+        this.serverProperties.setProperty("key.amyrlin", Tools.keyGenerator(23, ServerDirector.getServerID() + 2));
+        this.serverProperties.setProperty("key.chronicles", Tools.keyGenerator(23, ServerDirector.getServerID() + 3));
+        this.serverProperties.setProperty("key.mhael", Tools.keyGenerator(23, ServerDirector.getServerID() + 4));
         Debug.signal(Debug.NOTICE, null, "Generated new keys for special characters...");
 
-        ServerDirector.serverProperties.setProperty("bots.controlKey", Tools.keyGenerator(23, ServerDirector.getServerID() + 5));
+        this.serverProperties.setProperty("bots.controlKey", Tools.keyGenerator(23, ServerDirector.getServerID() + 5));
         Debug.signal(Debug.NOTICE, null, "Generated new control key for bots...");
     }
 
@@ -490,7 +512,7 @@ public class ServerDirector implements Runnable, NetServerListener {
         Debug.signal(Debug.NOTICE, null, "Network interface " + ipAddress + " is up...");
 
         // We save the new IP
-        if (!ServerDirector.serverManager.getServerConfigManager().updateServerConfig(null, ipAddress, ServerDirector.serverManager.getServerConfig())) {
+        if (!this.serverManager.getServerConfigManager().updateServerConfig(null, ipAddress, this.serverManager.getServerConfig())) {
             Debug.signal(Debug.CRITICAL, this, "Failed to save new IP (" + ipAddress + ") to the local server-" + ServerDirector.getServerID() + ".cfg.adr file ! Please perform a manual update!" + "Your server's IP has changed !");
             return;
         } else
@@ -500,8 +522,8 @@ public class ServerDirector implements Runnable, NetServerListener {
             return; // local server
 
         // Manual update ?
-        if (!ServerDirector.serverProperties.getBooleanProperty("init.automaticUpdate")) {
-            String publishAddress = ServerDirector.serverProperties.getProperty("init.publishAddress");
+        if (!this.serverProperties.getBooleanProperty("init.automaticUpdate")) {
+            String publishAddress = this.serverProperties.getProperty("init.publishAddress");
 
             if (publishAddress == null || publishAddress.length() == 0)
                 Debug.signal(Debug.NOTICE, null, "Your server's IP has changed, you should do a manual update on the wotlas web server!" + "Your server will be unreachable until then.");
@@ -515,25 +537,25 @@ public class ServerDirector implements Runnable, NetServerListener {
             @Override
             public void run() {
                 // We get the login
-                String login = ServerDirector.remoteServersProperties.getProperty("transfer.serverHomeLogin");
+                String login = ServerDirector.this.remoteServersProperties.getProperty("transfer.serverHomeLogin");
 
                 // We load the script we are about to modify with login & password.
-                String cmd = ServerDirector.resourceManager.getExternalTransferScript();
-                File wDir = new File(ServerDirector.resourceManager.getExternalScriptsDir());
-                String script = ServerDirector.resourceManager.loadText(cmd);
+                String cmd = ServerDirector.this.resourceManager.getExternalTransferScript();
+                File wDir = new File(ServerDirector.this.resourceManager.getExternalScriptsDir());
+                String script = ServerDirector.this.resourceManager.loadText(cmd);
                 boolean editScript = true;
 
                 if (script.indexOf("SET WEB_LOGIN") < 0 || script.indexOf("SET WEB_PASSWORD") < 0)
                     editScript = false; // the script doesn't use any login & password, no need to edit it
 
                 // Did the user already entered the password ?
-                if (ServerDirector.password == null && editScript) {
-                    ALoginDialog dialog = new ALoginDialog(new Frame(), "File Transfer Login (asked once):", login, ServerDirector.resourceManager);
+                if (ServerDirector.this.password == null && editScript) {
+                    ALoginDialog dialog = new ALoginDialog(new Frame(), "File Transfer Login (asked once):", login, ServerDirector.this.resourceManager);
 
                     if (dialog.okWasClicked()) {
                         login = dialog.getLogin();
-                        ServerDirector.remoteServersProperties.setProperty("transfer.serverHomeLogin", login);
-                        ServerDirector.password = dialog.getPassword();
+                        ServerDirector.this.remoteServersProperties.setProperty("transfer.serverHomeLogin", login);
+                        ServerDirector.this.password = dialog.getPassword();
                     } else {
                         Debug.signal(Debug.ERROR, null, "No password set. Transfer aborted");
                         return; // no transfer
@@ -556,9 +578,9 @@ public class ServerDirector implements Runnable, NetServerListener {
                     return;
                 } else if (editScript) {
                     script = FileTools.updateProperty("SET WEB_LOGIN", login, script);
-                    script = FileTools.updateProperty("SET WEB_PASSWORD", ServerDirector.password, script);
+                    script = FileTools.updateProperty("SET WEB_PASSWORD", ServerDirector.this.password, script);
 
-                    if (!ServerDirector.resourceManager.saveText(cmd, script)) {
+                    if (!ServerDirector.this.resourceManager.saveText(cmd, script)) {
                         Debug.signal(Debug.ERROR, this, "Failed to save " + script + " !");
                         return;
                     }
@@ -582,7 +604,7 @@ public class ServerDirector implements Runnable, NetServerListener {
                     script = FileTools.updateProperty("SET WEB_LOGIN", "You will be prompted for your login.", script);
                     script = FileTools.updateProperty("SET WEB_PASSWORD", "You will be prompted for your passsword.", script);
 
-                    if (!ServerDirector.resourceManager.saveText(cmd, script)) {
+                    if (!ServerDirector.this.resourceManager.saveText(cmd, script)) {
                         Debug.signal(Debug.ERROR, this, "Failed to save " + script + " to clean entries !");
                         return;
                     }
@@ -596,11 +618,15 @@ public class ServerDirector implements Runnable, NetServerListener {
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+    private static ServerDirector getCurrentServerDirector() {
+        return ServerDirector._serverDirector;
+    }
+
     /** To get our resource manager.
      *  @return our resource manager.
      */
     public static ResourceManager getResourceManager() {
-        return ServerDirector.resourceManager;
+        return ServerDirector.getCurrentServerDirector().resourceManager;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -609,7 +635,7 @@ public class ServerDirector implements Runnable, NetServerListener {
      *  @return our server manager.
      */
     public static ServerManager getServerManager() {
-        return ServerDirector.serverManager;
+        return ServerDirector.getCurrentServerDirector().serverManager;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -618,7 +644,7 @@ public class ServerDirector implements Runnable, NetServerListener {
      *  @return our data manager.
      */
     public static DataManager getDataManager() {
-        return ServerDirector.dataManager;
+        return ServerDirector.getCurrentServerDirector().dataManager;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

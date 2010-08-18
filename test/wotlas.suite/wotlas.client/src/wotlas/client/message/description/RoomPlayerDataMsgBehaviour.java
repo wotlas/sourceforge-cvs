@@ -24,9 +24,9 @@ import wotlas.client.DataManager;
 import wotlas.client.PlayerImpl;
 import wotlas.common.Player;
 import wotlas.common.message.description.RoomPlayerDataMessage;
+import wotlas.common.message.description.WishClientDescriptionNetMsgBehaviour;
 import wotlas.common.universe.Room;
 import wotlas.common.universe.WotlasLocation;
-import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.utils.Debug;
 
 /**
@@ -34,7 +34,7 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-public class RoomPlayerDataMsgBehaviour extends RoomPlayerDataMessage implements NetMessageBehaviour {
+public class RoomPlayerDataMsgBehaviour extends RoomPlayerDataMessage implements WishClientDescriptionNetMsgBehaviour {
     /*------------------------------------------------------------------------------------*/
 
     /** Constructor.

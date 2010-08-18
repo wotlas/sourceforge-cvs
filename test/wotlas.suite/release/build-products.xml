@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    You may freely edit this file. See commented blocks below.
+This file is clearly inspired from netbeans project automation.
+
+For the purpose of easier reading the script
+is divided into following sections:
+
+  - initialization
+  - compilation
+  - jar
+  - execution
+  - debugging
+  - javadoc
+  - junit compilation
+  - junit execution
+  - junit debugging
+  - applet
+  - cleanup
+
+-->
+<project name="wotlas-products" default="default" basedir="." 
+         xmlns:wotlas="http://www.wotlas.org/release/1">
+
+    <description>File used for compiling sources, creating jars and others help files (javadoc)</description>
+
+    <!-- 
+                ======================
+                INITIALIZATION SECTION 
+                ======================
+            -->
+
+    <target name="-pre-init">
+        <!-- Empty placeholder for easier customization. -->
+        <!-- You can override this target in the build-release.xml file. -->
+    </target>
+
+    <target name="-init-products" 
+            depends="-pre-init" >
+        <property file="build-products.properties"/>
+    </target>
+
+    <target name="-do-init"
+            depends="-pre-init,-init-products">
+        <property file="${user.properties.file}"/>
+    </target>
+
+    <target name="-init-macrodef-copydist">
+        <macrodef name="copydist" uri="http://www.wotlas.org/release/1">
+            <attribute name="srcdir"    />
+            <attribute name="todir"     />
+            <attribute name="includes"  default="${build.copy.includes}" />
+            <attribute name="excludes"  default="${build.copy.excludes}" />
+            <element name="customize"   optional="true"/>
+            <sequential>
+                <mkdir dir="@{todir}"/>
+                <copy todir="@{todir}" filtering="yes">
+                    <fileset dir="@{srcdir}">
+                        <include name="@{includes}"/>
+                        <exclude name="@{excludes}"/>
+                    </fileset>
+                    <customize/>
+                </copy>
+            </sequential>
+        </macrodef>
+    </target>
+
+    <target name="-init-macrodef-javac">
+        <macrodef name="javac" uri="http://www.wotlas.org/release/1">
+            <attribute name="product"    />
+            <attribute name="moduledir"  default="${modules.src.dir}/@{product}" />
+            <attribute name="classpath"  default=".;${build.classes.dir}" />
+            <attribute name="srcdir"     default="${src.dir}" />
+            <attribute name="destdir"    default="${build.classes.dir}" />
+            <attribute name="includes"   default="${build.classes.includes}" />
+            <attribute name="excludes"   default="${build.classes.excludes}" />
+            <attribute name="resincludes" default="${build.resources.includes}" />
+            <attribute name="resexcludes" default="${build.resources.excludes}" />
+            <attribute name="debug"      default="${javac.debug}" />
+            <attribute name="sourcepath" default="" />
+            <element name="customize"    optional="true"/>
+            <sequential>
+                <echo>**** Classpath = [@{classpath}]****</echo>
+                <mkdir dir="@{moduledir}/@{destdir}"/>
+                <javac debug="@{debug}" deprecation="${javac.deprecation}" 
+                       encoding="${source.encoding}" includeantruntime="false" 
+                       excludes="@{excludes}" includes="@{includes}" sourcepath="@{sourcepath}" 
+                       srcdir="@{moduledir}/@{srcdir}" destdir="@{moduledir}/@{destdir}"
+                       source="${javac.source}" target="${javac.target}">
+                    <classpath>
+                        <path path="@{classpath}"/>
+                    </classpath>
+                    <compilerarg line="${javac.compilerargs} ${javac.compilerargs.jaxws}"/>
+                    <customize/>
+                </javac>
+                <copy todir="@{moduledir}/@{destdir}" filtering="yes">
+                    <fileset dir="@{moduledir}/@{srcdir}">
+                        <include name="@{resincludes}"/>
+                        <exclude name="@{resexcludes}"/>
+                    </fileset>
+                </copy>
+            </sequential>
+        </macrodef>
+    </target>
+
+
+    <target name="-init-macrodef-jar">
+        <macrodef name="jar" uri="http://www.wotlas.org/release/1">
+            <attribute name="product"    />
+            <attribute name="moduledir"  default="${modules.src.dir}/@{product}" />
+
+            <attribute name="srcdir"     default="${build.classes.dir}" />
+            <attribute name="destdir"    default="${modules.jar.dir}" />
+            <attribute name="includes"   default="${build.jars.includes}" />
+            <attribute name="excludes"   default="${build.jars.excludes}" />
+            <attribute name="debug"      default="${jar.debug}" />
+            <attribute name="version"    default="${product.version}" />
+            <element name="customize"    optional="true"/>
+            <sequential>
+                <mkdir dir="@{destdir}"/>
+                <jar compress="${jar.compress}" update="true"
+                      excludes="@{excludes}" includes="@{includes}"
+                      jarfile="@{destdir}/@{product}.jar" >
+                    <metainf dir="@{moduledir}">
+                        <include name="LICENSE"/>
+                        <include name="NOTICE"/>
+                    </metainf>
+                    <fileset dir="@{moduledir}/@{srcdir}" />
+                    <manifest>
+                        <attribute name="Created-By"              value="Apache Ant"/>
+                        <attribute name="Build-Jdk"               value="${java.version}"/>
+                        <attribute name="Package"                 value="@{product}"/>
+                        <attribute name="Extension-Name"          value="@{product}"/>
+                        <attribute name="Specification-Title"     value="${mf.specification.title}" />
+                        <attribute name="Specification-Vendor"    value="${mf.specification.vendor}"/>
+                        <attribute name="Implementation-Title"    value="@{product}"/>
+                        <attribute name="Implementation-Vendor-Id" value="${mf.implementation.vendor.id}"/>
+                        <attribute name="Implementation-Vendor"   value="${mf.implementation.vendor}"/>
+                        <attribute name="Implementation-Version"  value="@{version}"/>
+                    </manifest>
+                </jar>
+                <checksum file="@{destdir}/@{product}.jar" algorithm="md5"  property="checksum.jar.md5"/>
+                <checksum file="@{destdir}/@{product}.jar" algorithm="sha1" property="checksum.jar.sha1"/>
+                <echo message="${checksum.jar.md5} *@{product}.jar"  file="@{destdir}/@{product}.jar.md5" />
+                <echo message="${checksum.jar.sha1} *@{product}.jar" file="@{destdir}/@{product}.jar.sha1" />
+            </sequential>
+        </macrodef>
+    </target>
+
+    <target name="-init-macrodef-property">
+        <macrodef name="property" uri="http://www.wotlas.org/release/1">
+            <attribute name="name"/>
+            <attribute name="value"/>
+            <sequential>
+                <property name="@{name}" value="${@{value}}"/>
+            </sequential>
+        </macrodef>
+    </target>
+
+    <target name="init"
+            depends="-do-init,-init-macrodef-copydist,-init-macrodef-javac,-init-macrodef-jar,-init-macrodef-property" />
+
+
+    <!--
+                ===================
+                COMPILATION SECTION
+                ===================
+            -->
+
+    <!--
+                ====================
+                JAR BUILDING SECTION
+                ====================
+            -->
+
+    <!--
+                ========================
+                PRODUCT BUILDING SECTION
+                ========================
+            -->
+
+    <target name="copy-alice-libraries" xmlns:wotlas="http://www.wotlas.org/release/1"
+            depends="init">
+        <wotlas:copydist srcdir="${modules.src.dir}/wotlas.server.bots.alice.jars/release/modules/ext"  todir="${modules.jar.dir}/alice"   includes="js.jar" />
+        <wotlas:copydist srcdir="${modules.src.dir}/wotlas.server.bots.alice.jars/release/modules/ext"  todir="${modules.jar.dir}/alice"   includes="org.mortbay.jetty.jar" />
+        <wotlas:copydist srcdir="${modules.src.dir}/wotlas.server.bots.alice.jars/release/modules/ext"  todir="${modules.jar.dir}/alice"   includes="servlet.jar" />
+    </target>
+
+    <target name="copy-common-libraries" xmlns:wotlas="http://www.wotlas.org/release/1"
+            depends="init">
+        <wotlas:copydist srcdir="${modules.src.dir}/lib/netbeans"  todir="${modules.jar.dir}"   includes="org-openide-util.jar" />
+    </target>
+
+    <target name="copy-client-libraries" xmlns:wotlas="http://www.wotlas.org/release/1"
+            depends="init">
+    </target>
+
+    <target name="copy-server-libraries" xmlns:wotlas="http://www.wotlas.org/release/1"
+            depends="init">
+        <wotlas:copydist srcdir="${modules.src.dir}/wotlas.server.jars/release/modules/ext"  todir="${modules.jar.dir}"   includes="jython.jar" />
+    </target>
+
+
+    <target name="build-2d-engine" xmlns:wotlas="http://www.wotlas.org/release/1"
+            depends="init">
+       <wotlas:javac product="wotlas.libs.graphics2d" />
+       <wotlas:jar   product="wotlas.libs.graphics2d" />
+       <wotlas:javac product="wotlas.libs.graphics2d.demo" 
+                     classpath=".;${build.classes.dir};${modules.jar.dir}/wotlas.libs.graphics2d.jar"/>
+       <wotlas:jar   product="wotlas.libs.graphics2d.demo" />
+    </target>
+
+    <target name="build-common-libraries" xmlns:wotlas="http://www.wotlas.org/release/1"
+            depends="init, copy-common-libraries, build-2d-engine">
+        <wotlas:javac product="wotlas.base.common" />
+        <wotlas:jar   product="wotlas.base.common" />
+        <wotlas:javac product="wotlas.base.randland" />
+        <wotlas:jar   product="wotlas.base.randland" />
+        <wotlas:javac product="wotlas.utils" 
+                      classpath=".;${build.classes.dir};${modules.jar.dir}/org-openide-util.jar"/>
+        <wotlas:jar   product="wotlas.utils" />
+        <wotlas:javac product="wotlas.libs.net"
+                      classpath=".;${build.classes.dir};${modules.jar.dir}/wotlas.utils.jar;${modules.jar.dir}/org-openide-util.jar"/>
+        <wotlas:jar   product="wotlas.libs.net" />
+        <wotlas:javac product="wotlas.common"
+                      classpath=".;${build.classes.dir};${modules.jar.dir}/wotlas.utils.jar;${modules.jar.dir}/wotlas.libs.net.jar;${modules.jar.dir}/wotlas.libs.graphics2d.jar;${modules.jar.dir}/org-openide-util.jar"/>
+        <wotlas:jar   product="wotlas.common" />
+    </target>
+	
+    <target name="build-client" xmlns:wotlas="http://www.wotlas.org/release/1"
+            depends="init, copy-client-libraries, copy-common-libraries, build-common-libraries, build-net-manager">
+        <wotlas:javac product="wotlas.client" 
+        	          classpath=".;${build.classes.dir};${modules.jar.dir}/wotlas.common.jar;${modules.jar.dir}/wotlas.libs.graphics2d.jar;${modules.jar.dir}/wotlas.libs.net.jar;${modules.jar.dir}/wotlas.utils.jar"/>
+        <wotlas:jar   product="wotlas.client" />
+    </target>
+
+    <target name="build-net-manager" xmlns:wotlas="http://www.wotlas.org/release/1"
+            depends="init, copy-common-libraries, build-common-libraries">
+
+    </target>
+
+    <target name="build-suite" xmlns:wotlas="http://www.wotlas.org/release/1"
+            depends="init">
+    </target>
+
+    <target name="build-core-server" xmlns:wotlas="http://www.wotlas.org/release/1"
+            depends="init, copy-alice-libraries,  copy-common-libraries, copy-server-libraries, build-common-libraries, build-net-manager">
+        <wotlas:javac product="wotlas.server" 
+        	          classpath=".;${build.classes.dir};${modules.jar.dir}/wotlas.common.jar;${modules.jar.dir}/wotlas.libs.graphics2d.jar;${modules.jar.dir}/wotlas.libs.net.jar;${modules.jar.dir}/wotlas.utils.jar"/>
+        <wotlas:jar   product="wotlas.server" />
+    </target>
+	
+    <target name="build-alice-libraries" xmlns:wotlas="http://www.wotlas.org/release/1"
+            depends="init, copy-alice-libraries, build-core-server">
+        <wotlas:javac product="wotlas.server.bots.alice.jars" 
+        	          classpath=".;${build.classes.dir};${modules.jar.dir}/alice/js.jar;${modules.jar.dir}/alice/org.mortbay.jetty.jar;${modules.jar.dir}/alice/servlet.jar"/>
+        <wotlas:jar   product="wotlas.server.bots.alice.jars" />
+        <wotlas:javac product="wotlas.server.bots.alice" 
+        	          classpath=".;${build.classes.dir};${modules.jar.dir}/wotlas.server.bots.alice.jars.jar;${modules.jar.dir}/wotlas.server.jar;${modules.jar.dir}/wotlas.libs.net.jar;${modules.jar.dir}/wotlas.libs.graphics2d.jar;${modules.jar.dir}/wotlas.common.jar;${modules.jar.dir}/wotlas.utils.jar"/>
+        <wotlas:jar   product="wotlas.server.bots.alice" />
+
+    </target>
+
+    <target name="build-server" xmlns:wotlas="http://www.wotlas.org/release/1"
+            depends="init, copy-alice-libraries, copy-common-libraries, copy-server-libraries, build-common-libraries, build-core-server, build-alice-libraries">
+    </target>
+
+    <target name="build-dev" xmlns:wotlas="http://www.wotlas.org/release/1"
+            depends="init, copy-alice-libraries, copy-client-libraries, copy-common-libraries, copy-server-libraries, build-client, build-server">
+    </target>
+
+    <!--
+                ===============
+                JAVADOC SECTION
+                ===============
+            -->
+
+    <!--
+                ===============
+                CLEANUP SECTION
+                ===============
+            -->
+
+    <target name="default"
+            depends="init" />
+
+</project>

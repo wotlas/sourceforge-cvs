@@ -16,12 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.server.message.description;
 
 import wotlas.common.message.description.CreateFakeNameMessage;
 import wotlas.common.message.description.SetFakeNameMessage;
-import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.common.message.description.WishServerDescriptionNetMsgBehaviour;
 import wotlas.server.LieManager;
 import wotlas.server.PlayerImpl;
 
@@ -30,11 +29,9 @@ import wotlas.server.PlayerImpl;
  *
  * @author Petrus
  */
-
-public class CreateFakeNameMsgBehaviour extends CreateFakeNameMessage implements NetMessageBehaviour {
+public class CreateFakeNameMsgBehaviour extends CreateFakeNameMessage implements WishServerDescriptionNetMsgBehaviour {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public CreateFakeNameMsgBehaviour() {
@@ -42,7 +39,6 @@ public class CreateFakeNameMsgBehaviour extends CreateFakeNameMessage implements
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
@@ -55,8 +51,9 @@ public class CreateFakeNameMsgBehaviour extends CreateFakeNameMessage implements
 
         short currentFakeName = lieManager.createFakeName(this.fakeName);
 
-        if (currentFakeName > 0)
+        if (currentFakeName > 0) {
             player.sendMessage(new SetFakeNameMessage(currentFakeName, this.fakeName));
+        }
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

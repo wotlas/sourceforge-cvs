@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.message.description;
 
 import wotlas.client.ClientDirector;
@@ -24,16 +23,15 @@ import wotlas.client.ClientManager;
 import wotlas.client.DataManager;
 import wotlas.client.ProfileConfig;
 import wotlas.client.ProfileConfigList;
+import wotlas.common.message.description.WishClientDescriptionNetMsgBehaviour;
 import wotlas.common.message.description.YourAccountDataMessage;
-import wotlas.libs.net.NetMessageBehaviour;
 
 /**
  * Associated behaviour to the YourAccountDataMessage...
  *
  * @author Petrus
  */
-
-public class YourAccountDataMsgBehaviour extends YourAccountDataMessage implements NetMessageBehaviour {
+public class YourAccountDataMsgBehaviour extends YourAccountDataMessage implements WishClientDescriptionNetMsgBehaviour {
     /*------------------------------------------------------------------------------------*/
 
     /** Constructor.
@@ -43,7 +41,6 @@ public class YourAccountDataMsgBehaviour extends YourAccountDataMessage implemen
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process

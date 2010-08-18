@@ -51,7 +51,7 @@ import java.io.IOException;
  *    }
  * </pre><br>
  *
- * The empty constructor is mandatory. The 'mySecretID' fiels is protected
+ * The empty constructor is mandatory. The 'mySecretID' field is protected
  * for an easy access from the child classes.
  *
  * <p>Note that a NetMessage comes along with a NetMessageBehaviour
@@ -90,6 +90,17 @@ public abstract class NetMessage {
      */
     public String getMessageClassName() {
         return this.messageClassName;
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /**
+     * This method is called by NetMessageFactory after having instantiated the new object of the current class.
+     * Actually does nothing. If your class needs to create instance datas specific of the current game, you need to store the NetMessageFactory.
+     * @param msgFactory current NetMessageFactory used to instantiate this object.
+     */
+    public void setMessageFactory(NetMessageFactory msgFactory) {
+        // Nothing to do.
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

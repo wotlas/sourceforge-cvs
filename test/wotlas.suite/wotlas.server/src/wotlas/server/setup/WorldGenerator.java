@@ -35,6 +35,7 @@ import wotlas.libs.graphics2d.drawable.DoorDrawable;
 import wotlas.utils.Debug;
 import wotlas.utils.ScreenPoint;
 import wotlas.utils.ScreenRectangle;
+import wotlas.utils.WotlasGameDefinition;
 
 /** A small utility to generate <<Wotlas release 1>>'s default world.
  *
@@ -48,7 +49,7 @@ public class WorldGenerator {
      *  WORLD CREATION : RANDLAND
      * @return Randland World.
      */
-    public static final WorldMap createRandlandWorld() {        
+    public static final WorldMap createRandlandWorld() {
 
         float halfPI = (float) (Math.PI / 2);
 
@@ -62,11 +63,10 @@ public class WorldGenerator {
         worldMap.setMusicName("stedding.mid");
 
         // STEP 3 - TOWNS
-
-        // Tar Valon Creation
         TownMap townMaps[] = new TownMap[5];
         worldMap.setTownMaps(townMaps);
 
+        // Tar Valon Creation
         TownMap townMap = new TownMap(755, 277, 17, 17);
         townMaps[0] = townMap;
 
@@ -2323,8 +2323,8 @@ public class WorldGenerator {
         return worldMap;
     }
 
-    /*------------------------------------------------------------------------------------*/    
-    
+    /*------------------------------------------------------------------------------------*/
+
     /** Main method.
      *  @param argv : -debug or -base=xxx
      */
@@ -2334,14 +2334,14 @@ public class WorldGenerator {
 
             if (!argv[i].startsWith("-"))
                 continue;
-            
-            if (argv[i].equals("-debug")) { 
+
+            if (argv[i].equals("-debug")) {
 
                 // -- TO SET THE DEBUG MODE --
                 System.out.println("mode DEBUG on");
                 Debug.displayExceptionStack(true);
-                
-            } else if (argv[i].equals("-base")) { 
+
+            } else if (argv[i].equals("-base")) {
 
                 // -- TO SET THE CONFIG FILES LOCATION --
                 if (i == argv.length - 1) {
@@ -2351,13 +2351,15 @@ public class WorldGenerator {
                 basePath = argv[i + 1];
             }
         }
-        
+
         // STEP 2 - WORLD CREATION : RANDLAND
+        // TODO Define the game context. 
+        WotlasGameDefinition wgd = null;
         WorldMap worldMaps[] = new WorldMap[1];
         worldMaps[0] = WorldGenerator.createRandlandWorld();
 
         // STEP XX - We save this simple universe.
-        ResourceManager rManager = new ResourceManager(basePath, true);
+        ResourceManager rManager = new ResourceManager(basePath, true, wgd);
         WorldManager wManager = new WorldManager(worldMaps, rManager);
 
         if (wManager.saveUniverse(true))

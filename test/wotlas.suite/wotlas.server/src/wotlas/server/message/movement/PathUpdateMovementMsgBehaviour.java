@@ -26,8 +26,8 @@ import wotlas.common.chat.ChatRoom;
 import wotlas.common.message.chat.AddPlayerToChatRoomMessage;
 import wotlas.common.message.chat.SetCurrentChatRoomMessage;
 import wotlas.common.message.movement.PathUpdateMovementMessage;
+import wotlas.common.message.movement.WishServerMovementNetMsgBehaviour;
 import wotlas.common.router.MessageRouter;
-import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.server.PlayerImpl;
 import wotlas.server.message.chat.RemPlayerFromChatRoomMsgBehaviour;
 import wotlas.utils.Debug;
@@ -37,7 +37,7 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage implements NetMessageBehaviour {
+public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage implements WishServerMovementNetMsgBehaviour {
 
     /*------------------------------------------------------------------------------------*/
     /** Constructor.
@@ -162,7 +162,7 @@ public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage im
 
             if (chatRoom == null) {
                 return; // no player near us, or no chat...
-            } 
+            }
 
             // New chat selected !
             if (nearPlayer == null) {

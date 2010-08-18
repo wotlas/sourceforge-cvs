@@ -1,0 +1,6 @@
+wotlas.client.message.chat.AddPlayerToChatRoomMsgBehaviour
+wotlas.client.message.chat.ChatRoomCreatedMsgBehaviour
+wotlas.client.message.chat.ChatRoomDeletedMsgBehaviour
+wotlas.client.message.chat.RemPlayerFromChatRoomMsgBehaviour
+wotlas.client.message.chat.SendTextMsgBehaviour
+wotlas.client.message.chat.SetCurrentChatRoomMsgBehaviour

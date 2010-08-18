@@ -92,7 +92,7 @@ public class SimpleMenu2DDrawable extends Drawable {
         /*
                 if( url==null ) {
                   // We try inside a JAR...
-                     basePath = "/wotlas/libs/graphics2D/menu/images/";
+                     basePath = "/wotlas/libs/graphics2d/menu/images/";
                      url = SimpleMenu2DDrawable.class.getResource(basePath+"middle-bar.gif");
                 }
         */

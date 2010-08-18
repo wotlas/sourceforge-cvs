@@ -71,7 +71,7 @@ public class DataManager {
         this.accountManager = new AccountManager(rManager);
 
         // 4 - Creation of the Chat Command Processor.
-        this.chatCommandProcessor = new ChatCommandProcessor();
+        this.chatCommandProcessor = new ChatCommandProcessor(rManager.getGameDefinition());
 
         // 5 - Creation of the Bot Manager
         this.botManager = new BotManager(this.accountManager);

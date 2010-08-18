@@ -22,7 +22,7 @@ import wotlas.client.DataManager;
 import wotlas.client.screen.plugin.InfoPlugIn;
 import wotlas.common.Player;
 import wotlas.common.message.description.PlayerPastMessage;
-import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.common.message.description.WishClientDescriptionNetMsgBehaviour;
 import wotlas.utils.Debug;
 
 /**
@@ -30,7 +30,7 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-public class PlayerPastMsgBehaviour extends PlayerPastMessage implements NetMessageBehaviour {
+public class PlayerPastMsgBehaviour extends PlayerPastMessage implements WishClientDescriptionNetMsgBehaviour {
 
     /*------------------------------------------------------------------------------------*/
     /** Constructor.

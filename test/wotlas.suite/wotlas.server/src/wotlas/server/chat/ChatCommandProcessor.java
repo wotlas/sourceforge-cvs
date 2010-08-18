@@ -24,6 +24,7 @@ import wotlas.common.message.chat.SendTextMessage;
 import wotlas.server.PlayerImpl;
 import wotlas.utils.Debug;
 import wotlas.utils.Tools;
+import wotlas.utils.WotlasGameDefinition;
 
 /** This class processes the available chat commands. In wotlas there is only one
  * instance of this class held by the default server DataManager.
@@ -37,11 +38,15 @@ public class ChatCommandProcessor {
      */
     private Hashtable<String, ChatCommand> commands;
 
+    private final WotlasGameDefinition gameDefinition;
+
     /*------------------------------------------------------------------------------------*/
     /** Constructor.
      */
-    public ChatCommandProcessor() {
+    public ChatCommandProcessor(WotlasGameDefinition wgd) {
+        super();
         this.commands = new Hashtable<String, ChatCommand>(20);
+        this.gameDefinition = wgd;
     }
 
     /*------------------------------------------------------------------------------------*/
@@ -51,11 +56,13 @@ public class ChatCommandProcessor {
 
         /** We load the available plug-ins (we search in our local directory).
          */
-        Class classes[] = null;
-        String packages[] = {"wotlas.server.chat"};
+        Object[] obj = null;
+        //        Class classes[] = null;
+        //        String packages[] = {"wotlas.server.chat"};
 
         try {
-            classes = Tools.getImplementorsOf("wotlas.server.chat.ChatCommand", packages);
+            obj = Tools.getImplementorsOf(ChatCommand.class, this.gameDefinition);
+            //            classes = Tools.getImplementorsOf("wotlas.server.chat.ChatCommand", packages);
         } catch (ClassNotFoundException e) {
             Debug.signal(Debug.CRITICAL, this, e);
             return;
@@ -67,15 +74,17 @@ public class ChatCommandProcessor {
             return;
         }
 
-        for (int i = 0; i < classes.length; i++) {
-
-            // We create instances of the chat commands
+        for (int i = 0; i < obj.length; i++) {
+            //        for (int i = 0; i < classes.length; i++) {
+            //
+            //            // We create instances of the chat commands
             try {
-                Object o = classes[i].newInstance();
-
-                if (o == null || !(o instanceof ChatCommand)) {
-                    continue;
-                }
+                Object o = obj[i];
+                //                Object o = classes[i].newInstance();
+                //
+                //                if (o == null || !(o instanceof ChatCommand)) {
+                //                    continue;
+                //                }
 
                 // Ok, we have a valid chat command Class.
                 addChatCommand((ChatCommand) o);

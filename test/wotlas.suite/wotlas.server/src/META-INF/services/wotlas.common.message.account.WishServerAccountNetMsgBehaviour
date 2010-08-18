@@ -1,0 +1,4 @@
+wotlas.server.message.account.AccountCreationMsgBehaviour
+wotlas.server.message.account.AccountStepMsgBehaviour
+wotlas.server.message.account.CancelAccountCreationMsgBehaviour
+wotlas.server.message.account.PreviousStepMsgBehaviour

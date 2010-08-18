@@ -16,11 +16,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.server.message.description;
 
 import wotlas.common.message.description.SetFakeNameMessage;
-import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.common.message.description.WishServerDescriptionNetMsgBehaviour;
 import wotlas.server.LieManager;
 import wotlas.server.PlayerImpl;
 
@@ -29,8 +28,7 @@ import wotlas.server.PlayerImpl;
  *
  * @author Petrus
  */
-
-public class SetFakeNameMsgBehaviour extends SetFakeNameMessage implements NetMessageBehaviour {
+public class SetFakeNameMsgBehaviour extends SetFakeNameMessage implements WishServerDescriptionNetMsgBehaviour {
     /*------------------------------------------------------------------------------------*/
 
     /** Constructor.
@@ -40,7 +38,6 @@ public class SetFakeNameMsgBehaviour extends SetFakeNameMessage implements NetMe
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process

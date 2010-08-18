@@ -328,6 +328,7 @@ public class AccountManager {
             else {
                 Debug.signal(Debug.ERROR, this, "Failed to load " + latest + " for player " + accounts[i].getPrimaryKey());
                 accounts[i] = null;
+                continue;
             }
 
             // we now search for the latest saved inventory file.
@@ -349,7 +350,10 @@ public class AccountManager {
                 player.setObjectManager(objManager);
                 objManager.setInventory(inventory);
             } else {
-                Debug.signal(Debug.ERROR, this, "Failed to load " + latest + " inventory for player " + accounts[i].getPrimaryKey());
+                // FIXME - the inventory is saved empty !
+                // Debug.signal(Debug.ERROR, this, "Failed to load " + latest + " inventory for player " + accounts[i].getPrimaryKey());
+                if (accounts[i] != null)
+                    Debug.signal(Debug.NOTICE, this, "Empty inventory from file (" + latest + ") for player " + accounts[i].getPrimaryKey());
                 //                accounts[i] = null;
                 // Petrus : if no inventory found : create a new one
                 ServerObjectManager objManager = new ServerObjectManager();

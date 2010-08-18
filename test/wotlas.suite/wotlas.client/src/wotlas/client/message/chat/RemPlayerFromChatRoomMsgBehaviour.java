@@ -23,7 +23,7 @@ import wotlas.client.DataManager;
 import wotlas.client.PlayerImpl;
 import wotlas.common.chat.ChatRoom;
 import wotlas.common.message.chat.RemPlayerFromChatRoomMessage;
-import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.common.message.chat.WishClientChatNetMsgBehaviour;
 import wotlas.utils.Debug;
 
 /**
@@ -31,7 +31,7 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-public class RemPlayerFromChatRoomMsgBehaviour extends RemPlayerFromChatRoomMessage implements NetMessageBehaviour {
+public class RemPlayerFromChatRoomMsgBehaviour extends RemPlayerFromChatRoomMessage implements WishClientChatNetMsgBehaviour {
 
     /*------------------------------------------------------------------------------------*/
     /** Constructor.

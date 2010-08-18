@@ -16,11 +16,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.screen;
 
 import java.awt.Frame;
 import wotlas.client.gui.JConnectionDialog;
+import wotlas.common.message.account.WishClientAccountNetMsgBehaviour;
+import wotlas.common.message.chat.WishClientChatNetMsgBehaviour;
+import wotlas.common.message.description.WishClientDescriptionNetMsgBehaviour;
+import wotlas.common.message.movement.WishClientMovementNetMsgBehaviour;
+import wotlas.libs.net.NetConfig;
+import wotlas.utils.WotlasGameDefinition;
 
 /** A small utility to connect to an account server using a JDialog.
  * <pre>
@@ -39,7 +44,6 @@ import wotlas.client.gui.JConnectionDialog;
  * @author Aldiss
  * @see wotlas.libs.net.NetClient
  */
-
 public class JGameConnectionDialog extends JConnectionDialog {
     /*------------------------------------------------------------------------------------*/
 
@@ -57,24 +61,21 @@ public class JGameConnectionDialog extends JConnectionDialog {
      * @param originalServerID ID given by the account server when the client created his player
      * @param context context to set to messages ( see NetConnection ).
      */
-
-    public JGameConnectionDialog(Frame frame, String server, int port, int serverID, String login, String password, int localClientID,
-            int originalServerID, Object context) {
-        super(frame, server, port, serverID, login + "-" + originalServerID + "-" + localClientID + ":" + password, context);
+    public JGameConnectionDialog(Frame frame, NetConfig netCfg, String login, String password, int localClientID, int originalServerID,
+            Object context, WotlasGameDefinition wgd) {
+        super(frame, netCfg, login + "-" + originalServerID + "-" + localClientID + ":" + password, context, wgd);
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To retrieve a list of the NetMessage packages to use with this server.
      */
     @Override
-    protected String[] getPackages() {
+    protected Class[] getMsgSubInterfaces() {
         //String list[] = null; // no packages for now
-        String list[] = { "wotlas.client.message.account", "wotlas.client.message.description", "wotlas.client.message.movement", "wotlas.client.message.chat" };
+        Class list[] = { WishClientAccountNetMsgBehaviour.class, WishClientDescriptionNetMsgBehaviour.class, WishClientMovementNetMsgBehaviour.class, WishClientChatNetMsgBehaviour.class };
 
         return list;
     }
 
     /*------------------------------------------------------------------------------------*/
-
 }

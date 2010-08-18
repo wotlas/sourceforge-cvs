@@ -23,6 +23,12 @@ import wotlas.common.ResourceManager;
 import wotlas.common.ServerConfig;
 import wotlas.common.ServerConfigManager;
 import wotlas.common.message.account.WarningMessage;
+import wotlas.common.message.account.WishServerAccountNetMsgBehaviour;
+import wotlas.common.message.chat.WishServerChatNetMsgBehaviour;
+import wotlas.common.message.description.WishServerDescriptionNetMsgBehaviour;
+import wotlas.common.message.movement.WishServerMovementNetMsgBehaviour;
+import wotlas.libs.net.NetConfig;
+import wotlas.server.message.gateway.WishGatewayNetMsgBehaviour;
 import wotlas.utils.Debug;
 
 /** A Server Manager manages three servers : A GameServer, a AccountServer and
@@ -84,19 +90,19 @@ public class ServerManager {
         }
 
         // 2 - We create the AccountServer
-        String account_packages[] = { "wotlas.server.message.account" };
-
-        this.accountServer = new AccountServer(ServerDirector.getServerProperties().getProperty("init.serverItf"), this.ourConfig.getAccountServerPort(), account_packages, this.ourConfig.getMaxNumberOfAccountConnections());
+        Class account_msgs[] = { WishServerAccountNetMsgBehaviour.class };
+        NetConfig accountNetCfg = new NetConfig(ServerDirector.getServerProperties().getProperty("init.serverItf"), this.ourConfig.getAccountServerPort());
+        this.accountServer = new AccountServer(accountNetCfg, account_msgs, this.ourConfig.getMaxNumberOfAccountConnections(), rManager.getGameDefinition());
 
         // 3 - We create the GameServer
-        String game_packages[] = { "wotlas.server.message.description", "wotlas.server.message.movement", "wotlas.server.message.chat" };
-
-        this.gameServer = new GameServer(ServerDirector.getServerProperties().getProperty("init.serverItf"), this.ourConfig.getGameServerPort(), game_packages, this.ourConfig.getMaxNumberOfGameConnections());
+        Class game_msgs[] = { WishServerDescriptionNetMsgBehaviour.class, WishServerMovementNetMsgBehaviour.class, WishServerChatNetMsgBehaviour.class };
+        NetConfig gameNetCfg = new NetConfig(ServerDirector.getServerProperties().getProperty("init.serverItf"), this.ourConfig.getGameServerPort());
+        this.gameServer = new GameServer(gameNetCfg, game_msgs, this.ourConfig.getMaxNumberOfGameConnections(), rManager.getGameDefinition());
 
         // 4 - We create the GatewayServer
-        String gateway_packages[] = { "wotlas.server.message.gateway" };
-
-        this.gatewayServer = new GatewayServer(ServerDirector.getServerProperties().getProperty("init.serverItf"), this.ourConfig.getGatewayServerPort(), gateway_packages, this.ourConfig.getMaxNumberOfGatewayConnections(), this.serverConfigManager);
+        Class gateway_msgs[] = { WishGatewayNetMsgBehaviour.class };
+        NetConfig gatewayNetCfg = new NetConfig(ServerDirector.getServerProperties().getProperty("init.serverItf"), this.ourConfig.getGatewayServerPort());
+        this.gatewayServer = new GatewayServer(gatewayNetCfg, gateway_msgs, this.ourConfig.getMaxNumberOfGatewayConnections(), this.serverConfigManager, rManager.getGameDefinition());
 
         // Everything is ready on the network side...
     }

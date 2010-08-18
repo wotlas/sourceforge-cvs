@@ -60,6 +60,7 @@ import wotlas.libs.aswing.APasswordField;
 import wotlas.libs.aswing.ATableCellRenderer;
 import wotlas.libs.aswing.ATextField;
 import wotlas.libs.graphics2d.FontFactory;
+import wotlas.libs.net.NetConfig;
 import wotlas.libs.sound.SoundLibrary;
 import wotlas.utils.Debug;
 
@@ -328,6 +329,7 @@ public class ClientManager extends JIntroWizard implements ActionListener {
 
                 // Hide the Log Window ?
                 if (!ClientDirector.getClientConfiguration().getDisplayLogWindow()) {
+                    // ADD by DIEGO : REMOVE by DIEGO if( !ClientDirector.SHOW_DEBUG )
                     ClientDirector.getLogStream().setVisible(false);
                 }
 
@@ -650,8 +652,11 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                             ClientDirector.getDataManager().setCurrentProfileConfig(ClientManager.this.currentProfileConfig);
 
                             ClientManager.this.currentServerConfig = ClientManager.this.serverConfigManager.getServerConfig(ClientManager.this.currentProfileConfig.getServerID());
+                            NetConfig netCfg = new NetConfig(ClientManager.this.currentServerConfig.getServerName(), ClientManager.this.currentServerConfig.getGameServerPort());
+                            netCfg.setServerId(ClientManager.this.currentServerConfig.getServerID());
+                            netCfg.setStandaloneBasePath(ClientDirector.getResourceManager().getResourceDir(null));
 
-                            JGameConnectionDialog jgconnect = new JGameConnectionDialog(ClientManager.this, ClientManager.this.currentServerConfig.getServerName(), ClientManager.this.currentServerConfig.getGameServerPort(), ClientManager.this.currentServerConfig.getServerID(), ClientManager.this.currentProfileConfig.getLogin(), passwd, ClientManager.this.currentProfileConfig.getLocalClientID(), ClientManager.this.currentProfileConfig.getOriginalServerID(), ClientDirector.getDataManager());
+                            JGameConnectionDialog jgconnect = new JGameConnectionDialog(ClientManager.this, netCfg, ClientManager.this.currentProfileConfig.getLogin(), passwd, ClientManager.this.currentProfileConfig.getLocalClientID(), ClientManager.this.currentProfileConfig.getOriginalServerID(), ClientDirector.getDataManager(), ClientDirector.getResourceManager().getGameDefinition());
 
                             if (jgconnect.hasSucceeded()) {
                                 ClientManager.this.currentProfileConfig.setPassword(passwd);
@@ -777,8 +782,11 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                             }
 
                             ClientManager.this.currentServerConfig = ClientManager.this.serverConfigManager.getServerConfig(ClientManager.this.currentProfileConfig.getServerID());
+                            NetConfig netCfg = new NetConfig(ClientManager.this.currentServerConfig.getServerName(), ClientManager.this.currentServerConfig.getAccountServerPort());
+                            netCfg.setServerId(ClientManager.this.currentServerConfig.getServerID());
+                            netCfg.setStandaloneBasePath(ClientDirector.getResourceManager().getResourceDir(null));
 
-                            JDeleteAccountDialog jdconnect = new JDeleteAccountDialog(ClientManager.this, ClientManager.this.currentServerConfig.getServerName(), ClientManager.this.currentServerConfig.getAccountServerPort(), ClientManager.this.currentServerConfig.getServerID(), ClientManager.this.currentProfileConfig.getLogin() + "-" + ClientManager.this.currentProfileConfig.getOriginalServerID() + "-" + ClientManager.this.currentProfileConfig.getLocalClientID(), passwd);
+                            JDeleteAccountDialog jdconnect = new JDeleteAccountDialog(ClientManager.this, netCfg, ClientManager.this.currentProfileConfig.getLogin() + "-" + ClientManager.this.currentProfileConfig.getOriginalServerID() + "-" + ClientManager.this.currentProfileConfig.getLocalClientID(), passwd, ClientDirector.getResourceManager().getGameDefinition());
 
                             if (jdconnect.hasSucceeded()) {
                                 Debug.signal(Debug.NOTICE, this, "Account deleted.");
@@ -931,7 +939,11 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                                 return;
                             }
 
-                            JGameConnectionDialog jgconnect = new JGameConnectionDialog(ClientManager.this, ClientManager.this.currentServerConfig.getServerName(), ClientManager.this.currentServerConfig.getGameServerPort(), ClientManager.this.currentServerConfig.getServerID(), ClientManager.this.currentProfileConfig.getLogin(), new String(charPasswd), ClientManager.this.currentProfileConfig.getLocalClientID(), ClientManager.this.currentProfileConfig.getOriginalServerID(), ClientDirector.getDataManager());
+                            NetConfig netCfg = new NetConfig(ClientManager.this.currentServerConfig.getServerName(), ClientManager.this.currentServerConfig.getGameServerPort());
+                            netCfg.setServerId(ClientManager.this.currentServerConfig.getServerID());
+                            netCfg.setStandaloneBasePath(ClientDirector.getResourceManager().getResourceDir(null));
+
+                            JGameConnectionDialog jgconnect = new JGameConnectionDialog(ClientManager.this, netCfg, ClientManager.this.currentProfileConfig.getLogin(), new String(charPasswd), ClientManager.this.currentProfileConfig.getLocalClientID(), ClientManager.this.currentProfileConfig.getOriginalServerID(), ClientDirector.getDataManager(), ClientDirector.getResourceManager().getGameDefinition());
 
                             if (jgconnect.hasSucceeded()) {
                                 Debug.signal(Debug.NOTICE, null, "ClientManager connected to GameServer");
@@ -1024,7 +1036,11 @@ public class ClientManager extends JIntroWizard implements ActionListener {
                 b_ok.addActionListener(new ActionListener() {
 
                     public void actionPerformed(ActionEvent e) {
-                        JGameConnectionDialog jgconnect = new JGameConnectionDialog(ClientManager.this, ClientManager.this.currentServerConfig.getServerName(), ClientManager.this.currentServerConfig.getGameServerPort(), ClientManager.this.currentServerConfig.getServerID(), ClientManager.this.currentProfileConfig.getLogin(), ClientManager.this.currentProfileConfig.getPassword(), ClientManager.this.currentProfileConfig.getLocalClientID(), ClientManager.this.currentProfileConfig.getOriginalServerID(), ClientDirector.getDataManager());
+                        NetConfig netCfg = new NetConfig(ClientManager.this.currentServerConfig.getServerName(), ClientManager.this.currentServerConfig.getGameServerPort());
+                        netCfg.setServerId(ClientManager.this.currentServerConfig.getServerID());
+                        netCfg.setStandaloneBasePath(ClientDirector.getResourceManager().getResourceDir(null));
+
+                        JGameConnectionDialog jgconnect = new JGameConnectionDialog(ClientManager.this, netCfg, ClientManager.this.currentProfileConfig.getLogin(), ClientManager.this.currentProfileConfig.getPassword(), ClientManager.this.currentProfileConfig.getLocalClientID(), ClientManager.this.currentProfileConfig.getOriginalServerID(), ClientDirector.getDataManager(), ClientDirector.getResourceManager().getGameDefinition());
 
                         if (jgconnect.hasSucceeded()) {
                             Debug.signal(Debug.NOTICE, null, "ClientManager connected to GameServer");

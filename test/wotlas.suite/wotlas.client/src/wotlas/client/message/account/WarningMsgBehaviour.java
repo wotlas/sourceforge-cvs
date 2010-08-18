@@ -16,12 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.message.account;
 
 import wotlas.client.DataManager;
 import wotlas.common.message.account.WarningMessage;
-import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.common.message.account.WishClientAccountNetMsgBehaviour;
 
 /**
  * Associated behaviour to the WarningMessage...
@@ -29,8 +28,7 @@ import wotlas.libs.net.NetMessageBehaviour;
  * @author Aldiss, Petrus
  * @see wotlas.client.DataManager
  */
-
-public class WarningMsgBehaviour extends WarningMessage implements NetMessageBehaviour {
+public class WarningMsgBehaviour extends WarningMessage implements WishClientAccountNetMsgBehaviour {
     /*------------------------------------------------------------------------------------*/
 
     /** To tell if this message is to be invoked later or not.
@@ -38,7 +36,6 @@ public class WarningMsgBehaviour extends WarningMessage implements NetMessageBeh
     private boolean invokeLater = true;
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public WarningMsgBehaviour() {
@@ -46,7 +43,6 @@ public class WarningMsgBehaviour extends WarningMessage implements NetMessageBeh
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
@@ -65,5 +61,4 @@ public class WarningMsgBehaviour extends WarningMessage implements NetMessageBeh
     }
 
     /*------------------------------------------------------------------------------------*/
-
 }

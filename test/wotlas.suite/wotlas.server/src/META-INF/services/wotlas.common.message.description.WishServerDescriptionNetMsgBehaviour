@@ -1,0 +1,10 @@
+wotlas.server.message.description.AccountRecoverMsgBehaviour
+wotlas.server.message.description.AllDataLeftPleaseMsgBehaviour
+wotlas.server.message.description.ChangeFakeNameMsgBehaviour
+wotlas.server.message.description.CreateFakeNameMsgBehaviour
+wotlas.server.message.description.DoorStateMsgBehaviour
+wotlas.server.message.description.MyPlayerDataPleaseMsgBehaviour
+wotlas.server.message.description.PlayerAwayMsgBehaviour
+wotlas.server.message.description.PlayerPastMsgBehaviour
+wotlas.server.message.description.SetFakeNameMsgBehaviour
+wotlas.server.message.description.WelcomeMsgBehaviour

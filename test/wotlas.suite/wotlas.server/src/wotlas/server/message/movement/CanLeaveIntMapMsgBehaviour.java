@@ -23,6 +23,7 @@ import wotlas.common.message.movement.CanLeaveIntMapMessage;
 import wotlas.common.message.movement.RedirectConnectionMessage;
 import wotlas.common.message.movement.RedirectErrorMessage;
 import wotlas.common.message.movement.ResetPositionMessage;
+import wotlas.common.message.movement.WishServerMovementNetMsgBehaviour;
 import wotlas.common.message.movement.YouCanLeaveMapMessage;
 import wotlas.common.universe.Building;
 import wotlas.common.universe.MapExit;
@@ -30,7 +31,6 @@ import wotlas.common.universe.Room;
 import wotlas.common.universe.TownMap;
 import wotlas.common.universe.WorldMap;
 import wotlas.common.universe.WotlasLocation;
-import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.server.GatewayServer;
 import wotlas.server.LieManager;
 import wotlas.server.PlayerImpl;
@@ -43,7 +43,7 @@ import wotlas.utils.ScreenPoint;
  *
  * @author Aldiss
  */
-public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements NetMessageBehaviour {
+public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements WishServerMovementNetMsgBehaviour {
 
     /*------------------------------------------------------------------------------------*/
     /** Constructor.
@@ -174,7 +174,7 @@ public class CanLeaveIntMapMsgBehaviour extends CanLeaveIntMapMessage implements
             }
         } else {
             error = true; // Bad MapExit location !!
-        } 
+        }
 
         if (error) {
             sendError(player, "Target Map not found ! " + this.location);

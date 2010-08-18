@@ -19,6 +19,8 @@
 
 package wotlas.libs.net;
 
+import wotlas.utils.WishGameExtension;
+
 /** 
  * A NetMessageBehaviour contains the code associated to a NetMessage.
  *
@@ -48,7 +50,7 @@ package wotlas.libs.net;
  * @see wotlas.libs.net.NetMessage
  */
 
-public interface NetMessageBehaviour {
+public interface NetMessageBehaviour extends WishGameExtension {
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

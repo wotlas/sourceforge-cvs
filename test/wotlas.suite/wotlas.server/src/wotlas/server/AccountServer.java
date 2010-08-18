@@ -23,9 +23,11 @@ import java.io.File;
 import java.util.Properties;
 import wotlas.common.ErrorCodeList;
 import wotlas.common.ResourceManager;
+import wotlas.libs.net.NetConfig;
 import wotlas.libs.net.NetConnection;
 import wotlas.libs.net.NetServer;
 import wotlas.utils.Debug;
+import wotlas.utils.WotlasGameDefinition;
 
 /** Wotlas Account Server. Its role is to wait clients and connect them to a new
  *  AccountBuilder. An AccountBuilder will help the client to create a GameAccount.<p>
@@ -63,11 +65,11 @@ public class AccountServer extends NetServer implements ErrorCodeList {
      *
      *  @param serverInterface the host interface to bind to. Example: wotlas.tower.org
      *  @param port port on which the server listens to clients.
-     *  @param packages a list of packages where we can find NetMsgBehaviour Classes.
+     *  @param msgSubInterfaces a list of sub-interfaces where we can find NetMsgBehaviour Classes implemeting them.
      *  @param nbMaxSockets maximum number of sockets that can be opened on this server
      */
-    public AccountServer(String serverInterface, int port, String packages[], int nbMaxSockets) {
-        super(serverInterface, port, packages);
+    public AccountServer(NetConfig netCfg, Class msgSubInterfaces[], int nbMaxSockets, WotlasGameDefinition wgd) {
+        super(netCfg, msgSubInterfaces, wgd);
         setMaximumOpenedSockets(nbMaxSockets);
 
         // we create our wizars step factory

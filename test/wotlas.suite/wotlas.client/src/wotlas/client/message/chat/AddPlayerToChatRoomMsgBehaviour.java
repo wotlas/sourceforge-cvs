@@ -22,7 +22,7 @@ import java.util.Hashtable;
 import wotlas.client.DataManager;
 import wotlas.client.PlayerImpl;
 import wotlas.common.message.chat.AddPlayerToChatRoomMessage;
-import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.common.message.chat.WishClientChatNetMsgBehaviour;
 import wotlas.utils.Debug;
 
 /**
@@ -30,7 +30,7 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-public class AddPlayerToChatRoomMsgBehaviour extends AddPlayerToChatRoomMessage implements NetMessageBehaviour {
+public class AddPlayerToChatRoomMsgBehaviour extends AddPlayerToChatRoomMessage implements WishClientChatNetMsgBehaviour {
 
     /*------------------------------------------------------------------------------------*/
     /** Constructor.

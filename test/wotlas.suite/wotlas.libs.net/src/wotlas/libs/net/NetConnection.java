@@ -20,7 +20,6 @@
 package wotlas.libs.net;
 
 import java.io.IOException;
-import java.net.Socket;
 import wotlas.libs.net.message.EndOfConnectionMessage;
 import wotlas.libs.net.message.PingMessage;
 import wotlas.utils.Debug;
@@ -90,8 +89,8 @@ public abstract class NetConnection {
      * @param socket an already opened socket
      * @exception IOException if the socket wasn't already connected.
      */
-    public NetConnection(Socket socket) throws IOException {
-        this(socket, null);
+    public NetConnection(NetMessageFactory msgFactory, IOChannel socket) throws IOException {
+        this(msgFactory, socket, null);
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -102,8 +101,8 @@ public abstract class NetConnection {
      * @param sessionContext object to give to messages when they arrive.
      * @exception IOException if the socket wasn't already connected.
      */
-    public NetConnection(Socket socket, Object sessionContext) throws IOException {
-        init(socket, sessionContext);
+    public NetConnection(NetMessageFactory msgFactory, IOChannel socket, Object sessionContext) throws IOException {
+        init(msgFactory, socket, sessionContext);
         this.listeners = new NetConnectionListener[0]; // no listeners for now
     }
 
@@ -118,7 +117,7 @@ public abstract class NetConnection {
      * @param sessionContext an object to give to messages as they arrive.
      * @exception IOException if the socket wasn't already connected.
      */
-    protected abstract void init(Socket socket, Object sessionContext) throws IOException;
+    protected abstract void init(NetMessageFactory msgFactory, IOChannel socket, Object sessionContext) throws IOException;
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 

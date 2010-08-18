@@ -16,16 +16,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.message.description;
 
 import wotlas.client.DataManager;
 import wotlas.client.PlayerImpl;
 import wotlas.common.message.description.DoorsStateMessage;
+import wotlas.common.message.description.WishClientDescriptionNetMsgBehaviour;
 import wotlas.common.universe.Door;
 import wotlas.common.universe.Room;
 import wotlas.common.universe.RoomLink;
-import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.utils.Debug;
 
 /**
@@ -33,8 +32,7 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-
-public class DoorsStateMsgBehaviour extends DoorsStateMessage implements NetMessageBehaviour {
+public class DoorsStateMsgBehaviour extends DoorsStateMessage implements WishClientDescriptionNetMsgBehaviour {
     /*------------------------------------------------------------------------------------*/
 
     /** Constructor.
@@ -44,7 +42,6 @@ public class DoorsStateMsgBehaviour extends DoorsStateMessage implements NetMess
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
@@ -74,8 +71,9 @@ public class DoorsStateMsgBehaviour extends DoorsStateMessage implements NetMess
             RoomLink roomLink = room.getRoomLink(this.roomLinkIDs[i]);
             Door door = null;
 
-            if (roomLink != null)
+            if (roomLink != null) {
                 door = roomLink.getDoor();
+            }
 
             if (door == null) {
                 Debug.signal(Debug.WARNING, this, "Door not found ! " + this.location);
@@ -83,13 +81,13 @@ public class DoorsStateMsgBehaviour extends DoorsStateMessage implements NetMess
             }
 
             // we set directly the state of the door, without any animation
-            if (this.isOpened[i])
+            if (this.isOpened[i]) {
                 door.setOpened();
-            else
+            } else {
                 door.setClosed();
+            }
         }
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

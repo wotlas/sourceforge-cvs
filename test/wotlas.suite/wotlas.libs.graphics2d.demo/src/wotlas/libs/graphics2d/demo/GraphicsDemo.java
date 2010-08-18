@@ -47,6 +47,7 @@ public class GraphicsDemo extends JFrame implements AWTEventListener {
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
     /** Our graphics director */
     private GraphicsDirector gDirector;
+
     /** Our ImageLibrary */
     private ImageLibrary imageLib;
 

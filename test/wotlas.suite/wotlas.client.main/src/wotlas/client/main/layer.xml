@@ -1,4 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.1//EN" "http://www.netbeans.org/dtds/filesystem-1_1.dtd">
 <filesystem>
+    <folder name="Actions">
+        <folder name="Games">
+            <file name="wotlas-client-main-action-ClientDirectorAction.instance"/>
+        </folder>
+    </folder>
+    <folder name="Menu">
+        <folder name="File">
+            <file name="wotlas-client-main-action-ClientDirectorAction.shadow">
+                <attr name="originalFile" stringvalue="Actions/Games/wotlas-client-main-action-ClientDirectorAction.instance"/>
+                <attr name="position" intvalue="2550"/>
+            </file>
+            <file name="wotlas-client-main-action-separatorAfter.instance">
+                <attr name="instanceClass" stringvalue="javax.swing.JSeparator"/>
+                <attr name="position" intvalue="2575"/>
+            </file>
+        </folder>
+    </folder>
 </filesystem>

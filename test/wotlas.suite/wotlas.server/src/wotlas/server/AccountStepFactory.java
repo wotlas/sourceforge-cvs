@@ -21,6 +21,7 @@ package wotlas.server;
 import java.io.File;
 import java.util.Hashtable;
 import wotlas.common.ResourceManager;
+import wotlas.libs.wizard.JWizardStepFactory;
 import wotlas.libs.wizard.JWizardStepParameters;
 import wotlas.utils.Debug;
 
@@ -67,7 +68,7 @@ public class AccountStepFactory {
 
         for (int i = 0; i < list.length; i++) {
 
-            JWizardStepParameters parameters = JWizardStepParameters.loadFromStream(rManager.getFileStream(list[i]));
+            JWizardStepParameters parameters = JWizardStepFactory.loadJWizardStepParameters(rManager.getFileStream(list[i]), rManager.getGameDefinition());
 
             if (parameters == null) {
                 Debug.signal(Debug.ERROR, this, "Failed to load wizard step " + list[i]);

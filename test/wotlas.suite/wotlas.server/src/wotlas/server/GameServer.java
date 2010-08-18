@@ -20,10 +20,12 @@
 package wotlas.server;
 
 import wotlas.common.ErrorCodeList;
+import wotlas.libs.net.NetConfig;
 import wotlas.libs.net.NetConnection;
 import wotlas.libs.net.NetServer;
 import wotlas.server.bots.BotPlayer;
 import wotlas.utils.Debug;
+import wotlas.utils.WotlasGameDefinition;
 
 /** Wotlas Game Server. Its role is to wait client and connect them to the
  *  game. A client must have previously created a GameAccount with the AccountServer.<br>
@@ -42,11 +44,11 @@ public class GameServer extends NetServer implements ErrorCodeList {
      *
      *  @param serverInterface the host interface to bind to. Example: wotlas.tower.org
      *  @param port port on which the server listens to clients.
-     *  @param packages a list of packages where we can find NetMsgBehaviour Classes.
+     *  @param msgSubInterfaces a list of sub-interfaces where we can find NetMsgBehaviour Classes implemeting them.
      *  @param nbMaxSockets maximum number of sockets that can be opened on this server
      */
-    public GameServer(String serverInterface, int port, String packages[], int nbMaxSockets) {
-        super(serverInterface, port, packages);
+    public GameServer(NetConfig netCfg, Class msgSubInterfaces[], int nbMaxSockets, WotlasGameDefinition wgd) {
+        super(netCfg, msgSubInterfaces, wgd);
         setMaximumOpenedSockets(nbMaxSockets);
     }
 

@@ -23,7 +23,7 @@ import wotlas.client.DataManager;
 import wotlas.client.PlayerImpl;
 import wotlas.common.Player;
 import wotlas.common.message.movement.LocationChangeMessage;
-import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.common.message.movement.WishClientMovementNetMsgBehaviour;
 import wotlas.utils.Debug;
 
 /**
@@ -31,7 +31,7 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-public class LocationChangeMsgBehaviour extends LocationChangeMessage implements NetMessageBehaviour {
+public class LocationChangeMsgBehaviour extends LocationChangeMessage implements WishClientMovementNetMsgBehaviour {
     /*------------------------------------------------------------------------------------*/
 
     /** Constructor.

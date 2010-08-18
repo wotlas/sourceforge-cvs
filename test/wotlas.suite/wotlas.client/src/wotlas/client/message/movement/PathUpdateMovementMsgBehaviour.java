@@ -23,7 +23,7 @@ import wotlas.client.DataManager;
 import wotlas.client.PlayerImpl;
 import wotlas.common.Player;
 import wotlas.common.message.movement.PathUpdateMovementMessage;
-import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.common.message.movement.WishClientMovementNetMsgBehaviour;
 import wotlas.utils.Debug;
 
 /**
@@ -31,7 +31,7 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage implements NetMessageBehaviour {
+public class PathUpdateMovementMsgBehaviour extends PathUpdateMovementMessage implements WishClientMovementNetMsgBehaviour {
     /*------------------------------------------------------------------------------------*/
 
     /** Constructor.

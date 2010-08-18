@@ -16,11 +16,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.server.message.account;
 
 import wotlas.common.message.account.AccountStepMessage;
-import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.common.message.account.WishServerAccountNetMsgBehaviour;
 import wotlas.server.AccountBuilder;
 
 /**
@@ -28,8 +27,7 @@ import wotlas.server.AccountBuilder;
  *
  * @author Aldiss
  */
-
-public class AccountStepMsgBehaviour extends AccountStepMessage implements NetMessageBehaviour {
+public class AccountStepMsgBehaviour extends AccountStepMessage implements WishServerAccountNetMsgBehaviour {
     /*------------------------------------------------------------------------------------*/
 
     /** Constructor.
@@ -39,7 +37,6 @@ public class AccountStepMsgBehaviour extends AccountStepMessage implements NetMe
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process

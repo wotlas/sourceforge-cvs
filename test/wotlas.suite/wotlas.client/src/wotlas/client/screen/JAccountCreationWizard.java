@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.screen;
 
 import java.awt.BorderLayout;
@@ -42,6 +41,7 @@ import wotlas.common.message.account.CancelAccountCreationMessage;
 import wotlas.libs.aswing.ATableCellRenderer;
 import wotlas.libs.aswing.ATextArea;
 import wotlas.libs.graphics2d.FontFactory;
+import wotlas.libs.net.NetConfig;
 import wotlas.libs.net.NetConnection;
 import wotlas.libs.wizard.JWizard;
 import wotlas.libs.wizard.JWizardStep;
@@ -56,13 +56,11 @@ import wotlas.utils.Debug;
 public class JAccountCreationWizard extends JWizard {
 
     /*------------------------------------------------------------------------------------*/
-
     /**  The current account wizard
      */
     static protected JAccountCreationWizard wizard;
 
     /*------------------------------------------------------------------------------------*/
-
     /** Called when wizard is finished (after last step's end).
      */
     @Override
@@ -80,7 +78,6 @@ public class JAccountCreationWizard extends JWizard {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Called when wizard is canceled ('cancel' button pressed).
      */
     @Override
@@ -98,11 +95,10 @@ public class JAccountCreationWizard extends JWizard {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor
      */
     public JAccountCreationWizard() {
-        super("Account creation wizard", ClientDirector.getResourceManager(), FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter Regular").deriveFont(18f), 460, 460);
+        super("Account creation wizard", ClientDirector.getResourceManager(), ClientDirector.getResourceManager().getGameDefinition(), FontFactory.getDefaultFontFactory().getFont("Lucida Blackletter Regular").deriveFont(18f), 460, 460);
 
         // We display first step
         try {
@@ -116,7 +112,6 @@ public class JAccountCreationWizard extends JWizard {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /**
      * First Step of our JWizard.
      * Choose a server.
@@ -126,17 +121,14 @@ public class JAccountCreationWizard extends JWizard {
         /** Our ServerConfigManager file.
          */
         private ServerConfigManager serverConfigManager;
-
         /** Current serverConfig
          */
         private ServerConfig currentServerConfig;
-
         /** Our current wizard...
          */
         private JWizard wizard;
 
         /*------------------------------------------------------------------------------------*/
-
         /** Creation of the steps paramters
          */
         public static JWizardStepParameters getStepParameters() {
@@ -149,7 +141,6 @@ public class JAccountCreationWizard extends JWizard {
         }
 
         /*------------------------------------------------------------------------------------*/
-
         /** Constructor.
          */
         public ServerSelectionStep() {
@@ -193,30 +184,34 @@ public class JAccountCreationWizard extends JWizard {
             serversTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             ListSelectionModel rowServerSM = serversTable.getSelectionModel();
             rowServerSM.addListSelectionListener(new ListSelectionListener() {
+
                 private JHTMLWindow htmlDescr;
 
                 public void valueChanged(ListSelectionEvent e) {
 
                     ListSelectionModel lsm = (ListSelectionModel) e.getSource();
-                    if (lsm.isSelectionEmpty())
+                    if (lsm.isSelectionEmpty()) {
                         return; //no rows were selected
+                    }
 
                     int selectedRow = lsm.getMinSelectionIndex();
 
                     //selectedRow is selected
                     ServerSelectionStep.this.currentServerConfig = ServerSelectionStep.this.serverConfigManager.serverConfigAt(selectedRow);
 
-                    if (this.htmlDescr == null)
+                    if (this.htmlDescr == null) {
                         this.htmlDescr = new JHTMLWindow(ClientDirector.getClientManager(), "Wotlas Server", "text:" + ServerSelectionStep.this.currentServerConfig.toHTML(), 350, 250, false, ClientDirector.getResourceManager());
-                    else {
+                    } else {
                         this.htmlDescr.setText(ServerSelectionStep.this.currentServerConfig.toHTML());
-                        if (!this.htmlDescr.isShowing())
+                        if (!this.htmlDescr.isShowing()) {
                             this.htmlDescr.show();
+                        }
                     }
 
                     //Ignore extra messages.
-                    if (e.getValueIsAdjusting())
+                    if (e.getValueIsAdjusting()) {
                         return;
+                    }
 
                     //selectedRow is selected
                     ServerSelectionStep.this.currentServerConfig = ServerSelectionStep.this.serverConfigManager.serverConfigAt(selectedRow);
@@ -236,7 +231,6 @@ public class JAccountCreationWizard extends JWizard {
         }
 
         /*------------------------------------------------------------------------------------*/
-
         /** To set our wizard.
          */
         protected void setWizard(JWizard wizard) {
@@ -244,7 +238,6 @@ public class JAccountCreationWizard extends JWizard {
         }
 
         /*------------------------------------------------------------------------------------*/
-
         /** Called each time the step is shown on screen.
          */
         @Override
@@ -252,15 +245,17 @@ public class JAccountCreationWizard extends JWizard {
         }
 
         /*------------------------------------------------------------------------------------*/
-
         /** Called when the "Next" button is clicked.
          *  Use the wizard's setNextStep() method to set the next step to be displayed.
          *  @return return true to validate the "Next" button action, false to cancel it...
          */
         @Override
         protected boolean onNext(Object context, JWizard wizard) {
+            NetConfig netCfg = new NetConfig(this.currentServerConfig.getServerName(), this.currentServerConfig.getAccountServerPort());
+            netCfg.setServerId(this.currentServerConfig.getServerID());
+            netCfg.setStandaloneBasePath(ClientDirector.getResourceManager().getResourceDir(null));
 
-            JAccountConnectionDialog jaconnect = new JAccountConnectionDialog(null, this.currentServerConfig.getServerName(), this.currentServerConfig.getAccountServerPort(), this.currentServerConfig.getServerID(), wizard);
+            JAccountConnectionDialog jaconnect = new JAccountConnectionDialog(null, netCfg, wizard, wizard.getGameDefinition());
 
             if (jaconnect.hasSucceeded()) {
                 wizard.setContext(jaconnect.getConnection());
@@ -276,7 +271,6 @@ public class JAccountCreationWizard extends JWizard {
         }
 
         /*------------------------------------------------------------------------------------*/
-
         /** Called when Previous button is clicked.
          *  Use the wizard's setNextStep() method to set the next step to be displayed.
          *  @return return true to validate the "Previous" button action, false to cancel it...
@@ -287,9 +281,7 @@ public class JAccountCreationWizard extends JWizard {
         }
 
         /*------------------------------------------------------------------------------------*/
-
     }
 
     /*------------------------------------------------------------------------------------*/
-
 }

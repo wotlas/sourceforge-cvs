@@ -1,0 +1,3 @@
+wotlas.server.message.chat.ChatRoomCreationMsgBehaviour
+wotlas.server.message.chat.RemPlayerFromChatRoomMsgBehaviour
+wotlas.server.message.chat.SendTextMsgBehaviour

@@ -6,6 +6,12 @@
             <code-name-base>wotlas.server.bots.alice.jars</code-name-base>
             <suite-component/>
             <module-dependencies/>
+            <public-packages>
+                <package>org.alicebot.server.core</package>
+                <package>org.alicebot.server.core.logging</package>
+                <package>org.alicebot.server.net.listener</package>
+                <package>org.mortbay.html</package>
+            </public-packages>
             <class-path-extension>
                 <runtime-relative-path>ext/js.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/js.jar</binary-origin>
@@ -18,12 +24,6 @@
                 <runtime-relative-path>ext/servlet.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/servlet.jar</binary-origin>
             </class-path-extension>
-            <public-packages>
-                <package>org.alicebot.server.core</package>
-                <package>org.alicebot.server.core.logging</package>
-                <package>org.alicebot.server.net.listener</package>
-                <package>org.mortbay.html</package>
-            </public-packages>
         </data>
     </configuration>
 </project>

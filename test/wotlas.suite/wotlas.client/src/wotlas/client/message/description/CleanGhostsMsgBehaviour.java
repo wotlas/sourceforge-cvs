@@ -23,8 +23,8 @@ import java.util.Iterator;
 import wotlas.client.DataManager;
 import wotlas.client.PlayerImpl;
 import wotlas.common.message.description.CleanGhostsMessage;
+import wotlas.common.message.description.WishClientDescriptionNetMsgBehaviour;
 import wotlas.common.universe.Room;
-import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.utils.Debug;
 
 /**
@@ -32,7 +32,7 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-public class CleanGhostsMsgBehaviour extends CleanGhostsMessage implements NetMessageBehaviour {
+public class CleanGhostsMsgBehaviour extends CleanGhostsMessage implements WishClientDescriptionNetMsgBehaviour {
     /*------------------------------------------------------------------------------------*/
 
     /** Constructor.

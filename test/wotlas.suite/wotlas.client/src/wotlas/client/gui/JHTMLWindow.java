@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.gui;
 
 import java.awt.BorderLayout;
@@ -48,7 +47,6 @@ import wotlas.utils.SwingTools;
  *
  * @author Aldiss
  */
-
 public class JHTMLWindow extends JDialog implements ActionListener {
     /*------------------------------------------------------------------------------------*/
 
@@ -58,21 +56,17 @@ public class JHTMLWindow extends JDialog implements ActionListener {
     public static int MAX_REPAINTS = 20;
 
     /*------------------------------------------------------------------------------------*/
-
     /** JEditorPane to display the HTML text.
      */
     private JEditorPane html;
-
     /** Timer to repaint the JEditorPaint a few times...
      */
     private Timer timer;
-
     /** number of repaints...
      */
     private int nbRepaints = 0;
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor with HTML file name/URL. (no header, not modal)
      * @param frame parent frame
      * @param title JDialog title
@@ -88,7 +82,6 @@ public class JHTMLWindow extends JDialog implements ActionListener {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor with HTML file name/URL header & modal mode.
      * @param frame parent frame
      * @param header text to display before the html document
@@ -108,8 +101,9 @@ public class JHTMLWindow extends JDialog implements ActionListener {
         String htmlText = null;
         URL url = null;
 
-        if (header == null)
+        if (header == null) {
             header = "";
+        }
 
         // We load the html file
         if (fileName.startsWith("http:")) {
@@ -119,19 +113,21 @@ public class JHTMLWindow extends JDialog implements ActionListener {
             } catch (Exception e) {
                 htmlText = "<b>ERROR</b><br>Failed to open URL: <i>" + fileName + "</i><p>An exception occured: <i>" + e.getMessage() + "</i>";
             }
-        } else if (fileName.startsWith("text:"))
+        } else if (fileName.startsWith("text:")) {
             htmlText = fileName.substring(5, fileName.length());
-        else if (rManager.inJar())
-            url = getClass().getResource(fileName);
-        else
+        } else if (rManager.inJar()) {
+            url = rManager.getClassResourceUrl(this.getClass(), fileName);
+        } else {
             try {
                 url = new File(fileName).toURL();
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
 
-        if (htmlText == null && url == null)
+        if (htmlText == null && url == null) {
             htmlText = "<b>ERROR</b><br>Could not open file: <i>" + fileName + "</i>";
+        }
 
         htmlText = header + htmlText;
 
@@ -153,9 +149,11 @@ public class JHTMLWindow extends JDialog implements ActionListener {
         b_ok.setFocusPainted(false);
 
         b_ok.addActionListener(new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
-                if (JHTMLWindow.this.timer != null)
+                if (JHTMLWindow.this.timer != null) {
                     JHTMLWindow.this.timer.stop();
+                }
                 dispose();
             }
         });
@@ -164,9 +162,9 @@ public class JHTMLWindow extends JDialog implements ActionListener {
 
         // JEDITOR PANE
         try {
-            if (url == null)
+            if (url == null) {
                 this.html = new JEditorPane("text/html", htmlText);
-            else {
+            } else {
                 this.html = new JEditorPane();
                 this.html.setPage(url);
             }
@@ -188,10 +186,11 @@ public class JHTMLWindow extends JDialog implements ActionListener {
         // Display
         pack();
 
-        if (center)
+        if (center) {
             SwingTools.centerComponent(this);
-        else
+        } else {
             setLocation(100, 100);
+        }
 
         show();
 
@@ -200,7 +199,6 @@ public class JHTMLWindow extends JDialog implements ActionListener {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To set the html text of the JEDitorPane
      */
     public void setText(String htmlText) {
@@ -208,11 +206,11 @@ public class JHTMLWindow extends JDialog implements ActionListener {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To add a listener to get HyperLinks...
      */
     public HyperlinkListener createHyperLinkListener() {
         return new HyperlinkListener() {
+
             public void hyperlinkUpdate(HyperlinkEvent e) {
                 if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                     if (e instanceof HTMLFrameHyperlinkEvent) {
@@ -236,14 +234,15 @@ public class JHTMLWindow extends JDialog implements ActionListener {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() != this.timer)
+        if (e.getSource() != this.timer) {
             return;
+        }
 
         this.nbRepaints++;
 
         Runnable runnable = new Runnable() {
+
             public void run() {
                 JHTMLWindow.this.html.repaint();
             }
@@ -258,5 +257,4 @@ public class JHTMLWindow extends JDialog implements ActionListener {
     }
 
     /*------------------------------------------------------------------------------------*/
-
 }

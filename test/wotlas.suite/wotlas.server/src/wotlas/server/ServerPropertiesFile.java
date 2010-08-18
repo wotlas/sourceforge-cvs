@@ -37,14 +37,18 @@ public class ServerPropertiesFile extends PropertiesConfigFile {
      */
     public final static String SERVER_CONFIG = "server.cfg";
 
+    /** Server Properties Config File Name for the standalone server.
+     */
+    public final static String SERVER_STANDALONE_CONFIG = "server-standalone.cfg";
+
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
     /** Constructor with our resource manager.
      *
      * @param rManager our resource manager
      */
-    public ServerPropertiesFile(ResourceManager rManager) {
-        super(rManager, ServerPropertiesFile.SERVER_CONFIG);
+    public ServerPropertiesFile(ResourceManager rManager, String serverCfgFile) {
+        super(rManager, serverCfgFile);
 
         if (!isValidInteger("init.persistencePeriod")) {
             Debug.signal(Debug.FAILURE, this, "The given persistence period is not a valid integer ! (in " + ServerPropertiesFile.SERVER_CONFIG + ")");

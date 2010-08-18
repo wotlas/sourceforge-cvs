@@ -28,7 +28,7 @@ public class PersistenceException extends Exception {
     * Construct a persistence exception from another exception.
     * @param exception    the root exception.
     **/
-    protected PersistenceException(Exception exception) {
+    public PersistenceException(Exception exception) {
         super(exception.getMessage());
     }
 

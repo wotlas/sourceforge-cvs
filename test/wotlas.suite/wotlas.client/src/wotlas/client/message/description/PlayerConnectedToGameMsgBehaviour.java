@@ -22,7 +22,7 @@ import wotlas.client.DataManager;
 import wotlas.common.Player;
 import wotlas.common.PlayerState;
 import wotlas.common.message.description.PlayerConnectedToGameMessage;
-import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.common.message.description.WishClientDescriptionNetMsgBehaviour;
 import wotlas.libs.sound.SoundLibrary;
 import wotlas.utils.Debug;
 
@@ -31,7 +31,7 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-public class PlayerConnectedToGameMsgBehaviour extends PlayerConnectedToGameMessage implements NetMessageBehaviour {
+public class PlayerConnectedToGameMsgBehaviour extends PlayerConnectedToGameMessage implements WishClientDescriptionNetMsgBehaviour {
     /*------------------------------------------------------------------------------------*/
 
     /** Constructor.

@@ -1,0 +1,5 @@
+wotlas.server.message.movement.CanLeaveIntMapMsgBehaviour
+wotlas.server.message.movement.CanLeaveTownMapMsgBehaviour
+wotlas.server.message.movement.CanLeaveWorldMapMsgBehaviour
+wotlas.server.message.movement.EnteringRoomMsgBehaviour
+wotlas.server.message.movement.PathUpdateMovementMsgBehaviour

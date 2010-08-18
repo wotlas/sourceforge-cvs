@@ -21,6 +21,7 @@ package wotlas.server.bots.alice.server;
 import java.util.Hashtable;
 import java.util.Iterator;
 import wotlas.common.ErrorCodeList;
+import wotlas.libs.net.NetConfig;
 import wotlas.libs.net.NetConnection;
 import wotlas.libs.net.NetConnectionListener;
 import wotlas.libs.net.NetServer;
@@ -38,8 +39,7 @@ public class AliceWotlasServer extends NetServer implements NetConnectionListene
     /** Our WOTLAS alice chat listener. We use this class to handle our alicebot answer
      *  requests.
      */
-    protected AliceWOTLAS aliceWotlas;
-
+    protected AliceWotlasListener aliceWotlas;
     /** List of the remote wotlas servers we are connected to. The key of the hashtable
      *  is the server's id.
      */
@@ -48,14 +48,13 @@ public class AliceWotlasServer extends NetServer implements NetConnectionListene
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
     /** Constructor (see wotlas.libs.net.NetServer for details)
      *
-     *  @param serverInterface the host interface to bind to. Example: wotlas.tower.org
-     *  @param port port on which the server listens to clients.
-     *  @param packages a list of packages where we can find NetMsgBehaviour Classes.
+     *  @param netCfg (the host interface to bind to. Example: wotlas.tower.org; and the port on which the server listens to clients).
+     *  @param msgSubInterfaces a list of sub-interfaces where we can find NetMsgBehaviour Classes implemeting them.
      *  @param nbMaxSockets maximum number of sockets that can be opened on this server
      *  @param aliceWotlas wotlas alice chat listener
      */
-    public AliceWotlasServer(String serverInterface, int port, String packages[], int nbMaxSockets, AliceWOTLAS aliceWotlas) {
-        super(serverInterface, port, packages);
+    public AliceWotlasServer(NetConfig netCfg, Class msgSubInterfaces[], int nbMaxSockets, AliceWotlasListener aliceWotlas) {
+        super(netCfg, msgSubInterfaces, aliceWotlas.getGameDefinition());
         this.aliceWotlas = aliceWotlas;
         this.serverLinks = new Hashtable<String, NetConnection>(10);
 
@@ -129,7 +128,7 @@ public class AliceWotlasServer extends NetServer implements NetConnectionListene
      */
     @Override
     public void connectionCreated(NetConnection connection) {
-    // well nothing to do here...
+        // well nothing to do here...
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

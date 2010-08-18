@@ -20,7 +20,6 @@ package wotlas.libs.net;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.Socket;
 import wotlas.utils.Debug;
 
 /** A NetSender sends NetMessages on an opened socket.
@@ -100,7 +99,7 @@ public class NetSender extends NetThread {
      * @param bufferSize buffer size (in bytes) for the buffered output stream.
      * @exception IOException if the socket wasn't already connected.
      */
-    public NetSender(Socket socket, NetConnection connection, byte senderType, int bufferSize) throws IOException {
+    public NetSender(IOChannel socket, NetConnection connection, byte senderType, int bufferSize) throws IOException {
         super(socket);
         this.connection = connection;
 
@@ -159,7 +158,7 @@ public class NetSender extends NetThread {
                                 tr = this.aggregationTimeout - System.currentTimeMillis() - t0;
                                 if (tr < 3) {
                                     break; // aggregation end, we are not going to loop again for 3ms
-                                } 
+                                }
                             }
                         } else {
                             this.stopAggregation = false;

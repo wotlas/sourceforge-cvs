@@ -22,9 +22,9 @@ import java.util.Hashtable;
 import wotlas.client.DataManager;
 import wotlas.client.PlayerImpl;
 import wotlas.common.message.description.AddPlayerToRoomMessage;
+import wotlas.common.message.description.WishClientDescriptionNetMsgBehaviour;
 import wotlas.common.universe.Room;
 import wotlas.common.universe.WotlasLocation;
-import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.libs.sound.SoundLibrary;
 import wotlas.utils.Debug;
 
@@ -33,7 +33,7 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-public class AddPlayerToRoomMsgBehaviour extends AddPlayerToRoomMessage implements NetMessageBehaviour {
+public class AddPlayerToRoomMsgBehaviour extends AddPlayerToRoomMessage implements WishClientDescriptionNetMsgBehaviour {
     /*------------------------------------------------------------------------------------*/
 
     /** Constructor.

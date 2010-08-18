@@ -26,6 +26,8 @@ import wotlas.libs.log.JLogStream;
 import wotlas.libs.sound.SoundLibrary;
 import wotlas.utils.Debug;
 import wotlas.utils.Tools;
+import wotlas.utils.WotlasDefaultGameDefinition;
+import wotlas.utils.WotlasGameDefinition;
 
 /** The MAIN client class. It starts the PersistenceManager, the ClientManager
  * and the DataManager.
@@ -49,35 +51,37 @@ public class ClientDirector {
 
     /*------------------------------------------------------------------------------------*/
 
+    protected static ClientDirector _clientDirector;
+
     /** Our client properties.
      */
-    private static ClientPropertiesFile clientProperties;
+    protected ClientPropertiesFile clientProperties;
 
     /** Our remote server properties.
      */
-    private static RemoteServersPropertiesFile remoteServersProperties;
+    protected RemoteServersPropertiesFile remoteServersProperties;
 
     /** Our resource manager
      */
-    private static ResourceManager resourceManager;
+    protected ResourceManager resourceManager;
 
     /*------------------------------------------------------------------------------------*/
 
     /** Our Client Manager.
      */
-    private static ClientManager clientManager;
+    protected ClientManager clientManager;
 
     /** Our Data Manager.
      */
-    private static DataManager dataManager;
+    protected DataManager dataManager;
 
     /** Client configuration (window size, sound volume, etc... )
      */
-    private static ClientConfiguration clientConfiguration;
+    protected ClientConfiguration clientConfiguration;
 
     /** Our JLogStream
      */
-    private static JLogStream logStream;
+    protected JLogStream logStream;
 
     /** True if we show debug informations
      */
@@ -121,20 +125,36 @@ public class ClientDirector {
             }
         }
 
+        // TODO STEP 0 - Define the game context. 
+        WotlasGameDefinition wgd = new WotlasDefaultGameDefinition(WotlasGameDefinition.ID_WOTLAS_CLIENT, new String[] { "server", "Server" }, new String[] { "client", "Client", "Standalone" });
+
+        ClientDirector.runClient(classicLogWindow, basePath, wgd);
+    }
+
+    /**
+     * @param classicLogWindow
+     * @param basePath
+     * @param wgd
+     */
+    private static void runClient(boolean classicLogWindow, String basePath, WotlasGameDefinition wgd) {
+
+        ClientDirector clientDirector = new ClientDirector();
+        ClientDirector._clientDirector = clientDirector;
+
         // STEP 1 - Creation of the ResourceManager
-        ClientDirector.resourceManager = new ResourceManager(basePath, false);
+        clientDirector.resourceManager = new ResourceManager(basePath, false, wgd);
 
         // STEP 2 - Start a JLogStream to display our Debug messages
         try {
             if (!classicLogWindow)
-                ClientDirector.logStream = new JLogStream(new javax.swing.JFrame(), ClientDirector.resourceManager.getExternalLogsDir() + ClientDirector.CLIENT_LOG_NAME, "log-title.jpg", ClientDirector.resourceManager);
+                clientDirector.logStream = new JLogStream(new javax.swing.JFrame(), clientDirector.resourceManager.getExternalLogsDir() + ClientDirector.CLIENT_LOG_NAME, "log-title.jpg", clientDirector.resourceManager);
             else
-                ClientDirector.logStream = new JLogStream(new javax.swing.JFrame(), ClientDirector.resourceManager.getExternalLogsDir() + ClientDirector.CLIENT_LOG_NAME, "log-title-dark.jpg", ClientDirector.resourceManager);
+                clientDirector.logStream = new JLogStream(new javax.swing.JFrame(), clientDirector.resourceManager.getExternalLogsDir() + ClientDirector.CLIENT_LOG_NAME, "log-title-dark.jpg", clientDirector.resourceManager);
 
-// TODO delete comment when alpha release works.            
-//            Debug.setPrintStream(ClientDirector.logStream);
-//             System.setOut(ClientDirector.logStream);
-//             System.setErr(ClientDirector.logStream);
+            // TODO delete comment when alpha release works.            
+            //            Debug.setPrintStream(ClientDirector.logStream);
+            //             System.setOut(ClientDirector.logStream);
+            //             System.setErr(ClientDirector.logStream);
         } catch (Exception e) {
             e.printStackTrace();
             Tools.displayDebugMessage("Start-up Error", "" + e);
@@ -152,39 +172,43 @@ public class ClientDirector {
 
         Debug.signal(Debug.NOTICE, null, "Code version       : " + ResourceManager.WOTLAS_VERSION);
 
-        if (!ClientDirector.resourceManager.inJar())
+        if (!clientDirector.resourceManager.inJar())
             Debug.signal(Debug.NOTICE, null, "Data directory     : " + basePath);
         else
             Debug.signal(Debug.NOTICE, null, "Data directory     : JAR File");
 
-        ClientDirector.clientProperties = new ClientPropertiesFile(ClientDirector.resourceManager);
-        ClientDirector.remoteServersProperties = new RemoteServersPropertiesFile(ClientDirector.resourceManager);
+        clientDirector.clientProperties = new ClientPropertiesFile(clientDirector.resourceManager);
+        clientDirector.remoteServersProperties = new RemoteServersPropertiesFile(clientDirector.resourceManager);
 
         // STEP 4 - Creation of Sound Library
-        SoundLibrary.createSoundLibrary(ClientDirector.clientProperties, ClientDirector.resourceManager, ClientDirector.resourceManager);
+        SoundLibrary.createSoundLibrary(clientDirector.clientProperties, clientDirector.resourceManager, clientDirector.resourceManager);
 
         // STEP 5 - Creation of our Font Factory
-        FontFactory.createDefaultFontFactory(ClientDirector.resourceManager);
+        FontFactory.createDefaultFontFactory(clientDirector.resourceManager);
         Debug.signal(Debug.NOTICE, null, "Font Factory created...");
 
         // STEP 6 - We load the client configuration. There is always a config returned.
-        ClientDirector.clientConfiguration = ClientConfiguration.load();
+        clientDirector.clientConfiguration = ClientConfiguration.load();
 
         // STEP 7 - We ask the ClientManager to get ready
-        ClientDirector.clientManager = new ClientManager(ClientDirector.resourceManager);
+        clientDirector.clientManager = new ClientManager(clientDirector.resourceManager);
         Debug.signal(Debug.NOTICE, null, "Client Manager created...");
 
         // STEP 8 - We ask the DataManager to get ready
-        ClientDirector.dataManager = new DataManager(ClientDirector.resourceManager);
-        ClientDirector.dataManager.showDebug(ClientDirector.SHOW_DEBUG);
+        clientDirector.dataManager = new DataManager(clientDirector.resourceManager);
+        clientDirector.dataManager.showDebug(ClientDirector.SHOW_DEBUG);
         Debug.signal(Debug.NOTICE, null, "DataManager created...");
 
         // STEP 9 - Start the ClientManager
-        ClientDirector.clientManager.start(ClientManager.FIRST_INIT);
+        clientDirector.clientManager.start(ClientManager.FIRST_INIT);
         Debug.signal(Debug.NOTICE, null, "WOTLAS Client started with success...");
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    public static ClientDirector getCurrentClientDirector() {
+        return ClientDirector._clientDirector;
+    }
 
     /** To get the URL where are stored the remote server configs. This URL can also contain
      *  a news.html file to display some news.
@@ -192,7 +216,7 @@ public class ClientDirector {
      * @return remoteServerConfigHomeURL
      */
     public static String getRemoteServerConfigHomeURL() {
-        return ClientDirector.remoteServersProperties.getProperty("info.remoteServerHomeURL");
+        return ClientDirector.getCurrentClientDirector().remoteServersProperties.getProperty("info.remoteServerHomeURL");
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -201,7 +225,7 @@ public class ClientDirector {
      *  @return Client Config, you can use the save() method to save it to disk...
      */
     public static ClientConfiguration getClientConfiguration() {
-        return ClientDirector.clientConfiguration;
+        return ClientDirector.getCurrentClientDirector().clientConfiguration;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -210,7 +234,7 @@ public class ClientDirector {
      *  @return our resource manager.
      */
     public static ResourceManager getResourceManager() {
-        return ClientDirector.resourceManager;
+        return ClientDirector.getCurrentClientDirector().resourceManager;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -220,7 +244,7 @@ public class ClientDirector {
      *  @return our ClientManager
      */
     public static ClientManager getClientManager() {
-        return ClientDirector.clientManager;
+        return ClientDirector.getCurrentClientDirector().clientManager;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -229,7 +253,7 @@ public class ClientDirector {
      *  @return our data manager.
      */
     public static DataManager getDataManager() {
-        return ClientDirector.dataManager;
+        return ClientDirector.getCurrentClientDirector().dataManager;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -238,7 +262,7 @@ public class ClientDirector {
      *  @return our log window which is a printStream.
      */
     public static JLogStream getLogStream() {
-        return ClientDirector.logStream;
+        return ClientDirector.getCurrentClientDirector().logStream;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

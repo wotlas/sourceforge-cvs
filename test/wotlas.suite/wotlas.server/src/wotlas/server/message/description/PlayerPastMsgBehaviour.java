@@ -16,12 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.server.message.description;
 
 import wotlas.common.message.description.PlayerPastMessage;
+import wotlas.common.message.description.WishServerDescriptionNetMsgBehaviour;
 import wotlas.common.router.MessageRouter;
-import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.server.PlayerImpl;
 import wotlas.utils.Debug;
 
@@ -30,11 +29,9 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-
-public class PlayerPastMsgBehaviour extends PlayerPastMessage implements NetMessageBehaviour {
+public class PlayerPastMsgBehaviour extends PlayerPastMessage implements WishServerDescriptionNetMsgBehaviour {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public PlayerPastMsgBehaviour() {
@@ -42,7 +39,6 @@ public class PlayerPastMsgBehaviour extends PlayerPastMessage implements NetMess
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
@@ -56,8 +52,9 @@ public class PlayerPastMsgBehaviour extends PlayerPastMessage implements NetMess
         // is our player the dest of this message
         if (this.primaryKey.equals(player.getPrimaryKey())) {
             // do we have to save the past for our player
-            if (player.getPlayerPast() == null || player.getPlayerPast().length() == 0)
-                player.setPlayerPast(this.playerPast); // we save the past...
+            if (player.getPlayerPast() == null || player.getPlayerPast().length() == 0) {
+                player.setPlayerPast(this.playerPast);
+            } // we save the past...
 
             return;
         }
@@ -70,8 +67,9 @@ public class PlayerPastMsgBehaviour extends PlayerPastMessage implements NetMess
 
         // we search for the player via our MessageRouter
         MessageRouter mRouter = player.getMessageRouter();
-        if (mRouter == null)
+        if (mRouter == null) {
             return;
+        }
 
         PlayerImpl searchedPlayer = (PlayerImpl) mRouter.getPlayer(this.primaryKey);
 
@@ -86,5 +84,4 @@ public class PlayerPastMsgBehaviour extends PlayerPastMessage implements NetMess
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

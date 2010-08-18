@@ -23,7 +23,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -33,6 +36,7 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.swing.JOptionPane;
+import org.openide.util.Lookup;
 
 /** Various useful tools...
  *
@@ -176,7 +180,7 @@ public class Tools {
      *  @param className a string representing the class name of the filter
      *  @return an instance of the object, null if we cannot get an instance.
      */
-    public static Object getInstance(String className) {
+    private static Object getInstance(String className) {
         try {
             Class myClass = Class.forName(className);
             return myClass.newInstance();
@@ -303,15 +307,34 @@ public class Tools {
      *
      *  I want to thank the AliceBot project from which I took some part of the following code.
      *
-     *  @param interfaceName the fully-qualified name of the interface whose implementations are wanted
+     *  @param interfaceToImpl the class of the interface whose implementations are wanted
      *                       such as wotlas.server.chat.ChatCommand
-     *  @param packages package names where to perform the search, if you want to search
-     *                 everywhere just give a null value or new String[0].
-     *  @return the found classes that implement the given interface.
+     *  @return the found instantiated objects that implement the given interface.
      *  @exception ClassNotFoundException if the class of the interface
      *  @exception SecurityException if we have no access to local files.
      */
-    public static Class[] getImplementorsOf(String interfaceName, String packages[]) throws ClassNotFoundException, SecurityException {
+    public static Object[] getImplementorsOf(Class interfaceToImpl, WotlasGameDefinition wgd) throws ClassNotFoundException, SecurityException {
+        ArrayList li = new ArrayList();
+
+        // Lookup : find classFactory impl.
+        Lookup lookup = Lookup.getDefault();
+        Lookup.Template template = new Lookup.Template(interfaceToImpl);
+        Lookup.Result result = lookup.lookup(template);
+        Collection c = result.allInstances();
+        for (Iterator i = c.iterator(); i.hasNext();) {
+            Object classInstance = i.next();
+            if (wgd != null && classInstance instanceof WishGameExtension) {
+                if (!wgd.isImplementorClassAllowed((WishGameExtension) classInstance)) {
+                    continue;
+                }
+            }
+            li.add(classInstance);
+        }
+        return li.toArray(new Object[li.size()]);
+
+    }
+
+    private static Class[] getImplementorsOf2(String interfaceName, String packages[]) throws ClassNotFoundException, SecurityException {
 
         // 1 - Prepare the search
         // If the classpath is not found we'll search in the current '.'
@@ -518,7 +541,7 @@ public class Tools {
 
         // 3 - Return the results...
         Class toReturn[] = {};
-        return (Class[]) results.toArray(toReturn);
+        return results.toArray(toReturn);
     }
 
     /*------------------------------------------------------------------------------------*/
@@ -572,12 +595,13 @@ public class Tools {
                 dirPath = dirPath.substring(1, dirPath.length());
             }
             // 2 - We analyze our list of resources.
-            InputStream is = Tools.class.getResourceAsStream(resourcesLstName);
-            if (is == null) {
+            URL url = ResourceLookup.getClassResourceUrl(Tools.class, resourcesLstName);
+            if (url == null) {
                 String msg = "File not found " + resourcesLstName;
                 Debug.signal(Debug.ERROR, null, msg);
                 return new String[0];
             }
+            InputStream is = url.openStream();
             BufferedReader in = new BufferedReader(new InputStreamReader(is));
             // 1st line is a comment.
             String name = in.readLine();
@@ -620,7 +644,6 @@ public class Tools {
                 }
 
                 list.add("/" + name);
-
 
             }
 

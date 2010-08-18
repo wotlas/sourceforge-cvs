@@ -21,7 +21,6 @@ package wotlas.libs.net;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.net.Socket;
 import java.net.SocketException;
 import wotlas.libs.net.message.EndOfConnectionMessage;
 import wotlas.libs.net.message.PingMessage;
@@ -89,7 +88,8 @@ public class NetReceiver extends NetThread {
      * @param bufferSize buffer size (in bytes) for the buffered input stream.
      * @exception IOException if the socket wasn't already connected.
      */
-    public NetReceiver(Socket socket, NetConnection connection, boolean sync, Object sessionContext, int bufferSize) throws IOException {
+    public NetReceiver(NetMessageFactory msgFactory, IOChannel socket, NetConnection connection, boolean sync, Object sessionContext,
+            int bufferSize) throws IOException {
         super(socket);
         this.sync = sync;
         this.sessionContext = sessionContext;
@@ -101,7 +101,7 @@ public class NetReceiver extends NetThread {
 
         // we retrieve & construct some useful handles
         this.inStream = new DataInputStream(getBufferedInputStream(bufferSize));
-        this.factory = NetMessageFactory.getMessageFactory();
+        this.factory = msgFactory;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

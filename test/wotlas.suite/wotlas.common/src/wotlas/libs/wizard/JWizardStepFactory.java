@@ -19,7 +19,12 @@
 package wotlas.libs.wizard;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Hashtable;
+import wotlas.libs.persistence.PropertiesConverter;
+import wotlas.utils.Debug;
+import wotlas.utils.Tools;
+import wotlas.utils.WotlasGameDefinition;
 
 /** A factory that builds, initializes and stores JWizardStep objects. It is used by
  *  the JWizard class.<br>
@@ -37,11 +42,14 @@ public class JWizardStepFactory {
      */
     private Hashtable<String, JWizardStep> staticSteps;
 
+    private WotlasGameDefinition gameDefinition;
+
     /*------------------------------------------------------------------------------------*/
     /** Constructor.
      */
-    public JWizardStepFactory() {
+    public JWizardStepFactory(WotlasGameDefinition wgd) {
         this.staticSteps = new Hashtable<String, JWizardStep>(10);
+        this.gameDefinition = wgd;
     }
 
     /*------------------------------------------------------------------------------------*/
@@ -75,17 +83,40 @@ public class JWizardStepFactory {
 
         // We create, store and return a new instance
         try {
-            Class myStepClass = Class.forName(stepClass);
+            JWizardStepParameters params = new JWizardStepParameters(stepClass, " ");
+            JWizardStep step = null;
 
-            JWizardStep step = (JWizardStep) myStepClass.newInstance();
-            step.init(new JWizardStepParameters(stepClass, " "));
+            // Lookup : find classFactory impl.
+            try {
+                Object[] classesFactories = Tools.getImplementorsOf(WishWizardClassFactory.class, getGameDefinition());
+                for (int i = 0; i < classesFactories.length && step == null; i++) {
+                    WishWizardClassFactory classFactory = (WishWizardClassFactory) classesFactories[i];
+                    step = classFactory.newWizardStep(params);
+                }
+            } catch (ClassNotFoundException cnfe) {
+                // FIXME Problem.
+                cnfe.printStackTrace();
+            }
+            if (step == null) {
+                // Class.forname can't do the work : netbeans classloader hinders it.
+                Class myStepClass = Class.forName(stepClass);
+                step = (JWizardStep) myStepClass.newInstance();
+            }
 
+            step.init(params);
             this.staticSteps.put(stepClass, step);
             return step;
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;
         }
+    }
+
+    /**
+     * @return the gameDefinition
+     */
+    public WotlasGameDefinition getGameDefinition() {
+        return this.gameDefinition;
     }
 
     /*------------------------------------------------------------------------------------*/
@@ -106,6 +137,7 @@ public class JWizardStepFactory {
                 step.init(parameters);
                 return step;
             } catch (Exception ex) {
+                // FIXME 
                 ex.printStackTrace();
                 return null;
             }
@@ -113,9 +145,25 @@ public class JWizardStepFactory {
 
         // We create, eventually store and return a new instance
         try {
-            Class myStepClass = Class.forName(parameters.getStepClass());
+            JWizardStep step = null;
 
-            JWizardStep step = (JWizardStep) myStepClass.newInstance();
+            // Lookup : find classFactory impl.
+            try {
+                Object[] classesFactories = Tools.getImplementorsOf(WishWizardClassFactory.class, getGameDefinition());
+                for (int i = 0; i < classesFactories.length && step == null; i++) {
+                    WishWizardClassFactory classFactory = (WishWizardClassFactory) classesFactories[i];
+                    step = classFactory.newWizardStep(parameters);
+                }
+            } catch (ClassNotFoundException cnfe) {
+                // FIXME Problem.
+                cnfe.printStackTrace();
+            }
+            if (step == null) {
+                // Class.forname can't do the work : netbeans classloader hinders it.
+                Class myStepClass = Class.forName(parameters.getStepClass());
+                step = (JWizardStep) myStepClass.newInstance();
+            }
+
             step.init(parameters);
 
             if (!parameters.getIsDynamic()) {
@@ -124,6 +172,7 @@ public class JWizardStepFactory {
 
             return step;
         } catch (Exception ex) {
+            // FIXME 
             ex.printStackTrace();
             return null;
         }
@@ -149,7 +198,7 @@ public class JWizardStepFactory {
             return null;
         }
 
-        JWizardStepParameters parameters = JWizardStepParameters.loadFromStream(fis);
+        JWizardStepParameters parameters = JWizardStepFactory.loadJWizardStepParameters(fis, getGameDefinition());
 
         if (parameters == null) {
             return null;
@@ -159,4 +208,25 @@ public class JWizardStepFactory {
     }
 
     /*------------------------------------------------------------------------------------*/
+
+    /** To load JWizardStepParameters from a file. This method uses the Wotlas
+     *  Persistent Library and the Wotlas Debug utility.
+     *
+     * @param path full path to the file containing the JWizardStepParameters.
+     * @return null if the file could not be loaded.
+     */
+    public static final JWizardStepParameters loadJWizardStepParameters(InputStream istream, WotlasGameDefinition wgd) {
+        if (istream == null)
+            return null;
+
+        try {
+            return (JWizardStepParameters) PropertiesConverter.load(istream, wgd);
+        } catch (Exception pe) {
+            Debug.signal(Debug.ERROR, null, "Failed to load file: " + pe.getMessage());
+            return null;
+        }
+    }
+
+    /*------------------------------------------------------------------------------------*/
+
 }

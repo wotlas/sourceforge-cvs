@@ -1,0 +1,316 @@
+*
+* Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
+* Copyright (C) 2001-2008 WOTLAS Team
+*
+* CHANGES BETWEEN VERSIONS
+* ( File Best Viewed in 1024x768 or above)
+*
+
+CHANGES BETWEEN 1.3.1 AND ?
+-------------------------
+
+Sleeping Owl - Preparing library separation and vyger
+
+ - 03/20/08 - test/wotlas.suite : eclipse integration of projects 
+(project names in cvs tree)
+  1- wotlas in wotlas.cvs.sourceforge.net/wotlas/wotlas 
+  2- vyger in wotlas.cvs.sourceforge.net/wotlas/test/vyger
+  3- vyger.test in wotlas.cvs.sourceforge.net/wotlas/test/vyger.test
+  4- wotlas.test.client in wotlas.cvs.sourceforge.net/wotlas/test/wotlas.test.client
+  5- wotlas.test.server in wotlas.cvs.sourceforge.net/wotlas/test/wotlas.test.server
+If you do want to compile all these projects in eclipse 3.3, you need first
+to build all these projects and the 'wotlas.suite' in netbeans before launching
+eclipse. For now you must use the jars created by netbeans in the dist/lib 
+directories. In the future we will either create maven configurations or adding
+an http repositories of stable libraries jars.
+ To import all these projects in eclipse, you need only to get the project set :
+http://wotlas.cvs.sourceforge.net/*checkout*/wotlas/wotlas/wotlas_EclipseProjectSet.psf
+
+ - 03/20/08 - test/vyger : more merging in the
+ wotlas.cvs.sourceforge.net/wotlas/test/vyger/first_alpha/merged/
+ directory : adding inventory, lieManager; creating EditorManager interface, 
+ DiceRollerManager and PrimaryKeyGenerator in order to not having cross reference
+ between wotlas.client, wotlas.common and wotlas.server packages; note that all
+ the cross references are not resolved.
+
+ - 03/15/08 - test/vyger : cleaning up the sources of vyger in 
+wotlas.cvs.sourceforge.net/wotlas/test/vyger/first_alpha/cleaned/
+and adding a merged sources directory :
+wotlas.cvs.sourceforge.net/wotlas/test/vyger/first_alpha/merged/
+that contains only the differences with wotlas stable sources.
+Note that you can test the vyger project with merged sources only in eclipse.
+Netbeans don't allow to have the same sources names in both the jars and the
+source directories.
+
+ - 02/25/08 - wotlas.server.AccountManager : Change ERROR message to NOTICE as
+long as the inventory is saved empty.
+ - 02/25/08 - test/wotlas.suite : change loading of resources using the
+classloader (class.getResourceAsStream() or class.getResource()) : In netbeans 
+module, classes and resources loading use a specific ClassLoader that prevents
+to use a module resource that is not declared in module dependencies.
+Actually we are using wotlas.common.ResourceManager to load many resources,
+but we want the 'wotlas.common' module to be the most independent possible, 
+we need to use the SystemClassLoader to load resources.
+Be aware it is a programming trick that would not be kept in the future.
+
+ - 01/22/08 - test/wotlas.suite : adding wotlas.libs.graphics2d.demo module
+to test the graphics2d library and dev documents from the wotlas-2D-engine-v1.3.zip 
+archive. After building the wotlas.suite, the script launch.bat/launch.sh in
+the demo module works and launch the same example as in the archive.
+
+ - 01/11/08 - wotlas : Improvement of ResourceManager and resources jar loading
+ - 01/11/08 - wotlas : FIX NullPointerException in InventoryPlugin when it is loaded in
+jars;
+
+ - 01/11/08 - test/wotlas.test.client : adding a project using jars build in wotlas.suite
+to test the client side;
+ - 01/11/08 - test/wotlas.test.server : adding a project using jars build in wotlas.suite
+to test the server side using resources loaded in jars;
+
+ - 01/11/08 - test/wotlas.suite : adding common and randland resources;
+ - 01/11/08 - test/wotlas.suite : applying the same patches as these of /wotlas project;
+
+
+ - 12/31/07 - Fix : moving the class 'wotlas.common.objects.inventories.InventoryLayout' and renaming
+package wotlas.libs.graphics2d, change the package names in the resources files.
+ - 12/31/07 - Fix : loading of messages and chat commands classes in jars server; adding 'classes.lst'
+in packages for use in wotlas.utils.Tools.
+
+ - 12/21/07 - Preparing library separation : creating wotlas.suite in test/wotlas.suite
+ - 12/21/07 - Preparing vyger : creating vyger project in test/vyger
+ - 12/21/07 - Renaming the 'wotlas.libs.graphics2D' in 'wotlas.libs.graphics2d' : the use of capitalized
+ letter should be prohibited in package names; You have to rebuild your universe with
+ WorldGenerator.
+ - 12/21/07 - Moving the class 'wotlas.common.objects.inventories.InventoryLayout' : it uses wotlas 
+client references, it should be moved in wotlas.client.screen.plugin.
+ - 12/21/07 - Fix wotlas.utils.Tools : using HashSet in order to have once time a class or a resource.
+ - 12/21/07 - Fix: font 'dialog' cause NullPointerException in menu 2D
+
+Sleeping Owl - Jdk 1.6 compliant task - more clean up
+ - 12/13/07 - eclipse-netbeans development : cleanup and checkstyle
+ - 12/13/07 - using generic types parameterized (ArrayList, HashMap, ...)  
+
+
+CHANGES BETWEEN V3 AND V1.3.1 (December 2007)
+---------------------------------------------
+
+Sleeping Owl - preparing alpha release
+ - 12/11/07 - Fix : loading of messages and plugins classes in JavaWebStart client.
+ - 12/11/07 - Eclipse integration : adding resources in /wotlas/.settings/ directory.
+ - 12/09/07 - Fix : loading images and world map datas in WebStart release.
+ - 12/03/07 - netbeans development : javawebstart integration
+ - 12/03/07 - fixing the building server default id
+
+Sleeping Owl - Jdk 1.6 compliant task
+ - 11/26/07 - Alice bot sources of program D from wotlas141.zip
+ - 11/26/07 - Jython jar from vyger project
+ - 11/26/07 - Applying Eclipse clean-up tool
+
+Sleeping Owl - Jdk 1.6 compliant task
+ - 11/25/07 - Fix : unmappable character for encoding UTF-8
+ - 11/25/07 - Fix : Font loading and NullPointerException
+ - 11/25/07 - Fix : non-varargs call of varargs method
+ - 11/25/07 - Fix : enum keyword
+ - 11/25/07 - Fix : assignement has no effect
+ - 11/25/07 - Changing ../bin in bin
+ - 11/25/07 - netbeans and eclipse development
+ - 11/25/07 - netbeans and eclipse development running and testing.
+ - 11/25/07 - eclipse sources cleanup
+
+
+SSzretter -
+ - 12/20/03 Changed all hard coded references to "Lucida Blackletter" to "Lucida Blackletter Regular" to fix Java 1.4.2 compatibility
+    ** need to test this new font name on linux/mac to make sure it works
+ - 12/20/03 Added ToDo.txt - to keep track of ideas, and what needs to be done
+ - 12/20/03 Commented out import wotlas.client.screen.extraplugin.*; in client datamanager to compile - must be work in progress?
+  
+
+
+
+CHANGES BETWEEN V1.2.3 AND V1.3 (20 May 2002)
+---------------------------------------------
+
+ - Added bots definitions and a link to a remote AliceBot server.
+ - Improved the server architecture : lots of tasks done before by the ServerDirector are now
+   done by the DataManager & ServerManager.
+ - Added a new method for dynamic code loading.
+ - all the resource access have been changed : the ResourceManager now handles every type of resource
+ - new SoundLibrary architecture around a SoundPlayer & MusicPlayer created dynamically at start-up
+ - brightness mask added to maps.
+ - Progress Monitor added when you enter the game.
+ - Antialiased Swing is now a wotlas library.
+ - /info command has been renamed to /manual and it's use is now easier : "/manual fanfare"
+ - Added a /away chat command and new player states to be able to say that you are connected but away.
+ - The html documentation has been updated to make our code use proper URLs.
+ - Added JAR Name detection and Java Web Start support.
+ - Added in-game menus on the client side.
+ - Enhanced network library. Our server now use Java 1.4 NetworkInterface to monitor its net interface.
+ - New administration panel for the server.
+ - New transfer scripts enabling the wotlas server to perform automatic IP updates on the wotlas web server.
+ - Corrected a very old bug on the Warning messages.
+ - Improved ImageLibrary code : JIT resources from a directory can now be loaded together.
+ - Updated FAQ entries.
+
+
+CHANGES BETWEEN V1.2.2 AND V1.2.3 (11 April 2002)
+------------------------------------------------
+
+ - Added a Message Router & Factory to make the server & client structure more clear.
+   Each location Town / World / Room has a MessageRouter attached to it. The MessageRouter is provided
+   by a factory at start-up.
+ - Thanks to the new message routing architecture, some old bugs have been fixed, especially those
+   annoying null pointer exceptions that appeared in v1.2.2 ...
+ - fixed a bug in the server address setup utility ( setup.bat ). The password was not set for file transfer.
+ - updated pscp.exe from v0.51 to v0.52 (server side). Thus the -batch option works now...
+ - your player's nickname is now displayed again in the "Info" plug-in. The nickname of other players is still
+   not displayed.
+
+
+CHANGES BETWEEN V1.2.1 AND V1.2.2 (3 April 2002)
+------------------------------------------------
+
+ - new map : Emond's Field.
+ - all the wotlas resources are now gathered in a same directory ( default is ../base ).
+ - the wotlas server, client & server utilities ( register & setup ) are now completely independent
+   from the location of the resources. By default they search data in "../base" but this can be changed
+   easily by adding a  '-base e:\wotlas\data' on their command lines. We now use a Resource Manager.
+ - the wotlas server & client have new command line options.
+ - The ClientManager (manages the different client swing windows) now extends the JIntroWizard.
+ - The Persistence Managers (used to load/save universe, configs, etc... to/from dot properties file)
+   do not exist anymore. Their save/load methods have been moved to other object managers.
+ - The ServerConfigList (managed the configs of the servers) has been renamed to ServerConfigManager
+   and possesses now all its associated save/load/create methods.
+ - The World Managers (manages the world data) found in wotlas.client and wotlas.server do not
+   exist anymore. Their code has been transfered to the standard wotlas.common.WorldManager.
+ - The wotlas.client.ClientManager, wotlas.client.DataManager (manages the client data and processes)
+   are not singletons anymore.
+ - The chat commands are now loaded dynamically on the server side.
+ - Client Plug-Ins ! the JPlayerPanel ( class that previously held the tab panels Info, Away & Lie )
+   now dynamically loads the classes found in the wotlas.client.screen.plugin package
+   AND that are instances of the JPanelPlugIn class.
+ - The smiley system has been made more severe.
+ - New sounds when you enter *doh* or *toh* in the chat
+ - Added 10 new smileys.
+ - Added hardware acceleration for the 2D game screen. The new graphics director ( EnhancedGraphicsDirector )
+   uses Java 1.4 Volatile images. The option is available in the Options Panel only if the Java version is
+   equal or higher than 1.4.0.
+ - Added new Wotlas-FAQ entries on PPPoE, flickering, and pscp's first use (thanks to Bibi).
+ - Added a shutdown Hook on the server side, so that the wotlas server can now be shut down safely
+   by CTRL+C or any system signal (SIGTERM, SIGKILL).
+ - Added a new chat button to insert images in the chat via the IMG HTML tag.
+ - Added automatic info to Away messages : last connection date.
+ - Corrected bugs in the chat player name list. The off line players are now displayed in gray.
+ - Added player name completion. Just enter the first letter of a name and hit TAB, one or more times.
+ - Added a HTML Macro plug-in (thanks to fred for the idea). Macros can be used in the chat, Away Plug-in.
+ - Added pure rotation movements to enable players to turn on themselves. You have to maintain the left mouse
+   button pressed and move the cursor to the left or right...
+ - Added "Iconified" state detection for game window. This way we reduce the tick rate and so reduce the CPU use.
+
+
+CHANGES BETWEEN V1.2 AND V1.2.1 (19 March 2002)
+-----------------------------------------------
+
+ - Corrected a bug found by valere & petrus on the "/who" command.
+
+
+CHANGES BETWEEN V1.2 AND V1.1.2 (18 March 2002)
+-----------------------------------------------
+
+ - added new maps : "Shayol Ghul" (2 maps), "White Tower" (4 maps), the Ways (1 map), "South Tv Ruins"
+   is now "Braem Wood" and "White Tower - Front" (1 map).
+ - added multi-server support. A player account can now travel from one server to another.
+   The game universe can now be shared between servers. Each server possesses a set of buildings.
+ - added new characters to the game : Younglings, Warders, Tower Guard, Shaitan, Keeper of chronicles,
+   Children of the Light, Wolf Brother, Asha'man, M'Hael,Aiel Warrior.
+ - added ServerConfigList buffer flush every six hour (to force update of the server table)
+   The server's IP/DNS name is now stored in a separate file server-X.cfg.adr that has a short buffer life
+   (twenty minutes) also our system is now on a "fail-first" mode. We don't check for a new server address
+   unless we fail to connect to it.
+ - added server-map-setup tool (see .bat .sh commands) to manage server/building asssociation.
+   we also reformed the 'server-setup' to make the transfer of the server address easier,
+   a new command 'register-setup' is now used for step by step server registration.
+ - reformed the chat command system : it now has generic interfaces, processor pattern and online doc.
+ - added new chat commands : /server to get info on your current server, /help to get the list of
+   available commands, /info to get information on a command, /log to print something in the server log.
+ - added "sound" chat commands : /fanfare to play the fanfare, /bell to ring a bell,
+   /knock to knock on a door... you have to wait 10 seconds between two sounds (error msg otherwise)
+ - added different fanfare sounds for each character class (thanks to an idea of xeno yar litharr)
+ - about 8 new musics for all the levels...
+ - local password storage. Your passwords are now saved on disk. This option can be unset (configuration panel).
+ - corrected bugs in ServerConfigList : the previous code was sometimes attempting to reach a wrong URI.
+ - behaviour part of some messages are now in the "invokeLater" mode to avoid events error.
+   we made extensive use of the SwingUtilities.invokeLater() utility.
+ - reformed and improved the wotlas.libs.net library : it no longuer uses a static registry.
+   Our network library is now easier to use : you write a message and its associated behaviour and that's all.
+ - The JCroppedWindow code has been improved : it now uses SwingUtilities.invokeLater() and doesn't crash
+   anymore. Also it now uses a MouseMotionListener for better movement management.
+   The About window now uses JCroppedWindow. The JLogWindow has a new image & dark menu bar support.
+ - Music management improved : the current music is not stopped if the new level one's is the same.
+ - chat display enhanced : we now use our own version of the HTMLEditorKit.
+ - persistence manager behaviour changed : we no longer save universe data during daily persistence save.
+ - Our wizard classes for wotlas setup have now been gathered into a library. The new approach uses a factory
+   to build steps from a class of parameters. These parameters can be saved to a configuration file or sent
+   on a stream. 8 generic steps are available.
+ - added messages history to the chat. The last 16 chat messages are saved and you can naviguate within the
+   list with the up & down arrows.
+ - added wotlas central web server up/down detection to the Wotlas Client start-up.
+ - added support for direct building to building travel (without returning to the town map).
+ - added chat command to ring a server administrator (private chat command).
+ - added pause/resume feature to the tick thread (client side). It corrected bugs that could happen during
+   a player re-connection or player switching.
+ - added 2D graphic effect to see who is speaking (thanks to an idea of knut hamson).
+ - added FontFactory to manage the use of the Lucida Blackletter we use in the game.
+ - improved replicated player movements : we don't use the movement timestamp if the delta time is less than 500ms.
+ - added Lie Manager : you can now lie on your name by creating up to 5 fake names.
+ - added support of other image types to our 2D graphics engine (thanks to an idea of D. Moonfire)
+ - new format for the /who command : it now displays the players location (town or world only).
+ - the wotlas network manager code and scripts have been integrated to the wotlas code tree.
+ - corrected bug in TextDrawable due to a behaviour change of Java 1.4 for Rectangle.intersects()
+
+
+CHANGES BETWEEN V1.1.2 AND V1.1.1 (6 January 2002)
+---------------------------------------------------
+
+ - corrected some minor bugs found in wotlas v1.1.1 (MultiRegionImage & chat)
+ - new version of the 2D Graphics engine (new ImageLibrary structure)
+ - "/who" chat command to know who are the people connected to the game
+ - "/to" chat command to show that your current message is for a precise player
+   To use the command just click on a player name in the chat player list.
+ - when you connect, a message is displayed to tell you the number of connected players
+
+
+CHANGES BETWEEN V1.1.1 AND V1.1 (10 December 2001)
+--------------------------------------------------
+
+ - corrected the bug of the first account window which was sent to background...
+ - corrected the nullPointerException in JOptionPanel...
+ - corrected typo in "About Wotlas" dialog...
+ - corrected error display on the server side when setup is started the first time.
+ - corrected error display on the client side when wotlas is started the first time.
+ - corrected format of away messages : they now start with a space to avoid >D smiley.
+ - added smiley :-)
+
+
+CHANGES BETWEEN V1.1 AND V1.0 (28 November 2001)
+------------------------------------------------
+
+ - new maps : blight refuge, tar valon gates, white tower gates, ruins
+ - bugs found in v1.0 have been fixed.
+ - wotlas v1.1 server & client code has been updated to better handle network congestion.
+ - you now have the possibility to become a member of the black ajah... (you'll have to find a member of it)
+ - new smileys and shortcuts for the chat engine.
+ - new sounds when new players arrive, connect, or disconnect.
+ - a panel shows your network connection quality in real time.
+ - your options are saved to disk : you can suppress music or sound.
+ - you can save your player's past later.
+ - you can leave a message that will be displayed when your player is not connected to the game.
+ - you can erase an account.
+ - a "-debug" option is now available for both client and server.
+
+
+PROJECT HISTORY
+---------------
+
+V1.0 released the 20 October 2001
+
+Project started the 5 March 2001

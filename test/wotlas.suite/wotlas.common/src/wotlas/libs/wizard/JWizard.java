@@ -42,6 +42,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import wotlas.libs.aswing.ALabel;
+import wotlas.utils.WotlasGameDefinition;
 
 /** A generic setup wizard that possesses buttons (previous/cancel/next) and displays
  *  a panel (JWizardStep) that can react when these buttons are pressed. <br>
@@ -141,11 +142,11 @@ public abstract class JWizard extends JFrame {
      * @param width wizard width
      * @param height wizard height   
      */
-    public JWizard(String title, WizardResourceLocator resourceLocator, Font titleFont, int width, int height) {
+    public JWizard(String title, WizardResourceLocator resourceLocator, WotlasGameDefinition wgd, Font titleFont, int width, int height) {
         super(title);
         this.resourceLocator = resourceLocator;
 
-        this.stepFactory = new JWizardStepFactory();
+        this.stepFactory = new JWizardStepFactory(wgd);
 
         setSize(width + 100, height);
 
@@ -455,6 +456,14 @@ public abstract class JWizard extends JFrame {
     }
 
     /*------------------------------------------------------------------------------------*/
+
+    /**
+     * @return
+     * @see wotlas.libs.wizard.JWizardStepFactory#getGameDefinition()
+     */
+    public WotlasGameDefinition getGameDefinition() {
+        return this.stepFactory.getGameDefinition();
+    }
 
     /** To set if the next button is enabled.
      */

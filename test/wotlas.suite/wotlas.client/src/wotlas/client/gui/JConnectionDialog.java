@@ -37,11 +37,14 @@ import wotlas.common.ServerConfigManager;
 import wotlas.libs.aswing.AInfoDialog;
 import wotlas.libs.aswing.ALabel;
 import wotlas.libs.net.NetClient;
+import wotlas.libs.net.NetConfig;
 import wotlas.libs.net.NetConnection;
 import wotlas.libs.net.NetErrorCodeList;
+import wotlas.libs.net.WishNetStandaloneServer;
 import wotlas.utils.Debug;
 import wotlas.utils.SwingTools;
 import wotlas.utils.Tools;
+import wotlas.utils.WotlasGameDefinition;
 
 /** A small utility to connect to a server using a JDialog.
  *
@@ -61,8 +64,8 @@ public abstract class JConnectionDialog extends JDialog implements Runnable {
     private NetClient client;
 
     protected Frame frame;
-    private String server, key;
-    private int port;
+    private String key;
+
     private Object context;
 
     // to tell if this JConnectionDialog was canceled
@@ -72,8 +75,10 @@ public abstract class JConnectionDialog extends JDialog implements Runnable {
     protected String errorMessage;
     protected short errorCode;
 
-    // ID of the server we want to join
-    protected int serverID;
+    // 
+    private NetConfig netCfg;
+
+    private WotlasGameDefinition gameDefinition;
 
     /*------------------------------------------------------------------------------------*/
 
@@ -82,23 +87,20 @@ public abstract class JConnectionDialog extends JDialog implements Runnable {
      *  The detail of the parameters is the following :
      * 
      * @param frame frame owner of this JDialog
-     * @param server server name (DNS or IP address)
-     * @param port server port
-     * @param serverID Id of the server we want to join
+     * @param netCfg cfg to connect to server( server name (DNS or IP address); port server port; serverID Id of the server we want to join)
      * @param key server key for this connection ( see the javadoc header of this class ).
      * @param context context to set to messages ( see NetConnection ).
      */
 
-    public JConnectionDialog(Frame frame, String server, int port, int serverID, String key, Object context) {
+    public JConnectionDialog(Frame frame, NetConfig netCfg, String key, Object context, WotlasGameDefinition wgd) {
         super(frame, "Network Connection", true);
 
         // some inits
         this.frame = frame;
-        this.server = server;
-        this.port = port;
+        this.gameDefinition = wgd;
+        this.netCfg = netCfg;
         this.key = key;
         this.context = context;
-        this.serverID = serverID;
 
         this.hasSucceeded = false;
         this.connectCanceled = false;
@@ -106,7 +108,7 @@ public abstract class JConnectionDialog extends JDialog implements Runnable {
         getContentPane().setBackground(Color.white);
 
         // Top Label
-        ALabel label1 = new ALabel("Trying to connect to " + server + ":" + port + ", please wait...", SwingConstants.CENTER);
+        ALabel label1 = new ALabel("Trying to connect to " + netCfg.getServerName() + ":" + netCfg.getServerPort() + ", please wait...", SwingConstants.CENTER);
         getContentPane().add(label1, BorderLayout.NORTH);
 
         // Center label
@@ -172,14 +174,16 @@ public abstract class JConnectionDialog extends JDialog implements Runnable {
                     // we report the deadlink and try the eventualy new address
                     this.l_info.setText("Connection failed. Trying to update server address...");
                     ServerConfigManager configList = ClientDirector.getClientManager().getServerConfigManager();
-
+                    String serverName;
                     if (searchingOnServerID <= 0)
-                        this.server = configList.reportDeadServer(this.serverID);
+                        serverName = configList.reportDeadServer(this.netCfg.getServerId());
                     else
-                        this.server = configList.reportDeadServer(searchingOnServerID);
+                        serverName = configList.reportDeadServer(searchingOnServerID);
 
-                    if (this.server != null)
+                    if (serverName != null) {
+                        this.netCfg.setServerName(serverName);
                         retry = true; // we retry a connection
+                    }
                 }
 
                 // If the account was not found we try another server (happens only for the GameServer)
@@ -189,13 +193,13 @@ public abstract class JConnectionDialog extends JDialog implements Runnable {
 
                     do {
                         searchingOnServerID = configList.getNextServerID(searchingOnServerID);
-                    } while (searchingOnServerID == this.serverID);
+                    } while (searchingOnServerID == this.netCfg.getServerId());
 
                     if (searchingOnServerID > 0) {
                         // we update our server address & port
                         ServerConfig nextServer = configList.getServerConfig(searchingOnServerID);
-                        this.server = nextServer.getServerName();
-                        this.port = nextServer.getGameServerPort();
+                        this.netCfg.setServerName(nextServer.getServerName());
+                        this.netCfg.setServerPort(nextServer.getGameServerPort());
                         retry = true;
                     } else
                         displayError("Account not found on running servers. Please retry later.");
@@ -242,11 +246,18 @@ public abstract class JConnectionDialog extends JDialog implements Runnable {
     /** To try a connection
      */
     private void tryConnection() {
-        this.client = new NetClient();
 
-        String packages[] = getPackages();
+        // Specific case of the standalone server : we must launch the server before.
+        if (this.netCfg.isStandaloneServer()) {
+            launchStandaloneServer();
+        }
 
-        this.connection = this.client.connectToServer(this.server, this.port, this.key, this.context, packages);
+        // Instantiating client side.
+        this.client = new NetClient(this.gameDefinition);
+
+        Class[] msgSubInterfaces = getMsgSubInterfaces();
+
+        this.connection = this.client.connectToServer(this.netCfg, this.key, this.context, msgSubInterfaces);
 
         if (this.connection == null) {
             if (this.client.getErrorCode() != NetErrorCodeList.ERR_NONE) {
@@ -264,11 +275,46 @@ public abstract class JConnectionDialog extends JDialog implements Runnable {
         Tools.waitTime(1000);
     }
 
+    /**
+     * 
+     */
+    protected WishNetStandaloneServer launchStandaloneServer() {
+        /** We load the available plug-ins (we search everywhere).
+         */
+        Object[] factories = null;
+        try {
+            // We get an instance of the factory
+            factories = Tools.getImplementorsOf(WishNetStandaloneServer.class, this.gameDefinition);
+
+        } catch (ClassNotFoundException e) {
+            Debug.signal(Debug.CRITICAL, this, e);
+            return null;
+        } catch (SecurityException e) {
+            Debug.signal(Debug.CRITICAL, this, e);
+            return null;
+        } catch (RuntimeException e) {
+            Debug.signal(Debug.ERROR, this, e);
+            return null;
+        }
+
+        if (factories == null || factories.length == 0 || !(factories[0] instanceof WishNetStandaloneServer)) {
+            Debug.signal(Debug.ERROR, this, "No standalone server available in services");
+            return null;
+        }
+
+        WishNetStandaloneServer server = (WishNetStandaloneServer) factories[0];
+        server.init(this.netCfg, this.gameDefinition);
+        server.run();
+        Debug.signal(Debug.ERROR, this, "No socket factory available in services : using the first as default");
+        return server;
+
+    }
+
     /*------------------------------------------------------------------------------------*/
 
-    /** To retrieve a list of the NetMessage packages to use with this server.
+    /** To retrieve a list of the NetMessage subInterfaces to use with this server.
      */
-    abstract protected String[] getPackages();
+    abstract protected Class[] getMsgSubInterfaces();
 
     /*------------------------------------------------------------------------------------*/
 

@@ -22,7 +22,7 @@ import java.util.Hashtable;
 import wotlas.client.DataManager;
 import wotlas.client.PlayerImpl;
 import wotlas.common.message.description.RemovePlayerFromRoomMessage;
-import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.common.message.description.WishClientDescriptionNetMsgBehaviour;
 import wotlas.utils.Debug;
 
 /**
@@ -30,7 +30,7 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-public class RemovePlayerFromRoomMsgBehaviour extends RemovePlayerFromRoomMessage implements NetMessageBehaviour {
+public class RemovePlayerFromRoomMsgBehaviour extends RemovePlayerFromRoomMessage implements WishClientDescriptionNetMsgBehaviour {
     /*------------------------------------------------------------------------------------*/
 
     /** Constructor.

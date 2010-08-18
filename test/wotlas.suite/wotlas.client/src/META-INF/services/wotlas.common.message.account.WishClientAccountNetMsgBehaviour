@@ -1,0 +1,4 @@
+wotlas.client.message.account.AccountCreationEndedMsgBehaviour
+wotlas.client.message.account.AccountStepMsgBehaviour
+wotlas.client.message.account.StepErrorMsgBehaviour
+wotlas.client.message.account.WarningMsgBehaviour

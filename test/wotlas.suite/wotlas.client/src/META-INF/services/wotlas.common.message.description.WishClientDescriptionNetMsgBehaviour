@@ -1,0 +1,13 @@
+wotlas.client.message.description.AddPlayerToRoomMsgBehaviour
+wotlas.client.message.description.CleanGhostsMsgBehaviour
+wotlas.client.message.description.DoorsStateMsgBehaviour
+wotlas.client.message.description.DoorStateMsgBehaviour
+wotlas.client.message.description.PlayerAwayMsgBehaviour
+wotlas.client.message.description.PlayerConnectedToGameMsgBehaviour
+wotlas.client.message.description.PlayerPastMsgBehaviour
+wotlas.client.message.description.RemovePlayerFromRoomMsgBehaviour
+wotlas.client.message.description.RoomPlayerDataMsgBehaviour
+wotlas.client.message.description.SetFakeNameMsgBehaviour
+wotlas.client.message.description.YourAccountDataMsgBehaviour
+wotlas.client.message.description.YourFakeNamesMsgBehaviour
+wotlas.client.message.description.YourPlayerDataMsgBehaviour

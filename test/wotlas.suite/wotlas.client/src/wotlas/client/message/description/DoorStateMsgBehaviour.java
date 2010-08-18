@@ -16,16 +16,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.message.description;
 
 import wotlas.client.DataManager;
 import wotlas.client.PlayerImpl;
 import wotlas.common.message.description.DoorStateMessage;
+import wotlas.common.message.description.WishClientDescriptionNetMsgBehaviour;
 import wotlas.common.universe.Door;
 import wotlas.common.universe.Room;
 import wotlas.common.universe.RoomLink;
-import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.libs.sound.SoundLibrary;
 import wotlas.utils.Debug;
 
@@ -34,8 +33,7 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-
-public class DoorStateMsgBehaviour extends DoorStateMessage implements NetMessageBehaviour {
+public class DoorStateMsgBehaviour extends DoorStateMessage implements WishClientDescriptionNetMsgBehaviour {
     /*------------------------------------------------------------------------------------*/
 
     /** Constructor.
@@ -45,7 +43,6 @@ public class DoorStateMsgBehaviour extends DoorStateMessage implements NetMessag
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
@@ -74,8 +71,9 @@ public class DoorStateMsgBehaviour extends DoorStateMessage implements NetMessag
         RoomLink roomLink = room.getRoomLink(this.roomLinkID);
         Door door = null;
 
-        if (roomLink != null)
+        if (roomLink != null) {
             door = roomLink.getDoor();
+        }
 
         if (door == null) {
             Debug.signal(Debug.WARNING, this, "RoomLink has no door !" + this.location);
@@ -92,5 +90,4 @@ public class DoorStateMsgBehaviour extends DoorStateMessage implements NetMessag
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

@@ -1,0 +1,15 @@
+wotlas.server.chat.AwayChatCommand
+wotlas.server.chat.BellChatCommand
+wotlas.server.chat.BlackAjahChatCommand
+wotlas.server.chat.FanfareChatCommand
+wotlas.server.chat.FindChatCommand
+wotlas.server.chat.HelpChatCommand
+wotlas.server.chat.KillChatCommand
+wotlas.server.chat.KnockChatCommand
+wotlas.server.chat.LieChatCommand
+wotlas.server.chat.LogChatCommand
+wotlas.server.chat.MakeBotChatCommand
+wotlas.server.chat.ManualChatCommand
+wotlas.server.chat.MsgChatCommand
+wotlas.server.chat.ServerChatCommand
+wotlas.server.chat.WhoChatCommand

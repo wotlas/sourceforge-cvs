@@ -16,14 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.server.message.description;
 
 import java.util.Calendar;
 import java.util.Date;
 import wotlas.common.message.description.PlayerAwayMessage;
+import wotlas.common.message.description.WishServerDescriptionNetMsgBehaviour;
 import wotlas.common.router.MessageRouter;
-import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.server.PlayerImpl;
 import wotlas.utils.Debug;
 import wotlas.utils.Tools;
@@ -33,11 +32,9 @@ import wotlas.utils.Tools;
  *
  * @author Aldiss
  */
-
-public class PlayerAwayMsgBehaviour extends PlayerAwayMessage implements NetMessageBehaviour {
+public class PlayerAwayMsgBehaviour extends PlayerAwayMessage implements WishServerDescriptionNetMsgBehaviour {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public PlayerAwayMsgBehaviour() {
@@ -45,7 +42,6 @@ public class PlayerAwayMsgBehaviour extends PlayerAwayMessage implements NetMess
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
@@ -71,8 +67,9 @@ public class PlayerAwayMsgBehaviour extends PlayerAwayMessage implements NetMess
 
         // we search for the player via our MessageRouter
         MessageRouter mRouter = player.getMessageRouter();
-        if (mRouter == null)
+        if (mRouter == null) {
             return;
+        }
 
         PlayerImpl searchedPlayer = (PlayerImpl) mRouter.getPlayer(this.primaryKey);
 
@@ -89,5 +86,4 @@ public class PlayerAwayMsgBehaviour extends PlayerAwayMessage implements NetMess
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

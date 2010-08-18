@@ -16,13 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.message.account;
 
 import wotlas.client.ClientDirector;
 import wotlas.client.screen.JAccountCreationWizard;
 import wotlas.common.message.account.AccountCreationEndedMessage;
-import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.common.message.account.WishClientAccountNetMsgBehaviour;
 import wotlas.utils.Debug;
 
 /**
@@ -30,8 +29,7 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-
-public class AccountCreationEndedMsgBehaviour extends AccountCreationEndedMessage implements NetMessageBehaviour {
+public class AccountCreationEndedMsgBehaviour extends AccountCreationEndedMessage implements WishClientAccountNetMsgBehaviour {
     /*------------------------------------------------------------------------------------*/
 
     /** Constructor.
@@ -41,7 +39,6 @@ public class AccountCreationEndedMsgBehaviour extends AccountCreationEndedMessag
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process

@@ -20,11 +20,12 @@
 package wotlas.libs.net.connection;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.net.SocketException;
 import wotlas.libs.net.NetConnection;
+import wotlas.libs.net.NetMessageFactory;
 import wotlas.libs.net.NetReceiver;
 import wotlas.libs.net.NetSender;
+import wotlas.libs.net.IOChannel;
 import wotlas.utils.Debug;
 
 /**
@@ -54,8 +55,9 @@ public class AsynchronousNetConnection extends NetConnection {
      * @param socket an already opened socket
      * @exception IOException if the socket wasn't already connected.
      */
-    public AsynchronousNetConnection(Socket socket) throws IOException {
-        super(socket, null);
+    public AsynchronousNetConnection(NetMessageFactory msgFactory, IOChannel socket) throws IOException {
+        this(msgFactory, socket, null);
+
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -66,8 +68,8 @@ public class AsynchronousNetConnection extends NetConnection {
      * @param sessionContext an object to give to messages as they arrive.
      * @exception IOException if the socket wasn't already connected.
      */
-    public AsynchronousNetConnection(Socket socket, Object sessionContext) throws IOException {
-        super(socket, sessionContext);
+    public AsynchronousNetConnection(NetMessageFactory msgFactory, IOChannel socket, Object sessionContext) throws IOException {
+        super(msgFactory, socket, sessionContext);
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -80,7 +82,7 @@ public class AsynchronousNetConnection extends NetConnection {
      * @exception IOException if the socket wasn't already connected.
      */
     @Override
-    protected void init(Socket socket, Object sessionContext) throws IOException {
+    protected void init(NetMessageFactory msgFactory, IOChannel socket, Object sessionContext) throws IOException {
         // We change both buffer size to 64k for this socket (default is normally 64k)
         try {
             socket.setReceiveBufferSize(64 * 1024);
@@ -93,7 +95,7 @@ public class AsynchronousNetConnection extends NetConnection {
         this.myNetsender = new NetSender(socket, this, NetSender.AGGREGATE_MESSAGES, 128 * 1024);
 
         // NetReceiver, asynchronous. It processes messages as they arrive.
-        this.myNetreceiver = new NetReceiver(socket, this, false, sessionContext, 128 * 1024);
+        this.myNetreceiver = new NetReceiver(msgFactory, socket, this, false, sessionContext, 128 * 1024);
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

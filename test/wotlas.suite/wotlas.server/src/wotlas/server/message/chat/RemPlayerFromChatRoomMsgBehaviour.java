@@ -24,9 +24,9 @@ import wotlas.common.chat.ChatList;
 import wotlas.common.chat.ChatRoom;
 import wotlas.common.message.chat.ChatRoomDeletedMessage;
 import wotlas.common.message.chat.RemPlayerFromChatRoomMessage;
+import wotlas.common.message.chat.WishServerChatNetMsgBehaviour;
 import wotlas.common.router.MessageRouter;
 import wotlas.common.universe.WotlasLocation;
-import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.server.PlayerImpl;
 import wotlas.utils.Debug;
 
@@ -35,7 +35,7 @@ import wotlas.utils.Debug;
  *
  * @author Petrus, Aldiss
  */
-public class RemPlayerFromChatRoomMsgBehaviour extends RemPlayerFromChatRoomMessage implements NetMessageBehaviour {
+public class RemPlayerFromChatRoomMsgBehaviour extends RemPlayerFromChatRoomMessage implements WishServerChatNetMsgBehaviour {
 
     /*------------------------------------------------------------------------------------*/
     /** Constructor.

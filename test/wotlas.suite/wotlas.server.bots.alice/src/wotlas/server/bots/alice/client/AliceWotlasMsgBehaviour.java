@@ -16,10 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.server.bots.alice.client;
 
-import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.server.AccountManager;
 import wotlas.server.GameAccount;
 import wotlas.server.bots.BotPlayer;
@@ -31,11 +29,9 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-
-public class AliceWotlasMsgBehaviour extends AliceWotlasMessage implements NetMessageBehaviour {
+public class AliceWotlasMsgBehaviour extends AliceWotlasMessage implements WishClientAliceNetMsgBehaviour {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public AliceWotlasMsgBehaviour() {
@@ -43,7 +39,6 @@ public class AliceWotlasMsgBehaviour extends AliceWotlasMessage implements NetMe
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process

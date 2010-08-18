@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.server.bots.alice.server;
 
 import java.net.InetAddress;
@@ -25,6 +24,8 @@ import java.util.Properties;
 import org.alicebot.server.core.ActiveMultiplexor;
 import org.alicebot.server.core.logging.Log;
 import org.alicebot.server.net.listener.AliceChatListener;
+import wotlas.libs.net.NetConfig;
+import wotlas.utils.WotlasGameDefinition;
 
 /**
  *  Alice Chat Listener for the wotlas protocol. More information on
@@ -37,51 +38,52 @@ import org.alicebot.server.net.listener.AliceChatListener;
  *
  * @author aldiss
  */
-
-public class AliceWOTLAS implements AliceChatListener {
+public class AliceWotlasListener implements AliceChatListener {
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Standard AliceWOTLAS port.
      */
     public static final int ALICE_WOTLAS_PORT = 21121;
-
     /** Maximum number of connections we accept from other servers.
      */
     public static final int MAX_ALICE_WOTLAS_CONNECTIONS = 20;
-
     /** Number of threads in our pool to handle Alice requests
      */
     public static final int POOL_THREADS_NUMBER = 5;
-
     /** Max number of requests a thread in our pool can accept at the same time.
      */
     public static final int MAX_POOL_THREAD_REQUEST = 20;
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Our associated server which listens on the ALICE_WOTLAS_PORT and forward requests
      *  to us.
      */
     protected AliceWotlasServer aliceWotlasServer;
-
     /** A pool of threads (using FIFOs) on which we will dispatch our requests.
      */
     protected AliceRequestFIFO fifoPool[];
-
     /** The index of the current thread we are using in our pool.
      */
     protected int poolThreadIndex;
 
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    private WotlasGameDefinition gameDefinition;
 
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
     /** Constructor.
      */
-    public AliceWOTLAS() {
+    public AliceWotlasListener(WotlasGameDefinition wgd) {
+        super();
+        this.gameDefinition = wgd;
+    }
+
+    /**
+     * @return the gameDefinition
+     */
+    public WotlasGameDefinition getGameDefinition() {
+        return this.gameDefinition;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /**
      *  Given a properties set, initializes the listener if possible.
      *
@@ -103,27 +105,27 @@ public class AliceWOTLAS implements AliceChatListener {
         }
 
         // 2 - We create some FIFO threads to handle the future incoming requests
-        this.fifoPool = new AliceRequestFIFO[AliceWOTLAS.POOL_THREADS_NUMBER];
+        this.fifoPool = new AliceRequestFIFO[AliceWotlasListener.POOL_THREADS_NUMBER];
         this.poolThreadIndex = 0;
 
-        for (int i = 0; i < AliceWOTLAS.POOL_THREADS_NUMBER; i++) {
-            this.fifoPool[i] = new AliceRequestFIFO(AliceWOTLAS.MAX_POOL_THREAD_REQUEST);
+        for (int i = 0; i < AliceWotlasListener.POOL_THREADS_NUMBER; i++) {
+            this.fifoPool[i] = new AliceRequestFIFO(AliceWotlasListener.MAX_POOL_THREAD_REQUEST);
             this.fifoPool[i].start();
         }
 
-        Log.userinfo("AliceWOTLAS: created " + AliceWOTLAS.POOL_THREADS_NUMBER + " threads to process incoming requests", Log.STARTUP);
+        Log.userinfo("AliceWOTLAS: created " + AliceWotlasListener.POOL_THREADS_NUMBER + " threads to process incoming requests", Log.STARTUP);
 
         // 3 - We create our server and start it !
-        String messagePackages[] = { "wotlas.server.bots.alice.server" };
+        Class sub_msgs[] = { WishServerAliceNetMsgBehaviour.class };
+        NetConfig netCfg = new NetConfig(hostName, AliceWotlasListener.ALICE_WOTLAS_PORT);
 
-        this.aliceWotlasServer = new AliceWotlasServer(hostName, AliceWOTLAS.ALICE_WOTLAS_PORT, messagePackages, AliceWOTLAS.MAX_ALICE_WOTLAS_CONNECTIONS, this);
+        this.aliceWotlasServer = new AliceWotlasServer(netCfg, sub_msgs, AliceWotlasListener.MAX_ALICE_WOTLAS_CONNECTIONS, this);
 
-        Log.userinfo("Started AliceWOTLAS listener on " + hostName + ":" + AliceWOTLAS.ALICE_WOTLAS_PORT, Log.STARTUP);
+        Log.userinfo("Started AliceWOTLAS listener on " + hostName + ":" + AliceWotlasListener.ALICE_WOTLAS_PORT, Log.STARTUP);
         return true;
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Starts the server of our listener.
      */
     public void run() {
@@ -131,7 +133,6 @@ public class AliceWOTLAS implements AliceChatListener {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /**
      *  Shuts down the process.
      */
@@ -139,12 +140,12 @@ public class AliceWOTLAS implements AliceChatListener {
         Log.userinfo("Shutting down AliceWOTLAS listener & server.", Log.LISTENERS);
         this.aliceWotlasServer.shutdown();
 
-        for (int i = 0; i < AliceWOTLAS.POOL_THREADS_NUMBER; i++)
+        for (int i = 0; i < AliceWotlasListener.POOL_THREADS_NUMBER; i++) {
             this.fifoPool[i].shutdown();
+        }
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To get an answer to a message. This is the root method processes must call
      *  to get an ALICE answer. We dispatch the request call on one of our FIFO threads
      *  in a way to perform load balancing.
@@ -172,8 +173,9 @@ public class AliceWOTLAS implements AliceChatListener {
             succeeded = this.fifoPool[this.poolThreadIndex].addRequest(request);
             this.poolThreadIndex = (this.poolThreadIndex + 1) % this.fifoPool.length; // move to next thread in any case
 
-            if (succeeded)
-                return true; // success, the thread will process the request
+            if (succeeded) {
+                return true;
+            } // success, the thread will process the request
             // also next time we'll begin the loop with the next thread
         } while (this.poolThreadIndex != endLoop); // have we tried all the threads in the pool ?
 
@@ -183,29 +185,24 @@ public class AliceWOTLAS implements AliceChatListener {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** A Thread that processes alice requests. Requests are stored in a FIFO.
      *  The FIFO has a FIXED length so that the CPU use is strictly controlled.
      */
     class AliceRequestFIFO extends Thread {
 
         /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
         /** Our Request FIFO. Note it has a fixed length.
          */
         private AliceRequest fifo[];
-
         /** Current end cursor of the fifo. Gives us the next index (in the fifo)
          *  where we can insert a new incoming request.
          */
         private int end;
-
         /** To tell the thread to stop.
          */
         private boolean shutdown;
 
         /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
         /** Constructor with length of the fifo to use.
          */
         public AliceRequestFIFO(int fifoLength) {
@@ -215,7 +212,6 @@ public class AliceWOTLAS implements AliceChatListener {
         }
 
         /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
         /** FIFO process
          */
         @Override
@@ -230,15 +226,17 @@ public class AliceWOTLAS implements AliceChatListener {
 
                 // 1 - Wait for something to come
                 synchronized (this) {
-                    while (this.fifo[index] == null)
+                    while (this.fifo[index] == null) {
                         try {
                             this.wait();
                         } catch (Exception e) {
                         }
+                    }
                 }
 
-                if (this.shutdown)
+                if (this.shutdown) {
                     return;
+                }
 
                 // 2 - Process Available Requests...
                 do {
@@ -251,8 +249,9 @@ public class AliceWOTLAS implements AliceChatListener {
                     }
 
                     // 2.2 - Send the answer back to the wotlas server                
-                    if (answer != null)
-                        AliceWOTLAS.this.aliceWotlasServer.sendAnswer(this.fifo[index].playerPrimaryKey, this.fifo[index].botPrimaryKey, answer, this.fifo[index].serverID);
+                    if (answer != null) {
+                        AliceWotlasListener.this.aliceWotlasServer.sendAnswer(this.fifo[index].playerPrimaryKey, this.fifo[index].botPrimaryKey, answer, this.fifo[index].serverID);
+                    }
 
                     // 2.3 - Move to next request in our FIFO
                     synchronized (this) {
@@ -265,13 +264,13 @@ public class AliceWOTLAS implements AliceChatListener {
         }
 
         /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
         /** Adds a request to this FIFO
          * @return true if the request was accepted, false if our FIFO is full.
          */
         public synchronized boolean addRequest(AliceRequest request) {
-            if (this.fifo[this.end] != null)
-                return false; // our FIFO is full, we can't accept the request
+            if (this.fifo[this.end] != null) {
+                return false;
+            } // our FIFO is full, we can't accept the request
 
             this.fifo[this.end] = request;
             this.end = (this.end + 1) % this.fifo.length; //  move the end of the FIFO
@@ -280,7 +279,6 @@ public class AliceWOTLAS implements AliceChatListener {
         }
 
         /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
         /** To shutdown this FIFO.
          */
         public synchronized void shutdown() {
@@ -289,36 +287,29 @@ public class AliceWOTLAS implements AliceChatListener {
         }
 
         /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** A request for alice... We use this class in a C data structure way.
      */
     class AliceRequest {
 
         /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
         /** Primary Key (userID) of the player asking this message
          */
         public String playerPrimaryKey;
-
         /** Primary Key of the bot target of this message
          */
         public String botPrimaryKey;
-
         /** Message to send to ALICE
          */
         public String message;
-
         /** Server ID of the server that asked for the request. We'll use this ID
          *  to send back ALICE's answer.
          */
         public int serverID;
 
         /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
         /** Constructor.
          */
         public AliceRequest(String playerPrimaryKey, String botPrimaryKey, String message, int serverID) {

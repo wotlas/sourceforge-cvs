@@ -28,7 +28,7 @@ import wotlas.common.character.DarkOne;
 import wotlas.common.character.WotCharacter;
 import wotlas.common.chat.ChatRoom;
 import wotlas.common.message.chat.SendTextMessage;
-import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.common.message.chat.WishClientChatNetMsgBehaviour;
 import wotlas.libs.sound.SoundLibrary;
 import wotlas.utils.Debug;
 
@@ -37,7 +37,7 @@ import wotlas.utils.Debug;
  *
  * @author Petrus
  */
-public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageBehaviour {
+public class SendTextMsgBehaviour extends SendTextMessage implements WishClientChatNetMsgBehaviour {
 
     /*------------------------------------------------------------------------------------*/
     /** Constructor.

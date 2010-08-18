@@ -1,0 +1,5 @@
+wotlas.libs.net.message.ClientRegisterMsgBehaviour
+wotlas.libs.net.message.EndOfConnectionMsgBehaviour
+wotlas.libs.net.message.PingMsgBehaviour
+wotlas.libs.net.message.ServerErrorMsgBehaviour
+wotlas.libs.net.message.ServerWelcomeMsgBehaviour

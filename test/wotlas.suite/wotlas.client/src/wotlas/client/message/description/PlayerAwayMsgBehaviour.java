@@ -23,7 +23,7 @@ import wotlas.client.PlayerImpl;
 import wotlas.client.screen.JChatRoom;
 import wotlas.common.Player;
 import wotlas.common.message.description.PlayerAwayMessage;
-import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.common.message.description.WishClientDescriptionNetMsgBehaviour;
 import wotlas.utils.Debug;
 
 /**
@@ -31,7 +31,7 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-public class PlayerAwayMsgBehaviour extends PlayerAwayMessage implements NetMessageBehaviour {
+public class PlayerAwayMsgBehaviour extends PlayerAwayMessage implements WishClientDescriptionNetMsgBehaviour {
     /*------------------------------------------------------------------------------------*/
 
     /** Constructor.

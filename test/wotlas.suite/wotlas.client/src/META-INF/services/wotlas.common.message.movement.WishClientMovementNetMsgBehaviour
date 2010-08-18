@@ -1,0 +1,6 @@
+wotlas.client.message.movement.LocationChangeMsgBehaviour
+wotlas.client.message.movement.PathUpdateMovementMsgBehaviour
+wotlas.client.message.movement.RedirectConnectionMsgBehaviour
+wotlas.client.message.movement.RedirectErrorMsgBehaviour
+wotlas.client.message.movement.ResetPositionMsgBehaviour
+wotlas.client.message.movement.YouCanLeaveMapMsgBehaviour

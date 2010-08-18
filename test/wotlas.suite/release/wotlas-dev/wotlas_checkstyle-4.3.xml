@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    This configuration file was written by the eclipse-cs plugin configuration editor
+-->
+<!--
+    Checkstyle-Configuration: Wotlas Checkstyle 4.3 (local)
+    Description: 
+Wotlas Checkstyle 4.3 specific config for development of Wotlas
+-->
+<!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.2//EN" "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
+<module name="Checker">
+    <property name="severity" value="warning"/>
+    <module name="TreeWalker">
+        <module name="FileContentsHolder"/>
+        <module name="JavadocMethod">
+            <property name="severity" value="info"/>
+            <property name="scope" value="protected"/>
+            <property name="allowUndeclaredRTE" value="true"/>
+            <property name="allowThrowsTagsForSubclasses" value="true"/>
+            <property name="logLoadErrors" value="true"/>
+            <property name="suppressLoadErrors" value="true"/>
+        </module>
+        <module name="JavadocStyle">
+            <property name="severity" value="info"/>
+            <property name="scope" value="protected"/>
+            <property name="checkEmptyJavadoc" value="true"/>
+            <property name="checkFirstSentence" value="false"/>
+        </module>
+        <module name="JavadocType">
+            <property name="scope" value="protected"/>
+        </module>
+        <module name="JavadocVariable">
+            <property name="severity" value="info"/>
+            <property name="scope" value="protected"/>
+        </module>
+        <module name="AbstractClassName">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="ConstantName">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="LocalFinalVariableName">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="LocalVariableName">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="MemberName"/>
+        <module name="MethodName"/>
+        <module name="PackageName">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="ParameterName"/>
+        <module name="StaticVariableName"/>
+        <module name="TypeName">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="AvoidStarImport"/>
+        <module name="UnusedImports"/>
+        <module name="ModifierOrder">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="CovariantEquals"/>
+        <module name="DefaultComesLast"/>
+        <module name="DeclarationOrder">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="EqualsHashCode"/>
+        <module name="ExplicitInitialization">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="FallThrough"/>
+        <module name="FinalLocalVariable">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="HiddenField">
+            <property name="ignoreConstructorParameter" value="true"/>
+            <property name="ignoreSetter" value="true"/>
+            <property name="ignoreAbstractMethods" value="true"/>
+        </module>
+        <module name="IllegalCatch">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="IllegalThrows">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="InnerAssignment"/>
+        <module name="JUnitTestCase"/>
+        <module name="MagicNumber">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="MissingCtor"/>
+        <module name="MissingSwitchDefault"/>
+        <module name="ModifiedControlVariable">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="MultipleStringLiterals">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="MultipleVariableDeclarations">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="PackageDeclaration">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="ParameterAssignment"/>
+        <module name="RedundantThrows">
+            <property name="severity" value="info"/>
+            <property name="allowSubclasses" value="true"/>
+            <property name="logLoadErrors" value="true"/>
+            <property name="suppressLoadErrors" value="true"/>
+        </module>
+        <module name="RequireThis">
+            <property name="severity" value="info"/>
+            <property name="checkMethods" value="false"/>
+        </module>
+        <module name="ReturnCount"/>
+        <module name="SimplifyBooleanExpression"/>
+        <module name="SimplifyBooleanReturn"/>
+        <module name="StringLiteralEquality">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="SuperClone"/>
+        <module name="SuperClone">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="SuperFinalize">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="EmptyBlock">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="DesignForExtension">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="FinalClass">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="HideUtilityClassConstructor"/>
+        <module name="InterfaceIsType">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="MutableException">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="ThrowsCount">
+            <property name="max" value="3"/>
+        </module>
+        <module name="VisibilityModifier">
+            <property name="protectedAllowed" value="true"/>
+        </module>
+        <module name="FinalParameters">
+            <property name="severity" value="info"/>
+        </module>
+        <module name="TrailingComment">
+            <property name="severity" value="info"/>
+        </module>
+    </module>
+    <module name="PackageHtml">
+        <metadata name="com.atlassw.tools.eclipse.checkstyle.comment" value="package.html to explain package usage"/>
+    </module>
+    <module name="SuppressionCommentFilter">
+        <metadata name="com.atlassw.tools.eclipse.checkstyle.comment" value="Rule to suppress in the code the checkstyle"/>
+    </module>
+</module>

@@ -24,10 +24,10 @@ import wotlas.common.Player;
 import wotlas.common.chat.ChatRoom;
 import wotlas.common.message.account.WarningMessage;
 import wotlas.common.message.chat.SendTextMessage;
+import wotlas.common.message.chat.WishServerChatNetMsgBehaviour;
 import wotlas.common.router.MessageRouter;
 import wotlas.common.universe.Room;
 import wotlas.common.universe.WotlasLocation;
-import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.server.PlayerImpl;
 import wotlas.server.ServerDirector;
 import wotlas.server.chat.ChatCommandProcessor;
@@ -38,7 +38,7 @@ import wotlas.utils.Debug;
  *
  * @author Petrus
  */
-public class SendTextMsgBehaviour extends SendTextMessage implements NetMessageBehaviour {
+public class SendTextMsgBehaviour extends SendTextMessage implements WishServerChatNetMsgBehaviour {
 
     /*------------------------------------------------------------------------------------*/
     /** Constructor.

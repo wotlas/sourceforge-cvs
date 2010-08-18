@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.message.movement;
 
 import wotlas.client.ClientDirector;
@@ -25,7 +24,7 @@ import wotlas.client.PlayerImpl;
 import wotlas.client.ProfileConfig;
 import wotlas.client.ProfileConfigList;
 import wotlas.common.message.movement.RedirectConnectionMessage;
-import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.common.message.movement.WishClientMovementNetMsgBehaviour;
 import wotlas.utils.Debug;
 
 /**
@@ -34,8 +33,7 @@ import wotlas.utils.Debug;
  * @author Aldiss, Petrus
  * @see wotlas.client.DataManager
  */
-
-public class RedirectConnectionMsgBehaviour extends RedirectConnectionMessage implements NetMessageBehaviour {
+public class RedirectConnectionMsgBehaviour extends RedirectConnectionMessage implements WishClientMovementNetMsgBehaviour {
     /*------------------------------------------------------------------------------------*/
 
     /** To tell if this message is to be invoked later or not.
@@ -43,7 +41,6 @@ public class RedirectConnectionMsgBehaviour extends RedirectConnectionMessage im
     private boolean invokeLater = true;
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public RedirectConnectionMsgBehaviour() {
@@ -51,7 +48,6 @@ public class RedirectConnectionMsgBehaviour extends RedirectConnectionMessage im
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
@@ -91,5 +87,4 @@ public class RedirectConnectionMsgBehaviour extends RedirectConnectionMessage im
     }
 
     /*------------------------------------------------------------------------------------*/
-
 }

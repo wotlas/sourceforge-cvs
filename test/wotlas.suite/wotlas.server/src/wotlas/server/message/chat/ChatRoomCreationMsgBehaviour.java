@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.server.message.chat;
 
 import java.util.Iterator;
@@ -25,9 +24,9 @@ import wotlas.common.chat.ChatRoom;
 import wotlas.common.message.account.WarningMessage;
 import wotlas.common.message.chat.ChatRoomCreatedMessage;
 import wotlas.common.message.chat.ChatRoomCreationMessage;
+import wotlas.common.message.chat.WishServerChatNetMsgBehaviour;
 import wotlas.common.router.MessageRouter;
 import wotlas.common.universe.WotlasLocation;
-import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.server.ChatListImpl;
 import wotlas.server.PlayerImpl;
 import wotlas.utils.Debug;
@@ -37,17 +36,14 @@ import wotlas.utils.Debug;
  *
  * @author Petrus
  */
-
-public class ChatRoomCreationMsgBehaviour extends ChatRoomCreationMessage implements NetMessageBehaviour {
+public class ChatRoomCreationMsgBehaviour extends ChatRoomCreationMessage implements WishServerChatNetMsgBehaviour {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Is it a bot's default chat room we want to create ?
      */
     private boolean isBotChatRoom;
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public ChatRoomCreationMsgBehaviour() {
@@ -55,7 +51,6 @@ public class ChatRoomCreationMsgBehaviour extends ChatRoomCreationMessage implem
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor with parameters for bots. The isBotChatRoom parameter tells if this
      *  chat room is the default chat room of a bot.
      */
@@ -65,7 +60,6 @@ public class ChatRoomCreationMsgBehaviour extends ChatRoomCreationMessage implem
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
@@ -78,8 +72,9 @@ public class ChatRoomCreationMsgBehaviour extends ChatRoomCreationMessage implem
         WotlasLocation location = player.getLocation();
 
         // 0 - We check the length of the chat room name
-        if (this.name.length() > ChatRoom.MAXIMUM_NAME_SIZE)
+        if (this.name.length() > ChatRoom.MAXIMUM_NAME_SIZE) {
             this.name = this.name.substring(0, ChatRoom.MAXIMUM_NAME_SIZE - 1);
+        }
 
         // 1 - We get the message router
         MessageRouter mRouter = player.getMessageRouter();
@@ -125,8 +120,9 @@ public class ChatRoomCreationMsgBehaviour extends ChatRoomCreationMessage implem
                 }
             }
 
-            if (chatList.getNumberOfChatRooms() > ChatRoom.MAXIMUM_CHATROOMS_PER_ROOM && !this.isBotChatRoom)
-                return; // can't add ChatRoom : too many already !
+            if (chatList.getNumberOfChatRooms() > ChatRoom.MAXIMUM_CHATROOMS_PER_ROOM && !this.isBotChatRoom) {
+                return;
+            } // can't add ChatRoom : too many already !
 
             chatList.addChatRoom(chatRoom);
         }
@@ -140,5 +136,4 @@ public class ChatRoomCreationMsgBehaviour extends ChatRoomCreationMessage implem
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

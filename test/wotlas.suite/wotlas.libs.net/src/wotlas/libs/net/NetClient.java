@@ -20,11 +20,11 @@
 package wotlas.libs.net;
 
 import java.io.IOException;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import wotlas.libs.net.connection.AsynchronousNetConnection;
 import wotlas.libs.net.message.ClientRegisterMessage;
 import wotlas.utils.Debug;
+import wotlas.utils.Tools;
+import wotlas.utils.WotlasGameDefinition;
 
 /** A NetClient provides methods to initiate a connection with a server.
  *  The default NetConnection it provides is a AsynchronousNetConnection. This can be changed
@@ -71,11 +71,17 @@ public class NetClient implements NetErrorCodeList {
      */
     private NetConnection connection;
 
+    /**
+     * A dependent factory of the current game definition
+     */
+    private NetMessageFactory msgFactory;
+
     /*------------------------------------------------------------------------------------*/
 
     /** Constructor.
      */
-    public NetClient() {
+    public NetClient(WotlasGameDefinition wgd) {
+        this.msgFactory = new NetMessageFactory(wgd);
         this.stop = false;
         this.validConnection = false;
     }
@@ -88,8 +94,46 @@ public class NetClient implements NetErrorCodeList {
      * @return a new SynchronousNetConnection associated to this socket.
      * @exception IOException IO error.
      */
-    protected NetConnection getNewConnection(Socket socket) throws IOException {
-        return new AsynchronousNetConnection(socket);
+    protected NetConnection getNewConnection(IOChannel socket) throws IOException {
+        return new AsynchronousNetConnection(this.msgFactory, socket);
+    }
+
+    /**
+     * We load the available socket factory managing the connection to or for the server.
+     * @param netCfg the configuration of the server (name, port, ...);
+     */
+    private IOChannelFactory getSocketFactory(NetConfig netCfg) {
+        /** We load the available plug-ins (we search everywhere).
+         */
+        Object[] factories = null;
+        try {
+            // We get an instance of the factory
+            factories = Tools.getImplementorsOf(IOChannelFactory.class, this.msgFactory.getGameDefinition());
+
+        } catch (ClassNotFoundException e) {
+            Debug.signal(Debug.CRITICAL, this, e);
+            return null;
+        } catch (SecurityException e) {
+            Debug.signal(Debug.CRITICAL, this, e);
+            return null;
+        } catch (RuntimeException e) {
+            Debug.signal(Debug.ERROR, this, e);
+            return null;
+        }
+
+        if (factories == null || factories.length == 0 || !(factories[0] instanceof IOChannelFactory)) {
+            Debug.signal(Debug.ERROR, this, "No socket factory available in services");
+            return null;
+        }
+
+        for (int i = 0; i < factories.length; i++) {
+            IOChannelFactory fact = (IOChannelFactory) factories[i];
+            if (fact.isManaging(netCfg)) {
+                return fact;
+            }
+        }
+        Debug.signal(Debug.ERROR, this, "No socket factory available in services : using the first as default");
+        return (IOChannelFactory) factories[0];
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -105,29 +149,37 @@ public class NetClient implements NetErrorCodeList {
      *  given context object implements the NetConnectionListener, we adds it to the
      *  NetConnection's listener ( connection.addConnectionListener() )...
      *
-     * @param serverName complete server name
-     * @param serverPort port to reach
+     * @param netCfg the configuration of the server (name, port, ...);
      * @param key key identifying this client on the server side.
      * @param sessionContext an optional session context object (see NetConnection for more details).
-     * @param msgPackages a list of packages where we can find NetMsgBehaviour Classes.
+     * @param msgSubInterfaces a list of sub-interfaces where we can find NetMsgBehaviour Classes implementing them.
      * @return a NetConnection on success, null on failure.
      */
-    public NetConnection connectToServer(String serverName, int serverPort, String key, Object sessionContext, String msgPackages[]) {
-        Socket socket;
+    public NetConnection connectToServer(NetConfig netCfg, String key, Object sessionContext, Class msgSubInterfaces[]) {
         this.errorMessage = null;
         this.errorCode = NetErrorCodeList.ERR_NONE;
         this.sessionContext = sessionContext;
 
         // to load the eventually new packages of messages...
-        NetMessageFactory.getMessageFactory().addMessagePackages(msgPackages);
+        this.msgFactory.addMessagePackages(msgSubInterfaces);
 
         try {
             // We try a connection with specified server.
-            try {
-                socket = new Socket(serverName, serverPort);
-            } catch (UnknownHostException e) {
+            IOChannelFactory factory = getSocketFactory(netCfg);
+            if (factory == null) {
                 this.errorCode = NetErrorCodeList.ERR_CONNECT_FAILED;
-                this.errorMessage = new String("Unknown Server - " + serverName + ":" + serverPort);
+                this.errorMessage = new String("Could not create client io socket : factory is null !");
+                Debug.signal(Debug.FAILURE, this, this.errorMessage);
+                return null;
+            }
+
+            IOChannel ioClient = factory.createNewClientSocket(netCfg);
+
+            // Interface is not ready
+            if (ioClient == null) {
+                this.errorCode = NetErrorCodeList.ERR_CONNECT_FAILED;
+                this.errorMessage = new String("Could not create client io socket !");
+                Debug.signal(Debug.FAILURE, this, this.errorMessage);
                 return null;
             }
 
@@ -139,7 +191,7 @@ public class NetClient implements NetErrorCodeList {
             // We create a new connection and send our key.
             // This client is the temporary context of the first
             // incoming message sent by the server.
-            this.connection = getNewConnection(socket);
+            this.connection = getNewConnection(ioClient);
             this.connection.setContext(this);
 
             this.connection.queueMessage(new ClientRegisterMessage(key));

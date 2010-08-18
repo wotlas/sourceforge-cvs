@@ -16,13 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.message.movement;
 
 import wotlas.client.DataManager;
 import wotlas.client.PlayerImpl;
 import wotlas.common.message.movement.ResetPositionMessage;
-import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.common.message.movement.WishClientMovementNetMsgBehaviour;
 import wotlas.utils.Debug;
 
 /**
@@ -30,8 +29,7 @@ import wotlas.utils.Debug;
  *
  * @author Aldiss
  */
-
-public class ResetPositionMsgBehaviour extends ResetPositionMessage implements NetMessageBehaviour {
+public class ResetPositionMsgBehaviour extends ResetPositionMessage implements WishClientMovementNetMsgBehaviour {
     /*------------------------------------------------------------------------------------*/
 
     /** To tell if this message is to be invoked later or not.
@@ -39,7 +37,6 @@ public class ResetPositionMsgBehaviour extends ResetPositionMessage implements N
     private boolean invokeLater = true;
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public ResetPositionMsgBehaviour() {
@@ -47,7 +44,6 @@ public class ResetPositionMsgBehaviour extends ResetPositionMessage implements N
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
@@ -61,8 +57,9 @@ public class ResetPositionMsgBehaviour extends ResetPositionMessage implements N
 
         // Direct Change
         if (this.invokeLater) {
-            if (DataManager.SHOW_DEBUG)
+            if (DataManager.SHOW_DEBUG) {
                 System.out.println("RESET POSITION MESSAGE");
+            }
 
             if (this.primaryKey == null) {
                 Debug.signal(Debug.ERROR, this, "No primary key to identify player !");
@@ -93,5 +90,4 @@ public class ResetPositionMsgBehaviour extends ResetPositionMessage implements N
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

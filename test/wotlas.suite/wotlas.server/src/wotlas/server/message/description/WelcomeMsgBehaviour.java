@@ -16,14 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.server.message.description;
 
 import java.util.HashMap;
 import wotlas.common.chat.ChatRoom;
 import wotlas.common.message.chat.SendTextMessage;
 import wotlas.common.message.description.WelcomeMessage;
-import wotlas.libs.net.NetMessageBehaviour;
+import wotlas.common.message.description.WishServerDescriptionNetMsgBehaviour;
 import wotlas.server.PlayerImpl;
 import wotlas.server.ServerDirector;
 
@@ -32,8 +31,7 @@ import wotlas.server.ServerDirector;
  *
  * @author Petrus
  */
-
-public class WelcomeMsgBehaviour extends WelcomeMessage implements NetMessageBehaviour {
+public class WelcomeMsgBehaviour extends WelcomeMessage implements WishServerDescriptionNetMsgBehaviour {
     /*------------------------------------------------------------------------------------*/
 
     /** Constructor.
@@ -43,7 +41,6 @@ public class WelcomeMsgBehaviour extends WelcomeMessage implements NetMessageBeh
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process

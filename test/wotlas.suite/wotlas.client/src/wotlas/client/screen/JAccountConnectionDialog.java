@@ -21,6 +21,9 @@ package wotlas.client.screen;
 
 import java.awt.Frame;
 import wotlas.client.gui.JConnectionDialog;
+import wotlas.common.message.account.WishClientAccountNetMsgBehaviour;
+import wotlas.libs.net.NetConfig;
+import wotlas.utils.WotlasGameDefinition;
 
 /** A small utility to connect to an account server using a JDialog.
  * <pre>
@@ -53,8 +56,8 @@ public class JAccountConnectionDialog extends JConnectionDialog {
      * @param context context to set to messages ( see NetConnection ).
      */
 
-    public JAccountConnectionDialog(Frame frame, String server, int port, int serverID, Object context) {
-        super(frame, server, port, serverID, "AccountServerPlease!", context);
+    public JAccountConnectionDialog(Frame frame, NetConfig netCfg, Object context, WotlasGameDefinition wgd) {
+        super(frame, netCfg, "AccountServerPlease!", context, wgd);
     }
 
     /*------------------------------------------------------------------------------------*/
@@ -62,8 +65,8 @@ public class JAccountConnectionDialog extends JConnectionDialog {
     /** To retrieve a list of the NetMessage packages to use with this server.
      */
     @Override
-    protected String[] getPackages() {
-        String list[] = { "wotlas.client.message.account" };
+    protected Class[] getMsgSubInterfaces() {
+        Class list[] = { WishClientAccountNetMsgBehaviour.class };
 
         return list;
     }

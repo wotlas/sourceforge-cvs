@@ -28,7 +28,7 @@ import wotlas.common.message.movement.MovementUpdateMessage;
 import wotlas.common.movement.MovementComposer;
 import wotlas.common.universe.WotlasLocation;
 import wotlas.libs.net.NetMessage;
-import wotlas.utils.Tools;
+import wotlas.libs.net.NetMessageFactory;
 
 /** 
  * To send player data (Message Sent by Server).
@@ -55,6 +55,9 @@ public class PlayerDataMessage extends NetMessage {
      *  Default is client implementation. Use the appropriate constructor to change that.
      */
     private String playerClass = "wotlas.client.PlayerImpl";
+
+    /** Used to instantiate specific datas like Player objects. */
+    private NetMessageFactory messageFactory;
 
     /*------------------------------------------------------------------------------------*/
 
@@ -103,6 +106,15 @@ public class PlayerDataMessage extends NetMessage {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /* (non-Javadoc)
+     * @see wotlas.libs.net.NetMessage#setMessageFactory(wotlas.libs.net.NetMessageFactory)
+     */
+    @Override
+    public void setMessageFactory(NetMessageFactory msgFactory) {
+        super.setMessageFactory(msgFactory);
+        this.messageFactory = msgFactory;
+    }
 
     /** This is where we put your message data on the stream. You don't need
      * to invoke this method yourself, it's done automatically.
@@ -165,7 +177,15 @@ public class PlayerDataMessage extends NetMessage {
 
         // Player Client Instance creation ( no direct call to "server"
         // or "client" packages are issued from the "common" package )
-        this.player = (Player) Tools.getInstance(this.playerClass);
+        try {
+            this.player = (Player) this.messageFactory.getInstance(this.playerClass);
+        } catch (SecurityException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
         // Wotlas Location
         WotlasLocation wotLoc = new WotlasLocation();
@@ -196,12 +216,39 @@ public class PlayerDataMessage extends NetMessage {
             this.player.setSyncID(istream.readByte());
 
         // Movement Composer
-        MovementComposer mvComposer = (MovementComposer) Tools.getInstance(istream.readUTF());
-        MovementUpdateMessage uMsg = (MovementUpdateMessage) Tools.getInstance(istream.readUTF());
+        MovementComposer mvComposer = null;
+        try {
+            mvComposer = (MovementComposer) this.messageFactory.getInstance(istream.readUTF());
+        } catch (SecurityException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        MovementUpdateMessage uMsg = null;
+        try {
+            uMsg = (MovementUpdateMessage) this.messageFactory.getInstance(istream.readUTF());
+        } catch (SecurityException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         uMsg.decode(istream);
 
         // Wotlas Character
-        WotCharacter wotChar = (WotCharacter) Tools.getInstance(istream.readUTF());
+        WotCharacter wotChar = null;
+        try {
+            wotChar = (WotCharacter) this.messageFactory.getInstance(istream.readUTF());
+        } catch (SecurityException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
         wotChar.decode(istream, this.publicInfoOnly);
         this.player.setWotCharacter(wotChar);

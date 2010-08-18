@@ -1,0 +1,17 @@
+To-Do
+
+12/20/2003 - SSzretter - Make a cfg file or add to existing config file font mapping/prefs
+   - Objects (inventory) system
+   - Inventory system for npcs and characters
+   
+   - fix:
+    [javac] Note: sun.tools.javac.Main has been deprecated.    
+    wotlas\classes
+    [javac] client\screen\JChatPanel.java:749: The method boolean isManagingFocus() declared in class wo
+tlas.client.screen.NoFocusJTextField is not deprecated, but overrides a deprecat
+ed method of the same signature declared in class javax.swing.JComponent.
+    [javac]   public boolean isManagingFocus() {
+    [javac]                  ^
+    [javac] client\screen\JChatPanel.java uses or overrides a deprecated API.  Please consult the
+documentation for a better alternative.
+

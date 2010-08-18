@@ -1,0 +1,3 @@
+wotlas.server.message.gateway.AccountTransactionMsgBehaviour
+wotlas.server.message.gateway.AccountTrFailedMsgBehaviour
+wotlas.server.message.gateway.AccountTrSuccessMsgBehaviour

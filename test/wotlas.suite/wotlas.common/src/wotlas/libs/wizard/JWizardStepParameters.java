@@ -22,7 +22,6 @@ package wotlas.libs.wizard;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import wotlas.libs.persistence.PropertiesConverter;
 import wotlas.utils.Debug;
 
@@ -435,26 +434,6 @@ public class JWizardStepParameters {
                     noServerParam.setProperty(this.stepPropertiesKey[i], this.stepPropertiesValue[i]);
 
         return noServerParam;
-    }
-
-    /*------------------------------------------------------------------------------------*/
-
-    /** To load JWizardStepParameters from a file. This method uses the Wotlas
-     *  Persistent Library and the Wotlas Debug utility.
-     *
-     * @param path full path to the file containing the JWizardStepParameters.
-     * @return null if the file could not be loaded.
-     */
-    public static JWizardStepParameters loadFromStream(InputStream istream) {
-        if (istream == null)
-            return null;
-
-        try {
-            return (JWizardStepParameters) PropertiesConverter.load(istream);
-        } catch (Exception pe) {
-            Debug.signal(Debug.ERROR, null, "Failed to load file: " + pe.getMessage());
-            return null;
-        }
     }
 
     /*------------------------------------------------------------------------------------*/

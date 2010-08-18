@@ -43,6 +43,9 @@ package wotlas.common;
 public class ServerConfig {
     /*------------------------------------------------------------------------------------*/
 
+    /** Name used for the standalone server : the one used by a client that use memory buffers to exchange with a server instantiated in memory. */
+    public static final String STANDALONE_SERVERNAME = "standalone";
+
     /** Server Symbolic Name.
      */
     private String serverSymbolicName;

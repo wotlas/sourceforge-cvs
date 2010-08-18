@@ -6,7 +6,7 @@
             <code-name-base>wotlas.base.common</code-name-base>
             <suite-component/>
             <module-dependencies/>
-            <public-packages/>
+            <public-packages />
         </data>
     </configuration>
 </project>

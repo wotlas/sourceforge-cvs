@@ -22,7 +22,6 @@ package wotlas.libs.net;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.net.Socket;
 
 /** A NetThread is an abstract class representing a thread that manages
  *  a socket connection.
@@ -38,7 +37,7 @@ abstract public class NetThread extends Thread {
 
     /** Our socket.
      */
-    private Socket socket;
+    private IOChannel socket;
 
     /** tells the thread if it must stop.
      */
@@ -49,7 +48,7 @@ abstract public class NetThread extends Thread {
     /** NetThread constructor with an opened socket.
      * @param socket an already opened socket. 
      */
-    protected NetThread(Socket socket) {
+    protected NetThread(IOChannel socket) {
         super("NetThread");
 
         this.socket = socket;
@@ -114,6 +113,7 @@ abstract public class NetThread extends Thread {
             try {
                 this.socket.close();
             } catch (IOException ioe) {
+                // TODO handle this exception ?
             }
         }
     }

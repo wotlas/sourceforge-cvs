@@ -31,7 +31,7 @@ import javax.swing.JPanel;
  * @author Aldiss
  */
 
-public abstract class JPanelPlugIn extends JPanel {
+public abstract class JPanelPlugIn extends JPanel implements WishClientPanelPlugin {
 
     /*------------------------------------------------------------------------------------*/
 

@@ -16,10 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.server.message.gateway;
 
-import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.server.AccountTransaction;
 
 /** 
@@ -27,8 +25,7 @@ import wotlas.server.AccountTransaction;
  *
  * @author Aldiss
  */
-
-public class AccountTransactionMsgBehaviour extends AccountTransactionMessage implements NetMessageBehaviour {
+public class AccountTransactionMsgBehaviour extends AccountTransactionMessage implements WishGatewayNetMsgBehaviour {
     /*------------------------------------------------------------------------------------*/
 
     /** Constructor. Just initializes the message category and type.
@@ -38,7 +35,6 @@ public class AccountTransactionMsgBehaviour extends AccountTransactionMessage im
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
@@ -50,5 +46,4 @@ public class AccountTransactionMsgBehaviour extends AccountTransactionMessage im
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

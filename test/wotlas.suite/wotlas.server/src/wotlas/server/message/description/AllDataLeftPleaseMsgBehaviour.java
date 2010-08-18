@@ -16,12 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.server.message.description;
 
 import wotlas.common.message.description.AllDataLeftPleaseMessage;
+import wotlas.common.message.description.WishServerDescriptionNetMsgBehaviour;
 import wotlas.common.router.MessageRouter;
-import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.server.PlayerImpl;
 
 /**
@@ -30,11 +29,9 @@ import wotlas.server.PlayerImpl;
  *
  * @author Aldiss
  */
-
-public class AllDataLeftPleaseMsgBehaviour extends AllDataLeftPleaseMessage implements NetMessageBehaviour {
+public class AllDataLeftPleaseMsgBehaviour extends AllDataLeftPleaseMessage implements WishServerDescriptionNetMsgBehaviour {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public AllDataLeftPleaseMsgBehaviour() {
@@ -42,7 +39,6 @@ public class AllDataLeftPleaseMsgBehaviour extends AllDataLeftPleaseMessage impl
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
@@ -56,9 +52,9 @@ public class AllDataLeftPleaseMsgBehaviour extends AllDataLeftPleaseMessage impl
         // 1 - PLAYER DATA
         MessageRouter mRouter = player.getMessageRouter();
         mRouter.addPlayer(player); // we validate the add of our player to this router
-        // this is the router that will send the data we need
+    // this is the router that will send the data we need
 
-        // 2 - OBJECT DATA (release 2)
+    // 2 - OBJECT DATA (release 2)
 
     }
 

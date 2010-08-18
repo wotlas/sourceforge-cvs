@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.server;
 
 import java.lang.reflect.InvocationTargetException;
@@ -38,6 +37,7 @@ import wotlas.libs.net.NetConnectionListener;
 import wotlas.libs.wizard.JWizardStepParameters;
 import wotlas.utils.Debug;
 import wotlas.utils.Tools;
+import wotlas.utils.WishPlayerDataFactory;
 
 /** An AccountBuilder helps the creation of a GameAccount for a client. Here is
  *  how it works :<p><br>
@@ -63,32 +63,26 @@ import wotlas.utils.Tools;
  * @author Aldiss
  * @see wotlas.server.AccountServer
  */
-
 public class AccountBuilder implements NetConnectionListener {
     /*------------------------------------------------------------------------------------*/
 
     /** The Game Account we are building
      */
     private GameAccount account;
-
     /** The Player Data associated to this GameAccount
      */
     private PlayerImpl player;
-
     /** Connection of our client.
      */
     private NetConnection connection;
-
     /** Our Account Server
      */
     private AccountServer accountServer;
-
     /** Our current step.
      */
     private JWizardStepParameters currentParameters;
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public AccountBuilder(AccountServer accountServer) {
@@ -102,7 +96,6 @@ public class AccountBuilder implements NetConnectionListener {
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** Method called when the connection with the client is established.
      *
      * @param connection 
@@ -112,7 +105,6 @@ public class AccountBuilder implements NetConnectionListener {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Method called when the connection with the client is established.
      *
      * @param connection 
@@ -123,12 +115,12 @@ public class AccountBuilder implements NetConnectionListener {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Called to start the account build.
      */
     public void startFirstStep() {
-        if (this.currentParameters != null)
-            return; // can only call this method once
+        if (this.currentParameters != null) {
+            return;
+        } // can only call this method once
 
         this.currentParameters = this.accountServer.getStepFactory().getStep(AccountStepFactory.FIRST_STEP);
 
@@ -139,7 +131,6 @@ public class AccountBuilder implements NetConnectionListener {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To return to the previous step.
      */
     public void returnToPreviousStep() {
@@ -172,7 +163,6 @@ public class AccountBuilder implements NetConnectionListener {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To parse the result data and move to the next step.
      */
     public void setStepResultData(JWizardStepParameters resultParameters) {
@@ -181,13 +171,14 @@ public class AccountBuilder implements NetConnectionListener {
 
             // A - we retrieve the data properties
             String resultPropsKey[] = resultParameters.getStepPropertiesKey();
-            if (resultPropsKey == null)
+            if (resultPropsKey == null) {
                 resultPropsKey = new String[0];
+            }
 
             // B - we call the associated methods of the data properties
             String next = null;
 
-            for (int i = 0; i < resultPropsKey.length; i++)
+            for (int i = 0; i < resultPropsKey.length; i++) {
                 if (resultPropsKey[i].startsWith("data.")) {
                     // 1 - we get the suffix
                     String suffix = resultPropsKey[i].substring(resultPropsKey[i].indexOf('.') + 1, resultPropsKey[i].length());
@@ -216,18 +207,21 @@ public class AccountBuilder implements NetConnectionListener {
                     // 3 - Check for a method to call on this data
                     String method = this.currentParameters.getProperty("server." + suffix + ".method");
 
-                    if (method != null && !invokeMethod(method, data))
+                    if (method != null && !invokeMethod(method, data)) {
                         return;
+                    }
 
                     // 4 - Check for default method to call on this data
                     method = this.currentParameters.getProperty("server.method");
 
-                    if (method != null && !invokeMethod(method, data))
+                    if (method != null && !invokeMethod(method, data)) {
                         return;
+                    }
 
                     // 5 - Check for link "next" step
                     next = this.currentParameters.getProperty("server." + suffix + ".next");
                 }
+            }
 
             // C - Do we have a next step to call ?
             if (next == null && !this.currentParameters.getIsLastStep()) {
@@ -267,7 +261,6 @@ public class AccountBuilder implements NetConnectionListener {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To invoke a method of the 'void XXXX(String data)' type.
      *  @return true if the method call succeeded, false if it failed and an error msg was
      *  sent.
@@ -298,7 +291,6 @@ public class AccountBuilder implements NetConnectionListener {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To invoke a method of the 'String XXXX()' type.
      *  @return a String if the method call succeeded, null if it fails. In case of
      *  errors no error message is sent.
@@ -308,8 +300,9 @@ public class AccountBuilder implements NetConnectionListener {
             Class cparams[] = new Class[0];
             Method m = getClass().getMethod(method, cparams);
 
-            if (m == null)
-                return null; // method not found
+            if (m == null) {
+                return null;
+            } // method not found
 
             Object params[] = new Object[0];
             return (String) m.invoke(this, params);
@@ -323,7 +316,6 @@ public class AccountBuilder implements NetConnectionListener {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To personalize eventual init properties ( we replace $PATTERN$ if there are any
      *  declared) of parameters that are going to be sent to a client.
      *  @param clientParameters params to personalize
@@ -333,11 +325,12 @@ public class AccountBuilder implements NetConnectionListener {
 
         // A - we retrieve the keys
         String propsKey[] = serverParameters.getStepPropertiesKey();
-        if (propsKey == null)
-            return; // none
+        if (propsKey == null) {
+            return;
+        } // none
 
         // B - we personalize the init properties
-        for (int i = 0; i < propsKey.length; i++)
+        for (int i = 0; i < propsKey.length; i++) {
             if (propsKey[i].startsWith("server.") && propsKey[i].endsWith("$")) {
                 // 1 - we get the suffix & pattern
                 String suffix = propsKey[i].substring(propsKey[i].indexOf('.') + 1, propsKey[i].indexOf('$') - 1);
@@ -349,20 +342,23 @@ public class AccountBuilder implements NetConnectionListener {
                 String text = clientParameters.getProperty("init." + suffix);
 
                 // 3 - Check what we have
-                if (pattern.length() == 0 || text == null || methodName.length() == 0)
-                    continue; // ignore this bad entry
+                if (pattern.length() == 0 || text == null || methodName.length() == 0) {
+                    continue;
+                } // ignore this bad entry
 
                 // 4 - Proceed...
                 int ind = text.indexOf(pattern);
 
-                if (ind < 0)
-                    continue; // pattern not found
+                if (ind < 0) {
+                    continue;
+                } // pattern not found
 
                 StringBuffer buf = new StringBuffer(text.substring(0, ind));
 
                 String result = invokeMethod(methodName);
-                if (result == null)
+                if (result == null) {
                     result = "#ERROR#";
+                }
 
                 buf.append(result);
                 buf.append(text.substring(ind + pattern.length(), text.length()));
@@ -370,10 +366,10 @@ public class AccountBuilder implements NetConnectionListener {
                 // 5 - Save our modif
                 clientParameters.setProperty("init." + suffix, buf.toString());
             }
+        }
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** A small method to report a step error.
      */
     private void sendStepError(String message) {
@@ -382,7 +378,6 @@ public class AccountBuilder implements NetConnectionListener {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To cancel the account's creation.
      */
     public void cancelCreation() {
@@ -391,7 +386,6 @@ public class AccountBuilder implements NetConnectionListener {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Method called to create the account
      *  This method sends back to the client a AccountCreationEnded message on success.
      */
@@ -412,8 +406,9 @@ public class AccountBuilder implements NetConnectionListener {
         this.player.setObjectManager(objectManager);
 
         // 2 - We add the account to the game server
-        if (accountManager.checkAccountName(this.account.getAccountName()))
+        if (accountManager.checkAccountName(this.account.getAccountName())) {
             throw new AccountException("Internal Error. This server was badly configurated.\nPlease mail this server's administrator ! (code: #dupAcID)");
+        }
 
         if (accountManager.createAccount(this.account)) {
             // we add the player to the world...
@@ -434,14 +429,12 @@ public class AccountBuilder implements NetConnectionListener {
 
     /*------------------------------------------------------------------------------------*/
     /*------------------------------------------------------------------------------------*/
-
     /***
      ***  METHODS THAT CAN BE INVOKED DYNAMICALY
      ***
      ***  Their prototype must be : public void setXXXX( String data ) throws AccountException
      ***
      ***/
-
     /** Method to set the player's login.
      */
     public void setLogin(String data) throws AccountException {
@@ -449,7 +442,6 @@ public class AccountBuilder implements NetConnectionListener {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Method to set the player's password.
      */
     public void setPassword(String data) throws AccountException {
@@ -457,7 +449,6 @@ public class AccountBuilder implements NetConnectionListener {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Method called to set the WotCharacterClass
      */
     public void setWotCharacterClass(String data) throws AccountException {
@@ -465,30 +456,45 @@ public class AccountBuilder implements NetConnectionListener {
         // 1 - Select Class
         String className = "wotlas.common.character.";
 
-        if (data.equals("Aes Sedai"))
+        if (data.equals("Aes Sedai")) {
             className += "AesSedai";
-        else if (data.equals("Warder"))
+        } else if (data.equals("Warder")) {
             className += "Warder";
-        else if (data.equals("Children of the Light"))
+        } else if (data.equals("Children of the Light")) {
             className += "ChildrenOfTheLight";
-        else if (data.equals("Wolf Brother"))
+        } else if (data.equals("Wolf Brother")) {
             className += "WolfBrother";
-        else if (data.equals("Asha'man"))
+        } else if (data.equals("Asha'man")) {
             className += "Ashaman";
-        else if (data.equals("Aiel"))
+        } else if (data.equals("Aiel")) {
             className += "AielWarrior";
-        else if (data.equals("Darkfriend"))
+        } else if (data.equals("Darkfriend")) {
             return;
-        else if (data.equals("Special Characters"))
+        } else if (data.equals("Special Characters")) {
             return;
-        else
+        } else {
             throw new AccountException("Unknown character class !");
+        }
 
         // 2 - Create Instance
-        Object obj = Tools.getInstance(className);
+        //Object obj = Tools.getInstance(className);
+        Object obj = null;
 
-        if (obj == null || !(obj instanceof WotCharacter))
+        // Lookup : find classFactory impl.
+        try {
+            Object[] classesFactories = Tools.getImplementorsOf(WishPlayerDataFactory.class, this.accountServer.getGameDefinition());
+            for (int i = 0; i < classesFactories.length && obj == null; i++) {
+                WishPlayerDataFactory classFactory = (WishPlayerDataFactory) classesFactories[i];
+                obj = classFactory.getInstance(className);
+            }
+        } catch (ClassNotFoundException cnfe) {
+            // FIXME Problem.
+            cnfe.printStackTrace();
+        }
+
+        if (obj == null || !(obj instanceof WotCharacter)) {
             throw new AccountException("Error during character class creation !");
+        }
 
         // 3 - Set the player's character
         WotCharacter wotCharacter = (WotCharacter) obj;
@@ -496,7 +502,6 @@ public class AccountBuilder implements NetConnectionListener {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Method called to set the WotCharacterClass rank.
      */
     public void setWotCharacterRank(String data) throws AccountException {
@@ -504,18 +509,19 @@ public class AccountBuilder implements NetConnectionListener {
         // 1 - Set the rank
         WotCharacter wotCharacter = this.player.getWotCharacter();
 
-        if (wotCharacter == null)
+        if (wotCharacter == null) {
             throw new AccountException("No character created !");
+        }
 
         wotCharacter.setCharacterRank(data);
 
         // 2 - check that it was set        
-        if (!data.equals(wotCharacter.getCharacterRank()))
+        if (!data.equals(wotCharacter.getCharacterRank())) {
             throw new AccountException("Unknown rank for this character class !");
+        }
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Method called to set the player hair color. (for humans only).
      */
     public void setHairColor(String data) throws AccountException {
@@ -523,50 +529,53 @@ public class AccountBuilder implements NetConnectionListener {
         // 1 - Get Human character
         WotCharacter wotCharacter = this.player.getWotCharacter();
 
-        if (wotCharacter == null)
+        if (wotCharacter == null) {
             throw new AccountException("No character created !");
+        }
 
-        if (!(wotCharacter instanceof Human))
+        if (!(wotCharacter instanceof Human)) {
             throw new AccountException("Your character is not Human !");
+        }
 
         Human human = (Human) wotCharacter;
         human.setHairColor(data);
 
         // 2 - check that it was set        
-        if (!data.equals(human.getHairColor()))
+        if (!data.equals(human.getHairColor())) {
             throw new AccountException("Unknown hair color !");
+        }
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Method called to set the player's name.
      */
     public void setPlayerName(String data) throws AccountException {
         data = data.trim();
 
-        if (data.length() > 30)
+        if (data.length() > 30) {
             throw new AccountException("Your nickname should have less than 30 letters !");
+        }
         this.player.setPlayerName(data);
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Method called to set the player's full name.
      */
     public void setFullPlayerName(String data) throws AccountException {
         data = data.trim();
 
-        if (data.length() > 30)
+        if (data.length() > 30) {
             throw new AccountException("Your full name should have less than 30 letters !");
+        }
 
-        if (data.length() < 5)
+        if (data.length() < 5) {
             throw new AccountException("Your full name should have more than 4 letters !");
+        }
 
         this.player.setFullPlayerName(data);
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Method called to set the player's email.
      */
     public void setEmail(String data) throws AccountException {
@@ -574,7 +583,6 @@ public class AccountBuilder implements NetConnectionListener {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Method called to set the player's past.
      */
     public void setPlayerPast(String data) throws AccountException {
@@ -582,16 +590,15 @@ public class AccountBuilder implements NetConnectionListener {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Method called to set the player's past option.
      */
     public void setPlayerPastOption(String data) throws AccountException {
-        if (data.equals("true"))
-            this.player.setPlayerPast(""); // past will be set later
+        if (data.equals("true")) {
+            this.player.setPlayerPast("");
+        } // past will be set later
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Method called to create special characters
      */
     public void setSpecialCharacter(String data) throws AccountException {
@@ -622,12 +629,12 @@ public class AccountBuilder implements NetConnectionListener {
             // We create a M'Hael...
             this.player.setWotCharacter(new Ashaman());
             this.player.getWotCharacter().setCharacterRank("M'Hael");
-        } else
+        } else {
             throw new AccountException("Wrong Special Character Key !");
+        }
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Method called to set a warder's cloak color. (for warders and blade masters only).
      */
     public void setCloakColor(String data) throws AccountException {
@@ -635,23 +642,25 @@ public class AccountBuilder implements NetConnectionListener {
         // 1 - Get Human character
         WotCharacter wotCharacter = this.player.getWotCharacter();
 
-        if (wotCharacter == null)
+        if (wotCharacter == null) {
             throw new AccountException("No character created !");
+        }
 
-        if (!(wotCharacter instanceof Warder))
+        if (!(wotCharacter instanceof Warder)) {
             throw new AccountException("Your character is not a Warder !");
+        }
 
         Warder warder = (Warder) wotCharacter;
         warder.setCloakColor(data);
 
         // 2 - check that it was set
-        if (warder.getCloakColor() == null)
+        if (warder.getCloakColor() == null) {
             throw new AccountException("Failed to set cloak color : " + data);
+        }
     }
 
     /*------------------------------------------------------------------------------------*/
     /*------------------------------------------------------------------------------------*/
-
     /** To get the server Name.
      */
     public String getServerName() throws AccountException {
@@ -659,7 +668,6 @@ public class AccountBuilder implements NetConnectionListener {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To get the admin email.
      */
     public String getAdminEmail() throws AccountException {
@@ -667,7 +675,6 @@ public class AccountBuilder implements NetConnectionListener {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To get the player account summary.
      */
     public String getAccountSummary() throws AccountException {
@@ -684,5 +691,4 @@ public class AccountBuilder implements NetConnectionListener {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

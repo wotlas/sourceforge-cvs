@@ -16,16 +16,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.server.message.movement;
 
 import wotlas.common.WorldManager;
 import wotlas.common.message.movement.EnteringRoomMessage;
 import wotlas.common.message.movement.ResetPositionMessage;
+import wotlas.common.message.movement.WishServerMovementNetMsgBehaviour;
 import wotlas.common.universe.Room;
 import wotlas.common.universe.TownMap;
 import wotlas.common.universe.WorldMap;
-import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.server.PlayerImpl;
 import wotlas.server.ServerDirector;
 import wotlas.utils.Debug;
@@ -36,11 +35,9 @@ import wotlas.utils.ScreenPoint;
  *
  * @author Aldiss
  */
-
-public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements NetMessageBehaviour {
+public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements WishServerMovementNetMsgBehaviour {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public EnteringRoomMsgBehaviour() {
@@ -48,7 +45,6 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
@@ -86,8 +82,9 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
         for (int i = 0; i < currentRoom.getRoomLinks().length; i++) {
             Room otherRoom = currentRoom.getRoomLinks()[i].getRoom1();
 
-            if (otherRoom == currentRoom)
+            if (otherRoom == currentRoom) {
                 otherRoom = currentRoom.getRoomLinks()[i].getRoom2();
+            }
 
             if (otherRoom.getRoomID() == this.location.getRoomID()) {
                 targetRoom = otherRoom;
@@ -110,7 +107,6 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To send an error message to the client.
      */
     public void sendError(PlayerImpl player, String message) {
@@ -120,20 +116,22 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
         ScreenPoint pReset = null;
         player.updateSyncID();
 
-        if (player.getLocation().isRoom())
+        if (player.getLocation().isRoom()) {
             pReset = player.getMyRoom().getInsertionPoint();
-        else {
+        } else {
             // We get the world manager
             WorldManager wManager = ServerDirector.getDataManager().getWorldManager();
 
             if (player.getLocation().isTown()) {
                 TownMap myTown = wManager.getTownMap(this.location);
-                if (myTown != null)
+                if (myTown != null) {
                     pReset = myTown.getInsertionPoint();
+                }
             } else if (player.getLocation().isWorld()) {
                 WorldMap myWorld = wManager.getWorldMap(this.location);
-                if (myWorld != null)
+                if (myWorld != null) {
                     pReset = myWorld.getInsertionPoint();
+                }
             }
         }
 
@@ -148,5 +146,4 @@ public class EnteringRoomMsgBehaviour extends EnteringRoomMessage implements Net
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

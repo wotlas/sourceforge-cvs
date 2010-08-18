@@ -21,6 +21,7 @@ package wotlas.server.chat;
 
 import wotlas.common.message.chat.SendTextMessage;
 import wotlas.server.PlayerImpl;
+import wotlas.utils.WishGameExtension;
 
 /** Represents a chat command. A chat command is a String that begins with a '/'
  *  and possess eventual parameters separated by ' '.<br>
@@ -34,7 +35,7 @@ import wotlas.server.PlayerImpl;
  * @author Aldiss
  */
 
-public interface ChatCommand {
+public interface ChatCommand extends WishGameExtension {
     /*------------------------------------------------------------------------------------*/
 
     /** Returns the first part of the chat command. For example if your chat command

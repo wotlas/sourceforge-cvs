@@ -20,11 +20,12 @@
 package wotlas.libs.net.connection;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.net.SocketException;
 import wotlas.libs.net.NetConnection;
+import wotlas.libs.net.NetMessageFactory;
 import wotlas.libs.net.NetReceiver;
 import wotlas.libs.net.NetSender;
+import wotlas.libs.net.IOChannel;
 import wotlas.utils.Debug;
 
 /**
@@ -55,8 +56,8 @@ public class SynchronousNetConnection extends NetConnection {
      * @param socket an already opened socket
      * @exception IOException if the socket wasn't already connected.
      */
-    public SynchronousNetConnection(Socket socket) throws IOException {
-        super(socket, null);
+    public SynchronousNetConnection(NetMessageFactory msgFactory, IOChannel socket) throws IOException {
+        super(msgFactory, socket, null);
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -67,8 +68,8 @@ public class SynchronousNetConnection extends NetConnection {
      * @param sessionContext object to give to messages when they arrive.
      * @exception IOException if the socket wasn't already connected.
      */
-    public SynchronousNetConnection(Socket socket, Object sessionContext) throws IOException {
-        super(socket, sessionContext);
+    public SynchronousNetConnection(NetMessageFactory msgFactory, IOChannel socket, Object sessionContext) throws IOException {
+        super(msgFactory, socket, sessionContext);
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -81,7 +82,7 @@ public class SynchronousNetConnection extends NetConnection {
      * @exception IOException if the socket wasn't already connected.
      */
     @Override
-    protected void init(Socket socket, Object sessionContext) throws IOException {
+    protected void init(NetMessageFactory msgFactory, IOChannel socket, Object sessionContext) throws IOException {
         // We change both buffer size to 128k for this socket (default size was 64k)
         try {
             socket.setReceiveBufferSize(128 * 1024);
@@ -94,7 +95,7 @@ public class SynchronousNetConnection extends NetConnection {
         this.myNetsender = new NetSender(socket, this, NetSender.USER_AGGREGATION, 128 * 1024);
 
         // NetReceiver
-        this.myNetreceiver = new NetReceiver(socket, this, true, sessionContext, 128 * 1024);
+        this.myNetreceiver = new NetReceiver(msgFactory, socket, this, true, sessionContext, 128 * 1024);
         this.myNetreceiver.setMaxMessageLimitPerUserCall(20);
     }
 

@@ -16,12 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.server.message.description;
 
 import wotlas.common.message.description.AccountRecoverMessage;
+import wotlas.common.message.description.WishServerDescriptionNetMsgBehaviour;
 import wotlas.common.message.description.YourAccountDataMessage;
-import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.server.PlayerImpl;
 import wotlas.server.ServerDirector;
 
@@ -30,11 +29,9 @@ import wotlas.server.ServerDirector;
  *
  * @author Petrus
  */
-
-public class AccountRecoverMsgBehaviour extends AccountRecoverMessage implements NetMessageBehaviour {
+public class AccountRecoverMsgBehaviour extends AccountRecoverMessage implements WishServerDescriptionNetMsgBehaviour {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public AccountRecoverMsgBehaviour() {
@@ -42,7 +39,6 @@ public class AccountRecoverMsgBehaviour extends AccountRecoverMessage implements
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process

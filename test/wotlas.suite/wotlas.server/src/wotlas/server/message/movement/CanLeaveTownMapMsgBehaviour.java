@@ -23,6 +23,7 @@ import wotlas.common.message.movement.CanLeaveTownMapMessage;
 import wotlas.common.message.movement.RedirectConnectionMessage;
 import wotlas.common.message.movement.RedirectErrorMessage;
 import wotlas.common.message.movement.ResetPositionMessage;
+import wotlas.common.message.movement.WishServerMovementNetMsgBehaviour;
 import wotlas.common.message.movement.YouCanLeaveMapMessage;
 import wotlas.common.universe.Building;
 import wotlas.common.universe.MapExit;
@@ -30,7 +31,6 @@ import wotlas.common.universe.Room;
 import wotlas.common.universe.TownMap;
 import wotlas.common.universe.WorldMap;
 import wotlas.common.universe.WotlasLocation;
-import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.server.GatewayServer;
 import wotlas.server.LieManager;
 import wotlas.server.PlayerImpl;
@@ -43,7 +43,7 @@ import wotlas.utils.ScreenPoint;
  *
  * @author Aldiss
  */
-public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implements NetMessageBehaviour {
+public class CanLeaveTownMapMsgBehaviour extends CanLeaveTownMapMessage implements WishServerMovementNetMsgBehaviour {
 
     /*------------------------------------------------------------------------------------*/
     /** Constructor.

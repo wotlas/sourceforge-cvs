@@ -25,8 +25,9 @@ import javax.swing.ProgressMonitor;
 import wotlas.utils.Debug;
 import wotlas.utils.FileTools;
 
-/** Server Config Manager.
- *
+/**
+ * Server Config Manager.
+ * 
  * @author Aldiss, Petrus
  * @see wotlas.common.ServerConfig
  * @see wotlas.libs.persistence.PropertiesConverter
@@ -36,65 +37,79 @@ public class ServerConfigManager {
 
     /*------------------------------------------------------------------------------------*/
 
-    /** Format of the Server Config File Names
+    /**
+     * Format of the Server Config File Names
      */
     public final static String SERVERS_PREFIX = "server-";
     public final static String SERVERS_SUFFIX = ".cfg";
-    public final static String SERVERS_ADDRESS_SUFFIX = ".adr"; // this suffix is added after the
+    public final static String SERVERS_ADDRESS_SUFFIX = ".adr"; // this suffix
+    // is added
+    // after the
     // SERVERS_SUFFIX : "server-0.cfg.adr"
 
-    /** Update period for server config address... (in ms)
-     *
-     *  Our cache system works on a "fail first" mode...
-     *  If a server is reachable we don't check for a new update on its Internet address.
-     *  If a server becomes unreachable then we check if its UPDATE_PERIOD has been reached
-     *  if true we check for a new address.
+    /**
+     * Update period for server config address... (in ms)
+     * 
+     * Our cache system works on a "fail first" mode... If a server is reachable
+     * we don't check for a new update on its Internet address. If a server
+     * becomes unreachable then we check if its UPDATE_PERIOD has been reached
+     * if true we check for a new address.
      */
     public final long UPDATE_PERIOD = 1000 * 60 * 5; // every five minutes
 
-    /** Update period for the server table... (in ms). This is a straight cache mode.
-     *  Each time the serverTable is accessed we check its lastServerTableUpdateTime
-     *  and compare it to this period...
+    /**
+     * Update period for the server table... (in ms). This is a straight cache
+     * mode. Each time the serverTable is accessed we check its
+     * lastServerTableUpdateTime and compare it to this period...
      */
     public final long UPDATE_TABLE_PERIOD = 1000 * 3600 * 4; // every 4 hours
 
     /*------------------------------------------------------------------------------------*/
 
-    /** ServerConfig List ( sorted by getServerID() )
+    /**
+     * ServerConfig List ( sorted by getServerID() )
      */
     private ServerConfig configs[];
 
-    /** Our resource manager/
+    /**
+     * Our resource manager/
      */
     private ResourceManager rManager;
 
-    /** Remote server home URL : where the server list is stored on the internet.
+    /**
+     * Remote server home URL : where the server list is stored on the internet.
      */
     private String remoteServerConfigHomeURL;
 
-    /** Remote Server Table giving the list of available remote servers.
+    /**
+     * Remote Server Table giving the list of available remote servers.
      */
     private String remoteServerTable;
 
-    /** Home of Servers unreachable ?
+    /**
+     * Home of Servers unreachable ?
      */
     private boolean serversRemoteHomeUnreachable;
 
-    /** Last time we updated the server table.
+    /**
+     * Last time we updated the server table.
      */
     private long lastServerTableUpdateTime;
 
-    /** A local ID of a server config we don't want to update. On the server side it's
-     *  the server's ID. On the client side it should remain equal to -1 : all configs
-     *  are updated.
+    /**
+     * A local ID of a server config we don't want to update. On the server side
+     * it's the server's ID. On the client side it should remain equal to -1 :
+     * all configs are updated.
      */
     private int localServerID;
 
     /*------------------------------------------------------------------------------------*/
 
-    /** Constructor with Resource manager.
-     *
-     * @param rManager our ResourceManager
+    /**
+     * Constructor with Resource manager.
+     * 
+     * @param rManager
+     *            our ResourceManager
      */
     public ServerConfigManager(ResourceManager rManager) {
         this.rManager = rManager;
@@ -111,9 +126,12 @@ public class ServerConfigManager {
 
     /*------------------------------------------------------------------------------------*/
 
-    /** To set the local server ID that is used on this machine and which configs should
-     *  never be updated.
-     * @param serverID serverID of the config to never update
+    /**
+     * To set the local server ID that is used on this machine and which configs
+     * should never be updated.
+     * 
+     * @param serverID
+     *            serverID of the config to never update
      */
     public void setLocalServerID(int localServerID) {
         this.localServerID = localServerID;
@@ -121,20 +139,27 @@ public class ServerConfigManager {
 
     /*------------------------------------------------------------------------------------*/
 
-    /** To get the URL where are stored the remote server configs. This URL can also contain
-     *  a news.html file to display some news.
-     *
-     * @param remoteServerConfigHomeURL urlname to use to find the servers home.
+    /**
+     * To get the URL where are stored the remote server configs. This URL can
+     * also contain a news.html file to display some news.
+     * 
+     * @param remoteServerConfigHomeURL
+     *            urlname to use to find the servers home.
      */
     public void setRemoteServerConfigHomeURL(String remoteServerConfigHomeURL) {
         this.remoteServerConfigHomeURL = remoteServerConfigHomeURL;
     }
 
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*
+     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     * - - - - -
+     */
 
-    /** To get the remote server table.
-     * @return the previously loaded server table, the just-loaded server table or null
-     *         if we cannot reach our central site.
+    /**
+     * To get the remote server table.
+     * 
+     * @return the previously loaded server table, the just-loaded server table
+     *         or null if we cannot reach our central site.
      */
     protected String getRemoteServerTable() {
         if (this.remoteServerConfigHomeURL == null)
@@ -168,10 +193,15 @@ public class ServerConfigManager {
         return this.remoteServerTable;
     }
 
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*
+     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     * - - - - -
+     */
 
-    /** To know if we have the necessary information on remote servers.
-     *  @return true if everything is ok
+    /**
+     * To know if we have the necessary information on remote servers.
+     * 
+     * @return true if everything is ok
      */
     public boolean hasRemoteServersInfo() {
         if (this.remoteServerTable != null)
@@ -179,10 +209,16 @@ public class ServerConfigManager {
         return false;
     }
 
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*
+     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     * - - - - -
+     */
 
-    /** To update a server config if there is an updated remote config.
-     * @param config config to update
+    /**
+     * To update a server config if there is an updated remote config.
+     * 
+     * @param config
+     *            config to update
      */
     protected void updateServerConfig(ServerConfig config) {
         if (config.getServerID() == 0) // server config is local
@@ -201,7 +237,11 @@ public class ServerConfigManager {
 
             if (ind >= 0) {
                 ind++; // to avoid the '=' char
-                int end = this.remoteServerTable.indexOf("\n", ind); // seeking the end of line
+                int end = this.remoteServerTable.indexOf("\n", ind); // seeking
+                // the
+                // end
+                // of
+                // line
 
                 if (end >= 0) {
                     // Extracting server config latest version
@@ -237,7 +277,8 @@ public class ServerConfigManager {
                             return;
                         }
 
-                        return; // failed to update... ( an error has been displayed by the PersistenceManager )
+                        return; // failed to update... ( an error has been
+                        // displayed by the PersistenceManager )
                     }
 
                     return; // config is up-to-date !
@@ -249,9 +290,14 @@ public class ServerConfigManager {
         Debug.signal(Debug.ERROR, this, "Server Config " + config.getServerID() + " not found in remote server table !");
     }
 
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*
+     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     * - - - - -
+     */
 
-    /** Get Max Number of server configs (in the server table) for the ProgressMonitor
+    /**
+     * Get Max Number of server configs (in the server table) for the
+     * ProgressMonitor
      */
     private int getMaxValue() {
         if (getRemoteServerTable() == null)
@@ -267,12 +313,18 @@ public class ServerConfigManager {
         return nb;
     }
 
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*
+     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     * - - - - -
+     */
 
-    /** To retrieve the latest server config files from the net. Only the server configs
-     *  that have been changed are downloaded.
-     * @param parent parent component for the javax.swing.ProgressMonitor... if you
-     *        enter null no ProgressMonitor will be used.
+    /**
+     * To retrieve the latest server config files from the net. Only the server
+     * configs that have been changed are downloaded.
+     * 
+     * @param parent
+     *            parent component for the javax.swing.ProgressMonitor... if you
+     *            enter null no ProgressMonitor will be used.
      */
     public void getLatestConfigFiles(Component parent) {
         if (getRemoteServerTable() == null)
@@ -376,10 +428,16 @@ public class ServerConfigManager {
             pMonitor.close();
     }
 
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*
+     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     * - - - - -
+     */
 
-    /** To add a new ServerConfig to our list.
-     * @param newConfig config to add
+    /**
+     * To add a new ServerConfig to our list.
+     * 
+     * @param newConfig
+     *            config to add
      */
     protected void addConfig(ServerConfig newConfig) {
         if (this.configs == null) {
@@ -393,17 +451,23 @@ public class ServerConfigManager {
         }
     }
 
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*
+     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     * - - - - -
+     */
 
-    /** To get a ServerConfig file from its associated serverID.
-     *
-     *  NOTE : serverID != originalServerID. For a player the originalServerID is the
-     *  serverID of the server that created his game account. But as his account moves
-     *  from one server to another, the player's current serverID ( where he now is )
-     *  can be different from his originalServerID.
-     *
-     * @param serverID server ID.
-     * @return null if the serverconfig was not found, the ServerConfig object otherwise.
+    /**
+     * To get a ServerConfig file from its associated serverID.
+     * 
+     * NOTE : serverID != originalServerID. For a player the originalServerID is
+     * the serverID of the server that created his game account. But as his
+     * account moves from one server to another, the player's current serverID (
+     * where he now is ) can be different from his originalServerID.
+     * 
+     * @param serverID
+     *            server ID.
+     * @return null if the serverconfig was not found, the ServerConfig object
+     *         otherwise.
      */
     public ServerConfig getServerConfig(int serverID) {
 
@@ -418,9 +482,13 @@ public class ServerConfigManager {
         return null;
     }
 
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*
+     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     * - - - - -
+     */
 
-    /** We search for the wanted server config without performing any updates.
+    /**
+     * We search for the wanted server config without performing any updates.
      */
     protected ServerConfig findServerConfig(int serverID) {
 
@@ -434,10 +502,16 @@ public class ServerConfigManager {
         return null;
     }
 
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*
+     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     * - - - - -
+     */
 
-    /** To get the following server ID.
-     * @param previousServerID the previous ID we tried
+    /**
+     * To get the following server ID.
+     * 
+     * @param previousServerID
+     *            the previous ID we tried
      * @return the immediately following server ID, -1 if there is none
      */
     public int getNextServerID(int previousServerID) {
@@ -458,9 +532,13 @@ public class ServerConfigManager {
         return min;
     }
 
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*
+     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     * - - - - -
+     */
 
-    /** To get the number of servers.
+    /**
+     * To get the number of servers.
      */
     public int size() {
         if (this.configs == null)
@@ -468,11 +546,16 @@ public class ServerConfigManager {
         return this.configs.length;
     }
 
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*
+     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     * - - - - -
+     */
 
-    /** To get a ServerConfig file from its index in the array <b>configs</b>.
-     *
-     * @param index server index.
+    /**
+     * To get a ServerConfig file from its index in the array <b>configs</b>.
+     * 
+     * @param index
+     *            server index.
      */
     public ServerConfig serverConfigAt(int index) {
         if (this.configs == null)
@@ -480,13 +563,19 @@ public class ServerConfigManager {
         return this.configs[index];
     }
 
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*
+     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     * - - - - -
+     */
 
-    /** To report a dead server. We'll then try to check the server address.
-     * @param serverID server id which represents the dead server
-     * @return another address you can try for this server, if this address fails
-     *     you can really consider the server dead. If we return null it means
-     *     that we don't where able to update the server address...
+    /**
+     * To report a dead server. We'll then try to check the server address.
+     * 
+     * @param serverID
+     *            server id which represents the dead server
+     * @return another address you can try for this server, if this address
+     *         fails you can really consider the server dead. If we return null
+     *         it means that we don't where able to update the server address...
      */
     public String reportDeadServer(int serverID) {
 
@@ -518,11 +607,17 @@ public class ServerConfigManager {
         return newAdr; // new address the user can try...
     }
 
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*
+     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     * - - - - -
+     */
 
-    /** Check the format of a DNS name or IP address.
-     *  @param adr address to check
-     *  @return the address without any ending special chars.
+    /**
+     * Check the format of a DNS name or IP address.
+     * 
+     * @param adr
+     *            address to check
+     * @return the address without any ending special chars.
      */
     public String checkAddressFormat(String adr) {
         if (adr == null)
@@ -533,7 +628,7 @@ public class ServerConfigManager {
         // or numbers (end of an IP address).
         adr = adr.trim();
 
-        for (int i = adr.length() - 1; i != 0; i--) {
+        for (int i = adr.length() - 1; i > 0; i--) {
             char c = adr.charAt(i);
 
             if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9') || c == '.')
@@ -543,15 +638,23 @@ public class ServerConfigManager {
         return ""; // not a valid address !!!
     }
 
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*
+     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     * - - - - -
+     */
 
     /******** PERSISTENCE METHODS **********/
 
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*
+     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     * - - - - -
+     */
 
-    /** Loads the server config associated to the given serverID.
-     *
-     * @param serverID id of the server which config is to be loaded.
+    /**
+     * Loads the server config associated to the given serverID.
+     * 
+     * @param serverID
+     *            id of the server which config is to be loaded.
      * @return server config
      */
     public ServerConfig loadServerConfig(int serverID) {
@@ -571,12 +674,17 @@ public class ServerConfigManager {
         return config;
     }
 
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*
+     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     * - - - - -
+     */
 
-    /** Saves the server config to the SERVERS_HOME directory.
-     *
-     *  @param serverConfig server config
-     *  @return true in case of success, false if an error occured.
+    /**
+     * Saves the server config to the SERVERS_HOME directory.
+     * 
+     * @param serverConfig
+     *            server config
+     * @return true in case of success, false if an error occured.
      */
     public boolean saveServerConfig(ServerConfig serverConfig) {
 
@@ -590,16 +698,23 @@ public class ServerConfigManager {
         return true;
     }
 
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*
+     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     * - - - - -
+     */
 
-    /** Updates a server config of the SERVERS_HOME directory.
-     *  The oldServerConfig fields are updated with the new ones.
-     *  The newConfigText paramter can be null : we then only save the new address.
-     *
-     *  @param newConfigText new config loaded from an URL. Can be null.
-     *  @param newAdrText new server address loaded from an URL
-     *  @param oldServerConfig server config
-     *  @return true in case of success, false if an error occured.
+    /**
+     * Updates a server config of the SERVERS_HOME directory. The
+     * oldServerConfig fields are updated with the new ones. The newConfigText
+     * paramter can be null : we then only save the new address.
+     * 
+     * @param newConfigText
+     *            new config loaded from an URL. Can be null.
+     * @param newAdrText
+     *            new server address loaded from an URL
+     * @param oldServerConfig
+     *            server config
+     * @return true in case of success, false if an error occured.
      */
     public boolean updateServerConfig(String newConfigText, String newAdrText, ServerConfig oldServerConfig) {
 
@@ -635,12 +750,18 @@ public class ServerConfigManager {
 
     /*------------------------------------------------------------------------------------*/
 
-    /** To create a server config from a text file representing a previously saved ServerConfig.
-     *
-     *  @param newConfigText new config loaded from an URL.
-     *  @param newAdrText new server address loaded from an URL
-     *  @param serverID server Id
-     *  @return the created ServerConfig in case of success, null if an error occured.
+    /**
+     * To create a server config from a text file representing a previously
+     * saved ServerConfig.
+     * 
+     * @param newConfigText
+     *            new config loaded from an URL.
+     * @param newAdrText
+     *            new server address loaded from an URL
+     * @param serverID
+     *            server Id
+     * @return the created ServerConfig in case of success, null if an error
+     *         occured.
      */
     public ServerConfig createServerConfig(String newConfigText, String newAdrText, int serverID) {
 
@@ -666,9 +787,11 @@ public class ServerConfigManager {
 
     /*------------------------------------------------------------------------------------*/
 
-    /** Loads all the server config files found in SERVERS_HOME.
-     *
-     * @param serverID id of the server which config is to be loaded.
+    /**
+     * Loads all the server config files found in SERVERS_HOME.
+     * 
+     * @param serverID
+     *            id of the server which config is to be loaded.
      * @return server config
      */
     public ServerConfig[] loadServerConfigs() {
@@ -723,13 +846,17 @@ public class ServerConfigManager {
                     Debug.signal(Debug.ERROR, this, "Failed to load server config: no" + serverFile + ServerConfigManager.SERVERS_ADDRESS_SUFFIX + " file found !");
 
                 configList[index].setServerName(serverName);
-                configList[index].clearLastUpdateTime(); // clear timestamp set by this operation
+                configList[index].clearLastUpdateTime(); // clear timestamp set
+                // by this operation
                 index++;
             }
 
         return configList;
     }
 
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+    /*
+     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+     * - - - - -
+     */
 
 }

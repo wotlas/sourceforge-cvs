@@ -16,11 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.server.message.description;
 
 import wotlas.common.WorldManager;
 import wotlas.common.message.description.DoorStateMessage;
+import wotlas.common.message.description.WishServerDescriptionNetMsgBehaviour;
 import wotlas.common.message.movement.ResetPositionMessage;
 import wotlas.common.router.MessageRouter;
 import wotlas.common.universe.Door;
@@ -28,7 +28,6 @@ import wotlas.common.universe.Room;
 import wotlas.common.universe.RoomLink;
 import wotlas.common.universe.TownMap;
 import wotlas.common.universe.WorldMap;
-import wotlas.libs.net.NetMessageBehaviour;
 import wotlas.server.PlayerImpl;
 import wotlas.server.ServerDirector;
 import wotlas.utils.Debug;
@@ -39,11 +38,9 @@ import wotlas.utils.ScreenPoint;
  *
  * @author Aldiss
  */
-
-public class DoorStateMsgBehaviour extends DoorStateMessage implements NetMessageBehaviour {
+public class DoorStateMsgBehaviour extends DoorStateMessage implements WishServerDescriptionNetMsgBehaviour {
 
     /*------------------------------------------------------------------------------------*/
-
     /** Constructor.
      */
     public DoorStateMsgBehaviour() {
@@ -51,7 +48,6 @@ public class DoorStateMsgBehaviour extends DoorStateMessage implements NetMessag
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** Associated code to this Message...
      *
      * @param sessionContext an object giving specific access to other objects needed to process
@@ -77,8 +73,9 @@ public class DoorStateMsgBehaviour extends DoorStateMessage implements NetMessag
         RoomLink roomLink = currentRoom.getRoomLink(this.roomLinkID);
         Door door = null;
 
-        if (roomLink != null)
+        if (roomLink != null) {
             door = roomLink.getDoor();
+        }
 
         if (door == null) {
             Debug.signal(Debug.ERROR, this, "Specified door was not found !");
@@ -86,23 +83,24 @@ public class DoorStateMsgBehaviour extends DoorStateMessage implements NetMessag
             return;
         }
 
-        if (this.isOpened)
+        if (this.isOpened) {
             door.open();
-        else
+        } else {
             door.close();
+        }
 
         // We propagate this update
         targetRoom = roomLink.getRoom1();
 
-        if (targetRoom == currentRoom)
+        if (targetRoom == currentRoom) {
             targetRoom = roomLink.getRoom2();
+        }
 
         currentRoom.getMessageRouter().sendMessage(this, null, MessageRouter.EXC_EXTENDED_GROUP);
         targetRoom.getMessageRouter().sendMessage(this, null, MessageRouter.EXC_EXTENDED_GROUP);
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
     /** To send an error message to the client.
      */
     public void sendError(PlayerImpl player, String message) {
@@ -112,20 +110,22 @@ public class DoorStateMsgBehaviour extends DoorStateMessage implements NetMessag
         ScreenPoint pReset = null;
         player.updateSyncID();
 
-        if (player.getLocation().isRoom())
+        if (player.getLocation().isRoom()) {
             pReset = player.getMyRoom().getInsertionPoint();
-        else {
+        } else {
             // We get the world manager
             WorldManager wManager = ServerDirector.getDataManager().getWorldManager();
 
             if (player.getLocation().isTown()) {
                 TownMap myTown = wManager.getTownMap(this.location);
-                if (myTown != null)
+                if (myTown != null) {
                     pReset = myTown.getInsertionPoint();
+                }
             } else if (player.getLocation().isWorld()) {
                 WorldMap myWorld = wManager.getWorldMap(this.location);
-                if (myWorld != null)
+                if (myWorld != null) {
                     pReset = myWorld.getInsertionPoint();
+                }
             }
         }
 
@@ -140,5 +140,4 @@ public class DoorStateMsgBehaviour extends DoorStateMessage implements NetMessag
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
 }

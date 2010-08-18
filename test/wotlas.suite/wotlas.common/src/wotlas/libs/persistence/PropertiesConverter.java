@@ -44,6 +44,8 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Properties;
 import wotlas.utils.Debug;
+import wotlas.utils.Tools;
+import wotlas.utils.WotlasGameDefinition;
 
 /**
  * Save and Load an object to a "dot-properties" file.
@@ -167,7 +169,7 @@ public class PropertiesConverter {
     * @return the object loaded from the file
     * @exception PersistenceException when a problem occurs during saving.
     */
-    public static Object load(String name) throws PersistenceException {
+    public static Object load(String name, WotlasGameDefinition wgd) throws PersistenceException {
         BufferedInputStream is;
 
         try {
@@ -177,7 +179,7 @@ public class PropertiesConverter {
             throw new PersistenceException(ex);
         }
 
-        Object obj = PropertiesConverter.load(is);
+        Object obj = PropertiesConverter.load(is, wgd);
 
         try {
             is.close(); // close stream : ADDED by ALDISS
@@ -194,7 +196,7 @@ public class PropertiesConverter {
     * @return the object loaded from the file
     * @exception PersistenceException when a problem occurs during saving.
     */
-    public static Object load(InputStream is) throws PersistenceException {
+    public static Object load(InputStream is, WotlasGameDefinition wgd) throws PersistenceException {
         Properties toBeRestored;
 
         toBeRestored = new Properties();
@@ -206,7 +208,7 @@ public class PropertiesConverter {
         }
 
         // Build the object from its content
-        return PropertiesConverter.fromProperties(toBeRestored, "");
+        return PropertiesConverter.fromProperties(toBeRestored, "", wgd);
     }
 
     /**
@@ -237,12 +239,14 @@ public class PropertiesConverter {
             Field[] fields;
             fields = curClass.getDeclaredFields();
             for (int i = 0; i < fields.length; i++) {
-                if (name.equalsIgnoreCase(fields[i].getName()))
+                if (name.equalsIgnoreCase(fields[i].getName())) {
                     return Modifier.isTransient(fields[i].getModifiers());
+                }
             }
         }
-        if (PropertiesConverter.warning)
+        if (PropertiesConverter.warning) {
             Debug.signal(Debug.WARNING, clazz, "\"" + name + "\" not found as a field");
+        }
         return true;
     }
 
@@ -270,25 +274,28 @@ public class PropertiesConverter {
             Method readMethod;
 
             for (int i = 0; i < descriptors.length; i++) {
-                if (PropertiesConverter.DEBUG)
+                if (PropertiesConverter.DEBUG) {
                     System.out.println("Candidate property:" + prefix + descriptors[i].getName() + " in class " + objectClass.getName());
+                }
                 if (((readMethod = descriptors[i].getReadMethod()) != null) && (descriptors[i].getWriteMethod() != null)) {
                     // Class property or 
                     // Getter and setter are present: check that the property is
                     // not transient
                     if (!PropertiesConverter.isTransient(objectClass, descriptors[i].getName())) {
                         // Not transient: save it
-                        if (PropertiesConverter.DEBUG)
+                        if (PropertiesConverter.DEBUG) {
                             System.out.println("Storable property:" + prefix + descriptors[i].getName());
+                        }
                         nbSaved += PropertiesConverter.saveProperty(object, properties, prefix, descriptors[i], readMethod);
                     } else if (PropertiesConverter.DEBUG) {
                         System.out.println("Property:" + prefix + descriptors[i].getName() + " is transient");
                     }
                 } else if (PropertiesConverter.DEBUG) {
-                    if (readMethod == null)
+                    if (readMethod == null) {
                         System.out.println("Property:" + prefix + descriptors[i].getName() + " has no read method");
-                    else
+                    } else {
                         System.out.println("Property:" + prefix + descriptors[i].getName() + " has no write method");
+                    }
                 }
             }
         }
@@ -324,10 +331,11 @@ public class PropertiesConverter {
                     for (nbCells = 0; true; nbCells++) {
                         if (object == null) {
                             // Test mode (using the class): consider one cell only
-                            if (nbCells == 0)
+                            if (nbCells == 0) {
                                 value = null;
-                            else
-                                break; // Only first cell in test mode
+                            } else {
+                                break;
+                            } // Only first cell in test mode
                         } else {
                             // Real mode (using the object)
                             arg[0] = new Integer(nbCells);
@@ -341,18 +349,20 @@ public class PropertiesConverter {
                 } catch (InvocationTargetException ex) {
                     // We suppose that the exception warn of the end of the array,
                     // but we log it anyway
-                    if (PropertiesConverter.warning)
+                    if (PropertiesConverter.warning) {
                         Debug.signal(Debug.WARNING, object, ex);
+                    }
                 }
                 // Save the number of values
                 nbSaved += PropertiesConverter.saveValue(properties, propertyName, new Integer(nbCells), (object == null) ? Integer.TYPE : null);
             } else {
                 // Non-indexed method: save the value according to its class
-                if (object == null)
-                    // Test mode (using the class)
+                if (object == null) // Test mode (using the class)
+                {
                     value = null;
-                else
+                } else {
                     value = readMethod.invoke(object, (Object[]) null);
+                }
                 if ((value != null) && (value.getClass().isArray() || readMethod.getReturnType().isArray())) {
                     Object[] values;
 
@@ -392,12 +402,13 @@ public class PropertiesConverter {
     * @return the number of saved properties.
     **/
     private static int saveValue(Properties properties, String propertyName, Object value, Class clazz) {
-        if (clazz == null)
-            // Actual mode
+        if (clazz == null) // Actual mode
+        {
             return PropertiesConverter.saveActualValue(properties, propertyName, value);
-        else
-            // Test mode (class without object instance)
+        } else // Test mode (class without object instance)
+        {
             return PropertiesConverter.saveTestValue(properties, propertyName, clazz);
+        }
     }
 
     /**
@@ -415,8 +426,9 @@ public class PropertiesConverter {
             Class valueClass;
 
             valueClass = value.getClass();
-            if (PropertiesConverter.DEBUG)
+            if (PropertiesConverter.DEBUG) {
                 System.out.println("Candidate value:" + propertyName + " (" + valueClass.toString() + ")");
+            }
             if ((valueClass.isPrimitive()) || (value instanceof Boolean) || (value instanceof Character) || (value instanceof Byte) || (value instanceof Integer) || (value instanceof Short) || (value instanceof Long) || (value instanceof Float) || (value instanceof Double) || (value instanceof StringBuffer)) {
                 // Primitive or string buffer type:
                 // directly register the value as a string
@@ -425,9 +437,10 @@ public class PropertiesConverter {
             } else if (value instanceof String) {
                 properties.setProperty(propertyName, (String) value);
                 nbSaved = 1;
-            } else
-                // Complex object: recursively add its properties
+            } else // Complex object: recursively add its properties
+            {
                 nbSaved = PropertiesConverter.toProperties(value, value.getClass(), properties, propertyName + ".");
+            }
         }
         return nbSaved;
     }
@@ -446,14 +459,16 @@ public class PropertiesConverter {
         String className;
 
         className = clazz.getName();
-        if (PropertiesConverter.DEBUG)
+        if (PropertiesConverter.DEBUG) {
             System.out.println("Candidate value:" + propertyName + " (" + className + ")");
+        }
         if (clazz.isPrimitive() || (className.equals("java.lang.Boolean")) || (className.equals("java.lang.Character")) || (className.equals("java.lang.Byte")) || (className.equals("java.lang.Integer")) || (className.equals("java.lang.Short")) || (className.equals("java.lang.Long")) || (className.equals("java.lang.Float")) || (className.equals("java.lang.Double")) || (className.equals("java.lang.StringBuffer")) || (className.equals("java.lang.String"))) {
             properties.setProperty(propertyName, "value(" + className + ")");
             nbSaved = 1;
-        } else
-            // Complex object: recursively add its properties
+        } else // Complex object: recursively add its properties
+        {
             nbSaved = PropertiesConverter.toProperties(null, clazz, properties, propertyName + ".");
+        }
         return nbSaved;
     }
 
@@ -464,7 +479,7 @@ public class PropertiesConverter {
     * @return the object build from properties.
     * @exception PersistenceException when a problem occurs during loading.
     **/
-    private static Object fromProperties(Properties properties, String prefix) throws PersistenceException {
+    private static Object fromProperties(Properties properties, String prefix, WotlasGameDefinition wgd) throws PersistenceException {
         PropertyDescriptor[] descriptors; // Properties of the object to restore
         String className; // Object class
         Class objectClass; // Class of object
@@ -472,14 +487,10 @@ public class PropertiesConverter {
 
         // Build the object and gets its properties.
         className = properties.getProperty(prefix + "class");
-        if (className == null)
+        if (className == null) {
             return null;
-        try {
-            objectClass = Class.forName(className);
-        } catch (ClassNotFoundException ex) {
-            Debug.signal(Debug.ERROR, className, ex);
-            throw new PersistenceException(ex);
         }
+        objectClass = PropertiesConverter.loadClassForname(className, wgd);
         try {
             object = objectClass.newInstance();
         } catch (Exception ex) {
@@ -493,8 +504,9 @@ public class PropertiesConverter {
             Method writeMethod;
 
             for (int i = 0; i < descriptors.length; i++) {
-                if (PropertiesConverter.DEBUG)
+                if (PropertiesConverter.DEBUG) {
                     System.out.println("Candidate property:" + prefix + descriptors[i].getName());
+                }
                 writeMethod = null;
                 if ((descriptors[i].getReadMethod() != null) && ((writeMethod = descriptors[i].getWriteMethod()) != null)) {
                     // Class property or 
@@ -502,21 +514,52 @@ public class PropertiesConverter {
                     // not transient
                     if (!PropertiesConverter.isTransient(objectClass, descriptors[i].getName())) {
                         // Not transient: save it
-                        if (PropertiesConverter.DEBUG)
+                        if (PropertiesConverter.DEBUG) {
                             System.out.println("Loadable property:" + prefix + descriptors[i].getName());
-                        PropertiesConverter.loadProperty(object, properties, prefix + descriptors[i].getName(), writeMethod, descriptors[i].getPropertyType(), (descriptors[i] instanceof IndexedPropertyDescriptor));
+                        }
+                        PropertiesConverter.loadProperty(object, properties, prefix + descriptors[i].getName(), writeMethod, descriptors[i].getPropertyType(), (descriptors[i] instanceof IndexedPropertyDescriptor), wgd);
                     } else if (PropertiesConverter.DEBUG) {
                         System.out.println("Property:" + prefix + descriptors[i].getName() + " is transient");
                     }
                 } else if (PropertiesConverter.DEBUG) {
-                    if (writeMethod == null)
+                    if (writeMethod == null) {
                         System.out.println("Property:" + prefix + descriptors[i].getName() + " has no write method");
-                    else
+                    } else {
                         System.out.println("Property:" + prefix + descriptors[i].getName() + " has no read method");
+                    }
                 }
             }
         }
         return object;
+    }
+
+    private static Class loadClassForname(String className, WotlasGameDefinition wgd) throws PersistenceException {
+        Class objectClass = null;
+        Exception ex = null;
+        try {
+            objectClass = Class.forName(className);
+        } catch (ClassNotFoundException cnfe1) {
+            // Direct class instanciation does not function in netbeans.
+            ex = cnfe1;
+        }
+        if (objectClass == null) {
+            // Lookup : find classFactory impl.
+            try {
+                Object[] classesFactories = Tools.getImplementorsOf(WishPropertiesClassFactory.class, wgd);
+                for (int i = 0; i < classesFactories.length && objectClass == null; i++) {
+                    WishPropertiesClassFactory classFactory = (WishPropertiesClassFactory) classesFactories[i];
+                    objectClass = classFactory.propertyClassForName(className);
+                }
+            } catch (ClassNotFoundException cnfe2) {
+                // Problem.
+                ex = cnfe2;
+            }
+        }
+        if (objectClass == null && ex != null) {
+            Debug.signal(Debug.ERROR, className, ex);
+            throw new PersistenceException(ex);
+        }
+        return objectClass;
     }
 
     /**
@@ -530,7 +573,7 @@ public class PropertiesConverter {
     * @return the number of loaded properties.
     * @exception PersistenceException when a problem occurs during loading.
     **/
-    private static void loadProperty(Object object, Properties properties, String propertyName, Method writeMethod, Class propertyClass, boolean indexed) throws PersistenceException {
+    private static void loadProperty(Object object, Properties properties, String propertyName, Method writeMethod, Class propertyClass, boolean indexed, WotlasGameDefinition wgd) throws PersistenceException {
         Object[] arg;
 
         try {
@@ -541,18 +584,20 @@ public class PropertiesConverter {
                 Class actualClass;
 
                 actualClass = propertyClass.getComponentType();
-                if (actualClass == null)
+                if (actualClass == null) {
                     actualClass = propertyClass;
-                nbCellsObject = (Integer) PropertiesConverter.loadValue(properties, propertyName, Integer.TYPE);
-                if (nbCellsObject == null)
-                    return; // No cells for this array
+                }
+                nbCellsObject = (Integer) PropertiesConverter.loadValue(properties, propertyName, Integer.TYPE, wgd);
+                if (nbCellsObject == null) {
+                    return;
+                } // No cells for this array
                 nbCells = nbCellsObject.intValue();
                 if (indexed) {
                     arg = new Object[2];
                     // This is an indexed property: write each cell
                     for (int cell = 0; cell < nbCells; cell++) {
                         // Load each cell
-                        arg[1] = PropertiesConverter.loadValue(properties, propertyName + "." + cell, actualClass);
+                        arg[1] = PropertiesConverter.loadValue(properties, propertyName + "." + cell, actualClass, wgd);
                         arg[0] = new Integer(cell);
                         writeMethod.invoke(object, arg);
                     }
@@ -565,7 +610,7 @@ public class PropertiesConverter {
                     for (int cell = 0; cell < nbCells; cell++) {
                         // Load each cell
                         Object value;
-                        value = PropertiesConverter.loadValue(properties, propertyName + "." + cell, actualClass);
+                        value = PropertiesConverter.loadValue(properties, propertyName + "." + cell, actualClass, wgd);
                         Array.set(array, cell, value);
                     }
                     arg[0] = array;
@@ -574,9 +619,10 @@ public class PropertiesConverter {
             } else {
                 // Single value
                 arg = new Object[1];
-                arg[0] = PropertiesConverter.loadValue(properties, propertyName, propertyClass);
-                if (arg[0] != null)
+                arg[0] = PropertiesConverter.loadValue(properties, propertyName, propertyClass, wgd);
+                if (arg[0] != null) {
                     writeMethod.invoke(object, arg);
+                }
             }
         } catch (InvocationTargetException ex) {
             // The read method should be callable
@@ -598,43 +644,45 @@ public class PropertiesConverter {
     * @return the value of the property.
     * @exception PersistenceException when a problem occurs during loading.
     **/
-    private static Object loadValue(Properties properties, String propertyName, Class propertyClass) throws PersistenceException {
+    private static Object loadValue(Properties properties, String propertyName, Class propertyClass, WotlasGameDefinition wgd) throws PersistenceException {
         Object result;
         String value;
 
         value = properties.getProperty(propertyName);
-        if (PropertiesConverter.DEBUG)
+        if (PropertiesConverter.DEBUG) {
             System.out.println("Loaded:" + propertyName + " = " + value + "/" + propertyClass);
+        }
         result = null;
         if (value != null) {
-            if ((propertyClass.getName().equals("java.lang.Boolean")) || (propertyClass.equals(Boolean.TYPE)))
+            if ((propertyClass.getName().equals("java.lang.Boolean")) || (propertyClass.equals(Boolean.TYPE))) {
                 result = new Boolean(value);
-            else if ((propertyClass.getName().equals("java.lang.Character")) || (propertyClass.equals(Character.TYPE)))
+            } else if ((propertyClass.getName().equals("java.lang.Character")) || (propertyClass.equals(Character.TYPE))) {
                 result = new Character(value.charAt(0));
-            else if ((propertyClass.getName().equals("java.lang.Byte")) || (propertyClass.equals(Byte.TYPE)))
+            } else if ((propertyClass.getName().equals("java.lang.Byte")) || (propertyClass.equals(Byte.TYPE))) {
                 result = new Byte(value);
-            else if ((propertyClass.getName().equals("java.lang.Integer")) || (propertyClass.equals(Integer.TYPE)))
+            } else if ((propertyClass.getName().equals("java.lang.Integer")) || (propertyClass.equals(Integer.TYPE))) {
                 result = new Integer(value);
-            else if ((propertyClass.getName().equals("java.lang.Short")) || (propertyClass.equals(Short.TYPE)))
+            } else if ((propertyClass.getName().equals("java.lang.Short")) || (propertyClass.equals(Short.TYPE))) {
                 result = new Short(value);
-            else if ((propertyClass.getName().equals("java.lang.Long")) || (propertyClass.equals(Long.TYPE)))
+            } else if ((propertyClass.getName().equals("java.lang.Long")) || (propertyClass.equals(Long.TYPE))) {
                 result = new Long(value);
-            else if ((propertyClass.getName().equals("java.lang.Float")) || (propertyClass.equals(Float.TYPE)))
+            } else if ((propertyClass.getName().equals("java.lang.Float")) || (propertyClass.equals(Float.TYPE))) {
                 result = new Float(value);
-            else if ((propertyClass.getName().equals("java.lang.Double")) || (propertyClass.equals(Double.TYPE)))
+            } else if ((propertyClass.getName().equals("java.lang.Double")) || (propertyClass.equals(Double.TYPE))) {
                 result = new Double(value);
-            else if (propertyClass.getName().equals("java.lang.StringBuffer"))
+            } else if (propertyClass.getName().equals("java.lang.StringBuffer")) {
                 result = new StringBuffer(value);
-            else if (propertyClass.getName().equals("java.lang.String"))
+            } else if (propertyClass.getName().equals("java.lang.String")) {
                 result = value;
-            else {
+            } else {
                 // Abnormal: should not occur
                 Debug.signal(Debug.WARNING, propertyName, "IGNORED");
                 return null;
             }
-        } else
-            // Complex object: recursively add its properties
-            result = PropertiesConverter.fromProperties(properties, propertyName + ".");
+        } else // Complex object: recursively add its properties
+        {
+            result = PropertiesConverter.fromProperties(properties, propertyName + ".", wgd);
+        }
         return result;
     }
 
@@ -663,8 +711,9 @@ public class PropertiesConverter {
         BufferedWriter awriter;
         ArrayList sortedList;
         awriter = new BufferedWriter(new OutputStreamWriter(out, "8859_1"));
-        if (header != null)
+        if (header != null) {
             PropertiesConverter.writeln(awriter, "#" + header);
+        }
         sortedList = new ArrayList(properties.size());
         PropertiesConverter.writeln(awriter, "#" + new Date().toString());
         for (Enumeration e = properties.keys(); e.hasMoreElements();) {
@@ -675,8 +724,9 @@ public class PropertiesConverter {
             sortedList.add(key + "=" + val);
         }
         Collections.sort(sortedList);
-        for (int i = 0; i < sortedList.size(); i++)
+        for (int i = 0; i < sortedList.size(); i++) {
             PropertiesConverter.writeln(awriter, (String) sortedList.get(i));
+        }
         awriter.flush();
     }
 
@@ -726,8 +776,9 @@ public class PropertiesConverter {
                         outBuffer.append(PropertiesConverter.toHex((aChar >> 4) & 0xF));
                         outBuffer.append(PropertiesConverter.toHex((aChar >> 0) & 0xF));
                     } else {
-                        if (PropertiesConverter.specialSaveChars.indexOf(aChar) != -1)
+                        if (PropertiesConverter.specialSaveChars.indexOf(aChar) != -1) {
                             outBuffer.append('\\');
+                        }
                         outBuffer.append(aChar);
                     }
             }

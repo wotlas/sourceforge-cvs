@@ -21,15 +21,12 @@ package wotlas.libs.net;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import wotlas.libs.net.connection.AsynchronousNetConnection;
 import wotlas.libs.net.message.ServerErrorMessage;
 import wotlas.libs.net.message.ServerWelcomeMessage;
-import wotlas.libs.net.utils.NetInterface;
 import wotlas.utils.Debug;
+import wotlas.utils.Tools;
+import wotlas.utils.WotlasGameDefinition;
 
 /** A NetServer awaits client connections. There are many types of Server depending on what
  *  you want to do :
@@ -54,35 +51,9 @@ public class NetServer extends Thread implements NetConnectionListener, NetError
 
     /*------------------------------------------------------------------------------------*/
 
-    /** Period between two bind() tries if the network interface is not ready.
+    /** the configuration of the server (name, port, ...);
      */
-    public static final long INTERFACE_BIND_PERIOD = 1000 * 60 * 3; // 3 min
-
-    /** To prevent servers from accessing to netwok info at the same time
-     */
-    private static final byte systemNetLock[] = new byte[0];
-
-    /*------------------------------------------------------------------------------------*/
-
-    /** Server Socket
-     */
-    protected ServerSocket server;
-
-    /** Server Net Interface. We accept three format : an IP address, a DNS name or a network interface
-     *  name followed by a ',' with an integer indicating the IP index for that network interface.
-     *  If you are not sure just set the index to 0, it will point out the first available IP for
-     *  the given interface.<br>
-     *  Example : "wotlas.dynds.org", "192.168.0.2", "lan1,0".
-     */
-    protected String serverInterface;
-
-    /** Server Port.
-     */
-    protected int serverPort;
-
-    /** Maximum number of opened sockets for this server.
-     */
-    private int maxOpenedSockets;
+    private NetConfig netCfg;
 
     /** Our listeners (objects that will be informed of our state ).
      */
@@ -92,13 +63,16 @@ public class NetServer extends Thread implements NetConnectionListener, NetError
      */
     private NetConnection connections[];
 
-    /** Stop server ?
-     */
-    protected boolean stopServer;
-
     /** User lock to temporarily forbid new connections
      */
     private boolean serverLock;
+
+    /**
+     * A dependent factory of the current game definition
+     */
+    private NetMessageFactory msgFactory;
+
+    protected IOServerChannel server;
 
     /*------------------------------------------------------------------------------------*/
 
@@ -116,24 +90,65 @@ public class NetServer extends Thread implements NetConnectionListener, NetError
      *  <p>By default we accept a maximum of 200 opened socket connections for
      *  this server. This number can be changed with setMaximumOpenedSockets().</p>
      *
-     *  @param host the interface to monitor and to bind to.
-     *  @param serverPort port on which the server listens to clients.
-     *  @param msgPackages a list of packages where we can find NetMsgBehaviour Classes.
+     *  @param netCfg the configuration of the server (name, port, ...);
+     *  @param msgSubInterfaces a list of sub-interfaces where we can find NetMsgBehaviour Classes implemeting them.
      */
-    public NetServer(String serverInterface, int serverPort, String msgPackages[]) {
+    public NetServer(NetConfig netCfg, Class msgSubInterfaces[], WotlasGameDefinition wgd) {
         super("Server");
-        this.serverInterface = serverInterface;
-        this.serverPort = serverPort;
-        this.stopServer = false;
+        this.msgFactory = new NetMessageFactory(wgd);
+        this.netCfg = netCfg;
         this.serverLock = false;
-        this.maxOpenedSockets = 200; // default maximum number of opened sockets
-
         this.listeners = new NetServerListener[0];
-        this.connections = new NetConnection[this.maxOpenedSockets];
+        this.connections = new NetConnection[10];
 
         // we add the new message packages to the message factory
-        int nb = NetMessageFactory.getMessageFactory().addMessagePackages(msgPackages);
+        int nb = this.msgFactory.addMessagePackages(msgSubInterfaces);
         Debug.signal(Debug.NOTICE, null, "Loaded " + nb + " network message behaviours...");
+    }
+
+    /**
+     * @return
+     * @see wotlas.libs.net.NetMessageFactory#getGameDefinition()
+     */
+    public WotlasGameDefinition getGameDefinition() {
+        return this.msgFactory.getGameDefinition();
+    }
+
+    /**
+     * We load the available socket factory managing the connection to or for the server.
+     * @param netCfg the configuration of the server (name, port, ...);
+     */
+    protected final IOChannelFactory getSocketFactory(NetConfig netCfg) {
+        /** We load the available plug-ins (we search everywhere).
+         */
+        Object[] factories = null;
+        try {
+            // We get an instance of the factory
+            factories = Tools.getImplementorsOf(IOChannelFactory.class, this.msgFactory.getGameDefinition());
+
+        } catch (ClassNotFoundException e) {
+            Debug.signal(Debug.CRITICAL, this, e);
+            return null;
+        } catch (SecurityException e) {
+            Debug.signal(Debug.CRITICAL, this, e);
+            return null;
+        } catch (RuntimeException e) {
+            Debug.signal(Debug.ERROR, this, e);
+            return null;
+        }
+
+        if (factories == null || factories.length == 0 || !(factories[0] instanceof IOChannelFactory)) {
+            Debug.signal(Debug.ERROR, this, "No socket factory available in services");
+            return null;
+        }
+        for (int i = 0; i < factories.length; i++) {
+            IOChannelFactory fact = (IOChannelFactory) factories[i];
+            if (fact.isManaging(netCfg)) {
+                return fact;
+            }
+        }
+        Debug.signal(Debug.ERROR, this, "No socket factory available in services : using the first as default");
+        return (IOChannelFactory) factories[0];
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -142,115 +157,34 @@ public class NetServer extends Thread implements NetConnectionListener, NetError
      *  message and wait INTERFACE_BIND_PERIOD milliseconds before retrying.
      *  @return a valid server socket
      */
-    private ServerSocket getServerSocket() {
-        // We get the ip address of the specified host
-        InetAddress hostIP = null;
-        boolean updateServerSocket = false;
+    private IOServerChannel createNewServerSocket() {
 
-        // We check the format of the "host" field
-        if (this.serverInterface.indexOf(',') < 0) {
-            // ok this is an IP or DNS Name
-            do {
-                try {
-                    hostIP = InetAddress.getByName(this.serverInterface);
-                } catch (UnknownHostException ue) {
-                    // Interface is not ready
-                    for (int i = 0; i < this.listeners.length; i++)
-                        this.listeners[i].serverInterfaceIsDown(this.serverInterface);
-
-                    // we wait some time before retrying...
-                    synchronized (this) {
-                        try {
-                            wait(NetServer.INTERFACE_BIND_PERIOD);
-                        } catch (Exception e) {
-                        }
-                    }
-                }
-
-                if (mustStop())
-                    return this.server;
-            } while (hostIP == null);
-        } else {
-            // ok, we have an interface name
-            int separatorIndex = this.serverInterface.indexOf(',');
-            int ipIndex = -1;
-
-            try {
-                ipIndex = Integer.parseInt(this.serverInterface.substring(separatorIndex + 1, this.serverInterface.length()));
-            } catch (Exception e) {
-                Debug.signal(Debug.FAILURE, this, "Invalid network interface format : " + this.serverInterface + " should be <itf>,<ip-index> !");
-                Debug.exit();
-            }
-
-            // We wait for the interface to be up
-            do {
-                String itfIP[] = null;
-
-                synchronized (NetServer.systemNetLock) { // <-- to prevent servers from accessing net info at the same time
-                    itfIP = NetInterface.getInterfaceAddresses(this.serverInterface.substring(0, separatorIndex));
-                }
-
-                if (itfIP == null || itfIP.length <= ipIndex) {
-                    // Interface is not ready
-                    if (this.server == null) {
-                        Debug.signal(Debug.FAILURE, this, "Network Interface MUST be enabled at start-up so that we load appropriate libraries !");
-                        Debug.exit();
-                    }
-
-                    for (int i = 0; i < this.listeners.length; i++)
-                        this.listeners[i].serverInterfaceIsDown(this.serverInterface.substring(0, separatorIndex) + " - ip " + ipIndex);
-
-                    // we wait some time before retrying...
-                    synchronized (this) {
-                        try {
-                            wait(NetServer.INTERFACE_BIND_PERIOD);
-                        } catch (Exception e) {
-                        }
-                    }
-                } else {
-                    // Interface is up !
-                    try {
-                        hostIP = InetAddress.getByName(itfIP[ipIndex]);
-                    } catch (UnknownHostException uhe) {
-                        Debug.signal(Debug.FAILURE, this, "Could not use IP given by NetworkInterface ! " + uhe); // FATAL !
-                        Debug.exit();
-                    }
-
-                    if (this.server != null && !this.server.getInetAddress().equals(hostIP))
-                        updateServerSocket = true;
-                }
-
-                if (mustStop())
-                    return this.server;
-            } while (hostIP == null);
-        }
-
-        // 2 - Has the state of the network interface changed ?
-        if (!updateServerSocket && this.server != null) {
-            for (int i = 0; i < this.listeners.length; i++)
-                this.listeners[i].serverInterfaceIsUp(hostIP.getHostAddress(), false); // state not changed
-
-            return this.server;
-        }
-
-        // 3 - ServerSocket creation is needed here.
-        if (this.server != null)
-            try {
-                this.server.close();
-            } catch (IOException ioe) {
-                Debug.signal(Debug.ERROR, this, "Error while closing old server socket : " + ioe);
-            }
-
-        try {
-            this.server = new ServerSocket(this.serverPort, 50, hostIP); // new server socket
-            this.server.setSoTimeout(5000);
-        } catch (Exception e) {
-            Debug.signal(Debug.FAILURE, this, "Could not create server socket ! " + e); // FATAL !
+        IOChannelFactory factory = getSocketFactory(this.netCfg);
+        if (factory == null) {
+            Debug.signal(Debug.FAILURE, this, "Could not create server io socket : factory is null !");
             Debug.exit();
         }
 
-        for (int i = 0; i < this.listeners.length; i++)
-            this.listeners[i].serverInterfaceIsUp(hostIP.getHostAddress(), true); // state changed
+        try {
+            if (this.server == null || this.server.mustStop()) {
+                IOServerChannel ioServer = factory.createNewServerSocket(this.netCfg, this.listeners);
+                this.server = ioServer;
+            }
+
+            if (this.server != null) {
+                this.server.setMaximumOpenedSockets(this.connections.length);
+            }
+
+        } catch (IOException ioe) {
+            Debug.signal(Debug.FAILURE, this, ioe);
+            Debug.exit();
+        }
+
+        // Interface is not ready
+        if (this.server == null) {
+            Debug.signal(Debug.FAILURE, this, "Could not create server io socket !");
+            Debug.exit();
+        }
 
         return this.server;
     }
@@ -296,8 +230,10 @@ public class NetServer extends Thread implements NetConnectionListener, NetError
      *
      * @return a new AsynchronousNetConnection associated to this socket.
      */
-    protected NetConnection getNewConnection(Socket socket) throws IOException {
-        return new AsynchronousNetConnection(socket);
+    protected NetConnection getNewConnection(IOChannel socket) throws IOException {
+        if (socket == null)
+            return null; // Not a real connection.
+        return new AsynchronousNetConnection(this.msgFactory, socket);
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -332,30 +268,34 @@ public class NetServer extends Thread implements NetConnectionListener, NetError
      */
     @Override
     public void run() {
-        Socket clientSocket; // current socket
+        IOChannel clientSocket; // current socket
         NetConnection connection; // current connection object wrapping up the socket
         boolean failureOccured = false; // if a failure already occured during the accept()
 
         // We retrieve a valid server socket. This method can lock to wait for the itf to get ready.
-        this.server = getServerSocket();
+        this.server = createNewServerSocket();
 
         // We print some info about this server.
-        Debug.signal(Debug.NOTICE, null, "Starting Server on " + this.server.getInetAddress() + ":" + this.server.getLocalPort());
+        Debug.signal(Debug.NOTICE, null, "Starting Server on " + this.server.getDescription());
 
         // We wait for client connections. We catch exceptions at different levels because
         // their importance is linked to where they are thrown.
-        while (!mustStop()) {
+        while (this.server != null && !this.server.mustStop()) {
             clientSocket = null;
             connection = null;
 
             try {
                 // we wait 5s for clients (InterruptedIOException after)
                 clientSocket = this.server.accept();
+
             } catch (InterruptedIOException iioe) {
-                // This is the normal behaviour : the SOTimeout was fired
+                // This is the normal behavior : the SOTimeout was fired
                 failureOccured = false;
-                this.server = getServerSocket(); // we update our server socket if needed
+                if (!this.server.mustStop()) {
+                    this.server = createNewServerSocket(); // we update our server socket if needed
+                }
                 continue;
+
             } catch (Exception e) {
                 Debug.signal(Debug.FAILURE, this, e);
 
@@ -373,15 +313,15 @@ public class NetServer extends Thread implements NetConnectionListener, NetError
                 connection = getNewConnection(clientSocket);
 
                 // we inspect our server state... can we really accept him ?
-                if (!registerConnection(connection)) {
+                if (connection != null && !registerConnection(connection)) {
                     // we have reached the server's connections limit
                     refuseClient(connection, NetErrorCodeList.ERR_MAX_CONN_REACHED, "Server has reached its maximum number of connections for the moment.");
                     Debug.signal(Debug.NOTICE, this, "Err:" + NetErrorCodeList.ERR_MAX_CONN_REACHED + " - Server has reached its max number of connections");
-                } else if (this.serverLock) {
+                } else if (connection != null && this.serverLock) {
                     // we don't accept new connections for the moment
                     refuseClient(connection, NetErrorCodeList.ERR_ACCESS_LOCKED, "Server does not accept connections for the moment.");
                     Debug.signal(Debug.NOTICE, this, "Err:" + NetErrorCodeList.ERR_ACCESS_LOCKED + " - Server Locked - just refused incoming connection");
-                } else {
+                } else if (connection != null) {
                     // we can start this connection and inspect the client connection.
                     // the context provided is an helper for the NetClientRegisterMessage
                     // behaviour.
@@ -411,58 +351,6 @@ public class NetServer extends Thread implements NetConnectionListener, NetError
      */
     public void setServerLock(boolean lock) {
         this.serverLock = lock;
-    }
-
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-    /** To stop this server
-     */
-    synchronized public void stopServer() {
-        this.stopServer = true;
-        notifyAll();
-    }
-
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-    /** should we stop ?
-     *  @return true if the server must stop.
-     */
-    synchronized private boolean mustStop() {
-        return this.stopServer;
-    }
-
-    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-
-    /** To change the maximum number of opened sockets. This can be refused if more than
-     *  the new 'maxOpenedSockets' are already opened.
-     *  @param maxOpenedSockets maximum number of opened sockets
-     */
-    protected synchronized void setMaximumOpenedSockets(int maxOpenedSockets) {
-
-        // 1 - can we accept this request ?
-        int nb = 0;
-
-        for (int i = 0; i < this.connections.length; i++)
-            if (this.connections[i] != null)
-                nb++;
-
-        if (nb > maxOpenedSockets) {
-            Debug.signal(Debug.ERROR, this, "setMaximumOpenedSockets() Request refused : more sockets are already opened !");
-            return;
-        }
-
-        // 2 - ok, request accepted
-        this.maxOpenedSockets = maxOpenedSockets;
-        NetConnection tmp[] = new NetConnection[maxOpenedSockets];
-        nb = 0;
-
-        for (int i = 0; i < this.connections.length; i++)
-            if (this.connections[i] != null) {
-                tmp[nb] = this.connections[i];
-                nb++;
-            }
-
-        this.connections = tmp; // swap
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -557,6 +445,9 @@ public class NetServer extends Thread implements NetConnectionListener, NetError
      * @param connection the NetConnection object associated to this connection.
      */
     public synchronized boolean registerConnection(NetConnection connection) {
+        if (connection == null)
+            return false; // not a real connection.
+
         // we try to find some room for the new connection
         for (int i = 0; i < this.connections.length; i++)
             if (this.connections[i] == null) {
@@ -573,8 +464,57 @@ public class NetServer extends Thread implements NetConnectionListener, NetError
      */
     public synchronized void closeConnections() {
         for (int i = 0; i < this.connections.length; i++)
+            if (this.connections[i] != null) {
+                // We do not need to listen to the closed connection (avoid deadlock with an other thread closing the current connection.
+                NetConnection connection = this.connections[i];
+                this.connections[i] = null;
+                connection.removeConnectionListener(this);
+                connection.close();
+            }
+    }
+
+    /** To stop this server
+     */
+    public void stopServer() {
+        if (this.server != null) {
+            this.server.stopServer();
+        }
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+    /** To change the maximum number of opened sockets. This can be refused if more than
+     *  the new 'maxOpenedSockets' are already opened.
+     *  @param maxOpenedSockets maximum number of opened sockets
+     */
+    protected synchronized void setMaximumOpenedSockets(int maxOpenedSockets) {
+
+        // 1 - can we accept this request ?
+        int nb = 0;
+
+        for (int i = 0; i < this.connections.length; i++)
             if (this.connections[i] != null)
-                this.connections[i].close();
+                nb++;
+
+        if (nb > maxOpenedSockets) {
+            Debug.signal(Debug.ERROR, this, "setMaximumOpenedSockets() Request refused : more sockets are already opened !");
+            return;
+        }
+
+        // 2 - ok, request accepted
+        if (this.server != null) {
+            this.server.setMaximumOpenedSockets(maxOpenedSockets);
+        }
+        NetConnection tmp[] = new NetConnection[maxOpenedSockets];
+        nb = 0;
+
+        for (int i = 0; i < this.connections.length; i++)
+            if (this.connections[i] != null) {
+                tmp[nb] = this.connections[i];
+                nb++;
+            }
+
+        this.connections = tmp; // swap
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

@@ -16,7 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package wotlas.client.screen;
 
 import java.awt.Frame;
@@ -24,7 +23,10 @@ import javax.swing.SwingUtilities;
 import wotlas.client.ClientDirector;
 import wotlas.client.gui.JConnectionDialog;
 import wotlas.common.ErrorCodeList;
+import wotlas.common.message.account.WishClientAccountNetMsgBehaviour;
 import wotlas.libs.aswing.AInfoDialog;
+import wotlas.libs.net.NetConfig;
+import wotlas.utils.WotlasGameDefinition;
 
 /** A small utility to connect to delete an account using a JDialog.
  * <pre>
@@ -43,7 +45,6 @@ import wotlas.libs.aswing.AInfoDialog;
  * @author Aldiss
  * @see wotlas.libs.net.NetClient
  */
-
 public class JDeleteAccountDialog extends JConnectionDialog {
     /*------------------------------------------------------------------------------------*/
 
@@ -58,34 +59,34 @@ public class JDeleteAccountDialog extends JConnectionDialog {
      * @param accountName login+'-'+key
      * @param password
      */
-    public JDeleteAccountDialog(Frame frame, String server, int port, int serverID, String accountName, String password) {
-        super(frame, server, port, serverID, "deleteAccount:" + accountName + ":" + password, null);
+    public JDeleteAccountDialog(Frame frame, NetConfig netCfg, String accountName, String password, WotlasGameDefinition wgd) {
+        super(frame, netCfg, "deleteAccount:" + accountName + ":" + password, null, wgd);
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To retrieve a list of the NetMessage packages to use with this server.
      */
     @Override
-    protected String[] getPackages() {
-        String list[] = { "wotlas.client.message.account" };
+    protected Class[] getMsgSubInterfaces() {
+        Class list[] = { WishClientAccountNetMsgBehaviour.class };
         return list;
     }
 
     /*------------------------------------------------------------------------------------*/
-
     /** To display en error message in a pop-up.
      */
     @Override
     protected void displayError(String error) {
 
-        if (this.errorCode == ErrorCodeList.ERR_ACCOUNT_DELETED)
+        if (this.errorCode == ErrorCodeList.ERR_ACCOUNT_DELETED) {
             this.hasSucceeded = true;
+        }
 
         final String ferror = new String(error);
         final Frame ourFrame = this.frame;
 
         Runnable runnable = new Runnable() {
+
             public void run() {
                 new AInfoDialog(ourFrame, ferror, true, ClientDirector.getResourceManager());
             }

@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+    You may freely edit this file. See commented blocks below.
+
+For the purpose of easier reading the script
+is divided into following sections:
+
+  - initialization
+
+  - release-2d-engine
+  - release-client
+  - release-dev
+  - release-net-manager
+  - release-suite
+  - release-server
+  - release-web-sf
+
+  - release-all
+
+  - cleanup
+
+-->
+<project name="wotlas-release" default="default" basedir="." xmlns:wotlas="http://www.wotlas.org/release/1">
+
+    <description>Builds, tests, and runs the project wotlas and create the main artifacts for Sourceforge file releases.</description>
+
+    <!-- 
+                =======================
+                INITIALIZATION SECTION 
+                =======================
+            -->
+
+    <!-- File used for compiling sources, creating jars and others help files -->
+    <import file="build-products.xml"/>
+
+    <target name="init-release" xmlns:wotlas="http://www.wotlas.org/release/1"
+            depends="init" />
+
+
+    <!-- 
+                ==========================
+                release-2d-engine SECTION 
+                ==========================
+            -->
+
+    <target name="release-2d-engine" xmlns:wotlas="http://www.wotlas.org/release/1"
+            depends="init-release, build-2d-engine">
+
+        <property name="2dengine.product.name" value="wotlas-2d-engine" />
+        <property name="2dengine.product.vers" value="${product.graphics2d.vers}" />
+
+        <property name="2dengine.dist.name"    value="${2dengine.product.name}-${2dengine.product.vers}" />
+        <property name="2dengine.dist.dir"     value="${modules.dist.dir}/${2dengine.dist.name}" />
+
+        <echo>[release-2d-engine] Copying resources for release of version ${2dengine.product.vers} in directory : ${2dengine.dist.dir}</echo>
+
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${2dengine.dist.dir}"   includes="wotlas.libs.graphics2d.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${2dengine.dist.dir}"   includes="wotlas.libs.graphics2d.demo.jar" />
+
+        <property name="2dengine.src.dir0" value="${modules.src.dir}/" />
+        <wotlas:copydist srcdir="${2dengine.src.dir0}"      todir="${2dengine.dist.dir}"   includes="*license.txt"  />
+    	
+        <property name="2dengine.src.dir1" value="${modules.src.dir}/wotlas.libs.graphics2d" />
+        <wotlas:copydist srcdir="${2dengine.src.dir1}"      todir="${2dengine.dist.dir}"   includes="*.txt"  />
+        <wotlas:copydist srcdir="${2dengine.src.dir1}"      todir="${2dengine.dist.dir}"   includes="*.html" />
+        <wotlas:copydist srcdir="${2dengine.src.dir1}/docs" todir="${2dengine.dist.dir}/docs" />
+        <wotlas:copydist srcdir="${2dengine.src.dir1}/src"  todir="${2dengine.dist.dir}/src"  />
+
+        <property name="2dengine.src.dir2" value="${modules.src.dir}/wotlas.libs.graphics2d.demo" />
+        <wotlas:copydist srcdir="${2dengine.src.dir2}/data"     todir="${2dengine.dist.dir}/data" />
+        <wotlas:copydist srcdir="${2dengine.src.dir2}/docs"     todir="${2dengine.dist.dir}/docs" />
+        <wotlas:copydist srcdir="${2dengine.src.dir2}/release"  todir="${2dengine.dist.dir}"  />
+        <wotlas:copydist srcdir="${2dengine.src.dir2}/src"      todir="${2dengine.dist.dir}/src"  />
+    </target>
+
+
+    <!-- 
+                =======================
+                release-client SECTION 
+                =======================
+            -->
+    <target name="release-client" xmlns:wotlas="http://www.wotlas.org/release/1"
+            depends="init-release, build-client">
+
+        <property name="client.product.name" value="wotlas-client" />
+        <property name="client.product.vers" value="${product.client.vers}" />
+
+        <property name="client.dist.name"    value="${client.product.name}-${client.product.vers}" />
+        <property name="client.dist.dir"     value="${modules.dist.dir}/${client.dist.name}" />
+
+        <echo>[release-client] Copying resources for release of version ${client.product.vers} in directory : ${client.dist.dir}</echo>
+
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${client.dist.dir}/lib"   includes="org-openide-util.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${client.dist.dir}/lib"   includes="wotlas.base.common.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${client.dist.dir}/lib"   includes="wotlas.base.randland.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${client.dist.dir}/lib"   includes="wotlas.client.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${client.dist.dir}/lib"   includes="wotlas.common.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${client.dist.dir}/lib"   includes="wotlas.libs.graphics2d.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${client.dist.dir}/lib"   includes="wotlas.libs.net.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${client.dist.dir}/lib"   includes="wotlas.utils.jar" />
+
+        <property name="client.src.dir0" value="${modules.src.dir}/" />
+        <wotlas:copydist srcdir="${client.src.dir0}"      todir="${client.dist.dir}"   includes="*license.txt" />
+    	<wotlas:copydist srcdir="${client.src.dir0}"      todir="${client.dist.dir}"   includes="*.html" />
+    	<wotlas:copydist srcdir="${client.src.dir0}/docs" todir="${client.dist.dir}/docs" />
+    	
+        <property name="client.src.dir3" value="${modules.src.dir}/wotlas.client" />
+        <wotlas:copydist srcdir="${client.src.dir3}/release"           todir="${client.dist.dir}"   includes="*.bat"  />
+        <wotlas:copydist srcdir="${client.src.dir3}/release"           todir="${client.dist.dir}"   includes="*.sh"  />
+        <wotlas:copydist srcdir="${client.src.dir3}/release/base-ext"  todir="${client.dist.dir}/base-ext"  />
+        <wotlas:copydist srcdir="${client.src.dir3}"      todir="${client.dist.dir}"   includes="*.html" />
+        <wotlas:copydist srcdir="${client.src.dir3}"      todir="${client.dist.dir}"   includes="*.txt" />
+        <wotlas:copydist srcdir="${client.src.dir3}/docs" todir="${client.dist.dir}/docs" />
+        <wotlas:copydist srcdir="${client.src.dir3}/src"  todir="${client.dist.dir}/src"  />
+
+        <property name="client.src.dir4" value="${modules.src.dir}/wotlas.common" />
+        <wotlas:copydist srcdir="${client.src.dir4}/docs" todir="${client.dist.dir}/docs" />
+        <wotlas:copydist srcdir="${client.src.dir4}/src"  todir="${client.dist.dir}/src"  />
+
+        <property name="client.src.dir5" value="${modules.src.dir}/wotlas.libs.graphics2d" />
+        <wotlas:copydist srcdir="${client.src.dir5}/docs" todir="${client.dist.dir}/docs" />
+        <wotlas:copydist srcdir="${client.src.dir5}/src"  todir="${client.dist.dir}/src"  />
+
+        <property name="client.src.dir6" value="${modules.src.dir}/wotlas.libs.net" />
+        <wotlas:copydist srcdir="${client.src.dir6}/docs" todir="${client.dist.dir}/docs" />
+        <wotlas:copydist srcdir="${client.src.dir6}/src"  todir="${client.dist.dir}/src"  />
+
+        <property name="client.src.dir7" value="${modules.src.dir}/wotlas.utils" />
+        <wotlas:copydist srcdir="${client.src.dir7}/docs" todir="${client.dist.dir}/docs" />
+        <wotlas:copydist srcdir="${client.src.dir7}/src"  todir="${client.dist.dir}/src"  />
+
+    </target>
+
+
+    <!-- 
+                ======================
+                release-dev   SECTION 
+                ======================
+            -->
+    <target name="release-dev" xmlns:wotlas="http://www.wotlas.org/release/1"
+            depends="init-release, build-dev">
+        <property name="dev.product.name" value="wotlas-dev" />
+        <property name="dev.product.vers" value="${product.dev.vers}" />
+
+        <property name="dev.dist.name"    value="${dev.product.name}-${dev.product.vers}" />
+        <property name="dev.dist.dir"     value="${modules.dist.dir}/${dev.dist.name}" />
+
+        <echo>[release-dev] Copying resources for release of version ${dev.product.vers} in directory : ${dev.dist.dir}</echo>
+
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${dev.dist.dir}/lib"   includes="jython.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${dev.dist.dir}/lib"   includes="org-openide-util.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${dev.dist.dir}/lib"   includes="wotlas.base.common.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${dev.dist.dir}/lib"   includes="wotlas.base.randland.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${dev.dist.dir}/lib"   includes="wotlas.client.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${dev.dist.dir}/lib"   includes="wotlas.common.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${dev.dist.dir}/lib"   includes="wotlas.libs.graphics2d.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${dev.dist.dir}/lib"   includes="wotlas.libs.net.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${dev.dist.dir}/lib"   includes="wotlas.server.bots.alice.jars.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${dev.dist.dir}/lib"   includes="wotlas.server.bots.alice.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${dev.dist.dir}/lib"   includes="wotlas.server.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${dev.dist.dir}/lib"   includes="wotlas.utils.jar" />
+
+        <wotlas:copydist srcdir="${modules.jar.dir}/alice"   todir="${dev.dist.dir}/lib/alice"   includes="js.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}/alice"   todir="${dev.dist.dir}/lib/alice"   includes="org.mortbay.jetty.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}/alice"   todir="${dev.dist.dir}/lib/alice"   includes="servlet.jar" />
+
+    	<property name="dev.src.dir0" value="${modules.src.dir}/" />
+        <wotlas:copydist srcdir="${dev.src.dir0}"      todir="${dev.dist.dir}"   includes="*license.txt" />
+        <wotlas:copydist srcdir="${dev.src.dir0}"      todir="${dev.dist.dir}"   includes="*.html" />
+        <wotlas:copydist srcdir="${dev.src.dir0}/docs" todir="${dev.dist.dir}/docs" />
+        <wotlas:copydist srcdir="${dev.src.dir0}/release/wotlas-dev" todir="${dev.dist.dir}" />
+
+        <property name="dev.src.dir3" value="${modules.src.dir}/wotlas.base.randland" />
+        <wotlas:copydist srcdir="${dev.src.dir3}/src/base/universe"     todir="${dev.dist.dir}/base-ext/universe" />
+        <wotlas:copydist srcdir="${dev.src.dir3}/src/base/wizard"       todir="${dev.dist.dir}/base-ext/wizard" />
+
+        <property name="dev.src.dir4" value="${modules.src.dir}/wotlas.client" />
+        <wotlas:copydist srcdir="${dev.src.dir4}/release"           todir="${dev.dist.dir}"   includes="*.bat"  />
+        <wotlas:copydist srcdir="${dev.src.dir4}/release"           todir="${dev.dist.dir}"   includes="*.sh"  />
+        <wotlas:copydist srcdir="${dev.src.dir4}/release/base-ext"  todir="${dev.dist.dir}/base-ext"  />
+        <wotlas:copydist srcdir="${dev.src.dir4}"      todir="${dev.dist.dir}"   includes="*.html" />
+        <wotlas:copydist srcdir="${dev.src.dir4}"      todir="${dev.dist.dir}"   includes="*.txt" />
+        <wotlas:copydist srcdir="${dev.src.dir4}/docs" todir="${dev.dist.dir}/docs" />
+        <wotlas:copydist srcdir="${dev.src.dir4}/src"  todir="${dev.dist.dir}/src"  />
+
+        <property name="dev.src.dir5" value="${modules.src.dir}/wotlas.common" />
+        <wotlas:copydist srcdir="${dev.src.dir5}/docs" todir="${dev.dist.dir}/docs" />
+        <wotlas:copydist srcdir="${dev.src.dir5}/src"  todir="${dev.dist.dir}/src"  />
+
+        <property name="dev.src.dir6" value="${modules.src.dir}/wotlas.libs.graphics2d" />
+        <wotlas:copydist srcdir="${dev.src.dir6}/docs" todir="${dev.dist.dir}/docs" />
+        <wotlas:copydist srcdir="${dev.src.dir6}/src"  todir="${dev.dist.dir}/src"  />
+
+        <property name="dev.src.dir7" value="${modules.src.dir}/wotlas.libs.net" />
+        <wotlas:copydist srcdir="${dev.src.dir7}/docs" todir="${dev.dist.dir}/docs" />
+        <wotlas:copydist srcdir="${dev.src.dir7}/src"  todir="${dev.dist.dir}/src"  />
+
+        <property name="dev.src.dir8s" value="${modules.src.dir}/wotlas.server.bots.alice.jars" />
+        <wotlas:copydist srcdir="${dev.src.dir8s}/docs" todir="${dev.dist.dir}/docs" />
+        <wotlas:copydist srcdir="${dev.src.dir8s}/src"  todir="${dev.dist.dir}/src_alice"  />
+
+        <property name="dev.src.dir9s" value="${modules.src.dir}/wotlas.server.bots.alice" />
+        <wotlas:copydist srcdir="${dev.src.dir9s}/docs" todir="${dev.dist.dir}/docs" />
+        <wotlas:copydist srcdir="${dev.src.dir9s}/src"  todir="${dev.dist.dir}/src_alice"  />
+
+        <property name="dev.src.dir10s" value="${modules.src.dir}/wotlas.server" />
+        <wotlas:copydist srcdir="${dev.src.dir10s}/release"           todir="${dev.dist.dir}"   includes="*.bat"  />
+        <wotlas:copydist srcdir="${dev.src.dir10s}/release"           todir="${dev.dist.dir}"   includes="*.sh"  />
+        <wotlas:copydist srcdir="${dev.src.dir10s}/release/base-ext"  todir="${dev.dist.dir}/base-ext"  />
+    	<wotlas:copydist srcdir="${dev.src.dir10s}/release/bin"       todir="${dev.dist.dir}/bin"  />
+        <wotlas:copydist srcdir="${dev.src.dir10s}"      todir="${dev.dist.dir}"   includes="*.html" />
+        <wotlas:copydist srcdir="${dev.src.dir10s}"      todir="${dev.dist.dir}"   includes="*.txt" />
+        <wotlas:copydist srcdir="${dev.src.dir10s}/docs" todir="${dev.dist.dir}/docs" />
+        <wotlas:copydist srcdir="${dev.src.dir10s}/src"  todir="${dev.dist.dir}/src"  />
+
+        <property name="dev.src.dir11" value="${modules.src.dir}/wotlas.utils" />
+        <wotlas:copydist srcdir="${dev.src.dir11}/docs" todir="${dev.dist.dir}/docs" />
+        <wotlas:copydist srcdir="${dev.src.dir11}/src"  todir="${dev.dist.dir}/src"  />
+    </target>
+
+
+    <!-- 
+                ============================
+                release-net-manager SECTION 
+                ============================
+            -->
+    <target name="release-net-manager" xmlns:wotlas="http://www.wotlas.org/release/1"
+            depends="init-release, build-net-manager">
+    </target>
+
+
+    <!-- 
+                =======================
+                release-server SECTION 
+                =======================
+            -->
+    <target name="release-server" xmlns:wotlas="http://www.wotlas.org/release/1"
+            depends="init-release, build-server">
+
+        <property name="server.product.name" value="wotlas-server" />
+        <property name="server.product.vers" value="${product.server.vers}" />
+
+        <property name="server.dist.name"    value="${server.product.name}-${server.product.vers}" />
+        <property name="server.dist.dir"     value="${modules.dist.dir}/${server.dist.name}" />
+
+        <echo>[release-server] Copying resources for release of version ${server.product.vers} in directory : ${server.dist.dir}</echo>
+
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${server.dist.dir}/lib"   includes="org-openide-util.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${server.dist.dir}/lib"   includes="wotlas.base.common.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${server.dist.dir}/lib"   includes="wotlas.base.randland.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${server.dist.dir}/lib"   includes="wotlas.common.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${server.dist.dir}/lib"   includes="wotlas.libs.graphics2d.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${server.dist.dir}/lib"   includes="wotlas.libs.net.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${server.dist.dir}/lib"   includes="wotlas.server.bots.alice.jars.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${server.dist.dir}/lib"   includes="wotlas.server.bots.alice.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${server.dist.dir}/lib"   includes="wotlas.server.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}"       todir="${server.dist.dir}/lib"   includes="wotlas.utils.jar" />
+
+        <wotlas:copydist srcdir="${modules.jar.dir}/alice"   todir="${server.dist.dir}/lib/alice"   includes="js.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}/alice"   todir="${server.dist.dir}/lib/alice"   includes="org.mortbay.jetty.jar" />
+        <wotlas:copydist srcdir="${modules.jar.dir}/alice"   todir="${server.dist.dir}/lib/alice"   includes="servlet.jar" />
+
+        <property name="server.src.dir0" value="${modules.src.dir}/" />
+        <wotlas:copydist srcdir="${server.src.dir0}"      todir="${server.dist.dir}"   includes="*license.txt" />
+        <wotlas:copydist srcdir="${server.src.dir0}"      todir="${server.dist.dir}"   includes="*.html" />
+        <wotlas:copydist srcdir="${server.src.dir0}/docs" todir="${server.dist.dir}/docs" />
+
+        <property name="server.src.dir3" value="${modules.src.dir}/wotlas.base.randland" />
+        <wotlas:copydist srcdir="${server.src.dir3}/src/base/universe"     todir="${server.dist.dir}/base-ext/universe" />
+        <wotlas:copydist srcdir="${server.src.dir3}/src/base/wizard"       todir="${server.dist.dir}/base-ext/wizard" />
+    	
+        <property name="server.src.dir5" value="${modules.src.dir}/wotlas.common" />
+        <wotlas:copydist srcdir="${server.src.dir5}/docs" todir="${server.dist.dir}/docs" />
+        <wotlas:copydist srcdir="${server.src.dir5}/src"  todir="${server.dist.dir}/src"  />
+
+        <property name="server.src.dir6" value="${modules.src.dir}/wotlas.libs.graphics2d" />
+        <wotlas:copydist srcdir="${server.src.dir6}/docs" todir="${server.dist.dir}/docs" />
+        <wotlas:copydist srcdir="${server.src.dir6}/src"  todir="${server.dist.dir}/src"  />
+
+        <property name="server.src.dir7" value="${modules.src.dir}/wotlas.libs.net" />
+        <wotlas:copydist srcdir="${server.src.dir7}/docs" todir="${server.dist.dir}/docs" />
+        <wotlas:copydist srcdir="${server.src.dir7}/src"  todir="${server.dist.dir}/src"  />
+
+        <property name="server.src.dir8" value="${modules.src.dir}/wotlas.server.bots.alice.jars" />
+        <wotlas:copydist srcdir="${server.src.dir8}/docs" todir="${server.dist.dir}/docs" />
+        <wotlas:copydist srcdir="${server.src.dir8}/src"  todir="${server.dist.dir}/src_alice"  />
+
+        <property name="server.src.dir9" value="${modules.src.dir}/wotlas.server.bots.alice" />
+        <wotlas:copydist srcdir="${server.src.dir9}/docs" todir="${server.dist.dir}/docs" />
+        <wotlas:copydist srcdir="${server.src.dir9}/src"  todir="${server.dist.dir}/src_alice"  />
+
+        <property name="server.src.dir10" value="${modules.src.dir}/wotlas.server" />
+        <wotlas:copydist srcdir="${server.src.dir10}/release"           todir="${server.dist.dir}"   includes="*.bat"  />
+        <wotlas:copydist srcdir="${server.src.dir10}/release"           todir="${server.dist.dir}"   includes="*.sh"  />
+        <wotlas:copydist srcdir="${server.src.dir10}/release/base-ext"  todir="${server.dist.dir}/base-ext"  />
+    	<wotlas:copydist srcdir="${server.src.dir10}/release/bin"       todir="${server.dist.dir}/bin"  />
+        <wotlas:copydist srcdir="${server.src.dir10}"      todir="${server.dist.dir}"   includes="*.html" />
+        <wotlas:copydist srcdir="${server.src.dir10}"      todir="${server.dist.dir}"   includes="*.txt" />
+        <wotlas:copydist srcdir="${server.src.dir10}/docs" todir="${server.dist.dir}/docs" />
+        <wotlas:copydist srcdir="${server.src.dir10}/src"  todir="${server.dist.dir}/src"  />
+
+        <property name="server.src.dir11" value="${modules.src.dir}/wotlas.utils" />
+        <wotlas:copydist srcdir="${server.src.dir11}/docs" todir="${server.dist.dir}/docs" />
+        <wotlas:copydist srcdir="${server.src.dir11}/src"  todir="${server.dist.dir}/src"  />
+    </target>
+
+
+    <!-- 
+                ======================
+                release-suite SECTION 
+                ======================
+            -->
+    <target name="release-suite" xmlns:wotlas="http://www.wotlas.org/release/1"
+            depends="init-release, build-suite">
+    </target>
+
+
+
+    <!-- 
+                =======================
+                release-web-sf SECTION 
+                =======================
+            -->
+    <target name="release-web-sf" xmlns:wotlas="http://www.wotlas.org/release/1"
+            depends="init-release">
+
+        <property name="web-sf.product.name" value="web-sf" />
+        <property name="web-sf.product.vers" value="${product.web-sf.vers}" />
+
+        <property name="web-sf.src.dir"    value="${modules.src.dir}/" />
+        <property name="web-sf.dist.name"  value="${web-sf.product.name}-${web-sf.product.vers}" />
+        <property name="web-sf.dist.dir"   value="${modules.dist.dir}/${web-sf.dist.name}" />
+
+        <wotlas:copydist srcdir="${web-sf.src.dir}"      todir="${web-sf.dist.dir}"   includes="*license.txt" />
+        <wotlas:copydist srcdir="${web-sf.src.dir}"      todir="${web-sf.dist.dir}"   includes="*.html" />
+    	<wotlas:copydist srcdir="${web-sf.src.dir}/docs" todir="${web-sf.dist.dir}/docs" />
+
+        <macrodef name="copyweb-sf" uri="http://www.wotlas.org/release/1">
+            <attribute name="product"/>
+            <sequential>
+               <wotlas:copydist srcdir="${web-sf.src.dir}/@{product}"      todir="${web-sf.dist.dir}/@{product}"   includes="*license.txt" />
+               <wotlas:copydist srcdir="${web-sf.src.dir}/@{product}"      todir="${web-sf.dist.dir}/@{product}"   includes="*.html" />
+    	       <wotlas:copydist srcdir="${web-sf.src.dir}/@{product}/docs" todir="${web-sf.dist.dir}/@{product}/docs" />
+            </sequential>
+        </macrodef>
+
+        <wotlas:copyweb-sf product="wotlas.base.common" />
+        <wotlas:copyweb-sf product="wotlas.base.randland" />
+        <wotlas:copyweb-sf product="wotlas.client" />
+        <wotlas:copyweb-sf product="wotlas.client.jars" />
+        <wotlas:copyweb-sf product="wotlas.client.main" />
+        <wotlas:copyweb-sf product="wotlas.common" />
+        <wotlas:copyweb-sf product="wotlas.common.jars" />
+        <wotlas:copyweb-sf product="wotlas.libs.graphics2d" />
+        <wotlas:copyweb-sf product="wotlas.libs.graphics2d.demo" />
+        <wotlas:copyweb-sf product="wotlas.libs.net" />
+        <wotlas:copyweb-sf product="wotlas.server" />
+        <wotlas:copyweb-sf product="wotlas.server.bots.alice" />
+        <wotlas:copyweb-sf product="wotlas.server.bots.alice.jars" />
+        <wotlas:copyweb-sf product="wotlas.server.jars" />
+        <wotlas:copyweb-sf product="wotlas.server.main" />
+        <wotlas:copyweb-sf product="wotlas.utils" />
+
+    </target>
+
+
+    <!-- 
+                =======================
+                release-all    SECTION 
+                =======================
+            -->
+
+    <target name="release-all" xmlns:wotlas="http://www.wotlas.org/release/1"
+            depends="release-2d-engine, release-client, release-dev, release-net-manager, release-server, release-suite, release-web-sf">
+    </target>
+	
+	
+    <!-- 
+                =======================
+                DEFAULT SECTION 
+                =======================
+            -->
+    <target name="default" xmlns:wotlas="http://www.wotlas.org/release/1"
+            depends="release-all">
+    </target>
+
+
+</project>

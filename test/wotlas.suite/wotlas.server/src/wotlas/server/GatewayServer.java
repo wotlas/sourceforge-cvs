@@ -23,10 +23,12 @@ import wotlas.common.ErrorCodeList;
 import wotlas.common.ServerConfig;
 import wotlas.common.ServerConfigManager;
 import wotlas.libs.net.NetClient;
+import wotlas.libs.net.NetConfig;
 import wotlas.libs.net.NetConnection;
 import wotlas.libs.net.NetErrorCodeList;
 import wotlas.libs.net.NetServer;
 import wotlas.utils.Debug;
+import wotlas.utils.WotlasGameDefinition;
 
 /** Wotlas Gateway Server. This is used for account transaction management.
  *  The server awaits for account transferts and also provides a method
@@ -52,12 +54,13 @@ public class GatewayServer extends NetServer implements ErrorCodeList {
      *
      *  @param serverInterface the host interface to bind to. Example: wotlas.tower.org
      *  @param port port on which the server listens to clients.
-     *  @param packages a list of packages where we can find NetMsgBehaviour Classes.
+     *  @param msgSubInterfaces a list of sub-interfaces where we can find NetMsgBehaviour Classes implemeting them.
      *  @param nbMaxSockets maximum number of sockets that can be opened on this server
      *  @param serverConfigManager config of all the servers.
      */
-    public GatewayServer(String serverInterface, int port, String packages[], int nbMaxSockets, ServerConfigManager serverConfigManager) {
-        super(serverInterface, port, packages);
+    public GatewayServer(NetConfig netCfg, Class msgSubInterfaces[], int nbMaxSockets, ServerConfigManager serverConfigManager,
+            WotlasGameDefinition wgd) {
+        super(netCfg, msgSubInterfaces, wgd);
         setMaximumOpenedSockets(nbMaxSockets);
 
         this.serverConfigManager = serverConfigManager;
@@ -118,8 +121,9 @@ public class GatewayServer extends NetServer implements ErrorCodeList {
         AccountTransaction transaction = new AccountTransaction(AccountTransaction.TRANSACTION_ACCOUNT_SENDER);
 
         // STEP 3 - Open a connection with the remote server
-        NetClient client = new NetClient();
-        NetConnection connection = client.connectToServer(remoteServer.getServerName(), remoteServer.getGatewayServerPort(), "GatewayServerPlease!", transaction, null);
+        NetClient client = new NetClient(getGameDefinition());
+        NetConfig remoteNetCfg = new NetConfig(remoteServer.getServerName(), remoteServer.getGatewayServerPort());
+        NetConnection connection = client.connectToServer(remoteNetCfg, "GatewayServerPlease!", transaction, null);
 
         if (connection == null) {
             // We analyze the error returned
@@ -130,8 +134,9 @@ public class GatewayServer extends NetServer implements ErrorCodeList {
                     Debug.signal(Debug.NOTICE, null, "Server dead link. Trying " + newServerName + ":" + remoteServer.getGatewayServerPort());
 
                 if (this.server != null) {
-                    client = new NetClient();
-                    connection = client.connectToServer(newServerName, remoteServer.getGatewayServerPort(), "GatewayServerPlease!", transaction, null);
+                    remoteNetCfg = new NetConfig(newServerName, remoteServer.getGatewayServerPort());
+                    client = new NetClient(getGameDefinition());
+                    connection = client.connectToServer(remoteNetCfg, "GatewayServerPlease!", transaction, null);
                 }
             }
 

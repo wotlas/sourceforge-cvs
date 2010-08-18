@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<psf version="2.0">
+<provider id="org.eclipse.team.cvs.core.cvsnature">
+<project reference="1.0,:pserver:anonymous@wotlas.cvs.sourceforge.net:/cvsroot/wotlas,test/vyger,vyger"/>
+<project reference="1.0,:pserver:anonymous@wotlas.cvs.sourceforge.net:/cvsroot/wotlas,test/vyger.test,vyger.test"/>
+<project reference="1.0,:pserver:anonymous@wotlas.cvs.sourceforge.net:/cvsroot/wotlas,wotlas,wotlas"/>
+<project reference="1.0,:pserver:anonymous@wotlas.cvs.sourceforge.net:/cvsroot/wotlas,test/wotlas.suite,wotlas.suite"/>
+<project reference="1.0,:pserver:anonymous@wotlas.cvs.sourceforge.net:/cvsroot/wotlas,test/wotlas.test.client,wotlas.test.client"/>
+<project reference="1.0,:pserver:anonymous@wotlas.cvs.sourceforge.net:/cvsroot/wotlas,test/wotlas.test.server,wotlas.test.server"/>
+</provider>
+</psf>

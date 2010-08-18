@@ -1,0 +1,140 @@
+<html>
+<head>
+<title>Wotlas Graphics 2D Engine</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000">
+<p><img src="images/bar.gif" width="620" height="40"></p>
+<p align="center"><img src="images/wotlas-graphics.jpg" width="360" height="190"></p>
+<blockquote> 
+  <p><img src="images/button.gif" width="14" height="14" align="absmiddle"> 
+    <a href="#about">Overview<br>
+    </a><img src="images/button.gif" width="14" height="14" align="absmiddle"> 
+    <a href="#api">API &amp; Source<br>
+    </a><img src="images/button.gif" width="14" height="14" align="absmiddle"> 
+    <a href="#demo">Demo<br>
+    </a><img src="images/button.gif" width="14" height="14" align="absmiddle"> 
+    <a href="#support">Technical Support</a></p>
+  <p align="center">&nbsp;</p>
+  <p align="center"><img src="images/separator.gif" width="300" height="2"></p>
+</blockquote>
+<p><img src="images/symbole.gif" width="18" height="18" align="absmiddle" border="0"><i><font size="5"> 
+  Overview</font></i><font size="5"> <a name="about"></a></font></p>
+<blockquote> 
+  <p><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Wotlas Graphics</i> is a flexible 
+    2D Graphics engine you can use in applications that need 2D side-scrolling 
+    display. It mainly works around a <i>GraphicsDirector</i> that displays <i>Drawable 
+    </i>objects and uses a <i>WindowPolicy</i> to scroll the game screen in an 
+    appropriate manner.</p>
+  <p> <i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Drawable </i>is the mother class 
+    of all the graphical objects. We provide a full set of graphical objects for 
+    our<i> </i>2D engine<i> </i>:<i> TextDrawable </i>(for text display with any 
+    font you want)<i>, MotionlessSprite </i>(to handle motionless images)<i>, 
+    Sprite </i>(to handle images that can have motion), <i>MultiRegionImage</i> 
+    (to handle huge images), <i>AuraEffect</i> (to display a selection aura on 
+    sprites), and much more... Of course you can develop your own <i>Drawable</i> 
+    objects very easily.</p>
+  <p> <i>&nbsp;</i><i>&nbsp;</i><i>&nbsp;</i><i>&nbsp;</i><i>&nbsp;</i><i>&nbsp;</i>To 
+    load/unload images efficiently and reduce memory costs we use an <i>ImageLibrary</i> 
+    which is a simple image database. Our <i>ImageLibrary</i> can load images 
+    from disk when the application starts and/or just in time when the images 
+    are needed. The structure of the library is a tree composed of directories 
+    and images. Each directory can contain images and/or sub-directories. You 
+    can indicate directories that must have mutually exclusive sub-directories 
+    (especially useful for huge images you don't want to be in memory at the same 
+    time). The ImageLibrary can access to various image sources via an interface 
+    named <i>ImageResourceLocator</i>. By defining your own <i>ImageResourceLocator</i> 
+    you can load images from JAR files or from a network.</p>
+  <p> <i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>Our 2D graphics engine works 
+    with <i>Java</i> <i>Swing</i> as its <i>GraphicsDirector</i> extends the <i>JPanel</i> 
+    class. But of course, because <i>Wotlas </i>is a GNU open-source project, 
+    you can change that easily.<br>
+    <br>
+    We recently moved our API to support the new <i>VolatileImage</i> feature 
+    of Java 1.4. If you choose to not use it the API remains Java 1.3 compliant.</p>
+  <p>Finally we also added a pop-up menu system that you can use easily. Just 
+    create a <i>Menu2DManager</i>, define a set of <i>SimpleMenu2D</i>, link them 
+    and add the root menu to the <i>Menu2DManager</i>. Now when you catch a right 
+    mouse click on the screen you can display the right menu and listen to item 
+    being clicked.</p>
+  <p>&nbsp;</p>
+  <p></p>
+  <p></p>
+  <p></p>
+  <p></p>
+</blockquote>
+<p><img src="images/symbole.gif" width="18" height="18" align="absmiddle" border="0"><font size="5"><i> 
+  </i><i>API &amp; Source<a name="api"></a></i></font></p>
+<blockquote> 
+  <p><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>The <i>Wotlas Graphics </i>API 
+    <i>Javadoc </i>is available <a href="docs/apis/index.html" target="_blank">here</a>. 
+    The source is available <a href="source/wotlas/libs/graphics2d/" target="_blank">here</a> 
+    ( local directory <i>source/wotlas/libs/graphics2d</i> ) and a JAR file of 
+    its compiled classes <i> </i><a href="jar/" target="_blank">here</a>. It is 
+    composed of five packages :</p>
+  <blockquote> 
+    <blockquote> 
+      <p>- <b>wotlas.libs.graphics2d</b> : the main classes and interfaces ( GraphicsDirector, 
+        ImageLibrary, Drawable, etc. ).</p>
+    </blockquote>
+  </blockquote>
+  <blockquote> 
+    <blockquote> 
+      <p>- <b>wotlas.libs.graphics2d.drawable</b> : <i>Drawable</i> objects you 
+        can use ( <i>Sprite</i>, <i>TextDrawable</i>, etc. ). </p>
+    </blockquote>
+  </blockquote>
+  <p></p>
+  <blockquote> 
+    <blockquote> 
+      <p>- <b>wotlas.libs.graphics2d.policy</b> : different scrolling policies. 
+      </p>
+    </blockquote>
+  </blockquote>
+  <p></p>
+  <blockquote> 
+    <blockquote> 
+      <p>- <b>wotlas.libs.graphics2d.filter</b> : dynamic image filters. For now, 
+        the only filters available are : a color filter ( to change one or more 
+        color(s) of a sprite ) and a brightness filter.</p>
+    </blockquote>
+  </blockquote>
+  <p></p>
+  <blockquote> 
+    <blockquote> 
+      <p>- <b>wotlas.libs.graphics2d.filter.color</b> : colors for the <i>ColorImageFilter</i>.</p>
+      <p>- <b>wotlas.libs.graphics2d.menu</b> : pop-up menu defintions, see the 
+        <i>Menu2DManager</i> and <i>SimpleMenu2D</i> classes. </p>
+    </blockquote>
+  </blockquote>
+  <p> <i>&nbsp;&nbsp;</i><i>&nbsp;&nbsp;</i><i>&nbsp;&nbsp;</i><i>&nbsp;&nbsp;</i>If 
+    you want to rebuild the '<i>graphics2d.jar</i>' file, you'll find a <i>'build'</i> 
+    script in the <i>'build/'</i> directory.</p>
+</blockquote>
+<p>&nbsp;</p>
+<p><img src="images/symbole.gif" width="18" height="18" align="absmiddle" border="0"> 
+  <font size="5"><i>Demo<a name="demo"></a></i></font></p>
+<blockquote> 
+  <p><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>A small demo of our API can be 
+    found <a href="demo/" target="_blank">here</a>. The source is available <a href="demo/source/" target="_blank">here</a>. 
+    Use the '<i>launch.bat</i>' or <i>'launch.sh'</i> script to start the demo. 
+    On Windows systems you can also double-click on <i>'demo.jar'</i>.</p>
+  <p align="center"><img src="images/demo.jpg" width="325" height="324"></p>
+  <p><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>Use the arrows to move your character 
+    and click on other women ( characters of our <i>Wotlas</i> project) to display 
+    some text and a selection aura. There is a command in the <i>'demo/build'</i> 
+    directory if you want to rebuild the '<i>demo.jar</i>' file.</p>
+</blockquote>
+<p>&nbsp;</p>
+<p><img src="images/symbole.gif" width="18" height="18" align="absmiddle" border="0"> 
+  <font size="5"><i>Technical Support<a name="support"></a></i></font></p>
+<blockquote> 
+  <p><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</i>You can join us at the following 
+    address <b>wotlas-devel@lists.sourceforge.net </b>. Our sourceforge <i>wotlas</i> 
+    home is <a href="http://wotlas.sf.net">here</a>.</p>
+</blockquote>
+<p>&nbsp;</p>
+<p><img src="images/bar.gif" width="620" height="40"> </p>
+</body>
+</html>

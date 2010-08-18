@@ -1,0 +1,140 @@
+*
+* Light And Shadow. A Persistent Universe based on Robert Jordan's Wheel of Time Books.
+* Copyright (C) 2001-2008 WOTLAS Team
+*
+* CHANGES BETWEEN VERSIONS
+* ( File Best Viewed in 1024x768 or above)
+*
+
+CHANGES BETWEEN 1.3.1 AND ?
+-------------------------
+
+Sleeping Owl - Preparing library separation and vyger
+
+ - 03/20/08 - test/wotlas.suite : eclipse integration of projects 
+(project names in cvs tree)
+  1- wotlas in wotlas.cvs.sourceforge.net/wotlas/wotlas 
+  2- vyger in wotlas.cvs.sourceforge.net/wotlas/test/vyger
+  3- vyger.test in wotlas.cvs.sourceforge.net/wotlas/test/vyger.test
+  4- wotlas.test.client in wotlas.cvs.sourceforge.net/wotlas/test/wotlas.test.client
+  5- wotlas.test.server in wotlas.cvs.sourceforge.net/wotlas/test/wotlas.test.server
+If you do want to compile all these projects in eclipse 3.3, you need first
+to build all these projects and the 'wotlas.suite' in netbeans before launching
+eclipse. For now you must use the jars created by netbeans in the dist/lib 
+directories. In the future we will either create maven configurations or adding
+an http repositories of stable libraries jars.
+ To import all these projects in eclipse, you need only to get the project set :
+http://wotlas.cvs.sourceforge.net/*checkout*/wotlas/wotlas/wotlas_EclipseProjectSet.psf
+
+ - 03/20/08 - test/vyger : more merging in the
+ wotlas.cvs.sourceforge.net/wotlas/test/vyger/first_alpha/merged/
+ directory : adding inventory, lieManager; creating EditorManager interface, 
+ DiceRollerManager and PrimaryKeyGenerator in order to not having cross reference
+ between wotlas.client, wotlas.common and wotlas.server packages; note that all
+ the cross references are not resolved.
+
+ - 03/15/08 - test/vyger : cleaning up the sources of vyger in 
+wotlas.cvs.sourceforge.net/wotlas/test/vyger/first_alpha/cleaned/
+and adding a merged sources directory :
+wotlas.cvs.sourceforge.net/wotlas/test/vyger/first_alpha/merged/
+that contains only the differences with wotlas stable sources.
+Note that you can test the vyger project with merged sources only in eclipse.
+Netbeans don't allow to have the same sources names in both the jars and the
+source directories.
+
+ - 02/25/08 - wotlas.server.AccountManager : Change ERROR message to NOTICE as
+long as the inventory is saved empty.
+ - 02/25/08 - test/wotlas.suite : change loading of resources using the
+classloader (class.getResourceAsStream() or class.getResource()) : In netbeans 
+module, classes and resources loading use a specific ClassLoader that prevents
+to use a module resource that is not declared in module dependencies.
+Actually we are using wotlas.common.ResourceManager to load many resources,
+but we want the 'wotlas.common' module to be the most independent possible, 
+we need to use the SystemClassLoader to load resources.
+Be aware it is a programming trick that would not be kept in the future.
+
+ - 01/22/08 - test/wotlas.suite : adding wotlas.libs.graphics2d.demo module
+to test the graphics2d library and dev documents from the wotlas-2D-engine-v1.3.zip 
+archive. After building the wotlas.suite, the script launch.bat/launch.sh in
+the demo module works and launch the same example as in the archive.
+
+ - 01/11/08 - wotlas : Improvement of ResourceManager and resources jar loading
+ - 01/11/08 - wotlas : FIX NullPointerException in InventoryPlugin when it is loaded in
+jars;
+
+ - 01/11/08 - test/wotlas.test.client : adding a project using jars build in wotlas.suite
+to test the client side;
+ - 01/11/08 - test/wotlas.test.server : adding a project using jars build in wotlas.suite
+to test the server side using resources loaded in jars;
+
+ - 01/11/08 - test/wotlas.suite : adding common and randland resources;
+ - 01/11/08 - test/wotlas.suite : applying the same patches as these of /wotlas project;
+
+
+ - 12/31/07 - Fix : moving the class 'wotlas.common.objects.inventories.InventoryLayout' and renaming
+package wotlas.libs.graphics2d, change the package names in the resources files.
+ - 12/31/07 - Fix : loading of messages and chat commands classes in jars server; adding 'classes.lst'
+in packages for use in wotlas.utils.Tools.
+
+ - 12/21/07 - Preparing library separation : creating wotlas.suite in test/wotlas.suite
+ - 12/21/07 - Preparing vyger : creating vyger project in test/vyger
+ - 12/21/07 - Renaming the 'wotlas.libs.graphics2D' in 'wotlas.libs.graphics2d' : the use of capitalized
+ letter should be prohibited in package names; You have to rebuild your universe with
+ WorldGenerator.
+ - 12/21/07 - Moving the class 'wotlas.common.objects.inventories.InventoryLayout' : it uses wotlas 
+client references, it should be moved in wotlas.client.screen.plugin.
+ - 12/21/07 - Fix wotlas.utils.Tools : using HashSet in order to have once time a class or a resource.
+ - 12/21/07 - Fix: font 'dialog' cause NullPointerException in menu 2D
+
+Sleeping Owl - Jdk 1.6 compliant task - more clean up
+ - 12/13/07 - eclipse-netbeans development : cleanup and checkstyle
+ - 12/13/07 - using generic types parameterized (ArrayList, HashMap, ...)  
+
+
+CHANGES BETWEEN V3 AND V1.3.1 (December 2007)
+---------------------------------------------
+
+Sleeping Owl - preparing alpha release
+ - 12/11/07 - Fix : loading of messages and plugins classes in JavaWebStart client.
+ - 12/11/07 - Eclipse integration : adding resources in /wotlas/.settings/ directory.
+ - 12/09/07 - Fix : loading images and world map datas in WebStart release.
+ - 12/03/07 - netbeans development : javawebstart integration
+ - 12/03/07 - fixing the building server default id
+
+Sleeping Owl - Jdk 1.6 compliant task
+ - 11/26/07 - Alice bot sources of program D from wotlas141.zip
+ - 11/26/07 - Jython jar from vyger project
+ - 11/26/07 - Applying Eclipse clean-up tool
+
+Sleeping Owl - Jdk 1.6 compliant task
+ - 11/25/07 - Fix : unmappable character for encoding UTF-8
+ - 11/25/07 - Fix : Font loading and NullPointerException
+ - 11/25/07 - Fix : non-varargs call of varargs method
+ - 11/25/07 - Fix : enum keyword
+ - 11/25/07 - Fix : assignement has no effect
+ - 11/25/07 - Changing ../bin in bin
+ - 11/25/07 - netbeans and eclipse development
+ - 11/25/07 - netbeans and eclipse development running and testing.
+ - 11/25/07 - eclipse sources cleanup
+
+
+SSzretter -
+ - 12/20/03 Changed all hard coded references to "Lucida Blackletter" to "Lucida Blackletter Regular" to fix Java 1.4.2 compatibility
+    ** need to test this new font name on linux/mac to make sure it works
+ - 12/20/03 Added ToDo.txt - to keep track of ideas, and what needs to be done
+ - 12/20/03 Commented out import wotlas.client.screen.extraplugin.*; in client datamanager to compile - must be work in progress?
+  
+
+
+
+CHANGES BEFORE V1.3 (20 May 2002)
+---------------------------------------------
+See docs/dev/CHANGES-1.2.txt
+
+
+PROJECT HISTORY
+---------------
+
+V1.0 released the 20 October 2001
+
+Project started the 5 March 2001
